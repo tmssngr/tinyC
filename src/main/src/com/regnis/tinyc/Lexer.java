@@ -52,10 +52,6 @@ public final class Lexer {
 			text = detectWhitespace();
 			return TokenType.WHITESPACE;
 		}
-		if (chr == ';') {
-			text = detectLineComment("");
-			return TokenType.COMMENT;
-		}
 		if (chr == '/') {
 			consume();
 			if (chr == '/') {
@@ -72,6 +68,10 @@ public final class Lexer {
 			return TokenType.IDENTIFIER;
 		}
 
+		if (chr == ';') {
+			consume();
+			return TokenType.SEMI;
+		}
 		if (chr == ',') {
 			consume();
 			return TokenType.COMMA;
