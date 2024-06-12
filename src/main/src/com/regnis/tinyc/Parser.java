@@ -11,6 +11,8 @@ import org.jetbrains.annotations.*;
  */
 public class Parser {
 
+	private static final List<TokenType> PRECEDENCE = List.of(TokenType.PLUS, TokenType.MINUS, TokenType.STAR, TokenType.SLASH);
+
 	private final Lexer lexer;
 
 	private TokenType token;
@@ -38,29 +40,41 @@ public class Parser {
 		consume(TokenType.VAR);
 		final String varName = consumeIdentifier();
 		consume(TokenType.ASSIGN);
-		final AstNode expression = getExpression();
+		final AstNode expression = getExpression(-1);
 		consume(TokenType.SEMI);
 		return AstNode.assign(expression, AstNode.lhs(varName));
 	}
 
-	private AstNode getExpression() {
+	private AstNode getExpression(int minPrecedence) {
 		AstNode left;
 		if (token == TokenType.INT_LITERAL) {
 			left = AstNode.intLiteral(consumeIntValue());
 		}
 		else {
-			throw new SyntaxException("Expected int literal", getLocation());
+			throw new SyntaxException("Expected int literal but got " + token, getLocation());
 		}
 
 		while (true) {
 			switch (token) {
-			case PLUS -> {
-				final AstNode right = getExpression();
-				left = AstNode.plus(left, right);
-			}
-			case MINUS -> {
-				final AstNode right = getExpression();
-				left = AstNode.minus(left, right);
+			case PLUS,
+			     MINUS,
+			     STAR,
+			     SLASH -> {
+				final int precedence = PRECEDENCE.indexOf(token);
+				if (precedence <= minPrecedence) {
+					return left;
+				}
+
+				final TokenType operationToken = token;
+				consume();
+				final AstNode right = getExpression(precedence);
+				left = switch (operationToken) {
+					case PLUS -> AstNode.add(left, right);
+					case MINUS -> AstNode.sub(left, right);
+					case STAR -> AstNode.multiply(left, right);
+					case SLASH -> AstNode.divide(left, right);
+					default -> throw new IllegalStateException("Unsupported operation " + operationToken);
+				};
 			}
 			default -> {
 				return left;

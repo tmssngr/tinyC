@@ -12,12 +12,20 @@ public record AstNode(NodeType type, AstNode left, AstNode right, int value, Str
 		return new AstNode(NodeType.Assign, expression, lhs, 0, "");
 	}
 
-	public static AstNode plus(AstNode left, AstNode right) {
-		return new AstNode(NodeType.Plus, left, right, 0, "");
+	public static AstNode add(AstNode left, AstNode right) {
+		return new AstNode(NodeType.Add, left, right, 0, "");
 	}
 
-	public static AstNode minus(AstNode left, AstNode right) {
-		return new AstNode(NodeType.Minus, left, right, 0, "");
+	public static AstNode sub(AstNode left, AstNode right) {
+		return new AstNode(NodeType.Sub, left, right, 0, "");
+	}
+
+	public static AstNode multiply(AstNode left, AstNode right) {
+		return new AstNode(NodeType.Multiply, left, right, 0, "");
+	}
+
+	public static AstNode divide(AstNode left, AstNode right) {
+		return new AstNode(NodeType.Divide, left, right, 0, "");
 	}
 
 	public static AstNode lhs(String name) {

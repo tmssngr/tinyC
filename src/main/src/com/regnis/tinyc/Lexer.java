@@ -64,8 +64,7 @@ public final class Lexer {
 				return TokenType.COMMENT;
 			}
 
-			text = "/";
-			return TokenType.IDENTIFIER;
+			return TokenType.SLASH;
 		}
 
 		if (chr == ';') {
@@ -76,13 +75,17 @@ public final class Lexer {
 			consume();
 			return TokenType.COMMA;
 		}
+		if (chr == '+') {
+			consume();
+			return TokenType.PLUS;
+		}
 		if (chr == '-') {
 			consume();
 			return TokenType.MINUS;
 		}
-		if (chr == '+') {
+		if (chr == '*') {
 			consume();
-			return TokenType.PLUS;
+			return TokenType.STAR;
 		}
 		if (chr == '=') {
 			consume();
