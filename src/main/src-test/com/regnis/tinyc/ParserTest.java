@@ -39,9 +39,16 @@ public class ParserTest {
 		), new Parser(new Lexer("var foo = 1 - 2 + 3;")).parse());
 
 		Assert.assertEquals(List.of(
+				AstNode.assign(AstNode.sub(AstNode.add(AstNode.intLiteral(1),
+				                                       AstNode.intLiteral(2)),
+				                           AstNode.intLiteral(3)),
+				               AstNode.lhs("foo"))
+		), new Parser(new Lexer("var foo = 1 + 2 - 3;")).parse());
+
+		Assert.assertEquals(List.of(
 				AstNode.assign(AstNode.add(AstNode.multiply(AstNode.intLiteral(1),
 				                                            AstNode.intLiteral(3)),
-				                           AstNode.multiply(AstNode.intLiteral(3),
+				                           AstNode.multiply(AstNode.intLiteral(2),
 				                                             AstNode.intLiteral(4))),
 				               AstNode.lhs("foo"))
 		), new Parser(new Lexer("var foo = 1 * 3 + 2 * 4;")).parse());

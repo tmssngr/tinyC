@@ -11,8 +11,6 @@ import org.jetbrains.annotations.*;
  */
 public class Parser {
 
-	private static final List<TokenType> PRECEDENCE = List.of(TokenType.PLUS, TokenType.MINUS, TokenType.STAR, TokenType.SLASH);
-
 	private final Lexer lexer;
 
 	private TokenType token;
@@ -40,7 +38,7 @@ public class Parser {
 		consume(TokenType.VAR);
 		final String varName = consumeIdentifier();
 		consume(TokenType.ASSIGN);
-		final AstNode expression = getExpression(-1);
+		final AstNode expression = getExpression(0);
 		consume(TokenType.SEMI);
 		return AstNode.assign(expression, AstNode.lhs(varName));
 	}
@@ -60,7 +58,7 @@ public class Parser {
 			     MINUS,
 			     STAR,
 			     SLASH -> {
-				final int precedence = PRECEDENCE.indexOf(token);
+				final int precedence = getPrecedence(token);
 				if (precedence <= minPrecedence) {
 					return left;
 				}
@@ -81,6 +79,16 @@ public class Parser {
 			}
 			}
 		}
+	}
+
+	private static int getPrecedence(TokenType token) {
+		return switch (token) {
+			case PLUS, MINUS -> 1;
+			case STAR, SLASH -> 2;
+			default -> {
+				throw new IllegalStateException("Unsupported operation " + token);
+			}
+		};
 	}
 
 	private int consumeIntValue() {

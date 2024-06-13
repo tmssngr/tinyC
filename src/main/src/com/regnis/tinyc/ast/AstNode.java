@@ -4,6 +4,21 @@ package com.regnis.tinyc.ast;
  * @author Thomas Singer
  */
 public record AstNode(NodeType type, AstNode left, AstNode right, int value, String name) {
+
+	@Override
+	public String toString() {
+		return switch (type) {
+			case IntLit -> String.valueOf(value);
+			case VarAssign -> "@" + name;
+			case Assign -> right + " := " + left;
+			case Add -> left + " + " + right;
+			case Sub -> left + " - " + right;
+			case Multiply -> left + " * " + right;
+			case Divide -> left + " / " + right;
+			default -> String.valueOf(type);
+		};
+	}
+
 	public static AstNode intLiteral(int value) {
 		return new AstNode(NodeType.IntLit, null, null, value, "");
 	}
