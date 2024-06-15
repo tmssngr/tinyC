@@ -118,12 +118,7 @@ public final class Lexer {
 			consume();
 		}
 		while (chr >= 0
-		       && chr != ','
-		       && chr != ';'
-		       && chr != '"'
-		       && chr != '('
-		       && chr != ')'
-		       && chr != '#'
+		       && isIdentifierChar(chr)
 		       && !isWhitespace()
 		       && !isLineBreak()
 		);
@@ -410,5 +405,15 @@ public final class Lexer {
 
 	private static void append(int chr, StringBuilder buffer) {
 		buffer.append((char)chr);
+	}
+
+	private static boolean isIdentifierChar(int chr) {
+		return isInInterval(chr, '0', '9')
+		       || isInInterval(chr, 'A', 'Z')
+		       || isInInterval(chr, 'a', 'z');
+	}
+
+	private static boolean isInInterval(int chr, char from, char to) {
+		return from <= chr && chr <= to;
 	}
 }
