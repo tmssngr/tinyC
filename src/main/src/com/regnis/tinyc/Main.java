@@ -1,5 +1,7 @@
 package com.regnis.tinyc;
 
+import com.regnis.tinyc.ast.*;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -10,7 +12,14 @@ import java.util.*;
 public class Main {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		final Path asmFile = Path.of("output.asm");
+		if (args.length != 1) {
+			return;
+		}
+
+		final Path inputFile = Path.of(args[0]);
+		final List<AstNode> nodes = parse(inputFile);
+
+		final Path asmFile = useExtension(inputFile, ".asm");
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);
 			output.write();
@@ -20,7 +29,30 @@ public class Main {
 			return;
 		}
 
-		launchExe(Path.of("output.exe"));
+		final Path exeFile = useExtension(inputFile, ".exe");
+		launchExe(exeFile);
+	}
+
+	private static Path useExtension(Path path, String extension) {
+		final String fileName = path.getFileName().toString();
+		final int dotIndex = fileName.lastIndexOf('.');
+		final String derivedName = dotIndex > 1 ? fileName.substring(0, dotIndex) + extension
+				: fileName + extension;
+		return path.resolveSibling(derivedName);
+	}
+
+	private static List<AstNode> parse(Path inputFile) throws IOException {
+		try (BufferedReader reader = Files.newBufferedReader(inputFile)) {
+			final Parser parser = new Parser(new Lexer(() -> {
+				try {
+					return reader.read();
+				}
+				catch (IOException ex) {
+					throw new UncheckedIOException(ex);
+				}
+			}));
+			return parser.parse();
+		}
 	}
 
 	private static boolean launchFasm(Path asmFile) throws IOException, InterruptedException {

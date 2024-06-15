@@ -138,6 +138,7 @@ public class Parser {
 	private void consume() {
 		do {
 			token = lexer.next();
+//			System.out.println(token);
 		}
 		while (token == TokenType.WHITESPACE || token == TokenType.COMMENT);
 	}
