@@ -1,6 +1,9 @@
 package com.regnis.tinyc;
 
+import com.regnis.tinyc.ast.*;
+
 import java.io.*;
+import java.util.*;
 
 /**
  * @author Thomas Singer
@@ -8,8 +11,9 @@ import java.io.*;
 public class X86Win64 {
 
 	private static final String INDENTATION = "        ";
-	private static final String PRINT_UINT = "__printUint";
+	private static final String EMIT = "__emit";
 	private static final String PRINT_STRING = "__printString";
+	private static final String PRINT_UINT = "__printUint";
 
 	private final Writer writer;
 
@@ -17,7 +21,67 @@ public class X86Win64 {
 		this.writer = writer;
 	}
 
-	public void write() throws IOException {
+	public void write(List<AstNode> nodes) throws IOException {
+		writePreample();
+
+		writeLabel("main");
+		for (AstNode node : nodes) {
+			final int reg = write(node.left());
+			writeIndented("mov rcx, " + getRegName(reg));
+			writeIndented("sub rsp, 8");
+			writeIndented("  call " + PRINT_UINT);
+			writeIndented("mov rcx, 0x0a");
+			writeIndented("  call " + EMIT);
+			writeIndented("add rsp, 8");
+		}
+		writeIndented("ret");
+
+		writePostample();
+	}
+
+	private int write(AstNode node) throws IOException {
+		switch (node.type()) {
+		case IntLit -> {
+			final int reg = getFreeReg();
+			writeIndented("mov " + getRegName(reg) + ", " + node.value());
+			return reg;
+		}
+		case Add -> {
+			final int leftReg = write(node.left());
+			final int rightReg = write(node.right());
+			writeIndented("add " + getRegName(leftReg) + ", " + getRegName(rightReg));
+			freeReg(rightReg);
+			return leftReg;
+		}
+		case Multiply -> {
+			final int leftReg = write(node.left());
+			final int rightReg = write(node.right());
+			writeIndented("imul " + getRegName(leftReg) + ", " + getRegName(rightReg));
+			freeReg(rightReg);
+			return leftReg;
+		}
+		default -> throw new UnsupportedOperationException(node.toString());
+		}
+	}
+
+	private int freeRegs;
+
+	private int getFreeReg() {
+		int mask = 1;
+		for (int i = 0; i < 3; i++, mask += mask) {
+			if ((freeRegs & mask) == 0) {
+				freeRegs |= mask;
+				return i;
+			}
+		}
+		throw new IllegalStateException("no free reg");
+	}
+
+	private void freeReg(int reg) {
+		freeRegs &= ~(1 << reg);
+	}
+
+	private void writePreample() throws IOException {
 		write("""
 				      format pe64 console
 				      include 'win64ax.inc'
@@ -34,12 +98,16 @@ public class X86Win64 {
 		writeIndented("sub rsp, 8");
 		writeIndented("  call init");
 		writeIndented("add rsp, 8");
+		writeIndented("  call main");
 		writeIndented("mov rcx, 0");
 		writeIndented("sub rsp, 0x20");
 		writeIndented("  call [ExitProcess]");
 		writeNL();
+	}
 
+	private void writePostample() throws IOException {
 		writeInit();
+		writeEmit();
 		writeStringPrint();
 		writeUintPrint();
 		writeNL();
@@ -90,6 +158,20 @@ public class X86Win64 {
 				                mov qword [rcx], rax
 				              add rsp, 20h
 				              ret""");
+	}
+
+	private void writeEmit() throws IOException {
+		// rcx = char
+		writeLabel(EMIT);
+		// push char to stack
+		// use that address as buffer to print
+		// use length 1
+		writeIndented("push rcx ; = sub rsp, 8");
+		writeIndented("  mov rcx, rsp");
+		writeIndented("  mov rdx, 1");
+		writeIndented("  call " + PRINT_STRING);
+		writeIndented("pop rcx");
+		writeIndented("ret");
 	}
 
 	private void writeStringPrint() throws IOException {
@@ -213,5 +295,14 @@ public class X86Win64 {
 
 	private void writeNL() throws IOException {
 		writer.write(System.lineSeparator());
+	}
+
+	private static String getRegName(int reg) {
+		return switch (reg) {
+			case 0 -> "rcx";
+			case 1 -> "rax";
+			case 2 -> "rbx";
+			default -> throw new IllegalStateException();
+		};
 	}
 }

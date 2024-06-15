@@ -22,7 +22,7 @@ public class Main {
 		final Path asmFile = useExtension(inputFile, ".asm");
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);
-			output.write();
+			output.write(nodes);
 		}
 
 		if (!launchFasm(asmFile)) {
