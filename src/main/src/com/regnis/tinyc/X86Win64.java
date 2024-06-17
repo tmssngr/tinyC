@@ -24,38 +24,69 @@ public class X86Win64 {
 	public void write(List<AstNode> nodes) throws IOException {
 		writePreample();
 
+		final Variables variables = Variables.detectFrom(nodes);
+
 		writeLabel("main");
 		for (AstNode node : nodes) {
-			final int reg = write(node.left());
-			writeIndented("mov rcx, " + getRegName(reg));
-			writeIndented("sub rsp, 8");
-			writeIndented("  call " + PRINT_UINT);
-			writeIndented("mov rcx, 0x0a");
-			writeIndented("  call " + EMIT);
-			writeIndented("add rsp, 8");
+			write(node, variables);
 		}
 		writeIndented("ret");
 
-		writePostample();
+		writePostample(variables);
 	}
 
-	private int write(AstNode node) throws IOException {
+	private int write(AstNode node, Variables variables) throws IOException {
 		switch (node.type()) {
 		case IntLit -> {
 			final int reg = getFreeReg();
 			writeIndented("mov " + getRegName(reg) + ", " + node.value());
 			return reg;
 		}
+		case Print -> {
+			final int reg = write(node.left(), variables);
+			final String regName = getRegName(reg);
+			if (!regName.equals("rcx")) {
+				writeIndented("mov rcx, " + regName);
+			}
+			writeIndented("sub rsp, 8");
+			writeIndented("  call " + PRINT_UINT);
+			writeIndented("mov rcx, 0x0a");
+			writeIndented("  call " + EMIT);
+			writeIndented("add rsp, 8");
+			return -1;
+		}
+		case VarRead -> {
+			final int reg = getFreeReg();
+			final int varIndex = variables.indexOf(node.text());
+			final String regName = getRegName(reg);
+			writeIndented("lea " + regName + ", [" + getVarName(varIndex) + "]");
+			writeIndented("mov qword " + regName + ", [" + regName + "]");
+			return reg;
+		}
+		case VarLhs -> {
+			final int reg = getFreeReg();
+			final int varIndex = variables.indexOf(node.text());
+			writeIndented("lea " + getRegName(reg) + ", [" + getVarName(varIndex) + "]");
+			return reg;
+		}
+		case Assign -> {
+			final int expressionReg = write(node.left(), variables);
+			final int varReg = write(node.right(), variables);
+			writeIndented("mov qword [" + getRegName(varReg) + "], " + getRegName(expressionReg));
+			freeReg(expressionReg);
+			freeReg(varReg);
+			return -1;
+		}
 		case Add -> {
-			final int leftReg = write(node.left());
-			final int rightReg = write(node.right());
+			final int leftReg = write(node.left(), variables);
+			final int rightReg = write(node.right(), variables);
 			writeIndented("add " + getRegName(leftReg) + ", " + getRegName(rightReg));
 			freeReg(rightReg);
 			return leftReg;
 		}
 		case Multiply -> {
-			final int leftReg = write(node.left());
-			final int rightReg = write(node.right());
+			final int leftReg = write(node.left(), variables);
+			final int rightReg = write(node.right(), variables);
 			writeIndented("imul " + getRegName(leftReg) + ", " + getRegName(rightReg));
 			freeReg(rightReg);
 			return leftReg;
@@ -105,7 +136,7 @@ public class X86Win64 {
 		writeNL();
 	}
 
-	private void writePostample() throws IOException {
+	private void writePostample(Variables variables) throws IOException {
 		writeInit();
 		writeEmit();
 		writeStringPrint();
@@ -117,6 +148,9 @@ public class X86Win64 {
 				              hStdIn  rb 8
 				              hStdOut rb 8
 				              hStdErr rb 8""");
+		for (int i = 0; i < variables.count(); i++) {
+			writeIndented(getVarName(i) + " rb 8");
+		}
 		writeNL();
 		write("""
 				      section '.idata' import data readable writeable
@@ -133,6 +167,10 @@ public class X86Win64 {
 				      import msvcrt,\\
 				             _getch,'_getch'
 				      """);
+	}
+
+	private String getVarName(int i) {
+		return "var" + i;
 	}
 
 	private void writeInit() throws IOException {

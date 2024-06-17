@@ -25,28 +25,43 @@ public class Parser {
 		final List<AstNode> nodes = new ArrayList<>();
 		while (token != TokenType.EOF) {
 			switch (token) {
+			case PRINT -> nodes.add(handlePrint());
 			case VAR -> nodes.add(handleVar());
 			default -> throw new SyntaxException("Unexpected token " + token, getLocation());
 			}
-
-			consume();
 		}
 		return nodes;
 	}
 
+	private AstNode handlePrint() {
+		final Location location = getLocation();
+		consume(TokenType.PRINT);
+		final AstNode expression = getExpression();
+		consume(TokenType.SEMI);
+		return AstNode.print(expression, location);
+	}
+
 	private AstNode handleVar() {
+		final Location location = getLocation();
 		consume(TokenType.VAR);
 		final String varName = consumeIdentifier();
 		consume(TokenType.ASSIGN);
-		final AstNode expression = getExpression(0);
+		final AstNode expression = getExpression();
 		consume(TokenType.SEMI);
-		return AstNode.assign(expression, AstNode.lhs(varName));
+		return AstNode.assign(expression, AstNode.lhs(varName, location), location);
+	}
+
+	private AstNode getExpression() {
+		return getExpression(0);
 	}
 
 	private AstNode getExpression(int minPrecedence) {
 		AstNode left;
 		if (token == TokenType.INT_LITERAL) {
-			left = AstNode.intLiteral(consumeIntValue());
+			left = AstNode.intLiteral(consumeIntValue(), getLocation());
+		}
+		else if (token == TokenType.IDENTIFIER) {
+			left = AstNode.varRead(consumeText(), getLocation());
 		}
 		else {
 			throw new SyntaxException("Expected int literal but got " + token, getLocation());
@@ -63,14 +78,15 @@ public class Parser {
 					return left;
 				}
 
+				final Location location = getLocation();
 				final TokenType operationToken = token;
 				consume();
 				final AstNode right = getExpression(precedence);
 				left = switch (operationToken) {
-					case PLUS -> AstNode.add(left, right);
-					case MINUS -> AstNode.sub(left, right);
-					case STAR -> AstNode.multiply(left, right);
-					case SLASH -> AstNode.divide(left, right);
+					case PLUS -> AstNode.add(left, right, location);
+					case MINUS -> AstNode.sub(left, right, location);
+					case STAR -> AstNode.multiply(left, right, location);
+					case SLASH -> AstNode.divide(left, right, location);
 					default -> throw new IllegalStateException("Unsupported operation " + operationToken);
 				};
 			}

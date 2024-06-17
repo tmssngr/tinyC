@@ -1,7 +1,5 @@
 package com.regnis.tinyc;
 
-import java.util.*;
-
 import org.jetbrains.annotations.*;
 
 /**
@@ -15,7 +13,6 @@ public final class Lexer {
 	private int column;
 	private int chr;
 	private int intValue;
-	private int size;
 	private String text;
 	private Location location;
 
@@ -41,7 +38,6 @@ public final class Lexer {
 	public TokenType next() {
 		text = null;
 		intValue = 0;
-		size = 0;
 		location = new Location(line, column);
 
 		if (chr < 0) {
@@ -55,7 +51,7 @@ public final class Lexer {
 		if (chr == '/') {
 			consume();
 			if (chr == '/') {
-				text = detectLineComment("/");
+				text = detectLineComment();
 				return TokenType.COMMENT;
 			}
 
@@ -101,14 +97,13 @@ public final class Lexer {
 		}
 		if (chr == '"') {
 			consume();
-			text = detectStringOrChar(false, '"');
+			text = detectStringOrChar('"');
 			return TokenType.STRING;
 		}
 		if (chr == '\'') {
 			consume();
-			final String text = detectStringOrChar(false, '\'');
+			final String text = detectStringOrChar('\'');
 			intValue = text.charAt(0);
-			size = 1;
 			return TokenType.INT_LITERAL;
 		}
 
@@ -129,6 +124,7 @@ public final class Lexer {
 		}
 
 		return switch (text) {
+			case "print" -> TokenType.PRINT;
 			case "var" -> TokenType.VAR;
 			default -> TokenType.IDENTIFIER;
 		};
@@ -143,54 +139,13 @@ public final class Lexer {
 		return intValue;
 	}
 
-	public int getSize() {
-		return size;
-	}
-
 	public Location getLocation() {
 		return location;
-	}
-
-	private boolean isWorkRegister(String text) {
-		text = text.toLowerCase(Locale.ROOT);
-		if (!text.startsWith("r")) {
-			return false;
-		}
-
-		text = text.substring(1);
-
-		try {
-			intValue = Integer.parseInt(text);
-			return intValue >= 0
-			       && intValue < 16;
-		}
-		catch (NumberFormatException e) {
-			return false;
-		}
-	}
-
-	private boolean isWorkRegisterPair(String text) {
-		text = text.toLowerCase(Locale.ROOT);
-		if (!text.startsWith("rr")) {
-			return false;
-		}
-
-		text = text.substring(2);
-
-		try {
-			intValue = Integer.parseInt(text);
-			return intValue >= 0
-			       && intValue < 16;
-		}
-		catch (NumberFormatException e) {
-			return false;
-		}
 	}
 
 	private boolean detectInt(String text) {
 		try {
 			intValue = Integer.parseInt(text);
-			size = 2;
 			return true;
 		}
 		catch (NumberFormatException ignored) {
@@ -200,7 +155,6 @@ public final class Lexer {
 			final String possibleNumberString = text.substring(2).replace("_", "");
 			try {
 				intValue = Integer.parseInt(possibleNumberString, 2);
-				size = 1;
 				return true;
 			}
 			catch (NumberFormatException ignored) {
@@ -213,7 +167,6 @@ public final class Lexer {
 			try {
 				intValue = Integer.parseInt(possibleNumberString,
 				                            16);
-				size = possibleNumberString.length() <= 2 ? 1 : 2;
 				return true;
 			}
 			catch (NumberFormatException ignored) {
@@ -232,19 +185,9 @@ public final class Lexer {
 		return buffer.toString();
 	}
 
-	private String detectLineBreak() {
+	private String detectLineComment() {
 		final StringBuilder buffer = new StringBuilder();
-		do {
-			append(buffer);
-			consume();
-		}
-		while (isLineBreak());
-		return buffer.toString();
-	}
-
-	private String detectLineComment(String start) {
-		final StringBuilder buffer = new StringBuilder();
-		buffer.append(start);
+		buffer.append("/");
 		do {
 			append(buffer);
 			consume();
@@ -273,7 +216,7 @@ public final class Lexer {
 		}
 	}
 
-	private String detectStringOrChar(boolean isLengthString, char endChar) {
+	private String detectStringOrChar(char endChar) {
 		final StringBuilder buffer = new StringBuilder();
 		Location escapeStartLocation = null;
 		while (true) {
@@ -318,7 +261,6 @@ public final class Lexer {
 				}
 				default -> consumeAppend(chr, buffer);
 				}
-				;
 				escapeStartLocation = null;
 				continue;
 			}
@@ -336,12 +278,7 @@ public final class Lexer {
 			}
 			consume();
 		}
-		if (isLengthString) {
-			if (buffer.length() > 255) {
-				throw new InvalidTokenException("A length-string only can be up to 255 characters long", location);
-			}
-		}
-		else if (buffer.isEmpty()) {
+		if (buffer.isEmpty()) {
 			throw new InvalidTokenException("An empty string can only be done with L\"\"", location);
 		}
 		return buffer.toString();
