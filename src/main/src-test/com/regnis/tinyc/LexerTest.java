@@ -16,7 +16,7 @@ public class LexerTest {
 			protected void test() {
 				assertType(TokenType.VAR);
 				assertIdentifier("foo");
-				assertType(TokenType.ASSIGN);
+				assertType(TokenType.EQUAL);
 				assertIdentifier("bar");
 				assertType(TokenType.MINUS);
 				assertIdentifier("bazz");

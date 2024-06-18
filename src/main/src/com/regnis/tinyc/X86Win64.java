@@ -16,6 +16,7 @@ public class X86Win64 {
 	private static final String PRINT_UINT = "__printUint";
 
 	private final Writer writer;
+	private int freeRegs;
 
 	public X86Win64(Writer writer) {
 		this.writer = writer;
@@ -38,13 +39,16 @@ public class X86Win64 {
 	private int write(AstNode node, Variables variables) throws IOException {
 		switch (node.type()) {
 		case IntLit -> {
+			final int value = node.value();
+			writeComment("int lit " + value);
 			final int reg = getFreeReg();
-			writeIndented("mov " + getRegName(reg) + ", " + node.value());
+			writeIndented("mov " + getRegName(reg) + ", " + value);
 			return reg;
 		}
 		case Print -> {
 			final int reg = write(node.left(), variables);
 			final String regName = getRegName(reg);
+			writeComment("print");
 			if (!regName.equals("rcx")) {
 				writeIndented("mov rcx, " + regName);
 			}
@@ -56,22 +60,27 @@ public class X86Win64 {
 			return -1;
 		}
 		case VarRead -> {
+			final String varName = node.text();
 			final int reg = getFreeReg();
-			final int varIndex = variables.indexOf(node.text());
+			final int varIndex = variables.indexOf(varName);
 			final String regName = getRegName(reg);
+			writeComment("read var ");
 			writeIndented("lea " + regName + ", [" + getVarName(varIndex) + "]");
 			writeIndented("mov qword " + regName + ", [" + regName + "]");
 			return reg;
 		}
 		case VarLhs -> {
+			final String varName = node.text();
 			final int reg = getFreeReg();
-			final int varIndex = variables.indexOf(node.text());
+			final int varIndex = variables.indexOf(varName);
+			writeComment("var address " + varName);
 			writeIndented("lea " + getRegName(reg) + ", [" + getVarName(varIndex) + "]");
 			return reg;
 		}
 		case Assign -> {
 			final int expressionReg = write(node.left(), variables);
 			final int varReg = write(node.right(), variables);
+			writeComment("assign");
 			writeIndented("mov qword [" + getRegName(varReg) + "], " + getRegName(expressionReg));
 			freeReg(expressionReg);
 			freeReg(varReg);
@@ -80,6 +89,7 @@ public class X86Win64 {
 		case Add -> {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
+			writeComment("add");
 			writeIndented("add " + getRegName(leftReg) + ", " + getRegName(rightReg));
 			freeReg(rightReg);
 			return leftReg;
@@ -87,6 +97,7 @@ public class X86Win64 {
 		case Multiply -> {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
+			writeComment("multiply");
 			writeIndented("imul " + getRegName(leftReg) + ", " + getRegName(rightReg));
 			freeReg(rightReg);
 			return leftReg;
@@ -94,8 +105,6 @@ public class X86Win64 {
 		default -> throw new UnsupportedOperationException(node.toString());
 		}
 	}
-
-	private int freeRegs;
 
 	private int getFreeReg() {
 		int mask = 1;
@@ -310,6 +319,10 @@ public class X86Win64 {
 	private void writeLabel(String label) throws IOException {
 		writer.write(label + ":");
 		writeNL();
+	}
+
+	private void writeComment(String s) throws IOException {
+		writeIndented("; " + s);
 	}
 
 	private void writeIndented(String text) throws IOException {

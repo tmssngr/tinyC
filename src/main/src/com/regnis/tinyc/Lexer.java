@@ -85,7 +85,7 @@ public final class Lexer {
 		}
 		if (chr == '=') {
 			consume();
-			return TokenType.ASSIGN;
+			return TokenType.EQUAL;
 		}
 		if (chr == '(') {
 			consume();

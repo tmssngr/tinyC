@@ -27,6 +27,7 @@ public class Parser {
 			switch (token) {
 			case PRINT -> nodes.add(handlePrint());
 			case VAR -> nodes.add(handleVar());
+			case IDENTIFIER -> nodes.add(handleIdentifier());
 			default -> throw new SyntaxException("Unexpected token " + token, getLocation());
 			}
 		}
@@ -45,10 +46,19 @@ public class Parser {
 		final Location location = getLocation();
 		consume(TokenType.VAR);
 		final String varName = consumeIdentifier();
-		consume(TokenType.ASSIGN);
+		consume(TokenType.EQUAL);
 		final AstNode expression = getExpression();
 		consume(TokenType.SEMI);
 		return AstNode.assign(expression, AstNode.lhs(varName, location), location);
+	}
+
+	private AstNode handleIdentifier() {
+		final Location location = getLocation();
+		final String identifier = consumeIdentifier();
+		consume(TokenType.EQUAL);
+		final AstNode expression = getExpression();
+		consume(TokenType.SEMI);
+		return AstNode.assign(expression, AstNode.lhs(identifier, location), location);
 	}
 
 	private AstNode getExpression() {
