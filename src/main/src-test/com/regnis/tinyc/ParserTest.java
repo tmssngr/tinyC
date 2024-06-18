@@ -73,6 +73,20 @@ public class ParserTest {
 				               AstNode.lhs("foo", new Location(0, 0)),
 				               new Location(0, 0))
 		), new Parser(new Lexer("var foo = 1 * 3 + 2 * 4;")).parse());
+		//                       012345678901234567890123
+
+		assertEquals(List.of(
+				AstNode.assign(AstNode.gt(AstNode.add(AstNode.intLiteral(1, new Location(0, 10)),
+				                                      AstNode.intLiteral(3, new Location(0, 14)),
+				                                      new Location(0, 12)),
+				                          AstNode.multiply(AstNode.intLiteral(2, new Location(0, 18)),
+				                                           AstNode.intLiteral(4, new Location(0, 22)),
+				                                           new Location(0, 20)),
+				                          new Location(0, 16)),
+				               AstNode.lhs("foo", new Location(0, 0)),
+				               new Location(0, 0))
+		), new Parser(new Lexer("var foo = 1 + 3 > 2 * 4;")).parse());
+		//                       012345678901234567890123
 	}
 
 	private void assertEquals(List<AstNode> expectedNodes, List<AstNode> currentNodes) {

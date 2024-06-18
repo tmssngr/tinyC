@@ -74,16 +74,24 @@ public class LexerTest {
 
 	@Test
 	public void testComparisonSigns() {
+		//               01234567890123456
 		new LexerTester("< <= == != >= > !") {
 			@Override
 			protected void test() {
 				assertType(TokenType.LT);
+				assertLocation(0, 0);
 				assertType(TokenType.LT_EQ);
+				assertLocation(0, 2);
 				assertType(TokenType.EQ_EQ);
+				assertLocation(0, 5);
 				assertType(TokenType.EXCL_EQ);
+				assertLocation(0, 8);
 				assertType(TokenType.GT_EQ);
+				assertLocation(0, 11);
 				assertType(TokenType.GT);
+				assertLocation(0, 14);
 				assertType(TokenType.EXCL);
+				assertLocation(0, 16);
 				assertEof();
 			}
 		}.test();

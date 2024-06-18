@@ -83,7 +83,13 @@ public class Parser {
 			case PLUS,
 			     MINUS,
 			     STAR,
-			     SLASH -> {
+			     SLASH,
+			     LT,
+			     LT_EQ,
+			     EQ_EQ,
+			     EXCL_EQ,
+			     GT_EQ,
+			     GT -> {
 				final int precedence = getPrecedence(token);
 				if (precedence <= minPrecedence) {
 					return left;
@@ -98,6 +104,12 @@ public class Parser {
 					case MINUS -> AstNode.sub(left, right, location);
 					case STAR -> AstNode.multiply(left, right, location);
 					case SLASH -> AstNode.divide(left, right, location);
+					case LT -> AstNode.lt(left, right, location);
+					case LT_EQ -> AstNode.lteq(left, right, location);
+					case EQ_EQ -> AstNode.eqeq(left, right, location);
+					case EXCL_EQ -> AstNode.neq(left, right, location);
+					case GT_EQ -> AstNode.gteq(left, right, location);
+					case GT -> AstNode.gt(left, right, location);
 					default -> throw new IllegalStateException("Unsupported operation " + operationToken);
 				};
 			}
@@ -110,8 +122,9 @@ public class Parser {
 
 	private static int getPrecedence(TokenType token) {
 		return switch (token) {
-			case PLUS, MINUS -> 1;
-			case STAR, SLASH -> 2;
+			case LT, LT_EQ, EQ_EQ, EXCL_EQ, GT_EQ, GT -> 1;
+			case PLUS, MINUS -> 2;
+			case STAR, SLASH -> 3;
 			default -> {
 				throw new IllegalStateException("Unsupported operation " + token);
 			}
