@@ -18,9 +18,13 @@ public class LexerTest {
 			@Override
 			protected void test() {
 				assertText(TokenType.COMMENT, "// line");
+				assertLocation(0, 0);
 				assertIdentifier("foo");
+				assertLocation(1, 0);
 				assertText(TokenType.COMMENT, "/* bar\nbazz* / */");
+				assertLocation(1, 4);
 				assertIdentifier("blupp");
+				assertLocation(2, 11);
 				assertEof();
 			}
 		}.test();
@@ -28,18 +32,42 @@ public class LexerTest {
 
 	@Test
 	public void textAssignment() {
+		//               012345678901234567890123456
 		new LexerTester("var foo = bar - bazz - blup") {
 			@Override
 			protected void test() {
 				assertType(TokenType.VAR);
+				assertLocation(0, 0);
 				assertIdentifier("foo");
+				assertLocation(0, 4);
 				assertType(TokenType.EQUAL);
+				assertLocation(0, 8);
 				assertIdentifier("bar");
+				assertLocation(0, 10);
 				assertType(TokenType.MINUS);
+				assertLocation(0, 14);
 				assertIdentifier("bazz");
+				assertLocation(0, 16);
 				assertType(TokenType.MINUS);
+				assertLocation(0, 21);
 				assertIdentifier("blup");
+				assertLocation(0, 23);
 				assertEof();
+			}
+		}.test();
+
+		//               012345678901
+		new LexerTester("var one = 1;") {
+			@Override
+			protected void test() {
+				assertType(TokenType.VAR);
+				assertLocation(0, 0);
+				assertIdentifier("one");
+				assertLocation(0, 4);
+				assertType(TokenType.EQUAL);
+				assertLocation(0, 8);
+				assertIntLiteral(1);
+				assertLocation(0, 10);
 			}
 		}.test();
 	}
@@ -84,6 +112,10 @@ public class LexerTest {
 			assertText(TokenType.IDENTIFIER, expected);
 		}
 
+		public void assertIntLiteral(int expected) {
+			assertValue(TokenType.INT_LITERAL, expected);
+		}
+
 		public void assertInvalidTokenException(String expectedMsg, int expectedLine, int expectedColumn) {
 			try {
 				next();
@@ -104,6 +136,11 @@ public class LexerTest {
 		public void assertText(TokenType type, String expected) {
 			assertType(type);
 			assertEquals(expected, lexer.getText());
+		}
+
+		private void assertValue(TokenType type, int expected) {
+			assertType(type);
+			assertEquals(expected, lexer.getIntValue());
 		}
 
 		private TokenType next() {

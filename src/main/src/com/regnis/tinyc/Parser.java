@@ -66,15 +66,16 @@ public class Parser {
 	}
 
 	private AstNode getExpression(int minPrecedence) {
+		Location location = getLocation();
 		AstNode left;
 		if (token == TokenType.INT_LITERAL) {
-			left = AstNode.intLiteral(consumeIntValue(), getLocation());
+			left = AstNode.intLiteral(consumeIntValue(), location);
 		}
 		else if (token == TokenType.IDENTIFIER) {
-			left = AstNode.varRead(consumeText(), getLocation());
+			left = AstNode.varRead(consumeText(), location);
 		}
 		else {
-			throw new SyntaxException("Expected int literal but got " + token, getLocation());
+			throw new SyntaxException("Expected int literal but got " + token, location);
 		}
 
 		while (true) {
@@ -88,7 +89,7 @@ public class Parser {
 					return left;
 				}
 
-				final Location location = getLocation();
+				location = getLocation();
 				final TokenType operationToken = token;
 				consume();
 				final AstNode right = getExpression(precedence);
