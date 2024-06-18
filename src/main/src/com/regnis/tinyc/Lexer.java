@@ -48,8 +48,7 @@ public final class Lexer {
 			text = detectWhitespace();
 			return TokenType.WHITESPACE;
 		}
-		if (chr == '/') {
-			consume();
+		if (isConsume('/')) {
 			if (chr == '/') {
 				text = detectLineComment();
 				return TokenType.COMMENT;
@@ -63,45 +62,52 @@ public final class Lexer {
 			return TokenType.SLASH;
 		}
 
-		if (chr == ';') {
-			consume();
+		if (isConsume(';')) {
 			return TokenType.SEMI;
 		}
-		if (chr == ',') {
-			consume();
+		if (isConsume(',')) {
 			return TokenType.COMMA;
 		}
-		if (chr == '+') {
-			consume();
+		if (isConsume('+')) {
 			return TokenType.PLUS;
 		}
-		if (chr == '-') {
-			consume();
+		if (isConsume('-')) {
 			return TokenType.MINUS;
 		}
-		if (chr == '*') {
-			consume();
+		if (isConsume('*')) {
 			return TokenType.STAR;
 		}
-		if (chr == '=') {
-			consume();
-			return TokenType.EQUAL;
+		if (isConsume('!')) {
+			return isConsume('=')
+					? TokenType.EXCL_EQ
+					: TokenType.EXCL;
 		}
-		if (chr == '(') {
-			consume();
+		if (isConsume('=')) {
+			return isConsume('=')
+					? TokenType.EQ_EQ
+					: TokenType.EQUAL;
+		}
+		if (isConsume('<')) {
+			return isConsume('=')
+					? TokenType.LT_EQ
+					: TokenType.LT;
+		}
+		if (isConsume('>')) {
+			return isConsume('=')
+					? TokenType.GT_EQ
+					: TokenType.GT;
+		}
+		if (isConsume('(')) {
 			return TokenType.L_PAREN;
 		}
-		if (chr == ')') {
-			consume();
+		if (isConsume(')')) {
 			return TokenType.R_PAREN;
 		}
-		if (chr == '"') {
-			consume();
+		if (isConsume('"')) {
 			text = detectStringOrChar('"');
 			return TokenType.STRING;
 		}
-		if (chr == '\'') {
-			consume();
+		if (isConsume('\'')) {
 			final String text = detectStringOrChar('\'');
 			intValue = text.charAt(0);
 			return TokenType.INT_LITERAL;
@@ -304,6 +310,14 @@ public final class Lexer {
 			return chr - 'a' + 10;
 		}
 		return -1;
+	}
+
+	private boolean isConsume(int chr) {
+		if (this.chr != chr) {
+			return false;
+		}
+		consume();
+		return true;
 	}
 
 	private void consume() {

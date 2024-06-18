@@ -10,6 +10,23 @@ import static org.junit.Assert.*;
 public class LexerTest {
 
 	@Test
+	public void testComments() {
+		new LexerTester("""
+				                // line
+				                foo /* bar
+				                bazz* / */ blupp""") {
+			@Override
+			protected void test() {
+				assertText(TokenType.COMMENT, "// line");
+				assertIdentifier("foo");
+				assertText(TokenType.COMMENT, "/* bar\nbazz* / */");
+				assertIdentifier("blupp");
+				assertEof();
+			}
+		}.test();
+	}
+
+	@Test
 	public void textAssignment() {
 		new LexerTester("var foo = bar - bazz - blup") {
 			@Override
@@ -28,17 +45,18 @@ public class LexerTest {
 	}
 
 	@Test
-	public void testComments() {
-		new LexerTester("""
-				                // line
-				                foo /* bar
-				                bazz* / */ blupp""") {
+	public void testComparisonSigns() {
+		new LexerTester("< <= == != >= > !") {
 			@Override
 			protected void test() {
-				assertText(TokenType.COMMENT, "// line");
-				assertIdentifier("foo");
-				assertText(TokenType.COMMENT, "/* bar\nbazz* / */");
-				assertIdentifier("blupp");
+				assertType(TokenType.LT);
+				assertType(TokenType.LT_EQ);
+				assertType(TokenType.EQ_EQ);
+				assertType(TokenType.EXCL_EQ);
+				assertType(TokenType.GT_EQ);
+				assertType(TokenType.GT);
+				assertType(TokenType.EXCL);
+				assertEof();
 			}
 		}.test();
 	}
@@ -62,17 +80,8 @@ public class LexerTest {
 			assertType(TokenType.EOF);
 		}
 
-		public void assertComment(String expected) {
-			assertText(TokenType.COMMENT, expected);
-		}
-
 		public void assertIdentifier(String expected) {
 			assertText(TokenType.IDENTIFIER, expected);
-		}
-
-		public void assertIntValue(int expectedValue) {
-			assertType(TokenType.INT_LITERAL);
-			assertEquals(expectedValue, lexer.getIntValue());
 		}
 
 		public void assertInvalidTokenException(String expectedMsg, int expectedLine, int expectedColumn) {
