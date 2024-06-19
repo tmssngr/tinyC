@@ -79,56 +79,29 @@ public class Parser {
 		}
 
 		while (true) {
-			switch (token) {
-			case PLUS,
-			     MINUS,
-			     STAR,
-			     SLASH,
-			     LT,
-			     LT_EQ,
-			     EQ_EQ,
-			     EXCL_EQ,
-			     GT_EQ,
-			     GT -> {
-				final int precedence = getPrecedence(token);
-				if (precedence <= minPrecedence) {
-					return left;
-				}
-
-				location = getLocation();
-				final TokenType operationToken = token;
-				consume();
-				final AstNode right = getExpression(precedence);
-				left = switch (operationToken) {
-					case PLUS -> AstNode.add(left, right, location);
-					case MINUS -> AstNode.sub(left, right, location);
-					case STAR -> AstNode.multiply(left, right, location);
-					case SLASH -> AstNode.divide(left, right, location);
-					case LT -> AstNode.lt(left, right, location);
-					case LT_EQ -> AstNode.lteq(left, right, location);
-					case EQ_EQ -> AstNode.eqeq(left, right, location);
-					case EXCL_EQ -> AstNode.neq(left, right, location);
-					case GT_EQ -> AstNode.gteq(left, right, location);
-					case GT -> AstNode.gt(left, right, location);
-					default -> throw new IllegalStateException("Unsupported operation " + operationToken);
-				};
-			}
-			default -> {
+			final int precedence = getPrecedence(token);
+			if (precedence <= minPrecedence) {
 				return left;
 			}
-			}
-		}
-	}
 
-	private static int getPrecedence(TokenType token) {
-		return switch (token) {
-			case LT, LT_EQ, EQ_EQ, EXCL_EQ, GT_EQ, GT -> 1;
-			case PLUS, MINUS -> 2;
-			case STAR, SLASH -> 3;
-			default -> {
-				throw new IllegalStateException("Unsupported operation " + token);
-			}
-		};
+			location = getLocation();
+			final TokenType operationToken = token;
+			consume();
+			final AstNode right = getExpression(precedence);
+			left = switch (operationToken) {
+				case PLUS -> AstNode.add(left, right, location);
+				case MINUS -> AstNode.sub(left, right, location);
+				case STAR -> AstNode.multiply(left, right, location);
+				case SLASH -> AstNode.divide(left, right, location);
+				case LT -> AstNode.lt(left, right, location);
+				case LT_EQ -> AstNode.lteq(left, right, location);
+				case EQ_EQ -> AstNode.eqeq(left, right, location);
+				case EXCL_EQ -> AstNode.neq(left, right, location);
+				case GT_EQ -> AstNode.gteq(left, right, location);
+				case GT -> AstNode.gt(left, right, location);
+				default -> throw new IllegalStateException("Unsupported operation " + operationToken);
+			};
+		}
 	}
 
 	private int consumeIntValue() {
@@ -181,5 +154,14 @@ public class Parser {
 //			System.out.println(token);
 		}
 		while (token == TokenType.WHITESPACE || token == TokenType.COMMENT);
+	}
+
+	private static int getPrecedence(TokenType token) {
+		return switch (token) {
+			case LT, LT_EQ, EQ_EQ, EXCL_EQ, GT_EQ, GT -> 1;
+			case PLUS, MINUS -> 2;
+			case STAR, SLASH -> 3;
+			default -> 0;
+		};
 	}
 }
