@@ -6,6 +6,8 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+import org.jetbrains.annotations.*;
+
 /**
  * @author Thomas Singer
  */
@@ -17,6 +19,15 @@ public class Main {
 		}
 
 		final Path inputFile = Path.of(args[0]);
+		compileAndRun(inputFile, null);
+	}
+
+	public static void compileAndRun(@NotNull Path inputFile) throws IOException, InterruptedException {
+		final Path outputFile = useExtension(inputFile, ".out");
+		compileAndRun(inputFile, outputFile);
+	}
+
+	private static void compileAndRun(@NotNull Path inputFile, @Nullable Path outputFile) throws IOException, InterruptedException {
 		final List<AstNode> nodes = parse(inputFile);
 
 		final Path asmFile = useExtension(inputFile, ".asm");
@@ -30,7 +41,7 @@ public class Main {
 		}
 
 		final Path exeFile = useExtension(inputFile, ".exe");
-		launchExe(exeFile);
+		launchExe(exeFile, outputFile);
 	}
 
 	private static Path useExtension(Path path, String extension) {
@@ -75,9 +86,14 @@ public class Main {
 		return false;
 	}
 
-	private static void launchExe(Path exeFile) throws IOException, InterruptedException {
+	private static void launchExe(Path exeFile, @Nullable Path outputFile) throws IOException, InterruptedException {
 		final ProcessBuilder processBuilder = new ProcessBuilder(exeFile.toString());
-		processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+		if (outputFile != null) {
+			processBuilder.redirectOutput(outputFile.toFile());
+		}
+		else {
+			processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+		}
 		processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
 		final Process process = processBuilder.start();
 		final int result = process.waitFor();

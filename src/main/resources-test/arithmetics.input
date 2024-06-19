@@ -1,0 +1,4 @@
+var foo = 4 * 3 + 2*5;
+var bar = foo * foo;
+foo = 1;
+print bar + foo;
