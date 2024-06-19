@@ -12,6 +12,15 @@ public class CompilerTest {
 
 	@Test
 	public void testArithmetics() throws IOException, InterruptedException {
-		Main.compileAndRun(Path.of("src/main/resources-test/arithmetics.input"));
+		compileAndRun("arithmetics.input");
+	}
+
+	@Test
+	public void testComparison() throws IOException, InterruptedException {
+		compileAndRun("comparison.input");
+	}
+
+	private void compileAndRun(String fileName) throws IOException, InterruptedException {
+		Main.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}
 }

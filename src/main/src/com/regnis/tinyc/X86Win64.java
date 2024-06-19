@@ -57,6 +57,7 @@ public class X86Win64 {
 			writeIndented("mov rcx, 0x0a");
 			writeIndented("  call " + EMIT);
 			writeIndented("add rsp, 8");
+			freeReg(reg);
 			return -1;
 		}
 		case VarRead -> {
@@ -99,6 +100,30 @@ public class X86Win64 {
 			final int rightReg = write(node.right(), variables);
 			writeComment("multiply");
 			writeIndented("imul " + getRegName(leftReg) + ", " + getRegName(rightReg));
+			freeReg(rightReg);
+			return leftReg;
+		}
+		case Lt,
+		     LtEq,
+		     Equals,
+		     NotEquals,
+		     GtEq,
+		     Gt -> {
+			final int leftReg = write(node.left(), variables);
+			final int rightReg = write(node.right(), variables);
+			writeComment(node.type().toString());
+			final String leftRegName = getRegName(leftReg);
+			writeIndented("cmp " + leftRegName + ", " + getRegName(rightReg));
+			writeIndented(switch (node.type()) {
+				case Lt -> "setl";
+				case LtEq -> "setle";
+				case Equals -> "sete";
+				case NotEquals -> "setne";
+				case GtEq -> "setge";
+				case Gt -> "setg";
+				default -> throw new IllegalStateException();
+			} + " " + getRegName(leftReg, 1));
+			writeIndented("and " + leftRegName + ", 0xFF");
 			freeReg(rightReg);
 			return leftReg;
 		}
@@ -349,11 +374,19 @@ public class X86Win64 {
 	}
 
 	private static String getRegName(int reg) {
-		return switch (reg) {
-			case 0 -> "rcx";
-			case 1 -> "rax";
-			case 2 -> "rbx";
+		return getRegName(reg, 0);
+	}
+
+	private static String getRegName(int reg, int size) {
+		final char chr = switch (reg) {
+			case 0 -> 'c';
+			case 1 -> 'a';
+			case 2 -> 'b';
 			default -> throw new IllegalStateException();
+		};
+		return switch (size) {
+			case 1 -> chr + "l";
+			default -> "r" + chr + "x";
 		};
 	}
 }

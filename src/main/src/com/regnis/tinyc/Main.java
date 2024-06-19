@@ -37,7 +37,7 @@ public class Main {
 		}
 
 		if (!launchFasm(asmFile)) {
-			return;
+			throw new IOException("Failed to compile");
 		}
 
 		final Path exeFile = useExtension(inputFile, ".exe");
