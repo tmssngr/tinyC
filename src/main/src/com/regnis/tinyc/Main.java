@@ -28,12 +28,12 @@ public class Main {
 	}
 
 	private static void compileAndRun(@NotNull Path inputFile, @Nullable Path outputFile) throws IOException, InterruptedException {
-		final List<AstNode> nodes = parse(inputFile);
+		final AstNode root = parse(inputFile);
 
 		final Path asmFile = useExtension(inputFile, ".asm");
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);
-			output.write(nodes);
+			output.write(root);
 		}
 
 		if (!launchFasm(asmFile)) {
@@ -52,7 +52,7 @@ public class Main {
 		return path.resolveSibling(derivedName);
 	}
 
-	private static List<AstNode> parse(Path inputFile) throws IOException {
+	private static AstNode parse(Path inputFile) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(inputFile)) {
 			final Parser parser = new Parser(new Lexer(() -> {
 				try {

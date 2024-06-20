@@ -17,6 +17,7 @@ public record AstNode(NodeType type, AstNode left, AstNode right, int value, Str
 			case Print -> "print " + left;
 			case VarLhs -> "@" + text;
 			case Assign -> right + " := " + left;
+			case Chain -> left + ", " + right;
 			case Add -> left + " + " + right;
 			case Sub -> left + " - " + right;
 			case Multiply -> left + " * " + right;
@@ -30,6 +31,10 @@ public record AstNode(NodeType type, AstNode left, AstNode right, int value, Str
 			//noinspection UnnecessaryDefault
 			default -> String.valueOf(type);
 		};
+	}
+
+	public static AstNode chain(AstNode first, AstNode second) {
+		return new AstNode(NodeType.Chain, first, second, 0, "", new Location(-1, -1));
 	}
 
 	public static AstNode intLiteral(int value, Location location) {

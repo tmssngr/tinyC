@@ -8,11 +8,9 @@ import java.util.*;
  * @author Thomas Singer
  */
 public class Variables {
-	public static Variables detectFrom(List<AstNode> nodes) {
+	public static Variables detectFrom(AstNode root) {
 		final Set<String> variableNames = new LinkedHashSet<>();
-		for (AstNode node : nodes) {
-			processNode(node, variableNames);
-		}
+		processNode(root, variableNames);
 		return new Variables(variableNames);
 	}
 

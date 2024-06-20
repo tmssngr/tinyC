@@ -3,7 +3,6 @@ package com.regnis.tinyc;
 import com.regnis.tinyc.ast.*;
 
 import java.io.*;
-import java.util.*;
 
 /**
  * @author Thomas Singer
@@ -22,15 +21,13 @@ public class X86Win64 {
 		this.writer = writer;
 	}
 
-	public void write(List<AstNode> nodes) throws IOException {
+	public void write(AstNode root) throws IOException {
 		writePreample();
 
-		final Variables variables = Variables.detectFrom(nodes);
+		final Variables variables = Variables.detectFrom(root);
 
 		writeLabel("main");
-		for (AstNode node : nodes) {
-			write(node, variables);
-		}
+		write(root, variables);
 		writeIndented("ret");
 
 		writePostample(variables);
@@ -38,6 +35,11 @@ public class X86Win64 {
 
 	private int write(AstNode node, Variables variables) throws IOException {
 		switch (node.type()) {
+		case Chain -> {
+			write(node.left(), variables);
+			write(node.right(), variables);
+			return -1;
+		}
 		case IntLit -> {
 			final int value = node.value();
 			writeComment("int lit " + value);

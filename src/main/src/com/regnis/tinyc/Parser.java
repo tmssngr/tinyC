@@ -2,8 +2,6 @@ package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
 
-import java.util.*;
-
 import org.jetbrains.annotations.*;
 
 /**
@@ -21,17 +19,20 @@ public class Parser {
 		consume();
 	}
 
-	public List<AstNode> parse() {
-		final List<AstNode> nodes = new ArrayList<>();
+	public AstNode parse() {
+		AstNode root = null;
 		while (token != TokenType.EOF) {
-			switch (token) {
-			case PRINT -> nodes.add(handlePrint());
-			case VAR -> nodes.add(handleVar());
-			case IDENTIFIER -> nodes.add(handleIdentifier());
-			default -> throw new SyntaxException("Unexpected token " + token, getLocation());
-			}
+			final AstNode node = switch (token) {
+				case PRINT -> handlePrint();
+				case VAR -> handleVar();
+				case IDENTIFIER -> handleIdentifier();
+				default -> throw new SyntaxException("Unexpected token " + token, getLocation());
+			};
+			root = root != null
+					? AstNode.chain(root, node)
+					: node;
 		}
-		return nodes;
+		return root;
 	}
 
 	private AstNode handlePrint() {
