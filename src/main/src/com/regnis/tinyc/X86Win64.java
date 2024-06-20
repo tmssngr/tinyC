@@ -15,6 +15,8 @@ public class X86Win64 {
 	private static final String PRINT_UINT = "__printUint";
 
 	private final Writer writer;
+
+	private int labelIndex;
 	private int freeRegs;
 
 	public X86Win64(Writer writer) {
@@ -87,6 +89,33 @@ public class X86Win64 {
 			writeIndented("mov qword [" + getRegName(varReg) + "], " + getRegName(expressionReg));
 			freeReg(expressionReg);
 			freeReg(varReg);
+			return -1;
+		}
+		case IfElse -> {
+			final int labelIndex = nextLabelIndex();
+			final String elseLabel = "else_" + labelIndex;
+			final String nextLabel = "endif_" + labelIndex;
+			final AstNode ifElse = node.right();
+			Utils.assertTrue(ifElse.type() == NodeType.Chain);
+			final AstNode thenNode = ifElse.left();
+			final AstNode elseNode = ifElse.right();
+			writeComment("if");
+			final int conditionReg = write(node.left(), variables);
+			final String conditionRegName = getRegName(conditionReg);
+			writeComment("if-condition");
+			writeIndented("or " + conditionRegName + ", " + conditionRegName);
+			writeIndented("jz " + (elseNode != null ? elseLabel : nextLabel));
+			if (thenNode != null) {
+				write(thenNode, variables);
+				if (elseNode != null) {
+					writeIndented("jmp " + nextLabel);
+				}
+			}
+			if (elseNode != null) {
+				writeLabel(elseLabel);
+				write(elseNode, variables);
+			}
+			writeLabel(nextLabel);
 			return -1;
 		}
 		case Add -> {
@@ -373,6 +402,11 @@ public class X86Win64 {
 
 	private void writeNL() throws IOException {
 		writer.write(System.lineSeparator());
+	}
+
+	private int nextLabelIndex() {
+		labelIndex++;
+		return labelIndex;
 	}
 
 	private static String getRegName(int reg) {

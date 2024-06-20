@@ -103,6 +103,12 @@ public final class Lexer {
 		if (isConsume(')')) {
 			return TokenType.R_PAREN;
 		}
+		if (isConsume('{')) {
+			return TokenType.L_BRACE;
+		}
+		if (isConsume('}')) {
+			return TokenType.R_BRACE;
+		}
 		if (isConsume('"')) {
 			text = detectStringOrChar('"');
 			return TokenType.STRING;
@@ -130,6 +136,8 @@ public final class Lexer {
 		}
 
 		return switch (text) {
+			case "if" -> TokenType.IF;
+			case "else" -> TokenType.ELSE;
 			case "print" -> TokenType.PRINT;
 			case "var" -> TokenType.VAR;
 			default -> TokenType.IDENTIFIER;

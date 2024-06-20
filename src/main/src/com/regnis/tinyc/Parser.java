@@ -22,19 +22,58 @@ public class Parser {
 	public AstNode parse() {
 		AstNode root = null;
 		while (token != TokenType.EOF) {
-			final AstNode node = switch (token) {
-				case PRINT -> handlePrint();
-				case VAR -> handleVar();
-				case IDENTIFIER -> handleIdentifier();
-				default -> throw new SyntaxException("Unexpected token " + token, getLocation());
-			};
-			root = root != null
-					? AstNode.chain(root, node)
-					: node;
+			root = handleStatements(root);
 		}
 		return root;
 	}
 
+	@NotNull
+	private AstNode handleStatements(@Nullable AstNode prev) {
+		final AstNode node = switch (token) {
+			case IF -> handleIf();
+			case PRINT -> handlePrint();
+			case VAR -> handleVar();
+			case IDENTIFIER -> handleIdentifier();
+			default -> throw new SyntaxException("Unexpected token " + token, getLocation());
+		};
+		return prev != null
+				? AstNode.chain(prev, node)
+				: node;
+	}
+
+	@Nullable
+	private AstNode getStatements() {
+		AstNode node = null;
+		while (token != TokenType.R_BRACE) {
+			if (token == TokenType.EOF) {
+				throw new SyntaxException("Unexpected end of file", getLocation());
+			}
+
+			node = handleStatements(node);
+		}
+		return node;
+	}
+
+	@NotNull
+	private AstNode handleIf() {
+		final Location location = getLocation();
+		consume(TokenType.IF);
+		consume(TokenType.L_PAREN);
+		final AstNode condition = getExpression();
+		consume(TokenType.R_PAREN);
+		consume(TokenType.L_BRACE);
+		final AstNode thenStatements = getStatements();
+		consume(TokenType.R_BRACE);
+		AstNode elseStatements = null;
+		if (isConsume(TokenType.ELSE)) {
+			consume(TokenType.L_BRACE);
+			elseStatements = getStatements();
+			consume(TokenType.R_BRACE);
+		}
+		return AstNode.ifElse(condition, AstNode.chain(thenStatements, elseStatements), location);
+	}
+
+	@NotNull
 	private AstNode handlePrint() {
 		final Location location = getLocation();
 		consume(TokenType.PRINT);
@@ -43,6 +82,7 @@ public class Parser {
 		return AstNode.print(expression, location);
 	}
 
+	@NotNull
 	private AstNode handleVar() {
 		final Location location = getLocation();
 		consume(TokenType.VAR);
@@ -53,6 +93,7 @@ public class Parser {
 		return AstNode.assign(expression, AstNode.lhs(varName, location), location);
 	}
 
+	@NotNull
 	private AstNode handleIdentifier() {
 		final Location location = getLocation();
 		final String identifier = consumeIdentifier();
@@ -62,10 +103,12 @@ public class Parser {
 		return AstNode.assign(expression, AstNode.lhs(identifier, location), location);
 	}
 
+	@NotNull
 	private AstNode getExpression() {
 		return getExpression(0);
 	}
 
+	@NotNull
 	private AstNode getExpression(int minPrecedence) {
 		Location location = getLocation();
 		AstNode left;
@@ -142,6 +185,15 @@ public class Parser {
 	@NotNull
 	private Location getLocation() {
 		return lexer.getLocation();
+	}
+
+	private boolean isConsume(@NotNull TokenType type) {
+		if (token != type) {
+			return false;
+		}
+
+		consume();
+		return true;
 	}
 
 	private void consume(@NotNull TokenType type) {

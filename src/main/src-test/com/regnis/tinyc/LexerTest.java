@@ -97,6 +97,62 @@ public class LexerTest {
 		}.test();
 	}
 
+	@Test
+	public void testIfElse() {
+		new LexerTester("""
+				                if (1 < 2) {
+				                  print 1;
+				                }
+				                else {
+				                  print 2;
+				                }""") {
+			@Override
+			protected void test() {
+				assertType(TokenType.IF);
+				assertLocation(0, 0);
+				assertType(TokenType.L_PAREN);
+				assertLocation(0, 3);
+				assertIntLiteral(1);
+				assertLocation(0, 4);
+				assertType(TokenType.LT);
+				assertLocation(0, 6);
+				assertIntLiteral(2);
+				assertLocation(0, 8);
+				assertType(TokenType.R_PAREN);
+				assertLocation(0, 9);
+				assertType(TokenType.L_BRACE);
+				assertLocation(0, 11);
+
+				assertType(TokenType.PRINT);
+				assertLocation(1, 2);
+				assertIntLiteral(1);
+				assertLocation(1, 8);
+				assertType(TokenType.SEMI);
+				assertLocation(1, 9);
+
+				assertType(TokenType.R_BRACE);
+				assertLocation(2, 0);
+
+				assertType(TokenType.ELSE);
+				assertLocation(3, 0);
+				assertType(TokenType.L_BRACE);
+				assertLocation(3, 5);
+
+				assertType(TokenType.PRINT);
+				assertLocation(4, 2);
+				assertIntLiteral(2);
+				assertLocation(4, 8);
+				assertType(TokenType.SEMI);
+				assertLocation(4, 9);
+
+				assertType(TokenType.R_BRACE);
+				assertLocation(5, 0);
+
+				assertEof();
+			}
+		}.test();
+	}
+
 	private abstract static class LexerTester {
 		protected abstract void test();
 

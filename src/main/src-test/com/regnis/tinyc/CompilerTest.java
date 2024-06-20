@@ -20,6 +20,11 @@ public class CompilerTest {
 		compileAndRun("comparison.input");
 	}
 
+	@Test
+	public void testIfElse() throws IOException, InterruptedException {
+		compileAndRun("ifelse.input");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Main.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}

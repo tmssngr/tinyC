@@ -87,6 +87,26 @@ public class ParserTest {
 				                                  var bar = 20;""")).parse());
 	}
 
+	@Test
+	public void testIf() {
+		assertEquals(AstNode.ifElse(AstNode.lt(AstNode.intLiteral(1, new Location(0, 4)),
+		                                       AstNode.intLiteral(2, new Location(0, 8)),
+		                                       new Location(0, 6)),
+		                            AstNode.chain(
+				                            AstNode.print(AstNode.intLiteral(1, new Location(1, 8)), new Location(1, 2)),
+				                            AstNode.print(AstNode.intLiteral(2, new Location(4, 8)), new Location(4, 2))
+		                            ),
+		                            new Location(0, 0)
+		             ),
+		             new Parser(new Lexer("""
+				                                  if (1 < 2) {
+				                                    print 1;
+				                                  }
+				                                  else {
+				                                    print 2;
+				                                  }""")).parse());
+	}
+
 	private static void assertEquals(AstNode expectedNode, AstNode currentNode) {
 		if (expectedNode == null) {
 			Assert.assertNull(currentNode);
