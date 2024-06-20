@@ -30,10 +30,11 @@ public class Parser {
 	@NotNull
 	private AstNode handleStatements(@Nullable AstNode prev) {
 		final AstNode node = switch (token) {
+			case IDENTIFIER -> handleIdentifier();
 			case IF -> handleIf();
 			case PRINT -> handlePrint();
 			case VAR -> handleVar();
-			case IDENTIFIER -> handleIdentifier();
+			case WHILE -> handleWhile();
 			default -> throw new SyntaxException("Unexpected token " + token, getLocation());
 		};
 		return prev != null
@@ -71,6 +72,19 @@ public class Parser {
 			consume(TokenType.R_BRACE);
 		}
 		return AstNode.ifElse(condition, AstNode.chain(thenStatements, elseStatements), location);
+	}
+
+	@NotNull
+	private AstNode handleWhile() {
+		final Location location = getLocation();
+		consume(TokenType.WHILE);
+		consume(TokenType.L_PAREN);
+		final AstNode condition = getExpression();
+		consume(TokenType.R_PAREN);
+		consume(TokenType.L_BRACE);
+		final AstNode bodyStatements = getStatements();
+		consume(TokenType.R_BRACE);
+		return AstNode.whileStatement(condition, bodyStatements, location);
 	}
 
 	@NotNull

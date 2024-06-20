@@ -18,7 +18,8 @@ public record AstNode(NodeType type, AstNode left, AstNode right, int value, Str
 			case VarLhs -> "@" + text;
 			case Assign -> right + " := " + left;
 			case Chain -> left + ", " + right;
-			case IfElse -> "if " + left + " thenElse " + right;
+			case IfElse -> "if " + left;
+			case While -> "while " + left;
 			case Add -> left + " + " + right;
 			case Sub -> left + " - " + right;
 			case Multiply -> left + " * " + right;
@@ -40,6 +41,10 @@ public record AstNode(NodeType type, AstNode left, AstNode right, int value, Str
 
 	public static AstNode ifElse(AstNode check, AstNode thenElseChain, Location location) {
 		return new AstNode(NodeType.IfElse, check, thenElseChain, 0, "", location);
+	}
+
+	public static AstNode whileStatement(AstNode condition, AstNode body, Location location) {
+		return new AstNode(NodeType.While, condition, body, 0, "", location);
 	}
 
 	public static AstNode intLiteral(int value, Location location) {

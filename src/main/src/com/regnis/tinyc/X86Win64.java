@@ -92,30 +92,11 @@ public class X86Win64 {
 			return -1;
 		}
 		case IfElse -> {
-			final int labelIndex = nextLabelIndex();
-			final String elseLabel = "else_" + labelIndex;
-			final String nextLabel = "endif_" + labelIndex;
-			final AstNode ifElse = node.right();
-			Utils.assertTrue(ifElse.type() == NodeType.Chain);
-			final AstNode thenNode = ifElse.left();
-			final AstNode elseNode = ifElse.right();
-			writeComment("if");
-			final int conditionReg = write(node.left(), variables);
-			final String conditionRegName = getRegName(conditionReg);
-			writeComment("if-condition");
-			writeIndented("or " + conditionRegName + ", " + conditionRegName);
-			writeIndented("jz " + (elseNode != null ? elseLabel : nextLabel));
-			if (thenNode != null) {
-				write(thenNode, variables);
-				if (elseNode != null) {
-					writeIndented("jmp " + nextLabel);
-				}
-			}
-			if (elseNode != null) {
-				writeLabel(elseLabel);
-				write(elseNode, variables);
-			}
-			writeLabel(nextLabel);
+			writeIfElse(node, variables);
+			return -1;
+		}
+		case While -> {
+			writeWhile(node, variables);
 			return -1;
 		}
 		case Add -> {
@@ -123,6 +104,14 @@ public class X86Win64 {
 			final int rightReg = write(node.right(), variables);
 			writeComment("add");
 			writeIndented("add " + getRegName(leftReg) + ", " + getRegName(rightReg));
+			freeReg(rightReg);
+			return leftReg;
+		}
+		case Sub -> {
+			final int leftReg = write(node.left(), variables);
+			final int rightReg = write(node.right(), variables);
+			writeComment("sub");
+			writeIndented("sub " + getRegName(leftReg) + ", " + getRegName(rightReg));
 			freeReg(rightReg);
 			return leftReg;
 		}
@@ -160,6 +149,54 @@ public class X86Win64 {
 		}
 		default -> throw new UnsupportedOperationException(node.toString());
 		}
+	}
+
+	private void writeIfElse(AstNode node, Variables variables) throws IOException {
+		final int labelIndex = nextLabelIndex();
+		final String elseLabel = "else_" + labelIndex;
+		final String nextLabel = "endif_" + labelIndex;
+		final AstNode ifElse = node.right();
+		Utils.assertTrue(ifElse.type() == NodeType.Chain);
+		final AstNode thenNode = ifElse.left();
+		final AstNode elseNode = ifElse.right();
+		final AstNode condition = node.left();
+		writeComment("if " + condition);
+		final int conditionReg = write(condition, variables);
+		final String conditionRegName = getRegName(conditionReg);
+		writeComment("if-condition");
+		writeIndented("or " + conditionRegName + ", " + conditionRegName);
+		writeIndented("jz " + (elseNode != null ? elseLabel : nextLabel));
+		if (thenNode != null) {
+			write(thenNode, variables);
+			if (elseNode != null) {
+				writeIndented("jmp " + nextLabel);
+			}
+		}
+		if (elseNode != null) {
+			writeLabel(elseLabel);
+			write(elseNode, variables);
+		}
+		writeLabel(nextLabel);
+	}
+
+	private void writeWhile(AstNode node, Variables variables) throws IOException {
+		final int labelIndex = nextLabelIndex();
+		final String whileLabel = "while_" + labelIndex;
+		final String nextLabel = "endwhile_" + labelIndex;
+		final AstNode condition = node.left();
+		writeComment("while " + condition);
+		writeLabel(whileLabel);
+		final int conditionReg = write(condition, variables);
+		final String conditionRegName = getRegName(conditionReg);
+		writeComment("while-condition");
+		writeIndented("or " + conditionRegName + ", " + conditionRegName);
+		writeIndented("jz " + nextLabel);
+		final AstNode body = node.right();
+		if (body != null) {
+			write(body, variables);
+			writeIndented("jmp " + whileLabel);
+		}
+		writeLabel(nextLabel);
 	}
 
 	private int getFreeReg() {

@@ -153,6 +153,58 @@ public class LexerTest {
 		}.test();
 	}
 
+	@Test
+	public void testWhile() {
+		new LexerTester("""
+				                while (i > 0) {
+				                  print i;
+				                  i = i - 1;
+				                }""") {
+			@Override
+			protected void test() {
+				assertType(TokenType.WHILE);
+				assertLocation(0, 0);
+				assertType(TokenType.L_PAREN);
+				assertLocation(0, 6);
+				assertIdentifier("i");
+				assertLocation(0, 7);
+				assertType(TokenType.GT);
+				assertLocation(0, 9);
+				assertIntLiteral(0);
+				assertLocation(0, 11);
+				assertType(TokenType.R_PAREN);
+				assertLocation(0, 12);
+				assertType(TokenType.L_BRACE);
+				assertLocation(0, 14);
+
+				assertType(TokenType.PRINT);
+				assertLocation(1, 2);
+				assertIdentifier("i");
+				assertLocation(1, 8);
+				assertType(TokenType.SEMI);
+				assertLocation(1, 9);
+
+				assertIdentifier("i");
+				assertLocation(2, 2);
+				assertType(TokenType.EQUAL);
+				assertLocation(2, 4);
+				assertIdentifier("i");
+				assertLocation(2, 6);
+				assertType(TokenType.MINUS);
+				assertLocation(2, 8);
+				assertIntLiteral(1);
+				assertLocation(2, 10);
+				assertType(TokenType.SEMI);
+				assertLocation(2, 11);
+
+				assertType(TokenType.R_BRACE);
+				assertLocation(3, 0);
+
+				assertEof();
+			}
+		}.test();
+	}
+
 	private abstract static class LexerTester {
 		protected abstract void test();
 

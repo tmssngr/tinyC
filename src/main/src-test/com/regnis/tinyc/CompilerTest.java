@@ -25,6 +25,11 @@ public class CompilerTest {
 		compileAndRun("ifelse.input");
 	}
 
+	@Test
+	public void testWhile() throws IOException, InterruptedException {
+		compileAndRun("while.input");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Main.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}

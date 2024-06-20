@@ -19,32 +19,26 @@ start:
           call [ExitProcess]
 
 main:
-        ; int lit 1
-        mov rcx, 1
-        ; var address a
+        ; int lit 5
+        mov rcx, 5
+        ; var address i
         lea rax, [var0]
         ; assign
         mov qword [rax], rcx
-        ; int lit 2
-        mov rcx, 2
-        ; var address b
-        lea rax, [var1]
-        ; assign
-        mov qword [rax], rcx
-        ; if a > b
+        ; while i > 0
+while_1:
         ; read var 
         lea rcx, [var0]
         mov qword rcx, [rcx]
-        ; read var 
-        lea rax, [var1]
-        mov qword rax, [rax]
+        ; int lit 0
+        mov rax, 0
         ; Gt
         cmp rcx, rax
         setg cl
         and rcx, 0xFF
-        ; if-condition
+        ; while-condition
         or rcx, rcx
-        jz else_1
+        jz endwhile_1
         ; read var 
         lea rax, [var0]
         mov qword rax, [rax]
@@ -55,19 +49,19 @@ main:
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        jmp endif_1
-else_1:
         ; read var 
-        lea rax, [var1]
+        lea rax, [var0]
         mov qword rax, [rax]
-        ; print
-        mov rcx, rax
-        sub rsp, 8
-          call __printUint
-        mov rcx, 0x0a
-          call __emit
-        add rsp, 8
-endif_1:
+        ; int lit 1
+        mov rbx, 1
+        ; sub
+        sub rax, rbx
+        ; var address i
+        lea rbx, [var0]
+        ; assign
+        mov qword [rbx], rax
+        jmp while_1
+endwhile_1:
         ret
 init:
         sub rsp, 20h
@@ -172,7 +166,6 @@ section '.data' data readable writeable
         hStdOut rb 8
         hStdErr rb 8
         var0 rb 8
-        var1 rb 8
 
 section '.idata' import data readable writeable
 

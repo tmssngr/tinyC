@@ -107,6 +107,34 @@ public class ParserTest {
 				                                  }""")).parse());
 	}
 
+	@Test
+	public void testWhile() {
+		assertEquals(AstNode.chain(AstNode.assign(AstNode.intLiteral(5, new Location(0, 8)),
+		                                          AstNode.lhs("i", new Location(0, 0)),
+		                                          new Location(0, 0)),
+		                           AstNode.whileStatement(
+				                           AstNode.gt(AstNode.varRead("i", new Location(1, 7)),
+				                                      AstNode.intLiteral(0, new Location(1, 11)),
+				                                      new Location(1, 9)),
+				                           AstNode.chain(
+						                           AstNode.print(AstNode.varRead("i", new Location(2, 8)), new Location(2, 2)),
+						                           AstNode.assign(AstNode.sub(AstNode.varRead("i", new Location(3, 6)),
+						                                                      AstNode.intLiteral(1, new Location(3, 10)),
+						                                                      new Location(3, 8)),
+						                                          AstNode.lhs("i", new Location(3, 2)),
+						                                          new Location(3, 2))
+				                           ),
+				                           new Location(1, 0)
+		                           )
+		             ),
+		             new Parser(new Lexer("""
+				                                  var i = 5;
+				                                  while (i > 0) {
+				                                    print i;
+				                                    i = i - 1;
+				                                  }""")).parse());
+	}
+
 	private static void assertEquals(AstNode expectedNode, AstNode currentNode) {
 		if (expectedNode == null) {
 			Assert.assertNull(currentNode);
