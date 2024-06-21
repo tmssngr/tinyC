@@ -124,6 +124,75 @@ public class ParserTest {
 				                                  }""")).parse());
 	}
 
+	@Test
+	public void testFor() {
+		assertEquals(AstNode.chain(AstNode.assign("i", AstNode.intLiteral(0, new Location(0, 13)),
+		                                          new Location(0, 5)),
+		                           AstNode.whileStatement(
+				                           AstNode.lt(AstNode.varRead("i", new Location(0, 16)),
+				                                      AstNode.intLiteral(10, new Location(0, 20)),
+				                                      new Location(0, 18)),
+				                           AstNode.chain(
+						                           AstNode.print(AstNode.varRead("i", new Location(1, 8)), new Location(1, 2)),
+						                           AstNode.assign("i", AstNode.add(AstNode.varRead("i", new Location(0, 28)),
+						                                                           AstNode.intLiteral(1, new Location(0, 32)),
+						                                                           new Location(0, 30)),
+						                                          new Location(0, 24))
+				                           ),
+				                           new Location(0, 0)
+		                           )
+		             ),
+		             new Parser(new Lexer("""
+				                                  for (var i = 0; i < 10; i = i + 1) {
+				                                    print i;
+				                                  }""")).parse());
+
+		assertEquals(AstNode.chain(AstNode.assign("i", AstNode.intLiteral(1, new Location(0, 8)),
+		                                          new Location(0, 0)),
+		                           AstNode.whileStatement(
+				                           AstNode.lt(AstNode.varRead("i", new Location(1, 7)),
+				                                      AstNode.intLiteral(10, new Location(1, 11)),
+				                                      new Location(1, 9)),
+				                           AstNode.chain(
+						                           AstNode.print(AstNode.varRead("i", new Location(2, 8)), new Location(2, 2)),
+						                           AstNode.assign("i", AstNode.add(AstNode.varRead("i", new Location(1, 19)),
+						                                                           AstNode.intLiteral(1, new Location(1, 23)),
+						                                                           new Location(1, 21)),
+						                                          new Location(1, 15))
+				                           ),
+				                           new Location(1, 0)
+		                           )
+		             ),
+		             new Parser(new Lexer("""
+				                                  var i = 1;
+				                                  for (; i < 10; i = i + 1) {
+				                                    print i;
+				                                  }""")).parse());
+
+		assertEquals(AstNode.chain(AstNode.assign("i", AstNode.intLiteral(5, new Location(0, 8)),
+		                                          new Location(0, 0)),
+		                           AstNode.whileStatement(
+				                           AstNode.gt(AstNode.varRead("i", new Location(1, 6)),
+				                                      AstNode.intLiteral(0, new Location(1, 10)),
+				                                      new Location(1, 8)),
+				                           AstNode.chain(
+						                           AstNode.print(AstNode.varRead("i", new Location(2, 8)), new Location(2, 2)),
+						                           AstNode.assign("i", AstNode.sub(AstNode.varRead("i", new Location(3, 6)),
+						                                                           AstNode.intLiteral(1, new Location(3, 10)),
+						                                                           new Location(3, 8)),
+						                                          new Location(3, 2))
+				                           ),
+				                           new Location(1, 0)
+		                           )
+		             ),
+		             new Parser(new Lexer("""
+				                                  var i = 5;
+				                                  for (;i > 0;) {
+				                                    print i;
+				                                    i = i - 1;
+				                                  }""")).parse());
+	}
+
 	private static void assertEquals(AstNode expectedNode, AstNode currentNode) {
 		if (expectedNode == null) {
 			Assert.assertNull(currentNode);

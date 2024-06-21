@@ -136,6 +136,7 @@ public final class Lexer {
 		}
 
 		return switch (text) {
+			case "for" -> TokenType.FOR;
 			case "if" -> TokenType.IF;
 			case "else" -> TokenType.ELSE;
 			case "print" -> TokenType.PRINT;

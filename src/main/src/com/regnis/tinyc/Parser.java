@@ -29,17 +29,31 @@ public class Parser {
 
 	@NotNull
 	private AstNode handleStatements(@Nullable AstNode prev) {
-		final AstNode node = switch (token) {
-			case IDENTIFIER -> handleIdentifier();
-			case IF -> handleIf();
-			case PRINT -> handlePrint();
-			case VAR -> handleVar();
-			case WHILE -> handleWhile();
-			default -> throw new SyntaxException("Unexpected token " + token, getLocation());
-		};
-		return prev != null
-				? AstNode.chain(prev, node)
-				: node;
+		AstNode node = getSimpleStatement();
+		if (node != null) {
+			consume(TokenType.SEMI);
+		}
+		else {
+			node = switch (token) {
+				case FOR -> handleFor();
+				case IF -> handleIf();
+				case PRINT -> handlePrint();
+				case WHILE -> handleWhile();
+				default -> throw new SyntaxException("Unexpected token " + token, getLocation());
+			};
+		}
+		return chain(prev, node);
+	}
+
+	@Nullable
+	private AstNode chain(@Nullable AstNode prev, @Nullable AstNode node) {
+		if (node == null) {
+			return prev;
+		}
+		if (prev == null) {
+			return node;
+		}
+		return AstNode.chain(prev, node);
 	}
 
 	@Nullable
@@ -75,6 +89,46 @@ public class Parser {
 	}
 
 	@NotNull
+	private AstNode handleFor() {
+		final Location location = getLocation();
+		consume(TokenType.FOR);
+		consume(TokenType.L_PAREN);
+		final AstNode initialize = getCommaSeparatedSimpleStatements();
+		consume(TokenType.SEMI);
+		final AstNode condition;
+		if (token == TokenType.SEMI) {
+			condition = null;
+		}
+		else {
+			condition = getExpression();
+			consume(TokenType.SEMI);
+		}
+		final AstNode iterate = getCommaSeparatedSimpleStatements();
+		consume(TokenType.R_PAREN);
+		consume(TokenType.L_BRACE);
+		final AstNode bodyStatements = chain(getStatements(), iterate);
+		consume(TokenType.R_BRACE);
+		return chain(initialize, AstNode.whileStatement(condition, bodyStatements, location));
+	}
+
+	@Nullable
+	private AstNode getCommaSeparatedSimpleStatements() {
+		AstNode iterate = null;
+		while (true) {
+			final AstNode simpleStatement = getSimpleStatement();
+			if (simpleStatement != null) {
+				iterate = chain(iterate, simpleStatement);
+				if (token == TokenType.COMMA) {
+					consume();
+					continue;
+				}
+			}
+			break;
+		}
+		return iterate;
+	}
+
+	@NotNull
 	private AstNode handleWhile() {
 		final Location location = getLocation();
 		consume(TokenType.WHILE);
@@ -96,6 +150,15 @@ public class Parser {
 		return AstNode.print(expression, location);
 	}
 
+	@Nullable
+	private AstNode getSimpleStatement() {
+		return switch (token) {
+			case VAR -> handleVar();
+			case IDENTIFIER -> handleIdentifier();
+			default -> null;
+		};
+	}
+
 	@NotNull
 	private AstNode handleVar() {
 		final Location location = getLocation();
@@ -103,7 +166,6 @@ public class Parser {
 		final String varName = consumeIdentifier();
 		consume(TokenType.EQUAL);
 		final AstNode expression = getExpression();
-		consume(TokenType.SEMI);
 		return AstNode.assign(varName, expression, location);
 	}
 
@@ -113,7 +175,6 @@ public class Parser {
 		final String identifier = consumeIdentifier();
 		consume(TokenType.EQUAL);
 		final AstNode expression = getExpression();
-		consume(TokenType.SEMI);
 		return AstNode.assign(identifier, expression, location);
 	}
 

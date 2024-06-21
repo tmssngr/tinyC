@@ -12,5 +12,5 @@ public enum TokenType {
 	LT, LT_EQ, EQ_EQ, GT_EQ, GT, EXCL_EQ,
 	STRING, VAR,
 	IDENTIFIER,
-	IF, ELSE, WHILE, PRINT;
+	FOR, IF, ELSE, WHILE, PRINT;
 }
