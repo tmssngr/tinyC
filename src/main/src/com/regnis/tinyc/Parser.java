@@ -104,7 +104,7 @@ public class Parser {
 		consume(TokenType.EQUAL);
 		final AstNode expression = getExpression();
 		consume(TokenType.SEMI);
-		return AstNode.assign(expression, AstNode.lhs(varName, location), location);
+		return AstNode.assign(varName, expression, location);
 	}
 
 	@NotNull
@@ -114,7 +114,7 @@ public class Parser {
 		consume(TokenType.EQUAL);
 		final AstNode expression = getExpression();
 		consume(TokenType.SEMI);
-		return AstNode.assign(expression, AstNode.lhs(identifier, location), location);
+		return AstNode.assign(identifier, expression, location);
 	}
 
 	@NotNull

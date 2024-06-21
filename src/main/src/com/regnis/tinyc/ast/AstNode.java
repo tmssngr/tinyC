@@ -67,6 +67,10 @@ public record AstNode(NodeType type, AstNode left, AstNode right, int value, Str
 		return binOp(NodeType.Assign, expression, lhs, location);
 	}
 
+	public static AstNode assign(String name, AstNode expression, Location location) {
+		return assign(expression, lhs(name, location), location);
+	}
+
 	public static AstNode add(AstNode left, AstNode right, Location location) {
 		return binOp(NodeType.Add, left, right, location);
 	}
