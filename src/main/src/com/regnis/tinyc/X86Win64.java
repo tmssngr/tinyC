@@ -23,16 +23,23 @@ public class X86Win64 {
 		this.writer = writer;
 	}
 
-	public void write(Statement root) throws IOException {
+	public void write(Program program) throws IOException {
 		writePreample();
 
-		final Variables variables = Variables.detectFrom(root);
+		final Variables variables = Variables.detectFrom(program);
 
-		writeLabel("main");
-		write(root, variables);
-		writeIndented("ret");
+		for (Function function : program.functions()) {
+			write(function, variables);
+		}
 
 		writePostample(variables);
+	}
+
+	private void write(Function function, Variables variables) throws IOException {
+		writeComment(function.toString());
+		writeLabel(function.name());
+		write(function.statement(), variables);
+		writeIndented("ret");
 	}
 
 	private void write(Statement statement, Variables variables) throws IOException {

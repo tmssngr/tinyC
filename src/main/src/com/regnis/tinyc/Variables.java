@@ -9,9 +9,11 @@ import java.util.*;
  */
 public class Variables {
 
-	public static Variables detectFrom(Statement statement) {
+	public static Variables detectFrom(Program program) {
 		final Set<String> variableNames = new LinkedHashSet<>();
-		processNode(statement, variableNames);
+		for (Function function : program.functions()) {
+			processNode(function.statement(), variableNames);
+		}
 		return new Variables(variableNames);
 	}
 

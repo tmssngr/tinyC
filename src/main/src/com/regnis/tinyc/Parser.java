@@ -21,10 +21,31 @@ public class Parser {
 		consume();
 	}
 
-	public Statement parse() {
-		final Statement statement = getStatementNotNull();
-		expectType(TokenType.EOF);
+	public Program parse() {
+		final List<Function> functions = new ArrayList<>();
+		while (token != TokenType.EOF) {
+			functions.add(getFunction());
+		}
+		return new Program(functions);
+	}
+
+	@NotNull
+	public Statement getStatementNotNull() {
+		final Statement statement = getStatement();
+		if (statement == null) {
+			throw new SyntaxException("Expected statement, but got " + token, getLocation());
+		}
 		return statement;
+	}
+
+	private Function getFunction() {
+		final Location location = getLocation();
+		final String type = consumeIdentifier();
+		final String name = consumeIdentifier();
+		consume(TokenType.L_PAREN);
+		consume(TokenType.R_PAREN);
+		final Statement statement = getStatementNotNull();
+		return new Function(name, type, statement, location);
 	}
 
 	@Nullable
@@ -42,15 +63,6 @@ public class Parser {
 				case L_BRACE -> handleCompound();
 				default -> null;
 			};
-		}
-		return statement;
-	}
-
-	@NotNull
-	private Statement getStatementNotNull() {
-		final Statement statement = getStatement();
-		if (statement == null) {
-			throw new SyntaxException("Expected statement, but got " + token, getLocation());
 		}
 		return statement;
 	}

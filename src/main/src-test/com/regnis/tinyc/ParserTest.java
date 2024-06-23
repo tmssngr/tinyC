@@ -16,13 +16,13 @@ public class ParserTest {
 	public void testAssignment() {
 		assertEquals(new SimpleStatement.Assign("foo", AstNode.intLiteral(1, new Location(0, 10)),
 		                                        new Location(0, 0)),
-		             new Parser(new Lexer("var foo = 1;")).parse());
+		             new Parser(new Lexer("var foo = 1;")).getStatementNotNull());
 
 		assertEquals(new SimpleStatement.Assign("foo", AstNode.add(AstNode.intLiteral(1, new Location(1, 12)),
 		                                                           AstNode.intLiteral(2, new Location(1, 16)),
 		                                                           new Location(1, 14)),
 		                                        new Location(1, 2)),
-		             new Parser(new Lexer("\n  var foo = 1 + 2;")).parse());
+		             new Parser(new Lexer("\n  var foo = 1 + 2;")).getStatementNotNull());
 
 		assertEquals(new SimpleStatement.Assign("foo", AstNode.add(AstNode.add(AstNode.intLiteral(1, new Location(0, 10)),
 		                                                                       AstNode.intLiteral(2, new Location(0, 14)),
@@ -30,7 +30,7 @@ public class ParserTest {
 		                                                           AstNode.intLiteral(3, new Location(0, 18)),
 		                                                           new Location(0, 16)),
 		                                        new Location(0, 0)),
-		             new Parser(new Lexer("var foo = 1 + 2 + 3;")).parse());
+		             new Parser(new Lexer("var foo = 1 + 2 + 3;")).getStatementNotNull());
 
 		assertEquals(new SimpleStatement.Assign("foo", AstNode.add(AstNode.sub(AstNode.intLiteral(1, new Location(0, 10)),
 		                                                                       AstNode.intLiteral(2, new Location(0, 14)),
@@ -38,7 +38,7 @@ public class ParserTest {
 		                                                           AstNode.intLiteral(3, new Location(0, 18)),
 		                                                           new Location(0, 16)),
 		                                        new Location(0, 0)),
-		             new Parser(new Lexer("var foo = 1 - 2 + 3;")).parse());
+		             new Parser(new Lexer("var foo = 1 - 2 + 3;")).getStatementNotNull());
 
 		assertEquals(new SimpleStatement.Assign("foo", AstNode.sub(AstNode.add(AstNode.intLiteral(1, new Location(0, 10)),
 		                                                                       AstNode.intLiteral(2, new Location(0, 14)),
@@ -46,7 +46,7 @@ public class ParserTest {
 		                                                           AstNode.intLiteral(3, new Location(0, 18)),
 		                                                           new Location(0, 16)),
 		                                        new Location(0, 0)),
-		             new Parser(new Lexer("var foo = 1 + 2 - 3;")).parse());
+		             new Parser(new Lexer("var foo = 1 + 2 - 3;")).getStatementNotNull());
 
 		assertEquals(
 				new SimpleStatement.Assign("foo", AstNode.add(AstNode.multiply(AstNode.intLiteral(1, new Location(0, 10)),
@@ -57,7 +57,7 @@ public class ParserTest {
 				                                                               new Location(0, 20)),
 				                                              new Location(0, 16)),
 				                           new Location(0, 0)),
-				new Parser(new Lexer("var foo = 1 * 3 + 2 * 4;")).parse());
+				new Parser(new Lexer("var foo = 1 * 3 + 2 * 4;")).getStatementNotNull());
 
 		assertEquals(new SimpleStatement.Assign("foo", AstNode.gt(AstNode.add(AstNode.intLiteral(1, new Location(0, 10)),
 		                                                                      AstNode.intLiteral(3, new Location(0, 14)),
@@ -67,7 +67,7 @@ public class ParserTest {
 		                                                                           new Location(0, 20)),
 		                                                          new Location(0, 16)),
 		                                        new Location(0, 0)),
-		             new Parser(new Lexer("var foo = 1 + 3 > 2 * 4;")).parse());
+		             new Parser(new Lexer("var foo = 1 + 3 > 2 * 4;")).getStatementNotNull());
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class ParserTest {
 				                                  {
 				                                  var foo = 10;
 				                                  var bar = 20;
-				                                  }""")).parse());
+				                                  }""")).getStatementNotNull());
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class ParserTest {
 				                                  }
 				                                  else {
 				                                    print 2;
-				                                  }""")).parse());
+				                                  }""")).getStatementNotNull());
 	}
 
 	@Test
@@ -127,7 +127,7 @@ public class ParserTest {
 				                           print i;
 				                           i = i - 1;
 				                         }
-				                         }""")).parse());
+				                         }""")).getStatementNotNull());
 	}
 
 	@Test
@@ -152,7 +152,7 @@ public class ParserTest {
 		             new Parser(new Lexer("""
 				                                  for (var i = 0; i < 10; i = i + 1) {
 				                                    print i;
-				                                  }""")).parse());
+				                                  }""")).getStatementNotNull());
 
 		assertEquals(new Statement.Compound(List.of(
 				             new SimpleStatement.Assign("i", AstNode.intLiteral(1, new Location(1, 8)),
@@ -179,7 +179,7 @@ public class ParserTest {
 				                                  for (; i < 10; i = i + 1) {
 				                                    print i;
 				                                  }
-				                                  }""")).parse());
+				                                  }""")).getStatementNotNull());
 
 		assertEquals(new Statement.Compound(List.of(
 				             new SimpleStatement.Assign("i", AstNode.intLiteral(5, new Location(1, 8)),
@@ -205,7 +205,30 @@ public class ParserTest {
 				                                    print i;
 				                                    i = i - 1;
 				                                  }
-				                                  }""")).parse());
+				                                  }""")).getStatementNotNull());
+	}
+
+	@Test
+	public void testFunctions() {
+		Assert.assertEquals(new Program(List.of(
+				new Function("main", "void",
+				             new Statement.Compound(List.of(
+						             new SimpleStatement.Assign("i", AstNode.intLiteral(10, new Location(1, 12)),
+						                                        new Location(1, 4)),
+						             new Statement.Print(AstNode.varRead("i", new Location(2, 10)),
+						                                 new Location(2, 4))
+				             )),
+				             new Location(0, 0)),
+				new Function("fooBar", "void",
+				             new Statement.Compound(List.of()),
+				             new Location(4, 0))
+		)), new Parser(new Lexer("""
+				                         void main() {
+				                             var i = 10;
+				                             print i;
+				                         }
+				                         void fooBar() {
+				                         }""")).parse());
 	}
 
 	private static void assertEquals(@Nullable Statement expectedStatement, @Nullable Statement currentStatement) {

@@ -18,6 +18,7 @@ start:
         sub rsp, 0x20
           call [ExitProcess]
 
+        ; void main
 main:
         ; int lit 1
         mov rcx, 1

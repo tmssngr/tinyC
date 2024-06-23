@@ -19,12 +19,12 @@ public class Compiler {
 	}
 
 	public static void compileAndRun(@NotNull Path inputFile, @Nullable Path outputFile) throws IOException, InterruptedException {
-		final Statement root = parse(inputFile);
+		final Program program = parse(inputFile);
 
 		final Path asmFile = useExtension(inputFile, ".asm");
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);
-			output.write(root);
+			output.write(program);
 		}
 
 		if (!launchFasm(asmFile)) {
@@ -43,7 +43,7 @@ public class Compiler {
 		return path.resolveSibling(derivedName);
 	}
 
-	private static Statement parse(Path inputFile) throws IOException {
+	private static Program parse(Path inputFile) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(inputFile)) {
 			final Parser parser = new Parser(new Lexer(() -> {
 				try {
