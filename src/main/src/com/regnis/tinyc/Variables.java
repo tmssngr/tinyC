@@ -82,14 +82,11 @@ public class Variables {
 
 		processNode(node.left(), variableNames);
 		processNode(node.right(), variableNames);
-		switch (node.type()) {
-		case VarLhs -> variableNames.add(node.text());
-		case VarRead -> {
+		if (node.type() == NodeType.VarRead) {
 			final String text = node.text();
 			if (!variableNames.contains(text)) {
 				throw new SyntaxException("Unknown variable " + text, node.location());
 			}
-		}
 		}
 	}
 }

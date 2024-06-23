@@ -14,12 +14,7 @@ public record AstNode(NodeType type, AstNode left, AstNode right, int value, Str
 		return switch (type) {
 			case IntLit -> String.valueOf(value);
 			case VarRead -> text;
-			case Print -> "print " + left;
-			case VarLhs -> "@" + text;
 			case Assign -> right + " := " + left;
-			case Chain -> left + ", " + right;
-			case IfElse -> "if " + left;
-			case While -> "while " + left;
 			case Add -> left + " + " + right;
 			case Sub -> left + " - " + right;
 			case Multiply -> left + " * " + right;
@@ -41,10 +36,6 @@ public record AstNode(NodeType type, AstNode left, AstNode right, int value, Str
 
 	public static AstNode varRead(String text, Location location) {
 		return new AstNode(NodeType.VarRead, null, null, 0, text, location);
-	}
-
-	public static AstNode lhs(String name, Location location) {
-		return new AstNode(NodeType.VarLhs, null, null, 0, name, location);
 	}
 
 	public static AstNode add(AstNode left, AstNode right, Location location) {
