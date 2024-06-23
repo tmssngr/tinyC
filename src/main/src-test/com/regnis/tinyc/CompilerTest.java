@@ -31,6 +31,6 @@ public class CompilerTest {
 	}
 
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
-		Main.compileAndRun(Path.of("src/main/resources-test", fileName));
+		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}
 }
