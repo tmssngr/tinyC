@@ -35,18 +35,6 @@ public record AstNode(NodeType type, AstNode left, AstNode right, int value, Str
 		};
 	}
 
-	public static AstNode chain(AstNode first, AstNode second) {
-		return new AstNode(NodeType.Chain, first, second, 0, "", new Location(-1, -1));
-	}
-
-	public static AstNode ifElse(AstNode check, AstNode thenElseChain, Location location) {
-		return new AstNode(NodeType.IfElse, check, thenElseChain, 0, "", location);
-	}
-
-	public static AstNode whileStatement(AstNode condition, AstNode body, Location location) {
-		return new AstNode(NodeType.While, condition, body, 0, "", location);
-	}
-
 	public static AstNode intLiteral(int value, Location location) {
 		return new AstNode(NodeType.IntLit, null, null, value, "", location);
 	}
@@ -55,20 +43,8 @@ public record AstNode(NodeType type, AstNode left, AstNode right, int value, Str
 		return new AstNode(NodeType.VarRead, null, null, 0, text, location);
 	}
 
-	public static AstNode print(AstNode expression, Location location) {
-		return new AstNode(NodeType.Print, expression, null, 0, "", location);
-	}
-
 	public static AstNode lhs(String name, Location location) {
 		return new AstNode(NodeType.VarLhs, null, null, 0, name, location);
-	}
-
-	public static AstNode assign(AstNode expression, AstNode lhs, Location location) {
-		return binOp(NodeType.Assign, expression, lhs, location);
-	}
-
-	public static AstNode assign(String name, AstNode expression, Location location) {
-		return assign(expression, lhs(name, location), location);
 	}
 
 	public static AstNode add(AstNode left, AstNode right, Location location) {

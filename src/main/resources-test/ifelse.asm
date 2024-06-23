@@ -21,21 +21,19 @@ start:
 main:
         ; int lit 1
         mov rcx, 1
-        ; var address a
+        ; assign a
         lea rax, [var0]
-        ; assign
         mov qword [rax], rcx
         ; int lit 2
         mov rcx, 2
-        ; var address b
+        ; assign b
         lea rax, [var1]
-        ; assign
         mov qword [rax], rcx
         ; if a > b
-        ; read var 
+        ; read var a
         lea rcx, [var0]
         mov qword rcx, [rcx]
-        ; read var 
+        ; read var b
         lea rax, [var1]
         mov qword rax, [rax]
         ; Gt
@@ -45,7 +43,7 @@ main:
         ; if-condition
         or rcx, rcx
         jz else_1
-        ; read var 
+        ; read var a
         lea rax, [var0]
         mov qword rax, [rax]
         ; print
@@ -57,7 +55,7 @@ main:
         add rsp, 8
         jmp endif_1
 else_1:
-        ; read var 
+        ; read var b
         lea rax, [var1]
         mov qword rax, [rax]
         ; print

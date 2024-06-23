@@ -1,8 +1,10 @@
-var a = 1;
-var b = 2;
-if (a > b) {
-	print a;
-}
-else {
-	print b;
+{
+	var a = 1;
+	var b = 2;
+	if (a > b) {
+		print a;
+	}
+	else {
+		print b;
+	}
 }

@@ -33,32 +33,29 @@ main:
         imul rax, rbx
         ; add
         add rcx, rax
-        ; var address foo
+        ; assign foo
         lea rax, [var0]
-        ; assign
         mov qword [rax], rcx
-        ; read var 
+        ; read var foo
         lea rcx, [var0]
         mov qword rcx, [rcx]
-        ; read var 
+        ; read var foo
         lea rax, [var0]
         mov qword rax, [rax]
         ; multiply
         imul rcx, rax
-        ; var address bar
+        ; assign bar
         lea rax, [var1]
-        ; assign
         mov qword [rax], rcx
         ; int lit 1
         mov rcx, 1
-        ; var address foo
+        ; assign foo
         lea rax, [var0]
-        ; assign
         mov qword [rax], rcx
-        ; read var 
+        ; read var bar
         lea rcx, [var1]
         mov qword rcx, [rcx]
-        ; read var 
+        ; read var foo
         lea rax, [var0]
         mov qword rax, [rax]
         ; add

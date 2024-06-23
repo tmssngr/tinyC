@@ -23,7 +23,7 @@ public class X86Win64 {
 		this.writer = writer;
 	}
 
-	public void write(AstNode root) throws IOException {
+	public void write(Statement root) throws IOException {
 		writePreample();
 
 		final Variables variables = Variables.detectFrom(root);
@@ -35,13 +35,66 @@ public class X86Win64 {
 		writePostample(variables);
 	}
 
+	private void write(Statement statement, Variables variables) throws IOException {
+		if (statement instanceof SimpleStatement simpleStatement) {
+			write(simpleStatement, variables);
+		}
+		else if (statement instanceof Statement.Compound compound) {
+			for (Statement childStatement : compound.statements()) {
+				write(childStatement, variables);
+			}
+		}
+		else if (statement instanceof Statement.Print print) {
+			writePrint(print, variables);
+		}
+		else if (statement instanceof Statement.If ifStatement) {
+			writeIfElse(ifStatement, variables);
+		}
+		else if (statement instanceof Statement.While whileStatement) {
+			writeWhile(whileStatement, variables);
+		}
+		else if (statement instanceof Statement.For forStatement) {
+			writeFor(forStatement, variables);
+		}
+		else {
+			throw new UnsupportedOperationException(statement.toString());
+		}
+	}
+
+	private void writePrint(Statement.Print print, Variables variables) throws IOException {
+		final int reg = write(print.expression(), variables);
+		final String regName = getRegName(reg);
+		writeComment("print");
+		if (!regName.equals("rcx")) {
+			writeIndented("mov rcx, " + regName);
+		}
+		writeIndented("sub rsp, 8");
+		writeIndented("  call " + PRINT_UINT);
+		writeIndented("mov rcx, 0x0a");
+		writeIndented("  call " + EMIT);
+		writeIndented("add rsp, 8");
+		freeReg(reg);
+	}
+
+	private void write(SimpleStatement statement, Variables variables) throws IOException {
+		if (statement instanceof SimpleStatement.Assign assign) {
+			final int expressionReg = write(assign.expression(), variables);
+			final int varReg = getFreeReg();
+			final String varName = assign.varName();
+			final int varIndex = variables.indexOf(varName);
+			writeComment("assign " + varName);
+			writeIndented("lea " + getRegName(varReg) + ", [" + getVarName(varIndex) + "]");
+			writeIndented("mov qword [" + getRegName(varReg) + "], " + getRegName(expressionReg));
+			freeReg(expressionReg);
+			freeReg(varReg);
+		}
+		else {
+			throw new UnsupportedOperationException(statement.toString());
+		}
+	}
+
 	private int write(AstNode node, Variables variables) throws IOException {
 		switch (node.type()) {
-		case Chain -> {
-			write(node.left(), variables);
-			write(node.right(), variables);
-			return -1;
-		}
 		case IntLit -> {
 			final int value = node.value();
 			writeComment("int lit " + value);
@@ -49,55 +102,15 @@ public class X86Win64 {
 			writeIndented("mov " + getRegName(reg) + ", " + value);
 			return reg;
 		}
-		case Print -> {
-			final int reg = write(node.left(), variables);
-			final String regName = getRegName(reg);
-			writeComment("print");
-			if (!regName.equals("rcx")) {
-				writeIndented("mov rcx, " + regName);
-			}
-			writeIndented("sub rsp, 8");
-			writeIndented("  call " + PRINT_UINT);
-			writeIndented("mov rcx, 0x0a");
-			writeIndented("  call " + EMIT);
-			writeIndented("add rsp, 8");
-			freeReg(reg);
-			return -1;
-		}
 		case VarRead -> {
 			final String varName = node.text();
 			final int reg = getFreeReg();
 			final int varIndex = variables.indexOf(varName);
 			final String regName = getRegName(reg);
-			writeComment("read var ");
+			writeComment("read var " + varName);
 			writeIndented("lea " + regName + ", [" + getVarName(varIndex) + "]");
 			writeIndented("mov qword " + regName + ", [" + regName + "]");
 			return reg;
-		}
-		case VarLhs -> {
-			final String varName = node.text();
-			final int reg = getFreeReg();
-			final int varIndex = variables.indexOf(varName);
-			writeComment("var address " + varName);
-			writeIndented("lea " + getRegName(reg) + ", [" + getVarName(varIndex) + "]");
-			return reg;
-		}
-		case Assign -> {
-			final int expressionReg = write(node.left(), variables);
-			final int varReg = write(node.right(), variables);
-			writeComment("assign");
-			writeIndented("mov qword [" + getRegName(varReg) + "], " + getRegName(expressionReg));
-			freeReg(expressionReg);
-			freeReg(varReg);
-			return -1;
-		}
-		case IfElse -> {
-			writeIfElse(node, variables);
-			return -1;
-		}
-		case While -> {
-			writeWhile(node, variables);
-			return -1;
 		}
 		case Add -> {
 			final int leftReg = write(node.left(), variables);
@@ -151,39 +164,35 @@ public class X86Win64 {
 		}
 	}
 
-	private void writeIfElse(AstNode node, Variables variables) throws IOException {
+	private void writeIfElse(Statement.If statement, Variables variables) throws IOException {
+		final AstNode condition = statement.condition();
+		final Statement thenStatement = statement.thenStatement();
+		final Statement elseStatement = statement.elseStatement();
 		final int labelIndex = nextLabelIndex();
 		final String elseLabel = "else_" + labelIndex;
 		final String nextLabel = "endif_" + labelIndex;
-		final AstNode ifElse = node.right();
-		Utils.assertTrue(ifElse.type() == NodeType.Chain);
-		final AstNode thenNode = ifElse.left();
-		final AstNode elseNode = ifElse.right();
-		final AstNode condition = node.left();
 		writeComment("if " + condition);
 		final int conditionReg = write(condition, variables);
 		final String conditionRegName = getRegName(conditionReg);
 		writeComment("if-condition");
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
-		writeIndented("jz " + (elseNode != null ? elseLabel : nextLabel));
-		if (thenNode != null) {
-			write(thenNode, variables);
-			if (elseNode != null) {
-				writeIndented("jmp " + nextLabel);
-			}
+		writeIndented("jz " + (elseStatement != null ? elseLabel : nextLabel));
+		write(thenStatement, variables);
+		if (elseStatement != null) {
+			writeIndented("jmp " + nextLabel);
 		}
-		if (elseNode != null) {
+		if (elseStatement != null) {
 			writeLabel(elseLabel);
-			write(elseNode, variables);
+			write(elseStatement, variables);
 		}
 		writeLabel(nextLabel);
 	}
 
-	private void writeWhile(AstNode node, Variables variables) throws IOException {
+	private void writeWhile(Statement.While statement, Variables variables) throws IOException {
 		final int labelIndex = nextLabelIndex();
 		final String whileLabel = "while_" + labelIndex;
 		final String nextLabel = "endwhile_" + labelIndex;
-		final AstNode condition = node.left();
+		final AstNode condition = statement.condition();
 		writeComment("while " + condition);
 		writeLabel(whileLabel);
 		final int conditionReg = write(condition, variables);
@@ -191,11 +200,42 @@ public class X86Win64 {
 		writeComment("while-condition");
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
 		writeIndented("jz " + nextLabel);
-		final AstNode body = node.right();
+		final Statement body = statement.bodyStatement();
 		if (body != null) {
 			write(body, variables);
 			writeIndented("jmp " + whileLabel);
 		}
+		writeLabel(nextLabel);
+	}
+
+	private void writeFor(Statement.For statement, Variables variables) throws IOException {
+		final int labelIndex = nextLabelIndex();
+		final String forLabel = "for_" + labelIndex;
+		final String nextLabel = "endFor_" + labelIndex;
+
+		writeComment("for");
+		for (SimpleStatement simpleStatement : statement.initialization()) {
+			write(simpleStatement, variables);
+		}
+
+		final AstNode condition = statement.condition();
+		writeComment("for condition " + condition);
+		writeLabel(forLabel);
+		final int conditionReg = write(condition, variables);
+		final String conditionRegName = getRegName(conditionReg);
+		writeIndented("or " + conditionRegName + ", " + conditionRegName);
+		writeIndented("jz " + nextLabel);
+		final Statement body = statement.bodyStatement();
+		if (body != null) {
+			write(body, variables);
+		}
+
+		writeComment("for iteration");
+		for (SimpleStatement simpleStatement : statement.iteration()) {
+			write(simpleStatement, variables);
+		}
+		writeIndented("jmp " + forLabel);
+
 		writeLabel(nextLabel);
 	}
 

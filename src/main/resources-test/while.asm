@@ -21,13 +21,12 @@ start:
 main:
         ; int lit 5
         mov rcx, 5
-        ; var address i
+        ; assign i
         lea rax, [var0]
-        ; assign
         mov qword [rax], rcx
         ; while i > 0
 while_1:
-        ; read var 
+        ; read var i
         lea rcx, [var0]
         mov qword rcx, [rcx]
         ; int lit 0
@@ -39,7 +38,7 @@ while_1:
         ; while-condition
         or rcx, rcx
         jz endwhile_1
-        ; read var 
+        ; read var i
         lea rax, [var0]
         mov qword rax, [rax]
         ; print
@@ -49,16 +48,15 @@ while_1:
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; read var 
+        ; read var i
         lea rax, [var0]
         mov qword rax, [rax]
         ; int lit 1
         mov rbx, 1
         ; sub
         sub rax, rbx
-        ; var address i
+        ; assign i
         lea rbx, [var0]
-        ; assign
         mov qword [rbx], rax
         jmp while_1
 endwhile_1:

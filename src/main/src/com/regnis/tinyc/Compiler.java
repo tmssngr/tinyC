@@ -19,7 +19,7 @@ public class Compiler {
 	}
 
 	public static void compileAndRun(@NotNull Path inputFile, @Nullable Path outputFile) throws IOException, InterruptedException {
-		final AstNode root = parse(inputFile);
+		final Statement root = parse(inputFile);
 
 		final Path asmFile = useExtension(inputFile, ".asm");
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
@@ -43,7 +43,7 @@ public class Compiler {
 		return path.resolveSibling(derivedName);
 	}
 
-	private static AstNode parse(Path inputFile) throws IOException {
+	private static Statement parse(Path inputFile) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(inputFile)) {
 			final Parser parser = new Parser(new Lexer(() -> {
 				try {

@@ -2,6 +2,8 @@ package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
 
+import java.util.*;
+
 import org.jetbrains.annotations.*;
 
 /**
@@ -19,81 +21,76 @@ public class Parser {
 		consume();
 	}
 
-	public AstNode parse() {
-		AstNode root = null;
-		while (token != TokenType.EOF) {
-			root = handleStatements(root);
-		}
-		return root;
+	public Statement parse() {
+		final Statement statement = getStatementNotNull();
+		expectType(TokenType.EOF);
+		return statement;
 	}
 
-	@NotNull
-	private AstNode handleStatements(@Nullable AstNode prev) {
-		AstNode node = getSimpleStatement();
-		if (node != null) {
+	@Nullable
+	private Statement getStatement() {
+		Statement statement = getSimpleStatement();
+		if (statement != null) {
 			consume(TokenType.SEMI);
 		}
 		else {
-			node = switch (token) {
+			statement = switch (token) {
 				case FOR -> handleFor();
 				case IF -> handleIf();
 				case PRINT -> handlePrint();
 				case WHILE -> handleWhile();
-				default -> throw new SyntaxException("Unexpected token " + token, getLocation());
+				case L_BRACE -> handleCompound();
+				default -> null;
 			};
 		}
-		return chain(prev, node);
-	}
-
-	@Nullable
-	private AstNode chain(@Nullable AstNode prev, @Nullable AstNode node) {
-		if (node == null) {
-			return prev;
-		}
-		if (prev == null) {
-			return node;
-		}
-		return AstNode.chain(prev, node);
-	}
-
-	@Nullable
-	private AstNode getStatements() {
-		AstNode node = null;
-		while (token != TokenType.R_BRACE) {
-			if (token == TokenType.EOF) {
-				throw new SyntaxException("Unexpected end of file", getLocation());
-			}
-
-			node = handleStatements(node);
-		}
-		return node;
+		return statement;
 	}
 
 	@NotNull
-	private AstNode handleIf() {
+	private Statement getStatementNotNull() {
+		final Statement statement = getStatement();
+		if (statement == null) {
+			throw new SyntaxException("Expected statement, but got " + token, getLocation());
+		}
+		return statement;
+	}
+
+	private Statement handleCompound() {
+		consume(TokenType.L_BRACE);
+		final List<Statement> statements = new ArrayList<>();
+		while (true) {
+			final Statement statement = getStatement();
+			if (statement == null) {
+				break;
+			}
+
+			statements.add(statement);
+		}
+		consume(TokenType.R_BRACE);
+		return new Statement.Compound(statements);
+	}
+
+	@NotNull
+	private Statement.If handleIf() {
 		final Location location = getLocation();
 		consume(TokenType.IF);
 		consume(TokenType.L_PAREN);
 		final AstNode condition = getExpression();
 		consume(TokenType.R_PAREN);
-		consume(TokenType.L_BRACE);
-		final AstNode thenStatements = getStatements();
-		consume(TokenType.R_BRACE);
-		AstNode elseStatements = null;
+		final Statement thenStatement = getStatementNotNull();
+		Statement elseStatements = null;
 		if (isConsume(TokenType.ELSE)) {
-			consume(TokenType.L_BRACE);
-			elseStatements = getStatements();
-			consume(TokenType.R_BRACE);
+			elseStatements = getStatementNotNull();
 		}
-		return AstNode.ifElse(condition, AstNode.chain(thenStatements, elseStatements), location);
+		return new Statement.If(condition, thenStatement, elseStatements, location);
 	}
 
 	@NotNull
-	private AstNode handleFor() {
+	private Statement.For handleFor() {
 		final Location location = getLocation();
 		consume(TokenType.FOR);
 		consume(TokenType.L_PAREN);
-		final AstNode initialize = getCommaSeparatedSimpleStatements();
+		final List<SimpleStatement> initialization = getCommaSeparatedSimpleStatements();
 		consume(TokenType.SEMI);
 		final AstNode condition;
 		if (token == TokenType.SEMI) {
@@ -103,21 +100,19 @@ public class Parser {
 			condition = getExpression();
 			consume(TokenType.SEMI);
 		}
-		final AstNode iterate = getCommaSeparatedSimpleStatements();
+		final List<SimpleStatement> iterate = getCommaSeparatedSimpleStatements();
 		consume(TokenType.R_PAREN);
-		consume(TokenType.L_BRACE);
-		final AstNode bodyStatements = chain(getStatements(), iterate);
-		consume(TokenType.R_BRACE);
-		return chain(initialize, AstNode.whileStatement(condition, bodyStatements, location));
+		final Statement body = getStatementNotNull();
+		return new Statement.For(initialization, condition, body, iterate, location);
 	}
 
-	@Nullable
-	private AstNode getCommaSeparatedSimpleStatements() {
-		AstNode iterate = null;
+	@NotNull
+	private List<SimpleStatement> getCommaSeparatedSimpleStatements() {
+		final List<SimpleStatement> statements = new ArrayList<>();
 		while (true) {
-			final AstNode simpleStatement = getSimpleStatement();
-			if (simpleStatement != null) {
-				iterate = chain(iterate, simpleStatement);
+			final SimpleStatement statement = getSimpleStatement();
+			if (statement != null) {
+				statements.add(statement);
 				if (token == TokenType.COMMA) {
 					consume();
 					continue;
@@ -125,33 +120,31 @@ public class Parser {
 			}
 			break;
 		}
-		return iterate;
+		return statements;
 	}
 
 	@NotNull
-	private AstNode handleWhile() {
+	private Statement.While handleWhile() {
 		final Location location = getLocation();
 		consume(TokenType.WHILE);
 		consume(TokenType.L_PAREN);
 		final AstNode condition = getExpression();
 		consume(TokenType.R_PAREN);
-		consume(TokenType.L_BRACE);
-		final AstNode bodyStatements = getStatements();
-		consume(TokenType.R_BRACE);
-		return AstNode.whileStatement(condition, bodyStatements, location);
+		final Statement bodyStatement = getStatementNotNull();
+		return new Statement.While(condition, bodyStatement, location);
 	}
 
 	@NotNull
-	private AstNode handlePrint() {
+	private Statement.Print handlePrint() {
 		final Location location = getLocation();
 		consume(TokenType.PRINT);
 		final AstNode expression = getExpression();
 		consume(TokenType.SEMI);
-		return AstNode.print(expression, location);
+		return new Statement.Print(expression, location);
 	}
 
 	@Nullable
-	private AstNode getSimpleStatement() {
+	private SimpleStatement getSimpleStatement() {
 		return switch (token) {
 			case VAR -> handleVar();
 			case IDENTIFIER -> handleIdentifier();
@@ -160,22 +153,22 @@ public class Parser {
 	}
 
 	@NotNull
-	private AstNode handleVar() {
+	private SimpleStatement.Assign handleVar() {
 		final Location location = getLocation();
 		consume(TokenType.VAR);
 		final String varName = consumeIdentifier();
 		consume(TokenType.EQUAL);
 		final AstNode expression = getExpression();
-		return AstNode.assign(varName, expression, location);
+		return new SimpleStatement.Assign(varName, expression, location);
 	}
 
 	@NotNull
-	private AstNode handleIdentifier() {
+	private SimpleStatement.Assign handleIdentifier() {
 		final Location location = getLocation();
-		final String identifier = consumeIdentifier();
+		final String varName = consumeIdentifier();
 		consume(TokenType.EQUAL);
 		final AstNode expression = getExpression();
-		return AstNode.assign(identifier, expression, location);
+		return new SimpleStatement.Assign(varName, expression, location);
 	}
 
 	@NotNull
