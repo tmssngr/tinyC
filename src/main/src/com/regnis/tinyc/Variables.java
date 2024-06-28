@@ -77,7 +77,7 @@ public class Variables {
 		return names.size();
 	}
 
-	private static void processNode(AstNode node, Set<String> variableNames) {
+	private static void processNode(Expression node, Set<String> variableNames) {
 		if (node == null) {
 			return;
 		}

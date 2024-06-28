@@ -87,7 +87,7 @@ public class Parser {
 		final Location location = getLocation();
 		consume(TokenType.IF);
 		consume(TokenType.L_PAREN);
-		final AstNode condition = getExpression();
+		final Expression condition = getExpression();
 		consume(TokenType.R_PAREN);
 		final Statement thenStatement = getStatementNotNull();
 		Statement elseStatements = null;
@@ -104,7 +104,7 @@ public class Parser {
 		consume(TokenType.L_PAREN);
 		final List<SimpleStatement> initialization = getCommaSeparatedSimpleStatements();
 		consume(TokenType.SEMI);
-		final AstNode condition;
+		final Expression condition;
 		if (token == TokenType.SEMI) {
 			condition = null;
 		}
@@ -140,7 +140,7 @@ public class Parser {
 		final Location location = getLocation();
 		consume(TokenType.WHILE);
 		consume(TokenType.L_PAREN);
-		final AstNode condition = getExpression();
+		final Expression condition = getExpression();
 		consume(TokenType.R_PAREN);
 		final Statement bodyStatement = getStatementNotNull();
 		return new Statement.While(condition, bodyStatement, location);
@@ -150,7 +150,7 @@ public class Parser {
 	private Statement.Print handlePrint() {
 		final Location location = getLocation();
 		consume(TokenType.PRINT);
-		final AstNode expression = getExpression();
+		final Expression expression = getExpression();
 		consume(TokenType.SEMI);
 		return new Statement.Print(expression, location);
 	}
@@ -170,7 +170,7 @@ public class Parser {
 		consume(TokenType.VAR);
 		final String varName = consumeIdentifier();
 		consume(TokenType.EQUAL);
-		final AstNode expression = getExpression();
+		final Expression expression = getExpression();
 		return new SimpleStatement.Assign(varName, expression, location);
 	}
 
@@ -179,24 +179,24 @@ public class Parser {
 		final Location location = getLocation();
 		final String varName = consumeIdentifier();
 		consume(TokenType.EQUAL);
-		final AstNode expression = getExpression();
+		final Expression expression = getExpression();
 		return new SimpleStatement.Assign(varName, expression, location);
 	}
 
 	@NotNull
-	private AstNode getExpression() {
+	private Expression getExpression() {
 		return getExpression(0);
 	}
 
 	@NotNull
-	private AstNode getExpression(int minPrecedence) {
+	private Expression getExpression(int minPrecedence) {
 		Location location = getLocation();
-		AstNode left;
+		Expression left;
 		if (token == TokenType.INT_LITERAL) {
-			left = AstNode.intLiteral(consumeIntValue(), location);
+			left = Expression.intLiteral(consumeIntValue(), location);
 		}
 		else if (token == TokenType.IDENTIFIER) {
-			left = AstNode.varRead(consumeText(), location);
+			left = Expression.varRead(consumeText(), location);
 		}
 		else {
 			throw new SyntaxException("Expected int literal but got " + token, location);
@@ -211,18 +211,18 @@ public class Parser {
 			location = getLocation();
 			final TokenType operationToken = token;
 			consume();
-			final AstNode right = getExpression(precedence);
+			final Expression right = getExpression(precedence);
 			left = switch (operationToken) {
-				case PLUS -> AstNode.add(left, right, location);
-				case MINUS -> AstNode.sub(left, right, location);
-				case STAR -> AstNode.multiply(left, right, location);
-				case SLASH -> AstNode.divide(left, right, location);
-				case LT -> AstNode.lt(left, right, location);
-				case LT_EQ -> AstNode.lteq(left, right, location);
-				case EQ_EQ -> AstNode.eqeq(left, right, location);
-				case EXCL_EQ -> AstNode.neq(left, right, location);
-				case GT_EQ -> AstNode.gteq(left, right, location);
-				case GT -> AstNode.gt(left, right, location);
+				case PLUS -> Expression.add(left, right, location);
+				case MINUS -> Expression.sub(left, right, location);
+				case STAR -> Expression.multiply(left, right, location);
+				case SLASH -> Expression.divide(left, right, location);
+				case LT -> Expression.lt(left, right, location);
+				case LT_EQ -> Expression.lteq(left, right, location);
+				case EQ_EQ -> Expression.eqeq(left, right, location);
+				case EXCL_EQ -> Expression.neq(left, right, location);
+				case GT_EQ -> Expression.gteq(left, right, location);
+				case GT -> Expression.gt(left, right, location);
 				default -> throw new IllegalStateException("Unsupported operation " + operationToken);
 			};
 		}

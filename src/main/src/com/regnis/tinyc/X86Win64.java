@@ -100,7 +100,7 @@ public class X86Win64 {
 		}
 	}
 
-	private int write(AstNode node, Variables variables) throws IOException {
+	private int write(Expression node, Variables variables) throws IOException {
 		switch (node.type()) {
 		case IntLit -> {
 			final int value = node.value();
@@ -172,7 +172,7 @@ public class X86Win64 {
 	}
 
 	private void writeIfElse(Statement.If statement, Variables variables) throws IOException {
-		final AstNode condition = statement.condition();
+		final Expression condition = statement.condition();
 		final Statement thenStatement = statement.thenStatement();
 		final Statement elseStatement = statement.elseStatement();
 		final int labelIndex = nextLabelIndex();
@@ -199,7 +199,7 @@ public class X86Win64 {
 		final int labelIndex = nextLabelIndex();
 		final String whileLabel = "while_" + labelIndex;
 		final String nextLabel = "endwhile_" + labelIndex;
-		final AstNode condition = statement.condition();
+		final Expression condition = statement.condition();
 		writeComment("while " + condition);
 		writeLabel(whileLabel);
 		final int conditionReg = write(condition, variables);
@@ -225,7 +225,7 @@ public class X86Win64 {
 			write(simpleStatement, variables);
 		}
 
-		final AstNode condition = statement.condition();
+		final Expression condition = statement.condition();
 		writeComment("for condition " + condition);
 		writeLabel(forLabel);
 		final int conditionReg = write(condition, variables);
