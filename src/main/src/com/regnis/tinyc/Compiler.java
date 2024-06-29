@@ -20,11 +20,12 @@ public class Compiler {
 
 	public static void compileAndRun(@NotNull Path inputFile, @Nullable Path outputFile) throws IOException, InterruptedException {
 		final Program program = parse(inputFile);
+		final Program programTyped = program.determineTypes();
 
 		final Path asmFile = useExtension(inputFile, ".asm");
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);
-			output.write(program);
+			output.write(programTyped);
 		}
 
 		if (!launchFasm(asmFile)) {

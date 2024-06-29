@@ -20,26 +20,26 @@ start:
 
         ; void main
 main:
-        ; int lit 5
-        mov rcx, 5
+        ; for
+        ; int lit 250
+        mov rcx, 250
         ; assign i
         lea rax, [var0]
         mov [rax], cl
-        ; while i > 0
-while_1:
+        ; for condition i != 2
+for_1:
         ; read var i
         lea rcx, [var0]
         mov cl, [rcx]
         movzx rcx, cl
-        ; int lit 0
-        mov rax, 0
-        ; Gt
+        ; int lit 2
+        mov rax, 2
+        ; NotEquals
         cmp rcx, rax
-        setg cl
+        setne cl
         and rcx, 0xFF
-        ; while-condition
         or rcx, rcx
-        jz endwhile_1
+        jz endFor_1
         ; read var i
         lea rax, [var0]
         mov al, [rax]
@@ -51,19 +51,20 @@ while_1:
         mov rcx, 0x0a
           call __emit
         add rsp, 8
+        ; for iteration
         ; read var i
         lea rax, [var0]
         mov al, [rax]
         movzx rax, al
         ; int lit 1
         mov rbx, 1
-        ; sub
-        sub al, bl
+        ; add
+        add al, bl
         ; assign i
         lea rbx, [var0]
         mov [rbx], al
-        jmp while_1
-endwhile_1:
+        jmp for_1
+endFor_1:
         ret
 init:
         sub rsp, 20h

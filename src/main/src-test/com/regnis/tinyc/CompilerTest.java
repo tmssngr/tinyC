@@ -30,6 +30,11 @@ public class CompilerTest {
 		compileAndRun("while.input");
 	}
 
+	@Test
+	public void testTypes() throws IOException, InterruptedException {
+		compileAndRun("types.input");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}

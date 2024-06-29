@@ -33,10 +33,10 @@ public class LexerTest {
 	@Test
 	public void textAssignment() {
 		//               012345678901234567890123456
-		new LexerTester("var foo = bar - bazz - blup") {
+		new LexerTester("i16 foo = bar - bazz - blup") {
 			@Override
 			protected void test() {
-				assertType(TokenType.VAR);
+				assertIdentifier("i16");
 				assertLocation(0, 0);
 				assertIdentifier("foo");
 				assertLocation(0, 4);

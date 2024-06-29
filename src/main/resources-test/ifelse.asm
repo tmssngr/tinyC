@@ -24,19 +24,21 @@ main:
         mov rcx, 1
         ; assign a
         lea rax, [var0]
-        mov qword [rax], rcx
+        mov [rax], cl
         ; int lit 2
         mov rcx, 2
         ; assign b
         lea rax, [var1]
-        mov qword [rax], rcx
+        mov [rax], cl
         ; if a > b
         ; read var a
         lea rcx, [var0]
-        mov qword rcx, [rcx]
+        mov cl, [rcx]
+        movzx rcx, cl
         ; read var b
         lea rax, [var1]
-        mov qword rax, [rax]
+        mov al, [rax]
+        movzx rax, al
         ; Gt
         cmp rcx, rax
         setg cl
@@ -46,7 +48,8 @@ main:
         jz else_1
         ; read var a
         lea rax, [var0]
-        mov qword rax, [rax]
+        mov al, [rax]
+        movzx rax, al
         ; print
         mov rcx, rax
         sub rsp, 8
@@ -58,7 +61,8 @@ main:
 else_1:
         ; read var b
         lea rax, [var1]
-        mov qword rax, [rax]
+        mov al, [rax]
+        movzx rax, al
         ; print
         mov rcx, rax
         sub rsp, 8
@@ -170,8 +174,8 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        var0 rb 8
-        var1 rb 8
+        var0 rb 1
+        var1 rb 1
 
 section '.idata' import data readable writeable
 

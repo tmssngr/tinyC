@@ -79,11 +79,11 @@ public class Parser {
 			statements.add(statement);
 		}
 		consume(TokenType.R_BRACE);
-		return new Statement.Compound(statements);
+		return new StmtCompound(statements);
 	}
 
 	@NotNull
-	private Statement.If handleIf() {
+	private StmtIf handleIf() {
 		final Location location = getLocation();
 		consume(TokenType.IF);
 		consume(TokenType.L_PAREN);
@@ -94,35 +94,35 @@ public class Parser {
 		if (isConsume(TokenType.ELSE)) {
 			elseStatements = getStatementNotNull();
 		}
-		return new Statement.If(condition, thenStatement, elseStatements, location);
+		return new StmtIf(condition, thenStatement, elseStatements, location);
 	}
 
 	@NotNull
-	private Statement.For handleFor() {
+	private StmtFor handleFor() {
 		final Location location = getLocation();
 		consume(TokenType.FOR);
 		consume(TokenType.L_PAREN);
-		final List<SimpleStatement> initialization = getCommaSeparatedSimpleStatements();
+		final List<Statement.Simple> initialization = getCommaSeparatedSimpleStatements();
 		consume(TokenType.SEMI);
 		final Expression condition;
 		if (token == TokenType.SEMI) {
-			condition = null;
+			condition = new ExprIntLiteral(1, location);
 		}
 		else {
 			condition = getExpression();
 			consume(TokenType.SEMI);
 		}
-		final List<SimpleStatement> iterate = getCommaSeparatedSimpleStatements();
+		final List<Statement.Simple> iterate = getCommaSeparatedSimpleStatements();
 		consume(TokenType.R_PAREN);
 		final Statement body = getStatementNotNull();
-		return new Statement.For(initialization, condition, body, iterate, location);
+		return new StmtFor(initialization, condition, body, iterate, location);
 	}
 
 	@NotNull
-	private List<SimpleStatement> getCommaSeparatedSimpleStatements() {
-		final List<SimpleStatement> statements = new ArrayList<>();
+	private List<Statement.Simple> getCommaSeparatedSimpleStatements() {
+		final List<Statement.Simple> statements = new ArrayList<>();
 		while (true) {
-			final SimpleStatement statement = getSimpleStatement();
+			final Statement.Simple statement = getSimpleStatement();
 			if (statement != null) {
 				statements.add(statement);
 				if (token == TokenType.COMMA) {
@@ -136,51 +136,49 @@ public class Parser {
 	}
 
 	@NotNull
-	private Statement.While handleWhile() {
+	private StmtWhile handleWhile() {
 		final Location location = getLocation();
 		consume(TokenType.WHILE);
 		consume(TokenType.L_PAREN);
 		final Expression condition = getExpression();
 		consume(TokenType.R_PAREN);
 		final Statement bodyStatement = getStatementNotNull();
-		return new Statement.While(condition, bodyStatement, location);
+		return new StmtWhile(condition, bodyStatement, location);
 	}
 
 	@NotNull
-	private Statement.Print handlePrint() {
+	private StmtPrint handlePrint() {
 		final Location location = getLocation();
 		consume(TokenType.PRINT);
 		final Expression expression = getExpression();
 		consume(TokenType.SEMI);
-		return new Statement.Print(expression, location);
+		return new StmtPrint(expression, location);
 	}
 
 	@Nullable
-	private SimpleStatement getSimpleStatement() {
-		return switch (token) {
-			case VAR -> handleVar();
-			case IDENTIFIER -> handleIdentifier();
-			default -> null;
-		};
-	}
-
-	@NotNull
-	private SimpleStatement.Assign handleVar() {
+	private Statement.Simple getSimpleStatement() {
 		final Location location = getLocation();
-		consume(TokenType.VAR);
-		final String varName = consumeIdentifier();
-		consume(TokenType.EQUAL);
-		final Expression expression = getExpression();
-		return new SimpleStatement.Assign(varName, expression, location);
-	}
+		if (token == TokenType.IDENTIFIER) {
+			final String identifier1 = consumeIdentifier();
+			if (isConsume(TokenType.EQUAL)) {
+				final Expression expression = getExpression();
+				return new StmtAssign(identifier1, expression, location);
+			}
 
-	@NotNull
-	private SimpleStatement.Assign handleIdentifier() {
-		final Location location = getLocation();
-		final String varName = consumeIdentifier();
-		consume(TokenType.EQUAL);
-		final Expression expression = getExpression();
-		return new SimpleStatement.Assign(varName, expression, location);
+			final String identifier2 = consumeIdentifier();
+			consume(TokenType.EQUAL);
+			final Expression expression = getExpression();
+			return new StmtDeclaration(identifier1, identifier2, expression, location);
+		}
+
+		if (isConsume(TokenType.VAR)) {
+			final String identifier = consumeIdentifier();
+			consume(TokenType.EQUAL);
+			final Expression expression = getExpression();
+			return new StmtDeclaration("", identifier, expression, location);
+		}
+
+		return null;
 	}
 
 	@NotNull
@@ -193,10 +191,11 @@ public class Parser {
 		Location location = getLocation();
 		Expression left;
 		if (token == TokenType.INT_LITERAL) {
-			left = Expression.intLiteral(consumeIntValue(), location);
+			left = new ExprIntLiteral(consumeIntValue(), location);
 		}
 		else if (token == TokenType.IDENTIFIER) {
-			left = Expression.varRead(consumeText(), location);
+			String text = consumeText();
+			left = new ExprVarRead(text, location);
 		}
 		else {
 			throw new SyntaxException("Expected int literal but got " + token, location);
@@ -213,16 +212,16 @@ public class Parser {
 			consume();
 			final Expression right = getExpression(precedence);
 			left = switch (operationToken) {
-				case PLUS -> Expression.add(left, right, location);
-				case MINUS -> Expression.sub(left, right, location);
-				case STAR -> Expression.multiply(left, right, location);
-				case SLASH -> Expression.divide(left, right, location);
-				case LT -> Expression.lt(left, right, location);
-				case LT_EQ -> Expression.lteq(left, right, location);
-				case EQ_EQ -> Expression.eqeq(left, right, location);
-				case EXCL_EQ -> Expression.neq(left, right, location);
-				case GT_EQ -> Expression.gteq(left, right, location);
-				case GT -> Expression.gt(left, right, location);
+				case PLUS -> new ExprBinary(ExprBinary.Op.Add, left, right, location);
+				case MINUS -> new ExprBinary(ExprBinary.Op.Sub, left, right, location);
+				case STAR -> new ExprBinary(ExprBinary.Op.Multiply, left, right, location);
+				case SLASH -> new ExprBinary(ExprBinary.Op.Divide, left, right, location);
+				case LT -> new ExprBinary(ExprBinary.Op.Lt, left, right, location);
+				case LT_EQ -> new ExprBinary(ExprBinary.Op.LtEq, left, right, location);
+				case EQ_EQ -> new ExprBinary(ExprBinary.Op.Equals, left, right, location);
+				case EXCL_EQ -> new ExprBinary(ExprBinary.Op.NotEquals, left, right, location);
+				case GT_EQ -> new ExprBinary(ExprBinary.Op.GtEq, left, right, location);
+				case GT -> new ExprBinary(ExprBinary.Op.Gt, left, right, location);
 				default -> throw new IllegalStateException("Unsupported operation " + operationToken);
 			};
 		}

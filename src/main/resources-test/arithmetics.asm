@@ -33,34 +33,40 @@ main:
         ; multiply
         imul rax, rbx
         ; add
-        add rcx, rax
+        add cl, al
+        movzx cx, cl
         ; assign foo
         lea rax, [var0]
-        mov qword [rax], rcx
+        mov [rax], cx
         ; read var foo
         lea rcx, [var0]
-        mov qword rcx, [rcx]
+        mov cx, [rcx]
+        movzx rcx, cx
         ; read var foo
         lea rax, [var0]
-        mov qword rax, [rax]
+        mov ax, [rax]
+        movzx rax, ax
         ; multiply
         imul rcx, rax
         ; assign bar
         lea rax, [var1]
-        mov qword [rax], rcx
+        mov [rax], cx
         ; int lit 1
         mov rcx, 1
+        movzx cx, cl
         ; assign foo
         lea rax, [var0]
-        mov qword [rax], rcx
+        mov [rax], cx
         ; read var bar
         lea rcx, [var1]
-        mov qword rcx, [rcx]
+        mov cx, [rcx]
+        movzx rcx, cx
         ; read var foo
         lea rax, [var0]
-        mov qword rax, [rax]
+        mov ax, [rax]
+        movzx rax, ax
         ; add
-        add rcx, rax
+        add cx, ax
         ; print
         sub rsp, 8
           call __printUint
@@ -170,8 +176,8 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        var0 rb 8
-        var1 rb 8
+        var0 rb 2
+        var1 rb 2
 
 section '.idata' import data readable writeable
 

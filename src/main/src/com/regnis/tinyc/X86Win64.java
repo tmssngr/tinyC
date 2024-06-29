@@ -1,8 +1,11 @@
 package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.types.*;
 
 import java.io.*;
+
+import org.jetbrains.annotations.*;
 
 /**
  * @author Thomas Singer
@@ -43,24 +46,24 @@ public class X86Win64 {
 	}
 
 	private void write(Statement statement, Variables variables) throws IOException {
-		if (statement instanceof SimpleStatement simpleStatement) {
+		if (statement instanceof Statement.Simple simpleStatement) {
 			write(simpleStatement, variables);
 		}
-		else if (statement instanceof Statement.Compound compound) {
+		else if (statement instanceof StmtCompound compound) {
 			for (Statement childStatement : compound.statements()) {
 				write(childStatement, variables);
 			}
 		}
-		else if (statement instanceof Statement.Print print) {
+		else if (statement instanceof StmtPrint print) {
 			writePrint(print, variables);
 		}
-		else if (statement instanceof Statement.If ifStatement) {
+		else if (statement instanceof StmtIf ifStatement) {
 			writeIfElse(ifStatement, variables);
 		}
-		else if (statement instanceof Statement.While whileStatement) {
+		else if (statement instanceof StmtWhile whileStatement) {
 			writeWhile(whileStatement, variables);
 		}
-		else if (statement instanceof Statement.For forStatement) {
+		else if (statement instanceof StmtFor forStatement) {
 			writeFor(forStatement, variables);
 		}
 		else {
@@ -68,7 +71,7 @@ public class X86Win64 {
 		}
 	}
 
-	private void writePrint(Statement.Print print, Variables variables) throws IOException {
+	private void writePrint(StmtPrint print, Variables variables) throws IOException {
 		final int reg = write(print.expression(), variables);
 		final String regName = getRegName(reg);
 		writeComment("print");
@@ -83,55 +86,86 @@ public class X86Win64 {
 		freeReg(reg);
 	}
 
-	private void write(SimpleStatement statement, Variables variables) throws IOException {
-		if (statement instanceof SimpleStatement.Assign assign) {
-			final int expressionReg = write(assign.expression(), variables);
-			final int varReg = getFreeReg();
-			final String varName = assign.varName();
-			final int varIndex = variables.indexOf(varName);
-			writeComment("assign " + varName);
-			writeIndented("lea " + getRegName(varReg) + ", [" + getVarName(varIndex) + "]");
-			writeIndented("mov qword [" + getRegName(varReg) + "], " + getRegName(expressionReg));
-			freeReg(expressionReg);
-			freeReg(varReg);
+	private void write(Statement.Simple statement, Variables variables) throws IOException {
+		if (statement instanceof StmtDeclaration declaration) {
+			writeAssignment(declaration.varName(), declaration.expression(), variables);
+		}
+		else if (statement instanceof StmtAssign assign) {
+			writeAssignment(assign.varName(), assign.expression(), variables);
 		}
 		else {
 			throw new UnsupportedOperationException(statement.toString());
 		}
 	}
 
+	private void writeAssignment(String varName, Expression expression, Variables variables) throws IOException {
+		final int expressionReg = write(expression, variables);
+		final int varReg = getFreeReg();
+		final Pair<Type, Integer> typeIndex = variables.get(varName);
+		final int typeSize = getTypeSize(typeIndex.left());
+		final String addrReg = getRegName(varReg);
+		writeComment("assign " + varName);
+		writeIndented("lea " + addrReg + ", [" + getVarName(typeIndex.right()) + "]");
+		writeIndented("mov [" + addrReg + "], " + getRegName(expressionReg, typeSize));
+		freeReg(expressionReg);
+		freeReg(varReg);
+	}
+
 	private int write(Expression node, Variables variables) throws IOException {
-		switch (node.type()) {
-		case IntLit -> {
-			final int value = node.value();
+		switch (node) {
+		case ExprIntLiteral literal -> {
+			final int value = literal.value();
 			writeComment("int lit " + value);
 			final int reg = getFreeReg();
 			writeIndented("mov " + getRegName(reg) + ", " + value);
 			return reg;
 		}
-		case VarRead -> {
-			final String varName = node.text();
+		case ExprVarRead read -> {
 			final int reg = getFreeReg();
-			final int varIndex = variables.indexOf(varName);
-			final String regName = getRegName(reg);
-			writeComment("read var " + varName);
-			writeIndented("lea " + regName + ", [" + getVarName(varIndex) + "]");
-			writeIndented("mov qword " + regName + ", [" + regName + "]");
+			final Pair<Type, Integer> typeIndex = variables.get(read.varName());
+			final int typeSize = getTypeSize(typeIndex.left());
+			final String varName = getVarName(typeIndex.right());
+			final String addrReg = getRegName(reg);
+			final String valueReg = getRegName(reg, typeSize);
+			writeComment("read var " + read.varName());
+			writeIndented("lea " + addrReg + ", [" + varName + "]");
+			writeIndented("mov " + valueReg + ", [" + addrReg + "]");
+			if (typeSize != 8) {
+				writeIndented("movzx " + getRegName(reg) + ", " + valueReg);
+			}
 			return reg;
 		}
+		case ExprBinary binary -> {
+			return writeBinary(binary, variables);
+		}
+		case ExprCast extend -> {
+			final int reg = write(extend.expression(), variables);
+			final int exprSize = getTypeSize(extend.expressionType());
+			final int size = getTypeSize(extend.type());
+			writeIndented("movzx " + getRegName(reg, size) + ", " + getRegName(reg, exprSize));
+			return reg;
+		}
+		default -> throw new UnsupportedOperationException("unsupported expression " + node);
+		}
+	}
+
+	private int writeBinary(ExprBinary node, Variables variables) throws IOException {
+		switch (node.op()) {
 		case Add -> {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
+			final int size = getTypeSize(node.type());
 			writeComment("add");
-			writeIndented("add " + getRegName(leftReg) + ", " + getRegName(rightReg));
+			writeIndented("add " + getRegName(leftReg, size) + ", " + getRegName(rightReg, size));
 			freeReg(rightReg);
 			return leftReg;
 		}
 		case Sub -> {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
+			final int size = getTypeSize(node.type());
 			writeComment("sub");
-			writeIndented("sub " + getRegName(leftReg) + ", " + getRegName(rightReg));
+			writeIndented("sub " + getRegName(leftReg, size) + ", " + getRegName(rightReg, size));
 			freeReg(rightReg);
 			return leftReg;
 		}
@@ -143,18 +177,16 @@ public class X86Win64 {
 			freeReg(rightReg);
 			return leftReg;
 		}
-		case Lt,
-		     LtEq,
-		     Equals,
-		     NotEquals,
-		     GtEq,
-		     Gt -> {
+		case Divide -> {
+			throw new UnsupportedOperationException();
+		}
+		default -> {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
-			writeComment(node.type().toString());
+			writeComment(node.op().toString());
 			final String leftRegName = getRegName(leftReg);
 			writeIndented("cmp " + leftRegName + ", " + getRegName(rightReg));
-			writeIndented(switch (node.type()) {
+			writeIndented(switch (node.op()) {
 				case Lt -> "setl";
 				case LtEq -> "setle";
 				case Equals -> "sete";
@@ -167,11 +199,10 @@ public class X86Win64 {
 			freeReg(rightReg);
 			return leftReg;
 		}
-		default -> throw new UnsupportedOperationException(node.toString());
 		}
 	}
 
-	private void writeIfElse(Statement.If statement, Variables variables) throws IOException {
+	private void writeIfElse(StmtIf statement, Variables variables) throws IOException {
 		final Expression condition = statement.condition();
 		final Statement thenStatement = statement.thenStatement();
 		final Statement elseStatement = statement.elseStatement();
@@ -195,7 +226,7 @@ public class X86Win64 {
 		writeLabel(nextLabel);
 	}
 
-	private void writeWhile(Statement.While statement, Variables variables) throws IOException {
+	private void writeWhile(StmtWhile statement, Variables variables) throws IOException {
 		final int labelIndex = nextLabelIndex();
 		final String whileLabel = "while_" + labelIndex;
 		final String nextLabel = "endwhile_" + labelIndex;
@@ -215,13 +246,13 @@ public class X86Win64 {
 		writeLabel(nextLabel);
 	}
 
-	private void writeFor(Statement.For statement, Variables variables) throws IOException {
+	private void writeFor(StmtFor statement, Variables variables) throws IOException {
 		final int labelIndex = nextLabelIndex();
 		final String forLabel = "for_" + labelIndex;
 		final String nextLabel = "endFor_" + labelIndex;
 
 		writeComment("for");
-		for (SimpleStatement simpleStatement : statement.initialization()) {
+		for (Statement.Simple simpleStatement : statement.initialization()) {
 			write(simpleStatement, variables);
 		}
 
@@ -238,7 +269,7 @@ public class X86Win64 {
 		}
 
 		writeComment("for iteration");
-		for (SimpleStatement simpleStatement : statement.iteration()) {
+		for (Statement.Simple simpleStatement : statement.iteration()) {
 			write(simpleStatement, variables);
 		}
 		writeIndented("jmp " + forLabel);
@@ -297,8 +328,11 @@ public class X86Win64 {
 				              hStdIn  rb 8
 				              hStdOut rb 8
 				              hStdErr rb 8""");
-		for (int i = 0; i < variables.count(); i++) {
-			writeIndented(getVarName(i) + " rb 8");
+		for (String varName : variables.getVarNames()) {
+			final Pair<Type, Integer> pair = variables.get(varName);
+			final int size = getTypeSize(pair.left());
+			final String asmName = getVarName(pair.right());
+			writeIndented(asmName + " rb " + size);
 		}
 		writeNL();
 		write("""
@@ -473,7 +507,7 @@ public class X86Win64 {
 		writeLines(text, null);
 	}
 
-	private void writeLines(String text, String leading) throws IOException {
+	private void writeLines(String text, @Nullable String leading) throws IOException {
 		final String[] lines = text.split("\\r?\\n");
 		for (String line : lines) {
 			if (leading != null && line.length() > 0) {
@@ -506,7 +540,19 @@ public class X86Win64 {
 		};
 		return switch (size) {
 			case 1 -> chr + "l";
+			case 2 -> chr + "x";
+			case 4 -> "e" + chr + "x";
 			default -> "r" + chr + "x";
 		};
+	}
+
+	private static int getTypeSize(Type type) {
+		if (type == Type.U8) {
+			return 1;
+		}
+		if (type == Type.I16) {
+			return 2;
+		}
+		throw new UnsupportedOperationException(String.valueOf(type));
 	}
 }
