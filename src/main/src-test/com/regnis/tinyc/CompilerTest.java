@@ -12,27 +12,27 @@ public class CompilerTest {
 
 	@Test
 	public void testArithmetics() throws IOException, InterruptedException {
-		compileAndRun("arithmetics.input");
+		compileAndRun("00 arithmetics.input");
 	}
 
 	@Test
 	public void testComparison() throws IOException, InterruptedException {
-		compileAndRun("comparison.input");
+		compileAndRun("01 comparison.input");
 	}
 
 	@Test
 	public void testIfElse() throws IOException, InterruptedException {
-		compileAndRun("ifelse.input");
+		compileAndRun("02 ifelse.input");
 	}
 
 	@Test
 	public void testWhile() throws IOException, InterruptedException {
-		compileAndRun("while.input");
+		compileAndRun("03 while.input");
 	}
 
 	@Test
 	public void testTypes() throws IOException, InterruptedException {
-		compileAndRun("types.input");
+		compileAndRun("04 types.input");
 	}
 
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
