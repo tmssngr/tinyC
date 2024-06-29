@@ -1,6 +1,6 @@
 void main() {
-	var a = 1;
-	var b = 2;
+	u8 a = 1;
+	u8 b = 2;
 	if (a > b) {
 		print a;
 	}

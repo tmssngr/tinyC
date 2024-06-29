@@ -14,9 +14,9 @@ public class ParserTest {
 
 	@Test
 	public void testAssignment() {
-		assertEquals(new StmtDeclaration("", "foo", intLit(1, loc(0, 10)),
+		assertEquals(new StmtDeclaration("u8", "foo", intLit(1, loc(0, 9)),
 		                                 loc(0, 0)),
-		             new Parser(new Lexer("var foo = 1;")).getStatementNotNull());
+		             new Parser(new Lexer("u8 foo = 1;")).getStatementNotNull());
 
 		assertEquals(new StmtDeclaration("i16", "foo", new ExprBinary(ExprBinary.Op.Add,
 		                                                              intLit(1, loc(1, 12)),
@@ -25,7 +25,7 @@ public class ParserTest {
 		                                 loc(1, 2)),
 		             new Parser(new Lexer("\n  i16 foo = 1 + 2;")).getStatementNotNull());
 
-		assertEquals(new StmtDeclaration("", "foo", new ExprBinary(ExprBinary.Op.Add,
+		assertEquals(new StmtDeclaration("u16", "foo", new ExprBinary(ExprBinary.Op.Add,
 		                                                           new ExprBinary(ExprBinary.Op.Add,
 		                                                                          intLit(1, loc(0, 10)),
 		                                                                          intLit(2, loc(0, 14)),
@@ -33,9 +33,9 @@ public class ParserTest {
 		                                                           intLit(3, loc(0, 18)),
 		                                                           loc(0, 16)),
 		                                 loc(0, 0)),
-		             new Parser(new Lexer("var foo = 1 + 2 + 3;")).getStatementNotNull());
+		             new Parser(new Lexer("u16 foo = 1 + 2 + 3;")).getStatementNotNull());
 
-		assertEquals(new StmtDeclaration("", "foo", new ExprBinary(ExprBinary.Op.Add,
+		assertEquals(new StmtDeclaration("i16", "foo", new ExprBinary(ExprBinary.Op.Add,
 		                                                           new ExprBinary(ExprBinary.Op.Sub,
 		                                                                          intLit(1, loc(0, 10)),
 		                                                                          intLit(2, loc(0, 14)),
@@ -43,7 +43,7 @@ public class ParserTest {
 		                                                           intLit(3, loc(0, 18)),
 		                                                           loc(0, 16)),
 		                                 loc(0, 0)),
-		             new Parser(new Lexer("var foo = 1 - 2 + 3;")).getStatementNotNull());
+		             new Parser(new Lexer("i16 foo = 1 - 2 + 3;")).getStatementNotNull());
 
 		assertEquals(new StmtAssign("foo", new ExprBinary(ExprBinary.Op.Sub,
 		                                                  new ExprBinary(ExprBinary.Op.Add,
@@ -69,16 +69,16 @@ public class ParserTest {
 				               loc(0, 0)),
 				new Parser(new Lexer("foo = 1 * 3 + 2 * 4;")).getStatementNotNull());
 
-		Expression left = new ExprBinary(ExprBinary.Op.Add,
-		                                 intLit(1, loc(0, 6)),
-		                                 intLit(3, loc(0, 10)),
-		                                 loc(0, 8));
-		Expression right = new ExprBinary(ExprBinary.Op.Multiply,
-		                                  intLit(2, loc(0, 14)),
-		                                  intLit(4, loc(0, 18)),
-		                                  loc(0, 16));
-		Location location = loc(0, 12);
-		assertEquals(new StmtAssign("foo", new ExprBinary(ExprBinary.Op.Gt, left, right, location),
+		assertEquals(new StmtAssign("foo", new ExprBinary(ExprBinary.Op.Gt,
+		                                                  new ExprBinary(ExprBinary.Op.Add,
+		                                                                 intLit(1, loc(0, 6)),
+		                                                                 intLit(3, loc(0, 10)),
+		                                                                 loc(0, 8)),
+		                                                  new ExprBinary(ExprBinary.Op.Multiply,
+		                                                                 intLit(2, loc(0, 14)),
+		                                                                 intLit(4, loc(0, 18)),
+		                                                                 loc(0, 16)),
+		                                                  loc(0, 12)),
 		                            loc(0, 0)),
 		             new Parser(new Lexer("foo = 1 + 3 > 2 * 4;")).getStatementNotNull());
 	}
@@ -86,24 +86,24 @@ public class ParserTest {
 	@Test
 	public void testCompound() {
 		assertEquals(new StmtCompound(List.of(
-				             new StmtDeclaration("", "foo", intLit(10, loc(1, 10)),
+				             new StmtDeclaration("u16", "foo", intLit(10, loc(1, 10)),
 				                                 loc(1, 0)),
-				             new StmtDeclaration("", "bar", intLit(20, loc(2, 10)),
+				             new StmtDeclaration("u8", "bar", intLit(20, loc(2, 9)),
 				                                 loc(2, 0))
 		             )),
 		             new Parser(new Lexer("""
 				                                  {
-				                                  var foo = 10;
-				                                  var bar = 20;
+				                                  u16 foo = 10;
+				                                  u8 bar = 20;
 				                                  }""")).getStatementNotNull());
 	}
 
 	@Test
 	public void testIf() {
-		Expression left = intLit(1, loc(0, 4));
-		Expression right = intLit(2, loc(0, 8));
-		Location location = loc(0, 6);
-		assertEquals(new StmtIf(new ExprBinary(ExprBinary.Op.Lt, left, right, location),
+		assertEquals(new StmtIf(new ExprBinary(ExprBinary.Op.Lt,
+		                                       intLit(1, loc(0, 4)),
+		                                       intLit(2, loc(0, 8)),
+		                                       loc(0, 6)),
 		                        new StmtCompound(List.of(new StmtPrint(intLit(1, loc(1, 8)),
 		                                                               loc(1, 2)))),
 		                        new StmtCompound(List.of(new StmtPrint(intLit(2, loc(4, 8)),
@@ -121,13 +121,13 @@ public class ParserTest {
 
 	@Test
 	public void testWhile() {
-		Expression left = new ExprVarRead("i", loc(2, 7));
-		Expression right = intLit(0, loc(2, 11));
-		Location location = loc(2, 9);
 		assertEquals(new StmtCompound(List.of(
-				new StmtDeclaration("", "i", intLit(5, loc(1, 8)),
+				new StmtDeclaration("u16", "i", intLit(5, loc(1, 8)),
 				                    loc(1, 0)),
-				new StmtWhile(new ExprBinary(ExprBinary.Op.Gt, left, right, location),
+				new StmtWhile(new ExprBinary(ExprBinary.Op.Gt,
+				                             new ExprVarRead("i", loc(2, 7)),
+				                             intLit(0, loc(2, 11)),
+				                             loc(2, 9)),
 				              new StmtCompound(List.of(
 						              new StmtPrint(new ExprVarRead("i", loc(3, 8)),
 						                            loc(3, 2)),
@@ -141,7 +141,7 @@ public class ParserTest {
 				)
 		)), new Parser(new Lexer("""
 				                         {
-				                         var i = 5;
+				                         u16 i = 5;
 				                         while (i > 0) {
 				                           print i;
 				                           i = i - 1;
@@ -151,14 +151,14 @@ public class ParserTest {
 
 	@Test
 	public void testFor() {
-		Expression left2 = new ExprVarRead("i", loc(0, 16));
-		Expression right2 = intLit(10, loc(0, 20));
-		Location location2 = loc(0, 18);
 		assertEquals(new StmtFor(List.of(
-				             new StmtDeclaration("", "i", intLit(0, loc(0, 13)),
+				             new StmtDeclaration("i16", "i", intLit(0, loc(0, 13)),
 				                                 loc(0, 5))
 		             ),
-		                         new ExprBinary(ExprBinary.Op.Lt, left2, right2, location2),
+		                         new ExprBinary(ExprBinary.Op.Lt,
+		                                        new ExprVarRead("i", loc(0, 16)),
+		                                        intLit(10, loc(0, 20)),
+		                                        loc(0, 18)),
 		                         new StmtCompound(List.of(
 				                         new StmtPrint(new ExprVarRead("i", loc(1, 8)),
 				                                       loc(1, 2))
@@ -172,18 +172,15 @@ public class ParserTest {
 		                         ),
 		                         loc(0, 0)),
 		             new Parser(new Lexer("""
-				                                  for (var i = 0; i < 10; i = i + 1) {
+				                                  for (i16 i = 0; i < 10; i = i + 1) {
 				                                    print i;
 				                                  }""")).getStatementNotNull());
 
-		Expression left1 = new ExprVarRead("i", loc(2, 7));
-		Expression right1 = intLit(10, loc(2, 11));
-		Location location1 = loc(2, 9);
 		assertEquals(new StmtCompound(List.of(
-				             new StmtDeclaration("", "i", intLit(1, loc(1, 8)),
+				             new StmtDeclaration("u8", "i", intLit(1, loc(1, 7)),
 				                                 loc(1, 0)),
 				             new StmtFor(List.of(),
-				                         new ExprBinary(ExprBinary.Op.Lt, left1, right1, location1),
+				                         new ExprBinary(ExprBinary.Op.Lt, new ExprVarRead("i", loc(2, 7)), intLit(10, loc(2, 11)), loc(2, 9)),
 				                         new StmtCompound(List.of(
 						                         new StmtPrint(new ExprVarRead("i", loc(3, 8)),
 						                                       loc(3, 2))
@@ -200,20 +197,20 @@ public class ParserTest {
 		             )),
 		             new Parser(new Lexer("""
 				                                  {
-				                                  var i = 1;
+				                                  u8 i = 1;
 				                                  for (; i < 10; i = i + 1) {
 				                                    print i;
 				                                  }
 				                                  }""")).getStatementNotNull());
 
-		Expression left = new ExprVarRead("i", loc(2, 6));
-		Expression right = intLit(0, loc(2, 10));
-		Location location = loc(2, 8);
 		assertEquals(new StmtCompound(List.of(
-				             new StmtDeclaration("", "i", intLit(5, loc(1, 8)),
+				             new StmtDeclaration("u8", "i", intLit(5, loc(1, 7)),
 				                                 loc(1, 0)),
 				             new StmtFor(List.of(),
-				                         new ExprBinary(ExprBinary.Op.Gt, left, right, location),
+				                         new ExprBinary(ExprBinary.Op.Gt,
+				                                        new ExprVarRead("i", loc(2, 6)),
+				                                        intLit(0, loc(2, 10)),
+				                                        loc(2, 8)),
 				                         new StmtCompound(List.of(
 						                         new StmtPrint(new ExprVarRead("i", loc(3, 8)),
 						                                       loc(3, 2)),
@@ -228,7 +225,7 @@ public class ParserTest {
 		             )),
 		             new Parser(new Lexer("""
 				                                  {
-				                                  var i = 5;
+				                                  u8 i = 5;
 				                                  for (;i > 0;) {
 				                                    print i;
 				                                    i = i - 1;
@@ -241,7 +238,7 @@ public class ParserTest {
 		Assert.assertEquals(new Program(List.of(
 				new Function("main", "void",
 				             new StmtCompound(List.of(
-						             new StmtDeclaration("", "i", intLit(10, loc(1, 12)),
+						             new StmtDeclaration("u8", "i", intLit(10, loc(1, 11)),
 						                                 loc(1, 4)),
 						             new StmtPrint(new ExprVarRead("i", loc(2, 10)),
 						                           loc(2, 4))
@@ -252,7 +249,7 @@ public class ParserTest {
 				             loc(4, 0))
 		)), new Parser(new Lexer("""
 				                         void main() {
-				                             var i = 10;
+				                             u8 i = 10;
 				                             print i;
 				                         }
 				                         void fooBar() {

@@ -25,16 +25,14 @@ public record StmtDeclaration(@NotNull String typeString, @Nullable Type type, @
 	@Override
 	public Simple determineTypes(VariableTypes types) {
 		Expression expression = this.expression.determineType(types);
-		Type type = expression.typeNotNull();
-		if (typeString.length() > 0) {
-			type = types.getType(typeString, location);
-			if (!type.equals(expression.typeNotNull())) {
-				if (type == Type.U8) {
-					throw new SyntaxException("Expected type " + type + " but got " + expression.typeNotNull(), location);
-				}
-
-				expression = new ExprCast(expression, expression.typeNotNull(), type, expression.location());
+		expression.typeNotNull();
+		final Type type = types.getType(typeString, location);
+		if (!type.equals(expression.typeNotNull())) {
+			if (type == Type.U8) {
+				throw new SyntaxException("Expected type " + type + " but got " + expression.typeNotNull(), location);
 			}
+
+			expression = new ExprCast(expression, expression.typeNotNull(), type, expression.location());
 		}
 		final Location prevDeclaration = types.addVariable(varName, type, location);
 		if (prevDeclaration != null) {

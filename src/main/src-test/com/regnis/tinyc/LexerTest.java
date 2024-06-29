@@ -57,17 +57,17 @@ public class LexerTest {
 		}.test();
 
 		//               012345678901
-		new LexerTester("var one = 1;") {
+		new LexerTester("u8 one = 1;") {
 			@Override
 			protected void test() {
-				assertType(TokenType.VAR);
+				assertIdentifier("u8");
 				assertLocation(0, 0);
 				assertIdentifier("one");
-				assertLocation(0, 4);
+				assertLocation(0, 3);
 				assertType(TokenType.EQUAL);
-				assertLocation(0, 8);
+				assertLocation(0, 7);
 				assertIntLiteral(1);
-				assertLocation(0, 10);
+				assertLocation(0, 9);
 			}
 		}.test();
 	}

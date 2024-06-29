@@ -171,13 +171,6 @@ public class Parser {
 			return new StmtDeclaration(identifier1, identifier2, expression, location);
 		}
 
-		if (isConsume(TokenType.VAR)) {
-			final String identifier = consumeIdentifier();
-			consume(TokenType.EQUAL);
-			final Expression expression = getExpression();
-			return new StmtDeclaration("", identifier, expression, location);
-		}
-
 		return null;
 	}
 
@@ -194,7 +187,7 @@ public class Parser {
 			left = new ExprIntLiteral(consumeIntValue(), location);
 		}
 		else if (token == TokenType.IDENTIFIER) {
-			String text = consumeText();
+			final String text = consumeText();
 			left = new ExprVarRead(text, location);
 		}
 		else {
