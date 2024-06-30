@@ -237,7 +237,7 @@ public class ParserTest {
 
 	@Test
 	public void testFunctions() {
-		Assert.assertEquals(new Program(List.of(
+		Assert.assertEquals(new Program(List.of(), List.of(
 				new Function("void", "main", List.of(),
 				             new StmtCompound(List.of(
 						             new StmtDeclaration("u8", "i", intLit(10, loc(1, 11)),
@@ -257,7 +257,7 @@ public class ParserTest {
 				                         void fooBar(u8 a) {
 				                         }""")).parse());
 
-		assertEquals(new Program(List.of(
+		assertEquals(new Program(List.of(), List.of(
 				new Function("void", "main", List.of(),
 				             new StmtCompound(List.of(
 						             new StmtDeclaration("u8", "i",

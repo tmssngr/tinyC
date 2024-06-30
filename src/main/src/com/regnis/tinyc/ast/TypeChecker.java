@@ -22,9 +22,20 @@ public final class TypeChecker {
 
 	@NotNull
 	public Program check(@NotNull Program program) {
+		final List<StmtDeclaration> globalVars = processGlobalVars(program.globalVars());
 		final List<Function> typedFunctions = determineFunctionDeclarationTypes(program.functions());
 		final List<Function> functions = determineStatementTypes(typedFunctions);
-		return new Program(functions);
+		return new Program(globalVars, functions);
+	}
+
+	@NotNull
+	private List<StmtDeclaration> processGlobalVars(List<StmtDeclaration> globalVars) {
+		final List<StmtDeclaration> declarations = new ArrayList<>();
+		for (StmtDeclaration globalVar : globalVars) {
+			final StmtDeclaration declaration = processDeclaration(globalVar);
+			declarations.add(declaration);
+		}
+		return declarations;
 	}
 
 	@NotNull
@@ -129,12 +140,7 @@ public final class TypeChecker {
 		final Type type = getType(declaration.typeString(), location);
 		expression = autoCastTo(type, expression, location);
 
-		final Pair<Type, Location> pair = variables.get(varName);
-		if (pair != null) {
-			throw new SyntaxException("Variable '" + varName + "' has already been declared at " + pair.right(), location);
-		}
-
-		variables.put(varName, new Pair<>(type, location));
+		addVariable(varName, type, location);
 		return new StmtDeclaration(declaration.typeString(), type, varName, expression, location);
 	}
 
@@ -341,6 +347,15 @@ public final class TypeChecker {
 			}
 		}
 		return new ExprBinary(op, type, left, right, location);
+	}
+
+	private void addVariable(String varName, Type type, Location location) {
+		final Pair<Type, Location> pair = variables.get(varName);
+		if (pair != null) {
+			throw new SyntaxException("Variable '" + varName + "' has already been declared at " + pair.right(), location);
+		}
+
+		variables.put(varName, new Pair<>(type, location));
 	}
 
 	@Nullable

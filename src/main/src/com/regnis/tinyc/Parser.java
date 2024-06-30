@@ -33,32 +33,39 @@ public class Parser {
 	@NotNull
 	public Program parse() {
 		final List<Function> functions = new ArrayList<>();
+		final List<StmtDeclaration> globalVars = new ArrayList<>();
 		while (token != TokenType.EOF) {
-			functions.add(getFunction());
-		}
-		return new Program(functions);
-	}
-
-	@NotNull
-	private Function getFunction() {
-		final Location location = getLocation();
-		final String type = consumeIdentifier();
-		final String typeString = getTypeString(type);
-		final String name = consumeIdentifier();
-		consume(TokenType.L_PAREN);
-		final List<Function.Arg> args = new ArrayList<>();
-		while (!isConsume(TokenType.R_PAREN)) {
-			final Location argLocation = getLocation();
-			final String identifier = consumeIdentifier();
-			final String argType = getTypeString(identifier);
-			final String argName = consumeIdentifier();
-			args.add(new Function.Arg(argType, argName, argLocation));
-			if (token != TokenType.R_PAREN) {
-				consume(TokenType.COMMA);
+			final Location location = getLocation();
+			final String type = consumeIdentifier();
+			final String typeString = getTypeString(type);
+			final String name = consumeIdentifier();
+			if (isConsume(TokenType.L_PAREN)) {
+				final List<Function.Arg> args = new ArrayList<>();
+				while (!isConsume(TokenType.R_PAREN)) {
+					final Location argLocation = getLocation();
+					final String identifier = consumeIdentifier();
+					final String argType = getTypeString(identifier);
+					final String argName = consumeIdentifier();
+					args.add(new Function.Arg(argType, argName, argLocation));
+					if (token != TokenType.R_PAREN) {
+						consume(TokenType.COMMA);
+					}
+				}
+				final Statement statement = getStatementNotNull();
+				functions.add(new Function(typeString, name, args, statement, location));
+				continue;
 			}
+
+			if (isConsume(TokenType.EQUAL)) {
+				final Expression expression = getExpression();
+				consume(TokenType.SEMI);
+				globalVars.add(new StmtDeclaration(typeString, name, expression, location));
+				continue;
+			}
+
+			throw new SyntaxException("Expected method or global variable declaration", location);
 		}
-		final Statement statement = getStatementNotNull();
-		return new Function(typeString, name, args, statement, location);
+		return new Program(globalVars, functions);
 	}
 
 	@Nullable

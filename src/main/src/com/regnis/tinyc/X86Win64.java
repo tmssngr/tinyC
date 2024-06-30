@@ -27,9 +27,9 @@ public class X86Win64 {
 	}
 
 	public void write(Program program) throws IOException {
-		writePreample();
-
 		final Variables variables = Variables.detectFrom(program);
+
+		writePreample(program.globalVars(), variables);
 
 		for (Function function : program.functions()) {
 			write(function, variables);
@@ -38,11 +38,76 @@ public class X86Win64 {
 		writePostample(variables);
 	}
 
+	private void writePreample(List<StmtDeclaration> declarations, Variables variables) throws IOException {
+		write("""
+				      format pe64 console
+				      include 'win64ax.inc'
+
+				      STD_IN_HANDLE = -10
+				      STD_OUT_HANDLE = -11
+				      STD_ERR_HANDLE = -12
+
+				      entry start
+
+				      section '.text' code readable executable
+
+				      start:""");
+		writeIndented("sub rsp, 8");
+		writeIndented("  call init");
+
+		for (StmtDeclaration declaration : declarations) {
+			writeAssignment(declaration.varName(), declaration.expression(), variables);
+		}
+
+		writeIndented("add rsp, 8");
+		writeIndented("  call main");
+		writeIndented("mov rcx, 0");
+		writeIndented("sub rsp, 0x20");
+		writeIndented("  call [ExitProcess]");
+		writeNL();
+	}
+
 	private void write(Function function, Variables variables) throws IOException {
 		writeComment(function.toString());
 		writeLabel(function.name());
 		write(function.statement(), variables);
 		writeIndented("ret");
+	}
+
+	private void writePostample(Variables variables) throws IOException {
+		writeInit();
+		writeEmit();
+		writeStringPrint();
+		writeUintPrint();
+		writeNL();
+
+		write("section '.data' data readable writeable");
+		writeIndented("""
+				              hStdIn  rb 8
+				              hStdOut rb 8
+				              hStdErr rb 8""");
+		for (String varName : variables.getVarNames()) {
+			final Pair<Type, Integer> pair = variables.get(varName);
+			final int size = getTypeSize(pair.left());
+			final String asmName = getVarName(pair.right());
+			writeIndented(asmName + " rb " + size);
+		}
+		writeNL();
+		write("""
+				      section '.idata' import data readable writeable
+
+				      library kernel32,'KERNEL32.DLL',\\
+				              msvcrt,'MSVCRT.DLL'
+
+				      import kernel32,\\
+				             ExitProcess,'ExitProcess',\\
+				             GetStdHandle,'GetStdHandle',\\
+				             SetConsoleCursorPosition,'SetConsoleCursorPosition',\\
+				             WriteFile,'WriteFile'
+
+				      import msvcrt,\\
+				             _getch,'_getch'
+				      """);
 	}
 
 	private void write(Statement statement, Variables variables) throws IOException {
@@ -80,7 +145,7 @@ public class X86Win64 {
 			throw new IllegalStateException("Unsupported arguments " + expressions);
 		}
 		if (expressions.size() == 1) {
-			final int reg = write(expressions.get(0), variables);
+			final int reg = write(expressions.getFirst(), variables);
 			final String regName = getRegName(reg);
 			freeReg(reg);
 			if (!regName.equals("rcx")) {
@@ -203,7 +268,7 @@ public class X86Win64 {
 		case Add -> {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
-			final int size = getTypeSize(node.type());
+			final int size = getTypeSize(node.typeNotNull());
 			writeComment("add");
 			writeIndented("add " + getRegName(leftReg, size) + ", " + getRegName(rightReg, size));
 			freeReg(rightReg);
@@ -212,7 +277,7 @@ public class X86Win64 {
 		case Sub -> {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
-			final int size = getTypeSize(node.type());
+			final int size = getTypeSize(node.typeNotNull());
 			writeComment("sub");
 			writeIndented("sub " + getRegName(leftReg, size) + ", " + getRegName(rightReg, size));
 			freeReg(rightReg);
@@ -288,10 +353,8 @@ public class X86Win64 {
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
 		writeIndented("jz " + nextLabel);
 		final Statement body = statement.bodyStatement();
-		if (body != null) {
-			write(body, variables);
-			writeIndented("jmp " + whileLabel);
-		}
+		write(body, variables);
+		writeIndented("jmp " + whileLabel);
 		writeLabel(nextLabel);
 	}
 
@@ -313,9 +376,7 @@ public class X86Win64 {
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
 		writeIndented("jz " + nextLabel);
 		final Statement body = statement.bodyStatement();
-		if (body != null) {
-			write(body, variables);
-		}
+		write(body, variables);
 
 		writeComment("for iteration");
 		for (Statement.Simple simpleStatement : statement.iteration()) {
@@ -339,66 +400,6 @@ public class X86Win64 {
 
 	private void freeReg(int reg) {
 		freeRegs &= ~(1 << reg);
-	}
-
-	private void writePreample() throws IOException {
-		write("""
-				      format pe64 console
-				      include 'win64ax.inc'
-
-				      STD_IN_HANDLE = -10
-				      STD_OUT_HANDLE = -11
-				      STD_ERR_HANDLE = -12
-
-				      entry start
-
-				      section '.text' code readable executable
-
-				      start:""");
-		writeIndented("sub rsp, 8");
-		writeIndented("  call init");
-		writeIndented("add rsp, 8");
-		writeIndented("  call main");
-		writeIndented("mov rcx, 0");
-		writeIndented("sub rsp, 0x20");
-		writeIndented("  call [ExitProcess]");
-		writeNL();
-	}
-
-	private void writePostample(Variables variables) throws IOException {
-		writeInit();
-		writeEmit();
-		writeStringPrint();
-		writeUintPrint();
-		writeNL();
-
-		write("section '.data' data readable writeable");
-		writeIndented("""
-				              hStdIn  rb 8
-				              hStdOut rb 8
-				              hStdErr rb 8""");
-		for (String varName : variables.getVarNames()) {
-			final Pair<Type, Integer> pair = variables.get(varName);
-			final int size = getTypeSize(pair.left());
-			final String asmName = getVarName(pair.right());
-			writeIndented(asmName + " rb " + size);
-		}
-		writeNL();
-		write("""
-				      section '.idata' import data readable writeable
-
-				      library kernel32,'KERNEL32.DLL',\\
-				              msvcrt,'MSVCRT.DLL'
-
-				      import kernel32,\\
-				             ExitProcess,'ExitProcess',\\
-				             GetStdHandle,'GetStdHandle',\\
-				             SetConsoleCursorPosition,'SetConsoleCursorPosition',\\
-				             WriteFile,'WriteFile'
-
-				      import msvcrt,\\
-				             _getch,'_getch'
-				      """);
 	}
 
 	private String getVarName(int i) {

@@ -45,6 +45,11 @@ public class CompilerTest {
 		compileAndRun("06 pointers.input");
 	}
 
+	@Test
+	public void testGlobalVars() throws IOException, InterruptedException {
+		compileAndRun("07 global vars.input");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}

@@ -13,6 +13,9 @@ public class Variables {
 
 	public static Variables detectFrom(Program program) {
 		final Variables variables = new Variables();
+		for (StmtDeclaration globalVar : program.globalVars()) {
+			variables.processDeclaration(globalVar);
+		}
 		for (Function function : program.functions()) {
 			variables.processNode(function.statement());
 		}
@@ -72,7 +75,11 @@ public class Variables {
 
 	private void detectFrom(Statement.Simple statement) {
 		if (statement instanceof StmtDeclaration declaration) {
-			names.put(declaration.varName(), new Pair<>(declaration.type(), names.size()));
+			processDeclaration(declaration);
 		}
+	}
+
+	private void processDeclaration(StmtDeclaration declaration) {
+		names.put(declaration.varName(), new Pair<>(declaration.type(), names.size()));
 	}
 }
