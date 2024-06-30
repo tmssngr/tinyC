@@ -21,14 +21,6 @@ public class Parser {
 		consume();
 	}
 
-	public Program parse() {
-		final List<Function> functions = new ArrayList<>();
-		while (token != TokenType.EOF) {
-			functions.add(getFunction());
-		}
-		return new Program(functions);
-	}
-
 	@NotNull
 	public Statement getStatementNotNull() {
 		final Statement statement = getStatement();
@@ -38,15 +30,27 @@ public class Parser {
 		return statement;
 	}
 
+	@NotNull
+	public Program parse() {
+		final List<Function> functions = new ArrayList<>();
+		while (token != TokenType.EOF) {
+			functions.add(getFunction());
+		}
+		return new Program(functions);
+	}
+
+	@NotNull
 	private Function getFunction() {
 		final Location location = getLocation();
 		final String type = consumeIdentifier();
+		final String typeString = getTypeString(type);
 		final String name = consumeIdentifier();
 		consume(TokenType.L_PAREN);
 		final List<Function.Arg> args = new ArrayList<>();
 		while (!isConsume(TokenType.R_PAREN)) {
 			final Location argLocation = getLocation();
-			final String argType = consumeIdentifier();
+			final String identifier = consumeIdentifier();
+			final String argType = getTypeString(identifier);
 			final String argName = consumeIdentifier();
 			args.add(new Function.Arg(argType, argName, argLocation));
 			if (token != TokenType.R_PAREN) {
@@ -54,7 +58,7 @@ public class Parser {
 			}
 		}
 		final Statement statement = getStatementNotNull();
-		return new Function(type, name, args, statement, location);
+		return new Function(typeString, name, args, statement, location);
 	}
 
 	@Nullable
@@ -115,14 +119,20 @@ public class Parser {
 			return new StmtAssign(identifier1, expression, location);
 		}
 
-		final StringBuilder typeBuilder = new StringBuilder(identifier1);
-		while (isConsume(TokenType.STAR)) {
-			typeBuilder.append("*");
-		}
+		final String typeString = getTypeString(identifier1);
 		final String identifier2 = consumeIdentifier();
 		consume(TokenType.EQUAL);
 		final Expression expression = getExpression();
-		return new StmtDeclaration(typeBuilder.toString(), identifier2, expression, location);
+		return new StmtDeclaration(typeString, identifier2, expression, location);
+	}
+
+	@NotNull
+	private String getTypeString(String identifier) {
+		final StringBuilder typeBuilder = new StringBuilder(identifier);
+		while (isConsume(TokenType.STAR)) {
+			typeBuilder.append("*");
+		}
+		return typeBuilder.toString();
 	}
 
 	private Statement handleCompound() {
