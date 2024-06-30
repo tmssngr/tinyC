@@ -26,10 +26,4 @@ public record ExprIntLiteral(int value, @Nullable Type type, @NotNull Location l
 	public Type typeNotNull() {
 		return Objects.requireNonNull(type);
 	}
-
-	@NotNull
-	@Override
-	public Expression determineType(@NotNull VariableTypes types) {
-		return this;
-	}
 }

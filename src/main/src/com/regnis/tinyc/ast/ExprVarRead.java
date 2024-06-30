@@ -25,14 +25,4 @@ public record ExprVarRead(@NotNull String varName, @Nullable Type type, @NotNull
 	public Type typeNotNull() {
 		return Objects.requireNonNull(type);
 	}
-
-	@NotNull
-	@Override
-	public Expression determineType(@NotNull VariableTypes types) {
-		final Type type = types.getVariableType(varName);
-		if (type == null) {
-			throw new SyntaxException("Unknown variable '" + varName + "'", location);
-		}
-		return new ExprVarRead(varName, type, location);
-	}
 }

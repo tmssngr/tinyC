@@ -19,10 +19,4 @@ public record ExprCast(@NotNull Expression expression, @NotNull Type expressionT
 	public Type typeNotNull() {
 		return type;
 	}
-
-	@NotNull
-	@Override
-	public Expression determineType(@NotNull VariableTypes types) {
-		return this;
-	}
 }

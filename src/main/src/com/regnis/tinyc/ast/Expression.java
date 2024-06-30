@@ -8,8 +8,6 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public interface Expression {
-	@NotNull
-	Expression determineType(@NotNull VariableTypes types);
 
 	@NotNull
 	Type typeNotNull();

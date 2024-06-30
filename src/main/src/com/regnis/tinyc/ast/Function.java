@@ -17,11 +17,4 @@ public record Function(String name, String typeString, @Nullable Type type, Stat
 	public String toString() {
 		return typeString + " " + name;
 	}
-
-	@NotNull
-	public Function determineTypes(@NotNull VariableTypes types) {
-		final Type type = types.getType(typeString, location);
-		final Statement newStatement = statement.determineTypes(types);
-		return new Function(name, typeString, type, newStatement, location);
-	}
 }
