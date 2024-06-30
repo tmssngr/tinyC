@@ -1,7 +1,5 @@
 package com.regnis.tinyc.ast;
 
-import com.regnis.tinyc.types.*;
-
 import org.jetbrains.annotations.*;
 
 /**

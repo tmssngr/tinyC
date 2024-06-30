@@ -1,7 +1,6 @@
 package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
-import com.regnis.tinyc.types.*;
 
 import java.util.*;
 

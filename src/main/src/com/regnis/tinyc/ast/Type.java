@@ -1,4 +1,4 @@
-package com.regnis.tinyc.types;
+package com.regnis.tinyc.ast;
 
 /**
  * @author Thomas Singer

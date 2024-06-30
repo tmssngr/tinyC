@@ -1,4 +1,4 @@
-package com.regnis.tinyc.types;
+package com.regnis.tinyc.ast;
 
 import com.regnis.tinyc.*;
 
