@@ -17,6 +17,7 @@ public final class TypeChecker {
 	@Nullable private Type expectedReturnType;
 
 	public TypeChecker() {
+		functions.put("print", new Func(Type.VOID, List.of(Type.I16), new Location(-1, -1)));
 	}
 
 	@NotNull
@@ -95,7 +96,6 @@ public final class TypeChecker {
 			case StmtIf ifStatement -> processIf(ifStatement);
 			case StmtWhile whileStatement -> processWhile(whileStatement);
 			case StmtFor forStatement -> processFor(forStatement);
-			case StmtPrint print -> processPrint(print.expression(), print.location());
 			case StmtReturn stmt -> processReturn(stmt.expression(), stmt.location());
 			case StmtCall stmt -> processCall(stmt);
 			default -> throw new IllegalStateException("Unexpected value: " + statement);
@@ -197,12 +197,6 @@ public final class TypeChecker {
 			newInit.add(newStatement);
 		}
 		return newInit;
-	}
-
-	@NotNull
-	private StmtPrint processPrint(Expression expression, Location location) {
-		expression = processExpression(expression);
-		return new StmtPrint(expression, location);
 	}
 
 	@NotNull

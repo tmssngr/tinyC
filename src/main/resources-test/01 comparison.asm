@@ -28,7 +28,8 @@ main:
         cmp rcx, rax
         setl cl
         and rcx, 0xFF
-        ; print
+        movzx cx, cl
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
@@ -42,7 +43,8 @@ main:
         cmp rcx, rax
         setl cl
         and rcx, 0xFF
-        ; print
+        movzx cx, cl
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
@@ -56,7 +58,8 @@ main:
         cmp rcx, rax
         setle cl
         and rcx, 0xFF
-        ; print
+        movzx cx, cl
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
@@ -70,7 +73,8 @@ main:
         cmp rcx, rax
         setle cl
         and rcx, 0xFF
-        ; print
+        movzx cx, cl
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
@@ -84,7 +88,8 @@ main:
         cmp rcx, rax
         sete cl
         and rcx, 0xFF
-        ; print
+        movzx cx, cl
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
@@ -98,7 +103,8 @@ main:
         cmp rcx, rax
         setne cl
         and rcx, 0xFF
-        ; print
+        movzx cx, cl
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
@@ -112,7 +118,8 @@ main:
         cmp rcx, rax
         setge cl
         and rcx, 0xFF
-        ; print
+        movzx cx, cl
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
@@ -126,7 +133,8 @@ main:
         cmp rcx, rax
         setge cl
         and rcx, 0xFF
-        ; print
+        movzx cx, cl
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
@@ -140,7 +148,8 @@ main:
         cmp rcx, rax
         setg cl
         and rcx, 0xFF
-        ; print
+        movzx cx, cl
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
@@ -154,7 +163,8 @@ main:
         cmp rcx, rax
         setg cl
         and rcx, 0xFF
-        ; print
+        movzx cx, cl
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a

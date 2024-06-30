@@ -101,10 +101,10 @@ public class LexerTest {
 	public void testIfElse() {
 		new LexerTester("""
 				                if (1 < 2) {
-				                  print 1;
+				                  print(1);
 				                }
 				                else {
-				                  print 2;
+				                  print(2);
 				                }""") {
 			@Override
 			protected void test() {
@@ -123,12 +123,16 @@ public class LexerTest {
 				assertType(TokenType.L_BRACE);
 				assertLocation(0, 11);
 
-				assertType(TokenType.PRINT);
+				assertIdentifier("print");
 				assertLocation(1, 2);
+				assertType(TokenType.L_PAREN);
+				assertLocation(1, 7);
 				assertIntLiteral(1);
 				assertLocation(1, 8);
-				assertType(TokenType.SEMI);
+				assertType(TokenType.R_PAREN);
 				assertLocation(1, 9);
+				assertType(TokenType.SEMI);
+				assertLocation(1, 10);
 
 				assertType(TokenType.R_BRACE);
 				assertLocation(2, 0);
@@ -138,12 +142,16 @@ public class LexerTest {
 				assertType(TokenType.L_BRACE);
 				assertLocation(3, 5);
 
-				assertType(TokenType.PRINT);
+				assertIdentifier("print");
 				assertLocation(4, 2);
+				assertType(TokenType.L_PAREN);
+				assertLocation(4, 7);
 				assertIntLiteral(2);
 				assertLocation(4, 8);
-				assertType(TokenType.SEMI);
+				assertType(TokenType.R_PAREN);
 				assertLocation(4, 9);
+				assertType(TokenType.SEMI);
+				assertLocation(4, 10);
 
 				assertType(TokenType.R_BRACE);
 				assertLocation(5, 0);
@@ -157,7 +165,7 @@ public class LexerTest {
 	public void testWhile() {
 		new LexerTester("""
 				                while (i > 0) {
-				                  print i;
+				                  print(i);
 				                  i = i - 1;
 				                }""") {
 			@Override
@@ -177,12 +185,16 @@ public class LexerTest {
 				assertType(TokenType.L_BRACE);
 				assertLocation(0, 14);
 
-				assertType(TokenType.PRINT);
+				assertIdentifier("print");
 				assertLocation(1, 2);
+				assertType(TokenType.L_PAREN);
+				assertLocation(1, 7);
 				assertIdentifier("i");
 				assertLocation(1, 8);
-				assertType(TokenType.SEMI);
+				assertType(TokenType.R_PAREN);
 				assertLocation(1, 9);
+				assertType(TokenType.SEMI);
+				assertLocation(1, 10);
 
 				assertIdentifier("i");
 				assertLocation(2, 2);

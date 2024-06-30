@@ -45,9 +45,10 @@ one:
         ret
         ; void doPrint
 doPrint:
-        ; int lit 1
-        mov rcx, 1
-        ; print
+        ; int lit 2
+        mov rcx, 2
+        movzx cx, cl
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a

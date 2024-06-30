@@ -53,7 +53,6 @@ public class X86Win64 {
 				write(childStatement, variables);
 			}
 		}
-		case StmtPrint print -> writePrint(print, variables);
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtWhile whileStatement -> writeWhile(whileStatement, variables);
 		case StmtFor forStatement -> writeFor(forStatement, variables);
@@ -75,21 +74,6 @@ public class X86Win64 {
 		}
 	}
 
-	private void writePrint(StmtPrint print, Variables variables) throws IOException {
-		final int reg = write(print.expression(), variables);
-		final String regName = getRegName(reg);
-		writeComment("print");
-		if (!regName.equals("rcx")) {
-			writeIndented("mov rcx, " + regName);
-		}
-		writeIndented("sub rsp, 8");
-		writeIndented("  call " + PRINT_UINT);
-		writeIndented("mov rcx, 0x0a");
-		writeIndented("  call " + EMIT);
-		writeIndented("add rsp, 8");
-		freeReg(reg);
-	}
-
 	private int writeCall(ExprFuncCall call, Variables variables) throws IOException {
 		final List<Expression> expressions = call.argExpressions();
 		if (expressions.size() > 1) {
@@ -103,9 +87,17 @@ public class X86Win64 {
 				writeIndented("mov rcx, " + regName);
 			}
 		}
-		writeComment("call " + call.name());
+		final String name = call.name();
+		writeComment("call " + name);
 		writeIndented("sub rsp, 8");
-		writeIndented("  call " + call.name());
+		if (name.equals("print")) {
+			writeIndented("  call " + PRINT_UINT);
+			writeIndented("mov rcx, 0x0a");
+			writeIndented("  call " + EMIT);
+		}
+		else {
+			writeIndented("  call " + name);
+		}
 		writeIndented("add rsp, 8");
 		return call.typeNotNull() == Type.VOID ? -1 : 1; // rax
 	}

@@ -44,8 +44,9 @@ for_1:
         lea rax, [var0]
         mov al, [rax]
         movzx rax, al
-        ; print
+        movzx ax, al
         mov rcx, rax
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a

@@ -67,7 +67,7 @@ main:
         movzx rax, ax
         ; add
         add cx, ax
-        ; print
+        ; call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a

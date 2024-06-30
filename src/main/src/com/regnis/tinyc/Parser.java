@@ -77,7 +77,6 @@ public class Parser {
 		return switch (token) {
 			case FOR -> handleFor();
 			case IF -> handleIf();
-			case PRINT -> handlePrint();
 			case RETURN -> handleReturn();
 			case WHILE -> handleWhile();
 			case L_BRACE -> handleCompound();
@@ -199,15 +198,6 @@ public class Parser {
 		consume(TokenType.R_PAREN);
 		final Statement bodyStatement = getStatementNotNull();
 		return new StmtWhile(condition, bodyStatement, location);
-	}
-
-	@NotNull
-	private StmtPrint handlePrint() {
-		final Location location = getLocation();
-		consume(TokenType.PRINT);
-		final Expression expression = getExpression();
-		consume(TokenType.SEMI);
-		return new StmtPrint(expression, location);
 	}
 
 	@NotNull

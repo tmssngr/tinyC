@@ -106,18 +106,18 @@ public class ParserTest {
 		                                       intLit(1, loc(0, 4)),
 		                                       intLit(2, loc(0, 8)),
 		                                       loc(0, 6)),
-		                        new StmtCompound(List.of(new StmtPrint(intLit(1, loc(1, 8)),
-		                                                               loc(1, 2)))),
-		                        new StmtCompound(List.of(new StmtPrint(intLit(2, loc(4, 8)),
-		                                                               loc(4, 2)))),
+		                        new StmtCompound(List.of(printStmt(intLit(1, loc(1, 8)),
+		                                                           loc(1, 2)))),
+		                        new StmtCompound(List.of(printStmt(intLit(2, loc(4, 8)),
+		                                                           loc(4, 2)))),
 		                        loc(0, 0)
 		             ),
 		             new Parser(new Lexer("""
 				                                  if (1 < 2) {
-				                                    print 1;
+				                                    print(1);
 				                                  }
 				                                  else {
-				                                    print 2;
+				                                    print(2);
 				                                  }""")).getStatementNotNull());
 	}
 
@@ -131,8 +131,8 @@ public class ParserTest {
 				                             intLit(0, loc(2, 11)),
 				                             loc(2, 9)),
 				              new StmtCompound(List.of(
-						              new StmtPrint(new ExprVarRead("i", loc(3, 8)),
-						                            loc(3, 2)),
+						              printStmt(new ExprVarRead("i", loc(3, 8)),
+						                        loc(3, 2)),
 						              new StmtAssign("i", new ExprBinary(ExprBinary.Op.Sub,
 						                                                 new ExprVarRead("i", loc(4, 6)),
 						                                                 intLit(1, loc(4, 10)),
@@ -145,7 +145,7 @@ public class ParserTest {
 				                         {
 				                         u16 i = 5;
 				                         while (i > 0) {
-				                           print i;
+				                           print(i);
 				                           i = i - 1;
 				                         }
 				                         }""")).getStatementNotNull());
@@ -162,8 +162,8 @@ public class ParserTest {
 		                                        intLit(10, loc(0, 20)),
 		                                        loc(0, 18)),
 		                         new StmtCompound(List.of(
-				                         new StmtPrint(new ExprVarRead("i", loc(1, 8)),
-				                                       loc(1, 2))
+				                         printStmt(new ExprVarRead("i", loc(1, 8)),
+				                                   loc(1, 2))
 		                         )),
 		                         List.of(
 				                         new StmtAssign("i", new ExprBinary(ExprBinary.Op.Add,
@@ -175,7 +175,7 @@ public class ParserTest {
 		                         loc(0, 0)),
 		             new Parser(new Lexer("""
 				                                  for (i16 i = 0; i < 10; i = i + 1) {
-				                                    print i;
+				                                    print(i);
 				                                  }""")).getStatementNotNull());
 
 		assertEquals(new StmtCompound(List.of(
@@ -184,8 +184,8 @@ public class ParserTest {
 				             new StmtFor(List.of(),
 				                         new ExprBinary(ExprBinary.Op.Lt, new ExprVarRead("i", loc(2, 7)), intLit(10, loc(2, 11)), loc(2, 9)),
 				                         new StmtCompound(List.of(
-						                         new StmtPrint(new ExprVarRead("i", loc(3, 8)),
-						                                       loc(3, 2))
+						                         printStmt(new ExprVarRead("i", loc(3, 8)),
+						                                   loc(3, 2))
 				                         )),
 				                         List.of(
 						                         new StmtAssign("i", new ExprBinary(ExprBinary.Op.Add,
@@ -201,7 +201,7 @@ public class ParserTest {
 				                                  {
 				                                  u8 i = 1;
 				                                  for (; i < 10; i = i + 1) {
-				                                    print i;
+				                                    print(i);
 				                                  }
 				                                  }""")).getStatementNotNull());
 
@@ -214,8 +214,8 @@ public class ParserTest {
 				                                        intLit(0, loc(2, 10)),
 				                                        loc(2, 8)),
 				                         new StmtCompound(List.of(
-						                         new StmtPrint(new ExprVarRead("i", loc(3, 8)),
-						                                       loc(3, 2)),
+						                         printStmt(new ExprVarRead("i", loc(3, 8)),
+						                                   loc(3, 2)),
 						                         new StmtAssign("i", new ExprBinary(ExprBinary.Op.Sub,
 						                                                            new ExprVarRead("i", loc(4, 6)),
 						                                                            intLit(1, loc(4, 10)),
@@ -229,7 +229,7 @@ public class ParserTest {
 				                                  {
 				                                  u8 i = 5;
 				                                  for (;i > 0;) {
-				                                    print i;
+				                                    print(i);
 				                                    i = i - 1;
 				                                  }
 				                                  }""")).getStatementNotNull());
@@ -242,8 +242,8 @@ public class ParserTest {
 				             new StmtCompound(List.of(
 						             new StmtDeclaration("u8", "i", intLit(10, loc(1, 11)),
 						                                 loc(1, 4)),
-						             new StmtPrint(new ExprVarRead("i", loc(2, 10)),
-						                           loc(2, 4))
+						             printStmt(new ExprVarRead("i", loc(2, 10)),
+						                       loc(2, 4))
 				             )),
 				             loc(0, 0)),
 				new Function("void", "fooBar", List.of(new Function.Arg("u8", "a", loc(4, 12))),
@@ -252,7 +252,7 @@ public class ParserTest {
 		)), new Parser(new Lexer("""
 				                         void main() {
 				                             u8 i = 10;
-				                             print i;
+				                             print(i);
 				                         }
 				                         void fooBar(u8 a) {
 				                         }""")).parse());
@@ -270,8 +270,8 @@ public class ParserTest {
 						                        new StmtReturn(null, loc(3, 8)),
 						                        null,
 						                        loc(2, 4)),
-						             new StmtPrint(new ExprVarRead("i", loc(4, 10)),
-						                           loc(4, 4))
+						             printStmt(new ExprVarRead("i", loc(4, 10)),
+						                       loc(4, 4))
 				             )),
 				             loc(0, 0)),
 				new Function("u8", "one", List.of(),
@@ -285,11 +285,15 @@ public class ParserTest {
 				                             u8 i = one();
 				                             if (i == 0)
 				                                 return;
-				                             print i;
+				                             print(i);
 				                         }
 				                         u8 one() {
 				                            return 1;
 				                         }""")).parse());
+	}
+
+	private static Statement printStmt(Expression expression, Location loc) {
+		return new StmtCall(new ExprFuncCall("print", List.of(expression), loc));
 	}
 
 	private static ExprIntLiteral intLit(int value, Location location) {
