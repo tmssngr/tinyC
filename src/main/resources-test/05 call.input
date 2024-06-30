@@ -1,5 +1,10 @@
 void main() {
-	doPrint(1);
+	u8 i = one();
+	doPrint(i);
+}
+
+u8 one() {
+	return 1;
 }
 
 void doPrint(u8 value) {

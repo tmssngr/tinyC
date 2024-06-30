@@ -20,12 +20,28 @@ start:
 
         ; void main
 main:
-        ; int lit 1
-        mov rcx, 1
+        ; call one
+        sub rsp, 8
+          call one
+        add rsp, 8
+        ; assign i
+        lea rcx, [var0]
+        mov [rcx], al
+        ; read var i
+        lea rcx, [var0]
+        mov cl, [rcx]
+        movzx rcx, cl
         ; call doPrint
         sub rsp, 8
           call doPrint
         add rsp, 8
+        ret
+        ; u8 one
+one:
+        ; return 1
+        ; int lit 1
+        mov rcx, 1
+        mov rax, rcx
         ret
         ; void doPrint
 doPrint:
@@ -140,6 +156,7 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
+        var0 rb 1
 
 section '.idata' import data readable writeable
 

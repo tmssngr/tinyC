@@ -58,6 +58,7 @@ public class X86Win64 {
 		case StmtWhile whileStatement -> writeWhile(whileStatement, variables);
 		case StmtFor forStatement -> writeFor(forStatement, variables);
 		case StmtCall call -> writeCall(call.call(), variables);
+		case StmtReturn ret -> writeReturn(ret.expression(), variables);
 		case null, default -> throw new UnsupportedOperationException(String.valueOf(statement));
 		}
 	}
@@ -89,21 +90,39 @@ public class X86Win64 {
 		freeReg(reg);
 	}
 
-	private void writeCall(ExprFuncCall call, Variables variables) throws IOException {
+	private int writeCall(ExprFuncCall call, Variables variables) throws IOException {
 		final List<Expression> expressions = call.argExpressions();
-		if (expressions.size() != 1) {
+		if (expressions.size() > 1) {
 			throw new IllegalStateException("Unsupported arguments " + expressions);
 		}
-		final int reg = write(expressions.get(0), variables);
-		final String regName = getRegName(reg);
-		if (!regName.equals("rcx")) {
-			writeIndented("mov rcx, " + regName);
+		if (expressions.size() == 1) {
+			final int reg = write(expressions.get(0), variables);
+			final String regName = getRegName(reg);
+			freeReg(reg);
+			if (!regName.equals("rcx")) {
+				writeIndented("mov rcx, " + regName);
+			}
 		}
 		writeComment("call " + call.name());
 		writeIndented("sub rsp, 8");
 		writeIndented("  call " + call.name());
 		writeIndented("add rsp, 8");
-		freeReg(reg);
+		return call.typeNotNull() == Type.VOID ? -1 : 1; // rax
+	}
+
+	private void writeReturn(@Nullable Expression expression, Variables variables) throws IOException {
+		if (expression != null) {
+			writeComment("return " + expression);
+			final int reg = write(expression, variables);
+			final String regName = getRegName(reg);
+			freeReg(reg);
+			if (!regName.equals("rax")) {
+				writeIndented("mov rax, " + regName);
+			}
+		}
+		else {
+			writeComment("return");
+		}
 	}
 
 	private void writeAssignment(String varName, Expression expression, Variables variables) throws IOException {
@@ -152,6 +171,9 @@ public class X86Win64 {
 			final int size = getTypeSize(extend.type());
 			writeIndented("movzx " + getRegName(reg, size) + ", " + getRegName(reg, exprSize));
 			return reg;
+		}
+		case ExprFuncCall call -> {
+			return writeCall(call, variables);
 		}
 		default -> throw new UnsupportedOperationException("unsupported expression " + node);
 		}
