@@ -20,6 +20,12 @@ start:
 
         ; void main
 main:
+        ; int lit 1
+        mov rcx, 1
+        ; call doPrint
+        sub rsp, 8
+          call doPrint
+        add rsp, 8
         ret
         ; void doPrint
 doPrint:

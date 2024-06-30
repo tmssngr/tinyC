@@ -3,6 +3,7 @@ package com.regnis.tinyc;
 import com.regnis.tinyc.ast.*;
 
 import java.io.*;
+import java.util.*;
 
 import org.jetbrains.annotations.*;
 
@@ -56,9 +57,20 @@ public class X86Win64 {
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtWhile whileStatement -> writeWhile(whileStatement, variables);
 		case StmtFor forStatement -> writeFor(forStatement, variables);
-		case StmtCall call -> {
-		}
+		case StmtCall call -> writeCall(call.call(), variables);
 		case null, default -> throw new UnsupportedOperationException(String.valueOf(statement));
+		}
+	}
+
+	private void write(Statement.Simple statement, Variables variables) throws IOException {
+		if (statement instanceof StmtDeclaration declaration) {
+			writeAssignment(declaration.varName(), declaration.expression(), variables);
+		}
+		else if (statement instanceof StmtAssign assign) {
+			writeAssignment(assign.varName(), assign.expression(), variables);
+		}
+		else {
+			throw new UnsupportedOperationException(statement.toString());
 		}
 	}
 
@@ -77,16 +89,21 @@ public class X86Win64 {
 		freeReg(reg);
 	}
 
-	private void write(Statement.Simple statement, Variables variables) throws IOException {
-		if (statement instanceof StmtDeclaration declaration) {
-			writeAssignment(declaration.varName(), declaration.expression(), variables);
+	private void writeCall(ExprFuncCall call, Variables variables) throws IOException {
+		final List<Expression> expressions = call.argExpressions();
+		if (expressions.size() != 1) {
+			throw new IllegalStateException("Unsupported arguments " + expressions);
 		}
-		else if (statement instanceof StmtAssign assign) {
-			writeAssignment(assign.varName(), assign.expression(), variables);
+		final int reg = write(expressions.get(0), variables);
+		final String regName = getRegName(reg);
+		if (!regName.equals("rcx")) {
+			writeIndented("mov rcx, " + regName);
 		}
-		else {
-			throw new UnsupportedOperationException(statement.toString());
-		}
+		writeComment("call " + call.name());
+		writeIndented("sub rsp, 8");
+		writeIndented("  call " + call.name());
+		writeIndented("add rsp, 8");
+		freeReg(reg);
 	}
 
 	private void writeAssignment(String varName, Expression expression, Variables variables) throws IOException {
