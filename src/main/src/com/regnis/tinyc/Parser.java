@@ -115,10 +115,14 @@ public class Parser {
 			return new StmtAssign(identifier1, expression, location);
 		}
 
+		final StringBuilder typeBuilder = new StringBuilder(identifier1);
+		while (isConsume(TokenType.STAR)) {
+			typeBuilder.append("*");
+		}
 		final String identifier2 = consumeIdentifier();
 		consume(TokenType.EQUAL);
 		final Expression expression = getExpression();
-		return new StmtDeclaration(identifier1, identifier2, expression, location);
+		return new StmtDeclaration(typeBuilder.toString(), identifier2, expression, location);
 	}
 
 	private Statement handleCompound() {
@@ -233,6 +237,14 @@ public class Parser {
 			else {
 				left = new ExprVarRead(name, location);
 			}
+		}
+		else if (isConsume(TokenType.AMP)) {
+			final String name = consumeIdentifier();
+			left = new ExprAddrOf(name, location);
+		}
+		else if (isConsume(TokenType.STAR)) {
+			final String name = consumeIdentifier();
+			left = new ExprDeref(name, location);
 		}
 		else {
 			throw new SyntaxException("Expected int literal but got " + token, location);

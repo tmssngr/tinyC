@@ -251,6 +251,8 @@ public final class TypeChecker {
 				final Expression right = processExpression(binary.right());
 				yield processBinary(binary.op(), left, right, binary.location());
 			}
+			case ExprAddrOf addrOf -> processAddrOf(addrOf.varName(), addrOf.location());
+			case ExprDeref deref -> processDeref(deref.varName(), deref.location());
 			default -> throw new IllegalStateException("Unexpected expression: " + expression);
 		};
 	}
@@ -262,6 +264,28 @@ public final class TypeChecker {
 			throw new SyntaxException("Unknown variable '" + name + "'", location);
 		}
 		return new ExprVarRead(name, type, location);
+	}
+
+	@NotNull
+	private Expression processAddrOf(String name, Location location) {
+		final Type type = getVariableType(name);
+		if (type == null) {
+			throw new SyntaxException("Unknown variable '" + name + "'", location);
+		}
+		return new ExprAddrOf(name, Type.pointer(type), location);
+	}
+
+	@NotNull
+	private Expression processDeref(String name, Location location) {
+		final Type type = getVariableType(name);
+		if (type == null) {
+			throw new SyntaxException("Unknown variable '" + name + "'", location);
+		}
+		final Type derefType = type.toType();
+		if (derefType == null) {
+			throw new SyntaxException("Expected variable '" + name + "' to be a pointer", location);
+		}
+		return new ExprDeref(name, derefType, location);
 	}
 
 	@NotNull
@@ -327,6 +351,9 @@ public final class TypeChecker {
 
 	@NotNull
 	private Type getType(@NotNull String type, @NotNull Location location) {
+		if (type.endsWith("*")) {
+			return Type.pointer(getType(type.substring(0, type.length() - 1), location));
+		}
 		return switch (type) {
 			case "void" -> Type.VOID;
 			case "u8" -> Type.U8;

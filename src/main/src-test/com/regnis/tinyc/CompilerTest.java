@@ -40,6 +40,11 @@ public class CompilerTest {
 		compileAndRun("05 call.input");
 	}
 
+	@Test
+	public void testPointers() throws IOException, InterruptedException {
+		compileAndRun("06 pointers.input");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}

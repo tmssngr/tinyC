@@ -5,10 +5,14 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record Type(String name) {
-	public static final Type VOID = new Type("void");
-	public static final Type U8 = new Type("u8");
-	public static final Type I16 = new Type("i16");
+public record Type(@NotNull String name, @Nullable Type toType) {
+	public static final Type VOID = new Type("void", null);
+	public static final Type U8 = new Type("u8", null);
+	public static final Type I16 = new Type("i16", null);
+
+	public static Type pointer(@NotNull Type toType) {
+		return new Type("*", toType);
+	}
 
 	public static int getSize(@NotNull Type type) {
 		if (type == VOID) {

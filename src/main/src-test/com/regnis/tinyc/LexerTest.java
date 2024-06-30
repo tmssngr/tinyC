@@ -217,6 +217,43 @@ public class LexerTest {
 		}.test();
 	}
 
+	@Test
+	public void testPointer() {
+		new LexerTester("""
+				                u8 char = 0x20;
+				                u8 *ptrToChar = &char;""") {
+			@Override
+			protected void test() {
+				assertIdentifier("u8");
+				assertLocation(0, 0);
+				assertIdentifier("char");
+				assertLocation(0, 3);
+				assertType(TokenType.EQUAL);
+				assertLocation(0, 8);
+				assertIntLiteral(32);
+				assertLocation(0, 10);
+				assertType(TokenType.SEMI);
+				assertLocation(0, 14);
+
+				assertIdentifier("u8");
+				assertLocation(1, 0);
+				assertType(TokenType.STAR);
+				assertLocation(1, 3);
+				assertIdentifier("ptrToChar");
+				assertLocation(1, 4);
+				assertType(TokenType.EQUAL);
+				assertLocation(1, 14);
+				assertType(TokenType.AMP);
+				assertLocation(1, 16);
+				assertIdentifier("char");
+				assertLocation(1, 17);
+				assertType(TokenType.SEMI);
+				assertLocation(1, 21);
+				assertEof();
+			}
+		}.test();
+	}
+
 	private abstract static class LexerTester {
 		protected abstract void test();
 

@@ -118,6 +118,9 @@ public final class Lexer {
 			intValue = text.charAt(0);
 			return TokenType.INT_LITERAL;
 		}
+		if (isConsume('&')) {
+			return TokenType.AMP;
+		}
 
 		final StringBuilder buffer = new StringBuilder();
 		do {
@@ -177,8 +180,8 @@ public final class Lexer {
 			}
 		}
 
-		if (text.startsWith("%")) {
-			final String possibleNumberString = text.substring(1);
+		if (text.startsWith("0x")) {
+			final String possibleNumberString = text.substring(2);
 			try {
 				intValue = Integer.parseInt(possibleNumberString,
 				                            16);

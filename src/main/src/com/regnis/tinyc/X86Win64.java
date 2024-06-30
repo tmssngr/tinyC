@@ -167,6 +167,33 @@ public class X86Win64 {
 		case ExprFuncCall call -> {
 			return writeCall(call, variables);
 		}
+		case ExprAddrOf addrOf -> {
+			final String name = addrOf.varName();
+			final int reg = getFreeReg();
+			final Pair<Type, Integer> typeIndex = variables.get(name);
+			final String varName = getVarName(typeIndex.right());
+			final String addrReg = getRegName(reg);
+			writeComment("address of var " + name);
+			writeIndented("lea " + addrReg + ", [" + varName + "]");
+			return reg;
+		}
+		case ExprDeref deref -> {
+			final String name = deref.varName();
+			final int reg = getFreeReg();
+			final Pair<Type, Integer> typeIndex = variables.get(name);
+			final int typeSize = getTypeSize(Objects.requireNonNull(typeIndex.left().toType()));
+			final String varName = getVarName(typeIndex.right());
+			final String addrReg = getRegName(reg);
+			final String valueReg = getRegName(reg, typeSize);
+			writeComment("deref " + name);
+			writeIndented("lea " + addrReg + ", [" + varName + "]");
+			writeIndented("mov " + addrReg + ", [" + addrReg + "]");
+			writeIndented("mov " + valueReg + ", [" + addrReg + "]");
+			if (typeSize != 8) {
+				writeIndented("movzx " + getRegName(reg) + ", " + valueReg);
+			}
+			return reg;
+		}
 		default -> throw new UnsupportedOperationException("unsupported expression " + node);
 		}
 	}
@@ -569,6 +596,9 @@ public class X86Win64 {
 	}
 
 	private static int getTypeSize(Type type) {
+		if (type.toType() != null) {
+			return 8;
+		}
 		if (type == Type.U8) {
 			return 1;
 		}
