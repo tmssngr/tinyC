@@ -76,6 +76,12 @@ public final class TypeChecker {
 	@NotNull
 	private Function determineTypes(Function function) {
 		final Statement statement = processStatement(function.statement());
+		final StmtCompound compound = statement instanceof StmtCompound c ? c : new StmtCompound(List.of(statement));
+		if (expectedReturnType != Type.VOID) {
+			if (!(Utils.getLastOrNull(compound.statements()) instanceof StmtReturn)) {
+				throw new SyntaxException("The function must return type " + expectedReturnType, function.location());
+			}
+		}
 		return new Function(function.name(), function.typeString(), function.returnType(), function.args(), statement, function.location());
 	}
 
