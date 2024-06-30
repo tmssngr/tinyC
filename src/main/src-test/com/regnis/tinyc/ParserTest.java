@@ -1,8 +1,10 @@
 package com.regnis.tinyc;
 
+import com.regnis.tinyc.ast.Function;
 import com.regnis.tinyc.ast.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 import org.junit.*;
@@ -26,22 +28,22 @@ public class ParserTest {
 		             new Parser(new Lexer("\n  i16 foo = 1 + 2;")).getStatementNotNull());
 
 		assertEquals(new StmtDeclaration("u16", "foo", new ExprBinary(ExprBinary.Op.Add,
-		                                                           new ExprBinary(ExprBinary.Op.Add,
-		                                                                          intLit(1, loc(0, 10)),
-		                                                                          intLit(2, loc(0, 14)),
-		                                                                          loc(0, 12)),
-		                                                           intLit(3, loc(0, 18)),
-		                                                           loc(0, 16)),
+		                                                              new ExprBinary(ExprBinary.Op.Add,
+		                                                                             intLit(1, loc(0, 10)),
+		                                                                             intLit(2, loc(0, 14)),
+		                                                                             loc(0, 12)),
+		                                                              intLit(3, loc(0, 18)),
+		                                                              loc(0, 16)),
 		                                 loc(0, 0)),
 		             new Parser(new Lexer("u16 foo = 1 + 2 + 3;")).getStatementNotNull());
 
 		assertEquals(new StmtDeclaration("i16", "foo", new ExprBinary(ExprBinary.Op.Add,
-		                                                           new ExprBinary(ExprBinary.Op.Sub,
-		                                                                          intLit(1, loc(0, 10)),
-		                                                                          intLit(2, loc(0, 14)),
-		                                                                          loc(0, 12)),
-		                                                           intLit(3, loc(0, 18)),
-		                                                           loc(0, 16)),
+		                                                              new ExprBinary(ExprBinary.Op.Sub,
+		                                                                             intLit(1, loc(0, 10)),
+		                                                                             intLit(2, loc(0, 14)),
+		                                                                             loc(0, 12)),
+		                                                              intLit(3, loc(0, 18)),
+		                                                              loc(0, 16)),
 		                                 loc(0, 0)),
 		             new Parser(new Lexer("i16 foo = 1 - 2 + 3;")).getStatementNotNull());
 
@@ -236,7 +238,7 @@ public class ParserTest {
 	@Test
 	public void testFunctions() {
 		Assert.assertEquals(new Program(List.of(
-				new Function("main", "void",
+				new Function("void", "main", List.of(),
 				             new StmtCompound(List.of(
 						             new StmtDeclaration("u8", "i", intLit(10, loc(1, 11)),
 						                                 loc(1, 4)),
@@ -244,7 +246,7 @@ public class ParserTest {
 						                           loc(2, 4))
 				             )),
 				             loc(0, 0)),
-				new Function("fooBar", "void",
+				new Function("void", "fooBar", List.of(new Function.Arg("u8", "a", loc(4, 12))),
 				             new StmtCompound(List.of()),
 				             loc(4, 0))
 		)), new Parser(new Lexer("""
@@ -252,7 +254,41 @@ public class ParserTest {
 				                             u8 i = 10;
 				                             print i;
 				                         }
-				                         void fooBar() {
+				                         void fooBar(u8 a) {
+				                         }""")).parse());
+
+		assertEquals(new Program(List.of(
+				new Function("void", "main", List.of(),
+				             new StmtCompound(List.of(
+						             new StmtDeclaration("u8", "i",
+						                                 new ExprFuncCall("one", List.of(), loc(1, 11)),
+						                                 loc(1, 4)),
+						             new StmtIf(new ExprBinary(ExprBinary.Op.Equals,
+						                                       new ExprVarRead("i", loc(2, 8)),
+						                                       new ExprIntLiteral(0, loc(2, 13)),
+						                                       loc(2, 10)),
+						                        new StmtReturn(null, loc(3, 8)),
+						                        null,
+						                        loc(2, 4)),
+						             new StmtPrint(new ExprVarRead("i", loc(4, 10)),
+						                           loc(4, 4))
+				             )),
+				             loc(0, 0)),
+				new Function("u8", "one", List.of(),
+				             new StmtCompound(List.of(
+						             new StmtReturn(new ExprIntLiteral(1, loc(7, 10)),
+						                            loc(7, 3))
+				             )),
+				             loc(4, 0))
+		)), new Parser(new Lexer("""
+				                         void main() {
+				                             u8 i = one();
+				                             if (i == 0)
+				                                 return;
+				                             print i;
+				                         }
+				                         u8 one() {
+				                            return 1;
 				                         }""")).parse());
 	}
 
@@ -264,6 +300,35 @@ public class ParserTest {
 		return new Location(line, column);
 	}
 
+	private static void assertEquals(@NotNull Program expectedProgram, @NotNull Program currentProgram) {
+		assertEquals(expectedProgram.functions(), currentProgram.functions(),
+		             ParserTest::assertEquals);
+	}
+
+	private static <E> void assertEquals(List<E> expList, List<E> currList, BiConsumer<E, E> consumer) {
+		Assert.assertEquals(expList.size(), currList.size());
+		final Iterator<E> expIt = expList.iterator();
+		final Iterator<E> currIt = currList.iterator();
+		while (true) {
+			final E expected = expIt.hasNext() ? expIt.next() : null;
+			final E current = currIt.hasNext() ? currIt.next() : null;
+			if (expected == null || current == null) {
+				Assert.assertEquals(expected, current);
+				return;
+			}
+
+			consumer.accept(expected, current);
+		}
+	}
+
+	private static void assertEquals(@NotNull Function expectedFunction, @NotNull Function currentFunction) {
+		Assert.assertEquals(expectedFunction.name(), currentFunction.name());
+		Assert.assertEquals(expectedFunction.typeString(), currentFunction.typeString());
+		Assert.assertEquals(expectedFunction.returnType(), currentFunction.returnType());
+		Assert.assertEquals(expectedFunction.args(), currentFunction.args());
+		assertEquals(expectedFunction.statement(), currentFunction.statement());
+	}
+
 	private static void assertEquals(@Nullable Statement expectedStatement, @Nullable Statement currentStatement) {
 		if (expectedStatement == null) {
 			Assert.assertNull(currentStatement);
@@ -271,6 +336,17 @@ public class ParserTest {
 		}
 
 		Assert.assertNotNull(currentStatement);
+		if (expectedStatement instanceof StmtCompound expC
+		    && currentStatement instanceof StmtCompound currC) {
+			assertEquals(expC.statements(), currC.statements(),
+			             ParserTest::assertEquals);
+		}
+		else if (expectedStatement instanceof StmtIf expIf
+		         && currentStatement instanceof StmtIf currIf) {
+			assertEquals(expIf.condition(), currIf.condition());
+			assertEquals(expIf.thenStatement(), currIf.thenStatement());
+			assertEquals(expIf.elseStatement(), currIf.elseStatement());
+		}
 		Assert.assertEquals(expectedStatement, currentStatement);
 	}
 
@@ -281,6 +357,12 @@ public class ParserTest {
 		}
 
 		Assert.assertNotNull(currentNode);
+		if (expectedNode instanceof ExprBinary exprBinary
+		    && currentNode instanceof ExprBinary currBinary) {
+			assertEquals(exprBinary.left(), currBinary.left());
+			assertEquals(exprBinary.right(), currBinary.right());
+		}
+		Assert.assertEquals(expectedNode.location(), currentNode.location());
 		Assert.assertEquals(expectedNode, currentNode);
 	}
 }

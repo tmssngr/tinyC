@@ -1,0 +1,7 @@
+void main() {
+	doPrint(1);
+}
+
+void doPrint(u8 value) {
+	print 1;
+}

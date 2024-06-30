@@ -35,6 +35,11 @@ public class CompilerTest {
 		compileAndRun("04 types.input");
 	}
 
+	@Test
+	public void testCall() throws IOException, InterruptedException {
+		compileAndRun("05 call.input");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}

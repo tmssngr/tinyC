@@ -12,6 +12,9 @@ import org.jetbrains.annotations.*;
 public final class TypeChecker {
 
 	private final Map<String, Pair<Type, Location>> variables = new HashMap<>();
+	private final Map<String, Func> functions = new HashMap<>();
+
+	@Nullable private Type expectedReturnType;
 
 	public TypeChecker() {
 	}
@@ -37,16 +40,35 @@ public final class TypeChecker {
 	private Function determineDeclarationTypes(Function function) {
 		final String name = function.name();
 		final Location location = function.location();
+		final Func existingFunc = functions.get(name);
+		if (existingFunc != null) {
+			throw new SyntaxException("Function '" + name + "' has already been declared at " + existingFunc.location, location);
+		}
+
 		final Type returnType = getType(function.typeString(), location);
-		return new Function(name, function.typeString(), returnType, function.statement(), location);
+		final List<Function.Arg> args = new ArrayList<>();
+		final List<Type> argTypes = new ArrayList<>();
+		for (Function.Arg arg : function.args()) {
+			final Type argType = getType(arg.typeString(), arg.location());
+			args.add(new Function.Arg(arg.typeString(), argType, arg.name(), arg.location()));
+			argTypes.add(argType);
+		}
+		functions.put(name, new Func(returnType, argTypes, location));
+		return new Function(name, function.typeString(), returnType, args, function.statement(), location);
 	}
 
 	@NotNull
 	private List<Function> determineStatementTypes(List<Function> typedFunctions) {
 		final List<Function> functions = new ArrayList<>();
 		for (Function typedFunction : typedFunctions) {
-			final Function function = determineTypes(typedFunction);
-			functions.add(function);
+			expectedReturnType = typedFunction.returnType();
+			try {
+				final Function function = determineTypes(typedFunction);
+				functions.add(function);
+			}
+			finally {
+				expectedReturnType = null;
+			}
 		}
 		return functions;
 	}
@@ -54,7 +76,7 @@ public final class TypeChecker {
 	@NotNull
 	private Function determineTypes(Function function) {
 		final Statement statement = processStatement(function.statement());
-		return new Function(function.name(), function.typeString(), function.type(), statement, function.location());
+		return new Function(function.name(), function.typeString(), function.returnType(), function.args(), statement, function.location());
 	}
 
 	@NotNull
@@ -68,6 +90,8 @@ public final class TypeChecker {
 			case StmtWhile whileStatement -> processWhile(whileStatement);
 			case StmtFor forStatement -> processFor(forStatement);
 			case StmtPrint print -> processPrint(print.expression(), print.location());
+			case StmtReturn stmt -> processReturn(stmt.expression(), stmt.location());
+			case StmtCall stmt -> processCall(stmt);
 			default -> throw new IllegalStateException("Unexpected value: " + statement);
 		};
 	}
@@ -97,13 +121,7 @@ public final class TypeChecker {
 		final Location location = declaration.location();
 		Expression expression = processExpression(declaration.expression());
 		final Type type = getType(declaration.typeString(), location);
-		if (!type.equals(expression.typeNotNull())) {
-			if (type == Type.U8) {
-				throw new SyntaxException("Expected type " + type + " but got " + expression.typeNotNull(), location);
-			}
-
-			expression = new ExprCast(expression, expression.typeNotNull(), type, expression.location());
-		}
+		expression = autoCastTo(type, expression, location);
 
 		final Pair<Type, Location> pair = variables.get(varName);
 		if (pair != null) {
@@ -122,13 +140,7 @@ public final class TypeChecker {
 			throw new SyntaxException("Undeclared variable '" + assign.varName() + "'", assign.location());
 		}
 
-		if (!type.equals(expression.typeNotNull())) {
-			if (type == Type.U8) {
-				throw new SyntaxException("Expected type " + type + " but got " + expression.typeNotNull(), assign.location());
-			}
-
-			expression = new ExprCast(expression, expression.typeNotNull(), type, expression.location());
-		}
+		expression = autoCastTo(type, expression, assign.location());
 		return new StmtAssign(assign.varName(), expression, assign.location());
 	}
 
@@ -188,10 +200,51 @@ public final class TypeChecker {
 	}
 
 	@NotNull
+	private StmtReturn processReturn(@Nullable Expression expression, Location location) {
+		final Type expectedReturnType = Objects.requireNonNull(this.expectedReturnType);
+		if (expression == null) {
+			if (expectedReturnType != Type.VOID) {
+				throw new SyntaxException("Expected expression of type '" + expectedReturnType + "'", location);
+			}
+		}
+		else {
+			if (expectedReturnType == Type.VOID) {
+				throw new SyntaxException("Can't return anything from a void function", location);
+			}
+			expression = processExpression(expression);
+			expression = autoCastTo(expectedReturnType, expression, location);
+		}
+		return new StmtReturn(expression, location);
+	}
+
+	@NotNull
+	private StmtCall processCall(StmtCall stmt) {
+		final ExprFuncCall call = stmt.call();
+		return new StmtCall(processFuncCall(call.name(), call.argExpressions(), call.location()));
+	}
+
+	@NotNull
+	private Expression autoCastTo(Type type, Expression expression, Location location) {
+		final Type expressionType = expression.typeNotNull();
+		if (type.equals(expressionType)) {
+			return expression;
+		}
+
+		final int expectedSize = Type.getSize(type);
+		final int actualSize = Type.getSize(expressionType);
+		if (actualSize >= expectedSize) {
+			throw new SyntaxException("Expected type " + type + " but got " + expressionType, location);
+		}
+
+		return new ExprCast(expression, expressionType, type, expression.location());
+	}
+
+	@NotNull
 	private Expression processExpression(Expression expression) {
 		return switch (expression) {
 			case ExprCast cast -> cast;
 			case ExprVarRead varRead -> processVarRead(varRead.varName(), varRead.location());
+			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
 			case ExprIntLiteral intLiteral -> intLiteral;
 			case ExprBinary binary -> {
 				final Expression left = processExpression(binary.left());
@@ -209,6 +262,29 @@ public final class TypeChecker {
 			throw new SyntaxException("Unknown variable '" + name + "'", location);
 		}
 		return new ExprVarRead(name, type, location);
+	}
+
+	@NotNull
+	private ExprFuncCall processFuncCall(String name, List<Expression> argExpressions, Location location) {
+		final Func function = functions.get(name);
+		if (function == null) {
+			throw new SyntaxException("Undeclared function '" + name + "'", location);
+		}
+		if (function.argTypes().size() != argExpressions.size()) {
+			throw new SyntaxException("Function '" + name + "' needs " + function.argTypes().size() + " arguments, but got " + argExpressions.size(), location);
+		}
+
+		final List<Expression> expressions = new ArrayList<>();
+		final Iterator<Type> methodArgIt = function.argTypes().iterator();
+		final Iterator<Expression> argExprIt = argExpressions.iterator();
+		while (methodArgIt.hasNext()) {
+			final Type expectedType = methodArgIt.next();
+			final Expression argExpr = argExprIt.next();
+			Expression expression = processExpression(argExpr);
+			expression = autoCastTo(expectedType, expression, location);
+			expressions.add(expression);
+		}
+		return new ExprFuncCall(name, function.returnType(), expressions, location);
 	}
 
 	@NotNull
@@ -257,5 +333,8 @@ public final class TypeChecker {
 			case "i16" -> Type.I16;
 			default -> throw new SyntaxException("Unknown type '" + type + "'", location);
 		};
+	}
+
+	public record Func(Type returnType, List<Type> argTypes, Location location) {
 	}
 }

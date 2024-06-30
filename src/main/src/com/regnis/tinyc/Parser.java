@@ -43,28 +43,83 @@ public class Parser {
 		final String type = consumeIdentifier();
 		final String name = consumeIdentifier();
 		consume(TokenType.L_PAREN);
-		consume(TokenType.R_PAREN);
+		final List<Function.Arg> args = new ArrayList<>();
+		while (!isConsume(TokenType.R_PAREN)) {
+			final Location argLocation = getLocation();
+			final String argType = consumeIdentifier();
+			final String argName = consumeIdentifier();
+			args.add(new Function.Arg(argType, argName, argLocation));
+			if (token != TokenType.R_PAREN) {
+				consume(TokenType.COMMA);
+			}
+		}
 		final Statement statement = getStatementNotNull();
-		return new Function(name, type, statement, location);
+		return new Function(type, name, args, statement, location);
 	}
 
 	@Nullable
 	private Statement getStatement() {
-		Statement statement = getSimpleStatement();
-		if (statement != null) {
+		if (token == TokenType.IDENTIFIER) {
+			final Location location = getLocation();
+			final String identifier = consumeIdentifier();
+			if (isConsume(TokenType.L_PAREN)) {
+				// method call
+				final List<Expression> argExpressions = getCallArgExpressions();
+				consume(TokenType.SEMI);
+				return new StmtCall(new ExprFuncCall(identifier, argExpressions, location));
+			}
+
+			final Statement.Simple declarationOrAssignment = getDeclarationOrAssignment(identifier, location);
 			consume(TokenType.SEMI);
+			return declarationOrAssignment;
 		}
-		else {
-			statement = switch (token) {
-				case FOR -> handleFor();
-				case IF -> handleIf();
-				case PRINT -> handlePrint();
-				case WHILE -> handleWhile();
-				case L_BRACE -> handleCompound();
-				default -> null;
-			};
+
+		return switch (token) {
+			case FOR -> handleFor();
+			case IF -> handleIf();
+			case PRINT -> handlePrint();
+			case RETURN -> handleReturn();
+			case WHILE -> handleWhile();
+			case L_BRACE -> handleCompound();
+			default -> null;
+		};
+	}
+
+	@NotNull
+	private List<Expression> getCallArgExpressions() {
+		final List<Expression> argExpressions = new ArrayList<>();
+		while (!isConsume(TokenType.R_PAREN)) {
+			final Expression expression = getExpression();
+			argExpressions.add(expression);
+			if (token != TokenType.R_PAREN) {
+				consume(TokenType.COMMA);
+			}
 		}
-		return statement;
+		return argExpressions;
+	}
+
+	@Nullable
+	private Statement.Simple getSimpleStatement() {
+		if (token == TokenType.IDENTIFIER) {
+			final Location location = getLocation();
+			final String identifier = consumeIdentifier();
+			return getDeclarationOrAssignment(identifier, location);
+		}
+
+		return null;
+	}
+
+	@NotNull
+	private Statement.Simple getDeclarationOrAssignment(String identifier1, Location location) {
+		if (isConsume(TokenType.EQUAL)) {
+			final Expression expression = getExpression();
+			return new StmtAssign(identifier1, expression, location);
+		}
+
+		final String identifier2 = consumeIdentifier();
+		consume(TokenType.EQUAL);
+		final Expression expression = getExpression();
+		return new StmtDeclaration(identifier1, identifier2, expression, location);
 	}
 
 	private Statement handleCompound() {
@@ -155,23 +210,16 @@ public class Parser {
 		return new StmtPrint(expression, location);
 	}
 
-	@Nullable
-	private Statement.Simple getSimpleStatement() {
+	@NotNull
+	private StmtReturn handleReturn() {
 		final Location location = getLocation();
-		if (token == TokenType.IDENTIFIER) {
-			final String identifier1 = consumeIdentifier();
-			if (isConsume(TokenType.EQUAL)) {
-				final Expression expression = getExpression();
-				return new StmtAssign(identifier1, expression, location);
-			}
-
-			final String identifier2 = consumeIdentifier();
-			consume(TokenType.EQUAL);
-			final Expression expression = getExpression();
-			return new StmtDeclaration(identifier1, identifier2, expression, location);
+		consume(TokenType.RETURN);
+		Expression expression = null;
+		if (!isConsume(TokenType.SEMI)) {
+			expression = getExpression();
+			consume(TokenType.SEMI);
 		}
-
-		return null;
+		return new StmtReturn(expression, location);
 	}
 
 	@NotNull
@@ -187,8 +235,14 @@ public class Parser {
 			left = new ExprIntLiteral(consumeIntValue(), location);
 		}
 		else if (token == TokenType.IDENTIFIER) {
-			final String text = consumeText();
-			left = new ExprVarRead(text, location);
+			final String name = consumeText();
+			if (isConsume(TokenType.L_PAREN)) {
+				final List<Expression> args = getCallArgExpressions();
+				left = new ExprFuncCall(name, args, location);
+			}
+			else {
+				left = new ExprVarRead(name, location);
+			}
 		}
 		else {
 			throw new SyntaxException("Expected int literal but got " + token, location);

@@ -140,6 +140,7 @@ public final class Lexer {
 			case "if" -> TokenType.IF;
 			case "else" -> TokenType.ELSE;
 			case "print" -> TokenType.PRINT;
+			case "return" -> TokenType.RETURN;
 			case "while" -> TokenType.WHILE;
 			default -> TokenType.IDENTIFIER;
 		};

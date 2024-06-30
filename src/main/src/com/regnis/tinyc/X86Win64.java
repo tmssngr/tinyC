@@ -45,28 +45,20 @@ public class X86Win64 {
 	}
 
 	private void write(Statement statement, Variables variables) throws IOException {
-		if (statement instanceof Statement.Simple simpleStatement) {
-			write(simpleStatement, variables);
-		}
-		else if (statement instanceof StmtCompound compound) {
+		switch (statement) {
+		case Statement.Simple simpleStatement -> write(simpleStatement, variables);
+		case StmtCompound compound -> {
 			for (Statement childStatement : compound.statements()) {
 				write(childStatement, variables);
 			}
 		}
-		else if (statement instanceof StmtPrint print) {
-			writePrint(print, variables);
+		case StmtPrint print -> writePrint(print, variables);
+		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
+		case StmtWhile whileStatement -> writeWhile(whileStatement, variables);
+		case StmtFor forStatement -> writeFor(forStatement, variables);
+		case StmtCall call -> {
 		}
-		else if (statement instanceof StmtIf ifStatement) {
-			writeIfElse(ifStatement, variables);
-		}
-		else if (statement instanceof StmtWhile whileStatement) {
-			writeWhile(whileStatement, variables);
-		}
-		else if (statement instanceof StmtFor forStatement) {
-			writeFor(forStatement, variables);
-		}
-		else {
-			throw new UnsupportedOperationException(statement.toString());
+		case null, default -> throw new UnsupportedOperationException(String.valueOf(statement));
 		}
 	}
 
