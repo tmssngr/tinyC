@@ -70,6 +70,21 @@ public class LexerTest {
 				assertLocation(0, 9);
 			}
 		}.test();
+
+		//               012345678901
+		new LexerTester("u8 qm = '?';") {
+			@Override
+			protected void test() {
+				assertIdentifier("u8");
+				assertLocation(0, 0);
+				assertIdentifier("qm");
+				assertLocation(0, 3);
+				assertType(TokenType.EQUAL);
+				assertLocation(0, 6);
+				assertIntLiteral('?');
+				assertLocation(0, 8);
+			}
+		}.test();
 	}
 
 	@Test
