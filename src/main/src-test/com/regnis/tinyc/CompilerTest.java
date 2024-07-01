@@ -12,42 +12,42 @@ public class CompilerTest {
 
 	@Test
 	public void testArithmetics() throws IOException, InterruptedException {
-		compileAndRun("00 arithmetics.input");
+		compileAndRun("00 arithmetics.c");
 	}
 
 	@Test
 	public void testComparison() throws IOException, InterruptedException {
-		compileAndRun("01 comparison.input");
+		compileAndRun("01 comparison.c");
 	}
 
 	@Test
 	public void testIfElse() throws IOException, InterruptedException {
-		compileAndRun("02 ifelse.input");
+		compileAndRun("02 ifelse.c");
 	}
 
 	@Test
 	public void testWhile() throws IOException, InterruptedException {
-		compileAndRun("03 while.input");
+		compileAndRun("03 while.c");
 	}
 
 	@Test
 	public void testTypes() throws IOException, InterruptedException {
-		compileAndRun("04 types.input");
+		compileAndRun("04 types.c");
 	}
 
 	@Test
 	public void testCall() throws IOException, InterruptedException {
-		compileAndRun("05 call.input");
+		compileAndRun("05 call.c");
 	}
 
 	@Test
 	public void testPointers() throws IOException, InterruptedException {
-		compileAndRun("06 pointers.input");
+		compileAndRun("06 pointers.c");
 	}
 
 	@Test
 	public void testGlobalVars() throws IOException, InterruptedException {
-		compileAndRun("07 global vars.input");
+		compileAndRun("07 global vars.c");
 	}
 
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
