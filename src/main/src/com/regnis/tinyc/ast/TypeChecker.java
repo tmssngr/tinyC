@@ -14,9 +14,13 @@ public final class TypeChecker {
 	private final Map<String, Pair<Type, Location>> variables = new HashMap<>();
 	private final Map<String, Func> functions = new HashMap<>();
 
+	private final Type pointerIntType;
+
 	@Nullable private Type expectedReturnType;
 
-	public TypeChecker() {
+	public TypeChecker(@NotNull Type pointerIntType) {
+		Utils.assertTrue(pointerIntType.isInt());
+		this.pointerIntType = pointerIntType;
 		functions.put("print", new Func(Type.VOID, List.of(Type.I16), new Location(-1, -1)));
 	}
 
@@ -236,13 +240,24 @@ public final class TypeChecker {
 			return expression;
 		}
 
-		final int expectedSize = Type.getSize(type);
-		final int actualSize = Type.getSize(expressionType);
+		if (type.isPointer() != expressionType.isPointer()) {
+			throw new SyntaxException("Can't convert from int to pointer or vise versa", location);
+		}
+
+		final int expectedSize = getTypeSize(type);
+		final int actualSize = getTypeSize(expressionType);
 		if (actualSize >= expectedSize) {
 			throw new SyntaxException("Expected type " + type + " but got " + expressionType, location);
 		}
 
 		return new ExprCast(expression, expressionType, type, expression.location());
+	}
+
+	private int getTypeSize(Type type) {
+		if (type.isPointer()) {
+			type = pointerIntType;
+		}
+		return Type.getSize(type);
 	}
 
 	@NotNull
@@ -322,13 +337,38 @@ public final class TypeChecker {
 		final Type leftType = left.typeNotNull();
 		final Type rightType = right.typeNotNull();
 
+		if (leftType.isPointer() || rightType.isPointer()) {
+			if (op == ExprBinary.Op.Equals
+			    || op == ExprBinary.Op.NotEquals) {
+				if (leftType.isPointer() && rightType.isPointer()) {
+					return new ExprBinary(op, Type.U8, left, right, location);
+				}
+			}
+			else if (op == ExprBinary.Op.Add
+			    || op == ExprBinary.Op.Sub) {
+				if (leftType.isPointer() && rightType.isInt()) {
+					left = new ExprCast(left, leftType, pointerIntType, left.location());
+					right = autoCastTo(pointerIntType, right, right.location());
+					return new ExprBinary(op, leftType, left, right, location);
+				}
+				if (leftType.isInt() && rightType.isPointer()) {
+					left = autoCastTo(pointerIntType, left, left.location());
+					right = new ExprCast(right, rightType, pointerIntType, right.location());
+					return new ExprBinary(op, rightType, left, right, location);
+				}
+			}
+		}
+
+		if (!leftType.isInt() || !rightType.isInt()) {
+			throw new SyntaxException("Operation " + op + " is not supported for " + leftType + " and " + rightType, location);
+		}
+
 		Type type;
-		if (op == ExprBinary.Op.Add || op == ExprBinary.Op.Sub || op == ExprBinary.Op.Multiply || op == ExprBinary.Op.Divide) {
-			type = leftType;
+		if (op.isRelational) {
+			type = Type.U8;
 			if (leftType != rightType) {
 				if (leftType == Type.U8) {
 					left = new ExprCast(left, leftType, rightType, left.location());
-					type = rightType;
 				}
 				else {
 					right = new ExprCast(right, rightType, leftType, right.location());
@@ -336,10 +376,11 @@ public final class TypeChecker {
 			}
 		}
 		else {
-			type = Type.U8;
+			type = leftType;
 			if (leftType != rightType) {
 				if (leftType == Type.U8) {
 					left = new ExprCast(left, leftType, rightType, left.location());
+					type = rightType;
 				}
 				else {
 					right = new ExprCast(right, rightType, leftType, right.location());

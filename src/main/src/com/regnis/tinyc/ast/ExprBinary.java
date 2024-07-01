@@ -26,13 +26,15 @@ public record ExprBinary(@NotNull Op op, @Nullable Type type, @NotNull Expressio
 	}
 
 	public enum Op {
-		Add("+"), Sub("-"), Multiply("*"), Divide("/"),
-		Lt("<"), LtEq("<="), Equals("=="), NotEquals("!="), GtEq(">="), Gt(">");
+		Add("+", false), Sub("-", false), Multiply("*", false), Divide("/", false),
+		Lt("<", true), LtEq("<=", true), Equals("==", true), NotEquals("!=", true), GtEq(">=", true), Gt(">", true);
 
 		private final String s;
+		public final boolean isRelational;
 
-		Op(String s) {
+		Op(String s, boolean isRelational) {
 			this.s = s;
+			this.isRelational = isRelational;
 		}
 	}
 }

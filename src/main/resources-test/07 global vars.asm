@@ -17,10 +17,15 @@ start:
         ; assign space
         lea rax, [var0]
         mov [rax], cl
+        ; int lit 63
+        mov rcx, 63
+        ; assign next
+        lea rax, [var1]
+        mov [rax], cl
         ; address of var space
         lea rcx, [var0]
         ; assign ptrToSpace
-        lea rax, [var1]
+        lea rax, [var2]
         mov [rax], rcx
         add rsp, 8
           call main
@@ -30,8 +35,19 @@ start:
 
         ; void main
 main:
+        ; read var ptrToSpace
+        lea rcx, [var2]
+        mov rcx, [rcx]
+        ; int lit 1
+        mov rax, 1
+        movzx rax, al
+        ; add
+        add rcx, rax
+        ; assign ptrToSpace
+        lea rax, [var2]
+        mov [rax], rcx
         ; deref ptrToSpace
-        lea rcx, [var1]
+        lea rcx, [var2]
         mov rcx, [rcx]
         mov cl, [rcx]
         movzx rcx, cl
@@ -146,7 +162,8 @@ section '.data' data readable writeable
         hStdOut rb 8
         hStdErr rb 8
         var0 rb 1
-        var1 rb 8
+        var1 rb 1
+        var2 rb 8
 
 section '.idata' import data readable writeable
 

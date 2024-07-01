@@ -226,7 +226,9 @@ public class X86Win64 {
 			final int reg = write(extend.expression(), variables);
 			final int exprSize = getTypeSize(extend.expressionType());
 			final int size = getTypeSize(extend.type());
-			writeIndented("movzx " + getRegName(reg, size) + ", " + getRegName(reg, exprSize));
+			if (size != exprSize) {
+				writeIndented("movzx " + getRegName(reg, size) + ", " + getRegName(reg, exprSize));
+			}
 			return reg;
 		}
 		case ExprFuncCall call -> {
@@ -597,15 +599,9 @@ public class X86Win64 {
 	}
 
 	private static int getTypeSize(Type type) {
-		if (type.toType() != null) {
+		if (type.isPointer()) {
 			return 8;
 		}
-		if (type == Type.U8) {
-			return 1;
-		}
-		if (type == Type.I16) {
-			return 2;
-		}
-		throw new UnsupportedOperationException(String.valueOf(type));
+		return Type.getSize(type);
 	}
 }
