@@ -14,14 +14,16 @@ start:
           call init
         ; int lit 32
         mov rcx, 32
+        movzx cx, cl
         ; assign space
         lea rax, [var0]
-        mov [rax], cl
+        mov [rax], cx
         ; int lit 63
         mov rcx, 63
+        movzx cx, cl
         ; assign next
         lea rax, [var1]
-        mov [rax], cl
+        mov [rax], cx
         ; address of var space
         lea rcx, [var0]
         ; assign ptrToSpace
@@ -41,6 +43,11 @@ main:
         ; int lit 1
         mov rax, 1
         movzx rax, al
+        ; int lit 2
+        mov rbx, 2
+        movzx rbx, bl
+        ; multiply
+        imul rax, rbx
         ; add
         add rcx, rax
         ; assign ptrToSpace
@@ -49,9 +56,8 @@ main:
         ; deref ptrToSpace
         lea rcx, [var2]
         mov rcx, [rcx]
-        mov cl, [rcx]
-        movzx rcx, cl
-        movzx cx, cl
+        mov cx, [rcx]
+        movzx rcx, cx
         ; call print
         sub rsp, 8
           call __printUint
@@ -161,8 +167,8 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        var0 rb 1
-        var1 rb 1
+        var0 rb 2
+        var1 rb 2
         var2 rb 8
 
 section '.idata' import data readable writeable

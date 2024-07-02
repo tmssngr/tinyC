@@ -333,9 +333,10 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private ExprBinary processBinary(ExprBinary.Op op, Expression left, Expression right, Location location) {
+	private Expression processBinary(ExprBinary.Op op, Expression left, Expression right, Location location) {
 		final Type leftType = left.typeNotNull();
 		final Type rightType = right.typeNotNull();
+		final Location rightLocation = right.location();
 
 		if (leftType.isPointer() || rightType.isPointer()) {
 			if (op == ExprBinary.Op.Equals
@@ -346,15 +347,19 @@ public final class TypeChecker {
 			}
 			else if (op == ExprBinary.Op.Add
 			    || op == ExprBinary.Op.Sub) {
-				if (leftType.isPointer() && rightType.isInt()) {
+				final Type toType = leftType.toType();
+				if (toType != null && rightType.isInt()) {
+					final int size = getTypeSize(toType);
 					left = new ExprCast(left, leftType, pointerIntType, left.location());
-					right = autoCastTo(pointerIntType, right, right.location());
-					return new ExprBinary(op, leftType, left, right, location);
-				}
-				if (leftType.isInt() && rightType.isPointer()) {
-					left = autoCastTo(pointerIntType, left, left.location());
-					right = new ExprCast(right, rightType, pointerIntType, right.location());
-					return new ExprBinary(op, rightType, left, right, location);
+					right = autoCastTo(pointerIntType, right, rightLocation);
+					if (size > 1) {
+						right = new ExprBinary(ExprBinary.Op.Multiply, pointerIntType, right,
+						                       autoCastTo(pointerIntType, new ExprIntLiteral(size, rightLocation),
+						                                  rightLocation),
+						                       rightLocation);
+					}
+					return new ExprCast(new ExprBinary(op, leftType, left, right, location),
+					                    pointerIntType, leftType, location);
 				}
 			}
 		}
@@ -371,7 +376,7 @@ public final class TypeChecker {
 					left = new ExprCast(left, leftType, rightType, left.location());
 				}
 				else {
-					right = new ExprCast(right, rightType, leftType, right.location());
+					right = new ExprCast(right, rightType, leftType, rightLocation);
 				}
 			}
 		}
@@ -383,7 +388,7 @@ public final class TypeChecker {
 					type = rightType;
 				}
 				else {
-					right = new ExprCast(right, rightType, leftType, right.location());
+					right = new ExprCast(right, rightType, leftType, rightLocation);
 				}
 			}
 		}

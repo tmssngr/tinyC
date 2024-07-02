@@ -16,6 +16,7 @@ public class TypeCheckerTest {
 		testBinaryOp("u8* prev = ptr1 - 2;");
 		testBinaryOp("u8 cmp = ptr1 == ptr2;");
 		testIllegalBinaryOp("u8  diff = ptr1 - ptr2;");
+		testIllegalBinaryOp("u8  diff = 1 - ptr2;");
 		testIllegalBinaryOp("u8  prev = ptr1 - 1;");
 		testIllegalBinaryOp("u8* prev = ptr1 * 1;");
 		testIllegalBinaryOp("u8* prev = ptr1 / 1;");
