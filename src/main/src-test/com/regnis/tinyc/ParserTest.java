@@ -233,6 +233,32 @@ public class ParserTest {
 				                                    i = i - 1;
 				                                  }
 				                                  }""")).getStatementNotNull());
+
+		assertEquals(new StmtCompound(List.of(
+				             new StmtDeclaration("u8", "i", intLit(5, loc(1, 7)),
+				                                 loc(1, 0)),
+				             new StmtFor(List.of(),
+				                         new ExprIntLiteral(1, loc(2, 0)),
+				                         new StmtCompound(List.of(
+						                         printStmt(new ExprVarRead("i", loc(3, 8)),
+						                                   loc(3, 2)),
+						                         new StmtAssign("i", new ExprBinary(ExprBinary.Op.Sub,
+						                                                            new ExprVarRead("i", loc(4, 6)),
+						                                                            intLit(1, loc(4, 10)),
+						                                                            loc(4, 8)),
+						                                        loc(4, 2))
+				                         )),
+				                         List.of(),
+				                         loc(2, 0))
+		             )),
+		             new Parser(new Lexer("""
+				                                  {
+				                                  u8 i = 5;
+				                                  for (;;) {
+				                                    print(i);
+				                                    i = i - 1;
+				                                  }
+				                                  }""")).getStatementNotNull());
 	}
 
 	@Test

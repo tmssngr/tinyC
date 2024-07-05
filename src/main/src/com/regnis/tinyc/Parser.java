@@ -179,7 +179,7 @@ public class Parser {
 		final List<Statement> initialization = getCommaSeparatedSimpleStatements();
 		consume(TokenType.SEMI);
 		final Expression condition;
-		if (token == TokenType.SEMI) {
+		if (isConsume(TokenType.SEMI)) {
 			condition = new ExprIntLiteral(1, location);
 		}
 		else {
