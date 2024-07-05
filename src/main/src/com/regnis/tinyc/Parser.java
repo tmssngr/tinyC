@@ -76,21 +76,34 @@ public class Parser {
 			case RETURN -> handleReturn();
 			case WHILE -> handleWhile();
 			case L_BRACE -> handleCompound();
-			case IDENTIFIER -> {
+			default -> {
 				final Location location = getLocation();
-				final String identifier = consumeIdentifier();
-				if (isConsume(TokenType.L_PAREN)) {
-					// method call
-					final List<Expression> argExpressions = getCallArgExpressions();
-					consume(TokenType.SEMI);
-					yield new StmtExpr(new ExprFuncCall(identifier, argExpressions, location));
+				final Statement statement = getVarDeclarationOrExpressionStatement(location);
+				//noinspection IfCanBeSwitch
+				if (statement == null) {
+					yield null;
 				}
 
-				final Statement declarationOrAssignment = getDeclarationOrAssignment(identifier, location);
-				consume(TokenType.SEMI);
-				yield declarationOrAssignment;
+				if (statement instanceof StmtDeclaration) {
+					consume(TokenType.SEMI);
+					yield statement;
+				}
+
+				if (statement instanceof StmtExpr expr) {
+					final Expression expression = expr.expression();
+					if (expression instanceof ExprFuncCall) {
+						consume(TokenType.SEMI);
+						yield statement;
+					}
+
+					if (expression instanceof ExprBinary binary
+					    && binary.op().kind == ExprBinary.OpKind.Assign) {
+						consume(TokenType.SEMI);
+						yield statement;
+					}
+				}
+				throw new SyntaxException("Unexpected expression", location);
 			}
-			default -> null;
 		};
 	}
 
@@ -109,27 +122,46 @@ public class Parser {
 
 	@Nullable
 	private Statement getSimpleStatement() {
-		if (token == TokenType.IDENTIFIER) {
-			final Location location = getLocation();
-			final String identifier = consumeIdentifier();
-			return getDeclarationOrAssignment(identifier, location);
+		final Location location = getLocation();
+		final Statement statement = getVarDeclarationOrExpressionStatement(location);
+		if (statement == null || statement instanceof StmtDeclaration) {
+			return statement;
 		}
 
-		return null;
+		if (statement instanceof StmtExpr expr
+		    && expr.expression() instanceof ExprBinary binary
+		    && binary.op().kind == ExprBinary.OpKind.Assign) {
+			return statement;
+		}
+
+		throw new SyntaxException("Expected var declaration or assignment", location);
 	}
 
-	@NotNull
-	private Statement getDeclarationOrAssignment(String identifier1, Location location) {
-		if (isConsume(TokenType.EQUAL)) {
-			final Expression expression = getExpression();
-			return new StmtAssign(identifier1, expression, location);
+	@Nullable
+	private Statement getVarDeclarationOrExpressionStatement(Location location) {
+		final Expression primary;
+		if (token == TokenType.IDENTIFIER) {
+			final String identifier1 = consumeIdentifier();
+			final String typeString = getTypeString(identifier1);
+			if (token == TokenType.IDENTIFIER) {
+				final String identifier2 = consumeIdentifier();
+				consume(TokenType.EQUAL);
+				final Expression expression = getExpression();
+				return new StmtDeclaration(typeString, identifier2, expression, location);
+			}
+
+			primary = getExpressionPrimary(identifier1, location);
+		}
+		else {
+			primary = getExpressionPrimary(location);
 		}
 
-		final String typeString = getTypeString(identifier1);
-		final String identifier2 = consumeIdentifier();
-		consume(TokenType.EQUAL);
-		final Expression expression = getExpression();
-		return new StmtDeclaration(typeString, identifier2, expression, location);
+		if (primary == null) {
+			return null;
+		}
+
+		final Expression expression = getExpression(primary, 0);
+		return new StmtExpr(expression);
 	}
 
 	@NotNull
@@ -239,8 +271,16 @@ public class Parser {
 
 	@NotNull
 	private Expression getExpression(int minPrecedence) {
-		Expression left = getExpressionPrimary();
+		final Location location = getLocation();
+		final Expression left = getExpressionPrimary(location);
+		if (left == null) {
+			throw new SyntaxException("Unexpected token " + token, location);
+		}
+		return getExpression(left, minPrecedence);
+	}
 
+	@NotNull
+	private Expression getExpression(@NotNull Expression left, int minPrecedence) {
 		while (true) {
 			final int precedence = getPrecedence(token);
 			if (precedence <= minPrecedence) {
@@ -256,6 +296,9 @@ public class Parser {
 				case MINUS -> new ExprBinary(ExprBinary.Op.Sub, left, right, location);
 				case STAR -> new ExprBinary(ExprBinary.Op.Multiply, left, right, location);
 				case SLASH -> new ExprBinary(ExprBinary.Op.Divide, left, right, location);
+
+				case EQUAL -> new ExprBinary(ExprBinary.Op.Assign, left, right, location);
+
 				case LT -> new ExprBinary(ExprBinary.Op.Lt, left, right, location);
 				case LT_EQ -> new ExprBinary(ExprBinary.Op.LtEq, left, right, location);
 				case EQ_EQ -> new ExprBinary(ExprBinary.Op.Equals, left, right, location);
@@ -267,20 +310,13 @@ public class Parser {
 		}
 	}
 
-	@NotNull
-	private Expression getExpressionPrimary() {
-		final Location location = getLocation();
+	@Nullable
+	private Expression getExpressionPrimary(Location location) {
 		return switch (token) {
 			case INT_LITERAL -> new ExprIntLiteral(consumeIntValue(), location);
 			case IDENTIFIER -> {
-				final String name = consumeText();
-				if (isConsume(TokenType.L_PAREN)) {
-					final List<Expression> args = getCallArgExpressions();
-					yield new ExprFuncCall(name, args, location);
-				}
-				else {
-					yield new ExprVarRead(name, location);
-				}
+				final String identifier = consumeText();
+				yield getExpressionPrimary(identifier, location);
 			}
 			case AMP -> {
 				consume(TokenType.AMP);
@@ -292,8 +328,17 @@ public class Parser {
 				final String name = consumeIdentifier();
 				yield new ExprDeref(name, location);
 			}
-			default -> throw new SyntaxException("Unexpected token " + token, location);
+			default -> null;
 		};
+	}
+
+	@NotNull
+	private Expression getExpressionPrimary(String identifier, Location location) {
+		if (isConsume(TokenType.L_PAREN)) {
+			final List<Expression> args = getCallArgExpressions();
+			return new ExprFuncCall(identifier, args, location);
+		}
+		return new ExprVarRead(identifier, location);
 	}
 
 	private int consumeIntValue() {
@@ -359,9 +404,10 @@ public class Parser {
 
 	private static int getPrecedence(TokenType token) {
 		return switch (token) {
-			case LT, LT_EQ, EQ_EQ, EXCL_EQ, GT_EQ, GT -> 1;
-			case PLUS, MINUS -> 2;
-			case STAR, SLASH -> 3;
+			case EQUAL -> 1;
+			case LT, LT_EQ, EQ_EQ, EXCL_EQ, GT_EQ, GT -> 2;
+			case PLUS, MINUS -> 3;
+			case STAR, SLASH -> 4;
 			default -> 0;
 		};
 	}

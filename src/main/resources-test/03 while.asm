@@ -60,8 +60,9 @@ while_1:
         mov rbx, 1
         ; sub
         sub al, bl
-        ; assign i
+        ; var i
         lea rbx, [var0]
+        ; assign
         mov [rbx], al
         jmp while_1
 endwhile_1:

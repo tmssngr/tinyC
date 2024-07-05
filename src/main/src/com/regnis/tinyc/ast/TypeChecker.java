@@ -105,7 +105,6 @@ public final class TypeChecker {
 	private Statement processStatement(Statement statement) {
 		return switch (statement) {
 			case StmtDeclaration declaration -> processDeclaration(declaration);
-			case StmtAssign assign -> processAssign(assign);
 			case StmtCompound compound -> new StmtCompound(processStatements(compound.statements()));
 			case StmtIf ifStatement -> processIf(ifStatement);
 			case StmtWhile whileStatement -> processWhile(whileStatement);
@@ -126,18 +125,6 @@ public final class TypeChecker {
 
 		addVariable(varName, type, location);
 		return new StmtDeclaration(declaration.typeString(), type, varName, expression, location);
-	}
-
-	@NotNull
-	private StmtAssign processAssign(StmtAssign assign) {
-		Expression expression = processExpression(assign.expression());
-		final Type type = getVariableType(assign.varName());
-		if (type == null) {
-			throw new SyntaxException("Undeclared variable '" + assign.varName() + "'", assign.location());
-		}
-
-		expression = autoCastTo(type, expression, assign.location());
-		return new StmtAssign(assign.varName(), expression, assign.location());
 	}
 
 	@NotNull
@@ -242,6 +229,9 @@ public final class TypeChecker {
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
 			case ExprIntLiteral intLiteral -> intLiteral;
 			case ExprBinary binary -> {
+				if (binary.op() == ExprBinary.Op.Assign) {
+					yield processAssign(binary.left(), binary.right(), binary.location());
+				}
 				final Expression left = processExpression(binary.left());
 				final Expression right = processExpression(binary.right());
 				yield processBinary(binary.op(), left, right, binary.location());
@@ -346,7 +336,7 @@ public final class TypeChecker {
 		switch (op.kind) {
 		case Arithmetic -> {
 			type = leftType;
-			if (leftType != rightType) {
+			if (!Objects.equals(leftType, rightType)) {
 				if (leftType == Type.U8) {
 					left = new ExprCast(left, leftType, rightType, left.location());
 					type = rightType;
@@ -358,7 +348,7 @@ public final class TypeChecker {
 		}
 		case Relational -> {
 			type = Type.U8;
-			if (leftType != rightType) {
+			if (!Objects.equals(leftType, rightType)) {
 				if (leftType == Type.U8) {
 					left = new ExprCast(left, leftType, rightType, left.location());
 				}
@@ -370,6 +360,24 @@ public final class TypeChecker {
 		default -> throw new UnsupportedOperationException(String.valueOf(op.kind));
 		}
 		return new ExprBinary(op, type, left, right, location);
+	}
+
+	private Expression processAssign(Expression left, Expression right, Location location) {
+		left = processLValue(left);
+		right = processExpression(right);
+		final Type leftType = left.typeNotNull();
+		final Type rightType = right.typeNotNull();
+		if (!Objects.equals(leftType, rightType)) {
+			right = autoCastTo(leftType, right, location);
+		}
+		return new ExprBinary(ExprBinary.Op.Assign, leftType, left, right, location);
+	}
+
+	private Expression processLValue(Expression expression) {
+		return switch (expression) {
+			case ExprVarRead varRead -> processVarRead(varRead.varName(), varRead.location());
+			default -> throw new SyntaxException("No l-expression " + expression, expression.location());
+		};
 	}
 
 	private void addVariable(String varName, Type type, Location location) {

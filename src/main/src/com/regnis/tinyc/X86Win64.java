@@ -119,7 +119,6 @@ public class X86Win64 {
 	private void writeStatement(Statement statement, Variables variables) throws IOException {
 		switch (statement) {
 		case StmtDeclaration declaration -> writeAssignment(declaration.varName(), declaration.expression(), variables);
-		case StmtAssign assign -> writeAssignment(assign.varName(), assign.expression(), variables);
 		case StmtCompound compound -> writeStatements(compound.statements(), variables);
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtWhile whileStatement -> writeWhile(whileStatement, variables);
@@ -258,6 +257,17 @@ public class X86Win64 {
 
 	private int writeBinary(ExprBinary node, Variables variables) throws IOException {
 		switch (node.op()) {
+		case Assign -> {
+			final int expressionReg = write(node.right(), variables);
+			final int lValueReg = writeLValue(node.left(), variables);
+			final String addrReg = getRegName(lValueReg);
+			final int typeSize = getTypeSize(node.typeNotNull());
+			writeComment("assign");
+			writeIndented("mov [" + addrReg + "], " + getRegName(expressionReg, typeSize));
+			freeReg(expressionReg);
+			freeReg(lValueReg);
+			return -1;
+		}
 		case Add -> {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
@@ -307,6 +317,21 @@ public class X86Win64 {
 			return leftReg;
 		}
 		}
+	}
+
+	private int writeLValue(Expression lValue, Variables variables) throws IOException {
+		return switch (lValue) {
+			case ExprVarRead var -> {
+				final String varName = var.varName();
+				final int varReg = getFreeReg();
+				final Pair<Type, Integer> typeIndex = variables.get(varName);
+				final String addrReg = getRegName(varReg);
+				writeComment("var " + varName);
+				writeIndented("lea " + addrReg + ", [" + getVarName(typeIndex.right()) + "]");
+				yield varReg;
+			}
+			default -> throw new IllegalStateException(String.valueOf(lValue));
+		};
 	}
 
 	private void writeIfElse(StmtIf statement, Variables variables) throws IOException {

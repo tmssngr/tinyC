@@ -50,8 +50,9 @@ main:
         imul rax, rbx
         ; add
         add rcx, rax
-        ; assign ptrToSpace
+        ; var ptrToSpace
         lea rax, [var2]
+        ; assign
         mov [rax], rcx
         ; deref ptrToSpace
         lea rcx, [var2]

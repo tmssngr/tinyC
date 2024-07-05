@@ -61,8 +61,9 @@ for_1:
         mov rbx, 1
         ; add
         add al, bl
-        ; assign i
+        ; var i
         lea rbx, [var0]
+        ; assign
         mov [rbx], al
         jmp for_1
 endFor_1:

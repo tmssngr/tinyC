@@ -54,8 +54,9 @@ main:
         ; int lit 1
         mov rcx, 1
         movzx cx, cl
-        ; assign foo
+        ; var foo
         lea rax, [var0]
+        ; assign
         mov [rax], cx
         ; read var bar
         lea rcx, [var1]
