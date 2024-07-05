@@ -25,16 +25,20 @@ public record ExprBinary(@NotNull Op op, @Nullable Type type, @NotNull Expressio
 		return Objects.requireNonNull(type);
 	}
 
+	public enum OpKind {
+		Arithmetic, Relational
+	}
+
 	public enum Op {
-		Add("+", false), Sub("-", false), Multiply("*", false), Divide("/", false),
-		Lt("<", true), LtEq("<=", true), Equals("==", true), NotEquals("!=", true), GtEq(">=", true), Gt(">", true);
+		Add("+", OpKind.Arithmetic), Sub("-", OpKind.Arithmetic), Multiply("*", OpKind.Arithmetic), Divide("/", OpKind.Arithmetic),
+		Lt("<", OpKind.Relational), LtEq("<=", OpKind.Relational), Equals("==", OpKind.Relational), NotEquals("!=", OpKind.Relational), GtEq(">=", OpKind.Relational), Gt(">", OpKind.Relational);
 
 		private final String s;
-		public final boolean isRelational;
+		public final OpKind kind;
 
-		Op(String s, boolean isRelational) {
+		Op(String s, OpKind kind) {
 			this.s = s;
-			this.isRelational = isRelational;
+			this.kind = kind;
 		}
 	}
 }

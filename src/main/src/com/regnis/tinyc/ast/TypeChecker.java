@@ -363,18 +363,8 @@ public final class TypeChecker {
 		}
 
 		Type type;
-		if (op.isRelational) {
-			type = Type.U8;
-			if (leftType != rightType) {
-				if (leftType == Type.U8) {
-					left = new ExprCast(left, leftType, rightType, left.location());
-				}
-				else {
-					right = new ExprCast(right, rightType, leftType, rightLocation);
-				}
-			}
-		}
-		else {
+		switch (op.kind) {
+		case Arithmetic -> {
 			type = leftType;
 			if (leftType != rightType) {
 				if (leftType == Type.U8) {
@@ -385,6 +375,19 @@ public final class TypeChecker {
 					right = new ExprCast(right, rightType, leftType, rightLocation);
 				}
 			}
+		}
+		case Relational -> {
+			type = Type.U8;
+			if (leftType != rightType) {
+				if (leftType == Type.U8) {
+					left = new ExprCast(left, leftType, rightType, left.location());
+				}
+				else {
+					right = new ExprCast(right, rightType, leftType, rightLocation);
+				}
+			}
+		}
+		default -> throw new UnsupportedOperationException(String.valueOf(op.kind));
 		}
 		return new ExprBinary(op, type, left, right, location);
 	}
