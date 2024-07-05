@@ -5,10 +5,10 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record StmtCall(@NotNull ExprFuncCall call) implements Statement {
+public record StmtExpr(@NotNull Expression expression) implements Statement {
 
 	@Override
 	public String toString() {
-		return call.toString();
+		return expression.toString();
 	}
 }

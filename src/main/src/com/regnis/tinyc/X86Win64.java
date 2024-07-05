@@ -121,7 +121,7 @@ public class X86Win64 {
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtWhile whileStatement -> writeWhile(whileStatement, variables);
 		case StmtFor forStatement -> writeFor(forStatement, variables);
-		case StmtCall call -> writeCall(call.call(), variables);
+		case StmtExpr stmt -> write(stmt.expression(), variables);
 		case StmtReturn ret -> writeReturn(ret.expression(), variables);
 		case null, default -> throw new UnsupportedOperationException(String.valueOf(statement));
 		}

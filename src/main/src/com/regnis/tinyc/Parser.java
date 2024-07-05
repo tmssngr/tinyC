@@ -70,27 +70,26 @@ public class Parser {
 
 	@Nullable
 	private Statement getStatement() {
-		if (token == TokenType.IDENTIFIER) {
-			final Location location = getLocation();
-			final String identifier = consumeIdentifier();
-			if (isConsume(TokenType.L_PAREN)) {
-				// method call
-				final List<Expression> argExpressions = getCallArgExpressions();
-				consume(TokenType.SEMI);
-				return new StmtCall(new ExprFuncCall(identifier, argExpressions, location));
-			}
-
-			final Statement.Simple declarationOrAssignment = getDeclarationOrAssignment(identifier, location);
-			consume(TokenType.SEMI);
-			return declarationOrAssignment;
-		}
-
 		return switch (token) {
 			case FOR -> handleFor();
 			case IF -> handleIf();
 			case RETURN -> handleReturn();
 			case WHILE -> handleWhile();
 			case L_BRACE -> handleCompound();
+			case IDENTIFIER -> {
+				final Location location = getLocation();
+				final String identifier = consumeIdentifier();
+				if (isConsume(TokenType.L_PAREN)) {
+					// method call
+					final List<Expression> argExpressions = getCallArgExpressions();
+					consume(TokenType.SEMI);
+					yield new StmtExpr(new ExprFuncCall(identifier, argExpressions, location));
+				}
+
+				final Statement.Simple declarationOrAssignment = getDeclarationOrAssignment(identifier, location);
+				consume(TokenType.SEMI);
+				yield declarationOrAssignment;
+			}
 			default -> null;
 		};
 	}

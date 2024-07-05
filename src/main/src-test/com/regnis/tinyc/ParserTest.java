@@ -293,7 +293,7 @@ public class ParserTest {
 	}
 
 	private static Statement printStmt(Expression expression, Location loc) {
-		return new StmtCall(new ExprFuncCall("print", List.of(expression), loc));
+		return new StmtExpr(new ExprFuncCall("print", List.of(expression), loc));
 	}
 
 	private static ExprIntLiteral intLit(int value, Location location) {

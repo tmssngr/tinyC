@@ -112,7 +112,7 @@ public final class TypeChecker {
 			case StmtWhile whileStatement -> processWhile(whileStatement);
 			case StmtFor forStatement -> processFor(forStatement);
 			case StmtReturn stmt -> processReturn(stmt.expression(), stmt.location());
-			case StmtCall stmt -> processCall(stmt);
+			case StmtExpr stmt -> new StmtExpr(processExpression(stmt.expression()));
 			default -> throw new IllegalStateException("Unexpected value: " + statement);
 		};
 	}
@@ -225,12 +225,6 @@ public final class TypeChecker {
 			expression = autoCastTo(expectedReturnType, expression, location);
 		}
 		return new StmtReturn(expression, location);
-	}
-
-	@NotNull
-	private StmtCall processCall(StmtCall stmt) {
-		final ExprFuncCall call = stmt.call();
-		return new StmtCall(processFuncCall(call.name(), call.argExpressions(), call.location()));
 	}
 
 	@NotNull
