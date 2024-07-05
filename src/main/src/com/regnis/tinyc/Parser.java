@@ -239,32 +239,7 @@ public class Parser {
 
 	@NotNull
 	private Expression getExpression(int minPrecedence) {
-		Location location = getLocation();
-		Expression left;
-		if (token == TokenType.INT_LITERAL) {
-			left = new ExprIntLiteral(consumeIntValue(), location);
-		}
-		else if (token == TokenType.IDENTIFIER) {
-			final String name = consumeText();
-			if (isConsume(TokenType.L_PAREN)) {
-				final List<Expression> args = getCallArgExpressions();
-				left = new ExprFuncCall(name, args, location);
-			}
-			else {
-				left = new ExprVarRead(name, location);
-			}
-		}
-		else if (isConsume(TokenType.AMP)) {
-			final String name = consumeIdentifier();
-			left = new ExprAddrOf(name, location);
-		}
-		else if (isConsume(TokenType.STAR)) {
-			final String name = consumeIdentifier();
-			left = new ExprDeref(name, location);
-		}
-		else {
-			throw new SyntaxException("Expected int literal but got " + token, location);
-		}
+		Expression left = getExpressionPrimary();
 
 		while (true) {
 			final int precedence = getPrecedence(token);
@@ -272,7 +247,7 @@ public class Parser {
 				return left;
 			}
 
-			location = getLocation();
+			final Location location = getLocation();
 			final TokenType operationToken = token;
 			consume();
 			final Expression right = getExpression(precedence);
@@ -290,6 +265,35 @@ public class Parser {
 				default -> throw new IllegalStateException("Unsupported operation " + operationToken);
 			};
 		}
+	}
+
+	@NotNull
+	private Expression getExpressionPrimary() {
+		final Location location = getLocation();
+		return switch (token) {
+			case INT_LITERAL -> new ExprIntLiteral(consumeIntValue(), location);
+			case IDENTIFIER -> {
+				final String name = consumeText();
+				if (isConsume(TokenType.L_PAREN)) {
+					final List<Expression> args = getCallArgExpressions();
+					yield new ExprFuncCall(name, args, location);
+				}
+				else {
+					yield new ExprVarRead(name, location);
+				}
+			}
+			case AMP -> {
+				consume(TokenType.AMP);
+				final String name = consumeIdentifier();
+				yield new ExprAddrOf(name, location);
+			}
+			case STAR -> {
+				consume(TokenType.STAR);
+				final String name = consumeIdentifier();
+				yield new ExprDeref(name, location);
+			}
+			default -> throw new SyntaxException("Unexpected token " + token, location);
+		};
 	}
 
 	private int consumeIntValue() {
