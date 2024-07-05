@@ -70,7 +70,7 @@ public class X86Win64 {
 	private void write(Function function, Variables variables) throws IOException {
 		writeComment(function.toString());
 		writeLabel(function.name());
-		write(function.statement(), variables);
+		writeStatement(function.statement(), variables);
 		writeIndented("ret");
 	}
 
@@ -110,32 +110,23 @@ public class X86Win64 {
 				      """);
 	}
 
-	private void write(Statement statement, Variables variables) throws IOException {
-		switch (statement) {
-		case Statement.Simple simpleStatement -> write(simpleStatement, variables);
-		case StmtCompound compound -> {
-			for (Statement childStatement : compound.statements()) {
-				write(childStatement, variables);
-			}
+	private void writeStatements(List<Statement> statements, Variables variables) throws IOException {
+		for (Statement statement : statements) {
+			writeStatement(statement, variables);
 		}
+	}
+
+	private void writeStatement(Statement statement, Variables variables) throws IOException {
+		switch (statement) {
+		case StmtDeclaration declaration -> writeAssignment(declaration.varName(), declaration.expression(), variables);
+		case StmtAssign assign -> writeAssignment(assign.varName(), assign.expression(), variables);
+		case StmtCompound compound -> writeStatements(compound.statements(), variables);
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtWhile whileStatement -> writeWhile(whileStatement, variables);
 		case StmtFor forStatement -> writeFor(forStatement, variables);
 		case StmtExpr stmt -> write(stmt.expression(), variables);
 		case StmtReturn ret -> writeReturn(ret.expression(), variables);
 		case null, default -> throw new UnsupportedOperationException(String.valueOf(statement));
-		}
-	}
-
-	private void write(Statement.Simple statement, Variables variables) throws IOException {
-		if (statement instanceof StmtDeclaration declaration) {
-			writeAssignment(declaration.varName(), declaration.expression(), variables);
-		}
-		else if (statement instanceof StmtAssign assign) {
-			writeAssignment(assign.varName(), assign.expression(), variables);
-		}
-		else {
-			throw new UnsupportedOperationException(statement.toString());
 		}
 	}
 
@@ -331,13 +322,13 @@ public class X86Win64 {
 		writeComment("if-condition");
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
 		writeIndented("jz " + (elseStatement != null ? elseLabel : nextLabel));
-		write(thenStatement, variables);
+		writeStatement(thenStatement, variables);
 		if (elseStatement != null) {
 			writeIndented("jmp " + nextLabel);
 		}
 		if (elseStatement != null) {
 			writeLabel(elseLabel);
-			write(elseStatement, variables);
+			writeStatement(elseStatement, variables);
 		}
 		writeLabel(nextLabel);
 	}
@@ -355,7 +346,7 @@ public class X86Win64 {
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
 		writeIndented("jz " + nextLabel);
 		final Statement body = statement.bodyStatement();
-		write(body, variables);
+		writeStatement(body, variables);
 		writeIndented("jmp " + whileLabel);
 		writeLabel(nextLabel);
 	}
@@ -366,9 +357,7 @@ public class X86Win64 {
 		final String nextLabel = "endFor_" + labelIndex;
 
 		writeComment("for");
-		for (Statement.Simple simpleStatement : statement.initialization()) {
-			write(simpleStatement, variables);
-		}
+		writeStatements(statement.initialization(), variables);
 
 		final Expression condition = statement.condition();
 		writeComment("for condition " + condition);
@@ -378,12 +367,10 @@ public class X86Win64 {
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
 		writeIndented("jz " + nextLabel);
 		final Statement body = statement.bodyStatement();
-		write(body, variables);
+		writeStatement(body, variables);
 
 		writeComment("for iteration");
-		for (Statement.Simple simpleStatement : statement.iteration()) {
-			write(simpleStatement, variables);
-		}
+		writeStatements(statement.iteration(), variables);
 		writeIndented("jmp " + forLabel);
 
 		writeLabel(nextLabel);

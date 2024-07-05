@@ -86,7 +86,7 @@ public class Parser {
 					yield new StmtExpr(new ExprFuncCall(identifier, argExpressions, location));
 				}
 
-				final Statement.Simple declarationOrAssignment = getDeclarationOrAssignment(identifier, location);
+				final Statement declarationOrAssignment = getDeclarationOrAssignment(identifier, location);
 				consume(TokenType.SEMI);
 				yield declarationOrAssignment;
 			}
@@ -108,7 +108,7 @@ public class Parser {
 	}
 
 	@Nullable
-	private Statement.Simple getSimpleStatement() {
+	private Statement getSimpleStatement() {
 		if (token == TokenType.IDENTIFIER) {
 			final Location location = getLocation();
 			final String identifier = consumeIdentifier();
@@ -119,7 +119,7 @@ public class Parser {
 	}
 
 	@NotNull
-	private Statement.Simple getDeclarationOrAssignment(String identifier1, Location location) {
+	private Statement getDeclarationOrAssignment(String identifier1, Location location) {
 		if (isConsume(TokenType.EQUAL)) {
 			final Expression expression = getExpression();
 			return new StmtAssign(identifier1, expression, location);
@@ -176,7 +176,7 @@ public class Parser {
 		final Location location = getLocation();
 		consume(TokenType.FOR);
 		consume(TokenType.L_PAREN);
-		final List<Statement.Simple> initialization = getCommaSeparatedSimpleStatements();
+		final List<Statement> initialization = getCommaSeparatedSimpleStatements();
 		consume(TokenType.SEMI);
 		final Expression condition;
 		if (token == TokenType.SEMI) {
@@ -186,17 +186,17 @@ public class Parser {
 			condition = getExpression();
 			consume(TokenType.SEMI);
 		}
-		final List<Statement.Simple> iterate = getCommaSeparatedSimpleStatements();
+		final List<Statement> iterate = getCommaSeparatedSimpleStatements();
 		consume(TokenType.R_PAREN);
 		final Statement body = getStatementNotNull();
 		return new StmtFor(initialization, condition, body, iterate, location);
 	}
 
 	@NotNull
-	private List<Statement.Simple> getCommaSeparatedSimpleStatements() {
-		final List<Statement.Simple> statements = new ArrayList<>();
+	private List<Statement> getCommaSeparatedSimpleStatements() {
+		final List<Statement> statements = new ArrayList<>();
 		while (true) {
-			final Statement.Simple statement = getSimpleStatement();
+			final Statement statement = getSimpleStatement();
 			if (statement != null) {
 				statements.add(statement);
 				if (token == TokenType.COMMA) {

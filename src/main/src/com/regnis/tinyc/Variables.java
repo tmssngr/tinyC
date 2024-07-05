@@ -17,7 +17,7 @@ public class Variables {
 			variables.processDeclaration(globalVar);
 		}
 		for (Function function : program.functions()) {
-			variables.processNode(function.statement());
+			variables.processStatement(function.statement());
 		}
 		return variables;
 	}
@@ -44,38 +44,30 @@ public class Variables {
 		return names.size();
 	}
 
-	private void processNode(@Nullable Statement statement) {
+	private void processStatement(@Nullable Statement statement) {
 		switch (statement) {
-		case Statement.Simple simpleStatement -> detectFrom(simpleStatement);
-		case StmtCompound compound -> {
-			for (Statement childStatement : compound.statements()) {
-				processNode(childStatement);
-			}
-		}
+		case StmtDeclaration declaration -> processDeclaration(declaration);
+		case StmtCompound compound -> processStatements(compound.statements());
 		case StmtIf ifStatement -> {
-			processNode(ifStatement.thenStatement());
-			processNode(ifStatement.elseStatement());
+			processStatement(ifStatement.thenStatement());
+			processStatement(ifStatement.elseStatement());
 		}
 		case StmtWhile whileStatement -> {
-			processNode(whileStatement.bodyStatement());
+			processStatement(whileStatement.bodyStatement());
 		}
 		case StmtFor forStatement -> {
-			for (Statement.Simple simpleStatement : forStatement.initialization()) {
-				detectFrom(simpleStatement);
-			}
-			processNode(forStatement.bodyStatement());
-			for (Statement.Simple simpleStatement : forStatement.iteration()) {
-				detectFrom(simpleStatement);
-			}
+			processStatements(forStatement.initialization());
+			processStatement(forStatement.bodyStatement());
+			processStatements(forStatement.iteration());
 		}
 		case null, default -> {
 		}
 		}
 	}
 
-	private void detectFrom(Statement.Simple statement) {
-		if (statement instanceof StmtDeclaration declaration) {
-			processDeclaration(declaration);
+	private void processStatements(List<Statement> compound) {
+		for (Statement childStatement : compound) {
+			processStatement(childStatement);
 		}
 	}
 

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record StmtDeclaration(@NotNull String typeString, @Nullable Type type, @NotNull String varName, @NotNull Expression expression, @NotNull Location location) implements Statement.Simple {
+public record StmtDeclaration(@NotNull String typeString, @Nullable Type type, @NotNull String varName, @NotNull Expression expression, @NotNull Location location) implements Statement {
 
 	public StmtDeclaration(@NotNull String typeString, @NotNull String varName, @NotNull Expression expression, @NotNull Location location) {
 		this(typeString, null, varName, expression, location);

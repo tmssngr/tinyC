@@ -7,7 +7,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record StmtAssign(@NotNull String varName, @NotNull Expression expression, @NotNull Location location) implements Statement.Simple {
+public record StmtAssign(@NotNull String varName, @NotNull Expression expression, @NotNull Location location) implements Statement {
 
 	@Override
 	public String toString() {

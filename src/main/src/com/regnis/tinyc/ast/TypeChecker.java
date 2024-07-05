@@ -103,11 +103,10 @@ public final class TypeChecker {
 
 	@NotNull
 	private Statement processStatement(Statement statement) {
-		if (statement instanceof Statement.Simple simple) {
-			return processStatement(simple);
-		}
 		return switch (statement) {
-			case StmtCompound compound -> processCompound(compound);
+			case StmtDeclaration declaration -> processDeclaration(declaration);
+			case StmtAssign assign -> processAssign(assign);
+			case StmtCompound compound -> new StmtCompound(processStatements(compound.statements()));
 			case StmtIf ifStatement -> processIf(ifStatement);
 			case StmtWhile whileStatement -> processWhile(whileStatement);
 			case StmtFor forStatement -> processFor(forStatement);
@@ -115,25 +114,6 @@ public final class TypeChecker {
 			case StmtExpr stmt -> new StmtExpr(processExpression(stmt.expression()));
 			default -> throw new IllegalStateException("Unexpected value: " + statement);
 		};
-	}
-
-	@NotNull
-	private Statement.Simple processStatement(Statement.Simple statement) {
-		return switch (statement) {
-			case StmtDeclaration declaration -> processDeclaration(declaration);
-			case StmtAssign assign -> processAssign(assign);
-			default -> throw new IllegalStateException("Unexpected value: " + statement);
-		};
-	}
-
-	@NotNull
-	private StmtCompound processCompound(StmtCompound compound) {
-		final List<Statement> statements = new ArrayList<>();
-		for (Statement statement : compound.statements()) {
-			final Statement newStatement = processStatement(statement);
-			statements.add(newStatement);
-		}
-		return new StmtCompound(statements);
 	}
 
 	@NotNull
@@ -186,27 +166,27 @@ public final class TypeChecker {
 
 	@NotNull
 	private StmtFor processFor(StmtFor forStmt) {
-		final List<Statement.Simple> initialization = determineTypes(forStmt.initialization());
+		final List<Statement> initialization = processStatements(forStmt.initialization());
 
 		final Expression condition = processExpression(forStmt.condition());
 		if (condition.typeNotNull() != Type.U8) {
 			throw new SyntaxException("Expected type u8 for the condition", forStmt.location());
 		}
 
-		final List<Statement.Simple> iteration = determineTypes(forStmt.iteration());
+		final List<Statement> iteration = processStatements(forStmt.iteration());
 
 		final Statement bodyStatement = processStatement(forStmt.bodyStatement());
 		return new StmtFor(initialization, condition, bodyStatement, iteration, forStmt.location());
 	}
 
 	@NotNull
-	private List<Statement.Simple> determineTypes(@NotNull List<Statement.Simple> initialization) {
-		final List<Statement.Simple> newInit = new ArrayList<>();
-		for (Statement.Simple statement : initialization) {
-			final Statement.Simple newStatement = processStatement(statement);
-			newInit.add(newStatement);
+	private List<Statement> processStatements(@NotNull List<Statement> statements) {
+		final List<Statement> newStatements = new ArrayList<>();
+		for (Statement statement : statements) {
+			final Statement newStatement = processStatement(statement);
+			newStatements.add(newStatement);
 		}
-		return newInit;
+		return newStatements;
 	}
 
 	@NotNull
