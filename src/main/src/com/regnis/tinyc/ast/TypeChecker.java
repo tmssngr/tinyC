@@ -129,10 +129,7 @@ public final class TypeChecker {
 
 	@NotNull
 	private StmtIf processIf(StmtIf ifStmt) {
-		final Expression condition = processExpression(ifStmt.condition());
-		if (condition.typeNotNull() != Type.U8) {
-			throw new SyntaxException("Expected type u8 for the condition", ifStmt.location());
-		}
+		final Expression condition = checkBooleanCondition(ifStmt.condition(), ifStmt.location());
 		final Statement thenStatement = processStatement(ifStmt.thenStatement());
 		Statement elseStatement = ifStmt.elseStatement();
 		if (elseStatement != null) {
@@ -143,10 +140,7 @@ public final class TypeChecker {
 
 	@NotNull
 	private StmtWhile processWhile(StmtWhile stmtWhile) {
-		final Expression condition = processExpression(stmtWhile.condition());
-		if (condition.typeNotNull() != Type.U8) {
-			throw new SyntaxException("Expected type u8 for the condition", stmtWhile.location());
-		}
+		final Expression condition = checkBooleanCondition(stmtWhile.condition(), stmtWhile.location());
 		final Statement bodyStatement = processStatement(stmtWhile.bodyStatement());
 		return new StmtWhile(condition, bodyStatement, stmtWhile.location());
 	}
@@ -155,15 +149,21 @@ public final class TypeChecker {
 	private StmtFor processFor(StmtFor forStmt) {
 		final List<Statement> initialization = processStatements(forStmt.initialization());
 
-		final Expression condition = processExpression(forStmt.condition());
-		if (condition.typeNotNull() != Type.U8) {
-			throw new SyntaxException("Expected type u8 for the condition", forStmt.location());
-		}
+		final Expression condition = checkBooleanCondition(forStmt.condition(), forStmt.location());
 
 		final List<Statement> iteration = processStatements(forStmt.iteration());
 
 		final Statement bodyStatement = processStatement(forStmt.bodyStatement());
 		return new StmtFor(initialization, condition, bodyStatement, iteration, forStmt.location());
+	}
+
+	@NotNull
+	private Expression checkBooleanCondition(Expression expression, Location location) {
+		final Expression condition = processExpression(expression);
+		if (condition.typeNotNull() != Type.U8) {
+			throw new SyntaxException("Expected type u8 for the condition", location);
+		}
+		return condition;
 	}
 
 	@NotNull
