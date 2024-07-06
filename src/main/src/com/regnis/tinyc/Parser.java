@@ -25,7 +25,7 @@ public class Parser {
 	public Statement getStatementNotNull() {
 		final Statement statement = getStatement();
 		if (statement == null) {
-			throw new SyntaxException("Expected statement, but got " + token, getLocation());
+			throw new SyntaxException(Messages.unexpectedToken(token), getLocation());
 		}
 		return statement;
 	}
@@ -270,7 +270,7 @@ public class Parser {
 		final Location location = getLocation();
 		final Expression left = getExpressionPrimary(location);
 		if (left == null) {
-			throw new SyntaxException("Unexpected token " + token, location);
+			throw new SyntaxException(Messages.unexpectedToken(token), location);
 		}
 		return getExpression(left, minPrecedence);
 	}

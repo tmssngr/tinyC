@@ -58,7 +58,7 @@ public final class TypeChecker {
 		final Location location = function.location();
 		final Func existingFunc = functions.get(name);
 		if (existingFunc != null) {
-			throw new SyntaxException("Function '" + name + "' has already been declared at " + existingFunc.location, location);
+			throw new SyntaxException(Messages.functionAlreadDeclaredAt(name, existingFunc.location), location);
 		}
 
 		final Type returnType = getType(function.typeString(), location);
@@ -95,7 +95,7 @@ public final class TypeChecker {
 		final StmtCompound compound = statement instanceof StmtCompound c ? c : new StmtCompound(List.of(statement));
 		if (expectedReturnType != Type.VOID) {
 			if (!(Utils.getLastOrNull(compound.statements()) instanceof StmtReturn)) {
-				throw new SyntaxException("The function must return type " + expectedReturnType, function.location());
+				throw new SyntaxException(Messages.functionMustReturnType(expectedReturnType), function.location());
 			}
 		}
 		return new Function(function.name(), function.typeString(), function.returnType(), function.args(), statement, function.location());
@@ -181,12 +181,12 @@ public final class TypeChecker {
 		final Type expectedReturnType = Objects.requireNonNull(this.expectedReturnType);
 		if (expression == null) {
 			if (expectedReturnType != Type.VOID) {
-				throw new SyntaxException("Expected expression of type '" + expectedReturnType + "'", location);
+				throw new SyntaxException(Messages.returnExpectedExpressionOfType(expectedReturnType), location);
 			}
 		}
 		else {
 			if (expectedReturnType == Type.VOID) {
-				throw new SyntaxException("Can't return anything from a void function", location);
+				throw new SyntaxException(Messages.cantReturnAnythingFromVoidFunction(), location);
 			}
 			expression = processExpression(expression);
 			expression = autoCastTo(expectedReturnType, expression, location);
@@ -202,13 +202,13 @@ public final class TypeChecker {
 		}
 
 		if (type.isPointer() != expressionType.isPointer()) {
-			throw new SyntaxException("Can't convert from int to pointer or vise versa", location);
+			throw new SyntaxException(Messages.cantCastFromTo(expressionType, type), location);
 		}
 
 		final int expectedSize = getTypeSize(type);
 		final int actualSize = getTypeSize(expressionType);
 		if (actualSize >= expectedSize) {
-			throw new SyntaxException("Expected type " + type + " but got " + expressionType, location);
+			throw new SyntaxException(Messages.cantCastFromTo(expressionType, type), location);
 		}
 
 		return new ExprCast(expression, expressionType, type, expression.location());
@@ -246,7 +246,7 @@ public final class TypeChecker {
 	private Expression processVarRead(String name, Location location) {
 		final Type type = getVariableType(name);
 		if (type == null) {
-			throw new SyntaxException("Unknown variable '" + name + "'", location);
+			throw new SyntaxException(Messages.undeclaredVariable(name), location);
 		}
 		return new ExprVarRead(name, type, location);
 	}
@@ -255,7 +255,7 @@ public final class TypeChecker {
 	private Expression processAddrOf(String name, Location location) {
 		final Type type = getVariableType(name);
 		if (type == null) {
-			throw new SyntaxException("Unknown variable '" + name + "'", location);
+			throw new SyntaxException(Messages.undeclaredVariable(name), location);
 		}
 		return new ExprAddrOf(name, Type.pointer(type), location);
 	}
@@ -266,7 +266,7 @@ public final class TypeChecker {
 		final Type type = expression.typeNotNull();
 		final Type derefType = type.toType();
 		if (derefType == null) {
-			throw new SyntaxException("Expected expression to be an l-value", location);
+			throw new SyntaxException(Messages.expectedPointerButGot(type), location);
 		}
 		return new ExprDeref(expression, derefType, location);
 	}
@@ -275,10 +275,10 @@ public final class TypeChecker {
 	private ExprFuncCall processFuncCall(String name, List<Expression> argExpressions, Location location) {
 		final Func function = functions.get(name);
 		if (function == null) {
-			throw new SyntaxException("Undeclared function '" + name + "'", location);
+			throw new SyntaxException(Messages.undeclaredFunction(name), location);
 		}
 		if (function.argTypes().size() != argExpressions.size()) {
-			throw new SyntaxException("Function '" + name + "' needs " + function.argTypes().size() + " arguments, but got " + argExpressions.size(), location);
+			throw new SyntaxException(Messages.functionNeedsXArgumentsButGotY(name, function.argTypes().size(), argExpressions.size()), location);
 		}
 
 		final List<Expression> expressions = new ArrayList<>();
@@ -327,7 +327,7 @@ public final class TypeChecker {
 		}
 
 		if (!leftType.isInt() || !rightType.isInt()) {
-			throw new SyntaxException("Operation " + op + " is not supported for " + leftType + " and " + rightType, location);
+			throw new SyntaxException(Messages.operationNotSupportedForTypes(op, leftType, rightType), location);
 		}
 
 		Type type;
@@ -374,14 +374,14 @@ public final class TypeChecker {
 	private Expression processLValue(Expression expression) {
 		return switch (expression) {
 			case ExprVarRead varRead -> processVarRead(varRead.varName(), varRead.location());
-			default -> throw new SyntaxException("No l-expression " + expression, expression.location());
+			default -> throw new SyntaxException(Messages.expectedLValue(), expression.location());
 		};
 	}
 
 	private void addVariable(String varName, Type type, Location location) {
 		final Pair<Type, Location> pair = variables.get(varName);
 		if (pair != null) {
-			throw new SyntaxException("Variable '" + varName + "' has already been declared at " + pair.right(), location);
+			throw new SyntaxException(Messages.variableHasAlreadyBeenDeclaredAt(varName, pair.right()), location);
 		}
 
 		variables.put(varName, new Pair<>(type, location));
@@ -402,7 +402,7 @@ public final class TypeChecker {
 			case "void" -> Type.VOID;
 			case "u8" -> Type.U8;
 			case "i16" -> Type.I16;
-			default -> throw new SyntaxException("Unknown type '" + type + "'", location);
+			default -> throw new SyntaxException(Messages.unknownType(type), location);
 		};
 	}
 
