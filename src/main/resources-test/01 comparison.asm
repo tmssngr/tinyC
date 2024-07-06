@@ -24,7 +24,7 @@ main:
         mov rcx, 1
         ; int lit 2
         mov rax, 2
-        ; Lt
+        ; <
         cmp rcx, rax
         setl cl
         and rcx, 0xFF
@@ -39,7 +39,7 @@ main:
         mov rcx, 2
         ; int lit 1
         mov rax, 1
-        ; Lt
+        ; <
         cmp rcx, rax
         setl cl
         and rcx, 0xFF
@@ -54,7 +54,7 @@ main:
         mov rcx, 1
         ; int lit 2
         mov rax, 2
-        ; LtEq
+        ; <=
         cmp rcx, rax
         setle cl
         and rcx, 0xFF
@@ -69,7 +69,7 @@ main:
         mov rcx, 2
         ; int lit 1
         mov rax, 1
-        ; LtEq
+        ; <=
         cmp rcx, rax
         setle cl
         and rcx, 0xFF
@@ -84,7 +84,7 @@ main:
         mov rcx, 1
         ; int lit 2
         mov rax, 2
-        ; Equals
+        ; ==
         cmp rcx, rax
         sete cl
         and rcx, 0xFF
@@ -99,7 +99,7 @@ main:
         mov rcx, 1
         ; int lit 2
         mov rax, 2
-        ; NotEquals
+        ; !=
         cmp rcx, rax
         setne cl
         and rcx, 0xFF
@@ -114,7 +114,7 @@ main:
         mov rcx, 1
         ; int lit 2
         mov rax, 2
-        ; GtEq
+        ; >=
         cmp rcx, rax
         setge cl
         and rcx, 0xFF
@@ -129,7 +129,7 @@ main:
         mov rcx, 2
         ; int lit 1
         mov rax, 1
-        ; GtEq
+        ; >=
         cmp rcx, rax
         setge cl
         and rcx, 0xFF
@@ -144,7 +144,7 @@ main:
         mov rcx, 1
         ; int lit 2
         mov rax, 2
-        ; Gt
+        ; >
         cmp rcx, rax
         setg cl
         and rcx, 0xFF
@@ -159,7 +159,7 @@ main:
         mov rcx, 2
         ; int lit 1
         mov rax, 1
-        ; Gt
+        ; >
         cmp rcx, rax
         setg cl
         and rcx, 0xFF

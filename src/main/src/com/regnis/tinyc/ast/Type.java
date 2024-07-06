@@ -13,7 +13,7 @@ public record Type(@NotNull String name, @Nullable Type toType, boolean isInt) {
 	public static final Type I64 = new Type("i64", null, true);
 
 	public static Type pointer(@NotNull Type toType) {
-		return new Type("*", toType, false);
+		return new Type(toType.name + "*", toType, false);
 	}
 
 	public static int getSize(@NotNull Type type) {
@@ -33,6 +33,11 @@ public record Type(@NotNull String name, @Nullable Type toType, boolean isInt) {
 			return 8;
 		}
 		throw new IllegalStateException("Unknown type " + type);
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 	public boolean isPointer() {

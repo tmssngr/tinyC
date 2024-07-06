@@ -33,7 +33,7 @@ while_1:
         movzx rcx, cl
         ; int lit 0
         mov rax, 0
-        ; Gt
+        ; >
         cmp rcx, rax
         setg cl
         and rcx, 0xFF

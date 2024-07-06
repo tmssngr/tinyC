@@ -39,7 +39,7 @@ main:
         lea rax, [var1]
         mov al, [rax]
         movzx rax, al
-        ; Gt
+        ; >
         cmp rcx, rax
         setg cl
         and rcx, 0xFF

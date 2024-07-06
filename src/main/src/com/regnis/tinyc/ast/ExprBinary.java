@@ -41,5 +41,10 @@ public record ExprBinary(@NotNull Op op, @Nullable Type type, @NotNull Expressio
 			this.s = s;
 			this.kind = kind;
 		}
+
+		@Override
+		public String toString() {
+			return s;
+		}
 	}
 }

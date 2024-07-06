@@ -34,7 +34,7 @@ for_1:
         movzx rcx, cl
         ; int lit 2
         mov rax, 2
-        ; NotEquals
+        ; !=
         cmp rcx, rax
         setne cl
         and rcx, 0xFF
