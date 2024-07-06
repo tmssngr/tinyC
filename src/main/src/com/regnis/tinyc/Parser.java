@@ -192,9 +192,7 @@ public class Parser {
 	private StmtIf handleIf() {
 		final Location location = getLocation();
 		consume(TokenType.IF);
-		consume(TokenType.L_PAREN);
-		final Expression condition = getExpression();
-		consume(TokenType.R_PAREN);
+		final Expression condition = getExpressionInParenthesis();
 		final Statement thenStatement = getStatementNotNull();
 		Statement elseStatements = null;
 		if (isConsume(TokenType.ELSE)) {
@@ -245,9 +243,7 @@ public class Parser {
 	private StmtWhile handleWhile() {
 		final Location location = getLocation();
 		consume(TokenType.WHILE);
-		consume(TokenType.L_PAREN);
-		final Expression condition = getExpression();
-		consume(TokenType.R_PAREN);
+		final Expression condition = getExpressionInParenthesis();
 		final Statement bodyStatement = getStatementNotNull();
 		return new StmtWhile(condition, bodyStatement, location);
 	}
@@ -314,6 +310,7 @@ public class Parser {
 	private Expression getExpressionPrimary(Location location) {
 		return switch (token) {
 			case INT_LITERAL -> new ExprIntLiteral(consumeIntValue(), location);
+			case L_PAREN -> getExpressionInParenthesis();
 			case IDENTIFIER -> {
 				final String identifier = consumeText();
 				yield getExpressionPrimary(identifier, location);
@@ -339,6 +336,14 @@ public class Parser {
 			return new ExprFuncCall(identifier, args, location);
 		}
 		return new ExprVarRead(identifier, location);
+	}
+
+	@NotNull
+	private Expression getExpressionInParenthesis() {
+		consume(TokenType.L_PAREN);
+		final Expression expression = getExpression();
+		consume(TokenType.R_PAREN);
+		return expression;
 	}
 
 	private int consumeIntValue() {

@@ -93,6 +93,17 @@ public class ParserTest {
 		                        loc(0, 4)),
 		             new Parser(new Lexer("foo = 1 + 3 > 2 * 4;")).getStatementNotNull());
 
+		assertEquals(assignStmt(new ExprVarRead("foo", loc(0, 0)),
+		                        new ExprBinary(ExprBinary.Op.Multiply,
+		                                       new ExprIntLiteral(2, loc(0, 6)),
+		                                       new ExprBinary(ExprBinary.Op.Add,
+		                                                      new ExprVarRead("bar", loc(0, 11)),
+		                                                      new ExprIntLiteral(1, loc(0, 17)),
+		                                                      loc(0, 15)),
+		                                       loc(0, 8)),
+		                        loc(0, 4)),
+		             new Parser(new Lexer("foo = 2 * (bar + 1);")).getStatementNotNull());
+
 		assertEquals(assignStmt(new ExprDeref("foo", loc(0, 0)),
 		                        new ExprVarRead("bar", loc(0, 7)),
 		                        loc(0, 5)),
