@@ -26,6 +26,12 @@ public class TypeCheckerTest {
 		testIllegalBinaryOp("u8 cmp = ptr1 > ptr2;");
 	}
 
+	@Test
+	public void testInvalidLValue() {
+		testIllegalBinaryOp("1 = ptr1;");
+		testIllegalBinaryOp("ptr1 + 1 = ptr2;");
+	}
+
 	private void testIllegalBinaryOp(String illegalOperation) {
 		try {
 			testBinaryOp(illegalOperation);
