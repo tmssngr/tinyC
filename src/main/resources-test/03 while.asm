@@ -20,50 +20,47 @@ start:
 
         ; void main
 main:
-        ; int lit 5
-        mov rcx, 5
-        ; assign i
+        ; 2:9 int lit 5
+        mov cl, 5
+        ; 2:2 assign i
         lea rax, [var0]
         mov [rax], cl
-        ; while i > 0
+        ; 3:2 while i > 0
 while_1:
-        ; read var i
+        ; 3:9 read var i
         lea rcx, [var0]
-        mov cl, [rcx]
-        movzx rcx, cl
-        ; int lit 0
-        mov rax, 0
-        ; >
-        cmp rcx, rax
-        setg cl
-        and rcx, 0xFF
+        mov al, [rcx]
+        ; 3:13 int lit 0
+        mov cl, 0
+        ; 3:11 >
+        cmp al, cl
+        setg al
+        and al, 0xFF
         ; while-condition
-        or rcx, rcx
+        or al, al
         jz endwhile_1
-        ; read var i
-        lea rax, [var0]
-        mov al, [rax]
-        movzx rax, al
-        movzx ax, al
-        mov rcx, rax
-        ; call print
+        ; 4:9 read var i
+        lea rcx, [var0]
+        mov bl, [rcx]
+        movzx bx, bl
+        movzx rcx, bx
+        ; 4:3 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; read var i
-        lea rax, [var0]
-        mov al, [rax]
-        movzx rax, al
-        ; int lit 1
-        mov rbx, 1
-        ; sub
-        sub al, bl
-        ; var i
-        lea rbx, [var0]
-        ; assign
-        mov [rbx], al
+        ; 5:7 read var i
+        lea rcx, [var0]
+        mov bl, [rcx]
+        ; 5:11 int lit 1
+        mov cl, 1
+        ; 5:9 sub
+        sub bl, cl
+        ; 5:3 var i
+        lea rcx, [var0]
+        ; 5:5 assign
+        mov [rcx], bl
         jmp while_1
 endwhile_1:
         ret

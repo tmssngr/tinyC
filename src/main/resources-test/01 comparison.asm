@@ -20,151 +20,161 @@ start:
 
         ; void main
 main:
-        ; int lit 1
-        mov rcx, 1
-        ; int lit 2
-        mov rax, 2
-        ; <
-        cmp rcx, rax
+        ; 2:11 int lit 1
+        mov cl, 1
+        ; 2:15 int lit 2
+        mov al, 2
+        ; 2:13 <
+        cmp cl, al
         setl cl
-        and rcx, 0xFF
+        and cl, 0xFF
         movzx cx, cl
-        ; call print
+        movzx rcx, cx
+        ; 2:5 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; int lit 2
-        mov rcx, 2
-        ; int lit 1
-        mov rax, 1
-        ; <
-        cmp rcx, rax
+        ; 3:11 int lit 2
+        mov cl, 2
+        ; 3:15 int lit 1
+        mov al, 1
+        ; 3:13 <
+        cmp cl, al
         setl cl
-        and rcx, 0xFF
+        and cl, 0xFF
         movzx cx, cl
-        ; call print
+        movzx rcx, cx
+        ; 3:5 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; int lit 1
-        mov rcx, 1
-        ; int lit 2
-        mov rax, 2
-        ; <=
-        cmp rcx, rax
+        ; 5:11 int lit 1
+        mov cl, 1
+        ; 5:16 int lit 2
+        mov al, 2
+        ; 5:13 <=
+        cmp cl, al
         setle cl
-        and rcx, 0xFF
+        and cl, 0xFF
         movzx cx, cl
-        ; call print
+        movzx rcx, cx
+        ; 5:5 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; int lit 2
-        mov rcx, 2
-        ; int lit 1
-        mov rax, 1
-        ; <=
-        cmp rcx, rax
+        ; 6:11 int lit 2
+        mov cl, 2
+        ; 6:16 int lit 1
+        mov al, 1
+        ; 6:13 <=
+        cmp cl, al
         setle cl
-        and rcx, 0xFF
+        and cl, 0xFF
         movzx cx, cl
-        ; call print
+        movzx rcx, cx
+        ; 6:5 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; int lit 1
-        mov rcx, 1
-        ; int lit 2
-        mov rax, 2
-        ; ==
-        cmp rcx, rax
+        ; 8:11 int lit 1
+        mov cl, 1
+        ; 8:16 int lit 2
+        mov al, 2
+        ; 8:13 ==
+        cmp cl, al
         sete cl
-        and rcx, 0xFF
+        and cl, 0xFF
         movzx cx, cl
-        ; call print
+        movzx rcx, cx
+        ; 8:5 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; int lit 1
-        mov rcx, 1
-        ; int lit 2
-        mov rax, 2
-        ; !=
-        cmp rcx, rax
+        ; 10:11 int lit 1
+        mov cl, 1
+        ; 10:16 int lit 2
+        mov al, 2
+        ; 10:13 !=
+        cmp cl, al
         setne cl
-        and rcx, 0xFF
+        and cl, 0xFF
         movzx cx, cl
-        ; call print
+        movzx rcx, cx
+        ; 10:5 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; int lit 1
-        mov rcx, 1
-        ; int lit 2
-        mov rax, 2
-        ; >=
-        cmp rcx, rax
+        ; 12:11 int lit 1
+        mov cl, 1
+        ; 12:16 int lit 2
+        mov al, 2
+        ; 12:13 >=
+        cmp cl, al
         setge cl
-        and rcx, 0xFF
+        and cl, 0xFF
         movzx cx, cl
-        ; call print
+        movzx rcx, cx
+        ; 12:5 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; int lit 2
-        mov rcx, 2
-        ; int lit 1
-        mov rax, 1
-        ; >=
-        cmp rcx, rax
+        ; 13:11 int lit 2
+        mov cl, 2
+        ; 13:16 int lit 1
+        mov al, 1
+        ; 13:13 >=
+        cmp cl, al
         setge cl
-        and rcx, 0xFF
+        and cl, 0xFF
         movzx cx, cl
-        ; call print
+        movzx rcx, cx
+        ; 13:5 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; int lit 1
-        mov rcx, 1
-        ; int lit 2
-        mov rax, 2
-        ; >
-        cmp rcx, rax
+        ; 15:11 int lit 1
+        mov cl, 1
+        ; 15:15 int lit 2
+        mov al, 2
+        ; 15:13 >
+        cmp cl, al
         setg cl
-        and rcx, 0xFF
+        and cl, 0xFF
         movzx cx, cl
-        ; call print
+        movzx rcx, cx
+        ; 15:5 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; int lit 2
-        mov rcx, 2
-        ; int lit 1
-        mov rax, 1
-        ; >
-        cmp rcx, rax
+        ; 16:11 int lit 2
+        mov cl, 2
+        ; 16:15 int lit 1
+        mov al, 1
+        ; 16:13 >
+        cmp cl, al
         setg cl
-        and rcx, 0xFF
+        and cl, 0xFF
         movzx cx, cl
-        ; call print
+        movzx rcx, cx
+        ; 16:5 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a

@@ -20,55 +20,57 @@ start:
 
         ; void main
 main:
-        ; int lit 4
-        mov rcx, 4
-        ; int lit 3
-        mov rax, 3
-        ; multiply
+        ; 2:15 int lit 4
+        mov cl, 4
+        ; 2:19 int lit 3
+        mov al, 3
+        ; 2:17 multiply
+        movsx rcx, cl
+        movsx rax, al
         imul rcx, rax
-        ; int lit 2
-        mov rax, 2
-        ; int lit 5
-        mov rbx, 5
-        ; multiply
+        ; 2:23 int lit 2
+        mov al, 2
+        ; 2:25 int lit 5
+        mov bl, 5
+        ; 2:24 multiply
+        movsx rax, al
+        movsx rbx, bl
         imul rax, rbx
-        ; add
+        ; 2:21 add
         add cl, al
         movzx cx, cl
-        ; assign foo
+        ; 2:5 assign foo
         lea rax, [var0]
         mov [rax], cx
-        ; read var foo
+        ; 3:15 read var foo
         lea rcx, [var0]
-        mov cx, [rcx]
-        movzx rcx, cx
-        ; read var foo
-        lea rax, [var0]
-        mov ax, [rax]
-        movzx rax, ax
-        ; multiply
-        imul rcx, rax
-        ; assign bar
-        lea rax, [var1]
-        mov [rax], cx
-        ; int lit 1
-        mov rcx, 1
-        movzx cx, cl
-        ; var foo
-        lea rax, [var0]
-        ; assign
-        mov [rax], cx
-        ; read var bar
+        mov ax, [rcx]
+        ; 3:21 read var foo
+        lea rcx, [var0]
+        mov bx, [rcx]
+        ; 3:19 multiply
+        movsx rax, ax
+        movsx rbx, bx
+        imul rax, rbx
+        ; 3:5 assign bar
         lea rcx, [var1]
-        mov cx, [rcx]
-        movzx rcx, cx
-        ; read var foo
+        mov [rcx], ax
+        ; 4:11 int lit 1
+        mov cx, 1
+        ; 4:5 var foo
         lea rax, [var0]
-        mov ax, [rax]
-        movzx rax, ax
-        ; add
-        add cx, ax
-        ; call print
+        ; 4:9 assign
+        mov [rax], cx
+        ; 5:11 read var bar
+        lea rcx, [var1]
+        mov ax, [rcx]
+        ; 5:17 read var foo
+        lea rcx, [var0]
+        mov bx, [rcx]
+        ; 5:15 add
+        add ax, bx
+        movzx rcx, ax
+        ; 5:5 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a

@@ -20,51 +20,48 @@ start:
 
         ; void main
 main:
-        ; for
-        ; int lit 250
-        mov rcx, 250
-        ; assign i
+        ; 2:3 for
+        ; 2:15 int lit 250
+        mov cl, 250
+        ; 2:8 assign i
         lea rax, [var0]
         mov [rax], cl
         ; for condition i != 2
 for_1:
-        ; read var i
+        ; 2:20 read var i
         lea rcx, [var0]
-        mov cl, [rcx]
-        movzx rcx, cl
-        ; int lit 2
-        mov rax, 2
-        ; !=
-        cmp rcx, rax
-        setne cl
-        and rcx, 0xFF
-        or rcx, rcx
+        mov al, [rcx]
+        ; 2:25 int lit 2
+        mov cl, 2
+        ; 2:22 !=
+        cmp al, cl
+        setne al
+        and al, 0xFF
+        or al, al
         jz endFor_1
-        ; read var i
-        lea rax, [var0]
-        mov al, [rax]
-        movzx rax, al
-        movzx ax, al
-        mov rcx, rax
-        ; call print
+        ; 3:11 read var i
+        lea rcx, [var0]
+        mov bl, [rcx]
+        movzx bx, bl
+        movzx rcx, bx
+        ; 3:5 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; for iteration
-        ; read var i
-        lea rax, [var0]
-        mov al, [rax]
-        movzx rax, al
-        ; int lit 1
-        mov rbx, 1
-        ; add
-        add al, bl
-        ; var i
-        lea rbx, [var0]
-        ; assign
-        mov [rbx], al
+        ; 2:32 read var i
+        lea rcx, [var0]
+        mov bl, [rcx]
+        ; 2:36 int lit 1
+        mov cl, 1
+        ; 2:34 add
+        add bl, cl
+        ; 2:28 var i
+        lea rcx, [var0]
+        ; 2:30 assign
+        mov [rcx], bl
         jmp for_1
 endFor_1:
         ret

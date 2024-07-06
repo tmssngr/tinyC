@@ -20,39 +20,36 @@ start:
 
         ; void main
 main:
-        ; int lit 1
-        mov rcx, 1
-        ; assign a
+        ; 2:9 int lit 1
+        mov cl, 1
+        ; 2:2 assign a
         lea rax, [var0]
         mov [rax], cl
-        ; int lit 2
-        mov rcx, 2
-        ; assign b
+        ; 3:9 int lit 2
+        mov cl, 2
+        ; 3:2 assign b
         lea rax, [var1]
         mov [rax], cl
-        ; if a > b
-        ; read var a
+        ; 4:2 if a > b
+        ; 4:6 read var a
         lea rcx, [var0]
-        mov cl, [rcx]
-        movzx rcx, cl
-        ; read var b
-        lea rax, [var1]
-        mov al, [rax]
-        movzx rax, al
-        ; >
-        cmp rcx, rax
-        setg cl
-        and rcx, 0xFF
+        mov al, [rcx]
+        ; 4:10 read var b
+        lea rcx, [var1]
+        mov bl, [rcx]
+        ; 4:8 >
+        cmp al, bl
+        setg al
+        and al, 0xFF
         ; if-condition
-        or rcx, rcx
+        or al, al
         jz else_1
-        ; read var a
-        lea rax, [var0]
-        mov al, [rax]
-        movzx rax, al
-        movzx ax, al
-        mov rcx, rax
-        ; call print
+        ; 5:9 read var a
+        lea rcx, [var0]
+        mov bl, [rcx]
+        movzx bx, bl
+        movzx rcx, bx
+        ; 5:3 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
@@ -60,13 +57,12 @@ main:
         add rsp, 8
         jmp endif_1
 else_1:
-        ; read var b
-        lea rax, [var1]
-        mov al, [rax]
-        movzx rax, al
-        movzx ax, al
-        mov rcx, rax
-        ; call print
+        ; 8:9 read var b
+        lea rcx, [var1]
+        mov bl, [rcx]
+        movzx bx, bl
+        movzx rcx, bx
+        ; 8:3 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a

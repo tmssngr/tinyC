@@ -12,21 +12,19 @@ section '.text' code readable executable
 start:
         sub rsp, 8
           call init
-        ; int lit 32
-        mov rcx, 32
-        movzx cx, cl
-        ; assign space
+        ; 1:13 int lit 32
+        mov cx, 32
+        ; 1:1 assign space
         lea rax, [var0]
         mov [rax], cx
-        ; int lit 63
-        mov rcx, 63
-        movzx cx, cl
-        ; assign next
+        ; 2:12 int lit 63
+        mov cx, 63
+        ; 2:1 assign next
         lea rax, [var1]
         mov [rax], cx
-        ; address of var space
+        ; 3:19 address of var space
         lea rcx, [var0]
-        ; assign ptrToSpace
+        ; 3:1 assign ptrToSpace
         lea rax, [var2]
         mov [rax], rcx
         add rsp, 8
@@ -37,31 +35,28 @@ start:
 
         ; void main
 main:
-        ; read var ptrToSpace
+        ; 6:15 read var ptrToSpace
         lea rcx, [var2]
-        mov rcx, [rcx]
-        ; int lit 1
-        mov rax, 1
-        movzx rax, al
-        ; int lit 2
+        mov rax, [rcx]
+        ; 6:28 int lit 1
+        mov rcx, 1
+        ; 6:28 int lit 2
         mov rbx, 2
-        movzx rbx, bl
-        ; multiply
-        imul rax, rbx
-        ; add
-        add rcx, rax
-        ; var ptrToSpace
-        lea rax, [var2]
-        ; assign
-        mov [rax], rcx
-        ; read var ptrToSpace
+        ; 6:28 multiply
+        imul rcx, rbx
+        ; 6:26 add
+        add rax, rcx
+        ; 6:2 var ptrToSpace
         lea rcx, [var2]
-        mov rcx, [rcx]
-        ; deref
-        mov ax, [rcx]
-        movzx rax, ax
-        mov rcx, rax
-        ; call print
+        ; 6:13 assign
+        mov [rcx], rax
+        ; 7:9 read var ptrToSpace
+        lea rcx, [var2]
+        mov rax, [rcx]
+        ; 7:8 deref
+        mov cx, [rax]
+        movzx rcx, cx
+        ; 7:2 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a

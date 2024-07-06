@@ -80,6 +80,12 @@ public class TypeCheckerTest {
 				          u8 a = 'a';
 				          u8* b = &a;
 				          u8 c = *b;""");
+		checkType("""
+				          void main() {
+				            u8 a = 'a';
+				            u8* b = &a;
+				            *b = 'b';
+				          }""");
 		testIllegal(Messages.expectedPointerButGot(Type.U8), 1, 7,
 		            """
 				            u8 a = 'a';

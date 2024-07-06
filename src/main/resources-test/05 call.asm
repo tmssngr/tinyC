@@ -20,35 +20,35 @@ start:
 
         ; void main
 main:
-        ; call one
+        ; 2:9 call one
         sub rsp, 8
           call one
         add rsp, 8
-        ; assign i
+        ; 2:2 assign i
         lea rcx, [var0]
         mov [rcx], al
-        ; read var i
+        ; 3:10 read var i
         lea rcx, [var0]
-        mov cl, [rcx]
-        movzx rcx, cl
-        ; call doPrint
+        mov al, [rcx]
+        movzx rcx, al
+        ; 3:2 call doPrint
         sub rsp, 8
           call doPrint
         add rsp, 8
         ret
         ; u8 one
 one:
-        ; return 1
-        ; int lit 1
-        mov rcx, 1
+        ; 7:9 return 1
+        ; 7:9 int lit 1
+        mov cl, 1
         mov rax, rcx
         ret
         ; void doPrint
 doPrint:
-        ; int lit 2
-        mov rcx, 2
-        movzx cx, cl
-        ; call print
+        ; 11:8 int lit 2
+        mov cx, 2
+        movzx rcx, cx
+        ; 11:2 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a

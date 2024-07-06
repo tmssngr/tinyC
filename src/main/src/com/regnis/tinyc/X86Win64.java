@@ -56,7 +56,7 @@ public class X86Win64 {
 		writeIndented("  call init");
 
 		for (StmtDeclaration declaration : declarations) {
-			writeAssignment(declaration.varName(), declaration.expression(), variables);
+			writeAssignment(declaration.varName(), declaration.expression(), declaration.location(), variables);
 		}
 
 		writeIndented("add rsp, 8");
@@ -118,7 +118,7 @@ public class X86Win64 {
 
 	private void writeStatement(Statement statement, Variables variables) throws IOException {
 		switch (statement) {
-		case StmtDeclaration declaration -> writeAssignment(declaration.varName(), declaration.expression(), variables);
+		case StmtDeclaration declaration -> writeAssignment(declaration.varName(), declaration.expression(), declaration.location(), variables);
 		case StmtCompound compound -> writeStatements(compound.statements(), variables);
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtWhile whileStatement -> writeWhile(whileStatement, variables);
@@ -135,15 +135,20 @@ public class X86Win64 {
 			throw new IllegalStateException("Unsupported arguments " + expressions);
 		}
 		if (expressions.size() == 1) {
-			final int reg = write(expressions.getFirst(), variables);
+			final Expression first = expressions.getFirst();
+			final int reg = write(first, variables);
 			final String regName = getRegName(reg);
 			freeReg(reg);
-			if (!regName.equals("rcx")) {
+			final int size = getTypeSize(first.typeNotNull());
+			if (size != 8) {
+				writeIndented("movzx rcx, " + getRegName(reg, size));
+			}
+			else if (!regName.equals("rcx")) {
 				writeIndented("mov rcx, " + regName);
 			}
 		}
 		final String name = call.name();
-		writeComment("call " + name);
+		writeComment("call " + name, call.location());
 		writeIndented("sub rsp, 8");
 		if (name.equals("print")) {
 			writeIndented("  call " + PRINT_UINT);
@@ -159,7 +164,7 @@ public class X86Win64 {
 
 	private void writeReturn(@Nullable Expression expression, Variables variables) throws IOException {
 		if (expression != null) {
-			writeComment("return " + expression);
+			writeComment("return " + expression, expression.location());
 			final int reg = write(expression, variables);
 			final String regName = getRegName(reg);
 			freeReg(reg);
@@ -172,13 +177,13 @@ public class X86Win64 {
 		}
 	}
 
-	private void writeAssignment(String varName, Expression expression, Variables variables) throws IOException {
+	private void writeAssignment(String varName, Expression expression, Location location, Variables variables) throws IOException {
 		final int expressionReg = write(expression, variables);
 		final int varReg = getFreeReg();
 		final Pair<Type, Integer> typeIndex = variables.get(varName);
 		final int typeSize = getTypeSize(typeIndex.left());
 		final String addrReg = getRegName(varReg);
-		writeComment("assign " + varName);
+		writeComment("assign " + varName, location);
 		writeIndented("lea " + addrReg + ", [" + getVarName(typeIndex.right()) + "]");
 		writeIndented("mov [" + addrReg + "], " + getRegName(expressionReg, typeSize));
 		freeReg(expressionReg);
@@ -189,25 +194,25 @@ public class X86Win64 {
 		switch (node) {
 		case ExprIntLiteral literal -> {
 			final int value = literal.value();
-			writeComment("int lit " + value);
+			final int size = getTypeSize(literal.typeNotNull());
+			writeComment("int lit " + value, node.location());
 			final int reg = getFreeReg();
-			writeIndented("mov " + getRegName(reg) + ", " + value);
+			writeIndented("mov " + getRegName(reg, size) + ", " + value);
 			return reg;
 		}
 		case ExprVarRead read -> {
-			final int reg = getFreeReg();
+			final int addrReg = getFreeReg();
+			final int valueReg = getFreeReg();
 			final Pair<Type, Integer> typeIndex = variables.get(read.varName());
 			final int typeSize = getTypeSize(typeIndex.left());
 			final String varName = getVarName(typeIndex.right());
-			final String addrReg = getRegName(reg);
-			final String valueReg = getRegName(reg, typeSize);
-			writeComment("read var " + read.varName());
-			writeIndented("lea " + addrReg + ", [" + varName + "]");
-			writeIndented("mov " + valueReg + ", [" + addrReg + "]");
-			if (typeSize != 8) {
-				writeIndented("movzx " + getRegName(reg) + ", " + valueReg);
-			}
-			return reg;
+			final String addrRegName = getRegName(addrReg);
+			final String valueRegName = getRegName(valueReg, typeSize);
+			writeComment("read var " + read.varName(), node.location());
+			writeIndented("lea " + addrRegName + ", [" + varName + "]");
+			writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
+			freeReg(addrReg);
+			return valueReg;
 		}
 		case ExprBinary binary -> {
 			return writeBinary(binary, variables);
@@ -230,21 +235,18 @@ public class X86Win64 {
 			final Pair<Type, Integer> typeIndex = variables.get(name);
 			final String varName = getVarName(typeIndex.right());
 			final String addrReg = getRegName(reg);
-			writeComment("address of var " + name);
+			writeComment("address of var " + name, node.location());
 			writeIndented("lea " + addrReg + ", [" + varName + "]");
 			return reg;
 		}
 		case ExprDeref deref -> {
 			final int addrReg = write(deref.expression(), variables);
 			final int typeSize = getTypeSize(Objects.requireNonNull(deref.type()));
-			writeComment("deref");
+			writeComment("deref", node.location());
 			final int valueReg = getFreeReg();
 			final String addrRegName = getRegName(addrReg, 8);
 			final String valueRegName = getRegName(valueReg, typeSize);
 			writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
-			if (typeSize != 8) {
-				writeIndented("movzx " + getRegName(valueReg) + ", " + valueRegName);
-			}
 			freeReg(addrReg);
 			return valueReg;
 		}
@@ -259,7 +261,7 @@ public class X86Win64 {
 			final int lValueReg = writeLValue(node.left(), variables);
 			final String addrReg = getRegName(lValueReg);
 			final int typeSize = getTypeSize(node.typeNotNull());
-			writeComment("assign");
+			writeComment("assign", node.location());
 			writeIndented("mov [" + addrReg + "], " + getRegName(expressionReg, typeSize));
 			freeReg(expressionReg);
 			freeReg(lValueReg);
@@ -269,7 +271,7 @@ public class X86Win64 {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
 			final int size = getTypeSize(node.typeNotNull());
-			writeComment("add");
+			writeComment("add", node.location());
 			writeIndented("add " + getRegName(leftReg, size) + ", " + getRegName(rightReg, size));
 			freeReg(rightReg);
 			return leftReg;
@@ -278,7 +280,7 @@ public class X86Win64 {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
 			final int size = getTypeSize(node.typeNotNull());
-			writeComment("sub");
+			writeComment("sub", node.location());
 			writeIndented("sub " + getRegName(leftReg, size) + ", " + getRegName(rightReg, size));
 			freeReg(rightReg);
 			return leftReg;
@@ -286,7 +288,12 @@ public class X86Win64 {
 		case Multiply -> {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
-			writeComment("multiply");
+			final int size = getTypeSize(node.typeNotNull());
+			writeComment("multiply", node.location());
+			if (size != 8) {
+				writeIndented("movsx " + getRegName(leftReg) + ", " + getRegName(leftReg, size));
+				writeIndented("movsx " + getRegName(rightReg) + ", " + getRegName(rightReg, size));
+			}
 			writeIndented("imul " + getRegName(leftReg) + ", " + getRegName(rightReg));
 			freeReg(rightReg);
 			return leftReg;
@@ -297,9 +304,10 @@ public class X86Win64 {
 		default -> {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
-			writeComment(node.op().toString());
-			final String leftRegName = getRegName(leftReg);
-			writeIndented("cmp " + leftRegName + ", " + getRegName(rightReg));
+			final int size = getTypeSize(node.typeNotNull());
+			writeComment(node.op().toString(), node.location());
+			final String leftRegName = getRegName(leftReg, size);
+			writeIndented("cmp " + leftRegName + ", " + getRegName(rightReg, size));
 			writeIndented(switch (node.op()) {
 				case Lt -> "setl";
 				case LtEq -> "setle";
@@ -323,10 +331,11 @@ public class X86Win64 {
 				final int varReg = getFreeReg();
 				final Pair<Type, Integer> typeIndex = variables.get(varName);
 				final String addrReg = getRegName(varReg);
-				writeComment("var " + varName);
+				writeComment("var " + varName, lValue.location());
 				writeIndented("lea " + addrReg + ", [" + getVarName(typeIndex.right()) + "]");
 				yield varReg;
 			}
+			case ExprDeref deref -> write(deref.expression(), variables);
 			default -> throw new IllegalStateException(String.valueOf(lValue));
 		};
 	}
@@ -338,9 +347,9 @@ public class X86Win64 {
 		final int labelIndex = nextLabelIndex();
 		final String elseLabel = "else_" + labelIndex;
 		final String nextLabel = "endif_" + labelIndex;
-		writeComment("if " + condition);
+		writeComment("if " + condition, statement.location());
 		final int conditionReg = write(condition, variables);
-		final String conditionRegName = getRegName(conditionReg);
+		final String conditionRegName = getRegName(conditionReg, getTypeSize(condition.typeNotNull()));
 		writeComment("if-condition");
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
 		writeIndented("jz " + (elseStatement != null ? elseLabel : nextLabel));
@@ -360,10 +369,10 @@ public class X86Win64 {
 		final String whileLabel = "while_" + labelIndex;
 		final String nextLabel = "endwhile_" + labelIndex;
 		final Expression condition = statement.condition();
-		writeComment("while " + condition);
+		writeComment("while " + condition, statement.location());
 		writeLabel(whileLabel);
 		final int conditionReg = write(condition, variables);
-		final String conditionRegName = getRegName(conditionReg);
+		final String conditionRegName = getRegName(conditionReg, getTypeSize(condition.typeNotNull()));
 		writeComment("while-condition");
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
 		writeIndented("jz " + nextLabel);
@@ -378,14 +387,14 @@ public class X86Win64 {
 		final String forLabel = "for_" + labelIndex;
 		final String nextLabel = "endFor_" + labelIndex;
 
-		writeComment("for");
+		writeComment("for", statement.location());
 		writeStatements(statement.initialization(), variables);
 
 		final Expression condition = statement.condition();
 		writeComment("for condition " + condition);
 		writeLabel(forLabel);
 		final int conditionReg = write(condition, variables);
-		final String conditionRegName = getRegName(conditionReg);
+		final String conditionRegName = getRegName(conditionReg, getTypeSize(condition.typeNotNull()));
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
 		writeIndented("jz " + nextLabel);
 		final Statement body = statement.bodyStatement();
@@ -554,6 +563,10 @@ public class X86Win64 {
 	private void writeLabel(String label) throws IOException {
 		writer.write(label + ":");
 		writeNL();
+	}
+
+	private void writeComment(String s, Location location) throws IOException {
+		writeComment(location + " " + s);
 	}
 
 	private void writeComment(String s) throws IOException {

@@ -211,6 +211,10 @@ public final class TypeChecker {
 			throw new SyntaxException(Messages.cantCastFromTo(expressionType, type), location);
 		}
 
+		if (expression instanceof ExprIntLiteral literal) {
+			return new ExprIntLiteral(literal.value(), type, literal.location());
+		}
+
 		return new ExprCast(expression, expressionType, type, expression.location());
 	}
 
@@ -374,6 +378,7 @@ public final class TypeChecker {
 	private Expression processLValue(Expression expression) {
 		return switch (expression) {
 			case ExprVarRead varRead -> processVarRead(varRead.varName(), varRead.location());
+			case ExprDeref deref -> processDeref(deref.expression(), deref.location());
 			default -> throw new SyntaxException(Messages.expectedLValue(), expression.location());
 		};
 	}

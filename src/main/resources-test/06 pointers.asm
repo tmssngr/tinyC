@@ -20,41 +20,74 @@ start:
 
         ; void main
 main:
-        ; int lit 10
-        mov rcx, 10
-        movzx cx, cl
-        ; assign a
+        ; 2:10 int lit 10
+        mov cx, 10
+        ; 2:2 assign a
         lea rax, [var0]
         mov [rax], cx
-        ; read var a
+        ; 3:8 read var a
         lea rcx, [var0]
-        mov cx, [rcx]
-        movzx rcx, cx
-        ; call print
+        mov ax, [rcx]
+        movzx rcx, ax
+        ; 3:2 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; address of var a
+        ; 4:11 address of var a
         lea rcx, [var0]
-        ; assign b
+        ; 4:2 assign b
         lea rax, [var1]
         mov [rax], rcx
-        ; read var b
+        ; 5:11 read var b
         lea rcx, [var1]
-        mov rcx, [rcx]
-        ; deref
+        mov rax, [rcx]
+        ; 5:10 deref
+        mov cx, [rax]
+        ; 5:15 int lit 1
+        mov al, 1
+        movzx ax, al
+        ; 5:13 sub
+        sub cx, ax
+        ; 5:2 assign c
+        lea rax, [var2]
+        mov [rax], cx
+        ; 6:8 read var c
+        lea rcx, [var2]
         mov ax, [rcx]
-        movzx rax, ax
-        ; assign c
+        movzx rcx, ax
+        ; 6:2 call print
+        sub rsp, 8
+          call __printUint
+        mov rcx, 0x0a
+          call __emit
+        add rsp, 8
+        ; 7:11 address of var c
         lea rcx, [var2]
-        mov [rcx], ax
-        ; read var c
+        ; 7:2 assign d
+        lea rax, [var3]
+        mov [rax], rcx
+        ; 8:8 read var d
+        lea rcx, [var3]
+        mov rax, [rcx]
+        ; 8:7 deref
+        mov cx, [rax]
+        ; 8:12 int lit 1
+        mov al, 1
+        movzx ax, al
+        ; 8:10 sub
+        sub cx, ax
+        ; 8:3 read var d
+        lea rax, [var3]
+        mov rbx, [rax]
+        ; 8:5 assign
+        mov [rbx], cx
+        ; 9:8 read var c
         lea rcx, [var2]
-        mov cx, [rcx]
-        movzx rcx, cx
-        ; call print
+        mov ax, [rcx]
+        movzx rcx, ax
+        ; 9:2 call print
         sub rsp, 8
           call __printUint
         mov rcx, 0x0a
@@ -166,6 +199,7 @@ section '.data' data readable writeable
         var0 rb 2
         var1 rb 8
         var2 rb 2
+        var3 rb 8
 
 section '.idata' import data readable writeable
 
