@@ -322,8 +322,16 @@ public class Parser {
 			}
 			case STAR -> {
 				consume(TokenType.STAR);
-				final String name = consumeIdentifier();
-				yield new ExprDeref(name, location);
+				final Location exprLocation = getLocation();
+				final Expression expression;
+				if (token == TokenType.L_PAREN) {
+					expression = getExpressionInParenthesis();
+				}
+				else {
+					final String identifier = consumeIdentifier();
+					expression = getExpressionPrimary(identifier, exprLocation);
+				}
+				yield new ExprDeref(expression, location);
 			}
 			default -> null;
 		};

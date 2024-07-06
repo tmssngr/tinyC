@@ -237,7 +237,7 @@ public final class TypeChecker {
 				yield processBinary(binary.op(), left, right, binary.location());
 			}
 			case ExprAddrOf addrOf -> processAddrOf(addrOf.varName(), addrOf.location());
-			case ExprDeref deref -> processDeref(deref.varName(), deref.location());
+			case ExprDeref deref -> processDeref(deref.expression(), deref.location());
 			default -> throw new IllegalStateException("Unexpected expression: " + expression);
 		};
 	}
@@ -261,16 +261,14 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private Expression processDeref(String name, Location location) {
-		final Type type = getVariableType(name);
-		if (type == null) {
-			throw new SyntaxException("Unknown variable '" + name + "'", location);
-		}
+	private Expression processDeref(Expression expression, Location location) {
+		expression = processExpression(expression);
+		final Type type = expression.typeNotNull();
 		final Type derefType = type.toType();
 		if (derefType == null) {
-			throw new SyntaxException("Expected variable '" + name + "' to be a pointer", location);
+			throw new SyntaxException("Expected expression to be an l-value", location);
 		}
-		return new ExprDeref(name, derefType, location);
+		return new ExprDeref(expression, derefType, location);
 	}
 
 	@NotNull

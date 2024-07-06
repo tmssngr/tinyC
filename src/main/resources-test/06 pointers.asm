@@ -41,14 +41,15 @@ main:
         ; assign b
         lea rax, [var1]
         mov [rax], rcx
-        ; deref b
+        ; read var b
         lea rcx, [var1]
         mov rcx, [rcx]
-        mov cx, [rcx]
-        movzx rcx, cx
+        ; deref
+        mov ax, [rcx]
+        movzx rax, ax
         ; assign c
-        lea rax, [var2]
-        mov [rax], cx
+        lea rcx, [var2]
+        mov [rcx], ax
         ; read var c
         lea rcx, [var2]
         mov cx, [rcx]

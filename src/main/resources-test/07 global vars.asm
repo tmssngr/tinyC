@@ -54,11 +54,13 @@ main:
         lea rax, [var2]
         ; assign
         mov [rax], rcx
-        ; deref ptrToSpace
+        ; read var ptrToSpace
         lea rcx, [var2]
         mov rcx, [rcx]
-        mov cx, [rcx]
-        movzx rcx, cx
+        ; deref
+        mov ax, [rcx]
+        movzx rax, ax
+        mov rcx, rax
         ; call print
         sub rsp, 8
           call __printUint

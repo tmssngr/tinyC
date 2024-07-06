@@ -9,10 +9,10 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record ExprDeref(@NotNull String varName, @Nullable Type type, @NotNull Location location) implements Expression {
+public record ExprDeref(@NotNull Expression expression, @Nullable Type type, @NotNull Location location) implements Expression {
 
-	public ExprDeref(String varName, Location location) {
-		this(varName, null, location);
+	public ExprDeref(@NotNull Expression expression, @NotNull Location location) {
+		this(expression, null, location);
 	}
 
 	@NotNull

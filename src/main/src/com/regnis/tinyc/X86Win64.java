@@ -235,21 +235,18 @@ public class X86Win64 {
 			return reg;
 		}
 		case ExprDeref deref -> {
-			final String name = deref.varName();
-			final int reg = getFreeReg();
-			final Pair<Type, Integer> typeIndex = variables.get(name);
-			final int typeSize = getTypeSize(Objects.requireNonNull(typeIndex.left().toType()));
-			final String varName = getVarName(typeIndex.right());
-			final String addrReg = getRegName(reg);
-			final String valueReg = getRegName(reg, typeSize);
-			writeComment("deref " + name);
-			writeIndented("lea " + addrReg + ", [" + varName + "]");
-			writeIndented("mov " + addrReg + ", [" + addrReg + "]");
-			writeIndented("mov " + valueReg + ", [" + addrReg + "]");
+			final int addrReg = write(deref.expression(), variables);
+			final int typeSize = getTypeSize(Objects.requireNonNull(deref.type()));
+			writeComment("deref");
+			final int valueReg = getFreeReg();
+			final String addrRegName = getRegName(addrReg, 8);
+			final String valueRegName = getRegName(valueReg, typeSize);
+			writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
 			if (typeSize != 8) {
-				writeIndented("movzx " + getRegName(reg) + ", " + valueReg);
+				writeIndented("movzx " + getRegName(valueReg) + ", " + valueRegName);
 			}
-			return reg;
+			freeReg(addrReg);
+			return valueReg;
 		}
 		default -> throw new UnsupportedOperationException("unsupported expression " + node);
 		}
