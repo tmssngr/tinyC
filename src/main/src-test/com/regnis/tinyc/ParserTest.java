@@ -15,7 +15,7 @@ import org.junit.*;
 public class ParserTest {
 
 	@Test
-	public void testAssignment() {
+	public void testDeclaration() {
 		assertEquals(new StmtDeclaration("u8", "foo", intLit(1, loc(0, 9)),
 		                                 loc(0, 0)),
 		             new Parser(new Lexer("u8 foo = 1;")).getStatementNotNull());
@@ -47,6 +47,13 @@ public class ParserTest {
 		                                 loc(0, 0)),
 		             new Parser(new Lexer("i16 foo = 1 - 2 + 3;")).getStatementNotNull());
 
+		assertEquals(new StmtDeclaration("i16*", "foo", new ExprVarRead("bar", loc(0, 11)),
+		                                 loc(0, 0)),
+		             new Parser(new Lexer("i16* foo = bar;")).getStatementNotNull());
+	}
+
+	@Test
+	public void testAssignment() {
 		assertEquals(new StmtAssign("foo", new ExprBinary(ExprBinary.Op.Sub,
 		                                                  new ExprBinary(ExprBinary.Op.Add,
 		                                                                 intLit(1, loc(0, 6)),
