@@ -55,7 +55,7 @@ public class TypeCheckerTest {
 
 	@Test
 	public void testVariables() {
-		testIllegal(Messages.variableHasAlreadyBeenDeclaredAt("foo", new Location(0, 0)), 1, 0,
+		testIllegal(Messages.variableAlreadyDeclaredAt("foo", new Location(0, 0)), 1, 0,
 		            """
 				            u8 foo = 1;
 				            i16 foo = 2;""");

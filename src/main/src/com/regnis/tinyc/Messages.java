@@ -63,7 +63,7 @@ public class Messages {
 	}
 
 	@NotNull
-	public static String variableHasAlreadyBeenDeclaredAt(String varName, Location location) {
+	public static String variableAlreadyDeclaredAt(String varName, Location location) {
 		return "Variable '" + varName + "' has already been declared at " + location;
 	}
 

@@ -11,8 +11,7 @@ import org.jetbrains.annotations.*;
  */
 public final class TypeChecker {
 
-	private final Map<String, Pair<Type, Location>> variables = new HashMap<>();
-	private final Map<String, Func> functions = new HashMap<>();
+	private final Map<String, Symbol> symbolMap = new HashMap<>();
 
 	private final Type pointerIntType;
 
@@ -21,7 +20,7 @@ public final class TypeChecker {
 	public TypeChecker(@NotNull Type pointerIntType) {
 		Utils.assertTrue(pointerIntType.isInt());
 		this.pointerIntType = pointerIntType;
-		functions.put("print", new Func(Type.VOID, List.of(Type.I16), new Location(-1, -1)));
+		symbolMap.put("print", new Symbol.Func(Type.VOID, List.of(Type.I16), new Location(-1, -1)));
 	}
 
 	@NotNull
@@ -56,10 +55,7 @@ public final class TypeChecker {
 	private Function determineDeclarationTypes(Function function) {
 		final String name = function.name();
 		final Location location = function.location();
-		final Func existingFunc = functions.get(name);
-		if (existingFunc != null) {
-			throw new SyntaxException(Messages.functionAlreadDeclaredAt(name, existingFunc.location), location);
-		}
+		checkNoSymbolNamed(name, location);
 
 		final Type returnType = getType(function.typeString(), location);
 		final List<Function.Arg> args = new ArrayList<>();
@@ -69,7 +65,7 @@ public final class TypeChecker {
 			args.add(new Function.Arg(arg.typeString(), argType, arg.name(), arg.location()));
 			argTypes.add(argType);
 		}
-		functions.put(name, new Func(returnType, argTypes, location));
+		symbolMap.put(name, new Symbol.Func(returnType, argTypes, location));
 		return new Function(name, function.typeString(), returnType, args, function.statement(), location);
 	}
 
@@ -248,19 +244,13 @@ public final class TypeChecker {
 
 	@NotNull
 	private Expression processVarRead(String name, Location location) {
-		final Type type = getVariableType(name);
-		if (type == null) {
-			throw new SyntaxException(Messages.undeclaredVariable(name), location);
-		}
+		final Type type = getVariable(name, location);
 		return new ExprVarRead(name, type, location);
 	}
 
 	@NotNull
 	private Expression processAddrOf(String name, Location location) {
-		final Type type = getVariableType(name);
-		if (type == null) {
-			throw new SyntaxException(Messages.undeclaredVariable(name), location);
-		}
+		final Type type = getVariable(name, location);
 		return new ExprAddrOf(name, Type.pointer(type), location);
 	}
 
@@ -277,8 +267,8 @@ public final class TypeChecker {
 
 	@NotNull
 	private ExprFuncCall processFuncCall(String name, List<Expression> argExpressions, Location location) {
-		final Func function = functions.get(name);
-		if (function == null) {
+		final Symbol symbol = symbolMap.get(name);
+		if (!(symbol instanceof Symbol.Func function)) {
 			throw new SyntaxException(Messages.undeclaredFunction(name), location);
 		}
 		if (function.argTypes().size() != argExpressions.size()) {
@@ -383,19 +373,29 @@ public final class TypeChecker {
 		};
 	}
 
-	private void addVariable(String varName, Type type, Location location) {
-		final Pair<Type, Location> pair = variables.get(varName);
-		if (pair != null) {
-			throw new SyntaxException(Messages.variableHasAlreadyBeenDeclaredAt(varName, pair.right()), location);
+	private void checkNoSymbolNamed(String name, Location location) {
+		final Symbol existingSymbol = symbolMap.get(name);
+		if (existingSymbol instanceof Symbol.Func) {
+			throw new SyntaxException(Messages.functionAlreadDeclaredAt(name, existingSymbol.location()), location);
 		}
-
-		variables.put(varName, new Pair<>(type, location));
+		if (existingSymbol instanceof Symbol.Variable) {
+			throw new SyntaxException(Messages.variableAlreadyDeclaredAt(name, existingSymbol.location()), location);
+		}
+		Utils.assertTrue(existingSymbol == null);
 	}
 
-	@Nullable
-	private Type getVariableType(@NotNull String name) {
-		final Pair<Type, Location> pair = variables.get(name);
-		return pair != null ? pair.left() : null;
+	private void addVariable(String varName, Type type, Location location) {
+		checkNoSymbolNamed(varName, location);
+		symbolMap.put(varName, new Symbol.Variable(type, location));
+	}
+
+	@NotNull
+	private Type getVariable(String name, Location location) {
+		final Symbol symbol = symbolMap.get(name);
+		if (!(symbol instanceof Symbol.Variable variable)) {
+			throw new SyntaxException(Messages.undeclaredVariable(name), location);
+		}
+		return variable.type();
 	}
 
 	@NotNull
@@ -409,8 +409,5 @@ public final class TypeChecker {
 			case "i16" -> Type.I16;
 			default -> throw new SyntaxException(Messages.unknownType(type), location);
 		};
-	}
-
-	public record Func(Type returnType, List<Type> argTypes, Location location) {
 	}
 }
