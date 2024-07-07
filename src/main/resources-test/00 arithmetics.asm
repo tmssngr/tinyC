@@ -76,6 +76,37 @@ main:
         mov rcx, 0x0a
           call __emit
         add rsp, 8
+        ; 6:12 int lit 1
+        mov cl, 1
+        ; 6:16 int lit 2
+        mov al, 2
+        ; 6:14 add
+        add cl, al
+        ; 6:22 int lit 3
+        mov al, 3
+        ; 6:26 int lit 4
+        mov bl, 4
+        ; 6:24 add
+        add al, bl
+        ; 6:19 multiply
+        movsx rcx, cl
+        movsx rax, al
+        imul rcx, rax
+        movzx cx, cl
+        ; 6:5 var foo
+        lea rax, [var0]
+        ; 6:9 assign
+        mov [rax], cx
+        ; 7:11 read var foo
+        lea rcx, [var0]
+        mov ax, [rcx]
+        movzx rcx, ax
+        ; 7:5 call print
+        sub rsp, 8
+          call __printUint
+        mov rcx, 0x0a
+          call __emit
+        add rsp, 8
         ret
 init:
         sub rsp, 20h

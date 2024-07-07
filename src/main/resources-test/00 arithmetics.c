@@ -3,4 +3,6 @@ void main() {
     i16 bar = foo * foo;
     foo = 1;
     print(bar + foo);
+    foo = (1 + 2) * (3 + 4);
+    print(foo);
 }
