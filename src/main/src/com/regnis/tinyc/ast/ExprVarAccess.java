@@ -9,9 +9,9 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record ExprVarRead(@NotNull String varName, @Nullable Type type, @NotNull Location location) implements Expression {
+public record ExprVarAccess(@NotNull String varName, @Nullable Type type, @NotNull Location location) implements Expression {
 
-	public ExprVarRead(String varName, Location location) {
+	public ExprVarAccess(String varName, Location location) {
 		this(varName, null, location);
 	}
 

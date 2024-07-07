@@ -160,7 +160,7 @@ public class TypeCheckerTest {
 						                                                                  new ExprArrayAccess("array", Type.U8,
 						                                                                                      new ExprIntLiteral(1, Type.I64, loc(4, 8)),
 						                                                                                      loc(4, 2)),
-						                                                                  new ExprVarRead("first", Type.U8, loc(4, 13)),
+						                                                                  new ExprVarAccess("first", Type.U8, loc(4, 13)),
 						                                                                  loc(4, 11)))
 				                                      )),
 				                                      loc(0, 0))

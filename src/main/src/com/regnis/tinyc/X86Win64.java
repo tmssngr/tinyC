@@ -230,7 +230,7 @@ public class X86Win64 {
 			writeIndented("mov " + getRegName(reg, size) + ", " + value);
 			return reg;
 		}
-		case ExprVarRead read -> {
+		case ExprVarAccess read -> {
 			final String name = read.varName();
 			writeComment("read var " + name, node.location());
 			final int addrReg = writeAddressOf(name, variables);
@@ -373,7 +373,7 @@ public class X86Win64 {
 	 */
 	private int writeLValue(Expression lValue, Variables variables) throws IOException {
 		return switch (lValue) {
-			case ExprVarRead var -> {
+			case ExprVarAccess var -> {
 				final String varName = var.varName();
 				final int varReg = getFreeReg();
 				final Variables.Variable variable = variables.get(varName);

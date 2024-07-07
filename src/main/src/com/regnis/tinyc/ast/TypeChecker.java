@@ -244,7 +244,7 @@ public final class TypeChecker {
 	private Expression processExpression(Expression expression) {
 		return switch (expression) {
 			case ExprCast cast -> cast;
-			case ExprVarRead varRead -> processVarRead(varRead.varName(), varRead.location());
+			case ExprVarAccess varRead -> processVarRead(varRead.varName(), varRead.location());
 			case ExprArrayAccess arrayAccess -> processArrayAccess(arrayAccess);
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
 			case ExprIntLiteral intLiteral -> intLiteral;
@@ -265,7 +265,7 @@ public final class TypeChecker {
 	@NotNull
 	private Expression processVarRead(String name, Location location) {
 		final Symbol.Variable variable = getVariable(name, location);
-		return new ExprVarRead(name, variable.type(), location);
+		return new ExprVarAccess(name, variable.type(), location);
 	}
 
 	@NotNull
@@ -401,19 +401,19 @@ public final class TypeChecker {
 
 	private Expression processLValue(Expression expression) {
 		return switch (expression) {
-			case ExprVarRead varRead -> processLValueVar(varRead.varName(), varRead.location());
+			case ExprVarAccess varRead -> processLValueVar(varRead.varName(), varRead.location());
 			case ExprArrayAccess arrayAccess -> processArrayAccess(arrayAccess);
 			case ExprDeref deref -> processDeref(deref.expression(), deref.location());
 			default -> throw new SyntaxException(Messages.expectedLValue(), expression.location());
 		};
 	}
 
-	private ExprVarRead processLValueVar(String varName, Location location) {
+	private ExprVarAccess processLValueVar(String varName, Location location) {
 		final Symbol.Variable variable = getVariable(varName, location);
 		if (variable.kind() != Symbol.VariableKind.Scalar) {
 			throw new SyntaxException(Messages.cantAssignToArrays(), location);
 		}
-		return new ExprVarRead(varName, variable.type(), location);
+		return new ExprVarAccess(varName, variable.type(), location);
 	}
 
 	private void checkNoSymbolNamed(String name, Location location) {

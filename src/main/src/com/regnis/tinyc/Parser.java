@@ -378,7 +378,7 @@ public class Parser {
 			consume(TokenType.R_BRACKET);
 			return new ExprArrayAccess(identifier, expression, location);
 		}
-		return new ExprVarRead(identifier, location);
+		return new ExprVarAccess(identifier, location);
 	}
 
 	@NotNull
