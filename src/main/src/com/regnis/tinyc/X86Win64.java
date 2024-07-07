@@ -38,7 +38,7 @@ public class X86Win64 {
 		writePostample(variables);
 	}
 
-	private void writePreample(List<StmtDeclaration> declarations, Variables variables) throws IOException {
+	private void writePreample(List<StmtVarDeclaration> declarations, Variables variables) throws IOException {
 		write("""
 				      format pe64 console
 				      include 'win64ax.inc'
@@ -55,7 +55,7 @@ public class X86Win64 {
 		writeIndented("sub rsp, 8");
 		writeIndented("  call init");
 
-		for (StmtDeclaration declaration : declarations) {
+		for (StmtVarDeclaration declaration : declarations) {
 			writeAssignment(declaration.varName(), declaration.expression(), declaration.location(), variables);
 		}
 
@@ -118,7 +118,7 @@ public class X86Win64 {
 
 	private void writeStatement(Statement statement, Variables variables) throws IOException {
 		switch (statement) {
-		case StmtDeclaration declaration -> writeAssignment(declaration.varName(), declaration.expression(), declaration.location(), variables);
+		case StmtVarDeclaration declaration -> writeAssignment(declaration.varName(), declaration.expression(), declaration.location(), variables);
 		case StmtCompound compound -> writeStatements(compound.statements(), variables);
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtWhile whileStatement -> writeWhile(whileStatement, variables);

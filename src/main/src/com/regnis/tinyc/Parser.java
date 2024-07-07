@@ -33,7 +33,7 @@ public class Parser {
 	@NotNull
 	public Program parse() {
 		final List<Function> functions = new ArrayList<>();
-		final List<StmtDeclaration> globalVars = new ArrayList<>();
+		final List<StmtVarDeclaration> globalVars = new ArrayList<>();
 		while (token != TokenType.EOF) {
 			final Location location = getLocation();
 			final String type = consumeIdentifier();
@@ -59,11 +59,11 @@ public class Parser {
 			if (isConsume(TokenType.EQUAL)) {
 				final Expression expression = getExpression();
 				consume(TokenType.SEMI);
-				globalVars.add(new StmtDeclaration(typeString, name, expression, location));
+				globalVars.add(new StmtVarDeclaration(typeString, name, expression, location));
 				continue;
 			}
 			if (isConsume(TokenType.SEMI)) {
-				globalVars.add(new StmtDeclaration(typeString, name, new ExprIntLiteral(0, location), location));
+				globalVars.add(new StmtVarDeclaration(typeString, name, new ExprIntLiteral(0, location), location));
 				continue;
 			}
 
@@ -88,7 +88,7 @@ public class Parser {
 					yield null;
 				}
 
-				if (statement instanceof StmtDeclaration) {
+				if (statement instanceof StmtVarDeclaration) {
 					consume(TokenType.SEMI);
 					yield statement;
 				}
@@ -128,7 +128,7 @@ public class Parser {
 	private Statement getSimpleStatement() {
 		final Location location = getLocation();
 		final Statement statement = getVarDeclarationOrExpressionStatement(location);
-		if (statement == null || statement instanceof StmtDeclaration) {
+		if (statement == null || statement instanceof StmtVarDeclaration) {
 			return statement;
 		}
 
@@ -156,7 +156,7 @@ public class Parser {
 				else {
 					expression = new ExprIntLiteral(0, location);
 				}
-				return new StmtDeclaration(typeString, identifier2, expression, location);
+				return new StmtVarDeclaration(typeString, identifier2, expression, location);
 			}
 
 			primary = getExpressionPrimary(identifier1, location);

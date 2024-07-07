@@ -25,17 +25,17 @@ public final class TypeChecker {
 
 	@NotNull
 	public Program check(@NotNull Program program) {
-		final List<StmtDeclaration> globalVars = processGlobalVars(program.globalVars());
+		final List<StmtVarDeclaration> globalVars = processGlobalVars(program.globalVars());
 		final List<Function> typedFunctions = determineFunctionDeclarationTypes(program.functions());
 		final List<Function> functions = determineStatementTypes(typedFunctions);
 		return new Program(globalVars, functions);
 	}
 
 	@NotNull
-	private List<StmtDeclaration> processGlobalVars(List<StmtDeclaration> globalVars) {
-		final List<StmtDeclaration> declarations = new ArrayList<>();
-		for (StmtDeclaration globalVar : globalVars) {
-			final StmtDeclaration declaration = processDeclaration(globalVar);
+	private List<StmtVarDeclaration> processGlobalVars(List<StmtVarDeclaration> globalVars) {
+		final List<StmtVarDeclaration> declarations = new ArrayList<>();
+		for (StmtVarDeclaration globalVar : globalVars) {
+			final StmtVarDeclaration declaration = processDeclaration(globalVar);
 			declarations.add(declaration);
 		}
 		return declarations;
@@ -100,7 +100,7 @@ public final class TypeChecker {
 	@NotNull
 	private Statement processStatement(Statement statement) {
 		return switch (statement) {
-			case StmtDeclaration declaration -> processDeclaration(declaration);
+			case StmtVarDeclaration declaration -> processDeclaration(declaration);
 			case StmtCompound compound -> new StmtCompound(processStatements(compound.statements()));
 			case StmtIf ifStatement -> processIf(ifStatement);
 			case StmtWhile whileStatement -> processWhile(whileStatement);
@@ -112,7 +112,7 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private StmtDeclaration processDeclaration(StmtDeclaration declaration) {
+	private StmtVarDeclaration processDeclaration(StmtVarDeclaration declaration) {
 		final String varName = declaration.varName();
 		final Location location = declaration.location();
 		Expression expression = processExpression(declaration.expression());
@@ -120,7 +120,7 @@ public final class TypeChecker {
 		expression = autoCastTo(type, expression, location);
 
 		addVariable(varName, type, location);
-		return new StmtDeclaration(declaration.typeString(), type, varName, expression, location);
+		return new StmtVarDeclaration(declaration.typeString(), type, varName, expression, location);
 	}
 
 	@NotNull

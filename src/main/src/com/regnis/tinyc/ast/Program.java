@@ -7,5 +7,5 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record Program(@NotNull List<StmtDeclaration> globalVars, @NotNull List<Function> functions) {
+public record Program(@NotNull List<StmtVarDeclaration> globalVars, @NotNull List<Function> functions) {
 }

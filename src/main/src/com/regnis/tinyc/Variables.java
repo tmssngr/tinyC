@@ -13,7 +13,7 @@ public class Variables {
 
 	public static Variables detectFrom(Program program) {
 		final Variables variables = new Variables();
-		for (StmtDeclaration globalVar : program.globalVars()) {
+		for (StmtVarDeclaration globalVar : program.globalVars()) {
 			variables.processDeclaration(globalVar);
 		}
 		for (Function function : program.functions()) {
@@ -46,7 +46,7 @@ public class Variables {
 
 	private void processStatement(@Nullable Statement statement) {
 		switch (statement) {
-		case StmtDeclaration declaration -> processDeclaration(declaration);
+		case StmtVarDeclaration declaration -> processDeclaration(declaration);
 		case StmtCompound compound -> processStatements(compound.statements());
 		case StmtIf ifStatement -> {
 			processStatement(ifStatement.thenStatement());
@@ -71,7 +71,7 @@ public class Variables {
 		}
 	}
 
-	private void processDeclaration(StmtDeclaration declaration) {
+	private void processDeclaration(StmtVarDeclaration declaration) {
 		names.put(declaration.varName(), new Pair<>(declaration.type(), names.size()));
 	}
 }
