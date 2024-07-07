@@ -16,6 +16,16 @@ public class ParserTest {
 
 	@Test
 	public void testDeclaration() {
+		assertEquals(new Program(List.of(
+				             new StmtDeclaration("u8", "foo", intLit(0, loc(0, 0)),
+				                                 loc(0, 0))
+		             ), List.of()),
+		             new Parser(new Lexer("u8 foo;")).parse());
+
+		assertEquals(new StmtDeclaration("u8", "foo", intLit(0, loc(0, 0)),
+		                                 loc(0, 0)),
+		             new Parser(new Lexer("u8 foo;")).getStatementNotNull());
+
 		assertEquals(new StmtDeclaration("u8", "foo", intLit(1, loc(0, 9)),
 		                                 loc(0, 0)),
 		             new Parser(new Lexer("u8 foo = 1;")).getStatementNotNull());
@@ -254,12 +264,12 @@ public class ParserTest {
 				                         new StmtCompound(List.of(
 						                         printStmt(new ExprVarRead("i", loc(3, 8)),
 						                                   loc(3, 2)),
-												 assignStmt(new ExprVarRead("i", loc(4, 2)),
-						                                        new ExprBinary(ExprBinary.Op.Sub,
-						                                                            new ExprVarRead("i", loc(4, 6)),
-						                                                            intLit(1, loc(4, 10)),
-						                                                            loc(4, 8)),
-						                                        loc(4, 4))
+						                         assignStmt(new ExprVarRead("i", loc(4, 2)),
+						                                    new ExprBinary(ExprBinary.Op.Sub,
+						                                                   new ExprVarRead("i", loc(4, 6)),
+						                                                   intLit(1, loc(4, 10)),
+						                                                   loc(4, 8)),
+						                                    loc(4, 4))
 				                         )),
 				                         List.of(),
 				                         loc(2, 0))
@@ -281,12 +291,12 @@ public class ParserTest {
 				                         new StmtCompound(List.of(
 						                         printStmt(new ExprVarRead("i", loc(3, 8)),
 						                                   loc(3, 2)),
-												 assignStmt(new ExprVarRead("i", loc(4, 2)),
-						                                        new ExprBinary(ExprBinary.Op.Sub,
-						                                                            new ExprVarRead("i", loc(4, 6)),
-						                                                            intLit(1, loc(4, 10)),
-						                                                            loc(4, 8)),
-						                                        loc(4, 4))
+						                         assignStmt(new ExprVarRead("i", loc(4, 2)),
+						                                    new ExprBinary(ExprBinary.Op.Sub,
+						                                                   new ExprVarRead("i", loc(4, 6)),
+						                                                   intLit(1, loc(4, 10)),
+						                                                   loc(4, 8)),
+						                                    loc(4, 4))
 				                         )),
 				                         List.of(),
 				                         loc(2, 0))

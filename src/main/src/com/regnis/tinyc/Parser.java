@@ -62,6 +62,10 @@ public class Parser {
 				globalVars.add(new StmtDeclaration(typeString, name, expression, location));
 				continue;
 			}
+			if (isConsume(TokenType.SEMI)) {
+				globalVars.add(new StmtDeclaration(typeString, name, new ExprIntLiteral(0, location), location));
+				continue;
+			}
 
 			throw new SyntaxException("Expected method or global variable declaration", location);
 		}
@@ -145,8 +149,13 @@ public class Parser {
 			final String typeString = getTypeString(identifier1);
 			if (token == TokenType.IDENTIFIER) {
 				final String identifier2 = consumeIdentifier();
-				consume(TokenType.EQUAL);
-				final Expression expression = getExpression();
+				final Expression expression;
+				if (isConsume(TokenType.EQUAL)) {
+					expression = getExpression();
+				}
+				else {
+					expression = new ExprIntLiteral(0, location);
+				}
 				return new StmtDeclaration(typeString, identifier2, expression, location);
 			}
 
