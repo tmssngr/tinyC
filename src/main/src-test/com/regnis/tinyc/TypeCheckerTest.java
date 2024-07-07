@@ -2,7 +2,12 @@ package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
 
+import java.util.*;
+
+import org.jetbrains.annotations.*;
 import org.junit.*;
+
+import static com.regnis.tinyc.ParserTest.*;
 
 /**
  * @author Thomas Singer
@@ -18,7 +23,7 @@ public class TypeCheckerTest {
 
 	@Test
 	public void testFunction() {
-		testIllegal(Messages.functionAlreadDeclaredAt("foo", new Location(0, 0)), 1, 0,
+		testIllegal(Messages.functionAlreadDeclaredAt("foo", loc(0, 0)), 1, 0,
 		            """
 				            void foo() {}
 				            void foo() {}""");
@@ -55,7 +60,7 @@ public class TypeCheckerTest {
 
 	@Test
 	public void testVariables() {
-		testIllegal(Messages.variableAlreadyDeclaredAt("foo", new Location(0, 0)), 1, 0,
+		testIllegal(Messages.variableAlreadyDeclaredAt("foo", loc(0, 0)), 1, 0,
 		            """
 				            u8 foo = 1;
 				            i16 foo = 2;""");
@@ -119,6 +124,54 @@ public class TypeCheckerTest {
 	public void testInvalidLValue() {
 		testIllegalStatement(Messages.expectedLValue(), 0, "1 = ptr1;");
 		testIllegalStatement(Messages.expectedLValue(), 5, "ptr1 + 1 = ptr2;");
+		testIllegal(Messages.cantAssignToArrays(), 2, 2,
+		            """
+				            u8 array[12];
+				            void main() {
+				              array = 1;
+				            }""");
+	}
+
+	@Test
+	public void testArrays() {
+		assertEquals(new Program(List.of(
+				             new StmtArrayDeclaration("u8", Type.pointer(Type.U8), "array", 2,
+				                                      loc(0, 0))
+		             ),
+		                         List.of(
+				                         new Function("main", "void", Type.VOID, List.of(),
+				                                      new StmtCompound(List.of(
+						                                      new StmtVarDeclaration("u8", Type.U8, "first",
+						                                                             new ExprArrayAccess("array", Type.U8,
+						                                                                                 new ExprIntLiteral(0, Type.I64, loc(2, 19)),
+						                                                                                 loc(2, 13)),
+						                                                             loc(2, 2)),
+						                                      new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
+						                                                                  Type.U8,
+						                                                                  new ExprArrayAccess("array", Type.U8,
+						                                                                                      new ExprIntLiteral(0, Type.I64, loc(3, 8)),
+						                                                                                      loc(3, 2)),
+						                                                                  new ExprArrayAccess("array", Type.U8,
+						                                                                                      new ExprIntLiteral(1, Type.I64, loc(3, 19)),
+						                                                                                      loc(3, 13)),
+						                                                                  loc(3, 11))),
+						                                      new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
+						                                                                  Type.U8,
+						                                                                  new ExprArrayAccess("array", Type.U8,
+						                                                                                      new ExprIntLiteral(1, Type.I64, loc(4, 8)),
+						                                                                                      loc(4, 2)),
+						                                                                  new ExprVarRead("first", Type.U8, loc(4, 13)),
+						                                                                  loc(4, 11)))
+				                                      )),
+				                                      loc(0, 0))
+		                         )),
+		             checkType("""
+				                       u8 array[2];
+				                       void main() {
+				                         u8 first = array[0];
+				                         array[0] = array[1];
+				                         array[1] = first;
+				                       }"""));
 	}
 
 	private void testIllegalStatement(String expectedMessage, int column, String illegalOperation) {
@@ -127,7 +180,7 @@ public class TypeCheckerTest {
 			Assert.fail();
 		}
 		catch (SyntaxException ex) {
-			Assert.assertEquals(new Location(6, column) + " " + expectedMessage, ex.toString());
+			Assert.assertEquals(loc(6, column) + " " + expectedMessage, ex.toString());
 		}
 	}
 
@@ -149,12 +202,14 @@ public class TypeCheckerTest {
 			Assert.fail();
 		}
 		catch (SyntaxException ex) {
-			Assert.assertEquals(new Location(row, column) + " " + expectedMessage, ex.toString());
+			Assert.assertEquals(loc(row, column) + " " + expectedMessage, ex.toString());
 		}
 	}
 
-	private void checkType(String input) {
+	@NotNull
+	private Program checkType(String input) {
 		final Program program = new Parser(new Lexer(input)).parse();
-		new TypeChecker(Type.I64).check(program);
+		final TypeChecker checker = new TypeChecker(Type.I64);
+		return checker.check(program);
 	}
 }

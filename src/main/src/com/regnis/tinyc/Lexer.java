@@ -109,6 +109,12 @@ public final class Lexer {
 		if (isConsume('}')) {
 			return TokenType.R_BRACE;
 		}
+		if (isConsume('[')) {
+			return TokenType.L_BRACKET;
+		}
+		if (isConsume(']')) {
+			return TokenType.R_BRACKET;
+		}
 		if (isConsume('"')) {
 			text = detectStringOrChar('"');
 			return TokenType.STRING;

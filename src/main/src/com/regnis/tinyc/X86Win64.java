@@ -21,6 +21,7 @@ public class X86Win64 {
 
 	private int labelIndex;
 	private int freeRegs;
+	@SuppressWarnings("unused") private boolean debug;
 
 	public X86Win64(Writer writer) {
 		this.writer = writer;
@@ -40,7 +41,7 @@ public class X86Win64 {
 	}
 
 	private void writePreample() throws IOException {
-		write("""
+		writeLines("""
 				      format pe64 console
 				      include 'win64ax.inc'
 
@@ -70,7 +71,7 @@ public class X86Win64 {
 		writeIndented("ret");
 	}
 
-	private void writeInit(List<StmtVarDeclaration> declarations, Variables variables) throws IOException {
+	private void writeInit(List<StmtDeclaration> declarations, Variables variables) throws IOException {
 		writeLabel("init");
 		writeIndented("""
 				              sub rsp, 20h
@@ -93,8 +94,10 @@ public class X86Win64 {
 				                mov qword [rcx], rax
 				              """);
 
-		for (StmtVarDeclaration declaration : declarations) {
-			writeAssignment(declaration.varName(), declaration.expression(), declaration.location(), variables);
+		for (StmtDeclaration declaration : declarations) {
+			if (declaration instanceof StmtVarDeclaration varDeclaration) {
+				writeAssignment(varDeclaration.varName(), varDeclaration.expression(), varDeclaration.location(), variables);
+			}
 		}
 
 		writeIndented("""
@@ -108,19 +111,19 @@ public class X86Win64 {
 		writeUintPrint();
 		writeNL();
 
-		write("section '.data' data readable writeable");
+		writeLines("section '.data' data readable writeable");
 		writeIndented("""
 				              hStdIn  rb 8
 				              hStdOut rb 8
 				              hStdErr rb 8""");
 		for (String varName : variables.getVarNames()) {
-			final Pair<Type, Integer> pair = variables.get(varName);
-			final int size = getTypeSize(pair.left());
-			final String asmName = getVarName(pair.right());
+			final Variables.Variable variable = variables.get(varName);
+			final int size = getTypeSize(variable.type()) * variable.count();
+			final String asmName = getVarName(variable.index());
 			writeIndented(asmName + " rb " + size);
 		}
 		writeNL();
-		write("""
+		writeLines("""
 				      section '.idata' import data readable writeable
 
 				      library kernel32,'KERNEL32.DLL',\\
@@ -207,11 +210,11 @@ public class X86Win64 {
 	private void writeAssignment(String varName, Expression expression, Location location, Variables variables) throws IOException {
 		final int expressionReg = write(expression, variables);
 		final int varReg = getFreeReg();
-		final Pair<Type, Integer> typeIndex = variables.get(varName);
-		final int typeSize = getTypeSize(typeIndex.left());
+		final Variables.Variable variable = variables.get(varName);
+		final int typeSize = getTypeSize(variable.type());
 		final String addrReg = getRegName(varReg);
 		writeComment("assign " + varName, location);
-		writeIndented("lea " + addrReg + ", [" + getVarName(typeIndex.right()) + "]");
+		writeIndented("lea " + addrReg + ", [" + getVarName(variable.index()) + "]");
 		writeIndented("mov [" + addrReg + "], " + getRegName(expressionReg, typeSize));
 		freeReg(expressionReg);
 		freeReg(varReg);
@@ -228,16 +231,16 @@ public class X86Win64 {
 			return reg;
 		}
 		case ExprVarRead read -> {
-			final int addrReg = getFreeReg();
-			final int valueReg = getFreeReg();
-			final Pair<Type, Integer> typeIndex = variables.get(read.varName());
-			final int typeSize = getTypeSize(typeIndex.left());
-			final String varName = getVarName(typeIndex.right());
-			final String addrRegName = getRegName(addrReg);
-			final String valueRegName = getRegName(valueReg, typeSize);
-			writeComment("read var " + read.varName(), node.location());
-			writeIndented("lea " + addrRegName + ", [" + varName + "]");
-			writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
+			final String name = read.varName();
+			writeComment("read var " + name, node.location());
+			final int addrReg = writeAddressOf(name, variables);
+			final int valueReg = writeRead(addrReg, read.typeNotNull());
+			freeReg(addrReg);
+			return valueReg;
+		}
+		case ExprArrayAccess array -> {
+			final int addrReg = writeArrayAccess(array, variables);
+			final int valueReg = writeRead(addrReg, array.typeNotNull());
 			freeReg(addrReg);
 			return valueReg;
 		}
@@ -258,13 +261,8 @@ public class X86Win64 {
 		}
 		case ExprAddrOf addrOf -> {
 			final String name = addrOf.varName();
-			final int reg = getFreeReg();
-			final Pair<Type, Integer> typeIndex = variables.get(name);
-			final String varName = getVarName(typeIndex.right());
-			final String addrReg = getRegName(reg);
 			writeComment("address of var " + name, node.location());
-			writeIndented("lea " + addrReg + ", [" + varName + "]");
-			return reg;
+			return writeAddressOf(name, variables);
 		}
 		case ExprDeref deref -> {
 			final int addrReg = write(deref.expression(), variables);
@@ -279,6 +277,25 @@ public class X86Win64 {
 		}
 		default -> throw new UnsupportedOperationException("unsupported expression " + node);
 		}
+	}
+
+	private int writeAddressOf(String name, Variables variables) throws IOException {
+		final int reg = getFreeReg();
+		final Variables.Variable variable = variables.get(name);
+		final String varName = getVarName(variable.index());
+		final String addrReg = getRegName(reg);
+		writeIndented("lea " + addrReg + ", [" + varName + "]");
+		return reg;
+	}
+
+	private int writeRead(int addrReg, Type type) throws IOException {
+		final int valueReg = getFreeReg();
+		final String addrRegName = getRegName(addrReg);
+		final int typeSize = getTypeSize(type);
+		final String valueRegName = getRegName(valueReg, typeSize);
+		writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
+		freeReg(addrReg);
+		return valueReg;
 	}
 
 	private int writeBinary(ExprBinary node, Variables variables) throws IOException {
@@ -351,20 +368,39 @@ public class X86Win64 {
 		}
 	}
 
+	/**
+	 * @return register of the target address
+	 */
 	private int writeLValue(Expression lValue, Variables variables) throws IOException {
 		return switch (lValue) {
 			case ExprVarRead var -> {
 				final String varName = var.varName();
 				final int varReg = getFreeReg();
-				final Pair<Type, Integer> typeIndex = variables.get(varName);
+				final Variables.Variable variable = variables.get(varName);
 				final String addrReg = getRegName(varReg);
-				writeComment("var " + varName, lValue.location());
-				writeIndented("lea " + addrReg + ", [" + getVarName(typeIndex.right()) + "]");
+				writeComment("var " + varName, var.location());
+				writeIndented("lea " + addrReg + ", [" + getVarName(variable.index()) + "]");
 				yield varReg;
 			}
 			case ExprDeref deref -> write(deref.expression(), variables);
+			case ExprArrayAccess arrayAccess -> writeArrayAccess(arrayAccess, variables);
 			default -> throw new IllegalStateException(String.valueOf(lValue));
 		};
+	}
+
+	private int writeArrayAccess(ExprArrayAccess arrayAccess, Variables variables) throws IOException {
+		final String varName = arrayAccess.varName();
+		final Variables.Variable variable = variables.get(varName);
+		writeComment("array " + varName, arrayAccess.location());
+		final int reg1 = write(arrayAccess.index(), variables);
+		final String reg1Name = getRegName(reg1);
+		final int reg2 = getFreeReg();
+		final String reg2Name = getRegName(reg2);
+		writeIndented("imul " + reg1Name + ", " + getTypeSize(arrayAccess.typeNotNull()));
+		writeIndented("lea " + reg2Name + ", [" + getVarName(variable.index()) + "]");
+		writeIndented("add " + reg2Name + ", " + reg1Name);
+		freeReg(reg1);
+		return reg2;
 	}
 
 	private void writeIfElse(StmtIf statement, Variables variables) throws IOException {
@@ -563,7 +599,7 @@ public class X86Win64 {
 	}
 
 	private void writeLabel(String label) throws IOException {
-		writer.write(label + ":");
+		write(label + ":");
 		writeNL();
 	}
 
@@ -579,7 +615,7 @@ public class X86Win64 {
 		writeLines(text, INDENTATION);
 	}
 
-	private void write(String text) throws IOException {
+	private void writeLines(String text) throws IOException {
 		writeLines(text, null);
 	}
 
@@ -587,15 +623,22 @@ public class X86Win64 {
 		final String[] lines = text.split("\\r?\\n");
 		for (String line : lines) {
 			if (leading != null && line.length() > 0) {
-				writer.write(leading);
+				write(leading);
 			}
-			writer.write(line);
+			write(line);
 			writeNL();
 		}
 	}
 
 	private void writeNL() throws IOException {
-		writer.write(System.lineSeparator());
+		write(System.lineSeparator());
+	}
+
+	private void write(String text) throws IOException {
+		writer.write(text);
+		if (debug) {
+			System.out.print(text);
+		}
 	}
 
 	private int nextLabelIndex() {

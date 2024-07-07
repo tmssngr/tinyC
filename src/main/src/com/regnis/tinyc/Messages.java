@@ -76,4 +76,9 @@ public class Messages {
 	public static String expectedPointerButGot(Type type) {
 		return "Expected pointer but got '" + type + "'";
 	}
+
+	@NotNull
+	public static String cantAssignToArrays() {
+		return "Array variables are immutable";
+	}
 }

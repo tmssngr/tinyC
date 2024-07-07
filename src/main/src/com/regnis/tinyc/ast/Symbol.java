@@ -14,7 +14,7 @@ public interface Symbol {
 	@NotNull
 	Location location();
 
-	record Variable(@NotNull Type type, @NotNull Location location) implements Symbol {
+	record Variable(@NotNull Type type, @NotNull VariableKind kind, @NotNull Location location) implements Symbol {
 	}
 
 	record Func(@NotNull Type returnType, @NotNull List<Type> argTypes, @NotNull Location location) implements Symbol {
@@ -23,5 +23,9 @@ public interface Symbol {
 			this.argTypes = List.copyOf(argTypes);
 			this.location = location;
 		}
+	}
+
+	enum VariableKind {
+		Scalar, Array
 	}
 }

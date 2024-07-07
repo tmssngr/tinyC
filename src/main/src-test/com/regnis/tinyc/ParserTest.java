@@ -14,6 +14,17 @@ import org.junit.*;
  */
 public class ParserTest {
 
+	public static void assertEquals(@NotNull Program expectedProgram, @NotNull Program currentProgram) {
+		assertEquals(expectedProgram.globalVars(), currentProgram.globalVars(),
+		             ParserTest::assertEquals);
+		assertEquals(expectedProgram.functions(), currentProgram.functions(),
+		             ParserTest::assertEquals);
+	}
+
+	public static Location loc(int line, int column) {
+		return new Location(line, column);
+	}
+
 	@Test
 	public void testDeclaration() {
 		assertEquals(new Program(List.of(
@@ -39,9 +50,9 @@ public class ParserTest {
 
 		assertEquals(new StmtVarDeclaration("u16", "foo", new ExprBinary(ExprBinary.Op.Add,
 		                                                                 new ExprBinary(ExprBinary.Op.Add,
-		                                                                             intLit(1, loc(0, 10)),
-		                                                                             intLit(2, loc(0, 14)),
-		                                                                             loc(0, 12)),
+		                                                                                intLit(1, loc(0, 10)),
+		                                                                                intLit(2, loc(0, 14)),
+		                                                                                loc(0, 12)),
 		                                                                 intLit(3, loc(0, 18)),
 		                                                                 loc(0, 16)),
 		                                    loc(0, 0)),
@@ -49,9 +60,9 @@ public class ParserTest {
 
 		assertEquals(new StmtVarDeclaration("i16", "foo", new ExprBinary(ExprBinary.Op.Add,
 		                                                                 new ExprBinary(ExprBinary.Op.Sub,
-		                                                                             intLit(1, loc(0, 10)),
-		                                                                             intLit(2, loc(0, 14)),
-		                                                                             loc(0, 12)),
+		                                                                                intLit(1, loc(0, 10)),
+		                                                                                intLit(2, loc(0, 14)),
+		                                                                                loc(0, 12)),
 		                                                                 intLit(3, loc(0, 18)),
 		                                                                 loc(0, 16)),
 		                                    loc(0, 0)),
@@ -368,8 +379,33 @@ public class ParserTest {
 				                         }""")).parse());
 	}
 
+	@Test
+	public void testArrays() {
+		assertEquals(new Program(List.of(
+				             new StmtArrayDeclaration("u8", "str", 4,
+				                                      loc(0, 0))
+		             ), List.of()),
+		             new Parser(new Lexer("u8 str[4];")).parse());
+
+		assertEquals(new StmtArrayDeclaration("u8", "buffer", 256,
+		                                      loc(0, 0)),
+		             new Parser(new Lexer("u8 buffer[256];")).getStatementNotNull());
+
+		assertEquals(assignStmt(new ExprArrayAccess("buffer",
+		                                            new ExprVarRead("i", loc(0, 7)),
+		                                            loc(0, 0)),
+		                        new ExprArrayAccess("buffer",
+		                                            new ExprBinary(ExprBinary.Op.Add,
+		                                                           new ExprVarRead("i", loc(0, 19)),
+		                                                           new ExprIntLiteral(1, loc(0, 23)),
+		                                                           loc(0, 21)),
+		                                            loc(0, 12)),
+		                        loc(0, 10)),
+		             new Parser(new Lexer("buffer[i] = buffer[i + 1];")).getStatementNotNull());
+	}
+
 	@NotNull
-	private StmtExpr assignStmt(Expression left, Expression right, Location loc) {
+	private static StmtExpr assignStmt(Expression left, Expression right, Location loc) {
 		return new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
 		                                   left,
 		                                   right,
@@ -382,15 +418,6 @@ public class ParserTest {
 
 	private static ExprIntLiteral intLit(int value, Location location) {
 		return new ExprIntLiteral(value, location);
-	}
-
-	private static Location loc(int line, int column) {
-		return new Location(line, column);
-	}
-
-	private static void assertEquals(@NotNull Program expectedProgram, @NotNull Program currentProgram) {
-		assertEquals(expectedProgram.functions(), currentProgram.functions(),
-		             ParserTest::assertEquals);
 	}
 
 	private static <E> void assertEquals(List<E> expList, List<E> currList, BiConsumer<E, E> consumer) {
@@ -439,6 +466,10 @@ public class ParserTest {
 		         && currentStatement instanceof StmtExpr currExpr) {
 			assertEquals(expExpr.expression(), currExpr.expression());
 		}
+		else if (expectedStatement instanceof StmtVarDeclaration expDecl
+		         && currentStatement instanceof StmtVarDeclaration currDecl) {
+			assertEquals(expDecl.expression(), currDecl.expression());
+		}
 		Assert.assertEquals(expectedStatement, currentStatement);
 	}
 
@@ -457,6 +488,10 @@ public class ParserTest {
 		else if (expectedNode instanceof ExprDeref expDeref
 		         && currentNode instanceof ExprDeref currDeref) {
 			assertEquals(expDeref.expression(), currDeref.expression());
+		}
+		else if (expectedNode instanceof ExprArrayAccess exprArray
+		         && currentNode instanceof ExprArrayAccess currArray) {
+			assertEquals(exprArray.index(), currArray.index());
 		}
 		Assert.assertEquals(expectedNode.location(), currentNode.location());
 		Assert.assertEquals(expectedNode, currentNode);

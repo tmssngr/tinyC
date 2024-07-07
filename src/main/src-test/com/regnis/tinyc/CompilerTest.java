@@ -50,6 +50,11 @@ public class CompilerTest {
 		compileAndRun("07 global vars.c");
 	}
 
+	@Test
+	public void testArrays() throws IOException, InterruptedException {
+		compileAndRun("08 arrays.c");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}

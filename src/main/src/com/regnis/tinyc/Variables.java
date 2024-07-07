@@ -13,7 +13,7 @@ public class Variables {
 
 	public static Variables detectFrom(Program program) {
 		final Variables variables = new Variables();
-		for (StmtVarDeclaration globalVar : program.globalVars()) {
+		for (StmtDeclaration globalVar : program.globalVars()) {
 			variables.processDeclaration(globalVar);
 		}
 		for (Function function : program.functions()) {
@@ -22,21 +22,21 @@ public class Variables {
 		return variables;
 	}
 
-	private final Map<String, Pair<Type, Integer>> names = new LinkedHashMap<>();
+	private final Map<String, Variable> names = new LinkedHashMap<>();
 
 	private Variables() {
 	}
 
 	public List<String> getVarNames() {
 		final List<String> strings = new ArrayList<>();
-		for (Map.Entry<String, Pair<Type, Integer>> entry : names.entrySet()) {
+		for (Map.Entry<String, Variable> entry : names.entrySet()) {
 			strings.add(entry.getKey());
 		}
 		return strings;
 	}
 
 	@NotNull
-	public Pair<Type, Integer> get(String name) {
+	public Variable get(String name) {
 		return names.get(name);
 	}
 
@@ -46,7 +46,7 @@ public class Variables {
 
 	private void processStatement(@Nullable Statement statement) {
 		switch (statement) {
-		case StmtVarDeclaration declaration -> processDeclaration(declaration);
+		case StmtDeclaration declaration -> processDeclaration(declaration);
 		case StmtCompound compound -> processStatements(compound.statements());
 		case StmtIf ifStatement -> {
 			processStatement(ifStatement.thenStatement());
@@ -71,7 +71,19 @@ public class Variables {
 		}
 	}
 
-	private void processDeclaration(StmtVarDeclaration declaration) {
-		names.put(declaration.varName(), new Pair<>(declaration.type(), names.size()));
+	private void processDeclaration(StmtDeclaration declaration) {
+		final int index = names.size();
+		if (declaration instanceof StmtVarDeclaration varDeclaration) {
+			names.put(varDeclaration.varName(), new Variable(varDeclaration.type(), index, 1));
+		}
+		else if (declaration instanceof StmtArrayDeclaration arrayDeclaration) {
+			names.put(arrayDeclaration.varName(), new Variable(arrayDeclaration.type(), index, arrayDeclaration.size()));
+		}
+		else {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	public record Variable(Type type, int index, int count) {
 	}
 }

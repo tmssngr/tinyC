@@ -25,20 +25,29 @@ public final class TypeChecker {
 
 	@NotNull
 	public Program check(@NotNull Program program) {
-		final List<StmtVarDeclaration> globalVars = processGlobalVars(program.globalVars());
+		final List<StmtDeclaration> globalVars = processGlobalVars(program.globalVars());
 		final List<Function> typedFunctions = determineFunctionDeclarationTypes(program.functions());
 		final List<Function> functions = determineStatementTypes(typedFunctions);
 		return new Program(globalVars, functions);
 	}
 
 	@NotNull
-	private List<StmtVarDeclaration> processGlobalVars(List<StmtVarDeclaration> globalVars) {
-		final List<StmtVarDeclaration> declarations = new ArrayList<>();
-		for (StmtVarDeclaration globalVar : globalVars) {
-			final StmtVarDeclaration declaration = processDeclaration(globalVar);
-			declarations.add(declaration);
+	private List<StmtDeclaration> processGlobalVars(List<StmtDeclaration> globalVars) {
+		final List<StmtDeclaration> declarations = new ArrayList<>();
+		for (StmtDeclaration declaration : globalVars) {
+			final StmtDeclaration newDeclaration = processGlobalVar(declaration);
+			declarations.add(newDeclaration);
 		}
 		return declarations;
+	}
+
+	@NotNull
+	private StmtDeclaration processGlobalVar(StmtDeclaration declaration) {
+		return switch (declaration) {
+			case StmtVarDeclaration var -> processVarDeclaration(var);
+			case StmtArrayDeclaration array -> processArrayDeclaration(array);
+			default -> throw new UnsupportedOperationException();
+		};
 	}
 
 	@NotNull
@@ -100,7 +109,7 @@ public final class TypeChecker {
 	@NotNull
 	private Statement processStatement(Statement statement) {
 		return switch (statement) {
-			case StmtVarDeclaration declaration -> processDeclaration(declaration);
+			case StmtVarDeclaration declaration -> processVarDeclaration(declaration);
 			case StmtCompound compound -> new StmtCompound(processStatements(compound.statements()));
 			case StmtIf ifStatement -> processIf(ifStatement);
 			case StmtWhile whileStatement -> processWhile(whileStatement);
@@ -112,15 +121,25 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private StmtVarDeclaration processDeclaration(StmtVarDeclaration declaration) {
+	private StmtVarDeclaration processVarDeclaration(StmtVarDeclaration declaration) {
 		final String varName = declaration.varName();
 		final Location location = declaration.location();
 		Expression expression = processExpression(declaration.expression());
 		final Type type = getType(declaration.typeString(), location);
 		expression = autoCastTo(type, expression, location);
 
-		addVariable(varName, type, location);
+		addVariable(varName, type, Symbol.VariableKind.Scalar, location);
 		return new StmtVarDeclaration(declaration.typeString(), type, varName, expression, location);
+	}
+
+	@NotNull
+	private StmtArrayDeclaration processArrayDeclaration(StmtArrayDeclaration declaration) {
+		final String varName = declaration.varName();
+		final Location location = declaration.location();
+		Type type = getType(declaration.typeString(), location);
+		type = Type.pointer(type);
+		addVariable(varName, type, Symbol.VariableKind.Array, location);
+		return new StmtArrayDeclaration(declaration.typeString(), type, varName, declaration.size(), location);
 	}
 
 	@NotNull
@@ -226,6 +245,7 @@ public final class TypeChecker {
 		return switch (expression) {
 			case ExprCast cast -> cast;
 			case ExprVarRead varRead -> processVarRead(varRead.varName(), varRead.location());
+			case ExprArrayAccess arrayAccess -> processArrayAccess(arrayAccess);
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
 			case ExprIntLiteral intLiteral -> intLiteral;
 			case ExprBinary binary -> {
@@ -244,14 +264,28 @@ public final class TypeChecker {
 
 	@NotNull
 	private Expression processVarRead(String name, Location location) {
-		final Type type = getVariable(name, location);
-		return new ExprVarRead(name, type, location);
+		final Symbol.Variable variable = getVariable(name, location);
+		return new ExprVarRead(name, variable.type(), location);
+	}
+
+	@NotNull
+	private Expression processArrayAccess(ExprArrayAccess access) {
+		final String varName = access.varName();
+		final Location location = access.location();
+		final Symbol.Variable variable = getVariable(varName, location);
+		if (variable.kind() != Symbol.VariableKind.Array) {
+			throw new SyntaxException(Messages.cantAssignToArrays(), location);
+		}
+		Expression expression = processExpression(access.index());
+		expression = autoCastTo(pointerIntType, expression, location);
+		final Type type = Objects.requireNonNull(variable.type().toType());
+		return new ExprArrayAccess(varName, type, expression, location);
 	}
 
 	@NotNull
 	private Expression processAddrOf(String name, Location location) {
-		final Type type = getVariable(name, location);
-		return new ExprAddrOf(name, Type.pointer(type), location);
+		final Symbol.Variable variable = getVariable(name, location);
+		return new ExprAddrOf(name, Type.pointer(variable.type()), location);
 	}
 
 	@NotNull
@@ -367,10 +401,19 @@ public final class TypeChecker {
 
 	private Expression processLValue(Expression expression) {
 		return switch (expression) {
-			case ExprVarRead varRead -> processVarRead(varRead.varName(), varRead.location());
+			case ExprVarRead varRead -> processLValueVar(varRead.varName(), varRead.location());
+			case ExprArrayAccess arrayAccess -> processArrayAccess(arrayAccess);
 			case ExprDeref deref -> processDeref(deref.expression(), deref.location());
 			default -> throw new SyntaxException(Messages.expectedLValue(), expression.location());
 		};
+	}
+
+	private ExprVarRead processLValueVar(String varName, Location location) {
+		final Symbol.Variable variable = getVariable(varName, location);
+		if (variable.kind() != Symbol.VariableKind.Scalar) {
+			throw new SyntaxException(Messages.cantAssignToArrays(), location);
+		}
+		return new ExprVarRead(varName, variable.type(), location);
 	}
 
 	private void checkNoSymbolNamed(String name, Location location) {
@@ -384,18 +427,18 @@ public final class TypeChecker {
 		Utils.assertTrue(existingSymbol == null);
 	}
 
-	private void addVariable(String varName, Type type, Location location) {
+	private void addVariable(String varName, Type type, Symbol.VariableKind kind, Location location) {
 		checkNoSymbolNamed(varName, location);
-		symbolMap.put(varName, new Symbol.Variable(type, location));
+		symbolMap.put(varName, new Symbol.Variable(type, kind, location));
 	}
 
 	@NotNull
-	private Type getVariable(String name, Location location) {
+	private Symbol.Variable getVariable(String name, Location location) {
 		final Symbol symbol = symbolMap.get(name);
 		if (!(symbol instanceof Symbol.Variable variable)) {
 			throw new SyntaxException(Messages.undeclaredVariable(name), location);
 		}
-		return variable.type();
+		return variable;
 	}
 
 	@NotNull

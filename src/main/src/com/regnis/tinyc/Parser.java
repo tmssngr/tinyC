@@ -33,7 +33,7 @@ public class Parser {
 	@NotNull
 	public Program parse() {
 		final List<Function> functions = new ArrayList<>();
-		final List<StmtVarDeclaration> globalVars = new ArrayList<>();
+		final List<StmtDeclaration> globalVars = new ArrayList<>();
 		while (token != TokenType.EOF) {
 			final Location location = getLocation();
 			final String type = consumeIdentifier();
@@ -66,6 +66,12 @@ public class Parser {
 				globalVars.add(new StmtVarDeclaration(typeString, name, new ExprIntLiteral(0, location), location));
 				continue;
 			}
+			if (isConsume(TokenType.L_BRACKET)) {
+				final StmtArrayDeclaration array = getArrayDeclaration(typeString, name, location);
+				consume(TokenType.SEMI);
+				globalVars.add(array);
+				continue;
+			}
 
 			throw new SyntaxException("Expected method or global variable declaration", location);
 		}
@@ -88,7 +94,8 @@ public class Parser {
 					yield null;
 				}
 
-				if (statement instanceof StmtVarDeclaration) {
+				if (statement instanceof StmtVarDeclaration
+				    || statement instanceof StmtArrayDeclaration) {
 					consume(TokenType.SEMI);
 					yield statement;
 				}
@@ -149,6 +156,10 @@ public class Parser {
 			final String typeString = getTypeString(identifier1);
 			if (token == TokenType.IDENTIFIER) {
 				final String identifier2 = consumeIdentifier();
+				if (isConsume(TokenType.L_BRACKET)) {
+					return getArrayDeclaration(typeString, identifier2, location);
+				}
+
 				final Expression expression;
 				if (isConsume(TokenType.EQUAL)) {
 					expression = getExpression();
@@ -171,6 +182,16 @@ public class Parser {
 
 		final Expression expression = getExpression(primary, 0);
 		return new StmtExpr(expression);
+	}
+
+	@NotNull
+	private StmtArrayDeclaration getArrayDeclaration(String typeString, String name, Location location) {
+		final int size = consumeIntValue();
+		if (size <= 0) {
+			throw new SyntaxException("Arrays need a size > 0", location);
+		}
+		consume(TokenType.R_BRACKET);
+		return new StmtArrayDeclaration(typeString, name, size, location);
 	}
 
 	@NotNull
@@ -351,6 +372,11 @@ public class Parser {
 		if (isConsume(TokenType.L_PAREN)) {
 			final List<Expression> args = getCallArgExpressions();
 			return new ExprFuncCall(identifier, args, location);
+		}
+		if (isConsume(TokenType.L_BRACKET)) {
+			final Expression expression = getExpression();
+			consume(TokenType.R_BRACKET);
+			return new ExprArrayAccess(identifier, expression, location);
 		}
 		return new ExprVarRead(identifier, location);
 	}
