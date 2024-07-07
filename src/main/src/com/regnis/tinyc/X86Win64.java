@@ -29,16 +29,17 @@ public class X86Win64 {
 	public void write(Program program) throws IOException {
 		final Variables variables = Variables.detectFrom(program);
 
-		writePreample(program.globalVars(), variables);
+		writePreample();
 
 		for (Function function : program.functions()) {
 			write(function, variables);
 		}
 
-		writePostample(variables);
+		writeInit(program.globalVars(), variables);
+		writePostamble(variables);
 	}
 
-	private void writePreample(List<StmtVarDeclaration> declarations, Variables variables) throws IOException {
+	private void writePreample() throws IOException {
 		write("""
 				      format pe64 console
 				      include 'win64ax.inc'
@@ -54,11 +55,6 @@ public class X86Win64 {
 				      start:""");
 		writeIndented("sub rsp, 8");
 		writeIndented("  call init");
-
-		for (StmtVarDeclaration declaration : declarations) {
-			writeAssignment(declaration.varName(), declaration.expression(), declaration.location(), variables);
-		}
-
 		writeIndented("add rsp, 8");
 		writeIndented("  call main");
 		writeIndented("mov rcx, 0");
@@ -74,8 +70,39 @@ public class X86Win64 {
 		writeIndented("ret");
 	}
 
-	private void writePostample(Variables variables) throws IOException {
-		writeInit();
+	private void writeInit(List<StmtVarDeclaration> declarations, Variables variables) throws IOException {
+		writeLabel("init");
+		writeIndented("""
+				              sub rsp, 20h
+				                mov rcx, STD_IN_HANDLE
+				                call [GetStdHandle]
+				                ; handle in rax, 0 if invalid
+				                lea rcx, [hStdIn]
+				                mov qword [rcx], rax
+
+				                mov rcx, STD_OUT_HANDLE
+				                call [GetStdHandle]
+				                ; handle in rax, 0 if invalid
+				                lea rcx, [hStdOut]
+				                mov qword [rcx], rax
+
+				                mov rcx, STD_ERR_HANDLE
+				                call [GetStdHandle]
+				                ; handle in rax, 0 if invalid
+				                lea rcx, [hStdErr]
+				                mov qword [rcx], rax
+				              """);
+
+		for (StmtVarDeclaration declaration : declarations) {
+			writeAssignment(declaration.varName(), declaration.expression(), declaration.location(), variables);
+		}
+
+		writeIndented("""
+				              add rsp, 20h
+				              ret""");
+	}
+
+	private void writePostamble(Variables variables) throws IOException {
 		writeEmit();
 		writeStringPrint();
 		writeUintPrint();
@@ -424,31 +451,6 @@ public class X86Win64 {
 
 	private String getVarName(int i) {
 		return "var" + i;
-	}
-
-	private void writeInit() throws IOException {
-		writeLabel("init");
-		writeIndented("""
-				              sub rsp, 20h
-				                mov rcx, STD_IN_HANDLE
-				                call [GetStdHandle]
-				                ; handle in rax, 0 if invalid
-				                lea rcx, [hStdIn]
-				                mov qword [rcx], rax
-
-				                mov rcx, STD_OUT_HANDLE
-				                call [GetStdHandle]
-				                ; handle in rax, 0 if invalid
-				                lea rcx, [hStdOut]
-				                mov qword [rcx], rax
-
-				                mov rcx, STD_ERR_HANDLE
-				                call [GetStdHandle]
-				                ; handle in rax, 0 if invalid
-				                lea rcx, [hStdErr]
-				                mov qword [rcx], rax
-				              add rsp, 20h
-				              ret""");
 	}
 
 	private void writeEmit() throws IOException {

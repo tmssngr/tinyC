@@ -12,21 +12,6 @@ section '.text' code readable executable
 start:
         sub rsp, 8
           call init
-        ; 1:13 int lit 32
-        mov cx, 32
-        ; 1:1 assign space
-        lea rax, [var0]
-        mov [rax], cx
-        ; 2:12 int lit 63
-        mov cx, 63
-        ; 2:1 assign next
-        lea rax, [var1]
-        mov [rax], cx
-        ; 3:19 address of var space
-        lea rcx, [var0]
-        ; 3:1 assign ptrToSpace
-        lea rax, [var2]
-        mov [rax], rcx
         add rsp, 8
           call main
         mov rcx, 0
@@ -82,6 +67,21 @@ init:
           ; handle in rax, 0 if invalid
           lea rcx, [hStdErr]
           mov qword [rcx], rax
+        ; 1:13 int lit 32
+        mov cx, 32
+        ; 1:1 assign space
+        lea rax, [var0]
+        mov [rax], cx
+        ; 2:12 int lit 63
+        mov cx, 63
+        ; 2:1 assign next
+        lea rax, [var1]
+        mov [rax], cx
+        ; 3:19 address of var space
+        lea rcx, [var0]
+        ; 3:1 assign ptrToSpace
+        lea rax, [var2]
+        mov [rax], rcx
         add rsp, 20h
         ret
 __emit:
