@@ -9,14 +9,21 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record ExprVarAccess(@NotNull String varName, @Nullable Type type, @NotNull Location location) implements Expression {
+public record ExprVarAccess(@NotNull String varName, @Nullable Type type, @Nullable Expression arrayIndex, @NotNull Location location) implements Expression {
 
-	public ExprVarAccess(String varName, Location location) {
-		this(varName, null, location);
+	public static ExprVarAccess scalar(@NotNull String varName, @NotNull Location location) {
+		return new ExprVarAccess(varName, null, null, location);
+	}
+
+	public static ExprVarAccess array(@NotNull String varName, @NotNull Expression index, @NotNull Location location) {
+		return new ExprVarAccess(varName, null, index, location);
 	}
 
 	@Override
 	public String toString() {
+		if (arrayIndex != null) {
+			return varName + "[...]";
+		}
 		return varName;
 	}
 

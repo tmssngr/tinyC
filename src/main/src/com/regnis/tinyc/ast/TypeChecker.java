@@ -244,8 +244,7 @@ public final class TypeChecker {
 	private Expression processExpression(Expression expression) {
 		return switch (expression) {
 			case ExprCast cast -> cast;
-			case ExprVarAccess varRead -> processVarRead(varRead.varName(), varRead.location());
-			case ExprArrayAccess arrayAccess -> processArrayAccess(arrayAccess);
+			case ExprVarAccess var -> processVarRead(var);
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
 			case ExprIntLiteral intLiteral -> intLiteral;
 			case ExprBinary binary -> {
@@ -263,23 +262,23 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private Expression processVarRead(String name, Location location) {
+	private Expression processVarRead(ExprVarAccess var) {
+		final String name = var.varName();
+		final Location location = var.location();
+		final Expression arrayIndex = var.arrayIndex();
 		final Symbol.Variable variable = getVariable(name, location);
-		return new ExprVarAccess(name, variable.type(), location);
-	}
-
-	@NotNull
-	private Expression processArrayAccess(ExprArrayAccess access) {
-		final String varName = access.varName();
-		final Location location = access.location();
-		final Symbol.Variable variable = getVariable(varName, location);
-		if (variable.kind() != Symbol.VariableKind.Array) {
-			throw new SyntaxException(Messages.cantAssignToArrays(), location);
+		if (arrayIndex != null) {
+			if (variable.kind() != Symbol.VariableKind.Array) {
+				throw new SyntaxException(Messages.cantAssignToArrays(), location);
+			}
+			Expression expression = processExpression(arrayIndex);
+			expression = autoCastTo(pointerIntType, expression, location);
+			final Type type = Objects.requireNonNull(variable.type().toType());
+			return new ExprVarAccess(name, type, expression, location);
 		}
-		Expression expression = processExpression(access.index());
-		expression = autoCastTo(pointerIntType, expression, location);
-		final Type type = Objects.requireNonNull(variable.type().toType());
-		return new ExprArrayAccess(varName, type, expression, location);
+		else {
+			return new ExprVarAccess(name, variable.type(), null, location);
+		}
 	}
 
 	@NotNull
@@ -401,19 +400,33 @@ public final class TypeChecker {
 
 	private Expression processLValue(Expression expression) {
 		return switch (expression) {
-			case ExprVarAccess varRead -> processLValueVar(varRead.varName(), varRead.location());
-			case ExprArrayAccess arrayAccess -> processArrayAccess(arrayAccess);
+			case ExprVarAccess varRead -> processLValueVar(varRead);
 			case ExprDeref deref -> processDeref(deref.expression(), deref.location());
 			default -> throw new SyntaxException(Messages.expectedLValue(), expression.location());
 		};
 	}
 
-	private ExprVarAccess processLValueVar(String varName, Location location) {
-		final Symbol.Variable variable = getVariable(varName, location);
-		if (variable.kind() != Symbol.VariableKind.Scalar) {
-			throw new SyntaxException(Messages.cantAssignToArrays(), location);
+	@NotNull
+	private ExprVarAccess processLValueVar(ExprVarAccess var) {
+		final String name = var.varName();
+		final Location location = var.location();
+		final Symbol.Variable variable = getVariable(name, location);
+		final Expression arrayIndex = var.arrayIndex();
+		if (arrayIndex != null) {
+			if (variable.kind() != Symbol.VariableKind.Array) {
+				throw new SyntaxException(Messages.cantAssignToArrays(), location);
+			}
+			Expression expression = processExpression(arrayIndex);
+			expression = autoCastTo(pointerIntType, expression, location);
+			final Type type = Objects.requireNonNull(variable.type().toType());
+			return new ExprVarAccess(name, type, expression, location);
 		}
-		return new ExprVarAccess(varName, variable.type(), location);
+		else {
+			if (variable.kind() != Symbol.VariableKind.Scalar) {
+				throw new SyntaxException(Messages.cantAssignToArrays(), location);
+			}
+			return new ExprVarAccess(name, variable.type(), null, location);
+		}
 	}
 
 	private void checkNoSymbolNamed(String name, Location location) {

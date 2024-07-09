@@ -376,9 +376,9 @@ public class Parser {
 		if (isConsume(TokenType.L_BRACKET)) {
 			final Expression expression = getExpression();
 			consume(TokenType.R_BRACKET);
-			return new ExprArrayAccess(identifier, expression, location);
+			return ExprVarAccess.array(identifier, expression, location);
 		}
-		return new ExprVarAccess(identifier, location);
+		return ExprVarAccess.scalar(identifier, location);
 	}
 
 	@NotNull

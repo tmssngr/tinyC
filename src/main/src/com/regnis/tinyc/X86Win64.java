@@ -230,17 +230,18 @@ public class X86Win64 {
 			writeIndented("mov " + getRegName(reg, size) + ", " + value);
 			return reg;
 		}
-		case ExprVarAccess read -> {
-			final String name = read.varName();
-			writeComment("read var " + name, node.location());
-			final int addrReg = writeAddressOf(name, variables);
-			final int valueReg = writeRead(addrReg, read.typeNotNull());
-			freeReg(addrReg);
-			return valueReg;
-		}
-		case ExprArrayAccess array -> {
-			final int addrReg = writeArrayAccess(array, variables);
-			final int valueReg = writeRead(addrReg, array.typeNotNull());
+		case ExprVarAccess var -> {
+			final String name = var.varName();
+			final Expression arrayIndex = var.arrayIndex();
+			final int addrReg;
+			if (arrayIndex != null) {
+				addrReg = writeArrayAccess(name, arrayIndex, var.typeNotNull(), node.location(), variables);
+			}
+			else {
+				writeComment("read var " + name, node.location());
+				addrReg = writeAddressOf(name, variables);
+			}
+			final int valueReg = writeRead(addrReg, var.typeNotNull());
 			freeReg(addrReg);
 			return valueReg;
 		}
@@ -375,28 +376,32 @@ public class X86Win64 {
 		return switch (lValue) {
 			case ExprVarAccess var -> {
 				final String varName = var.varName();
-				final int varReg = getFreeReg();
-				final Variables.Variable variable = variables.get(varName);
-				final String addrReg = getRegName(varReg);
-				writeComment("var " + varName, var.location());
-				writeIndented("lea " + addrReg + ", [" + getVarName(variable.index()) + "]");
-				yield varReg;
+				final Expression arrayIndex = var.arrayIndex();
+				if (arrayIndex != null) {
+					yield writeArrayAccess(varName, arrayIndex, var.typeNotNull(), var.location(), variables);
+				}
+				else {
+					final int varReg = getFreeReg();
+					final Variables.Variable variable = variables.get(varName);
+					final String addrReg = getRegName(varReg);
+					writeComment("var " + varName, var.location());
+					writeIndented("lea " + addrReg + ", [" + getVarName(variable.index()) + "]");
+					yield varReg;
+				}
 			}
 			case ExprDeref deref -> write(deref.expression(), variables);
-			case ExprArrayAccess arrayAccess -> writeArrayAccess(arrayAccess, variables);
 			default -> throw new IllegalStateException(String.valueOf(lValue));
 		};
 	}
 
-	private int writeArrayAccess(ExprArrayAccess arrayAccess, Variables variables) throws IOException {
-		final String varName = arrayAccess.varName();
+	private int writeArrayAccess(@NotNull String varName, @NotNull Expression index, @NotNull Type type, @NotNull Location location, @NotNull Variables variables) throws IOException {
 		final Variables.Variable variable = variables.get(varName);
-		writeComment("array " + varName, arrayAccess.location());
-		final int reg1 = write(arrayAccess.index(), variables);
+		writeComment("array " + varName, location);
+		final int reg1 = write(index, variables);
 		final String reg1Name = getRegName(reg1);
 		final int reg2 = getFreeReg();
 		final String reg2Name = getRegName(reg2);
-		writeIndented("imul " + reg1Name + ", " + getTypeSize(arrayAccess.typeNotNull()));
+		writeIndented("imul " + reg1Name + ", " + getTypeSize(type));
 		writeIndented("lea " + reg2Name + ", [" + getVarName(variable.index()) + "]");
 		writeIndented("add " + reg2Name + ", " + reg1Name);
 		freeReg(reg1);
