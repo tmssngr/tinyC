@@ -3,6 +3,7 @@ package com.regnis.tinyc;
 import com.regnis.tinyc.ast.*;
 
 import java.io.*;
+import java.nio.charset.*;
 import java.util.*;
 
 import org.jetbrains.annotations.*;
@@ -16,6 +17,7 @@ public class X86Win64 {
 	private static final String EMIT = "__emit";
 	private static final String PRINT_STRING = "__printString";
 	private static final String PRINT_UINT = "__printUint";
+	private static final String STRING_PREFIX = "string_";
 
 	private final Writer writer;
 
@@ -42,18 +44,18 @@ public class X86Win64 {
 
 	private void writePreample() throws IOException {
 		writeLines("""
-				      format pe64 console
-				      include 'win64ax.inc'
+				           format pe64 console
+				           include 'win64ax.inc'
 
-				      STD_IN_HANDLE = -10
-				      STD_OUT_HANDLE = -11
-				      STD_ERR_HANDLE = -12
+				           STD_IN_HANDLE = -10
+				           STD_OUT_HANDLE = -11
+				           STD_ERR_HANDLE = -12
 
-				      entry start
+				           entry start
 
-				      section '.text' code readable executable
+				           section '.text' code readable executable
 
-				      start:""");
+				           start:""");
 		writeIndented("sub rsp, 8");
 		writeIndented("  call init");
 		writeIndented("add rsp, 8");
@@ -123,21 +125,34 @@ public class X86Win64 {
 			writeIndented(asmName + " rb " + size);
 		}
 		writeNL();
+
+		final List<String> stringLiterals = variables.getStringLiterals();
+		if (stringLiterals.size() > 0) {
+			writeLines("section '.data' data readable");
+			int i = 0;
+			for (String literal : stringLiterals) {
+				final String encoded = encode((literal + '\0').getBytes(StandardCharsets.UTF_8));
+				writeIndented(STRING_PREFIX + i + " db " + encoded);
+				i++;
+			}
+			writeNL();
+		}
+
 		writeLines("""
-				      section '.idata' import data readable writeable
+				           section '.idata' import data readable writeable
 
-				      library kernel32,'KERNEL32.DLL',\\
-				              msvcrt,'MSVCRT.DLL'
+				           library kernel32,'KERNEL32.DLL',\\
+				                   msvcrt,'MSVCRT.DLL'
 
-				      import kernel32,\\
-				             ExitProcess,'ExitProcess',\\
-				             GetStdHandle,'GetStdHandle',\\
-				             SetConsoleCursorPosition,'SetConsoleCursorPosition',\\
-				             WriteFile,'WriteFile'
+				           import kernel32,\\
+				                  ExitProcess,'ExitProcess',\\
+				                  GetStdHandle,'GetStdHandle',\\
+				                  SetConsoleCursorPosition,'SetConsoleCursorPosition',\\
+				                  WriteFile,'WriteFile'
 
-				      import msvcrt,\\
-				             _getch,'_getch'
-				      """);
+				           import msvcrt,\\
+				                  _getch,'_getch'
+				           """);
 	}
 
 	private void writeStatements(List<Statement> statements, Variables variables) throws IOException {
@@ -228,6 +243,14 @@ public class X86Win64 {
 			writeComment("int lit " + value, node.location());
 			final int reg = getFreeReg();
 			writeIndented("mov " + getRegName(reg, size) + ", " + value);
+			return reg;
+		}
+		case ExprStringLiteral literal -> {
+			final int i = variables.getStringIndex(literal);
+			final String stringLiteralName = STRING_PREFIX + i;
+			writeComment("string literal " + stringLiteralName, node.location());
+			final int reg = getFreeReg();
+			writeIndented("lea " + getRegName(reg) + ", [" + stringLiteralName + "]");
 			return reg;
 		}
 		case ExprVarAccess var -> {
@@ -675,5 +698,37 @@ public class X86Win64 {
 			return 8;
 		}
 		return Type.getSize(type);
+	}
+
+	private static String encode(byte[] bytes) {
+		final StringBuilder buffer = new StringBuilder();
+		boolean stringIsOpen = false;
+		for (byte b : bytes) {
+			if (b >= 0x20 && b < 0x7f && b != '\'') {
+				if (!stringIsOpen) {
+					if (buffer.length() > 0) {
+						buffer.append(", ");
+					}
+					buffer.append("'");
+					stringIsOpen = true;
+				}
+				buffer.append((char)b);
+			}
+			else {
+				if (stringIsOpen) {
+					buffer.append("'");
+					stringIsOpen = false;
+				}
+				if (buffer.length() > 0) {
+					buffer.append(", ");
+				}
+				buffer.append("0x");
+				Utils.toHex(b, 2, buffer);
+			}
+		}
+		if (stringIsOpen) {
+			buffer.append("'");
+		}
+		return buffer.toString();
 	}
 }

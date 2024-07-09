@@ -24,6 +24,10 @@ public class Compiler {
 		final Program programTyped = checker.check(program);
 
 		final Path asmFile = useExtension(inputFile, ".asm");
+		final Path exeFile = useExtension(inputFile, ".exe");
+		Files.deleteIfExists(asmFile);
+		Files.deleteIfExists(exeFile);
+
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);
 			output.write(programTyped);
@@ -33,7 +37,6 @@ public class Compiler {
 			throw new IOException("Failed to compile");
 		}
 
-		final Path exeFile = useExtension(inputFile, ".exe");
 		launchExe(exeFile, outputFile);
 	}
 

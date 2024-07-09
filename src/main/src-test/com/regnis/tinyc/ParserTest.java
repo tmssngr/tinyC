@@ -71,6 +71,10 @@ public class ParserTest {
 		assertEquals(new StmtVarDeclaration("i16*", "foo", ExprVarAccess.scalar("bar", loc(0, 11)),
 		                                    loc(0, 0)),
 		             new Parser(new Lexer("i16* foo = bar;")).getStatementNotNull());
+
+		assertEquals(new StmtVarDeclaration("u8*", "text", new ExprStringLiteral("hello", loc(0, 11)),
+		                                    loc(0, 0)),
+		             new Parser(new Lexer("u8* text = \"hello\";")).getStatementNotNull());
 	}
 
 	@Test
@@ -139,6 +143,11 @@ public class ParserTest {
 		                        ExprVarAccess.scalar("bar", loc(0, 13)),
 		                        loc(0, 11)),
 		             new Parser(new Lexer("*(foo + 2) = bar;")).getStatementNotNull());
+
+		assertEquals(assignStmt(ExprVarAccess.scalar("text", loc(0, 0)),
+		                        new ExprStringLiteral("hello", loc(0, 7)),
+		                        loc(0, 5)),
+		             new Parser(new Lexer("text = \"hello\";")).getStatementNotNull());
 	}
 
 	@Test

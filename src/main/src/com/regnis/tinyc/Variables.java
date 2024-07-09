@@ -23,21 +23,32 @@ public class Variables {
 	}
 
 	private final Map<String, Variable> names = new LinkedHashMap<>();
+	private final Map<String, Integer> stringLiterals = new LinkedHashMap<>();
 
 	private Variables() {
 	}
 
+	@NotNull
 	public List<String> getVarNames() {
 		final List<String> strings = new ArrayList<>();
 		for (Map.Entry<String, Variable> entry : names.entrySet()) {
 			strings.add(entry.getKey());
 		}
-		return strings;
+		return Collections.unmodifiableList(strings);
 	}
 
 	@NotNull
-	public Variable get(String name) {
+	public Variable get(@NotNull String name) {
 		return names.get(name);
+	}
+
+	@NotNull
+	public List<String> getStringLiterals() {
+		return Collections.unmodifiableList(new ArrayList<>(stringLiterals.keySet()));
+	}
+
+	public int getStringIndex(@NotNull ExprStringLiteral literal) {
+		return stringLiterals.get(literal.text());
 	}
 
 	public int count() {
@@ -49,16 +60,26 @@ public class Variables {
 		case StmtDeclaration declaration -> processDeclaration(declaration);
 		case StmtCompound compound -> processStatements(compound.statements());
 		case StmtIf ifStatement -> {
+			processExpression(ifStatement.condition());
 			processStatement(ifStatement.thenStatement());
 			processStatement(ifStatement.elseStatement());
 		}
 		case StmtWhile whileStatement -> {
+			processExpression(whileStatement.condition());
 			processStatement(whileStatement.bodyStatement());
 		}
 		case StmtFor forStatement -> {
+			processExpression(forStatement.condition());
 			processStatements(forStatement.initialization());
 			processStatement(forStatement.bodyStatement());
 			processStatements(forStatement.iteration());
+		}
+		case StmtExpr expr -> processExpression(expr.expression());
+		case StmtReturn stmtReturn -> {
+			final Expression expression = stmtReturn.expression();
+			if (expression != null) {
+				processExpression(expression);
+			}
 		}
 		case null, default -> {
 		}
@@ -75,12 +96,32 @@ public class Variables {
 		final int index = names.size();
 		if (declaration instanceof StmtVarDeclaration varDeclaration) {
 			names.put(varDeclaration.varName(), new Variable(varDeclaration.type(), index, 1));
+			processExpression(varDeclaration.expression());
 		}
 		else if (declaration instanceof StmtArrayDeclaration arrayDeclaration) {
 			names.put(arrayDeclaration.varName(), new Variable(arrayDeclaration.type(), index, arrayDeclaration.size()));
 		}
 		else {
 			throw new UnsupportedOperationException();
+		}
+	}
+
+	private void processExpression(@NotNull Expression expression) {
+		switch (expression) {
+		case ExprStringLiteral stringLiteral -> stringLiterals.put(stringLiteral.text(), stringLiterals.size());
+		case ExprCast cast -> processExpression(cast.expression());
+		case ExprDeref deref -> processExpression(deref.expression());
+		case ExprBinary binary -> {
+			processExpression(binary.left());
+			processExpression(binary.right());
+		}
+		case ExprFuncCall funcCall -> {
+			for (Expression argExpression : funcCall.argExpressions()) {
+				processExpression(argExpression);
+			}
+		}
+		default -> {
+		}
 		}
 	}
 

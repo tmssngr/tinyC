@@ -11,6 +11,7 @@ public record Type(@NotNull String name, @Nullable Type toType, boolean isInt) {
 	public static final Type I16 = new Type("i16", null, true);
 	public static final Type I32 = new Type("i32", null, true);
 	public static final Type I64 = new Type("i64", null, true);
+	public static final Type POINTER_U8 = Type.pointer(Type.U8);
 
 	public static Type pointer(@NotNull Type toType) {
 		return new Type(toType.name + "*", toType, false);

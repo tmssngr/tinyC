@@ -243,10 +243,11 @@ public final class TypeChecker {
 	@NotNull
 	private Expression processExpression(Expression expression) {
 		return switch (expression) {
+			case ExprIntLiteral intLiteral -> intLiteral;
+			case ExprStringLiteral stringLiteral -> stringLiteral;
 			case ExprCast cast -> cast;
 			case ExprVarAccess var -> processVarRead(var);
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
-			case ExprIntLiteral intLiteral -> intLiteral;
 			case ExprBinary binary -> {
 				if (binary.op() == ExprBinary.Op.Assign) {
 					yield processAssign(binary.left(), binary.right(), binary.location());

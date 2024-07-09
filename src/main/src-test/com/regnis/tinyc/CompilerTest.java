@@ -55,6 +55,11 @@ public class CompilerTest {
 		compileAndRun("08 arrays.c");
 	}
 
+	@Test
+	public void testStrings() throws IOException, InterruptedException {
+		compileAndRun("09 strings.c");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}
