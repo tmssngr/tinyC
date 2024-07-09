@@ -353,13 +353,9 @@ public class Parser {
 			case STAR -> {
 				consume(TokenType.STAR);
 				final Location exprLocation = getLocation();
-				final Expression expression;
-				if (token == TokenType.L_PAREN) {
-					expression = getExpressionInParenthesis();
-				}
-				else {
-					final String identifier = consumeIdentifier();
-					expression = getExpressionPrimary(identifier, exprLocation);
+				final Expression expression = getExpressionPrimary(exprLocation);
+				if (expression == null) {
+					throw new SyntaxException(Messages.expectedExpression(), exprLocation);
 				}
 				yield new ExprDeref(expression, location);
 			}

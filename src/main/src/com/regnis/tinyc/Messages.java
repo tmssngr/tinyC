@@ -81,4 +81,9 @@ public class Messages {
 	public static String cantAssignToArrays() {
 		return "Array variables are immutable";
 	}
+
+	@NotNull
+	public static String expectedExpression() {
+		return "Expected expression";
+	}
 }

@@ -86,6 +86,11 @@ public class TypeCheckerTest {
 				          u8* b = &a;
 				          u8 c = *b;""");
 		checkType("""
+				          u8   a = 'a';
+				          u8*  b = &a;
+				          u8** c = &b;
+				          u8   d = **c;""");
+		checkType("""
 				          void main() {
 				            u8 a = 'a';
 				            u8* b = &a;
