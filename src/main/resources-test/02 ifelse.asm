@@ -48,11 +48,11 @@ main:
         lea rcx, [var0]
         mov bl, [rcx]
         movzx bx, bl
-        movzx rcx, bx
-        ; 5:3 call print
+        ; 5:3 print i16
         sub rsp, 8
+          movzx rcx, bx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         jmp endif_1
@@ -61,11 +61,11 @@ else_1:
         lea rcx, [var1]
         mov bl, [rcx]
         movzx bx, bl
-        movzx rcx, bx
-        ; 8:3 call print
+        ; 8:3 print i16
         sub rsp, 8
+          movzx rcx, bx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
 endif_1:

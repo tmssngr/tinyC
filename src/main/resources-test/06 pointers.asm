@@ -28,11 +28,11 @@ main:
         ; 3:8 read var a
         lea rcx, [var0]
         mov ax, [rcx]
-        movzx rcx, ax
-        ; 3:2 call print
+        ; 3:2 print i16
         sub rsp, 8
+          movzx rcx, ax
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 4:11 address of var a
@@ -56,11 +56,11 @@ main:
         ; 6:8 read var c
         lea rcx, [var2]
         mov ax, [rcx]
-        movzx rcx, ax
-        ; 6:2 call print
+        ; 6:2 print i16
         sub rsp, 8
+          movzx rcx, ax
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 7:11 address of var c
@@ -86,11 +86,11 @@ main:
         ; 9:8 read var c
         lea rcx, [var2]
         mov ax, [rcx]
-        movzx rcx, ax
-        ; 9:2 call print
+        ; 9:2 print i16
         sub rsp, 8
+          movzx rcx, ax
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ret

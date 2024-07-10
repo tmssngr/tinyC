@@ -29,11 +29,11 @@ main:
         setl cl
         and cl, 0xFF
         movzx cx, cl
-        movzx rcx, cx
-        ; 2:5 call print
+        ; 2:5 print i16
         sub rsp, 8
+          movzx rcx, cx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 3:11 int lit 2
@@ -45,11 +45,11 @@ main:
         setl cl
         and cl, 0xFF
         movzx cx, cl
-        movzx rcx, cx
-        ; 3:5 call print
+        ; 3:5 print i16
         sub rsp, 8
+          movzx rcx, cx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 5:11 int lit 1
@@ -61,11 +61,11 @@ main:
         setle cl
         and cl, 0xFF
         movzx cx, cl
-        movzx rcx, cx
-        ; 5:5 call print
+        ; 5:5 print i16
         sub rsp, 8
+          movzx rcx, cx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 6:11 int lit 2
@@ -77,11 +77,11 @@ main:
         setle cl
         and cl, 0xFF
         movzx cx, cl
-        movzx rcx, cx
-        ; 6:5 call print
+        ; 6:5 print i16
         sub rsp, 8
+          movzx rcx, cx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 8:11 int lit 1
@@ -93,11 +93,11 @@ main:
         sete cl
         and cl, 0xFF
         movzx cx, cl
-        movzx rcx, cx
-        ; 8:5 call print
+        ; 8:5 print i16
         sub rsp, 8
+          movzx rcx, cx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 10:11 int lit 1
@@ -109,11 +109,11 @@ main:
         setne cl
         and cl, 0xFF
         movzx cx, cl
-        movzx rcx, cx
-        ; 10:5 call print
+        ; 10:5 print i16
         sub rsp, 8
+          movzx rcx, cx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 12:11 int lit 1
@@ -125,11 +125,11 @@ main:
         setge cl
         and cl, 0xFF
         movzx cx, cl
-        movzx rcx, cx
-        ; 12:5 call print
+        ; 12:5 print i16
         sub rsp, 8
+          movzx rcx, cx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 13:11 int lit 2
@@ -141,11 +141,11 @@ main:
         setge cl
         and cl, 0xFF
         movzx cx, cl
-        movzx rcx, cx
-        ; 13:5 call print
+        ; 13:5 print i16
         sub rsp, 8
+          movzx rcx, cx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 15:11 int lit 1
@@ -157,11 +157,11 @@ main:
         setg cl
         and cl, 0xFF
         movzx cx, cl
-        movzx rcx, cx
-        ; 15:5 call print
+        ; 15:5 print i16
         sub rsp, 8
+          movzx rcx, cx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 16:11 int lit 2
@@ -173,11 +173,11 @@ main:
         setg cl
         and cl, 0xFF
         movzx cx, cl
-        movzx rcx, cx
-        ; 16:5 call print
+        ; 16:5 print i16
         sub rsp, 8
+          movzx rcx, cx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ret

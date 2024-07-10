@@ -176,34 +176,52 @@ public class X86Win64 {
 
 	private int writeCall(ExprFuncCall call, Variables variables) throws IOException {
 		final List<Expression> expressions = call.argExpressions();
-		if (expressions.size() > 1) {
-			throw new IllegalStateException("Unsupported arguments " + expressions);
-		}
-		if (expressions.size() == 1) {
-			final Expression first = expressions.getFirst();
-			final int reg = write(first, variables);
+		final String name = call.name();
+		if (name.equals("print")) {
+			if (expressions.size() != 1) {
+				throw new IllegalStateException("Unsupported arguments " + expressions);
+			}
+			final Expression expression = expressions.getFirst();
+			final int reg = write(expression, variables);
 			final String regName = getRegName(reg);
 			freeReg(reg);
-			final int size = getTypeSize(first.typeNotNull());
+			final Type type = expression.typeNotNull();
+			writeComment("print " + type, call.location());
+			writeIndented("sub rsp, 8");
+			final int size = getTypeSize(type);
 			if (size != 8) {
-				writeIndented("movzx rcx, " + getRegName(reg, size));
+				writeIndented("  movzx rcx, " + getRegName(reg, size));
 			}
 			else if (!regName.equals("rcx")) {
-				writeIndented("mov rcx, " + regName);
+				writeIndented("  mov rcx, " + regName);
 			}
-		}
-		final String name = call.name();
-		writeComment("call " + name, call.location());
-		writeIndented("sub rsp, 8");
-		if (name.equals("print")) {
 			writeIndented("  call " + PRINT_UINT);
-			writeIndented("mov rcx, 0x0a");
+			writeIndented("  mov rcx, 0x0a");
 			writeIndented("  call " + EMIT);
+			writeIndented("add rsp, 8");
 		}
 		else {
+			if (expressions.size() > 1) {
+				throw new IllegalStateException("Unsupported arguments " + expressions);
+			}
+			if (expressions.size() == 1) {
+				final Expression first = expressions.getFirst();
+				final int reg = write(first, variables);
+				final String regName = getRegName(reg);
+				freeReg(reg);
+				final int size = getTypeSize(first.typeNotNull());
+				if (size != 8) {
+					writeIndented("movzx rcx, " + getRegName(reg, size));
+				}
+				else if (!regName.equals("rcx")) {
+					writeIndented("mov rcx, " + regName);
+				}
+			}
+			writeComment("call " + name, call.location());
+			writeIndented("sub rsp, 8");
 			writeIndented("  call " + name);
+			writeIndented("add rsp, 8");
 		}
-		writeIndented("add rsp, 8");
 		return call.typeNotNull() == Type.VOID ? -1 : 1; // rax
 	}
 

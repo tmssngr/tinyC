@@ -43,11 +43,11 @@ while_1:
         lea rcx, [var0]
         mov bl, [rcx]
         movzx bx, bl
-        movzx rcx, bx
-        ; 4:3 call print
+        ; 4:3 print i16
         sub rsp, 8
+          movzx rcx, bx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 5:7 read var i

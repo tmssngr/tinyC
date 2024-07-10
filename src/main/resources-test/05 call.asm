@@ -47,11 +47,11 @@ one:
 doPrint:
         ; 11:8 int lit 2
         mov cx, 2
-        movzx rcx, cx
-        ; 11:2 call print
+        ; 11:2 print i16
         sub rsp, 8
+          movzx rcx, cx
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ret

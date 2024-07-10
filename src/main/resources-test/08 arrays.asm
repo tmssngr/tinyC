@@ -93,11 +93,11 @@ main:
         lea rcx, [var2]
         mov al, [rcx]
         movzx ax, al
-        movzx rcx, ax
-        ; 9:3 call print
+        ; 9:3 print i16
         sub rsp, 8
+          movzx rcx, ax
           call __printUint
-        mov rcx, 0x0a
+          mov rcx, 0x0a
           call __emit
         add rsp, 8
         ret
