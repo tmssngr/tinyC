@@ -16,6 +16,7 @@ public class X86Win64 {
 	private static final String INDENTATION = "        ";
 	private static final String EMIT = "__emit";
 	private static final String PRINT_STRING = "__printString";
+	private static final String PRINT_STRING_ZERO = "__printStringZero";
 	private static final String PRINT_UINT = "__printUint";
 	private static final String STRING_PREFIX = "string_";
 
@@ -177,7 +178,28 @@ public class X86Win64 {
 	private int writeCall(ExprFuncCall call, Variables variables) throws IOException {
 		final List<Expression> expressions = call.argExpressions();
 		final String name = call.name();
-		if (name.equals("print")) {
+		if (name.equals("printString")) {
+			if (expressions.size() != 1) {
+				throw new IllegalStateException("Unsupported arguments " + expressions);
+			}
+			final Expression expression = expressions.getFirst();
+			final int reg = write(expression, variables);
+			final String regName = getRegName(reg);
+			freeReg(reg);
+			final Type type = expression.typeNotNull();
+			if (type.toType() != Type.U8) {
+				throw new IllegalStateException("Unsupported type");
+			}
+			writeComment("print " + type, call.location());
+			writeIndented("sub rsp, 8");
+			final int size = getTypeSize(type);
+			if (!regName.equals("rcx")) {
+				writeIndented("  mov rcx, " + regName);
+			}
+			writeIndented("  call " + PRINT_STRING_ZERO);
+			writeIndented("add rsp, 8");
+		}
+		else if (name.equals("print")) {
 			if (expressions.size() != 1) {
 				throw new IllegalStateException("Unsupported arguments " + expressions);
 			}
@@ -550,6 +572,18 @@ public class X86Win64 {
 	}
 
 	private void writeStringPrint() throws IOException {
+		// rcx = pointer to text
+		writeLabel(PRINT_STRING_ZERO);
+		writeIndented("mov rdx, rcx");
+		writeLabel(PRINT_STRING_ZERO + "_1");
+		writeIndented("mov r9l, [rdx]");
+		writeIndented("or  r9l, r9l");
+		writeIndented("jz " + PRINT_STRING_ZERO + "_2");
+		writeIndented("add rdx, 1");
+		writeIndented("jmp " + PRINT_STRING_ZERO + "_1");
+		writeLabel(PRINT_STRING_ZERO + "_2");
+		writeIndented("sub rdx, rcx");
+
 		// rcx = pointer to text
 		// rdx = length
 		// BOOL WriteFile(

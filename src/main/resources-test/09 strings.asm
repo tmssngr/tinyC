@@ -20,19 +20,27 @@ start:
 
         ; void main
 main:
-        ; 4:12 read var text
+        ; 4:14 read var text
         lea rcx, [var0]
         mov rax, [rcx]
-        ; 4:11 deref
+        ; 4:2 print u8*
+        sub rsp, 8
+          mov rcx, rax
+          call __printStringZero
+        add rsp, 8
+        ; 5:12 read var text
+        lea rcx, [var0]
+        mov rax, [rcx]
+        ; 5:11 deref
         mov cl, [rax]
-        ; 4:2 assign chr
+        ; 5:2 assign chr
         lea rax, [var1]
         mov [rax], cl
-        ; 5:8 read var chr
+        ; 6:8 read var chr
         lea rcx, [var1]
         mov al, [rcx]
         movzx ax, al
-        ; 5:2 print i16
+        ; 6:2 print i16
         sub rsp, 8
           movzx rcx, ax
           call __printUint
@@ -73,6 +81,16 @@ __emit:
           call __printString
         pop rcx
         ret
+__printStringZero:
+        mov rdx, rcx
+__printStringZero_1:
+        mov r9l, [rdx]
+        or  r9l, r9l
+        jz __printStringZero_2
+        add rdx, 1
+        jmp __printStringZero_1
+__printStringZero_2:
+        sub rdx, rcx
 __printString:
         mov     rdi, rsp
         and     spl, 0xf0
