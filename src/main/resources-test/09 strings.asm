@@ -28,39 +28,109 @@ main:
           mov rcx, rax
           call __printStringZero
         add rsp, 8
-        ; 5:15 address of array text[...]
-        ; 5:21 int lit 1
+        ; 5:2 call printLength
+        sub rsp, 8
+          call printLength
+        add rsp, 8
+        ; 6:15 address of array text[...]
+        ; 6:21 int lit 1
         mov rcx, 1
         imul rcx, 1
         lea rbx, [var0]
         mov rax, [rbx]
         add rax, rcx
-        ; 5:2 assign second
+        ; 6:2 assign second
         lea rcx, [var1]
         mov [rcx], rax
-        ; 6:14 read var second
+        ; 7:14 read var second
         lea rcx, [var1]
         mov rax, [rcx]
-        ; 6:2 print u8*
+        ; 7:2 print u8*
         sub rsp, 8
           mov rcx, rax
           call __printStringZero
         add rsp, 8
-        ; 7:12 read var text
+        ; 8:12 read var text
         lea rcx, [var0]
         mov rax, [rcx]
-        ; 7:11 deref
+        ; 8:11 deref
         mov cl, [rax]
-        ; 7:2 assign chr
+        ; 8:2 assign chr
         lea rax, [var2]
         mov [rax], cl
-        ; 8:8 read var chr
+        ; 9:8 read var chr
         lea rcx, [var2]
         mov al, [rcx]
         movzx ax, al
-        ; 8:2 print i16
+        ; 9:2 print i16
         sub rsp, 8
           movzx rcx, ax
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
+        ret
+        ; void printLength
+printLength:
+        ; 13:15 int lit 0
+        mov cx, 0
+        ; 13:2 assign length
+        lea rax, [var3]
+        mov [rax], cx
+        ; 14:2 for
+        ; 14:17 read var text
+        lea rcx, [var0]
+        mov rax, [rcx]
+        ; 14:7 assign ptr
+        lea rcx, [var4]
+        mov [rcx], rax
+        ; for condition ExprDeref[expression=ptr, type=u8, location=14:23] != 0
+for_1:
+        ; 14:24 read var ptr
+        lea rcx, [var4]
+        mov rax, [rcx]
+        ; 14:23 deref
+        mov cl, [rax]
+        ; 14:31 int lit 0
+        mov al, 0
+        ; 14:28 !=
+        cmp cl, al
+        setne cl
+        and cl, 0xFF
+        or cl, cl
+        jz endFor_1
+        ; 15:12 read var length
+        lea rax, [var3]
+        mov bx, [rax]
+        ; 15:21 int lit 1
+        mov al, 1
+        movzx ax, al
+        ; 15:19 add
+        add bx, ax
+        ; 15:3 var length
+        lea rax, [var3]
+        ; 15:10 assign
+        mov [rax], bx
+        ; for iteration
+        ; 14:40 read var ptr
+        lea rax, [var4]
+        mov rbx, [rax]
+        ; 14:46 int lit 1
+        mov rax, 1
+        ; 14:44 add
+        add rbx, rax
+        ; 14:34 var ptr
+        lea rax, [var4]
+        ; 14:38 assign
+        mov [rax], rbx
+        jmp for_1
+endFor_1:
+        ; 17:8 read var length
+        lea rax, [var3]
+        mov bx, [rax]
+        ; 17:2 print i16
+        sub rsp, 8
+          movzx rcx, bx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -87,10 +157,10 @@ init:
           mov qword [rcx], rax
         add rsp, 20h
         ; 1:12 string literal string_0
-        lea rcx, [string_0]
+        lea rax, [string_0]
         ; 1:1 assign text
-        lea rax, [var0]
-        mov [rax], rcx
+        lea rbx, [var0]
+        mov [rbx], rax
         ret
 __emit:
         push rcx ; = sub rsp, 8
@@ -186,6 +256,8 @@ section '.data' data readable writeable
         var0 rb 8
         var1 rb 8
         var2 rb 1
+        var3 rb 2
+        var4 rb 8
 
 section '.data' data readable
         string_0 db 'hello world', 0x0a, 0x00
