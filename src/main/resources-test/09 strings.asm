@@ -67,12 +67,12 @@ init:
           ; handle in rax, 0 if invalid
           lea rcx, [hStdErr]
           mov qword [rcx], rax
+        add rsp, 20h
         ; 1:12 string literal string_0
         lea rcx, [string_0]
         ; 1:1 assign text
         lea rax, [var0]
         mov [rax], rcx
-        add rsp, 20h
         ret
 __emit:
         push rcx ; = sub rsp, 8

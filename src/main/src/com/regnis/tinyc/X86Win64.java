@@ -95,6 +95,7 @@ public class X86Win64 {
 				                ; handle in rax, 0 if invalid
 				                lea rcx, [hStdErr]
 				                mov qword [rcx], rax
+				              add rsp, 20h
 				              """);
 
 		for (StmtDeclaration declaration : declarations) {
@@ -103,9 +104,7 @@ public class X86Win64 {
 			}
 		}
 
-		writeIndented("""
-				              add rsp, 20h
-				              ret""");
+		writeIndented("ret");
 	}
 
 	private void writePostamble(Variables variables) throws IOException {

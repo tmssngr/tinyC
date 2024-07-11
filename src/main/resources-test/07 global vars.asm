@@ -67,6 +67,7 @@ init:
           ; handle in rax, 0 if invalid
           lea rcx, [hStdErr]
           mov qword [rcx], rax
+        add rsp, 20h
         ; 1:13 int lit 32
         mov cx, 32
         ; 1:1 assign space
@@ -82,7 +83,6 @@ init:
         ; 3:1 assign ptrToSpace
         lea rax, [var2]
         mov [rax], rcx
-        add rsp, 20h
         ret
 __emit:
         push rcx ; = sub rsp, 8
