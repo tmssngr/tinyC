@@ -494,6 +494,10 @@ public class ParserTest {
 			assertEquals(exprBinary.left(), currBinary.left());
 			assertEquals(exprBinary.right(), currBinary.right());
 		}
+		else if (expectedNode instanceof ExprAddrOf exprAddrOf
+		         && currentNode instanceof ExprAddrOf currAddrOf) {
+			assertEquals(exprAddrOf.arrayIndex(), currAddrOf.arrayIndex());
+		}
 		else if (expectedNode instanceof ExprDeref expDeref
 		         && currentNode instanceof ExprDeref currDeref) {
 			assertEquals(expDeref.expression(), currDeref.expression());

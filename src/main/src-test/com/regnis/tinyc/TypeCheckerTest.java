@@ -129,7 +129,7 @@ public class TypeCheckerTest {
 	public void testInvalidLValue() {
 		testIllegalStatement(Messages.expectedLValue(), 0, "1 = ptr1;");
 		testIllegalStatement(Messages.expectedLValue(), 5, "ptr1 + 1 = ptr2;");
-		testIllegal(Messages.cantAssignToArrays(), 2, 2,
+		testIllegal(Messages.arraysAreImmutable(), 2, 2,
 		            """
 				            u8 array[12];
 				            void main() {
@@ -167,7 +167,18 @@ public class TypeCheckerTest {
 						                                                                                    new ExprIntLiteral(1, Type.I64, loc(4, 8)),
 						                                                                                    loc(4, 2)),
 						                                                                  new ExprVarAccess("first", Type.U8, null, loc(4, 13)),
-						                                                                  loc(4, 11)))
+						                                                                  loc(4, 11))),
+						                                      new StmtVarDeclaration("u8*", Type.pointer(Type.U8), "second",
+						                                                             new ExprAddrOf("array",
+						                                                                            Type.pointer(Type.U8),
+						                                                                            new ExprIntLiteral(1, Type.I64, loc(5, 22)),
+						                                                                            loc(5, 15)),
+						                                                             loc(5, 2)),
+						                                      new StmtVarDeclaration("u8", Type.U8, "s",
+						                                                             new ExprVarAccess("second", Type.U8,
+						                                                                               new ExprIntLiteral(0, Type.I64, loc(6, 16)),
+						                                                                               loc(6, 9)),
+						                                                             loc(6, 2))
 				                                      )),
 				                                      loc(0, 0))
 		                         )),
@@ -177,7 +188,23 @@ public class TypeCheckerTest {
 				                         u8 first = array[0];
 				                         array[0] = array[1];
 				                         array[1] = first;
+				                         u8* second = &array[1];
+				                         u8 s = second[0];
 				                       }"""));
+
+		testIllegal(Messages.arraysAreImmutable(), 2, 2,
+		            """
+				            u8 array[12];
+				            void main() {
+				              array = 1;
+				            }""");
+		testIllegal(Messages.arrayIndexMustBeInt(), 3, 2,
+		            """
+				            u8 array[12];
+				            void main() {
+				              u8* foo = array;
+				              array[foo] = 1;
+				            }""");
 	}
 
 	private void testIllegalStatement(String expectedMessage, int column, String illegalOperation) {

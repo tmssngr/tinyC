@@ -95,7 +95,7 @@ public class Variables {
 	private void processDeclaration(StmtDeclaration declaration) {
 		final int index = names.size();
 		if (declaration instanceof StmtVarDeclaration varDeclaration) {
-			names.put(varDeclaration.varName(), new Variable(varDeclaration.type(), index, 1));
+			names.put(varDeclaration.varName(), new Variable(varDeclaration.type(), index, 0));
 			processExpression(varDeclaration.expression());
 		}
 		else if (declaration instanceof StmtArrayDeclaration arrayDeclaration) {
@@ -126,5 +126,8 @@ public class Variables {
 	}
 
 	public record Variable(Type type, int index, int count) {
+		public boolean isScalar() {
+			return count == 0;
+		}
 	}
 }

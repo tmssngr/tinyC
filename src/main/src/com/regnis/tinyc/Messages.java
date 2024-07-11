@@ -78,12 +78,17 @@ public class Messages {
 	}
 
 	@NotNull
-	public static String cantAssignToArrays() {
+	public static String arraysAreImmutable() {
 		return "Array variables are immutable";
 	}
 
 	@NotNull
 	public static String expectedExpression() {
 		return "Expected expression";
+	}
+
+	@NotNull
+	public static String arrayIndexMustBeInt() {
+		return "The index of an array must be an integer value";
 	}
 }

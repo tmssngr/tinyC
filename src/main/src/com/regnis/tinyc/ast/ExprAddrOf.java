@@ -9,10 +9,10 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record ExprAddrOf(@NotNull String varName, @Nullable Type type, @NotNull Location location) implements Expression {
+public record ExprAddrOf(@NotNull String varName, @Nullable Type type, @Nullable Expression arrayIndex, @NotNull Location location) implements Expression {
 
-	public ExprAddrOf(String varName, Location location) {
-		this(varName, null, location);
+	public ExprAddrOf(@NotNull String varName, @Nullable Expression arrayIndex, @NotNull Location location) {
+		this(varName, null, arrayIndex, location);
 	}
 
 	@NotNull

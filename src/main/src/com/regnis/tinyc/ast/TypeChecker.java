@@ -257,7 +257,7 @@ public final class TypeChecker {
 				final Expression right = processExpression(binary.right());
 				yield processBinary(binary.op(), left, right, binary.location());
 			}
-			case ExprAddrOf addrOf -> processAddrOf(addrOf.varName(), addrOf.location());
+			case ExprAddrOf addrOf -> processAddrOf(addrOf);
 			case ExprDeref deref -> processDeref(deref.expression(), deref.location());
 			default -> throw new IllegalStateException("Unexpected expression: " + expression);
 		};
@@ -269,24 +269,40 @@ public final class TypeChecker {
 		final Location location = var.location();
 		final Expression arrayIndex = var.arrayIndex();
 		final Symbol.Variable variable = getVariable(name, location);
+		Type type = variable.type();
 		if (arrayIndex != null) {
-			if (variable.kind() != Symbol.VariableKind.Array) {
-				throw new SyntaxException(Messages.cantAssignToArrays(), location);
+			type = type.toType();
+			if (type == null) {
+				throw new SyntaxException(Messages.expectedPointerButGot(variable.type()), location);
 			}
-			Expression expression = processExpression(arrayIndex);
-			expression = autoCastTo(pointerIntType, expression, location);
-			final Type type = Objects.requireNonNull(variable.type().toType());
+
+			final Expression expression = processArrayIndex(arrayIndex, location);
 			return new ExprVarAccess(name, type, expression, location);
 		}
-		else {
-			return new ExprVarAccess(name, variable.type(), null, location);
-		}
+		return new ExprVarAccess(name, type, null, location);
 	}
 
 	@NotNull
-	private Expression processAddrOf(String name, Location location) {
+	private Expression processArrayIndex(Expression arrayIndex, Location location) {
+		Expression expression = processExpression(arrayIndex);
+		if (!expression.typeNotNull().isInt()) {
+			throw new SyntaxException(Messages.arrayIndexMustBeInt(), location);
+		}
+		expression = autoCastTo(pointerIntType, expression, location);
+		return expression;
+	}
+
+	@NotNull
+	private Expression processAddrOf(ExprAddrOf addrOf) {
+		final String name = addrOf.varName();
+		final Location location = addrOf.location();
 		final Symbol.Variable variable = getVariable(name, location);
-		return new ExprAddrOf(name, Type.pointer(variable.type()), location);
+		Expression arrayIndex = addrOf.arrayIndex();
+		if (arrayIndex != null) {
+			arrayIndex = processArrayIndex(arrayIndex, location);
+			return new ExprAddrOf(name, variable.type(), arrayIndex, location);
+		}
+		return new ExprAddrOf(name, Type.pointer(variable.type()), arrayIndex, location);
 	}
 
 	@NotNull
@@ -416,16 +432,15 @@ public final class TypeChecker {
 		final Expression arrayIndex = var.arrayIndex();
 		if (arrayIndex != null) {
 			if (variable.kind() != Symbol.VariableKind.Array) {
-				throw new SyntaxException(Messages.cantAssignToArrays(), location);
+				throw new SyntaxException(Messages.arraysAreImmutable(), location);
 			}
-			Expression expression = processExpression(arrayIndex);
-			expression = autoCastTo(pointerIntType, expression, location);
+			final Expression expression = processArrayIndex(arrayIndex, location);
 			final Type type = Objects.requireNonNull(variable.type().toType());
 			return new ExprVarAccess(name, type, expression, location);
 		}
 		else {
 			if (variable.kind() != Symbol.VariableKind.Scalar) {
-				throw new SyntaxException(Messages.cantAssignToArrays(), location);
+				throw new SyntaxException(Messages.arraysAreImmutable(), location);
 			}
 			return new ExprVarAccess(name, variable.type(), null, location);
 		}

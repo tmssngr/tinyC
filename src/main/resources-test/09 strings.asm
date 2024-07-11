@@ -28,19 +28,37 @@ main:
           mov rcx, rax
           call __printStringZero
         add rsp, 8
-        ; 5:12 read var text
+        ; 5:15 address of array text[...]
+        ; 5:21 int lit 1
+        mov rcx, 1
+        imul rcx, 1
+        lea rbx, [var0]
+        mov rax, [rbx]
+        add rax, rcx
+        ; 5:2 assign second
+        lea rcx, [var1]
+        mov [rcx], rax
+        ; 6:14 read var second
+        lea rcx, [var1]
+        mov rax, [rcx]
+        ; 6:2 print u8*
+        sub rsp, 8
+          mov rcx, rax
+          call __printStringZero
+        add rsp, 8
+        ; 7:12 read var text
         lea rcx, [var0]
         mov rax, [rcx]
-        ; 5:11 deref
+        ; 7:11 deref
         mov cl, [rax]
-        ; 5:2 assign chr
-        lea rax, [var1]
+        ; 7:2 assign chr
+        lea rax, [var2]
         mov [rax], cl
-        ; 6:8 read var chr
-        lea rcx, [var1]
+        ; 8:8 read var chr
+        lea rcx, [var2]
         mov al, [rcx]
         movzx ax, al
-        ; 6:2 print i16
+        ; 8:2 print i16
         sub rsp, 8
           movzx rcx, ax
           call __printUint
@@ -166,7 +184,8 @@ section '.data' data readable writeable
         hStdOut rb 8
         hStdErr rb 8
         var0 rb 8
-        var1 rb 1
+        var1 rb 8
+        var2 rb 1
 
 section '.data' data readable
         string_0 db 'hello world', 0x0a, 0x00

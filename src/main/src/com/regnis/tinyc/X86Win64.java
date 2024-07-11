@@ -120,7 +120,7 @@ public class X86Win64 {
 				              hStdErr rb 8""");
 		for (String varName : variables.getVarNames()) {
 			final Variables.Variable variable = variables.get(varName);
-			final int size = getTypeSize(variable.type()) * variable.count();
+			final int size = getTypeSize(variable.type()) * Math.max(1, variable.count());
 			final String asmName = getVarName(variable.index());
 			writeIndented(asmName + " rb " + size);
 		}
@@ -265,6 +265,7 @@ public class X86Win64 {
 		final int expressionReg = write(expression, variables);
 		final int varReg = getFreeReg();
 		final Variables.Variable variable = variables.get(varName);
+		Utils.assertTrue(variable.isScalar());
 		final int typeSize = getTypeSize(variable.type());
 		final String addrReg = getRegName(varReg);
 		writeComment("assign " + varName, location);
@@ -297,7 +298,8 @@ public class X86Win64 {
 			final Expression arrayIndex = var.arrayIndex();
 			final int addrReg;
 			if (arrayIndex != null) {
-				addrReg = writeArrayAccess(name, arrayIndex, var.typeNotNull(), node.location(), variables);
+				writeComment("array " + name, node.location());
+				addrReg = writeArrayAccess(name, arrayIndex, var.typeNotNull(), variables);
 			}
 			else {
 				writeComment("read var " + name, node.location());
@@ -310,10 +312,10 @@ public class X86Win64 {
 		case ExprBinary binary -> {
 			return writeBinary(binary, variables);
 		}
-		case ExprCast extend -> {
-			final int reg = write(extend.expression(), variables);
-			final int exprSize = getTypeSize(extend.expressionType());
-			final int size = getTypeSize(extend.type());
+		case ExprCast cast -> {
+			final int reg = write(cast.expression(), variables);
+			final int exprSize = getTypeSize(cast.expressionType());
+			final int size = getTypeSize(cast.type());
 			if (size != exprSize) {
 				writeIndented("movzx " + getRegName(reg, size) + ", " + getRegName(reg, exprSize));
 			}
@@ -324,6 +326,12 @@ public class X86Win64 {
 		}
 		case ExprAddrOf addrOf -> {
 			final String name = addrOf.varName();
+			final Expression arrayIndex = addrOf.arrayIndex();
+			if (arrayIndex != null) {
+				writeComment("address of array " + name + "[...]", node.location());
+				return writeArrayAccess(name, arrayIndex, Objects.requireNonNull(addrOf.typeNotNull().toType()), variables);
+			}
+
 			writeComment("address of var " + name, node.location());
 			return writeAddressOf(name, variables);
 		}
@@ -345,6 +353,7 @@ public class X86Win64 {
 	private int writeAddressOf(String name, Variables variables) throws IOException {
 		final int reg = getFreeReg();
 		final Variables.Variable variable = variables.get(name);
+		Utils.assertTrue(variable.isScalar());
 		final String varName = getVarName(variable.index());
 		final String addrReg = getRegName(reg);
 		writeIndented("lea " + addrReg + ", [" + varName + "]");
@@ -438,15 +447,18 @@ public class X86Win64 {
 		return switch (lValue) {
 			case ExprVarAccess var -> {
 				final String varName = var.varName();
+				final Location location = var.location();
 				final Expression arrayIndex = var.arrayIndex();
 				if (arrayIndex != null) {
-					yield writeArrayAccess(varName, arrayIndex, var.typeNotNull(), var.location(), variables);
+					writeComment("array " + varName, location);
+					yield writeArrayAccess(varName, arrayIndex, var.typeNotNull(), variables);
 				}
 				else {
 					final int varReg = getFreeReg();
 					final Variables.Variable variable = variables.get(varName);
+					Utils.assertTrue(variable.isScalar());
 					final String addrReg = getRegName(varReg);
-					writeComment("var " + varName, var.location());
+					writeComment("var " + varName, location);
 					writeIndented("lea " + addrReg + ", [" + getVarName(variable.index()) + "]");
 					yield varReg;
 				}
@@ -456,18 +468,28 @@ public class X86Win64 {
 		};
 	}
 
-	private int writeArrayAccess(@NotNull String varName, @NotNull Expression index, @NotNull Type type, @NotNull Location location, @NotNull Variables variables) throws IOException {
+	private int writeArrayAccess(@NotNull String varName, @NotNull Expression index, @NotNull Type type, @NotNull Variables variables) throws IOException {
 		final Variables.Variable variable = variables.get(varName);
-		writeComment("array " + varName, location);
-		final int reg1 = write(index, variables);
-		final String reg1Name = getRegName(reg1);
-		final int reg2 = getFreeReg();
-		final String reg2Name = getRegName(reg2);
-		writeIndented("imul " + reg1Name + ", " + getTypeSize(type));
-		writeIndented("lea " + reg2Name + ", [" + getVarName(variable.index()) + "]");
-		writeIndented("add " + reg2Name + ", " + reg1Name);
-		freeReg(reg1);
-		return reg2;
+		final String asmVarName = getVarName(variable.index());
+		final int offsetReg = write(index, variables);
+		final String offsetRegName = getRegName(offsetReg);
+		writeIndented("imul " + offsetRegName + ", " + getTypeSize(type));
+
+		final int addrReg = getFreeReg();
+		final String addrRegName = getRegName(addrReg);
+		if (variable.isScalar()) {
+			final int varReg = getFreeReg();
+			final String varRegName = getRegName(varReg);
+			writeIndented("lea " + varRegName + ", [" + asmVarName + "]");
+			writeIndented("mov " + addrRegName + ", [" + varRegName + "]");
+			freeReg(varReg);
+		}
+		else {
+			writeIndented("lea " + addrRegName + ", [" + asmVarName + "]");
+		}
+		writeIndented("add " + addrRegName + ", " + offsetRegName);
+		freeReg(offsetReg);
+		return addrReg;
 	}
 
 	private void writeIfElse(StmtIf statement, Variables variables) throws IOException {
@@ -539,7 +561,7 @@ public class X86Win64 {
 
 	private int getFreeReg() {
 		int mask = 1;
-		for (int i = 0; i < 3; i++, mask += mask) {
+		for (int i = 0; i < 4; i++, mask += mask) {
 			if ((freeRegs & mask) == 0) {
 				freeRegs |= mask;
 				return i;
@@ -730,12 +752,23 @@ public class X86Win64 {
 	}
 
 	private static String getRegName(int reg, int size) {
-		final char chr = switch (reg) {
-			case 0 -> 'c';
-			case 1 -> 'a';
-			case 2 -> 'b';
+		return switch (reg) {
+			case 0 -> getXRegName('c', size);
+			case 1 -> getXRegName('a', size);
+			case 2 -> getXRegName('b', size);
+			case 3 -> getXRegName('d', size);
+			case 4 -> switch (size) {
+				case 1 -> "r9b";
+				case 2 -> "r9w";
+				case 4 -> "r9d";
+				default -> "r9";
+			};
 			default -> throw new IllegalStateException();
 		};
+	}
+
+	@NotNull
+	private static String getXRegName(char chr, int size) {
 		return switch (size) {
 			case 1 -> chr + "l";
 			case 2 -> chr + "x";

@@ -349,7 +349,12 @@ public class Parser {
 			case AMP -> {
 				consume(TokenType.AMP);
 				final String name = consumeIdentifier();
-				yield new ExprAddrOf(name, location);
+				Expression arrayIndex = null;
+				if (isConsume(TokenType.L_BRACKET)) {
+					arrayIndex = getExpression();
+					consume(TokenType.R_BRACKET);
+				}
+				yield new ExprAddrOf(name, arrayIndex, location);
 			}
 			case STAR -> {
 				consume(TokenType.STAR);
