@@ -384,22 +384,51 @@ public class X86Win64 {
 			return -1;
 		}
 		case Add -> {
-			final int leftReg = write(node.left(), variables);
-			final int rightReg = write(node.right(), variables);
-			final int size = getTypeSize(node.typeNotNull());
-			writeComment("add", node.location());
-			writeIndented("add " + getRegName(leftReg, size) + ", " + getRegName(rightReg, size));
-			freeReg(rightReg);
-			return leftReg;
+			return writeSimpleArithmetic("add", node, variables);
 		}
 		case Sub -> {
-			final int leftReg = write(node.left(), variables);
-			final int rightReg = write(node.right(), variables);
-			final int size = getTypeSize(node.typeNotNull());
-			writeComment("sub", node.location());
-			writeIndented("sub " + getRegName(leftReg, size) + ", " + getRegName(rightReg, size));
-			freeReg(rightReg);
-			return leftReg;
+			return writeSimpleArithmetic("sub", node, variables);
+		}
+		case And -> {
+			return writeSimpleArithmetic("and", node, variables);
+		}
+		case Or -> {
+			return writeSimpleArithmetic("or", node, variables);
+		}
+		case Xor -> {
+			return writeSimpleArithmetic("xor", node, variables);
+		}
+		case AndLog -> {
+			final int labelIndex = nextLabelIndex();
+			final String nextLabel = "next_" + labelIndex;
+			writeComment("logic and", node.location());
+			final int conditionReg = write(node.left(), variables);
+			final String conditionRegName = getRegName(conditionReg, getTypeSize(node.typeNotNull()));
+			writeIndented("or " + conditionRegName + ", " + conditionRegName);
+			writeIndented("jz " + nextLabel);
+			final int conditionReg2 = write(node.right(), variables);
+			if (conditionReg2 != conditionReg) {
+				writeIndented("mov " + conditionRegName + ", " + getRegName(conditionReg2, getTypeSize(node.typeNotNull())));
+			}
+			freeReg(conditionReg2);
+			writeLabel(nextLabel);
+			return conditionReg;
+		}
+		case OrLog -> {
+			final int labelIndex = nextLabelIndex();
+			final String nextLabel = "next_" + labelIndex;
+			writeComment("logic or", node.location());
+			final int conditionReg = write(node.left(), variables);
+			final String conditionRegName = getRegName(conditionReg, getTypeSize(node.typeNotNull()));
+			writeIndented("or " + conditionRegName + ", " + conditionRegName);
+			writeIndented("jnz " + nextLabel);
+			final int conditionReg2 = write(node.right(), variables);
+			if (conditionReg2 != conditionReg) {
+				writeIndented("mov " + conditionRegName + ", " + getRegName(conditionReg2, getTypeSize(node.typeNotNull())));
+			}
+			freeReg(conditionReg2);
+			writeLabel(nextLabel);
+			return conditionReg;
 		}
 		case Multiply -> {
 			final int leftReg = write(node.left(), variables);
@@ -431,13 +460,23 @@ public class X86Win64 {
 				case NotEquals -> "setne";
 				case GtEq -> "setge";
 				case Gt -> "setg";
-				default -> throw new IllegalStateException();
+				default -> throw new UnsupportedOperationException("Unsupported operand " + node.op());
 			} + " " + getRegName(leftReg, 1));
 			writeIndented("and " + leftRegName + ", 0xFF");
 			freeReg(rightReg);
 			return leftReg;
 		}
 		}
+	}
+
+	private int writeSimpleArithmetic(String mnemonic, ExprBinary node, Variables variables) throws IOException {
+		final int leftReg = write(node.left(), variables);
+		final int rightReg = write(node.right(), variables);
+		final int size = getTypeSize(node.typeNotNull());
+		writeComment(mnemonic, node.location());
+		writeIndented(mnemonic + " " + getRegName(leftReg, size) + ", " + getRegName(rightReg, size));
+		freeReg(rightReg);
+		return leftReg;
 	}
 
 	/**

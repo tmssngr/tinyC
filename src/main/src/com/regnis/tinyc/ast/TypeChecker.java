@@ -389,6 +389,15 @@ public final class TypeChecker {
 				}
 			}
 		}
+		case Logic -> {
+			if (leftType != Type.U8) {
+				throw new SyntaxException(Messages.logicOperatorsOnlySupportedOnBoolean(), left.location());
+			}
+			if (rightType != Type.U8) {
+				throw new SyntaxException(Messages.logicOperatorsOnlySupportedOnBoolean(), right.location());
+			}
+			type = leftType;
+		}
 		case Relational -> {
 			type = Type.U8;
 			if (!Objects.equals(leftType, rightType)) {

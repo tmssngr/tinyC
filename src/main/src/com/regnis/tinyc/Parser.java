@@ -324,13 +324,19 @@ public class Parser {
 				case SLASH -> new ExprBinary(ExprBinary.Op.Divide, left, right, location);
 
 				case EQUAL -> new ExprBinary(ExprBinary.Op.Assign, left, right, location);
+				case EXCL_EQ -> new ExprBinary(ExprBinary.Op.NotEquals, left, right, location);
 
 				case LT -> new ExprBinary(ExprBinary.Op.Lt, left, right, location);
 				case LT_EQ -> new ExprBinary(ExprBinary.Op.LtEq, left, right, location);
 				case EQ_EQ -> new ExprBinary(ExprBinary.Op.Equals, left, right, location);
-				case EXCL_EQ -> new ExprBinary(ExprBinary.Op.NotEquals, left, right, location);
 				case GT_EQ -> new ExprBinary(ExprBinary.Op.GtEq, left, right, location);
 				case GT -> new ExprBinary(ExprBinary.Op.Gt, left, right, location);
+
+				case AMP -> new ExprBinary(ExprBinary.Op.And, left, right, location);
+				case AMP_AMP -> new ExprBinary(ExprBinary.Op.AndLog, left, right, location);
+				case PIPE -> new ExprBinary(ExprBinary.Op.Or, left, right, location);
+				case PIPE_PIPE -> new ExprBinary(ExprBinary.Op.OrLog, left, right, location);
+				case CARET -> new ExprBinary(ExprBinary.Op.Xor, left, right, location);
 				default -> throw new IllegalStateException("Unsupported operation " + operationToken);
 			};
 		}
@@ -452,12 +458,19 @@ public class Parser {
 		while (token == TokenType.WHITESPACE || token == TokenType.COMMENT);
 	}
 
+	// see https://en.cppreference.com/w/c/language/operator_precedence
 	private static int getPrecedence(TokenType token) {
 		return switch (token) {
 			case EQUAL -> 1;
-			case LT, LT_EQ, EQ_EQ, EXCL_EQ, GT_EQ, GT -> 2;
-			case PLUS, MINUS -> 3;
-			case STAR, SLASH -> 4;
+			case PIPE_PIPE -> 2;
+			case AMP_AMP -> 3;
+			case PIPE -> 4;
+			case CARET -> 5;
+			case AMP -> 6;
+			case EQ_EQ, EXCL_EQ -> 7;
+			case LT, LT_EQ, GT_EQ, GT -> 8;
+			case PLUS, MINUS -> 9;
+			case STAR, SLASH -> 10;
 			default -> 0;
 		};
 	}

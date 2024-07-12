@@ -91,4 +91,9 @@ public class Messages {
 	public static String arrayIndexMustBeInt() {
 		return "The index of an array must be an integer value";
 	}
+
+	@NotNull
+	public static String logicOperatorsOnlySupportedOnBoolean() {
+		return "Logic operations are only supported on boolean type";
+	}
 }

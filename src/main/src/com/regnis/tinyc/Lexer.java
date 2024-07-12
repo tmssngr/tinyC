@@ -69,9 +69,15 @@ public final class Lexer {
 			return TokenType.COMMA;
 		}
 		if (isConsume('+')) {
+			if (isConsume('+')) {
+				return TokenType.PLUS_PLUS;
+			}
 			return TokenType.PLUS;
 		}
 		if (isConsume('-')) {
+			if (isConsume('-')) {
+				return TokenType.MINUS_MINUS;
+			}
 			return TokenType.MINUS;
 		}
 		if (isConsume('*')) {
@@ -125,7 +131,19 @@ public final class Lexer {
 			return TokenType.INT_LITERAL;
 		}
 		if (isConsume('&')) {
+			if (isConsume('&')) {
+				return TokenType.AMP_AMP;
+			}
 			return TokenType.AMP;
+		}
+		if (isConsume('|')) {
+			if (isConsume('|')) {
+				return TokenType.PIPE_PIPE;
+			}
+			return TokenType.PIPE;
+		}
+		if (isConsume('^')) {
+			return TokenType.CARET;
 		}
 
 		final StringBuilder buffer = new StringBuilder();

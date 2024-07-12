@@ -60,6 +60,11 @@ public class CompilerTest {
 		compileAndRun("09 strings.c");
 	}
 
+	@Test
+	public void testOperators() throws IOException, InterruptedException {
+		compileAndRun("10 operators.c");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}
