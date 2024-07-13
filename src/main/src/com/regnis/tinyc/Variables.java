@@ -110,7 +110,7 @@ public class Variables {
 		switch (expression) {
 		case ExprStringLiteral stringLiteral -> stringLiterals.put(stringLiteral.text(), stringLiterals.size());
 		case ExprCast cast -> processExpression(cast.expression());
-		case ExprDeref deref -> processExpression(deref.expression());
+		case ExprUnary deref -> processExpression(deref.expression());
 		case ExprBinary binary -> {
 			processExpression(binary.left());
 			processExpression(binary.right());

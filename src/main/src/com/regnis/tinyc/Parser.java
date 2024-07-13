@@ -374,7 +374,7 @@ public class Parser {
 				if (expression == null) {
 					throw new SyntaxException(Messages.expectedExpression(), exprLocation);
 				}
-				yield new ExprDeref(expression, location);
+				yield new ExprUnary(ExprUnary.Op.Deref, expression, location);
 			}
 			default -> null;
 		};

@@ -85,7 +85,7 @@ printLength_0:
         ; 14:7 assign ptr
         lea rcx, [var4]
         mov [rcx], rax
-        ; for condition ExprDeref[expression=ptr, type=u8, location=14:23] != 0
+        ; for condition ExprUnary[op=*, expression=ptr, type=u8, location=14:23] != 0
 for_1:
         ; 14:24 read var ptr
         lea rcx, [var4]

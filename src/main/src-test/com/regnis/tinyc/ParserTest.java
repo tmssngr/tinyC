@@ -129,13 +129,15 @@ public class ParserTest {
 		                        loc(0, 4)),
 		             new Parser(new Lexer("foo = 2 * (bar + 1);")).getStatementNotNull());
 
-		assertEquals(assignStmt(new ExprDeref(ExprVarAccess.scalar("foo", loc(0, 1)),
+		assertEquals(assignStmt(new ExprUnary(ExprUnary.Op.Deref,
+		                                      ExprVarAccess.scalar("foo", loc(0, 1)),
 		                                      loc(0, 0)),
 		                        ExprVarAccess.scalar("bar", loc(0, 7)),
 		                        loc(0, 5)),
 		             new Parser(new Lexer("*foo = bar;")).getStatementNotNull());
 
-		assertEquals(assignStmt(new ExprDeref(new ExprBinary(ExprBinary.Op.Add,
+		assertEquals(assignStmt(new ExprUnary(ExprUnary.Op.Deref,
+		                                      new ExprBinary(ExprBinary.Op.Add,
 		                                                     ExprVarAccess.scalar("foo", loc(0, 2)),
 		                                                     new ExprIntLiteral(2, loc(0, 8)),
 		                                                     loc(0, 6)),
@@ -509,8 +511,8 @@ public class ParserTest {
 		         && currentNode instanceof ExprAddrOf currAddrOf) {
 			assertEquals(exprAddrOf.arrayIndex(), currAddrOf.arrayIndex());
 		}
-		else if (expectedNode instanceof ExprDeref expDeref
-		         && currentNode instanceof ExprDeref currDeref) {
+		else if (expectedNode instanceof ExprUnary expDeref
+		         && currentNode instanceof ExprUnary currDeref) {
 			assertEquals(expDeref.expression(), currDeref.expression());
 		}
 		else if (expectedNode instanceof ExprVarAccess exprArray

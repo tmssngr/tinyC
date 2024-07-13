@@ -259,7 +259,7 @@ public final class TypeChecker {
 				yield processBinary(binary.op(), left, right, binary.location());
 			}
 			case ExprAddrOf addrOf -> processAddrOf(addrOf);
-			case ExprDeref deref -> processDeref(deref.expression(), deref.location());
+			case ExprUnary unary -> processUnary(unary);
 			default -> throw new IllegalStateException("Unexpected expression: " + expression);
 		};
 	}
@@ -307,14 +307,22 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private Expression processDeref(Expression expression, Location location) {
-		expression = processExpression(expression);
-		final Type type = expression.typeNotNull();
-		final Type derefType = type.toType();
-		if (derefType == null) {
-			throw new SyntaxException(Messages.expectedPointerButGot(type), location);
+	private Expression processUnary(ExprUnary unary) {
+		final ExprUnary.Op op = unary.op();
+		final Location location = unary.location();
+		final Expression expression = processExpression(unary.expression());
+		final Type expressionType = expression.typeNotNull();
+		Type type = expressionType;
+		switch (op) {
+		case Deref -> {
+			type = type.toType();
+			if (type == null) {
+				throw new SyntaxException(Messages.expectedPointerButGot(expressionType), location);
+			}
 		}
-		return new ExprDeref(expression, derefType, location);
+		default -> throw new UnsupportedOperationException("Unsupported operator " + op);
+		}
+		return new ExprUnary(op, expression, type, location);
 	}
 
 	@NotNull
@@ -430,7 +438,7 @@ public final class TypeChecker {
 	private Expression processLValue(Expression expression) {
 		return switch (expression) {
 			case ExprVarAccess varRead -> processLValueVar(varRead);
-			case ExprDeref deref -> processDeref(deref.expression(), deref.location());
+			case ExprUnary deref -> processUnary(deref);
 			default -> throw new SyntaxException(Messages.expectedLValue(), expression.location());
 		};
 	}

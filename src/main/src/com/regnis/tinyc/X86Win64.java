@@ -287,86 +287,72 @@ public class X86Win64 {
 	}
 
 	private int write(Expression node, Variables variables) throws IOException {
-		switch (node) {
-		case ExprIntLiteral literal -> {
-			final int value = literal.value();
-			final int size = getTypeSize(literal.typeNotNull());
-			writeComment("int lit " + value, node.location());
-			final int reg = getFreeReg();
-			writeIndented("mov " + getRegName(reg, size) + ", " + value);
-			return reg;
-		}
-		case ExprBoolLiteral literal -> {
-			final boolean value = literal.value();
-			final int size = getTypeSize(literal.typeNotNull());
-			writeComment("bool lit " + value, node.location());
-			final int reg = getFreeReg();
-			writeIndented("mov " + getRegName(reg, size) + ", " + (value ? TRUE : FALSE));
-			return reg;
-		}
-		case ExprStringLiteral literal -> {
-			final int i = variables.getStringIndex(literal);
-			final String stringLiteralName = STRING_PREFIX + i;
-			writeComment("string literal " + stringLiteralName, node.location());
-			final int reg = getFreeReg();
-			writeIndented("lea " + getRegName(reg) + ", [" + stringLiteralName + "]");
-			return reg;
-		}
-		case ExprVarAccess var -> {
-			final String name = var.varName();
-			final Expression arrayIndex = var.arrayIndex();
-			final int addrReg;
-			if (arrayIndex != null) {
-				writeComment("array " + name, node.location());
-				addrReg = writeArrayAccess(name, arrayIndex, var.typeNotNull(), variables);
+		return switch (node) {
+			case ExprIntLiteral literal -> {
+				final int value = literal.value();
+				final int size = getTypeSize(literal.typeNotNull());
+				writeComment("int lit " + value, node.location());
+				final int reg = getFreeReg();
+				writeIndented("mov " + getRegName(reg, size) + ", " + value);
+				yield reg;
 			}
-			else {
-				writeComment("read var " + name, node.location());
-				addrReg = writeAddressOf(name, variables);
+			case ExprBoolLiteral literal -> {
+				final boolean value = literal.value();
+				final int size = getTypeSize(literal.typeNotNull());
+				writeComment("bool lit " + value, node.location());
+				final int reg = getFreeReg();
+				writeIndented("mov " + getRegName(reg, size) + ", " + (value ? TRUE : FALSE));
+				yield reg;
 			}
-			final int valueReg = writeRead(addrReg, var.typeNotNull());
-			freeReg(addrReg);
-			return valueReg;
-		}
-		case ExprBinary binary -> {
-			return writeBinary(binary, variables);
-		}
-		case ExprCast cast -> {
-			final int reg = write(cast.expression(), variables);
-			final int exprSize = getTypeSize(cast.expressionType());
-			final int size = getTypeSize(cast.type());
-			if (size != exprSize) {
-				writeIndented("movzx " + getRegName(reg, size) + ", " + getRegName(reg, exprSize));
+			case ExprStringLiteral literal -> {
+				final int i = variables.getStringIndex(literal);
+				final String stringLiteralName = STRING_PREFIX + i;
+				writeComment("string literal " + stringLiteralName, node.location());
+				final int reg = getFreeReg();
+				writeIndented("lea " + getRegName(reg) + ", [" + stringLiteralName + "]");
+				yield reg;
 			}
-			return reg;
-		}
-		case ExprFuncCall call -> {
-			return writeCall(call, variables);
-		}
-		case ExprAddrOf addrOf -> {
-			final String name = addrOf.varName();
-			final Expression arrayIndex = addrOf.arrayIndex();
-			if (arrayIndex != null) {
-				writeComment("address of array " + name + "[...]", node.location());
-				return writeArrayAccess(name, arrayIndex, Objects.requireNonNull(addrOf.typeNotNull().toType()), variables);
+			case ExprVarAccess var -> {
+				final String name = var.varName();
+				final Expression arrayIndex = var.arrayIndex();
+				final int addrReg;
+				if (arrayIndex != null) {
+					writeComment("array " + name, node.location());
+					addrReg = writeArrayAccess(name, arrayIndex, var.typeNotNull(), variables);
+				}
+				else {
+					writeComment("read var " + name, node.location());
+					addrReg = writeAddressOf(name, variables);
+				}
+				final int valueReg = writeRead(addrReg, var.typeNotNull());
+				freeReg(addrReg);
+				yield valueReg;
 			}
+			case ExprBinary binary -> writeBinary(binary, variables);
+			case ExprUnary unary -> processUnary(unary, variables);
+			case ExprFuncCall call -> writeCall(call, variables);
+			case ExprCast cast -> {
+				final int reg = write(cast.expression(), variables);
+				final int exprSize = getTypeSize(cast.expressionType());
+				final int size = getTypeSize(cast.type());
+				if (size != exprSize) {
+					writeIndented("movzx " + getRegName(reg, size) + ", " + getRegName(reg, exprSize));
+				}
+				yield reg;
+			}
+			case ExprAddrOf addrOf -> {
+				final String name = addrOf.varName();
+				final Expression arrayIndex = addrOf.arrayIndex();
+				if (arrayIndex != null) {
+					writeComment("address of array " + name + "[...]", node.location());
+					yield writeArrayAccess(name, arrayIndex, Objects.requireNonNull(addrOf.typeNotNull().toType()), variables);
+				}
 
-			writeComment("address of var " + name, node.location());
-			return writeAddressOf(name, variables);
-		}
-		case ExprDeref deref -> {
-			final int addrReg = write(deref.expression(), variables);
-			final int typeSize = getTypeSize(Objects.requireNonNull(deref.type()));
-			writeComment("deref", node.location());
-			final int valueReg = getFreeReg();
-			final String addrRegName = getRegName(addrReg, 8);
-			final String valueRegName = getRegName(valueReg, typeSize);
-			writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
-			freeReg(addrReg);
-			return valueReg;
-		}
-		default -> throw new UnsupportedOperationException("unsupported expression " + node);
-		}
+				writeComment("address of var " + name, node.location());
+				yield writeAddressOf(name, variables);
+			}
+			default -> throw new UnsupportedOperationException("unsupported expression " + node);
+		};
 	}
 
 	private int writeAddressOf(String name, Variables variables) throws IOException {
@@ -488,6 +474,23 @@ public class X86Win64 {
 		}
 	}
 
+	private int processUnary(ExprUnary unary, Variables variables) throws IOException {
+		final ExprUnary.Op op = unary.op();
+		return switch (op) {
+			case Deref -> {
+				final int addrReg = write(unary.expression(), variables);
+				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
+				writeComment("deref", unary.location());
+				final int valueReg = getFreeReg();
+				final String addrRegName = getRegName(addrReg, 8);
+				final String valueRegName = getRegName(valueReg, typeSize);
+				writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
+				freeReg(addrReg);
+				yield valueReg;
+			}
+			default -> throw new UnsupportedOperationException("unsupported operation " + op);
+		};
+	}
 	private int writeSimpleArithmetic(String mnemonic, ExprBinary node, Variables variables) throws IOException {
 		final int leftReg = write(node.left(), variables);
 		final int rightReg = write(node.right(), variables);
@@ -521,7 +524,7 @@ public class X86Win64 {
 					yield varReg;
 				}
 			}
-			case ExprDeref deref -> write(deref.expression(), variables);
+			case ExprUnary deref -> write(deref.expression(), variables);
 			default -> throw new IllegalStateException(String.valueOf(lValue));
 		};
 	}
