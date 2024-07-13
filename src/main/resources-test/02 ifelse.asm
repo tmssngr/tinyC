@@ -13,13 +13,13 @@ start:
         sub rsp, 8
           call init
         add rsp, 8
-          call main
+          call main_0
         mov rcx, 0
         sub rsp, 0x20
           call [ExitProcess]
 
         ; void main
-main:
+main_0:
         ; 2:9 int lit 1
         mov cl, 1
         ; 2:2 assign a
@@ -69,6 +69,7 @@ else_1:
           call __emit
         add rsp, 8
 endif_1:
+main_ret:
         ret
 init:
         sub rsp, 20h

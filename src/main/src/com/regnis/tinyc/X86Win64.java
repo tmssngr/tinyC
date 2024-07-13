@@ -25,6 +25,7 @@ public class X86Win64 {
 	private int labelIndex;
 	private int freeRegs;
 	@SuppressWarnings("unused") private boolean debug;
+	private String functionRetLabel;
 
 	public X86Win64(Writer writer) {
 		this.writer = writer;
@@ -60,7 +61,7 @@ public class X86Win64 {
 		writeIndented("sub rsp, 8");
 		writeIndented("  call init");
 		writeIndented("add rsp, 8");
-		writeIndented("  call main");
+		writeIndented("  call " + getFunctionLabel("main"));
 		writeIndented("mov rcx, 0");
 		writeIndented("sub rsp, 0x20");
 		writeIndented("  call [ExitProcess]");
@@ -68,10 +69,17 @@ public class X86Win64 {
 	}
 
 	private void write(Function function, Variables variables) throws IOException {
+		final String functionLabel = getFunctionLabel(function.name());
+		functionRetLabel = function.name() + "_ret";
 		writeComment(function.toString());
-		writeLabel(function.name());
+		writeLabel(functionLabel);
 		writeStatement(function.statement(), variables);
+		writeLabel(functionRetLabel);
 		writeIndented("ret");
+	}
+
+	private String getFunctionLabel(String name) {
+		return name + "_0";
 	}
 
 	private void writeInit(List<StmtDeclaration> declarations, Variables variables) throws IOException {
@@ -240,7 +248,7 @@ public class X86Win64 {
 			}
 			writeComment("call " + name, call.location());
 			writeIndented("sub rsp, 8");
-			writeIndented("  call " + name);
+			writeIndented("  call " + getFunctionLabel(name));
 			writeIndented("add rsp, 8");
 		}
 		return call.typeNotNull() == Type.VOID ? -1 : 1; // rax
@@ -259,6 +267,7 @@ public class X86Win64 {
 		else {
 			writeComment("return");
 		}
+		writeIndented("jmp " + Objects.requireNonNull(functionRetLabel));
 	}
 
 	private void writeAssignment(String varName, Expression expression, Location location, Variables variables) throws IOException {

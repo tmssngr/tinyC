@@ -13,13 +13,13 @@ start:
         sub rsp, 8
           call init
         add rsp, 8
-          call main
+          call main_0
         mov rcx, 0
         sub rsp, 0x20
           call [ExitProcess]
 
         ; void main
-main:
+main_0:
         ; 2:9 int lit 5
         mov cl, 5
         ; 2:2 assign i
@@ -63,6 +63,18 @@ while_1:
         mov [rcx], bl
         jmp while_1
 endwhile_1:
+        ; 8:2 while 1
+while_2:
+        ; 8:9 int lit 1
+        mov cl, 1
+        ; while-condition
+        or cl, cl
+        jz endwhile_2
+        ; return
+        jmp main_ret
+        jmp while_2
+endwhile_2:
+main_ret:
         ret
 init:
         sub rsp, 20h

@@ -13,13 +13,13 @@ start:
         sub rsp, 8
           call init
         add rsp, 8
-          call main
+          call main_0
         mov rcx, 0
         sub rsp, 0x20
           call [ExitProcess]
 
         ; void main
-main:
+main_0:
         ; 2:3 for
         ; 2:15 int lit 250
         mov cl, 250
@@ -64,6 +64,7 @@ for_1:
         mov [rcx], bl
         jmp for_1
 endFor_1:
+main_ret:
         ret
 init:
         sub rsp, 20h
