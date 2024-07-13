@@ -346,6 +346,11 @@ public class Parser {
 	private Expression getExpressionPrimary(Location location) {
 		return switch (token) {
 			case INT_LITERAL -> new ExprIntLiteral(consumeIntValue(), location);
+			case TRUE, FALSE -> {
+				final boolean value = token == TokenType.TRUE;
+				consume();
+				yield new ExprBoolLiteral(value, location);
+			}
 			case STRING -> new ExprStringLiteral(consumeText(), location);
 			case L_PAREN -> getExpressionInParenthesis();
 			case IDENTIFIER -> {

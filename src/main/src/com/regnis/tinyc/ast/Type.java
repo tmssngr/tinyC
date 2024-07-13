@@ -7,6 +7,7 @@ import org.jetbrains.annotations.*;
  */
 public record Type(@NotNull String name, @Nullable Type toType, boolean isInt) {
 	public static final Type VOID = new Type("void", null, false);
+	public static final Type BOOL = new Type("bool", null, false);
 	public static final Type U8 = new Type("u8", null, true);
 	public static final Type I16 = new Type("i16", null, true);
 	public static final Type I32 = new Type("i32", null, true);
@@ -21,7 +22,7 @@ public record Type(@NotNull String name, @Nullable Type toType, boolean isInt) {
 		if (type == VOID) {
 			return 0;
 		}
-		if (type == U8) {
+		if (type == U8 || type == BOOL) {
 			return 1;
 		}
 		if (type == I16) {

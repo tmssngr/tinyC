@@ -215,6 +215,17 @@ public class ParserTest {
 				                           i = i - 1;
 				                         }
 				                         }""")).getStatementNotNull());
+
+		assertEquals(new StmtWhile(new ExprBoolLiteral(true, loc(0, 7)),
+		                           new StmtCompound(List.of(
+				                           printStmt(ExprVarAccess.scalar("i", loc(1, 8)),
+				                                     loc(1, 2))
+		                           )),
+		                           loc(0, 0)),
+		             new Parser(new Lexer("""
+				                                  while (true) {
+				                                    print(i);
+				                                  }""")).getStatementNotNull());
 	}
 
 	@Test
@@ -405,9 +416,9 @@ public class ParserTest {
 		                                            loc(0, 0)),
 		                        ExprVarAccess.array("buffer",
 		                                            new ExprBinary(ExprBinary.Op.Add,
-		                                                             ExprVarAccess.scalar("i", loc(0, 19)),
-		                                                             new ExprIntLiteral(1, loc(0, 23)),
-		                                                             loc(0, 21)),
+		                                                           ExprVarAccess.scalar("i", loc(0, 19)),
+		                                                           new ExprIntLiteral(1, loc(0, 23)),
+		                                                           loc(0, 21)),
 		                                            loc(0, 12)),
 		                        loc(0, 10)),
 		             new Parser(new Lexer("buffer[i] = buffer[i + 1];")).getStatementNotNull());

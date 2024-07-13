@@ -93,7 +93,7 @@ public class Messages {
 	}
 
 	@NotNull
-	public static String logicOperatorsOnlySupportedOnBoolean() {
-		return "Logic operations are only supported on boolean type";
+	public static String expectedBoolExpression() {
+		return "Expected bool expression";
 	}
 }

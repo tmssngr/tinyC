@@ -176,8 +176,8 @@ public final class TypeChecker {
 	@NotNull
 	private Expression checkBooleanCondition(Expression expression, Location location) {
 		final Expression condition = processExpression(expression);
-		if (condition.typeNotNull() != Type.U8) {
-			throw new SyntaxException("Expected type u8 for the condition", location);
+		if (condition.typeNotNull() != Type.BOOL) {
+			throw new SyntaxException(Messages.expectedBoolExpression(), location);
 		}
 		return condition;
 	}
@@ -244,9 +244,10 @@ public final class TypeChecker {
 	@NotNull
 	private Expression processExpression(Expression expression) {
 		return switch (expression) {
-			case ExprIntLiteral intLiteral -> intLiteral;
-			case ExprStringLiteral stringLiteral -> stringLiteral;
-			case ExprCast cast -> cast;
+			case ExprIntLiteral ignored -> expression;
+			case ExprBoolLiteral ignored -> expression;
+			case ExprStringLiteral ignored -> expression;
+			case ExprCast ignored -> expression;
 			case ExprVarAccess var -> processVarRead(var);
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
 			case ExprBinary binary -> {
@@ -371,6 +372,16 @@ public final class TypeChecker {
 			}
 		}
 
+		if (op.kind == ExprBinary.OpKind.Logic) {
+			if (leftType != Type.BOOL) {
+				throw new SyntaxException(Messages.expectedBoolExpression(), left.location());
+			}
+			if (rightType != Type.BOOL) {
+				throw new SyntaxException(Messages.expectedBoolExpression(), right.location());
+			}
+			return new ExprBinary(op, Type.BOOL, left, right, location);
+		}
+
 		if (!leftType.isInt() || !rightType.isInt()) {
 			throw new SyntaxException(Messages.operationNotSupportedForTypes(op, leftType, rightType), location);
 		}
@@ -389,17 +400,8 @@ public final class TypeChecker {
 				}
 			}
 		}
-		case Logic -> {
-			if (leftType != Type.U8) {
-				throw new SyntaxException(Messages.logicOperatorsOnlySupportedOnBoolean(), left.location());
-			}
-			if (rightType != Type.U8) {
-				throw new SyntaxException(Messages.logicOperatorsOnlySupportedOnBoolean(), right.location());
-			}
-			type = leftType;
-		}
 		case Relational -> {
-			type = Type.U8;
+			type = Type.BOOL;
 			if (!Objects.equals(leftType, rightType)) {
 				if (leftType == Type.U8) {
 					left = new ExprCast(left, leftType, rightType, left.location());

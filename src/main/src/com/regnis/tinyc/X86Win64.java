@@ -19,6 +19,8 @@ public class X86Win64 {
 	private static final String PRINT_STRING_ZERO = "__printStringZero";
 	private static final String PRINT_UINT = "__printUint";
 	private static final String STRING_PREFIX = "string_";
+	private static final int TRUE = 1;
+	private static final int FALSE = 0;
 
 	private final Writer writer;
 
@@ -292,6 +294,14 @@ public class X86Win64 {
 			writeComment("int lit " + value, node.location());
 			final int reg = getFreeReg();
 			writeIndented("mov " + getRegName(reg, size) + ", " + value);
+			return reg;
+		}
+		case ExprBoolLiteral literal -> {
+			final boolean value = literal.value();
+			final int size = getTypeSize(literal.typeNotNull());
+			writeComment("bool lit " + value, node.location());
+			final int reg = getFreeReg();
+			writeIndented("mov " + getRegName(reg, size) + ", " + (value ? TRUE : FALSE));
 			return reg;
 		}
 		case ExprStringLiteral literal -> {

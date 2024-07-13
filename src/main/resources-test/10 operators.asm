@@ -212,12 +212,12 @@ main_0:
         sub rsp, 8
           call __printStringZero
         add rsp, 8
-        ; 18:10 logic and
-        ; 18:8 int lit 0
+        ; 18:14 logic and
+        ; 18:8 bool lit false
         mov cl, 0
         or cl, cl
         jz next_1
-        ; 18:13 int lit 0
+        ; 18:17 bool lit false
         mov al, 0
         mov cl, al
 next_1:
@@ -229,13 +229,13 @@ next_1:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 19:10 logic and
-        ; 19:8 int lit 0
+        ; 19:14 logic and
+        ; 19:8 bool lit false
         mov cl, 0
         or cl, cl
         jz next_2
-        ; 19:13 int lit 2
-        mov al, 2
+        ; 19:17 bool lit true
+        mov al, 1
         mov cl, al
 next_2:
         movzx cx, cl
@@ -246,12 +246,12 @@ next_2:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 20:10 logic and
-        ; 20:8 int lit 1
+        ; 20:13 logic and
+        ; 20:8 bool lit true
         mov cl, 1
         or cl, cl
         jz next_3
-        ; 20:13 int lit 0
+        ; 20:16 bool lit false
         mov al, 0
         mov cl, al
 next_3:
@@ -263,13 +263,13 @@ next_3:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 21:10 logic and
-        ; 21:8 int lit 1
+        ; 21:13 logic and
+        ; 21:8 bool lit true
         mov cl, 1
         or cl, cl
         jz next_4
-        ; 21:13 int lit 2
-        mov al, 2
+        ; 21:16 bool lit true
+        mov al, 1
         mov cl, al
 next_4:
         movzx cx, cl
@@ -286,12 +286,12 @@ next_4:
         sub rsp, 8
           call __printStringZero
         add rsp, 8
-        ; 23:10 logic or
-        ; 23:8 int lit 0
+        ; 23:14 logic or
+        ; 23:8 bool lit false
         mov cl, 0
         or cl, cl
         jnz next_5
-        ; 23:13 int lit 0
+        ; 23:17 bool lit false
         mov al, 0
         mov cl, al
 next_5:
@@ -303,13 +303,13 @@ next_5:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 24:10 logic or
-        ; 24:8 int lit 0
+        ; 24:14 logic or
+        ; 24:8 bool lit false
         mov cl, 0
         or cl, cl
         jnz next_6
-        ; 24:13 int lit 2
-        mov al, 2
+        ; 24:17 bool lit true
+        mov al, 1
         mov cl, al
 next_6:
         movzx cx, cl
@@ -320,12 +320,12 @@ next_6:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 25:10 logic or
-        ; 25:8 int lit 1
+        ; 25:13 logic or
+        ; 25:8 bool lit true
         mov cl, 1
         or cl, cl
         jnz next_7
-        ; 25:13 int lit 0
+        ; 25:16 bool lit false
         mov al, 0
         mov cl, al
 next_7:
@@ -337,13 +337,13 @@ next_7:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 26:10 logic or
-        ; 26:8 int lit 1
+        ; 26:13 logic or
+        ; 26:8 bool lit true
         mov cl, 1
         or cl, cl
         jnz next_8
-        ; 26:13 int lit 2
-        mov al, 2
+        ; 26:16 bool lit true
+        mov al, 1
         mov cl, al
 next_8:
         movzx cx, cl
