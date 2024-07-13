@@ -488,6 +488,29 @@ public class X86Win64 {
 				freeReg(addrReg);
 				yield valueReg;
 			}
+			case Neg -> {
+				final int reg = write(unary.expression(), variables);
+				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
+				writeComment("neg", unary.location());
+				writeIndented("neg " + getRegName(reg, typeSize));
+				yield reg;
+			}
+			case Com -> {
+				final int reg = write(unary.expression(), variables);
+				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
+				writeComment("com", unary.location());
+				writeIndented("not " + getRegName(reg, typeSize));
+				yield reg;
+			}
+			case NotLog -> {
+				final int reg = write(unary.expression(), variables);
+				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
+				final String regName = getRegName(reg, typeSize);
+				writeComment("not", unary.location());
+				writeIndented("or " + regName + ", " + regName);
+				writeIndented("sete " + regName);
+				yield reg;
+			}
 			default -> throw new UnsupportedOperationException("unsupported operation " + op);
 		};
 	}

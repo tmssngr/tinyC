@@ -426,6 +426,30 @@ public class ParserTest {
 		             new Parser(new Lexer("buffer[i] = buffer[i + 1];")).getStatementNotNull());
 	}
 
+	@Test
+	public void testUnaryOperators() {
+		assertEquals(assignStmt(ExprVarAccess.scalar("a", loc(0, 0)),
+		                        new ExprUnary(ExprUnary.Op.Neg,
+		                                      ExprVarAccess.scalar("a", loc(0, 5)),
+		                                      loc(0, 4)),
+		                        loc(0, 2)),
+		             new Parser(new Lexer("a = -a;")).getStatementNotNull());
+
+		assertEquals(assignStmt(ExprVarAccess.scalar("a", loc(0, 0)),
+		                        new ExprUnary(ExprUnary.Op.Com,
+		                                      ExprVarAccess.scalar("a", loc(0, 5)),
+		                                      loc(0, 4)),
+		                        loc(0, 2)),
+		             new Parser(new Lexer("a = ~a;")).getStatementNotNull());
+
+		assertEquals(assignStmt(ExprVarAccess.scalar("a", loc(0, 0)),
+		                        new ExprUnary(ExprUnary.Op.NotLog,
+		                                      ExprVarAccess.scalar("a", loc(0, 5)),
+		                                      loc(0, 4)),
+		                        loc(0, 2)),
+		             new Parser(new Lexer("a = !a;")).getStatementNotNull());
+	}
+
 	@NotNull
 	private static StmtExpr assignStmt(Expression left, Expression right, Location loc) {
 		return new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,

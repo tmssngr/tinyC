@@ -96,4 +96,9 @@ public class Messages {
 	public static String expectedBoolExpression() {
 		return "Expected bool expression";
 	}
+
+	@NotNull
+	public static String expectedIntegerType(Type type) {
+		return "Expected integer type, but got " + type;
+	}
 }

@@ -367,17 +367,23 @@ public class Parser {
 				}
 				yield new ExprAddrOf(name, arrayIndex, location);
 			}
-			case STAR -> {
-				consume(TokenType.STAR);
-				final Location exprLocation = getLocation();
-				final Expression expression = getExpressionPrimary(exprLocation);
-				if (expression == null) {
-					throw new SyntaxException(Messages.expectedExpression(), exprLocation);
-				}
-				yield new ExprUnary(ExprUnary.Op.Deref, expression, location);
-			}
+			case STAR -> getUnary(ExprUnary.Op.Deref, location);
+			case MINUS -> getUnary(ExprUnary.Op.Neg, location);
+			case TILDE -> getUnary(ExprUnary.Op.Com, location);
+			case EXCL -> getUnary(ExprUnary.Op.NotLog, location);
 			default -> null;
 		};
+	}
+
+	@NotNull
+	private ExprUnary getUnary(ExprUnary.Op op, Location location) {
+		consume();
+		final Location exprLocation = getLocation();
+		final Expression expression = getExpressionPrimary(exprLocation);
+		if (expression == null) {
+			throw new SyntaxException(Messages.expectedExpression(), exprLocation);
+		}
+		return new ExprUnary(op, expression, location);
 	}
 
 	@NotNull

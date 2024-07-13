@@ -360,16 +360,11 @@ next_8:
         sub rsp, 8
           call __printStringZero
         add rsp, 8
-        ; 28:8 int lit 10
-        mov cl, 10
-        ; 28:17 int lit 6
-        mov al, 6
-        ; 28:15 and
-        and cl, al
-        ; 28:26 int lit 1
-        mov al, 1
-        ; 28:24 or
-        or cl, al
+        ; 28:9 bool lit false
+        mov cl, 0
+        ; 28:8 not
+        or cl, cl
+        sete cl
         movzx cx, cl
         ; 28:2 print i16
         sub rsp, 8
@@ -378,27 +373,11 @@ next_8:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 29:15 logic or
-        ; 29:8 int lit 1
+        ; 29:9 bool lit true
         mov cl, 1
-        ; 29:13 int lit 2
-        mov al, 2
-        ; 29:10 ==
-        cmp cl, al
-        sete cl
-        and cl, 0xFF
+        ; 29:8 not
         or cl, cl
-        jnz next_9
-        ; 29:18 int lit 2
-        mov al, 2
-        ; 29:22 int lit 3
-        mov bl, 3
-        ; 29:20 <
-        cmp al, bl
-        setl al
-        and al, 0xFF
-        mov cl, al
-next_9:
+        sete cl
         movzx cx, cl
         ; 29:2 print i16
         sub rsp, 8
@@ -407,29 +386,105 @@ next_9:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 30:15 logic and
-        ; 30:8 int lit 1
+        ; 30:14 string literal string_6
+        lea rcx, [string_6]
+        ; 30:2 print u8*
+        sub rsp, 8
+          call __printStringZero
+        add rsp, 8
+        ; 31:8 int lit 10
+        mov cl, 10
+        ; 31:17 int lit 6
+        mov al, 6
+        ; 31:15 and
+        and cl, al
+        ; 31:26 int lit 1
+        mov al, 1
+        ; 31:24 or
+        or cl, al
+        movzx cx, cl
+        ; 31:2 print i16
+        sub rsp, 8
+          movzx rcx, cx
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
+        ; 32:15 logic or
+        ; 32:8 int lit 1
         mov cl, 1
-        ; 30:13 int lit 2
+        ; 32:13 int lit 2
         mov al, 2
-        ; 30:10 ==
+        ; 32:10 ==
+        cmp cl, al
+        sete cl
+        and cl, 0xFF
+        or cl, cl
+        jnz next_9
+        ; 32:18 int lit 2
+        mov al, 2
+        ; 32:22 int lit 3
+        mov bl, 3
+        ; 32:20 <
+        cmp al, bl
+        setl al
+        and al, 0xFF
+        mov cl, al
+next_9:
+        movzx cx, cl
+        ; 32:2 print i16
+        sub rsp, 8
+          movzx rcx, cx
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
+        ; 33:15 logic and
+        ; 33:8 int lit 1
+        mov cl, 1
+        ; 33:13 int lit 2
+        mov al, 2
+        ; 33:10 ==
         cmp cl, al
         sete cl
         and cl, 0xFF
         or cl, cl
         jz next_10
-        ; 30:18 int lit 2
+        ; 33:18 int lit 2
         mov al, 2
-        ; 30:22 int lit 3
+        ; 33:22 int lit 3
         mov bl, 3
-        ; 30:20 <
+        ; 33:20 <
         cmp al, bl
         setl al
         and al, 0xFF
         mov cl, al
 next_10:
         movzx cx, cl
-        ; 30:2 print i16
+        ; 33:2 print i16
+        sub rsp, 8
+          movzx rcx, cx
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
+        ; 34:9 int lit 1
+        mov cx, 1
+        ; 34:8 neg
+        neg cx
+        ; 34:2 print i16
+        sub rsp, 8
+          movzx rcx, cx
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
+        ; 35:9 int lit 1
+        mov cl, 1
+        ; 35:8 com
+        not cl
+        movzx cx, cl
+        ; 35:2 print i16
         sub rsp, 8
           movzx rcx, cx
           call __printUint
@@ -552,12 +607,13 @@ section '.data' data readable writeable
         hStdErr rb 8
 
 section '.data' data readable
-        string_0 db '&:', 0x0a, 0x00
-        string_1 db 0x0a, '|:', 0x0a, 0x00
-        string_2 db 0x0a, '^:', 0x0a, 0x00
-        string_3 db 0x0a, '&&:', 0x0a, 0x00
-        string_4 db 0x0a, '||:', 0x0a, 0x00
-        string_5 db 0x0a, 'misc:', 0x0a, 0x00
+        string_0 db 'Bit-&:', 0x0a, 0x00
+        string_1 db 0x0a, 'Bit-|:', 0x0a, 0x00
+        string_2 db 0x0a, 'Bit-^:', 0x0a, 0x00
+        string_3 db 0x0a, 'Logic-&&:', 0x0a, 0x00
+        string_4 db 0x0a, 'Logic-||:', 0x0a, 0x00
+        string_5 db 0x0a, 'Logic-!:', 0x0a, 0x00
+        string_6 db 0x0a, 'misc:', 0x0a, 0x00
 
 section '.idata' import data readable writeable
 

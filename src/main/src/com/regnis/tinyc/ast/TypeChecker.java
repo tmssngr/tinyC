@@ -310,7 +310,7 @@ public final class TypeChecker {
 	private Expression processUnary(ExprUnary unary) {
 		final ExprUnary.Op op = unary.op();
 		final Location location = unary.location();
-		final Expression expression = processExpression(unary.expression());
+		Expression expression = processExpression(unary.expression());
 		final Type expressionType = expression.typeNotNull();
 		Type type = expressionType;
 		switch (op) {
@@ -318,6 +318,25 @@ public final class TypeChecker {
 			type = type.toType();
 			if (type == null) {
 				throw new SyntaxException(Messages.expectedPointerButGot(expressionType), location);
+			}
+		}
+		case Neg -> {
+			if (!type.isInt()) {
+				throw new SyntaxException(Messages.expectedIntegerType(type), location);
+			}
+			if (type == Type.U8) {
+				type = Type.I16;
+				expression = autoCastTo(type, expression, expression.location());
+			}
+		}
+		case Com -> {
+			if (!type.isInt()) {
+				throw new SyntaxException(Messages.expectedIntegerType(type), location);
+			}
+		}
+		case NotLog -> {
+			if (type != Type.BOOL) {
+				throw new SyntaxException(Messages.expectedBoolExpression(), location);
 			}
 		}
 		default -> throw new UnsupportedOperationException("Unsupported operator " + op);

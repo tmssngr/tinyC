@@ -145,6 +145,9 @@ public final class Lexer {
 		if (isConsume('^')) {
 			return TokenType.CARET;
 		}
+		if (isConsume('~')) {
+			return TokenType.TILDE;
+		}
 
 		final StringBuilder buffer = new StringBuilder();
 		do {
