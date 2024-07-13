@@ -14,4 +14,10 @@ public record ExprStringLiteral(@NotNull String text, @NotNull Location location
 	public Type typeNotNull() {
 		return Type.POINTER_U8;
 	}
+
+	@NotNull
+	@Override
+	public String toUserString() {
+		return "string";
+	}
 }

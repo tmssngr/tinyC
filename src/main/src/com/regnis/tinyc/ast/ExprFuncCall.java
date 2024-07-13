@@ -15,8 +15,9 @@ public record ExprFuncCall(@NotNull String name, @Nullable Type type, @NotNull L
 		this(name, null, argExpressions, location);
 	}
 
+	@NotNull
 	@Override
-	public String toString() {
+	public String toUserString() {
 		return name + "(" + argExpressions + ")";
 	}
 

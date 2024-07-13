@@ -14,4 +14,7 @@ public interface Expression {
 
 	@NotNull
 	Location location();
+
+	@NotNull
+	String toUserString();
 }

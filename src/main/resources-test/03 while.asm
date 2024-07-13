@@ -63,7 +63,7 @@ while_1:
         mov [rcx], bl
         jmp while_1
 endwhile_1:
-        ; 8:2 while ExprBoolLiteral[value=true, location=8:9]
+        ; 8:2 while true
 while_2:
         ; 8:9 bool lit true
         mov cl, 1

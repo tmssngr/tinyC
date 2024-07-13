@@ -21,6 +21,12 @@ public record ExprUnary(@NotNull Op op, @NotNull Expression expression, @Nullabl
 		return Objects.requireNonNull(type);
 	}
 
+	@NotNull
+	@Override
+	public String toUserString() {
+		return op.s + expression.toUserString();
+	}
+
 	public enum Op {
 		Deref("*");
 

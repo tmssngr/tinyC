@@ -15,4 +15,10 @@ public record ExprBoolLiteral(boolean value, @NotNull Location location) impleme
 	public Type typeNotNull() {
 		return Objects.requireNonNull(Type.BOOL);
 	}
+
+	@NotNull
+	@Override
+	public String toUserString() {
+		return String.valueOf(value);
+	}
 }

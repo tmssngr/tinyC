@@ -9,8 +9,9 @@ import org.jetbrains.annotations.*;
  */
 public record ExprCast(@NotNull Expression expression, @NotNull Type expressionType, @NotNull Type type, @NotNull Location location) implements Expression {
 
+	@NotNull
 	@Override
-	public String toString() {
+	public String toUserString() {
 		return "(" + expressionType + " -> " + type + ")";
 	}
 

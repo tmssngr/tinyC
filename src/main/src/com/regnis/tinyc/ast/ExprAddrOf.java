@@ -20,4 +20,12 @@ public record ExprAddrOf(@NotNull String varName, @Nullable Type type, @Nullable
 	public Type typeNotNull() {
 		return Objects.requireNonNull(type);
 	}
+
+	@NotNull
+	@Override
+	public String toUserString() {
+		return arrayIndex != null
+				? "addr-of " + varName + "[...]"
+				: "addr-of " + varName;
+	}
 }

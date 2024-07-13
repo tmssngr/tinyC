@@ -19,8 +19,9 @@ public record ExprVarAccess(@NotNull String varName, @Nullable Type type, @Nulla
 		return new ExprVarAccess(varName, null, index, location);
 	}
 
+	@NotNull
 	@Override
-	public String toString() {
+	public String toUserString() {
 		if (arrayIndex != null) {
 			return varName + "[...]";
 		}

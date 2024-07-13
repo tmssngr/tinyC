@@ -16,8 +16,9 @@ public record ExprIntLiteral(int value, @Nullable Type type, @NotNull Location l
 				: Type.I16, location);
 	}
 
+	@NotNull
 	@Override
-	public String toString() {
+	public String toUserString() {
 		return String.valueOf(value);
 	}
 

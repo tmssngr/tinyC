@@ -14,9 +14,10 @@ public record ExprBinary(@NotNull Op op, @Nullable Type type, @NotNull Expressio
 		this(op, null, left, right, location);
 	}
 
+	@NotNull
 	@Override
-	public String toString() {
-		return left + " " + op.s + " " + right;
+	public String toUserString() {
+		return left.toUserString() + " " + op.s + " " + right.toUserString();
 	}
 
 	@NotNull

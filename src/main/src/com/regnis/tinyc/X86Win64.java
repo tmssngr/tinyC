@@ -258,7 +258,7 @@ public class X86Win64 {
 
 	private void writeReturn(@Nullable Expression expression, Variables variables) throws IOException {
 		if (expression != null) {
-			writeComment("return " + expression, expression.location());
+			writeComment("return " + expression.toUserString(), expression.location());
 			final int reg = write(expression, variables);
 			final String regName = getRegName(reg);
 			freeReg(reg);
@@ -560,7 +560,7 @@ public class X86Win64 {
 		final int labelIndex = nextLabelIndex();
 		final String elseLabel = "else_" + labelIndex;
 		final String nextLabel = "endif_" + labelIndex;
-		writeComment("if " + condition, statement.location());
+		writeComment("if " + condition.toUserString(), statement.location());
 		final int conditionReg = write(condition, variables);
 		final String conditionRegName = getRegName(conditionReg, getTypeSize(condition.typeNotNull()));
 		writeComment("if-condition");
@@ -582,7 +582,7 @@ public class X86Win64 {
 		final String whileLabel = "while_" + labelIndex;
 		final String nextLabel = "endwhile_" + labelIndex;
 		final Expression condition = statement.condition();
-		writeComment("while " + condition, statement.location());
+		writeComment("while " + condition.toUserString(), statement.location());
 		writeLabel(whileLabel);
 		final int conditionReg = write(condition, variables);
 		final String conditionRegName = getRegName(conditionReg, getTypeSize(condition.typeNotNull()));
@@ -604,7 +604,7 @@ public class X86Win64 {
 		writeStatements(statement.initialization(), variables);
 
 		final Expression condition = statement.condition();
-		writeComment("for condition " + condition);
+		writeComment("for condition " + condition.toUserString());
 		writeLabel(forLabel);
 		final int conditionReg = write(condition, variables);
 		final String conditionRegName = getRegName(conditionReg, getTypeSize(condition.typeNotNull()));
