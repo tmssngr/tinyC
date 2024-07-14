@@ -7,12 +7,12 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record ExprCast(@NotNull Expression expression, @NotNull Type expressionType, @NotNull Type type, @NotNull Location location) implements Expression {
+public record ExprCast(@NotNull Expression expression, @NotNull Type type, @NotNull Location location) implements Expression {
 
 	@NotNull
 	@Override
 	public String toUserString() {
-		return "(" + expressionType + " -> " + type + ")";
+		return "(" + type + ")";
 	}
 
 	@NotNull

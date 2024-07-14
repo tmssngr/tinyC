@@ -231,7 +231,7 @@ public final class TypeChecker {
 			return new ExprIntLiteral(literal.value(), type, literal.location());
 		}
 
-		return new ExprCast(expression, expressionType, type, expression.location());
+		return new ExprCast(expression, type, expression.location());
 	}
 
 	private int getTypeSize(Type type) {
@@ -385,7 +385,7 @@ public final class TypeChecker {
 				final Type toType = leftType.toType();
 				if (toType != null && rightType.isInt()) {
 					final int size = getTypeSize(toType);
-					left = new ExprCast(left, leftType, pointerIntType, left.location());
+					left = new ExprCast(left, pointerIntType, left.location());
 					right = autoCastTo(pointerIntType, right, rightLocation);
 					if (size > 1) {
 						right = new ExprBinary(ExprBinary.Op.Multiply, pointerIntType, right,
@@ -394,7 +394,7 @@ public final class TypeChecker {
 						                       rightLocation);
 					}
 					return new ExprCast(new ExprBinary(op, leftType, left, right, location),
-					                    pointerIntType, leftType, location);
+					                    leftType, location);
 				}
 			}
 		}
@@ -419,11 +419,11 @@ public final class TypeChecker {
 			type = leftType;
 			if (!Objects.equals(leftType, rightType)) {
 				if (leftType == Type.U8) {
-					left = new ExprCast(left, leftType, rightType, left.location());
+					left = new ExprCast(left, rightType, left.location());
 					type = rightType;
 				}
 				else {
-					right = new ExprCast(right, rightType, leftType, rightLocation);
+					right = new ExprCast(right, leftType, rightLocation);
 				}
 			}
 		}
@@ -431,10 +431,10 @@ public final class TypeChecker {
 			type = Type.BOOL;
 			if (!Objects.equals(leftType, rightType)) {
 				if (leftType == Type.U8) {
-					left = new ExprCast(left, leftType, rightType, left.location());
+					left = new ExprCast(left, rightType, left.location());
 				}
 				else {
-					right = new ExprCast(right, rightType, leftType, rightLocation);
+					right = new ExprCast(right, leftType, rightLocation);
 				}
 			}
 		}

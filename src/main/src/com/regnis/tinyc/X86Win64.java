@@ -332,8 +332,9 @@ public class X86Win64 {
 			case ExprUnary unary -> processUnary(unary, variables);
 			case ExprFuncCall call -> writeCall(call, variables);
 			case ExprCast cast -> {
-				final int reg = write(cast.expression(), variables);
-				final int exprSize = getTypeSize(cast.expressionType());
+				final Expression expression = cast.expression();
+				final int reg = write(expression, variables);
+				final int exprSize = getTypeSize(expression.typeNotNull());
 				final int size = getTypeSize(cast.type());
 				if (size != exprSize) {
 					writeIndented("movzx " + getRegName(reg, size) + ", " + getRegName(reg, exprSize));
