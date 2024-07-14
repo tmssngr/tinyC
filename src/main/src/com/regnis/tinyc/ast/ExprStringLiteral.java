@@ -7,7 +7,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record ExprStringLiteral(@NotNull String text, @NotNull Location location) implements Expression {
+public record ExprStringLiteral(@NotNull String text, int index, @NotNull Location location) implements Expression {
 
 	@NotNull
 	@Override

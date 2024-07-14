@@ -30,7 +30,7 @@ public class ParserTest {
 		assertEquals(new Program(List.of(
 				             new StmtVarDeclaration("u8", "foo", intLit(0, loc(0, 0)),
 				                                    loc(0, 0))
-		             ), List.of()),
+		             ), List.of(), List.of(), List.of()),
 		             new Parser(new Lexer("u8 foo;")).parse());
 
 		assertEquals(new StmtVarDeclaration("u8", "foo", intLit(0, loc(0, 0)),
@@ -72,7 +72,7 @@ public class ParserTest {
 		                                    loc(0, 0)),
 		             new Parser(new Lexer("i16* foo = bar;")).getStatementNotNull());
 
-		assertEquals(new StmtVarDeclaration("u8*", "text", new ExprStringLiteral("hello", loc(0, 11)),
+		assertEquals(new StmtVarDeclaration("u8*", "text", new ExprStringLiteral("hello", -1, loc(0, 11)),
 		                                    loc(0, 0)),
 		             new Parser(new Lexer("u8* text = \"hello\";")).getStatementNotNull());
 	}
@@ -147,7 +147,7 @@ public class ParserTest {
 		             new Parser(new Lexer("*(foo + 2) = bar;")).getStatementNotNull());
 
 		assertEquals(assignStmt(ExprVarAccess.scalar("text", loc(0, 0)),
-		                        new ExprStringLiteral("hello", loc(0, 7)),
+		                        new ExprStringLiteral("hello", -1, loc(0, 7)),
 		                        loc(0, 5)),
 		             new Parser(new Lexer("text = \"hello\";")).getStatementNotNull());
 	}
@@ -346,59 +346,69 @@ public class ParserTest {
 
 	@Test
 	public void testFunctions() {
-		Assert.assertEquals(new Program(List.of(), List.of(
-				new Function("void", "main", List.of(),
-				             new StmtCompound(List.of(
-						             new StmtVarDeclaration("u8", "i", intLit(10, loc(1, 11)),
-						                                    loc(1, 4)),
-						             printStmt(ExprVarAccess.scalar("i", loc(2, 10)),
-						                       loc(2, 4))
-				             )),
-				             loc(0, 0)),
-				new Function("void", "fooBar", List.of(new Function.Arg("u8", "a", loc(4, 12))),
-				             new StmtCompound(List.of()),
-				             loc(4, 0))
-		)), new Parser(new Lexer("""
-				                         void main() {
-				                             u8 i = 10;
-				                             print(i);
-				                         }
-				                         void fooBar(u8 a) {
-				                         }""")).parse());
+		Assert.assertEquals(new Program(List.of(),
+		                                List.of(
+				                                new Function("void", "main", List.of(),
+				                                             new StmtCompound(List.of(
+						                                             new StmtVarDeclaration("u8", "i", intLit(10, loc(1, 11)),
+						                                                                    loc(1, 4)),
+						                                             printStmt(ExprVarAccess.scalar("i", loc(2, 10)),
+						                                                       loc(2, 4))
+				                                             )),
+				                                             loc(0, 0)),
+				                                new Function("void", "fooBar", List.of(new Function.Arg("u8", "a", loc(4, 12))),
+				                                             new StmtCompound(List.of()),
+				                                             loc(4, 0))
+		                                ),
+		                                List.of(),
+		                                List.of()
+		                    ),
+		                    new Parser(new Lexer("""
+				                                         void main() {
+				                                             u8 i = 10;
+				                                             print(i);
+				                                         }
+				                                         void fooBar(u8 a) {
+				                                         }""")).parse());
 
-		assertEquals(new Program(List.of(), List.of(
-				new Function("void", "main", List.of(),
-				             new StmtCompound(List.of(
-						             new StmtVarDeclaration("u8", "i",
-						                                    new ExprFuncCall("one", List.of(), loc(1, 11)),
-						                                    loc(1, 4)),
-						             new StmtIf(new ExprBinary(ExprBinary.Op.Equals,
-						                                       ExprVarAccess.scalar("i", loc(2, 8)),
-						                                       new ExprIntLiteral(0, loc(2, 13)),
-						                                       loc(2, 10)),
-						                        new StmtReturn(null, loc(3, 8)),
-						                        null,
-						                        loc(2, 4)),
-						             printStmt(ExprVarAccess.scalar("i", loc(4, 10)),
-						                       loc(4, 4))
-				             )),
-				             loc(0, 0)),
-				new Function("u8", "one", List.of(),
-				             new StmtCompound(List.of(
-						             new StmtReturn(new ExprIntLiteral(1, loc(7, 10)),
-						                            loc(7, 3))
-				             )),
-				             loc(4, 0))
-		)), new Parser(new Lexer("""
-				                         void main() {
-				                             u8 i = one();
-				                             if (i == 0)
-				                                 return;
-				                             print(i);
-				                         }
-				                         u8 one() {
-				                            return 1;
-				                         }""")).parse());
+		assertEquals(new Program(List.of(),
+		                         List.of(
+				                         new Function("void", "main", List.of(),
+				                                      new StmtCompound(List.of(
+						                                      new StmtVarDeclaration("u8", "i",
+						                                                             new ExprFuncCall("one", List.of(), loc(1, 11)),
+						                                                             loc(1, 4)),
+						                                      new StmtIf(new ExprBinary(ExprBinary.Op.Equals,
+						                                                                ExprVarAccess.scalar("i", loc(2, 8)),
+						                                                                new ExprIntLiteral(0, loc(2, 13)),
+						                                                                loc(2, 10)),
+						                                                 new StmtReturn(null, loc(3, 8)),
+						                                                 null,
+						                                                 loc(2, 4)),
+						                                      printStmt(ExprVarAccess.scalar("i", loc(4, 10)),
+						                                                loc(4, 4))
+				                                      )),
+				                                      loc(0, 0)),
+				                         new Function("u8", "one", List.of(),
+				                                      new StmtCompound(List.of(
+						                                      new StmtReturn(new ExprIntLiteral(1, loc(7, 10)),
+						                                                     loc(7, 3))
+				                                      )),
+				                                      loc(4, 0))
+		                         ),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             new Parser(new Lexer("""
+				                                  void main() {
+				                                      u8 i = one();
+				                                      if (i == 0)
+				                                          return;
+				                                      print(i);
+				                                  }
+				                                  u8 one() {
+				                                     return 1;
+				                                  }""")).parse());
 	}
 
 	@Test
@@ -406,7 +416,7 @@ public class ParserTest {
 		assertEquals(new Program(List.of(
 				             new StmtArrayDeclaration("u8", "str", 4,
 				                                      loc(0, 0))
-		             ), List.of()),
+		             ), List.of(), List.of(), List.of()),
 		             new Parser(new Lexer("u8 str[4];")).parse());
 
 		assertEquals(new StmtArrayDeclaration("u8", "buffer", 256,

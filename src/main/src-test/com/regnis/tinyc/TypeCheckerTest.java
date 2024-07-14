@@ -181,7 +181,9 @@ public class TypeCheckerTest {
 						                                                             loc(6, 2))
 				                                      )),
 				                                      loc(0, 0))
-		                         )),
+		                         ),
+		                         List.of(), List.of()
+		             ),
 		             checkType("""
 				                       u8 array[2];
 				                       void main() {

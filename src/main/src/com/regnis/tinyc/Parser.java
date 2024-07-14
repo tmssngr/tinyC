@@ -75,7 +75,7 @@ public class Parser {
 
 			throw new SyntaxException("Expected method or global variable declaration", location);
 		}
-		return new Program(globalVars, functions);
+		return new Program(globalVars, functions, List.of(), List.of());
 	}
 
 	@Nullable
@@ -356,7 +356,7 @@ public class Parser {
 				consume();
 				yield new ExprBoolLiteral(value, location);
 			}
-			case STRING -> new ExprStringLiteral(consumeText(), location);
+			case STRING -> new ExprStringLiteral(consumeText(), -1, location);
 			case L_PAREN -> getExpressionInParenthesis();
 			case IDENTIFIER -> {
 				final String identifier = consumeIdentifier();

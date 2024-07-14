@@ -18,7 +18,6 @@ public class X86Win64 {
 	private static final String PRINT_STRING = "__printString";
 	private static final String PRINT_STRING_ZERO = "__printStringZero";
 	private static final String PRINT_UINT = "__printUint";
-	private static final String STRING_PREFIX = "string_";
 	private static final int TRUE = 1;
 	private static final int FALSE = 0;
 
@@ -34,7 +33,7 @@ public class X86Win64 {
 	}
 
 	public void write(Program program) throws IOException {
-		final Variables variables = Variables.detectFrom(program);
+		final Variables variables = new Variables(program.globalVariables());
 
 		writePreample();
 
@@ -43,7 +42,7 @@ public class X86Win64 {
 		}
 
 		writeInit(program.globalVars(), variables);
-		writePostamble(variables);
+		writePostamble(program.globalVariables(), program.stringLiterals());
 	}
 
 	private void writePreample() throws IOException {
@@ -117,7 +116,7 @@ public class X86Win64 {
 		writeIndented("ret");
 	}
 
-	private void writePostamble(Variables variables) throws IOException {
+	private void writePostamble(List<Variable> globalVariables, List<StringLiteral> stringLiterals) throws IOException {
 		writeEmit();
 		writeStringPrint();
 		writeUintPrint();
@@ -128,22 +127,18 @@ public class X86Win64 {
 				              hStdIn  rb 8
 				              hStdOut rb 8
 				              hStdErr rb 8""");
-		for (String varName : variables.getVarNames()) {
-			final Variables.Variable variable = variables.get(varName);
-			final int size = getTypeSize(variable.type()) * Math.max(1, variable.count());
+		for (Variable variable : globalVariables) {
+			final int size = getTypeSize(variable.type()) * Math.max(1, variable.arraySize());
 			final String asmName = getVarName(variable.index());
 			writeIndented(asmName + " rb " + size);
 		}
 		writeNL();
 
-		final List<String> stringLiterals = variables.getStringLiterals();
 		if (stringLiterals.size() > 0) {
 			writeLines("section '.data' data readable");
-			int i = 0;
-			for (String literal : stringLiterals) {
-				final String encoded = encode((literal + '\0').getBytes(StandardCharsets.UTF_8));
-				writeIndented(STRING_PREFIX + i + " db " + encoded);
-				i++;
+			for (StringLiteral literal : stringLiterals) {
+				final String encoded = encode((literal.text() + '\0').getBytes(StandardCharsets.UTF_8));
+				writeIndented(getStringLiteralName(literal.index()) + " db " + encoded);
 			}
 			writeNL();
 		}
@@ -201,7 +196,6 @@ public class X86Win64 {
 			}
 			writeComment("print " + type, call.location());
 			writeIndented("sub rsp, 8");
-			final int size = getTypeSize(type);
 			if (!regName.equals("rcx")) {
 				writeIndented("  mov rcx, " + regName);
 			}
@@ -275,7 +269,7 @@ public class X86Win64 {
 	private void writeAssignment(String varName, Expression expression, Location location, Variables variables) throws IOException {
 		final int expressionReg = write(expression, variables);
 		final int varReg = getFreeReg();
-		final Variables.Variable variable = variables.get(varName);
+		final Variable variable = variables.get(varName);
 		Utils.assertTrue(variable.isScalar());
 		final int typeSize = getTypeSize(variable.type());
 		final String addrReg = getRegName(varReg);
@@ -305,8 +299,8 @@ public class X86Win64 {
 				yield reg;
 			}
 			case ExprStringLiteral literal -> {
-				final int i = variables.getStringIndex(literal);
-				final String stringLiteralName = STRING_PREFIX + i;
+				final int i = literal.index();
+				final String stringLiteralName = getStringLiteralName(i);
 				writeComment("string literal " + stringLiteralName, node.location());
 				final int reg = getFreeReg();
 				writeIndented("lea " + getRegName(reg) + ", [" + stringLiteralName + "]");
@@ -358,7 +352,7 @@ public class X86Win64 {
 
 	private int writeAddressOf(String name, Variables variables) throws IOException {
 		final int reg = getFreeReg();
-		final Variables.Variable variable = variables.get(name);
+		final Variable variable = variables.get(name);
 		Utils.assertTrue(variable.isScalar());
 		final String varName = getVarName(variable.index());
 		final String addrReg = getRegName(reg);
@@ -515,6 +509,7 @@ public class X86Win64 {
 			default -> throw new UnsupportedOperationException("unsupported operation " + op);
 		};
 	}
+
 	private int writeSimpleArithmetic(String mnemonic, ExprBinary node, Variables variables) throws IOException {
 		final int leftReg = write(node.left(), variables);
 		final int rightReg = write(node.right(), variables);
@@ -540,7 +535,7 @@ public class X86Win64 {
 				}
 				else {
 					final int varReg = getFreeReg();
-					final Variables.Variable variable = variables.get(varName);
+					final Variable variable = variables.get(varName);
 					Utils.assertTrue(variable.isScalar());
 					final String addrReg = getRegName(varReg);
 					writeComment("var " + varName, location);
@@ -554,7 +549,7 @@ public class X86Win64 {
 	}
 
 	private int writeArrayAccess(@NotNull String varName, @NotNull Expression index, @NotNull Type type, @NotNull Variables variables) throws IOException {
-		final Variables.Variable variable = variables.get(varName);
+		final Variable variable = variables.get(varName);
 		final String asmVarName = getVarName(variable.index());
 		final int offsetReg = write(index, variables);
 		final String offsetRegName = getRegName(offsetReg);
@@ -657,10 +652,6 @@ public class X86Win64 {
 
 	private void freeReg(int reg) {
 		freeRegs &= ~(1 << reg);
-	}
-
-	private String getVarName(int i) {
-		return "var" + i;
 	}
 
 	private void writeEmit() throws IOException {
@@ -832,6 +823,16 @@ public class X86Win64 {
 		return labelIndex;
 	}
 
+	@NotNull
+	private static String getVarName(int i) {
+		return "var" + i;
+	}
+
+	@NotNull
+	private static String getStringLiteralName(int i) {
+		return "string_" + i;
+	}
+
 	private static String getRegName(int reg) {
 		return getRegName(reg, 0);
 	}
@@ -899,5 +900,20 @@ public class X86Win64 {
 			buffer.append("'");
 		}
 		return buffer.toString();
+	}
+
+	private static class Variables {
+		private final Map<String, Variable> nameToVariable = new HashMap<>();
+
+		public Variables(List<Variable> globalVariables) {
+			for (Variable variable : globalVariables) {
+				Utils.assertTrue(nameToVariable.put(variable.name(), variable) == null);
+			}
+		}
+
+		@NotNull
+		public Variable get(String name) {
+			return nameToVariable.get(name);
+		}
 	}
 }

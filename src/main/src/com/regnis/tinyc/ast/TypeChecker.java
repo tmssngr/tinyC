@@ -12,6 +12,9 @@ import org.jetbrains.annotations.*;
 public final class TypeChecker {
 
 	private final Map<String, Symbol> symbolMap = new HashMap<>();
+	private final List<Variable> globalVariables = new ArrayList<>();
+	private final Map<String, StringLiteral> stringLiteralMap = new HashMap<>();
+	private final List<StringLiteral> stringLiterals = new ArrayList<>();
 
 	private final Type pointerIntType;
 
@@ -29,7 +32,7 @@ public final class TypeChecker {
 		final List<StmtDeclaration> globalVars = processGlobalVars(program.globalVars());
 		final List<Function> typedFunctions = determineFunctionDeclarationTypes(program.functions());
 		final List<Function> functions = determineStatementTypes(typedFunctions);
-		return new Program(globalVars, functions);
+		return new Program(globalVars, functions, globalVariables, stringLiterals);
 	}
 
 	@NotNull
@@ -129,17 +132,18 @@ public final class TypeChecker {
 		final Type type = getType(declaration.typeString(), location);
 		expression = autoCastTo(type, expression, location);
 
-		addVariable(varName, type, Symbol.VariableKind.Scalar, location);
+		addVariable(varName, type, Symbol.VariableKind.Scalar, 0, location);
 		return new StmtVarDeclaration(declaration.typeString(), type, varName, expression, location);
 	}
 
 	@NotNull
 	private StmtArrayDeclaration processArrayDeclaration(StmtArrayDeclaration declaration) {
+		Utils.assertTrue(declaration.size() > 0);
 		final String varName = declaration.varName();
 		final Location location = declaration.location();
 		Type type = getType(declaration.typeString(), location);
 		type = Type.pointer(type);
-		addVariable(varName, type, Symbol.VariableKind.Array, location);
+		addVariable(varName, type, Symbol.VariableKind.Array, declaration.size(), location);
 		return new StmtArrayDeclaration(declaration.typeString(), type, varName, declaration.size(), location);
 	}
 
@@ -246,7 +250,7 @@ public final class TypeChecker {
 		return switch (expression) {
 			case ExprIntLiteral ignored -> expression;
 			case ExprBoolLiteral ignored -> expression;
-			case ExprStringLiteral ignored -> expression;
+			case ExprStringLiteral literal -> processStringLiteral(literal);
 			case ExprCast cast -> processCast(cast);
 			case ExprVarAccess var -> processVarRead(var);
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
@@ -262,6 +266,18 @@ public final class TypeChecker {
 			case ExprUnary unary -> processUnary(unary);
 			default -> throw new IllegalStateException("Unexpected expression: " + expression);
 		};
+	}
+
+	@NotNull
+	private ExprStringLiteral processStringLiteral(ExprStringLiteral literal) {
+		final String text = literal.text();
+		StringLiteral stringLiteral = stringLiteralMap.get(text);
+		if (stringLiteral == null) {
+			stringLiteral = new StringLiteral(text, stringLiterals.size());
+			stringLiteralMap.put(text, stringLiteral);
+			stringLiterals.add(stringLiteral);
+		}
+		return new ExprStringLiteral(text, stringLiteral.index(), literal.location());
 	}
 
 	private Expression processCast(ExprCast cast) {
@@ -316,7 +332,7 @@ public final class TypeChecker {
 			arrayIndex = processArrayIndex(arrayIndex, location);
 			return new ExprAddrOf(name, variable.type(), arrayIndex, location);
 		}
-		return new ExprAddrOf(name, Type.pointer(variable.type()), arrayIndex, location);
+		return new ExprAddrOf(name, Type.pointer(variable.type()), null, location);
 	}
 
 	@NotNull
@@ -508,9 +524,10 @@ public final class TypeChecker {
 		Utils.assertTrue(existingSymbol == null);
 	}
 
-	private void addVariable(String varName, Type type, Symbol.VariableKind kind, Location location) {
+	private void addVariable(String varName, Type type, Symbol.VariableKind kind, int arraySize, Location location) {
 		checkNoSymbolNamed(varName, location);
 		symbolMap.put(varName, new Symbol.Variable(type, kind, location));
+		globalVariables.add(new Variable(varName, type, globalVariables.size(), arraySize, location));
 	}
 
 	@NotNull
