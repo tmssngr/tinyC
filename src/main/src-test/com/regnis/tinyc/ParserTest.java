@@ -450,6 +450,15 @@ public class ParserTest {
 		             new Parser(new Lexer("a = !a;")).getStatementNotNull());
 	}
 
+	@Test
+	public void testCast() {
+		assertEquals(assignStmt(ExprVarAccess.scalar("b", loc(0, 0)),
+		                        ExprCast.cast("u8", ExprVarAccess.scalar("a", loc(0, 8)),
+		                                      loc(0, 5)),
+		                        loc(0, 2)),
+		             new Parser(new Lexer("b = (u8)a;")).getStatementNotNull());
+	}
+
 	@NotNull
 	private static StmtExpr assignStmt(Expression left, Expression right, Location loc) {
 		return new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,

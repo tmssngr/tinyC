@@ -64,6 +64,22 @@ for_1:
         mov [rcx], bl
         jmp for_1
 endFor_1:
+        ; 6:11 int lit 260
+        mov cx, 260
+        ; 6:3 assign v
+        lea rbx, [var1]
+        mov [rbx], cx
+        ; 7:13 read var v
+        lea rcx, [var1]
+        mov bx, [rcx]
+        movzx bx, bl
+        ; 7:3 print i16
+        sub rsp, 8
+          movzx rcx, bx
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
 main_ret:
         ret
 init:
@@ -179,6 +195,7 @@ section '.data' data readable writeable
         hStdOut rb 8
         hStdErr rb 8
         var0 rb 1
+        var1 rb 2
 
 section '.idata' import data readable writeable
 

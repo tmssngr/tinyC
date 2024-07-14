@@ -174,10 +174,9 @@ public class Parser {
 		}
 		else {
 			primary = getExpressionPrimary(location);
-		}
-
-		if (primary == null) {
-			return null;
+			if (primary == null) {
+				return null;
+			}
 		}
 
 		final Expression expression = getExpression(primary, 0);
@@ -298,11 +297,8 @@ public class Parser {
 	@NotNull
 	private Expression getExpression(int minPrecedence) {
 		final Location location = getLocation();
-		final Expression left = getExpressionPrimary(location);
-		if (left == null) {
-			throw new SyntaxException(Messages.unexpectedToken(token), location);
-		}
-		return getExpression(left, minPrecedence);
+		final Expression primary = getExpressionPrimaryNotNull(location);
+		return getExpression(primary, minPrecedence);
 	}
 
 	@NotNull
@@ -342,6 +338,15 @@ public class Parser {
 		}
 	}
 
+	@NotNull
+	private Expression getExpressionPrimaryNotNull(Location location) {
+		final Expression primary = getExpressionPrimary(location);
+		if (primary == null) {
+			throw new SyntaxException(Messages.unexpectedToken(token), location);
+		}
+		return primary;
+	}
+
 	@Nullable
 	private Expression getExpressionPrimary(Location location) {
 		return switch (token) {
@@ -354,7 +359,7 @@ public class Parser {
 			case STRING -> new ExprStringLiteral(consumeText(), location);
 			case L_PAREN -> getExpressionInParenthesis();
 			case IDENTIFIER -> {
-				final String identifier = consumeText();
+				final String identifier = consumeIdentifier();
 				yield getExpressionPrimary(identifier, location);
 			}
 			case AMP -> {
@@ -379,10 +384,7 @@ public class Parser {
 	private ExprUnary getUnary(ExprUnary.Op op, Location location) {
 		consume();
 		final Location exprLocation = getLocation();
-		final Expression expression = getExpressionPrimary(exprLocation);
-		if (expression == null) {
-			throw new SyntaxException(Messages.expectedExpression(), exprLocation);
-		}
+		final Expression expression = getExpressionPrimaryNotNull(exprLocation);
 		return new ExprUnary(op, expression, location);
 	}
 
@@ -403,7 +405,21 @@ public class Parser {
 	@NotNull
 	private Expression getExpressionInParenthesis() {
 		consume(TokenType.L_PAREN);
-		final Expression expression = getExpression();
+		final Location location = getLocation();
+		final Expression primary;
+		if (token == TokenType.IDENTIFIER) {
+			final String identifier = consumeIdentifier();
+			if (isConsume(TokenType.R_PAREN)) {
+				final Expression expression = getExpressionPrimaryNotNull(getLocation());
+				return ExprCast.cast(identifier, expression, location);
+			}
+
+			primary = getExpressionPrimary(identifier, location);
+		}
+		else {
+			primary = getExpressionPrimaryNotNull(location);
+		}
+		final Expression expression = getExpression(primary, 0);
 		consume(TokenType.R_PAREN);
 		return expression;
 	}

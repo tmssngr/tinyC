@@ -231,7 +231,7 @@ public final class TypeChecker {
 			return new ExprIntLiteral(literal.value(), type, literal.location());
 		}
 
-		return new ExprCast(expression, type, expression.location());
+		return ExprCast.autocast(expression, type);
 	}
 
 	private int getTypeSize(Type type) {
@@ -247,7 +247,7 @@ public final class TypeChecker {
 			case ExprIntLiteral ignored -> expression;
 			case ExprBoolLiteral ignored -> expression;
 			case ExprStringLiteral ignored -> expression;
-			case ExprCast ignored -> expression;
+			case ExprCast cast -> processCast(cast);
 			case ExprVarAccess var -> processVarRead(var);
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
 			case ExprBinary binary -> {
@@ -262,6 +262,19 @@ public final class TypeChecker {
 			case ExprUnary unary -> processUnary(unary);
 			default -> throw new IllegalStateException("Unexpected expression: " + expression);
 		};
+	}
+
+	private Expression processCast(ExprCast cast) {
+		final String typeString = cast.typeString();
+		final Location location = cast.location();
+		final Type type = getType(typeString, location);
+		final Expression expression = processExpression(cast.expression());
+		final Type expressionType = expression.typeNotNull();
+		if (type.isPointer() != expressionType.isPointer()) {
+			throw new SyntaxException(Messages.cantCastFromTo(expressionType, type), location);
+		}
+
+		return new ExprCast(typeString, expression, type, location);
 	}
 
 	@NotNull
@@ -385,7 +398,7 @@ public final class TypeChecker {
 				final Type toType = leftType.toType();
 				if (toType != null && rightType.isInt()) {
 					final int size = getTypeSize(toType);
-					left = new ExprCast(left, pointerIntType, left.location());
+					left = ExprCast.autocast(left, pointerIntType);
 					right = autoCastTo(pointerIntType, right, rightLocation);
 					if (size > 1) {
 						right = new ExprBinary(ExprBinary.Op.Multiply, pointerIntType, right,
@@ -393,8 +406,8 @@ public final class TypeChecker {
 						                                  rightLocation),
 						                       rightLocation);
 					}
-					return new ExprCast(new ExprBinary(op, leftType, left, right, location),
-					                    leftType, location);
+					return ExprCast.autocast(new ExprBinary(op, leftType, left, right, location),
+					                         leftType);
 				}
 			}
 		}
@@ -419,11 +432,11 @@ public final class TypeChecker {
 			type = leftType;
 			if (!Objects.equals(leftType, rightType)) {
 				if (leftType == Type.U8) {
-					left = new ExprCast(left, rightType, left.location());
+					left = ExprCast.autocast(left, rightType);
 					type = rightType;
 				}
 				else {
-					right = new ExprCast(right, leftType, rightLocation);
+					right = ExprCast.autocast(right, leftType);
 				}
 			}
 		}
@@ -431,10 +444,10 @@ public final class TypeChecker {
 			type = Type.BOOL;
 			if (!Objects.equals(leftType, rightType)) {
 				if (leftType == Type.U8) {
-					left = new ExprCast(left, rightType, left.location());
+					left = ExprCast.autocast(left, rightType);
 				}
 				else {
-					right = new ExprCast(right, leftType, rightLocation);
+					right = ExprCast.autocast(right, leftType);
 				}
 			}
 		}

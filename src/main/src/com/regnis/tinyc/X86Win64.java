@@ -335,8 +335,8 @@ public class X86Win64 {
 				final Expression expression = cast.expression();
 				final int reg = write(expression, variables);
 				final int exprSize = getTypeSize(expression.typeNotNull());
-				final int size = getTypeSize(cast.type());
-				if (size != exprSize) {
+				final int size = getTypeSize(cast.typeNotNull());
+				if (size > exprSize) {
 					writeIndented("movzx " + getRegName(reg, size) + ", " + getRegName(reg, exprSize));
 				}
 				yield reg;
