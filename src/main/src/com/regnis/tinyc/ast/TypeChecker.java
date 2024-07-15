@@ -125,24 +125,24 @@ public final class TypeChecker {
 
 	@NotNull
 	private StmtVarDeclaration processVarDeclaration(StmtVarDeclaration declaration) {
-		final String varName = declaration.varName();
+		String varName = declaration.varName();
 		final Location location = declaration.location();
 		Expression expression = processExpression(declaration.expression());
 		final Type type = getType(declaration.typeString(), location);
 		expression = autoCastTo(type, expression, location);
 
-		addVariable(varName, type, Symbol.VariableKind.Scalar, 0, location);
+		varName = addVariable(varName, type, 0, location);
 		return new StmtVarDeclaration(declaration.typeString(), type, varName, expression, location);
 	}
 
 	@NotNull
 	private StmtArrayDeclaration processArrayDeclaration(StmtArrayDeclaration declaration) {
 		Utils.assertTrue(declaration.size() > 0);
-		final String varName = declaration.varName();
+		String varName = declaration.varName();
 		final Location location = declaration.location();
 		Type type = getType(declaration.typeString(), location);
 		type = Type.pointer(type);
-		addVariable(varName, type, Symbol.VariableKind.Array, declaration.size(), location);
+		varName = addVariable(varName, type, declaration.size(), location);
 		return new StmtArrayDeclaration(declaration.typeString(), type, varName, declaration.size(), location);
 	}
 
@@ -288,7 +288,7 @@ public final class TypeChecker {
 		final String name = var.varName();
 		final Location location = var.location();
 		final Expression arrayIndex = var.arrayIndex();
-		final Symbol.Variable variable = getVariable(name, location);
+		final Variable variable = getVariable(name, location);
 		Type type = variable.type();
 		if (arrayIndex != null) {
 			type = type.toType();
@@ -297,9 +297,9 @@ public final class TypeChecker {
 			}
 
 			final Expression expression = processArrayIndex(arrayIndex, location);
-			return new ExprVarAccess(name, type, expression, location);
+			return new ExprVarAccess(variable.name(), type, expression, location);
 		}
-		return new ExprVarAccess(name, type, null, location);
+		return new ExprVarAccess(variable.name(), type, null, location);
 	}
 
 	@NotNull
@@ -316,13 +316,13 @@ public final class TypeChecker {
 	private Expression processAddrOf(ExprAddrOf addrOf) {
 		final String name = addrOf.varName();
 		final Location location = addrOf.location();
-		final Symbol.Variable variable = getVariable(name, location);
+		final Variable variable = getVariable(name, location);
 		Expression arrayIndex = addrOf.arrayIndex();
 		if (arrayIndex != null) {
 			arrayIndex = processArrayIndex(arrayIndex, location);
-			return new ExprAddrOf(name, variable.type(), arrayIndex, location);
+			return new ExprAddrOf(variable.name(), variable.type(), arrayIndex, location);
 		}
-		return new ExprAddrOf(name, Type.pointer(variable.type()), null, location);
+		return new ExprAddrOf(variable.name(), Type.pointer(variable.type()), null, location);
 	}
 
 	@NotNull
@@ -485,22 +485,21 @@ public final class TypeChecker {
 	private ExprVarAccess processLValueVar(ExprVarAccess var) {
 		final String name = var.varName();
 		final Location location = var.location();
-		final Symbol.Variable variable = getVariable(name, location);
+		final Variable variable = getVariable(name, location);
 		final Expression arrayIndex = var.arrayIndex();
 		if (arrayIndex != null) {
-			if (variable.kind() != Symbol.VariableKind.Array) {
+			if (!variable.isArray()) {
 				throw new SyntaxException(Messages.arraysAreImmutable(), location);
 			}
 			final Expression expression = processArrayIndex(arrayIndex, location);
 			final Type type = Objects.requireNonNull(variable.type().toType());
-			return new ExprVarAccess(name, type, expression, location);
+			return new ExprVarAccess(variable.name(), type, expression, location);
 		}
-		else {
-			if (variable.kind() != Symbol.VariableKind.Scalar) {
-				throw new SyntaxException(Messages.arraysAreImmutable(), location);
-			}
-			return new ExprVarAccess(name, variable.type(), null, location);
+
+		if (variable.isArray()) {
+			throw new SyntaxException(Messages.arraysAreImmutable(), location);
 		}
+		return new ExprVarAccess(variable.name(), variable.type(), null, location);
 	}
 
 	private void checkNoSymbolNamed(String name, Location location) {
@@ -508,22 +507,24 @@ public final class TypeChecker {
 		if (existingSymbol instanceof Symbol.Func) {
 			throw new SyntaxException(Messages.functionAlreadDeclaredAt(name, existingSymbol.location()), location);
 		}
-		if (existingSymbol instanceof Symbol.Variable) {
+		if (existingSymbol instanceof Variable) {
 			throw new SyntaxException(Messages.variableAlreadyDeclaredAt(name, existingSymbol.location()), location);
 		}
 		Utils.assertTrue(existingSymbol == null);
 	}
 
-	private void addVariable(String varName, Type type, Symbol.VariableKind kind, int arraySize, Location location) {
+	private String addVariable(String varName, Type type, int arraySize, Location location) {
 		checkNoSymbolNamed(varName, location);
-		symbolMap.put(varName, new Symbol.Variable(type, kind, location));
-		globalVariables.add(new Variable(varName, type, globalVariables.size(), arraySize, location));
+		final Variable variable = new Variable(varName, type, globalVariables.size(), arraySize, location);
+		symbolMap.put(varName, variable);
+		globalVariables.add(variable);
+		return varName;
 	}
 
 	@NotNull
-	private Symbol.Variable getVariable(String name, Location location) {
+	private Variable getVariable(String name, Location location) {
 		final Symbol symbol = symbolMap.get(name);
-		if (!(symbol instanceof Symbol.Variable variable)) {
+		if (!(symbol instanceof Variable variable)) {
 			throw new SyntaxException(Messages.undeclaredVariable(name), location);
 		}
 		return variable;
