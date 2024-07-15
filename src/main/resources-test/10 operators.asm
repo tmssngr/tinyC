@@ -13,13 +13,13 @@ start:
         sub rsp, 8
           call init
         add rsp, 8
-          call main_0
+          call @main
         mov rcx, 0
         sub rsp, 0x20
           call [ExitProcess]
 
         ; void main
-main_0:
+@main:
         ; 2:14 string literal string_0
         lea rcx, [string_0]
         ; 2:2 print u8*
@@ -204,11 +204,11 @@ main_0:
         ; 18:8 bool lit false
         mov cl, 0
         or cl, cl
-        jz next_1
+        jz @next_1
         ; 18:17 bool lit false
         mov al, 0
         mov cl, al
-next_1:
+@next_1:
         movzx rcx, cl
         ; 18:2 print i64
         sub rsp, 8
@@ -220,11 +220,11 @@ next_1:
         ; 19:8 bool lit false
         mov cl, 0
         or cl, cl
-        jz next_2
+        jz @next_2
         ; 19:17 bool lit true
         mov al, 1
         mov cl, al
-next_2:
+@next_2:
         movzx rcx, cl
         ; 19:2 print i64
         sub rsp, 8
@@ -236,11 +236,11 @@ next_2:
         ; 20:8 bool lit true
         mov cl, 1
         or cl, cl
-        jz next_3
+        jz @next_3
         ; 20:16 bool lit false
         mov al, 0
         mov cl, al
-next_3:
+@next_3:
         movzx rcx, cl
         ; 20:2 print i64
         sub rsp, 8
@@ -252,11 +252,11 @@ next_3:
         ; 21:8 bool lit true
         mov cl, 1
         or cl, cl
-        jz next_4
+        jz @next_4
         ; 21:16 bool lit true
         mov al, 1
         mov cl, al
-next_4:
+@next_4:
         movzx rcx, cl
         ; 21:2 print i64
         sub rsp, 8
@@ -274,11 +274,11 @@ next_4:
         ; 23:8 bool lit false
         mov cl, 0
         or cl, cl
-        jnz next_5
+        jnz @next_5
         ; 23:17 bool lit false
         mov al, 0
         mov cl, al
-next_5:
+@next_5:
         movzx rcx, cl
         ; 23:2 print i64
         sub rsp, 8
@@ -290,11 +290,11 @@ next_5:
         ; 24:8 bool lit false
         mov cl, 0
         or cl, cl
-        jnz next_6
+        jnz @next_6
         ; 24:17 bool lit true
         mov al, 1
         mov cl, al
-next_6:
+@next_6:
         movzx rcx, cl
         ; 24:2 print i64
         sub rsp, 8
@@ -306,11 +306,11 @@ next_6:
         ; 25:8 bool lit true
         mov cl, 1
         or cl, cl
-        jnz next_7
+        jnz @next_7
         ; 25:16 bool lit false
         mov al, 0
         mov cl, al
-next_7:
+@next_7:
         movzx rcx, cl
         ; 25:2 print i64
         sub rsp, 8
@@ -322,11 +322,11 @@ next_7:
         ; 26:8 bool lit true
         mov cl, 1
         or cl, cl
-        jnz next_8
+        jnz @next_8
         ; 26:16 bool lit true
         mov al, 1
         mov cl, al
-next_8:
+@next_8:
         movzx rcx, cl
         ; 26:2 print i64
         sub rsp, 8
@@ -397,7 +397,7 @@ next_8:
         sete cl
         and cl, 0xFF
         or cl, cl
-        jnz next_9
+        jnz @next_9
         ; 32:18 int lit 2
         mov al, 2
         ; 32:22 int lit 3
@@ -407,7 +407,7 @@ next_8:
         setl al
         and al, 0xFF
         mov cl, al
-next_9:
+@next_9:
         movzx rcx, cl
         ; 32:2 print i64
         sub rsp, 8
@@ -425,7 +425,7 @@ next_9:
         sete cl
         and cl, 0xFF
         or cl, cl
-        jz next_10
+        jz @next_10
         ; 33:18 int lit 2
         mov al, 2
         ; 33:22 int lit 3
@@ -435,7 +435,7 @@ next_9:
         setl al
         and al, 0xFF
         mov cl, al
-next_10:
+@next_10:
         movzx rcx, cl
         ; 33:2 print i64
         sub rsp, 8
@@ -465,7 +465,7 @@ next_10:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-main_ret:
+@main_ret:
         ret
 init:
         sub rsp, 20h

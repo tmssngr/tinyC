@@ -13,13 +13,13 @@ start:
         sub rsp, 8
           call init
         add rsp, 8
-          call main_0
+          call @main
         mov rcx, 0
         sub rsp, 0x20
           call [ExitProcess]
 
         ; void main
-main_0:
+@main:
         ; 4:14 read var text
         lea rcx, [var0]
         mov rax, [rcx]
@@ -30,7 +30,7 @@ main_0:
         add rsp, 8
         ; 5:2 call printLength
         sub rsp, 8
-          call printLength_0
+          call @printLength
         add rsp, 8
         ; 6:15 address of array text[...]
         ; 6:21 int lit 1
@@ -69,10 +69,10 @@ main_0:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-main_ret:
+@main_ret:
         ret
         ; void printLength
-printLength_0:
+@printLength:
         ; 13:15 int lit 0
         mov cx, 0
         ; 13:2 assign length
@@ -137,7 +137,7 @@ printLength_0:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-printLength_ret:
+@printLength_ret:
         ret
 init:
         sub rsp, 20h

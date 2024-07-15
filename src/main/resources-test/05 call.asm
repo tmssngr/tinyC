@@ -13,16 +13,16 @@ start:
         sub rsp, 8
           call init
         add rsp, 8
-          call main_0
+          call @main
         mov rcx, 0
         sub rsp, 0x20
           call [ExitProcess]
 
         ; void main
-main_0:
+@main:
         ; 2:9 call one
         sub rsp, 8
-          call one_0
+          call @one
         add rsp, 8
         ; 2:2 assign i
         lea rcx, [var0]
@@ -33,21 +33,21 @@ main_0:
         movzx rcx, al
         ; 3:2 call doPrint
         sub rsp, 8
-          call doPrint_0
+          call @doPrint
         add rsp, 8
-main_ret:
+@main_ret:
         ret
         ; u8 one
-one_0:
+@one:
         ; 7:9 return 1
         ; 7:9 int lit 1
         mov cl, 1
         mov rax, rcx
-        jmp one_ret
-one_ret:
+        jmp @one_ret
+@one_ret:
         ret
         ; void doPrint
-doPrint_0:
+@doPrint:
         ; 11:8 int lit 2
         mov rcx, 2
         ; 11:2 print i64
@@ -56,7 +56,7 @@ doPrint_0:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-doPrint_ret:
+@doPrint_ret:
         ret
 init:
         sub rsp, 20h

@@ -71,7 +71,7 @@ public class X86Win64 {
 
 	private void write(Function function, Variables variables) throws IOException {
 		final String functionLabel = getFunctionLabel(function.name());
-		functionRetLabel = function.name() + "_ret";
+		functionRetLabel = functionLabel + "_ret";
 		writeComment(function.toString());
 		writeLabel(functionLabel);
 		writeStatement(function.statement(), variables);
@@ -80,7 +80,7 @@ public class X86Win64 {
 	}
 
 	private String getFunctionLabel(String name) {
-		return name + "_0";
+		return "@" + name;
 	}
 
 	private void writeInit(List<StmtDeclaration> declarations, Variables variables) throws IOException {
@@ -399,7 +399,7 @@ public class X86Win64 {
 		}
 		case AndLog -> {
 			final int labelIndex = nextLabelIndex();
-			final String nextLabel = "next_" + labelIndex;
+			final String nextLabel = "@next_" + labelIndex;
 			writeComment("logic and", node.location());
 			final int conditionReg = write(node.left(), variables);
 			final String conditionRegName = getRegName(conditionReg, getTypeSize(node.typeNotNull()));
@@ -415,7 +415,7 @@ public class X86Win64 {
 		}
 		case OrLog -> {
 			final int labelIndex = nextLabelIndex();
-			final String nextLabel = "next_" + labelIndex;
+			final String nextLabel = "@next_" + labelIndex;
 			writeComment("logic or", node.location());
 			final int conditionReg = write(node.left(), variables);
 			final String conditionRegName = getRegName(conditionReg, getTypeSize(node.typeNotNull()));
@@ -576,8 +576,8 @@ public class X86Win64 {
 		final Statement thenStatement = statement.thenStatement();
 		final Statement elseStatement = statement.elseStatement();
 		final int labelIndex = nextLabelIndex();
-		final String elseLabel = "else_" + labelIndex;
-		final String nextLabel = "endif_" + labelIndex;
+		final String elseLabel = "@else_" + labelIndex;
+		final String nextLabel = "@endif_" + labelIndex;
 		writeComment("if " + condition.toUserString(), statement.location());
 		final int conditionReg = write(condition, variables);
 		final String conditionRegName = getRegName(conditionReg, getTypeSize(condition.typeNotNull()));
