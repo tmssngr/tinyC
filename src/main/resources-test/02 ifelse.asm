@@ -47,10 +47,10 @@ main_0:
         ; 5:9 read var a
         lea rcx, [var0]
         mov bl, [rcx]
-        movzx bx, bl
-        ; 5:3 print i16
+        movzx rbx, bl
+        ; 5:3 print i64
         sub rsp, 8
-          movzx rcx, bx
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -60,10 +60,10 @@ else_1:
         ; 8:9 read var b
         lea rcx, [var1]
         mov bl, [rcx]
-        movzx bx, bl
-        ; 8:3 print i16
+        movzx rbx, bl
+        ; 8:3 print i64
         sub rsp, 8
-          movzx rcx, bx
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit

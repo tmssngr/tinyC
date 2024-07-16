@@ -40,9 +40,9 @@ main_0:
         mov rax, [rcx]
         ; 7:8 deref
         mov cx, [rax]
-        ; 7:2 print i16
+        movzx rcx, cx
+        ; 7:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit

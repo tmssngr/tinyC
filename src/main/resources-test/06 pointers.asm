@@ -28,9 +28,10 @@ main_0:
         ; 3:8 read var a
         lea rcx, [var0]
         mov ax, [rcx]
-        ; 3:2 print i16
+        movzx rax, ax
+        ; 3:2 print i64
         sub rsp, 8
-          movzx rcx, ax
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -56,9 +57,10 @@ main_0:
         ; 6:8 read var c
         lea rcx, [var2]
         mov ax, [rcx]
-        ; 6:2 print i16
+        movzx rax, ax
+        ; 6:2 print i64
         sub rsp, 8
-          movzx rcx, ax
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -86,9 +88,10 @@ main_0:
         ; 9:8 read var c
         lea rcx, [var2]
         mov ax, [rcx]
-        ; 9:2 print i16
+        movzx rax, ax
+        ; 9:2 print i64
         sub rsp, 8
-          movzx rcx, ax
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit

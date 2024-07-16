@@ -32,10 +32,9 @@ main_0:
         mov al, 0
         ; 3:10 and
         and cl, al
-        movzx cx, cl
-        ; 3:2 print i16
+        movzx rcx, cl
+        ; 3:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -46,10 +45,9 @@ main_0:
         mov al, 1
         ; 4:10 and
         and cl, al
-        movzx cx, cl
-        ; 4:2 print i16
+        movzx rcx, cl
+        ; 4:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -60,10 +58,9 @@ main_0:
         mov al, 0
         ; 5:10 and
         and cl, al
-        movzx cx, cl
-        ; 5:2 print i16
+        movzx rcx, cl
+        ; 5:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -74,10 +71,9 @@ main_0:
         mov al, 1
         ; 6:10 and
         and cl, al
-        movzx cx, cl
-        ; 6:2 print i16
+        movzx rcx, cl
+        ; 6:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -94,10 +90,9 @@ main_0:
         mov al, 0
         ; 8:10 or
         or cl, al
-        movzx cx, cl
-        ; 8:2 print i16
+        movzx rcx, cl
+        ; 8:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -108,10 +103,9 @@ main_0:
         mov al, 1
         ; 9:10 or
         or cl, al
-        movzx cx, cl
-        ; 9:2 print i16
+        movzx rcx, cl
+        ; 9:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -122,10 +116,9 @@ main_0:
         mov al, 0
         ; 10:10 or
         or cl, al
-        movzx cx, cl
-        ; 10:2 print i16
+        movzx rcx, cl
+        ; 10:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -136,10 +129,9 @@ main_0:
         mov al, 1
         ; 11:10 or
         or cl, al
-        movzx cx, cl
-        ; 11:2 print i16
+        movzx rcx, cl
+        ; 11:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -156,10 +148,9 @@ main_0:
         mov al, 0
         ; 13:10 xor
         xor cl, al
-        movzx cx, cl
-        ; 13:2 print i16
+        movzx rcx, cl
+        ; 13:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -170,10 +161,9 @@ main_0:
         mov al, 2
         ; 14:10 xor
         xor cl, al
-        movzx cx, cl
-        ; 14:2 print i16
+        movzx rcx, cl
+        ; 14:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -184,10 +174,9 @@ main_0:
         mov al, 0
         ; 15:10 xor
         xor cl, al
-        movzx cx, cl
-        ; 15:2 print i16
+        movzx rcx, cl
+        ; 15:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -198,10 +187,9 @@ main_0:
         mov al, 2
         ; 16:10 xor
         xor cl, al
-        movzx cx, cl
-        ; 16:2 print i16
+        movzx rcx, cl
+        ; 16:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -221,10 +209,9 @@ main_0:
         mov al, 0
         mov cl, al
 next_1:
-        movzx cx, cl
-        ; 18:2 print i16
+        movzx rcx, cl
+        ; 18:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -238,10 +225,9 @@ next_1:
         mov al, 1
         mov cl, al
 next_2:
-        movzx cx, cl
-        ; 19:2 print i16
+        movzx rcx, cl
+        ; 19:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -255,10 +241,9 @@ next_2:
         mov al, 0
         mov cl, al
 next_3:
-        movzx cx, cl
-        ; 20:2 print i16
+        movzx rcx, cl
+        ; 20:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -272,10 +257,9 @@ next_3:
         mov al, 1
         mov cl, al
 next_4:
-        movzx cx, cl
-        ; 21:2 print i16
+        movzx rcx, cl
+        ; 21:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -295,10 +279,9 @@ next_4:
         mov al, 0
         mov cl, al
 next_5:
-        movzx cx, cl
-        ; 23:2 print i16
+        movzx rcx, cl
+        ; 23:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -312,10 +295,9 @@ next_5:
         mov al, 1
         mov cl, al
 next_6:
-        movzx cx, cl
-        ; 24:2 print i16
+        movzx rcx, cl
+        ; 24:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -329,10 +311,9 @@ next_6:
         mov al, 0
         mov cl, al
 next_7:
-        movzx cx, cl
-        ; 25:2 print i16
+        movzx rcx, cl
+        ; 25:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -346,10 +327,9 @@ next_7:
         mov al, 1
         mov cl, al
 next_8:
-        movzx cx, cl
-        ; 26:2 print i16
+        movzx rcx, cl
+        ; 26:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -365,10 +345,9 @@ next_8:
         ; 28:8 not
         or cl, cl
         sete cl
-        movzx cx, cl
-        ; 28:2 print i16
+        movzx rcx, cl
+        ; 28:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -378,10 +357,9 @@ next_8:
         ; 29:8 not
         or cl, cl
         sete cl
-        movzx cx, cl
-        ; 29:2 print i16
+        movzx rcx, cl
+        ; 29:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -402,10 +380,9 @@ next_8:
         mov al, 1
         ; 31:24 or
         or cl, al
-        movzx cx, cl
-        ; 31:2 print i16
+        movzx rcx, cl
+        ; 31:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -431,10 +408,9 @@ next_8:
         and al, 0xFF
         mov cl, al
 next_9:
-        movzx cx, cl
-        ; 32:2 print i16
+        movzx rcx, cl
+        ; 32:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -460,10 +436,9 @@ next_9:
         and al, 0xFF
         mov cl, al
 next_10:
-        movzx cx, cl
-        ; 33:2 print i16
+        movzx rcx, cl
+        ; 33:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -472,9 +447,9 @@ next_10:
         mov cx, 1
         ; 34:8 neg
         neg cx
-        ; 34:2 print i16
+        movzx rcx, cx
+        ; 34:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -483,10 +458,9 @@ next_10:
         mov cl, 1
         ; 35:8 com
         not cl
-        movzx cx, cl
-        ; 35:2 print i16
+        movzx rcx, cl
+        ; 35:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit

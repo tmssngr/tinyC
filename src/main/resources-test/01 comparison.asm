@@ -28,10 +28,9 @@ main_0:
         cmp cl, al
         setl cl
         and cl, 0xFF
-        movzx cx, cl
-        ; 2:5 print i16
+        movzx rcx, cl
+        ; 2:5 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -44,10 +43,9 @@ main_0:
         cmp cl, al
         setl cl
         and cl, 0xFF
-        movzx cx, cl
-        ; 3:5 print i16
+        movzx rcx, cl
+        ; 3:5 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -60,10 +58,9 @@ main_0:
         cmp cl, al
         setle cl
         and cl, 0xFF
-        movzx cx, cl
-        ; 5:5 print i16
+        movzx rcx, cl
+        ; 5:5 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -76,10 +73,9 @@ main_0:
         cmp cl, al
         setle cl
         and cl, 0xFF
-        movzx cx, cl
-        ; 6:5 print i16
+        movzx rcx, cl
+        ; 6:5 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -92,10 +88,9 @@ main_0:
         cmp cl, al
         sete cl
         and cl, 0xFF
-        movzx cx, cl
-        ; 8:5 print i16
+        movzx rcx, cl
+        ; 8:5 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -108,10 +103,9 @@ main_0:
         cmp cl, al
         setne cl
         and cl, 0xFF
-        movzx cx, cl
-        ; 10:5 print i16
+        movzx rcx, cl
+        ; 10:5 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -124,10 +118,9 @@ main_0:
         cmp cl, al
         setge cl
         and cl, 0xFF
-        movzx cx, cl
-        ; 12:5 print i16
+        movzx rcx, cl
+        ; 12:5 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -140,10 +133,9 @@ main_0:
         cmp cl, al
         setge cl
         and cl, 0xFF
-        movzx cx, cl
-        ; 13:5 print i16
+        movzx rcx, cl
+        ; 13:5 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -156,10 +148,9 @@ main_0:
         cmp cl, al
         setg cl
         and cl, 0xFF
-        movzx cx, cl
-        ; 15:5 print i16
+        movzx rcx, cl
+        ; 15:5 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -172,10 +163,9 @@ main_0:
         cmp cl, al
         setg cl
         and cl, 0xFF
-        movzx cx, cl
-        ; 16:5 print i16
+        movzx rcx, cl
+        ; 16:5 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit

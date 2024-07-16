@@ -61,10 +61,10 @@ main_0:
         ; 9:8 read var chr
         lea rcx, [var2]
         mov al, [rcx]
-        movzx ax, al
-        ; 9:2 print i16
+        movzx rax, al
+        ; 9:2 print i64
         sub rsp, 8
-          movzx rcx, ax
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -129,9 +129,10 @@ endFor_1:
         ; 17:8 read var length
         lea rax, [var3]
         mov bx, [rax]
-        ; 17:2 print i16
+        movzx rbx, bx
+        ; 17:2 print i64
         sub rsp, 8
-          movzx rcx, bx
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit

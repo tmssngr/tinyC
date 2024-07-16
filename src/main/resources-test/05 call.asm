@@ -49,10 +49,9 @@ one_ret:
         ; void doPrint
 doPrint_0:
         ; 11:8 int lit 2
-        mov cx, 2
-        ; 11:2 print i16
+        mov rcx, 2
+        ; 11:2 print i64
         sub rsp, 8
-          movzx rcx, cx
           call __printUint
           mov rcx, 0x0a
           call __emit

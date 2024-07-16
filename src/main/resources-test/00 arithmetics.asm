@@ -69,9 +69,10 @@ main_0:
         mov bx, [rcx]
         ; 5:15 add
         add ax, bx
-        ; 5:5 print i16
+        movzx rax, ax
+        ; 5:5 print i64
         sub rsp, 8
-          movzx rcx, ax
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -100,9 +101,10 @@ main_0:
         ; 7:11 read var foo
         lea rcx, [var0]
         mov ax, [rcx]
-        ; 7:5 print i16
+        movzx rax, ax
+        ; 7:5 print i64
         sub rsp, 8
-          movzx rcx, ax
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit

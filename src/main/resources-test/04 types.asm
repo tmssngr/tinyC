@@ -42,10 +42,10 @@ for_1:
         ; 3:11 read var i
         lea rcx, [var0]
         mov bl, [rcx]
-        movzx bx, bl
-        ; 3:5 print i16
+        movzx rbx, bl
+        ; 3:5 print i64
         sub rsp, 8
-          movzx rcx, bx
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -72,10 +72,10 @@ endFor_1:
         ; 7:13 read var v
         lea rcx, [var1]
         mov bx, [rcx]
-        movzx bx, bl
-        ; 7:3 print i16
+        movzx rbx, bl
+        ; 7:3 print i64
         sub rsp, 8
-          movzx rcx, bx
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
