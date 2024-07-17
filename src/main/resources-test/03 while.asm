@@ -26,7 +26,7 @@ main_0:
         lea rax, [var0]
         mov [rax], cl
         ; 3:2 while i > 0
-while_1:
+@while_1:
         ; 3:9 read var i
         lea rcx, [var0]
         mov al, [rcx]
@@ -38,7 +38,7 @@ while_1:
         and al, 0xFF
         ; while-condition
         or al, al
-        jz endwhile_1
+        jz @while_1_end
         ; 4:9 read var i
         lea rcx, [var0]
         mov bl, [rcx]
@@ -61,19 +61,19 @@ while_1:
         lea rcx, [var0]
         ; 5:5 assign
         mov [rcx], bl
-        jmp while_1
-endwhile_1:
+        jmp @while_1
+@while_1_end:
         ; 8:2 while true
-while_2:
+@while_2:
         ; 8:9 bool lit true
         mov cl, 1
         ; while-condition
         or cl, cl
-        jz endwhile_2
+        jz @while_2_end
         ; return
         jmp main_ret
-        jmp while_2
-endwhile_2:
+        jmp @while_2
+@while_2_end:
 main_ret:
         ret
 init:

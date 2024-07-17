@@ -85,7 +85,7 @@ printLength_0:
         lea rcx, [var4]
         mov [rcx], rax
         ; 14:2 for *ptr != 0
-for_1:
+@for_1:
         ; 14:24 read var ptr
         lea rcx, [var4]
         mov rax, [rcx]
@@ -97,8 +97,9 @@ for_1:
         cmp cl, al
         setne cl
         and cl, 0xFF
+        ; for-condition
         or cl, cl
-        jz endFor_1
+        jz @for_1_end
         ; 15:12 read var length
         lea rax, [var3]
         mov bx, [rax]
@@ -123,8 +124,8 @@ for_1:
         lea rax, [var4]
         ; 14:38 assign
         mov [rax], rbx
-        jmp for_1
-endFor_1:
+        jmp @for_1
+@for_1_end:
         ; 17:8 read var length
         lea rax, [var3]
         mov bx, [rax]

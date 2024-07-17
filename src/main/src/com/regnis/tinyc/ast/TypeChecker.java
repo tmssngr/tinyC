@@ -116,7 +116,6 @@ public final class TypeChecker {
 			case StmtVarDeclaration declaration -> processVarDeclaration(declaration);
 			case StmtCompound compound -> new StmtCompound(processStatements(compound.statements()));
 			case StmtIf ifStatement -> processIf(ifStatement);
-			case StmtWhile whileStatement -> processWhile(whileStatement);
 			case StmtLoop forStatement -> processFor(forStatement);
 			case StmtReturn stmt -> processReturn(stmt.expression(), stmt.location());
 			case StmtExpr stmt -> new StmtExpr(processExpression(stmt.expression()));
@@ -156,13 +155,6 @@ public final class TypeChecker {
 			elseStatement = processStatement(elseStatement);
 		}
 		return new StmtIf(condition, thenStatement, elseStatement, ifStmt.location());
-	}
-
-	@NotNull
-	private StmtWhile processWhile(StmtWhile stmtWhile) {
-		final Expression condition = checkBooleanCondition(stmtWhile.condition(), stmtWhile.location());
-		final Statement bodyStatement = processStatement(stmtWhile.bodyStatement());
-		return new StmtWhile(condition, bodyStatement, stmtWhile.location());
 	}
 
 	@NotNull

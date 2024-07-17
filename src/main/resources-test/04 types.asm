@@ -26,7 +26,7 @@ main_0:
         lea rax, [var0]
         mov [rax], cl
         ; 2:3 for i != 2
-for_1:
+@for_1:
         ; 2:20 read var i
         lea rcx, [var0]
         mov al, [rcx]
@@ -36,8 +36,9 @@ for_1:
         cmp al, cl
         setne al
         and al, 0xFF
+        ; for-condition
         or al, al
-        jz endFor_1
+        jz @for_1_end
         ; 3:11 read var i
         lea rcx, [var0]
         mov bl, [rcx]
@@ -61,8 +62,8 @@ for_1:
         lea rcx, [var0]
         ; 2:30 assign
         mov [rcx], bl
-        jmp for_1
-endFor_1:
+        jmp @for_1
+@for_1_end:
         ; 6:11 int lit 260
         mov cx, 260
         ; 6:3 assign v

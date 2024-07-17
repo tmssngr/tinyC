@@ -274,12 +274,12 @@ public class Parser {
 	}
 
 	@NotNull
-	private StmtWhile handleWhile() {
+	private Statement handleWhile() {
 		final Location location = getLocation();
 		consume(TokenType.WHILE);
 		final Expression condition = getExpressionInParenthesis();
 		final Statement bodyStatement = getStatementNotNull();
-		return new StmtWhile(condition, bodyStatement, location);
+		return new StmtLoop(condition, bodyStatement, List.of(), location);
 	}
 
 	@NotNull

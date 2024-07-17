@@ -171,7 +171,6 @@ public class X86Win64 {
 		case StmtVarDeclaration declaration -> writeAssignment(declaration.varName(), declaration.expression(), declaration.location(), variables);
 		case StmtCompound compound -> writeStatements(compound.statements(), variables);
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
-		case StmtWhile whileStatement -> writeWhile(whileStatement, variables);
 		case StmtLoop forStatement -> writeFor(forStatement, variables);
 		case StmtExpr stmt -> write(stmt.expression(), variables);
 		case StmtReturn ret -> writeReturn(ret.expression(), variables);
@@ -596,42 +595,29 @@ public class X86Win64 {
 		writeLabel(nextLabel);
 	}
 
-	private void writeWhile(StmtWhile statement, Variables variables) throws IOException {
-		final int labelIndex = nextLabelIndex();
-		final String whileLabel = "while_" + labelIndex;
-		final String nextLabel = "endwhile_" + labelIndex;
-		final Expression condition = statement.condition();
-		writeComment("while " + condition.toUserString(), statement.location());
-		writeLabel(whileLabel);
-		final int conditionReg = write(condition, variables);
-		final String conditionRegName = getRegName(conditionReg, getTypeSize(condition.typeNotNull()));
-		writeComment("while-condition");
-		writeIndented("or " + conditionRegName + ", " + conditionRegName);
-		writeIndented("jz " + nextLabel);
-		final Statement body = statement.bodyStatement();
-		writeStatement(body, variables);
-		writeIndented("jmp " + whileLabel);
-		writeLabel(nextLabel);
-	}
-
 	private void writeFor(StmtLoop statement, Variables variables) throws IOException {
+		final List<Statement> iteration = statement.iteration();
+		final String loopName = iteration.isEmpty() ? "while" : "for";
 		final int labelIndex = nextLabelIndex();
-		final String forLabel = "for_" + labelIndex;
-		final String nextLabel = "endFor_" + labelIndex;
+		final String label = "@" + loopName + "_" + labelIndex;
+		final String nextLabel = "@" + loopName + "_" + labelIndex + "_end";
 
 		final Expression condition = statement.condition();
-		writeComment("for " + condition.toUserString(), statement.location());
-		writeLabel(forLabel);
+		writeComment(loopName + " " + condition.toUserString(), statement.location());
+		writeLabel(label);
 		final int conditionReg = write(condition, variables);
 		final String conditionRegName = getRegName(conditionReg, getTypeSize(condition.typeNotNull()));
+		writeComment(loopName + "-condition");
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
 		writeIndented("jz " + nextLabel);
 		final Statement body = statement.bodyStatement();
 		writeStatement(body, variables);
 
-		writeComment("for iteration");
-		writeStatements(statement.iteration(), variables);
-		writeIndented("jmp " + forLabel);
+		if (iteration.size() > 0) {
+			writeComment("for iteration");
+			writeStatements(iteration, variables);
+		}
+		writeIndented("jmp " + label);
 
 		writeLabel(nextLabel);
 	}

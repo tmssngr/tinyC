@@ -193,7 +193,7 @@ public class ParserTest {
 		assertEquals(new StmtCompound(List.of(
 				new StmtVarDeclaration("u16", "i", intLit(5, loc(1, 8)),
 				                       loc(1, 0)),
-				new StmtWhile(new ExprBinary(ExprBinary.Op.Gt,
+				new StmtLoop(new ExprBinary(ExprBinary.Op.Gt,
 				                             ExprVarAccess.scalar("i", loc(2, 7)),
 				                             intLit(0, loc(2, 11)),
 				                             loc(2, 9)),
@@ -207,6 +207,7 @@ public class ParserTest {
 						                                        loc(4, 8)),
 						                         loc(4, 4))
 				              )),
+							  List.of(),
 				              loc(2, 0)
 				)
 		)), new Parser(new Lexer("""
@@ -218,11 +219,12 @@ public class ParserTest {
 				                         }
 				                         }""")).getStatementNotNull());
 
-		assertEquals(new StmtWhile(new ExprBoolLiteral(true, loc(0, 7)),
+		assertEquals(new StmtLoop(new ExprBoolLiteral(true, loc(0, 7)),
 		                           new StmtCompound(List.of(
 				                           printStmt(ExprVarAccess.scalar("i", loc(1, 8)),
 				                                     loc(1, 2))
 		                           )),
+								   List.of(),
 		                           loc(0, 0)),
 		             new Parser(new Lexer("""
 				                                  while (true) {
