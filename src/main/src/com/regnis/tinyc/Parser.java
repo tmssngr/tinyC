@@ -231,7 +231,7 @@ public class Parser {
 	}
 
 	@NotNull
-	private StmtFor handleFor() {
+	private Statement handleFor() {
 		final Location location = getLocation();
 		consume(TokenType.FOR);
 		consume(TokenType.L_PAREN);
@@ -248,7 +248,12 @@ public class Parser {
 		final List<Statement> iterate = getCommaSeparatedSimpleStatements();
 		consume(TokenType.R_PAREN);
 		final Statement body = getStatementNotNull();
-		return new StmtFor(initialization, condition, body, iterate, location);
+		if (initialization.isEmpty()) {
+			return new StmtLoop(condition, body, iterate, location);
+		}
+
+		initialization.add(new StmtLoop(condition, body, iterate, location));
+		return new StmtCompound(initialization);
 	}
 
 	@NotNull

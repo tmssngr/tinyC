@@ -117,7 +117,7 @@ public final class TypeChecker {
 			case StmtCompound compound -> new StmtCompound(processStatements(compound.statements()));
 			case StmtIf ifStatement -> processIf(ifStatement);
 			case StmtWhile whileStatement -> processWhile(whileStatement);
-			case StmtFor forStatement -> processFor(forStatement);
+			case StmtLoop forStatement -> processFor(forStatement);
 			case StmtReturn stmt -> processReturn(stmt.expression(), stmt.location());
 			case StmtExpr stmt -> new StmtExpr(processExpression(stmt.expression()));
 			default -> throw new IllegalStateException("Unexpected value: " + statement);
@@ -166,15 +166,13 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private StmtFor processFor(StmtFor forStmt) {
-		final List<Statement> initialization = processStatements(forStmt.initialization());
-
+	private StmtLoop processFor(StmtLoop forStmt) {
 		final Expression condition = checkBooleanCondition(forStmt.condition(), forStmt.location());
 
 		final List<Statement> iteration = processStatements(forStmt.iteration());
 
 		final Statement bodyStatement = processStatement(forStmt.bodyStatement());
-		return new StmtFor(initialization, condition, bodyStatement, iteration, forStmt.location());
+		return new StmtLoop(condition, bodyStatement, iteration, forStmt.location());
 	}
 
 	@NotNull

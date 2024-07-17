@@ -172,7 +172,7 @@ public class X86Win64 {
 		case StmtCompound compound -> writeStatements(compound.statements(), variables);
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtWhile whileStatement -> writeWhile(whileStatement, variables);
-		case StmtFor forStatement -> writeFor(forStatement, variables);
+		case StmtLoop forStatement -> writeFor(forStatement, variables);
 		case StmtExpr stmt -> write(stmt.expression(), variables);
 		case StmtReturn ret -> writeReturn(ret.expression(), variables);
 		case null, default -> throw new UnsupportedOperationException(String.valueOf(statement));
@@ -614,16 +614,13 @@ public class X86Win64 {
 		writeLabel(nextLabel);
 	}
 
-	private void writeFor(StmtFor statement, Variables variables) throws IOException {
+	private void writeFor(StmtLoop statement, Variables variables) throws IOException {
 		final int labelIndex = nextLabelIndex();
 		final String forLabel = "for_" + labelIndex;
 		final String nextLabel = "endFor_" + labelIndex;
 
-		writeComment("for", statement.location());
-		writeStatements(statement.initialization(), variables);
-
 		final Expression condition = statement.condition();
-		writeComment("for condition " + condition.toUserString());
+		writeComment("for " + condition.toUserString(), statement.location());
 		writeLabel(forLabel);
 		final int conditionReg = write(condition, variables);
 		final String conditionRegName = getRegName(conditionReg, getTypeSize(condition.typeNotNull()));

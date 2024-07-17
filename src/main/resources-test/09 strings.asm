@@ -78,14 +78,13 @@ printLength_0:
         ; 13:2 assign length
         lea rax, [var3]
         mov [rax], cx
-        ; 14:2 for
         ; 14:17 read var text
         lea rcx, [var0]
         mov rax, [rcx]
         ; 14:7 assign ptr
         lea rcx, [var4]
         mov [rcx], rax
-        ; for condition *ptr != 0
+        ; 14:2 for *ptr != 0
 for_1:
         ; 14:24 read var ptr
         lea rcx, [var4]

@@ -20,13 +20,12 @@ start:
 
         ; void main
 main_0:
-        ; 2:3 for
         ; 2:15 int lit 250
         mov cl, 250
         ; 2:8 assign i
         lea rax, [var0]
         mov [rax], cl
-        ; for condition i != 2
+        ; 2:3 for i != 2
 for_1:
         ; 2:20 read var i
         lea rcx, [var0]
