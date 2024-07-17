@@ -9,9 +9,9 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record Function(String name, String typeString, @Nullable Type returnType, List<Arg> args, Statement statement, Location location) {
+public record Function(@NotNull String name, @NotNull String typeString, @Nullable Type returnType, @NotNull List<Arg> args, @NotNull Statement statement, @NotNull Location location) {
 
-	public Function(String typeString, String name, List<Arg> args, Statement statement, Location location) {
+	public Function(@NotNull String typeString, @NotNull String name, @NotNull List<Arg> args, @NotNull Statement statement, @NotNull Location location) {
 		this(name, typeString, null, args, statement, location);
 	}
 
@@ -20,8 +20,8 @@ public record Function(String name, String typeString, @Nullable Type returnType
 		return typeString + " " + name;
 	}
 
-	public record Arg(String typeString, @Nullable Type type, String name, Location location) {
-		public Arg(String typeString, String name, Location location) {
+	public record Arg(@NotNull String typeString, @Nullable Type type, @NotNull String name, @NotNull Location location) {
+		public Arg(@NotNull String typeString, @NotNull String name, @NotNull Location location) {
 			this(typeString, null, name, location);
 		}
 	}
