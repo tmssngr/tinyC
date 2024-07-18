@@ -59,6 +59,10 @@ public class X86Win64 {
 				           section '.text' code readable executable
 
 				           start:""");
+		writeComment("alignment");
+		writeIndented("and rsp, -1-16");
+		writeIndented("sub rsp, 8");
+
 		writeIndented("sub rsp, 8");
 		writeIndented("  call init");
 		writeIndented("add rsp, 8");

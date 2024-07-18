@@ -10,6 +10,9 @@ entry start
 section '.text' code readable executable
 
 start:
+        ; alignment
+        and rsp, -1-16
+        sub rsp, 8
         sub rsp, 8
           call init
         add rsp, 8
