@@ -396,23 +396,24 @@ start:
         mov al, 2
         ; 32:10 ==
         cmp cl, al
-        sete cl
-        and cl, 0xFF
-        or cl, cl
+        sete bl
+        and bl, 0xFF
+        or bl, bl
         jnz @next_9
         ; 32:18 int lit 2
-        mov al, 2
+        mov cl, 2
         ; 32:22 int lit 3
-        mov bl, 3
+        mov al, 3
         ; 32:20 <
-        cmp al, bl
-        setl al
-        and al, 0xFF
-        mov cl, al
+        cmp cl, al
+        setl dl
+        and dl, 0xFF
+        mov bl, dl
 @next_9:
-        movzx rcx, cl
+        movzx rbx, bl
         ; 32:2 print i64
         sub rsp, 8
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -424,23 +425,24 @@ start:
         mov al, 2
         ; 33:10 ==
         cmp cl, al
-        sete cl
-        and cl, 0xFF
-        or cl, cl
+        sete bl
+        and bl, 0xFF
+        or bl, bl
         jz @next_10
         ; 33:18 int lit 2
-        mov al, 2
+        mov cl, 2
         ; 33:22 int lit 3
-        mov bl, 3
+        mov al, 3
         ; 33:20 <
-        cmp al, bl
-        setl al
-        and al, 0xFF
-        mov cl, al
+        cmp cl, al
+        setl dl
+        and dl, 0xFF
+        mov bl, dl
 @next_10:
-        movzx rcx, cl
+        movzx rbx, bl
         ; 33:2 print i64
         sub rsp, 8
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit

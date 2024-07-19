@@ -97,44 +97,44 @@ start:
         mov al, 0
         ; 14:28 !=
         cmp cl, al
-        setne cl
-        and cl, 0xFF
+        setne bl
+        and bl, 0xFF
         ; for-condition
-        or cl, cl
+        or bl, bl
         jz @for_1_end
         ; 15:12 read var length
-        lea rax, [var3]
-        mov bx, [rax]
+        lea rcx, [var3]
+        mov ax, [rcx]
         ; 15:21 int lit 1
-        mov al, 1
-        movzx ax, al
+        mov cl, 1
+        movzx cx, cl
         ; 15:19 add
-        add bx, ax
+        add ax, cx
         ; 15:3 var length
-        lea rax, [var3]
+        lea rcx, [var3]
         ; 15:10 assign
-        mov [rax], bx
+        mov [rcx], ax
         ; for iteration
         ; 14:40 read var ptr
-        lea rax, [var4]
-        mov rbx, [rax]
+        lea rcx, [var4]
+        mov rax, [rcx]
         ; 14:46 int lit 1
-        mov rax, 1
+        mov rcx, 1
         ; 14:44 add
-        add rbx, rax
+        add rax, rcx
         ; 14:34 var ptr
-        lea rax, [var4]
+        lea rcx, [var4]
         ; 14:38 assign
-        mov [rax], rbx
+        mov [rcx], rax
         jmp @for_1
 @for_1_end:
         ; 17:8 read var length
-        lea rax, [var3]
-        mov bx, [rax]
-        movzx rbx, bx
+        lea rcx, [var3]
+        mov ax, [rcx]
+        movzx rax, ax
         ; 17:2 print i64
         sub rsp, 8
-          mov rcx, rbx
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -162,10 +162,10 @@ init:
           mov qword [rcx], rax
         add rsp, 20h
         ; 1:12 string literal string_0
-        lea rax, [string_0]
+        lea rcx, [string_0]
         ; 1:1 assign text
-        lea rbx, [var0]
-        mov [rbx], rax
+        lea rax, [var0]
+        mov [rax], rcx
         ret
 __emit:
         push rcx ; = sub rsp, 8

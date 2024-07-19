@@ -451,6 +451,8 @@ public class X86Win64 {
 		default -> {
 			final int leftReg = write(node.left(), variables);
 			final int rightReg = write(node.right(), variables);
+			final int resultReg = getFreeReg();
+			final String resultRegName = getRegName(resultReg, 1);
 			final int size = getTypeSize(node.typeNotNull());
 			writeComment(node.op().toString(), node.location());
 			final String leftRegName = getRegName(leftReg, size);
@@ -463,10 +465,11 @@ public class X86Win64 {
 				case GtEq -> "setge";
 				case Gt -> "setg";
 				default -> throw new UnsupportedOperationException("Unsupported operand " + node.op());
-			} + " " + getRegName(leftReg, 1));
-			writeIndented("and " + leftRegName + ", 0xFF");
+			} + " " + resultRegName);
+			writeIndented("and " + resultRegName + ", 0xFF");
+			freeReg(leftReg);
 			freeReg(rightReg);
-			return leftReg;
+			return resultReg;
 		}
 		}
 	}

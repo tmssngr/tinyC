@@ -36,18 +36,18 @@ start:
         mov cl, 2
         ; 2:22 !=
         cmp al, cl
-        setne al
-        and al, 0xFF
+        setne bl
+        and bl, 0xFF
         ; for-condition
-        or al, al
+        or bl, bl
         jz @for_1_end
         ; 3:11 read var i
         lea rcx, [var0]
-        mov bl, [rcx]
-        movzx rbx, bl
+        mov al, [rcx]
+        movzx rax, al
         ; 3:5 print i64
         sub rsp, 8
-          mov rcx, rbx
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -55,29 +55,29 @@ start:
         ; for iteration
         ; 2:32 read var i
         lea rcx, [var0]
-        mov bl, [rcx]
+        mov al, [rcx]
         ; 2:36 int lit 1
         mov cl, 1
         ; 2:34 add
-        add bl, cl
+        add al, cl
         ; 2:28 var i
         lea rcx, [var0]
         ; 2:30 assign
-        mov [rcx], bl
+        mov [rcx], al
         jmp @for_1
 @for_1_end:
         ; 6:11 int lit 260
         mov cx, 260
         ; 6:3 assign v
-        lea rbx, [var1]
-        mov [rbx], cx
+        lea rax, [var1]
+        mov [rax], cx
         ; 7:13 read var v
         lea rcx, [var1]
-        mov bx, [rcx]
-        movzx rbx, bl
+        mov ax, [rcx]
+        movzx rax, al
         ; 7:3 print i64
         sub rsp, 8
-          mov rcx, rbx
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit

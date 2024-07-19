@@ -41,14 +41,14 @@ start:
         mov bl, [rcx]
         ; 4:8 >
         cmp al, bl
-        setg al
-        and al, 0xFF
+        setg cl
+        and cl, 0xFF
         ; if-condition
-        or al, al
+        or cl, cl
         jz @else_1
         ; 5:9 read var a
-        lea rcx, [var0]
-        mov bl, [rcx]
+        lea rax, [var0]
+        mov bl, [rax]
         movzx rbx, bl
         ; 5:3 print i64
         sub rsp, 8
@@ -60,8 +60,8 @@ start:
         jmp @endif_1
 @else_1:
         ; 8:9 read var b
-        lea rcx, [var1]
-        mov bl, [rcx]
+        lea rax, [var1]
+        mov bl, [rax]
         movzx rbx, bl
         ; 8:3 print i64
         sub rsp, 8

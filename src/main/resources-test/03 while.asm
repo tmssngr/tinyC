@@ -36,33 +36,33 @@ start:
         mov cl, 0
         ; 3:11 >
         cmp al, cl
-        setg al
-        and al, 0xFF
+        setg bl
+        and bl, 0xFF
         ; while-condition
-        or al, al
+        or bl, bl
         jz @while_1_end
         ; 4:9 read var i
         lea rcx, [var0]
-        mov bl, [rcx]
-        movzx rbx, bl
+        mov al, [rcx]
+        movzx rax, al
         ; 4:3 print i64
         sub rsp, 8
-          mov rcx, rbx
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 5:7 read var i
         lea rcx, [var0]
-        mov bl, [rcx]
+        mov al, [rcx]
         ; 5:11 int lit 1
         mov cl, 1
         ; 5:9 sub
-        sub bl, cl
+        sub al, cl
         ; 5:3 var i
         lea rcx, [var0]
         ; 5:5 assign
-        mov [rcx], bl
+        mov [rcx], al
         jmp @while_1
 @while_1_end:
         ; 8:2 while true
