@@ -51,8 +51,8 @@ public class Parser {
 						consume(TokenType.COMMA);
 					}
 				}
-				final Statement statement = getStatementNotNull();
-				functions.add(new Function(name, typeString, args, statement, location));
+				final List<Statement> statements = getStatements();
+				functions.add(new Function(name, typeString, args, statements, location));
 				continue;
 			}
 
@@ -76,6 +76,13 @@ public class Parser {
 			throw new SyntaxException("Expected method or global variable declaration", location);
 		}
 		return new Program(globalVars, functions, List.of(), List.of());
+	}
+
+	private List<Statement> getStatements() {
+		final Statement statement = getStatementNotNull();
+		return statement instanceof StmtCompound c
+				? c.statements()
+				: List.of(statement);
 	}
 
 	@Nullable
@@ -222,12 +229,12 @@ public class Parser {
 		final Location location = getLocation();
 		consume(TokenType.IF);
 		final Expression condition = getExpressionInParenthesis();
-		final Statement thenStatement = getStatementNotNull();
-		Statement elseStatements = null;
+		final List<Statement> thenStatements = getStatements();
+		List<Statement> elseStatements = List.of();
 		if (isConsume(TokenType.ELSE)) {
-			elseStatements = getStatementNotNull();
+			elseStatements = getStatements();
 		}
-		return new StmtIf(condition, thenStatement, elseStatements, location);
+		return new StmtIf(condition, thenStatements, elseStatements, location);
 	}
 
 	@NotNull
@@ -247,12 +254,12 @@ public class Parser {
 		}
 		final List<Statement> iterate = getCommaSeparatedSimpleStatements();
 		consume(TokenType.R_PAREN);
-		final Statement body = getStatementNotNull();
+		final List<Statement> bodyStatements = getStatements();
 		if (initialization.isEmpty()) {
-			return new StmtLoop(condition, body, iterate, location);
+			return new StmtLoop(condition, bodyStatements, iterate, location);
 		}
 
-		initialization.add(new StmtLoop(condition, body, iterate, location));
+		initialization.add(new StmtLoop(condition, bodyStatements, iterate, location));
 		return new StmtCompound(initialization);
 	}
 
@@ -278,8 +285,8 @@ public class Parser {
 		final Location location = getLocation();
 		consume(TokenType.WHILE);
 		final Expression condition = getExpressionInParenthesis();
-		final Statement bodyStatement = getStatementNotNull();
-		return new StmtLoop(condition, bodyStatement, List.of(), location);
+		final List<Statement> bodyStatements = getStatements();
+		return new StmtLoop(condition, bodyStatements, List.of(), location);
 	}
 
 	@NotNull

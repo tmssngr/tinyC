@@ -80,7 +80,7 @@ public final class TypeChecker {
 			argTypes.add(argType);
 		}
 		globalSymbols.put(name, new Symbol.Func(returnType, argTypes, location));
-		return new Function(name, function.typeString(), returnType, args, List.of(), function.statement(), location);
+		return new Function(name, function.typeString(), returnType, args, List.of(), function.statements(), location);
 	}
 
 	@NotNull
@@ -98,14 +98,13 @@ public final class TypeChecker {
 		expectedReturnType = function.returnType();
 		localVariables = new LocalVariables();
 		try {
-			final Statement statement = processStatement(function.statement());
-			final StmtCompound compound = statement instanceof StmtCompound c ? c : new StmtCompound(List.of(statement));
+			final List<Statement> statements = processStatements(function.statements());
 			if (expectedReturnType != Type.VOID) {
-				if (!(Utils.getLastOrNull(compound.statements()) instanceof StmtReturn)) {
+				if (!(Utils.getLastOrNull(statements) instanceof StmtReturn)) {
 					throw new SyntaxException(Messages.functionMustReturnType(expectedReturnType), function.location());
 				}
 			}
-			return new Function(function.name(), function.typeString(), function.returnType(), function.args(), localVariables.getList(), statement, function.location());
+			return new Function(function.name(), function.typeString(), function.returnType(), function.args(), localVariables.getList(), statements, function.location());
 		}
 		finally {
 			localVariables = null;
@@ -165,12 +164,9 @@ public final class TypeChecker {
 	@NotNull
 	private StmtIf processIf(StmtIf ifStmt) {
 		final Expression condition = checkBooleanCondition(ifStmt.condition(), ifStmt.location());
-		final Statement thenStatement = processStatement(ifStmt.thenStatement());
-		Statement elseStatement = ifStmt.elseStatement();
-		if (elseStatement != null) {
-			elseStatement = processStatement(elseStatement);
-		}
-		return new StmtIf(condition, thenStatement, elseStatement, ifStmt.location());
+		final List<Statement> thenStatements = processStatements(ifStmt.thenStatements());
+		final List<Statement> elseStatements = processStatements(ifStmt.elseStatements());
+		return new StmtIf(condition, thenStatements, elseStatements, ifStmt.location());
 	}
 
 	@NotNull
@@ -179,8 +175,8 @@ public final class TypeChecker {
 
 		final List<Statement> iteration = processStatements(forStmt.iteration());
 
-		final Statement bodyStatement = processStatement(forStmt.bodyStatement());
-		return new StmtLoop(condition, bodyStatement, iteration, forStmt.location());
+		final List<Statement> bodyStatements = processStatements(forStmt.bodyStatements());
+		return new StmtLoop(condition, bodyStatements, iteration, forStmt.location());
 	}
 
 	@NotNull
