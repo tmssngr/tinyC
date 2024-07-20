@@ -33,7 +33,7 @@ public class Parser {
 	@NotNull
 	public Program parse() {
 		final List<Function> functions = new ArrayList<>();
-		final List<StmtDeclaration> globalVars = new ArrayList<>();
+		final List<Statement> globalVars = new ArrayList<>();
 		while (token != TokenType.EOF) {
 			final Location location = getLocation();
 			final String type = consumeIdentifier();

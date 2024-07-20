@@ -214,6 +214,29 @@ public class TypeCheckerTest {
 	}
 
 	@Test
+	public void testFlattenNestedCompounds() {
+		assertEquals(new Program(List.of(),
+		                         List.of(
+				                         new Function("main", "void", Type.VOID, List.of(), List.of(),
+				                                      List.of(
+						                                      new StmtExpr(new ExprFuncCall("print", Type.VOID,
+						                                                                    List.of(
+								                                                                    new ExprIntLiteral(1, Type.I64, loc(2, 10))
+						                                                                    ),
+						                                                                    loc(2, 4)))
+				                                      ), loc(0, 0))),
+		                         List.of(),
+		                         List.of()),
+		             checkType("""
+				                       void main() {
+				                         {
+				                           print(1);
+				                         }
+				                       }
+				                       """));
+	}
+
+	@Test
 	public void testLocalVars() {
 		assertEquals(new Program(List.of(),
 		                         List.of(

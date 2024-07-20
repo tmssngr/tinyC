@@ -39,7 +39,7 @@ public class IRGenerator {
 		return new IRProgram(functions, globalVars, stringLiterals);
 	}
 
-	private IRFunction convertFunction(Function function, List<StmtDeclaration> declarations, Variables variables) {
+	private IRFunction convertFunction(Function function, List<Statement> declarations, Variables variables) {
 		final String name = function.name();
 		instructions = new ArrayList<>();
 		try {
@@ -65,9 +65,9 @@ public class IRGenerator {
 		}
 	}
 
-	private void writeInit(List<StmtDeclaration> declarations, Variables variables) {
+	private void writeInit(List<Statement> declarations, Variables variables) {
 		boolean isFirst = true;
-		for (StmtDeclaration declaration : declarations) {
+		for (Statement declaration : declarations) {
 			if (declaration instanceof StmtVarDeclaration varDeclaration) {
 				if (isFirst) {
 					isFirst = false;

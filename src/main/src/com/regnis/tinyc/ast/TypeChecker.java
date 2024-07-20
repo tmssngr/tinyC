@@ -15,9 +15,9 @@ public final class TypeChecker {
 	private final List<Variable> globalVariables = new ArrayList<>();
 	private final Map<String, StringLiteral> stringLiteralMap = new HashMap<>();
 	private final List<StringLiteral> stringLiterals = new ArrayList<>();
-
 	private final Type pointerIntType;
 
+	private List<Statement> statements = List.of();
 	@Nullable private Type expectedReturnType;
 	@Nullable private LocalVariables localVariables;
 
@@ -30,29 +30,10 @@ public final class TypeChecker {
 
 	@NotNull
 	public Program check(@NotNull Program program) {
-		final List<StmtDeclaration> globalVars = processGlobalVars(program.globalVars());
+		final List<Statement> globalVars = processStatements(program.globalVars());
 		final List<Function> typedFunctions = determineFunctionDeclarationTypes(program.functions());
 		final List<Function> functions = determineStatementTypes(typedFunctions);
 		return new Program(globalVars, functions, globalVariables, stringLiterals);
-	}
-
-	@NotNull
-	private List<StmtDeclaration> processGlobalVars(List<StmtDeclaration> globalVars) {
-		final List<StmtDeclaration> declarations = new ArrayList<>();
-		for (StmtDeclaration declaration : globalVars) {
-			final StmtDeclaration newDeclaration = processGlobalVar(declaration);
-			declarations.add(newDeclaration);
-		}
-		return declarations;
-	}
-
-	@NotNull
-	private StmtDeclaration processGlobalVar(StmtDeclaration declaration) {
-		return switch (declaration) {
-			case StmtVarDeclaration var -> processVarDeclaration(var);
-			case StmtArrayDeclaration array -> processArrayDeclaration(array);
-			default -> throw new UnsupportedOperationException();
-		};
 	}
 
 	@NotNull
@@ -113,20 +94,52 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private Statement processStatement(Statement statement) {
-		return switch (statement) {
-			case StmtVarDeclaration declaration -> processVarDeclaration(declaration);
-			case StmtCompound compound -> processCompound(compound);
-			case StmtIf ifStatement -> processIf(ifStatement);
-			case StmtLoop forStatement -> processFor(forStatement);
-			case StmtReturn stmt -> processReturn(stmt.expression(), stmt.location());
-			case StmtExpr stmt -> new StmtExpr(processExpression(stmt.expression()));
-			default -> throw new IllegalStateException("Unexpected value: " + statement);
-		};
+	private List<Statement> processStatements(@NotNull List<Statement> statements) {
+		final List<Statement> prevStatements = this.statements;
+		try {
+			this.statements = new ArrayList<>();
+
+			for (Statement statement : statements) {
+				processStatement(statement);
+			}
+
+			return this.statements;
+		}
+		finally {
+			this.statements = prevStatements;
+		}
 	}
 
 	@NotNull
-	private StmtVarDeclaration processVarDeclaration(StmtVarDeclaration declaration) {
+	private List<Statement> processStatementsWithLocalScope(@NotNull List<Statement> statements) {
+		final LocalVariables prevLocalVariables = Objects.requireNonNull(this.localVariables);
+		this.localVariables = new LocalVariables(prevLocalVariables);
+		try {
+			return processStatements(statements);
+		}
+		finally {
+			this.localVariables = prevLocalVariables;
+		}
+	}
+
+	private void add(Statement statement) {
+		statements.add(statement);
+	}
+
+	private void processStatement(Statement statement) {
+		switch (statement) {
+		case StmtVarDeclaration declaration -> processVarDeclaration(declaration);
+		case StmtArrayDeclaration declaration -> processArrayDeclaration(declaration);
+		case StmtCompound compound -> processCompound(compound);
+		case StmtIf ifStatement -> processIf(ifStatement);
+		case StmtLoop forStatement -> processFor(forStatement);
+		case StmtReturn stmt -> processReturn(stmt.expression(), stmt.location());
+		case StmtExpr stmt -> add(new StmtExpr(processExpression(stmt.expression())));
+		default -> throw new IllegalStateException("Unexpected value: " + statement);
+		}
+	}
+
+	private void processVarDeclaration(StmtVarDeclaration declaration) {
 		final String varName = declaration.varName();
 		final Location location = declaration.location();
 		Expression expression = processExpression(declaration.expression());
@@ -134,49 +147,38 @@ public final class TypeChecker {
 		expression = autoCastTo(type, expression, location);
 
 		final Variable variable = addVariable(varName, type, 0, location);
-		return new StmtVarDeclaration(declaration.typeString(), varName, variable.index(), variable.scope(), type, expression, location);
+		add(new StmtVarDeclaration(declaration.typeString(), varName, variable.index(), variable.scope(), type, expression, location));
 	}
 
-	@NotNull
-	private StmtArrayDeclaration processArrayDeclaration(StmtArrayDeclaration declaration) {
+	private void processArrayDeclaration(StmtArrayDeclaration declaration) {
 		Utils.assertTrue(declaration.size() > 0);
 		final String varName = declaration.varName();
 		final Location location = declaration.location();
 		Type type = getType(declaration.typeString(), location);
 		type = Type.pointer(type);
 		final Variable variable = addVariable(varName, type, declaration.size(), location);
-		return new StmtArrayDeclaration(declaration.typeString(), varName, variable.index(), variable.scope(), type, declaration.size(), location);
+		add(new StmtArrayDeclaration(declaration.typeString(), varName, variable.index(), variable.scope(), type, declaration.size(), location));
 	}
 
-	@NotNull
-	private StmtCompound processCompound(StmtCompound compound) {
-		final LocalVariables prevLocalVariables = Objects.requireNonNull(localVariables);
-		localVariables = new LocalVariables(prevLocalVariables);
-		try {
-			final List<Statement> statements = processStatements(compound.statements());
-			return new StmtCompound(statements);
-		}
-		finally {
-			localVariables = prevLocalVariables;
-		}
+	private void processCompound(StmtCompound compound) {
+		final List<Statement> statements = processStatementsWithLocalScope(compound.statements());
+		this.statements.addAll(statements);
 	}
 
-	@NotNull
-	private StmtIf processIf(StmtIf ifStmt) {
+	private void processIf(StmtIf ifStmt) {
 		final Expression condition = checkBooleanCondition(ifStmt.condition(), ifStmt.location());
-		final List<Statement> thenStatements = processStatements(ifStmt.thenStatements());
-		final List<Statement> elseStatements = processStatements(ifStmt.elseStatements());
-		return new StmtIf(condition, thenStatements, elseStatements, ifStmt.location());
+		final List<Statement> thenStatements = processStatementsWithLocalScope(ifStmt.thenStatements());
+		final List<Statement> elseStatements = processStatementsWithLocalScope(ifStmt.elseStatements());
+		add(new StmtIf(condition, thenStatements, elseStatements, ifStmt.location()));
 	}
 
-	@NotNull
-	private StmtLoop processFor(StmtLoop forStmt) {
+	private void processFor(StmtLoop forStmt) {
 		final Expression condition = checkBooleanCondition(forStmt.condition(), forStmt.location());
 
 		final List<Statement> iteration = processStatements(forStmt.iteration());
 
-		final List<Statement> bodyStatements = processStatements(forStmt.bodyStatements());
-		return new StmtLoop(condition, bodyStatements, iteration, forStmt.location());
+		final List<Statement> bodyStatements = processStatementsWithLocalScope(forStmt.bodyStatements());
+		add(new StmtLoop(condition, bodyStatements, iteration, forStmt.location()));
 	}
 
 	@NotNull
@@ -188,18 +190,7 @@ public final class TypeChecker {
 		return condition;
 	}
 
-	@NotNull
-	private List<Statement> processStatements(@NotNull List<Statement> statements) {
-		final List<Statement> newStatements = new ArrayList<>();
-		for (Statement statement : statements) {
-			final Statement newStatement = processStatement(statement);
-			newStatements.add(newStatement);
-		}
-		return newStatements;
-	}
-
-	@NotNull
-	private StmtReturn processReturn(@Nullable Expression expression, Location location) {
+	private void processReturn(@Nullable Expression expression, Location location) {
 		final Type expectedReturnType = Objects.requireNonNull(this.expectedReturnType);
 		if (expression == null) {
 			if (expectedReturnType != Type.VOID) {
@@ -213,7 +204,7 @@ public final class TypeChecker {
 			expression = processExpression(expression);
 			expression = autoCastTo(expectedReturnType, expression, location);
 		}
-		return new StmtReturn(expression, location);
+		add(new StmtReturn(expression, location));
 	}
 
 	@NotNull
