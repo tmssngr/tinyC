@@ -140,13 +140,13 @@ public class TypeCheckerTest {
 	@Test
 	public void testArrays() {
 		assertEquals(new Program(List.of(
-				             new StmtArrayDeclaration("u8", Type.pointer(Type.U8), "array", 2,
+				             new StmtArrayDeclaration("u8", "array", Type.pointer(Type.U8), 2,
 				                                      loc(0, 0))
 		             ),
 		                         List.of(
 				                         new Function("main", "void", Type.VOID, List.of(),
 				                                      new StmtCompound(List.of(
-						                                      new StmtVarDeclaration("u8", Type.U8, "first",
+						                                      new StmtVarDeclaration("u8", "first", Type.U8,
 						                                                             new ExprVarAccess("array",
 						                                                                               Type.U8,
 						                                                                               new ExprIntLiteral(0, Type.I64, loc(2, 19)),
@@ -168,13 +168,13 @@ public class TypeCheckerTest {
 						                                                                                    loc(4, 2)),
 						                                                                  new ExprVarAccess("first", Type.U8, null, loc(4, 13)),
 						                                                                  loc(4, 11))),
-						                                      new StmtVarDeclaration("u8*", Type.pointer(Type.U8), "second",
+						                                      new StmtVarDeclaration("u8*", "second", Type.pointer(Type.U8),
 						                                                             new ExprAddrOf("array",
 						                                                                            Type.pointer(Type.U8),
 						                                                                            new ExprIntLiteral(1, Type.I64, loc(5, 22)),
 						                                                                            loc(5, 15)),
 						                                                             loc(5, 2)),
-						                                      new StmtVarDeclaration("u8", Type.U8, "s",
+						                                      new StmtVarDeclaration("u8", "s", Type.U8,
 						                                                             new ExprVarAccess("second", Type.U8,
 						                                                                               new ExprIntLiteral(0, Type.I64, loc(6, 16)),
 						                                                                               loc(6, 9)),
