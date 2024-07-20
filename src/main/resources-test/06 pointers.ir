@@ -1,0 +1,69 @@
+@main:
+ Local variables
+   0: a
+   1: b
+   2: c
+   3: d
+        ; 2:10 int lit 10
+        ld r0, 10 (2)
+        ; 2:2 assign a(%0)
+        addrOf r1, [0@function]
+        store [r1], r0 (2)
+        ; 3:8 read var a(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (2)
+        cast r0 (i64), r1 (i16)
+        ; 3:2 print i64
+        printint r0
+        ; 4:11 address of var a(%0)
+        addrOf r0, [0@function]
+        ; 4:2 assign b(%1)
+        addrOf r1, [1@function]
+        store [r1], r0 (8)
+        ; 5:11 read var b(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (8)
+        ; 5:10 deref
+        load r0, [r1] (2)
+        ; 5:15 int lit 1
+        ld r1, 1 (1)
+        cast r2 (i16), r1 (u8)
+        ; 5:13 sub
+        binary- r0, r2 (2)
+        ; 5:2 assign c(%2)
+        addrOf r1, [2@function]
+        store [r1], r0 (2)
+        ; 6:8 read var c(%2)
+        addrOf r0, [2@function]
+        load r1, [r0] (2)
+        cast r0 (i64), r1 (i16)
+        ; 6:2 print i64
+        printint r0
+        ; 7:11 address of var c(%2)
+        addrOf r0, [2@function]
+        ; 7:2 assign d(%3)
+        addrOf r1, [3@function]
+        store [r1], r0 (8)
+        ; 8:8 read var d(%3)
+        addrOf r0, [3@function]
+        load r1, [r0] (8)
+        ; 8:7 deref
+        load r0, [r1] (2)
+        ; 8:12 int lit 1
+        ld r1, 1 (1)
+        cast r2 (i16), r1 (u8)
+        ; 8:10 sub
+        binary- r0, r2 (2)
+        ; 8:3 read var d(%3)
+        addrOf r1, [3@function]
+        load r2, [r1] (8)
+        ; 8:5 assign
+        store [r2], r0 (2)
+        ; 9:8 read var c(%2)
+        addrOf r0, [2@function]
+        load r1, [r0] (2)
+        cast r0 (i64), r1 (i16)
+        ; 9:2 print i64
+        printint r0
+@main_ret:
+

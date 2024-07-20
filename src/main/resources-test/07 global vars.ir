@@ -1,0 +1,48 @@
+@main:
+        ; begin initialize global variables
+        ; 1:13 int lit 32
+        ld r0, 32 (2)
+        ; 1:1 assign space($0)
+        addrOf r1, [0@global]
+        store [r1], r0 (2)
+        ; 2:12 int lit 63
+        ld r0, 63 (2)
+        ; 2:1 assign next($1)
+        addrOf r1, [1@global]
+        store [r1], r0 (2)
+        ; 3:19 address of var space($0)
+        addrOf r0, [0@global]
+        ; 3:1 assign ptrToSpace($2)
+        addrOf r1, [2@global]
+        store [r1], r0 (8)
+        ; end initialize global variables
+        ; 6:15 read var ptrToSpace($2)
+        addrOf r0, [2@global]
+        load r1, [r0] (8)
+        ; 6:28 int lit 1
+        ld r0, 1 (8)
+        ; 6:28 int lit 2
+        ld r2, 2 (8)
+        ; 6:28 multiply
+        binary* r0, r2 (8)
+        ; 6:26 add
+        binary+ r1, r0 (8)
+        ; 6:2 var ptrToSpace($2)
+        addrOf r0, [2@global]
+        ; 6:13 assign
+        store [r0], r1 (8)
+        ; 7:9 read var ptrToSpace($2)
+        addrOf r0, [2@global]
+        load r1, [r0] (8)
+        ; 7:8 deref
+        load r0, [r1] (2)
+        cast r1 (i64), r0 (i16)
+        ; 7:2 print i64
+        printint r1
+@main_ret:
+
+Global variables
+  0: space (2)
+  1: next (2)
+  2: ptrToSpace (8)
+

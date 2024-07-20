@@ -1,0 +1,32 @@
+@main:
+ Local variables
+   0: a
+        ; 2:9 int lit 10
+        ld r0, 10 (1)
+        ; 2:2 assign a(%0)
+        addrOf r1, [0@function]
+        store [r1], r0 (1)
+        ; 3:8 read var a(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        ; 3:2 print i64
+        printint r0
+@main_ret:
+
+@foo:
+ Local variables
+   0: a
+        ; 7:9 int lit 20
+        ld r0, 20 (1)
+        ; 7:2 assign a(%0)
+        addrOf r1, [0@function]
+        store [r1], r0 (1)
+        ; 8:8 read var a(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        ; 8:2 print i64
+        printint r0
+@foo_ret:
+

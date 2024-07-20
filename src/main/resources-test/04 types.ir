@@ -1,0 +1,53 @@
+@main:
+ Local variables
+   0: i
+   1: v
+        ; 2:15 int lit 250
+        ld r0, 250 (1)
+        ; 2:8 assign i(%0)
+        addrOf r1, [0@function]
+        store [r1], r0 (1)
+        ; 2:3 for i != 2
+@for_1:
+        ; 2:20 read var i(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (1)
+        ; 2:25 int lit 2
+        ld r0, 2 (1)
+        ; 2:22 !=
+        cmp r2, (r1 != r0) (u8)
+        ; for-condition
+        branch-false r2, @for_1_end
+        ; 3:11 read var i(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        ; 3:5 print i64
+        printint r0
+        ; for iteration
+        ; 2:32 read var i(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (1)
+        ; 2:36 int lit 1
+        ld r0, 1 (1)
+        ; 2:34 add
+        binary+ r1, r0 (1)
+        ; 2:28 var i(%0)
+        addrOf r0, [0@function]
+        ; 2:30 assign
+        store [r0], r1 (1)
+        jmp @for_1
+@for_1_end:
+        ; 6:11 int lit 260
+        ld r0, 260 (2)
+        ; 6:3 assign v(%1)
+        addrOf r1, [1@function]
+        store [r1], r0 (2)
+        ; 7:13 read var v(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (2)
+        cast r0 (i64), r1 (u8)
+        ; 7:3 print i64
+        printint r0
+@main_ret:
+

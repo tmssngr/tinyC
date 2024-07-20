@@ -1,0 +1,314 @@
+@main:
+        ; 2:14 string literal string_0
+        load r0, stringlit-0
+        ; 2:2 print u8*
+        printStringZero r0
+        ; 3:8 int lit 0
+        ld r0, 0 (1)
+        ; 3:12 int lit 0
+        ld r1, 0 (1)
+        ; 3:10 and
+        binary& r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 3:2 print i64
+        printint r1
+        ; 4:8 int lit 0
+        ld r0, 0 (1)
+        ; 4:12 int lit 1
+        ld r1, 1 (1)
+        ; 4:10 and
+        binary& r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 4:2 print i64
+        printint r1
+        ; 5:8 int lit 1
+        ld r0, 1 (1)
+        ; 5:12 int lit 0
+        ld r1, 0 (1)
+        ; 5:10 and
+        binary& r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 5:2 print i64
+        printint r1
+        ; 6:8 int lit 1
+        ld r0, 1 (1)
+        ; 6:12 int lit 1
+        ld r1, 1 (1)
+        ; 6:10 and
+        binary& r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 6:2 print i64
+        printint r1
+        ; 7:14 string literal string_1
+        load r0, stringlit-1
+        ; 7:2 print u8*
+        printStringZero r0
+        ; 8:8 int lit 0
+        ld r0, 0 (1)
+        ; 8:12 int lit 0
+        ld r1, 0 (1)
+        ; 8:10 or
+        binary| r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 8:2 print i64
+        printint r1
+        ; 9:8 int lit 0
+        ld r0, 0 (1)
+        ; 9:12 int lit 1
+        ld r1, 1 (1)
+        ; 9:10 or
+        binary| r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 9:2 print i64
+        printint r1
+        ; 10:8 int lit 1
+        ld r0, 1 (1)
+        ; 10:12 int lit 0
+        ld r1, 0 (1)
+        ; 10:10 or
+        binary| r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 10:2 print i64
+        printint r1
+        ; 11:8 int lit 1
+        ld r0, 1 (1)
+        ; 11:12 int lit 1
+        ld r1, 1 (1)
+        ; 11:10 or
+        binary| r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 11:2 print i64
+        printint r1
+        ; 12:14 string literal string_2
+        load r0, stringlit-2
+        ; 12:2 print u8*
+        printStringZero r0
+        ; 13:8 int lit 0
+        ld r0, 0 (1)
+        ; 13:12 int lit 0
+        ld r1, 0 (1)
+        ; 13:10 xor
+        binary^ r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 13:2 print i64
+        printint r1
+        ; 14:8 int lit 0
+        ld r0, 0 (1)
+        ; 14:12 int lit 2
+        ld r1, 2 (1)
+        ; 14:10 xor
+        binary^ r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 14:2 print i64
+        printint r1
+        ; 15:8 int lit 1
+        ld r0, 1 (1)
+        ; 15:12 int lit 0
+        ld r1, 0 (1)
+        ; 15:10 xor
+        binary^ r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 15:2 print i64
+        printint r1
+        ; 16:8 int lit 1
+        ld r0, 1 (1)
+        ; 16:12 int lit 2
+        ld r1, 2 (1)
+        ; 16:10 xor
+        binary^ r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 16:2 print i64
+        printint r1
+        ; 17:14 string literal string_3
+        load r0, stringlit-3
+        ; 17:2 print u8*
+        printStringZero r0
+        ; 18:14 logic and
+        ; 18:8 bool lit false
+        ld r0, 0 (1)
+        branch-false r0, @and_next_1
+        ; 18:17 bool lit false
+        ld r1, 0 (1)
+        ld r0, r1
+@and_next_1:
+        cast r1 (i64), r0 (bool)
+        ; 18:2 print i64
+        printint r1
+        ; 19:14 logic and
+        ; 19:8 bool lit false
+        ld r0, 0 (1)
+        branch-false r0, @and_next_2
+        ; 19:17 bool lit true
+        ld r1, 1 (1)
+        ld r0, r1
+@and_next_2:
+        cast r1 (i64), r0 (bool)
+        ; 19:2 print i64
+        printint r1
+        ; 20:13 logic and
+        ; 20:8 bool lit true
+        ld r0, 1 (1)
+        branch-false r0, @and_next_3
+        ; 20:16 bool lit false
+        ld r1, 0 (1)
+        ld r0, r1
+@and_next_3:
+        cast r1 (i64), r0 (bool)
+        ; 20:2 print i64
+        printint r1
+        ; 21:13 logic and
+        ; 21:8 bool lit true
+        ld r0, 1 (1)
+        branch-false r0, @and_next_4
+        ; 21:16 bool lit true
+        ld r1, 1 (1)
+        ld r0, r1
+@and_next_4:
+        cast r1 (i64), r0 (bool)
+        ; 21:2 print i64
+        printint r1
+        ; 22:14 string literal string_4
+        load r0, stringlit-4
+        ; 22:2 print u8*
+        printStringZero r0
+        ; 23:14 logic or
+        ; 23:8 bool lit false
+        ld r0, 0 (1)
+        branch-true r0, @or_next_5
+        ; 23:17 bool lit false
+        ld r1, 0 (1)
+        ld r0, r1
+@or_next_5:
+        cast r1 (i64), r0 (bool)
+        ; 23:2 print i64
+        printint r1
+        ; 24:14 logic or
+        ; 24:8 bool lit false
+        ld r0, 0 (1)
+        branch-true r0, @or_next_6
+        ; 24:17 bool lit true
+        ld r1, 1 (1)
+        ld r0, r1
+@or_next_6:
+        cast r1 (i64), r0 (bool)
+        ; 24:2 print i64
+        printint r1
+        ; 25:13 logic or
+        ; 25:8 bool lit true
+        ld r0, 1 (1)
+        branch-true r0, @or_next_7
+        ; 25:16 bool lit false
+        ld r1, 0 (1)
+        ld r0, r1
+@or_next_7:
+        cast r1 (i64), r0 (bool)
+        ; 25:2 print i64
+        printint r1
+        ; 26:13 logic or
+        ; 26:8 bool lit true
+        ld r0, 1 (1)
+        branch-true r0, @or_next_8
+        ; 26:16 bool lit true
+        ld r1, 1 (1)
+        ld r0, r1
+@or_next_8:
+        cast r1 (i64), r0 (bool)
+        ; 26:2 print i64
+        printint r1
+        ; 27:14 string literal string_5
+        load r0, stringlit-5
+        ; 27:2 print u8*
+        printStringZero r0
+        ; 28:9 bool lit false
+        ld r0, 0 (1)
+        ; 28:8 not
+        notLog r0 (1)
+        cast r1 (i64), r0 (bool)
+        ; 28:2 print i64
+        printint r1
+        ; 29:9 bool lit true
+        ld r0, 1 (1)
+        ; 29:8 not
+        notLog r0 (1)
+        cast r1 (i64), r0 (bool)
+        ; 29:2 print i64
+        printint r1
+        ; 30:14 string literal string_6
+        load r0, stringlit-6
+        ; 30:2 print u8*
+        printStringZero r0
+        ; 31:8 int lit 10
+        ld r0, 10 (1)
+        ; 31:17 int lit 6
+        ld r1, 6 (1)
+        ; 31:15 and
+        binary& r0, r1 (1)
+        ; 31:26 int lit 1
+        ld r1, 1 (1)
+        ; 31:24 or
+        binary| r0, r1 (1)
+        cast r1 (i64), r0 (u8)
+        ; 31:2 print i64
+        printint r1
+        ; 32:15 logic or
+        ; 32:8 int lit 1
+        ld r0, 1 (1)
+        ; 32:13 int lit 2
+        ld r1, 2 (1)
+        ; 32:10 ==
+        cmp r2, (r0 == r1) (u8)
+        branch-true r2, @or_next_9
+        ; 32:18 int lit 2
+        ld r0, 2 (1)
+        ; 32:22 int lit 3
+        ld r1, 3 (1)
+        ; 32:20 <
+        cmp r3, (r0 < r1) (u8)
+        ld r2, r3
+@or_next_9:
+        cast r0 (i64), r2 (bool)
+        ; 32:2 print i64
+        printint r0
+        ; 33:15 logic and
+        ; 33:8 int lit 1
+        ld r0, 1 (1)
+        ; 33:13 int lit 2
+        ld r1, 2 (1)
+        ; 33:10 ==
+        cmp r2, (r0 == r1) (u8)
+        branch-false r2, @and_next_10
+        ; 33:18 int lit 2
+        ld r0, 2 (1)
+        ; 33:22 int lit 3
+        ld r1, 3 (1)
+        ; 33:20 <
+        cmp r3, (r0 < r1) (u8)
+        ld r2, r3
+@and_next_10:
+        cast r0 (i64), r2 (bool)
+        ; 33:2 print i64
+        printint r0
+        ; 34:9 int lit 1
+        ld r0, 1 (2)
+        ; 34:8 neg
+        neg r0 (2)
+        cast r1 (i64), r0 (i16)
+        ; 34:2 print i64
+        printint r1
+        ; 35:9 int lit 1
+        ld r0, 1 (1)
+        ; 35:8 com
+        not r0 (1)
+        cast r1 (i64), r0 (u8)
+        ; 35:2 print i64
+        printint r1
+@main_ret:
+
+String literals
+  string lit 0 "Bit-&:\n\0"
+  string lit 1 "\nBit-|:\n\0"
+  string lit 2 "\nBit-^:\n\0"
+  string lit 3 "\nLogic-&&:\n\0"
+  string lit 4 "\nLogic-||:\n\0"
+  string lit 5 "\nLogic-!:\n\0"
+  string lit 6 "\nmisc:\n\0"
