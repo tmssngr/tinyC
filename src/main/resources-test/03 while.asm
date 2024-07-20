@@ -44,10 +44,9 @@ start:
         ; 4:9 read var i
         lea rcx, [var0]
         mov al, [rcx]
-        movzx rax, al
+        movzx rcx, al
         ; 4:3 print i64
         sub rsp, 8
-          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit

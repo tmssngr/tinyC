@@ -30,10 +30,9 @@ start:
         ; 3:8 read var a
         lea rcx, [var0]
         mov ax, [rcx]
-        movzx rax, ax
+        movzx rcx, ax
         ; 3:2 print i64
         sub rsp, 8
-          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -50,19 +49,18 @@ start:
         mov cx, [rax]
         ; 5:15 int lit 1
         mov al, 1
-        movzx ax, al
+        movzx bx, al
         ; 5:13 sub
-        sub cx, ax
+        sub cx, bx
         ; 5:2 assign c
         lea rax, [var2]
         mov [rax], cx
         ; 6:8 read var c
         lea rcx, [var2]
         mov ax, [rcx]
-        movzx rax, ax
+        movzx rcx, ax
         ; 6:2 print i64
         sub rsp, 8
-          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -79,9 +77,9 @@ start:
         mov cx, [rax]
         ; 8:12 int lit 1
         mov al, 1
-        movzx ax, al
+        movzx bx, al
         ; 8:10 sub
-        sub cx, ax
+        sub cx, bx
         ; 8:3 read var d
         lea rax, [var3]
         mov rbx, [rax]
@@ -90,10 +88,9 @@ start:
         ; 9:8 read var c
         lea rcx, [var2]
         mov ax, [rcx]
-        movzx rax, ax
+        movzx rcx, ax
         ; 9:2 print i64
         sub rsp, 8
-          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit

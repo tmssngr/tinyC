@@ -42,9 +42,10 @@ start:
         mov rax, [rcx]
         ; 7:8 deref
         mov cx, [rax]
-        movzx rcx, cx
+        movzx rax, cx
         ; 7:2 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit

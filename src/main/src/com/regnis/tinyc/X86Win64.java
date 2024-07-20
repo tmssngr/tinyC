@@ -333,7 +333,10 @@ public class X86Win64 {
 				final int exprSize = getTypeSize(expression.typeNotNull());
 				final int size = getTypeSize(cast.typeNotNull());
 				if (size > exprSize) {
-					writeIndented("movzx " + getRegName(reg, size) + ", " + getRegName(reg, exprSize));
+					final int targetReg = getFreeReg();
+					writeIndented("movzx " + getRegName(targetReg, size) + ", " + getRegName(reg, exprSize));
+					freeReg(reg);
+					yield targetReg;
 				}
 				yield reg;
 			}

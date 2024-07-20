@@ -40,10 +40,10 @@ start:
         imul rax, rbx
         ; 2:21 add
         add cl, al
-        movzx cx, cl
+        movzx ax, cl
         ; 2:5 assign foo
-        lea rax, [var0]
-        mov [rax], cx
+        lea rcx, [var0]
+        mov [rcx], ax
         ; 3:15 read var foo
         lea rcx, [var0]
         mov ax, [rcx]
@@ -71,10 +71,9 @@ start:
         mov bx, [rcx]
         ; 5:15 add
         add ax, bx
-        movzx rax, ax
+        movzx rcx, ax
         ; 5:5 print i64
         sub rsp, 8
-          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -95,18 +94,17 @@ start:
         movsx rcx, cl
         movsx rax, al
         imul rcx, rax
-        movzx cx, cl
+        movzx ax, cl
         ; 6:5 var foo
-        lea rax, [var0]
+        lea rcx, [var0]
         ; 6:9 assign
-        mov [rax], cx
+        mov [rcx], ax
         ; 7:11 read var foo
         lea rcx, [var0]
         mov ax, [rcx]
-        movzx rax, ax
+        movzx rcx, ax
         ; 7:5 print i64
         sub rsp, 8
-          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit

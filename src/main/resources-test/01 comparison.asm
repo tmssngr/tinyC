@@ -30,10 +30,9 @@ start:
         cmp cl, al
         setl bl
         and bl, 0xFF
-        movzx rbx, bl
+        movzx rcx, bl
         ; 2:5 print i64
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -46,10 +45,9 @@ start:
         cmp cl, al
         setl bl
         and bl, 0xFF
-        movzx rbx, bl
+        movzx rcx, bl
         ; 3:5 print i64
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -62,10 +60,9 @@ start:
         cmp cl, al
         setle bl
         and bl, 0xFF
-        movzx rbx, bl
+        movzx rcx, bl
         ; 5:5 print i64
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -78,10 +75,9 @@ start:
         cmp cl, al
         setle bl
         and bl, 0xFF
-        movzx rbx, bl
+        movzx rcx, bl
         ; 6:5 print i64
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -94,10 +90,9 @@ start:
         cmp cl, al
         sete bl
         and bl, 0xFF
-        movzx rbx, bl
+        movzx rcx, bl
         ; 8:5 print i64
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -110,10 +105,9 @@ start:
         cmp cl, al
         setne bl
         and bl, 0xFF
-        movzx rbx, bl
+        movzx rcx, bl
         ; 10:5 print i64
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -126,10 +120,9 @@ start:
         cmp cl, al
         setge bl
         and bl, 0xFF
-        movzx rbx, bl
+        movzx rcx, bl
         ; 12:5 print i64
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -142,10 +135,9 @@ start:
         cmp cl, al
         setge bl
         and bl, 0xFF
-        movzx rbx, bl
+        movzx rcx, bl
         ; 13:5 print i64
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -158,10 +150,9 @@ start:
         cmp cl, al
         setg bl
         and bl, 0xFF
-        movzx rbx, bl
+        movzx rcx, bl
         ; 15:5 print i64
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -174,10 +165,9 @@ start:
         cmp cl, al
         setg bl
         and bl, 0xFF
-        movzx rbx, bl
+        movzx rcx, bl
         ; 16:5 print i64
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit

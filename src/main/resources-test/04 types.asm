@@ -44,10 +44,9 @@ start:
         ; 3:11 read var i
         lea rcx, [var0]
         mov al, [rcx]
-        movzx rax, al
+        movzx rcx, al
         ; 3:5 print i64
         sub rsp, 8
-          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -74,10 +73,9 @@ start:
         ; 7:13 read var v
         lea rcx, [var1]
         mov ax, [rcx]
-        movzx rax, al
+        movzx rcx, al
         ; 7:3 print i64
         sub rsp, 8
-          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit

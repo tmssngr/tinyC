@@ -75,12 +75,12 @@ start:
         mov bl, 1
         ; 7:10 add
         add al, bl
-        movzx rax, al
-        imul rax, 1
-        lea rbx, [var0]
-        add rbx, rax
+        movzx rbx, al
+        imul rbx, 1
+        lea rax, [var0]
+        add rax, rbx
         ; 7:14 assign
-        mov [rbx], cl
+        mov [rax], cl
         ; 8:15 array chars
         ; 8:21 int lit 2
         mov rcx, 2
@@ -94,10 +94,9 @@ start:
         ; 9:9 read var result
         lea rcx, [var2]
         mov al, [rcx]
-        movzx rax, al
+        movzx rcx, al
         ; 9:3 print i64
         sub rsp, 8
-          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
