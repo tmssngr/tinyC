@@ -132,7 +132,7 @@ public final class TypeChecker {
 		expression = autoCastTo(type, expression, location);
 
 		varName = addVariable(varName, type, 0, location);
-		return new StmtVarDeclaration(declaration.typeString(), type, varName, expression, location);
+		return new StmtVarDeclaration(declaration.typeString(), varName, type, expression, location);
 	}
 
 	@NotNull
@@ -143,7 +143,7 @@ public final class TypeChecker {
 		Type type = getType(declaration.typeString(), location);
 		type = Type.pointer(type);
 		varName = addVariable(varName, type, declaration.size(), location);
-		return new StmtArrayDeclaration(declaration.typeString(), type, varName, declaration.size(), location);
+		return new StmtArrayDeclaration(declaration.typeString(), varName, type, declaration.size(), location);
 	}
 
 	@NotNull
@@ -515,7 +515,7 @@ public final class TypeChecker {
 
 	private String addVariable(String varName, Type type, int arraySize, Location location) {
 		checkNoSymbolNamed(varName, location);
-		final Variable variable = new Variable(varName, type, globalVariables.size(), arraySize, location);
+		final Variable variable = new Variable(varName, globalVariables.size(), type, arraySize, location);
 		symbolMap.put(varName, variable);
 		globalVariables.add(variable);
 		return varName;
