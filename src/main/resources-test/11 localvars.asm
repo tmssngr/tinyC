@@ -25,49 +25,16 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 16
-        ; 4:14 read var text($0)
-        lea rcx, [var0]
-        mov rax, [rcx]
-        ; 4:2 print u8*
-        sub rsp, 8
-          mov rcx, rax
-          call __printStringZero
-        add rsp, 8
-        ; 5:2 call printLength
-        sub rsp, 8
-          call @printLength
-        add rsp, 8
-        ; 6:15 address of array text($0)[...]
-        ; 6:21 int lit 1
-        mov rcx, 1
-        imul rcx, 1
-        lea rbx, [var0]
-        mov rax, [rbx]
-        add rax, rcx
-        ; 6:2 assign second(%0)
-        lea rcx, [rsp+0]
-        mov [rcx], rax
-        ; 7:14 read var second(%0)
-        lea rcx, [rsp+0]
-        mov rax, [rcx]
-        ; 7:2 print u8*
-        sub rsp, 8
-          mov rcx, rax
-          call __printStringZero
-        add rsp, 8
-        ; 8:12 read var text($0)
-        lea rcx, [var0]
-        mov rax, [rcx]
-        ; 8:11 deref
-        mov cl, [rax]
-        ; 8:2 assign chr(%1)
-        lea rax, [rsp+8]
+        ; 2:9 int lit 10
+        mov cl, 10
+        ; 2:2 assign a(%0)
+        lea rax, [rsp+0]
         mov [rax], cl
-        ; 9:8 read var chr(%1)
-        lea rcx, [rsp+8]
+        ; 3:8 read var a(%0)
+        lea rcx, [rsp+0]
         mov al, [rcx]
         movzx rcx, al
-        ; 9:2 print i64
+        ; 3:2 print i64
         sub rsp, 8
           call __printUint
           mov rcx, 0x0a
@@ -77,74 +44,26 @@ start:
         ; release space for local variables
         add rsp, 16
         ret
-        ; void printLength
-@printLength:
+        ; void foo
+@foo:
         ; reserve space for local variables
         sub rsp, 16
-        ; 13:15 int lit 0
-        mov cx, 0
-        ; 13:2 assign length(%0)
+        ; 7:9 int lit 20
+        mov cl, 20
+        ; 7:2 assign a(%0)
         lea rax, [rsp+0]
-        mov [rax], cx
-        ; 14:17 read var text($0)
-        lea rcx, [var0]
-        mov rax, [rcx]
-        ; 14:7 assign ptr(%1)
-        lea rcx, [rsp+2]
-        mov [rcx], rax
-        ; 14:2 for *ptr != 0
-@for_1:
-        ; 14:24 read var ptr(%1)
-        lea rcx, [rsp+2]
-        mov rax, [rcx]
-        ; 14:23 deref
-        mov cl, [rax]
-        ; 14:31 int lit 0
-        mov al, 0
-        ; 14:28 !=
-        cmp cl, al
-        setne bl
-        and bl, 0xFF
-        ; for-condition
-        or bl, bl
-        jz @for_1_end
-        ; 15:12 read var length(%0)
+        mov [rax], cl
+        ; 8:8 read var a(%0)
         lea rcx, [rsp+0]
-        mov ax, [rcx]
-        ; 15:21 int lit 1
-        mov cl, 1
-        movzx dx, cl
-        ; 15:19 add
-        add ax, dx
-        ; 15:3 var length(%0)
-        lea rcx, [rsp+0]
-        ; 15:10 assign
-        mov [rcx], ax
-        ; for iteration
-        ; 14:40 read var ptr(%1)
-        lea rcx, [rsp+2]
-        mov rax, [rcx]
-        ; 14:46 int lit 1
-        mov rcx, 1
-        ; 14:44 add
-        add rax, rcx
-        ; 14:34 var ptr(%1)
-        lea rcx, [rsp+2]
-        ; 14:38 assign
-        mov [rcx], rax
-        jmp @for_1
-@for_1_end:
-        ; 17:8 read var length(%0)
-        lea rcx, [rsp+0]
-        mov ax, [rcx]
-        movzx rcx, ax
-        ; 17:2 print i64
+        mov al, [rcx]
+        movzx rcx, al
+        ; 8:2 print i64
         sub rsp, 8
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-@printLength_ret:
+@foo_ret:
         ; release space for local variables
         add rsp, 16
         ret
@@ -168,11 +87,6 @@ init:
           lea rcx, [hStdErr]
           mov qword [rcx], rax
         add rsp, 20h
-        ; 1:12 string literal string_0
-        lea rcx, [string_0]
-        ; 1:1 assign text($0)
-        lea rax, [var0]
-        mov [rax], rcx
         ret
 __emit:
         push rcx ; = sub rsp, 8
@@ -265,11 +179,6 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable text($0)
-        var0 rb 8
-
-section '.data' data readable
-        string_0 db 'hello world', 0x0a, 0x00
 
 section '.idata' import data readable writeable
 
