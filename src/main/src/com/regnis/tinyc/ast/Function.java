@@ -11,7 +11,7 @@ import org.jetbrains.annotations.*;
  */
 public record Function(@NotNull String name, @NotNull String typeString, @Nullable Type returnType, @NotNull List<Arg> args, @NotNull List<Variable> localVars, @NotNull Statement statement, @NotNull Location location) {
 
-	public Function(@NotNull String typeString, @NotNull String name, @NotNull List<Arg> args, @NotNull Statement statement, @NotNull Location location) {
+	public Function(@NotNull String name, @NotNull String typeString, @NotNull List<Arg> args, @NotNull Statement statement, @NotNull Location location) {
 		this(name, typeString, null, args, List.of(), statement, location);
 	}
 

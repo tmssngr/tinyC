@@ -347,7 +347,7 @@ public class ParserTest {
 	public void testFunctions() {
 		Assert.assertEquals(new Program(List.of(),
 		                                List.of(
-				                                new Function("void", "main", List.of(),
+				                                new Function("main", "void", List.of(),
 				                                             new StmtCompound(List.of(
 						                                             new StmtVarDeclaration("u8", "i", intLit(10, loc(1, 11)),
 						                                                                    loc(1, 4)),
@@ -355,7 +355,7 @@ public class ParserTest {
 						                                                       loc(2, 4))
 				                                             )),
 				                                             loc(0, 0)),
-				                                new Function("void", "fooBar", List.of(new Function.Arg("u8", "a", loc(4, 12))),
+				                                new Function("fooBar", "void", List.of(new Function.Arg("u8", "a", loc(4, 12))),
 				                                             new StmtCompound(List.of()),
 				                                             loc(4, 0))
 		                                ),
@@ -372,7 +372,7 @@ public class ParserTest {
 
 		assertEquals(new Program(List.of(),
 		                         List.of(
-				                         new Function("void", "main", List.of(),
+				                         new Function("main", "void", List.of(),
 				                                      new StmtCompound(List.of(
 						                                      new StmtVarDeclaration("u8", "i",
 						                                                             new ExprFuncCall("one", List.of(), loc(1, 11)),
@@ -388,7 +388,7 @@ public class ParserTest {
 						                                                loc(4, 4))
 				                                      )),
 				                                      loc(0, 0)),
-				                         new Function("u8", "one", List.of(),
+				                         new Function("one", "u8", List.of(),
 				                                      new StmtCompound(List.of(
 						                                      new StmtReturn(new ExprIntLiteral(1, loc(7, 10)),
 						                                                     loc(7, 3))
