@@ -7,7 +7,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record Program(@NotNull List<StmtDeclaration> globalVars,
+public record Program(@NotNull List<Statement> globalVars,
                       @NotNull List<Function> functions,
                       @NotNull List<Variable> globalVariables,
                       @NotNull List<StringLiteral> stringLiterals) {
