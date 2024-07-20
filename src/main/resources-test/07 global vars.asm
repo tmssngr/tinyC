@@ -25,18 +25,21 @@ start:
         ; begin initialize global variables
         ; 1:13 int lit 32
         mov cx, 32
-        ; 1:1 assign space($0)
+        ; 1:1 var space($0)
         lea rax, [var0]
+        ; 1:1 assign
         mov [rax], cx
         ; 2:12 int lit 63
         mov cx, 63
-        ; 2:1 assign next($1)
+        ; 2:1 var next($1)
         lea rax, [var1]
+        ; 2:1 assign
         mov [rax], cx
         ; 3:19 address of var space($0)
         lea rcx, [var0]
-        ; 3:1 assign ptrToSpace($2)
+        ; 3:1 var ptrToSpace($2)
         lea rax, [var2]
+        ; 3:1 assign
         mov [rax], rcx
         ; end initialize global variables
         ; 6:15 read var ptrToSpace($2)

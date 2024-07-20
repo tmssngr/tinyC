@@ -28,8 +28,9 @@ start:
         sub rsp, 8
           call @one
         add rsp, 8
-        ; 2:2 assign i(%0)
+        ; 2:2 var i(%0)
         lea rcx, [rsp+0]
+        ; 2:2 assign
         mov [rcx], al
         ; 3:10 read var i(%0)
         lea rcx, [rsp+0]

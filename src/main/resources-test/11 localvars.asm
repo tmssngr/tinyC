@@ -26,8 +26,9 @@ start:
         sub rsp, 16
         ; 2:9 int lit 10
         mov cl, 10
-        ; 2:2 assign a(%0)
+        ; 2:2 var a(%0)
         lea rax, [rsp+0]
+        ; 2:2 assign
         mov [rax], cl
         ; 3:8 read var a(%0)
         lea rcx, [rsp+0]
@@ -49,8 +50,9 @@ start:
         sub rsp, 16
         ; 7:9 int lit 20
         mov cl, 20
-        ; 7:2 assign a(%0)
+        ; 7:2 var a(%0)
         lea rax, [rsp+0]
+        ; 7:2 assign
         mov [rax], cl
         ; 8:8 read var a(%0)
         lea rcx, [rsp+0]

@@ -26,13 +26,15 @@ start:
         sub rsp, 16
         ; 2:9 int lit 1
         mov cl, 1
-        ; 2:2 assign a(%0)
+        ; 2:2 var a(%0)
         lea rax, [rsp+0]
+        ; 2:2 assign
         mov [rax], cl
         ; 3:9 int lit 2
         mov cl, 2
-        ; 3:2 assign b(%1)
+        ; 3:2 var b(%1)
         lea rax, [rsp+1]
+        ; 3:2 assign
         mov [rax], cl
         ; 4:2 if a > b
         ; 4:6 read var a(%0)

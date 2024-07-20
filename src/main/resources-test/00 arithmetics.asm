@@ -43,8 +43,9 @@ start:
         ; 2:21 add
         add cl, al
         movzx ax, cl
-        ; 2:5 assign foo(%0)
+        ; 2:5 var foo(%0)
         lea rcx, [rsp+0]
+        ; 2:5 assign
         mov [rcx], ax
         ; 3:15 read var foo(%0)
         lea rcx, [rsp+0]
@@ -56,8 +57,9 @@ start:
         movsx rax, ax
         movsx rbx, bx
         imul rax, rbx
-        ; 3:5 assign bar(%1)
+        ; 3:5 var bar(%1)
         lea rcx, [rsp+2]
+        ; 3:5 assign
         mov [rcx], ax
         ; 4:11 int lit 1
         mov cx, 1

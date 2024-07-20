@@ -26,8 +26,9 @@ start:
         sub rsp, 16
         ; 2:9 int lit 5
         mov cl, 5
-        ; 2:2 assign i(%0)
+        ; 2:2 var i(%0)
         lea rax, [rsp+0]
+        ; 2:2 assign
         mov [rax], cl
         ; 3:2 while i > 0
 @while_1:

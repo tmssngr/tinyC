@@ -147,7 +147,15 @@ public final class TypeChecker {
 		expression = autoCastTo(type, expression, location);
 
 		final Variable variable = addVariable(varName, type, 0, location);
-		add(new StmtVarDeclaration(declaration.typeString(), varName, variable.index(), variable.scope(), type, expression, location));
+		addAssignment(variable, expression, location);
+	}
+
+	private void addAssignment(Variable variable, Expression expression, Location location) {
+		add(new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
+		                                variable.type(),
+		                                new ExprVarAccess(variable.name(), variable.index(), variable.scope(), variable.type(), null, location),
+		                                expression,
+		                                location)));
 	}
 
 	private void processArrayDeclaration(StmtArrayDeclaration declaration) {
@@ -156,8 +164,7 @@ public final class TypeChecker {
 		final Location location = declaration.location();
 		Type type = getType(declaration.typeString(), location);
 		type = Type.pointer(type);
-		final Variable variable = addVariable(varName, type, declaration.size(), location);
-		add(new StmtArrayDeclaration(declaration.typeString(), varName, variable.index(), variable.scope(), type, declaration.size(), location));
+		addVariable(varName, type, declaration.size(), location);
 	}
 
 	private void processCompound(StmtCompound compound) {

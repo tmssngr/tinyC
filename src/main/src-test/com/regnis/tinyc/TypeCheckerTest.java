@@ -139,10 +139,7 @@ public class TypeCheckerTest {
 
 	@Test
 	public void testArrays() {
-		assertEquals(new Program(List.of(
-				             new StmtArrayDeclaration("u8", "array", 0, VariableScope.global, Type.pointer(Type.U8), 2,
-				                                      loc(0, 0))
-		             ),
+		assertEquals(new Program(List.of(),
 		                         List.of(
 				                         new Function("main", "void", Type.VOID, List.of(),
 				                                      List.of(
@@ -151,11 +148,11 @@ public class TypeCheckerTest {
 						                                      new Variable("s", 2, VariableScope.function, Type.U8, 0, loc(6, 2))
 				                                      ),
 				                                      List.of(
-						                                      declare("first", 0, VariableScope.function, Type.U8,
-						                                              new ExprVarAccess("array", 0, VariableScope.global, Type.U8,
+						                                      assign("first", 0, VariableScope.function, Type.U8,
+						                                             new ExprVarAccess("array", 0, VariableScope.global, Type.U8,
 						                                                               new ExprIntLiteral(0, Type.I64, loc(2, 19)),
 						                                                               loc(2, 13)),
-						                                              loc(2, 2)),
+						                                             loc(2, 2)),
 						                                      new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
 						                                                                  Type.U8,
 						                                                                  new ExprVarAccess("array", 0, VariableScope.global, Type.U8,
@@ -172,17 +169,17 @@ public class TypeCheckerTest {
 						                                                                                    loc(4, 2)),
 						                                                                  new ExprVarAccess("first", 0, VariableScope.function, Type.U8, null, loc(4, 13)),
 						                                                                  loc(4, 11))),
-						                                      declare("second", 1, VariableScope.function, Type.pointer(Type.U8),
-						                                              new ExprAddrOf("array",
+						                                      assign("second", 1, VariableScope.function, Type.pointer(Type.U8),
+						                                             new ExprAddrOf("array",
 						                                                            0, VariableScope.global, Type.pointer(Type.U8),
 						                                                            new ExprIntLiteral(1, Type.I64, loc(5, 22)),
 						                                                            loc(5, 15)),
-						                                              loc(5, 2)),
-						                                      declare("s", 2, VariableScope.function, Type.U8,
-						                                              new ExprVarAccess("second", 1, VariableScope.function, Type.U8,
+						                                             loc(5, 2)),
+						                                      assign("s", 2, VariableScope.function, Type.U8,
+						                                             new ExprVarAccess("second", 1, VariableScope.function, Type.U8,
 						                                                               new ExprIntLiteral(0, Type.I64, loc(6, 16)),
 						                                                               loc(6, 9)),
-						                                              loc(6, 2))
+						                                             loc(6, 2))
 				                                      ),
 				                                      loc(0, 0))
 		                         ),
@@ -246,11 +243,11 @@ public class TypeCheckerTest {
 				                         new Function("main", "void", Type.VOID, List.of(),
 				                                      List.of(new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(1, 2))),
 				                                      List.of(
-						                                      declare("a", 0, VariableScope.function, Type.U8,
-						                                              new ExprIntLiteral(10,
+						                                      assign("a", 0, VariableScope.function, Type.U8,
+						                                             new ExprIntLiteral(10,
 						                                                                Type.U8,
 						                                                                loc(1, 9)),
-						                                              loc(1, 2)),
+						                                             loc(1, 2)),
 						                                      new StmtExpr(
 								                                      new ExprFuncCall("print", Type.VOID,
 								                                                       List.of(
@@ -263,11 +260,11 @@ public class TypeCheckerTest {
 				                         new Function("foo", "void", Type.VOID, List.of(),
 				                                      List.of(new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(6, 2))),
 				                                      List.of(
-						                                      declare("a", 0, VariableScope.function, Type.U8,
-						                                              new ExprIntLiteral(20,
+						                                      assign("a", 0, VariableScope.function, Type.U8,
+						                                             new ExprIntLiteral(20,
 						                                                                Type.U8,
 						                                                                loc(6, 9)),
-						                                              loc(6, 2)),
+						                                             loc(6, 2)),
 						                                      new StmtExpr(
 								                                      new ExprFuncCall("print", Type.VOID, List.of(
 										                                      ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, null, loc(7, 8)),
@@ -300,19 +297,19 @@ public class TypeCheckerTest {
 						                                      new Variable("b", 2, VariableScope.function, Type.I16, 0, loc(7, 4))
 				                                      ),
 				                                      List.of(
-						                                      declare("a", 0, VariableScope.function, Type.U8,
-						                                              new ExprIntLiteral(10,
+						                                      assign("a", 0, VariableScope.function, Type.U8,
+						                                             new ExprIntLiteral(10,
 						                                                                Type.U8,
 						                                                                loc(1, 9)),
-						                                              loc(1, 2)),
+						                                             loc(1, 2)),
 						                                      new StmtIf(new ExprBinary(ExprBinary.Op.Gt, Type.BOOL,
 						                                                                new ExprVarAccess("a", 0, VariableScope.function, Type.U8, null, loc(2, 6)),
 						                                                                new ExprIntLiteral(0, loc(2, 10)),
 						                                                                loc(2, 8)),
 						                                                 List.of(
-								                                                 declare("b", 1, VariableScope.function, Type.U8,
-								                                                         new ExprIntLiteral(1, Type.U8, loc(3, 11)),
-								                                                         loc(3, 4)),
+								                                                 assign("b", 1, VariableScope.function, Type.U8,
+								                                                        new ExprIntLiteral(1, Type.U8, loc(3, 11)),
+								                                                        loc(3, 4)),
 								                                                 new StmtExpr(
 										                                                 new ExprFuncCall("print", Type.VOID,
 										                                                                  List.of(
@@ -322,9 +319,9 @@ public class TypeCheckerTest {
 								                                                 )
 						                                                 ),
 						                                                 List.of(
-								                                                 declare("b", 2, VariableScope.function, Type.I16,
-								                                                         new ExprIntLiteral(2, Type.I16, loc(7, 12)),
-								                                                         loc(7, 4)),
+								                                                 assign("b", 2, VariableScope.function, Type.I16,
+								                                                        new ExprIntLiteral(2, Type.I16, loc(7, 12)),
+								                                                        loc(7, 4)),
 								                                                 new StmtExpr(
 										                                                 new ExprFuncCall("print", Type.VOID,
 										                                                                  List.of(
@@ -393,9 +390,11 @@ public class TypeCheckerTest {
 	}
 
 	@NotNull
-	private static Statement declare(String varName, int index, VariableScope scope, Type type, Expression expression, Location location) {
-		return new StmtVarDeclaration(type.toString(), varName, index, scope, type,
-		                              expression,
-		                              location);
+	private static Statement assign(String varName, int index, VariableScope scope, Type type, Expression expression, Location location) {
+		return new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
+		                                   type,
+		                                   new ExprVarAccess(varName, index, scope, type, null, location),
+		                                   expression,
+		                                   location));
 	}
 }

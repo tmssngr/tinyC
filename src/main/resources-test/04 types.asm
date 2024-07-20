@@ -26,8 +26,9 @@ start:
         sub rsp, 16
         ; 2:15 int lit 250
         mov cl, 250
-        ; 2:8 assign i(%0)
+        ; 2:8 var i(%0)
         lea rax, [rsp+0]
+        ; 2:8 assign
         mov [rax], cl
         ; 2:3 for i != 2
 @for_1:
@@ -69,8 +70,9 @@ start:
 @for_1_end:
         ; 6:11 int lit 260
         mov cx, 260
-        ; 6:3 assign v(%1)
+        ; 6:3 var v(%1)
         lea rax, [rsp+1]
+        ; 6:3 assign
         mov [rax], cx
         ; 7:13 read var v(%1)
         lea rcx, [rsp+1]

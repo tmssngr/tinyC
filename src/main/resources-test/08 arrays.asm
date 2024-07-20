@@ -26,8 +26,9 @@ start:
         sub rsp, 16
         ; 4:12 int lit 32
         mov cl, 32
-        ; 4:3 assign chr(%0)
+        ; 4:3 var chr(%0)
         lea rax, [rsp+0]
+        ; 4:3 assign
         mov [rax], cl
         ; 5:14 read var chr(%0)
         lea rcx, [rsp+0]
@@ -90,8 +91,9 @@ start:
         lea rax, [var0]
         add rax, rcx
         mov cl, [rax]
-        ; 8:3 assign result(%1)
+        ; 8:3 var result(%1)
         lea rax, [rsp+1]
+        ; 8:3 assign
         mov [rax], cl
         ; 9:9 read var result(%1)
         lea rcx, [rsp+1]

@@ -26,8 +26,9 @@ start:
         sub rsp, 32
         ; 2:10 int lit 10
         mov cx, 10
-        ; 2:2 assign a(%0)
+        ; 2:2 var a(%0)
         lea rax, [rsp+0]
+        ; 2:2 assign
         mov [rax], cx
         ; 3:8 read var a(%0)
         lea rcx, [rsp+0]
@@ -41,8 +42,9 @@ start:
         add rsp, 8
         ; 4:11 address of var a(%0)
         lea rcx, [rsp+0]
-        ; 4:2 assign b(%1)
+        ; 4:2 var b(%1)
         lea rax, [rsp+2]
+        ; 4:2 assign
         mov [rax], rcx
         ; 5:11 read var b(%1)
         lea rcx, [rsp+2]
@@ -54,8 +56,9 @@ start:
         movzx bx, al
         ; 5:13 sub
         sub cx, bx
-        ; 5:2 assign c(%2)
+        ; 5:2 var c(%2)
         lea rax, [rsp+10]
+        ; 5:2 assign
         mov [rax], cx
         ; 6:8 read var c(%2)
         lea rcx, [rsp+10]
@@ -69,8 +72,9 @@ start:
         add rsp, 8
         ; 7:11 address of var c(%2)
         lea rcx, [rsp+10]
-        ; 7:2 assign d(%3)
+        ; 7:2 var d(%3)
         lea rax, [rsp+12]
+        ; 7:2 assign
         mov [rax], rcx
         ; 8:8 read var d(%3)
         lea rcx, [rsp+12]

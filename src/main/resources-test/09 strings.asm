@@ -27,8 +27,9 @@ start:
         ; begin initialize global variables
         ; 1:12 string literal string_0
         lea rcx, [string_0]
-        ; 1:1 assign text($0)
+        ; 1:1 var text($0)
         lea rax, [var0]
+        ; 1:1 assign
         mov [rax], rcx
         ; end initialize global variables
         ; 4:14 read var text($0)
@@ -50,8 +51,9 @@ start:
         lea rbx, [var0]
         mov rax, [rbx]
         add rax, rcx
-        ; 6:2 assign second(%0)
+        ; 6:2 var second(%0)
         lea rcx, [rsp+0]
+        ; 6:2 assign
         mov [rcx], rax
         ; 7:14 read var second(%0)
         lea rcx, [rsp+0]
@@ -66,8 +68,9 @@ start:
         mov rax, [rcx]
         ; 8:11 deref
         mov cl, [rax]
-        ; 8:2 assign chr(%1)
+        ; 8:2 var chr(%1)
         lea rax, [rsp+8]
+        ; 8:2 assign
         mov [rax], cl
         ; 9:8 read var chr(%1)
         lea rcx, [rsp+8]
@@ -89,14 +92,16 @@ start:
         sub rsp, 16
         ; 13:15 int lit 0
         mov cx, 0
-        ; 13:2 assign length(%0)
+        ; 13:2 var length(%0)
         lea rax, [rsp+0]
+        ; 13:2 assign
         mov [rax], cx
         ; 14:17 read var text($0)
         lea rcx, [var0]
         mov rax, [rcx]
-        ; 14:7 assign ptr(%1)
+        ; 14:7 var ptr(%1)
         lea rcx, [rsp+2]
+        ; 14:7 assign
         mov [rcx], rax
         ; 14:2 for *ptr != 0
 @for_1:
