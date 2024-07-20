@@ -218,11 +218,11 @@ start:
         ; 18:8 bool lit false
         mov cl, 0
         or cl, cl
-        jz @next_1
+        jz @and_next_1
         ; 18:17 bool lit false
         mov al, 0
         mov cl, al
-@next_1:
+@and_next_1:
         movzx rax, cl
         ; 18:2 print i64
         sub rsp, 8
@@ -235,11 +235,11 @@ start:
         ; 19:8 bool lit false
         mov cl, 0
         or cl, cl
-        jz @next_2
+        jz @and_next_2
         ; 19:17 bool lit true
         mov al, 1
         mov cl, al
-@next_2:
+@and_next_2:
         movzx rax, cl
         ; 19:2 print i64
         sub rsp, 8
@@ -252,11 +252,11 @@ start:
         ; 20:8 bool lit true
         mov cl, 1
         or cl, cl
-        jz @next_3
+        jz @and_next_3
         ; 20:16 bool lit false
         mov al, 0
         mov cl, al
-@next_3:
+@and_next_3:
         movzx rax, cl
         ; 20:2 print i64
         sub rsp, 8
@@ -269,11 +269,11 @@ start:
         ; 21:8 bool lit true
         mov cl, 1
         or cl, cl
-        jz @next_4
+        jz @and_next_4
         ; 21:16 bool lit true
         mov al, 1
         mov cl, al
-@next_4:
+@and_next_4:
         movzx rax, cl
         ; 21:2 print i64
         sub rsp, 8
@@ -292,11 +292,11 @@ start:
         ; 23:8 bool lit false
         mov cl, 0
         or cl, cl
-        jnz @next_5
+        jnz @or_next_5
         ; 23:17 bool lit false
         mov al, 0
         mov cl, al
-@next_5:
+@or_next_5:
         movzx rax, cl
         ; 23:2 print i64
         sub rsp, 8
@@ -309,11 +309,11 @@ start:
         ; 24:8 bool lit false
         mov cl, 0
         or cl, cl
-        jnz @next_6
+        jnz @or_next_6
         ; 24:17 bool lit true
         mov al, 1
         mov cl, al
-@next_6:
+@or_next_6:
         movzx rax, cl
         ; 24:2 print i64
         sub rsp, 8
@@ -326,11 +326,11 @@ start:
         ; 25:8 bool lit true
         mov cl, 1
         or cl, cl
-        jnz @next_7
+        jnz @or_next_7
         ; 25:16 bool lit false
         mov al, 0
         mov cl, al
-@next_7:
+@or_next_7:
         movzx rax, cl
         ; 25:2 print i64
         sub rsp, 8
@@ -343,11 +343,11 @@ start:
         ; 26:8 bool lit true
         mov cl, 1
         or cl, cl
-        jnz @next_8
+        jnz @or_next_8
         ; 26:16 bool lit true
         mov al, 1
         mov cl, al
-@next_8:
+@or_next_8:
         movzx rax, cl
         ; 26:2 print i64
         sub rsp, 8
@@ -422,7 +422,7 @@ start:
         sete bl
         and bl, 0xFF
         or bl, bl
-        jnz @next_9
+        jnz @or_next_9
         ; 32:18 int lit 2
         mov cl, 2
         ; 32:22 int lit 3
@@ -432,7 +432,7 @@ start:
         setl dl
         and dl, 0xFF
         mov bl, dl
-@next_9:
+@or_next_9:
         movzx rcx, bl
         ; 32:2 print i64
         sub rsp, 8
@@ -450,7 +450,7 @@ start:
         sete bl
         and bl, 0xFF
         or bl, bl
-        jz @next_10
+        jz @and_next_10
         ; 33:18 int lit 2
         mov cl, 2
         ; 33:22 int lit 3
@@ -460,7 +460,7 @@ start:
         setl dl
         and dl, 0xFF
         mov bl, dl
-@next_10:
+@and_next_10:
         movzx rcx, bl
         ; 33:2 print i64
         sub rsp, 8

@@ -1,0 +1,84 @@
+@main:
+ Local variables
+   0: chr
+   1: result
+        ; 4:12 int lit 32
+        ld r0, 32 (1)
+        ; 4:3 assign chr(%0)
+        addrOf r1, [0@function]
+        store [r1], r0 (1)
+        ; 5:14 read var chr(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (1)
+        ; 5:3 array chars($0)
+        ; 5:9 int lit 0
+        ld r0, 0 (8)
+        mul r0, 1
+        addrOf r2, [0@global]
+        binary+ r2, r0 (0)
+        ; 5:12 assign
+        store [r2], r1 (1)
+        ; 6:14 array chars($0)
+        ; 6:20 int lit 0
+        ld r0, 0 (8)
+        mul r0, 1
+        addrOf r1, [0@global]
+        binary+ r1, r0 (0)
+        load r0, [r1] (1)
+        ; 6:25 int lit 1
+        ld r1, 1 (1)
+        ; 6:23 add
+        binary+ r0, r1 (1)
+        ; 6:3 array chars($0)
+        ; 6:9 int lit 1
+        ld r1, 1 (8)
+        mul r1, 1
+        addrOf r2, [0@global]
+        binary+ r2, r1 (0)
+        ; 6:12 assign
+        store [r2], r0 (1)
+        ; 7:16 array chars($0)
+        ; 7:22 int lit 1
+        ld r0, 1 (8)
+        mul r0, 1
+        addrOf r1, [0@global]
+        binary+ r1, r0 (0)
+        load r0, [r1] (1)
+        ; 7:27 int lit 2
+        ld r1, 2 (1)
+        ; 7:25 add
+        binary+ r0, r1 (1)
+        ; 7:3 array chars($0)
+        ; 7:9 int lit 1
+        ld r1, 1 (1)
+        ; 7:11 int lit 1
+        ld r2, 1 (1)
+        ; 7:10 add
+        binary+ r1, r2 (1)
+        cast r2 (i64), r1 (u8)
+        mul r2, 1
+        addrOf r1, [0@global]
+        binary+ r1, r2 (0)
+        ; 7:14 assign
+        store [r1], r0 (1)
+        ; 8:15 array chars($0)
+        ; 8:21 int lit 2
+        ld r0, 2 (8)
+        mul r0, 1
+        addrOf r1, [0@global]
+        binary+ r1, r0 (0)
+        load r0, [r1] (1)
+        ; 8:3 assign result(%1)
+        addrOf r1, [1@function]
+        store [r1], r0 (1)
+        ; 9:9 read var result(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        ; 9:3 print i64
+        printint r0
+@main_ret:
+
+Global variables
+  0: chars (2048)
+

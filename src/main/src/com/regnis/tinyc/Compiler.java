@@ -1,6 +1,7 @@
 package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.ir.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -19,18 +20,23 @@ public class Compiler {
 	}
 
 	public static void compileAndRun(@NotNull Path inputFile, @Nullable Path outputFile) throws IOException, InterruptedException {
-		final Program program = parse(inputFile);
+		final Program parsedProgram = parse(inputFile);
 		final TypeChecker checker = new TypeChecker(Type.I64);
-		final Program programTyped = checker.check(program);
+		final Program program = checker.check(parsedProgram);
 
+		final Path irFile = useExtension(inputFile, ".ir");
 		final Path asmFile = useExtension(inputFile, ".asm");
 		final Path exeFile = useExtension(inputFile, ".exe");
 		Files.deleteIfExists(asmFile);
 		Files.deleteIfExists(exeFile);
 
+		final IRGenerator generator = new IRGenerator();
+		final IRProgram irProgram = generator.convert(program);
+		write(irProgram, irFile);
+
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);
-			output.write(programTyped);
+			output.write(irProgram);
 		}
 
 		if (!launchFasm(asmFile)) {
@@ -49,7 +55,7 @@ public class Compiler {
 	}
 
 	private static Program parse(Path inputFile) throws IOException {
-		try (BufferedReader reader = Files.newBufferedReader(inputFile)) {
+		try (final BufferedReader reader = Files.newBufferedReader(inputFile)) {
 			final Parser parser = new Parser(new Lexer(() -> {
 				try {
 					return reader.read();
@@ -60,6 +66,63 @@ public class Compiler {
 			}));
 			return parser.parse();
 		}
+	}
+
+	private static void write(IRProgram program, Path file) throws IOException {
+		try (final BufferedWriter writer = Files.newBufferedWriter(file)) {
+			writeFunctions(program.functions(), writer);
+
+			final List<IRGlobalVar> globalVars = program.globalVars();
+			if (globalVars.size() > 0) {
+				writeln("Global variables", writer);
+				for (IRGlobalVar var : globalVars) {
+					writeln("  " + var.toString(), writer);
+				}
+				writeln("", writer);
+			}
+
+			final List<IRStringLiteral> stringLiterals = program.stringLiterals();
+			if (stringLiterals.size() > 0) {
+				writeln("String literals", writer);
+				for (IRStringLiteral literal : stringLiterals) {
+					writeln("  " + literal.toString(), writer);
+				}
+			}
+		}
+	}
+
+	private static void writeFunctions(List<IRFunction> functions, BufferedWriter writer) throws IOException {
+		for (IRFunction function : functions) {
+			writeln(function.label() + ":", writer);
+			final List<IRLocalVar> localVars = function.localVars();
+			if (localVars.size() > 0) {
+				writeln(" Local variables", writer);
+				for (IRLocalVar var : localVars) {
+					writeln("   " + var.toString(), writer);
+				}
+			}
+
+			for (IRInstruction instruction : function.instructions()) {
+				if (instruction instanceof IRLabel label) {
+					writeln(label.label() + ":", writer);
+				}
+				else {
+					writer.write("        ");
+					if (instruction instanceof IRComment c) {
+						writeln("; " + c.comment(), writer);
+					}
+					else {
+						writeln(instruction.toString(), writer);
+					}
+				}
+			}
+			writeln("", writer);
+		}
+	}
+
+	private static void writeln(String text, BufferedWriter writer) throws IOException {
+		writer.write(text);
+		writer.newLine();
 	}
 
 	private static boolean launchFasm(Path asmFile) throws IOException, InterruptedException {

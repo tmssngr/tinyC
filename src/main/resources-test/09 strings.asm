@@ -24,6 +24,13 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 16
+        ; begin initialize global variables
+        ; 1:12 string literal string_0
+        lea rcx, [string_0]
+        ; 1:1 assign text($0)
+        lea rax, [var0]
+        mov [rax], rcx
+        ; end initialize global variables
         ; 4:14 read var text($0)
         lea rcx, [var0]
         mov rax, [rcx]
@@ -167,11 +174,6 @@ init:
           lea rcx, [hStdErr]
           mov qword [rcx], rax
         add rsp, 20h
-        ; 1:12 string literal string_0
-        lea rcx, [string_0]
-        ; 1:1 assign text($0)
-        lea rax, [var0]
-        mov [rax], rcx
         ret
 __emit:
         push rcx ; = sub rsp, 8
@@ -264,7 +266,7 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable text($0)
+        ; variable 0: text (8)
         var0 rb 8
 
 section '.data' data readable

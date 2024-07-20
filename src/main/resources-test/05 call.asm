@@ -34,8 +34,8 @@ start:
         ; 3:10 read var i(%0)
         lea rcx, [rsp+0]
         mov al, [rcx]
-        movzx rcx, al
         ; 3:2 call doPrint
+        movzx rcx, al
         sub rsp, 8
           call @doPrint
         add rsp, 8

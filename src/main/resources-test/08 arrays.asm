@@ -219,7 +219,7 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable chars($0)
+        ; variable 0: chars (2048)
         var0 rb 2048
 
 section '.idata' import data readable writeable

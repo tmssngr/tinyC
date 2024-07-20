@@ -22,6 +22,23 @@ start:
 
         ; void main
 @main:
+        ; begin initialize global variables
+        ; 1:13 int lit 32
+        mov cx, 32
+        ; 1:1 assign space($0)
+        lea rax, [var0]
+        mov [rax], cx
+        ; 2:12 int lit 63
+        mov cx, 63
+        ; 2:1 assign next($1)
+        lea rax, [var1]
+        mov [rax], cx
+        ; 3:19 address of var space($0)
+        lea rcx, [var0]
+        ; 3:1 assign ptrToSpace($2)
+        lea rax, [var2]
+        mov [rax], rcx
+        ; end initialize global variables
         ; 6:15 read var ptrToSpace($2)
         lea rcx, [var2]
         mov rax, [rcx]
@@ -72,21 +89,6 @@ init:
           lea rcx, [hStdErr]
           mov qword [rcx], rax
         add rsp, 20h
-        ; 1:13 int lit 32
-        mov cx, 32
-        ; 1:1 assign space($0)
-        lea rax, [var0]
-        mov [rax], cx
-        ; 2:12 int lit 63
-        mov cx, 63
-        ; 2:1 assign next($1)
-        lea rax, [var1]
-        mov [rax], cx
-        ; 3:19 address of var space($0)
-        lea rcx, [var0]
-        ; 3:1 assign ptrToSpace($2)
-        lea rax, [var2]
-        mov [rax], rcx
         ret
 __emit:
         push rcx ; = sub rsp, 8
@@ -179,11 +181,11 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable space($0)
+        ; variable 0: space (2)
         var0 rb 2
-        ; variable next($1)
+        ; variable 1: next (2)
         var1 rb 2
-        ; variable ptrToSpace($2)
+        ; variable 2: ptrToSpace (8)
         var2 rb 8
 
 section '.idata' import data readable writeable

@@ -1,0 +1,116 @@
+@main:
+ Local variables
+   0: second
+   1: chr
+        ; begin initialize global variables
+        ; 1:12 string literal string_0
+        load r0, stringlit-0
+        ; 1:1 assign text($0)
+        addrOf r1, [0@global]
+        store [r1], r0 (8)
+        ; end initialize global variables
+        ; 4:14 read var text($0)
+        addrOf r0, [0@global]
+        load r1, [r0] (8)
+        ; 4:2 print u8*
+        printStringZero r1
+        ; 5:2 call printLength
+        IRCall[label=@printLength, args=[]]
+        ; 6:15 address of array text($0)[...]
+        ; 6:21 int lit 1
+        ld r0, 1 (8)
+        mul r0, 1
+        addrOf r2, [0@global]
+        load r1, [r2] (0)
+        binary+ r1, r0 (0)
+        ; 6:2 assign second(%0)
+        addrOf r0, [0@function]
+        store [r0], r1 (8)
+        ; 7:14 read var second(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (8)
+        ; 7:2 print u8*
+        printStringZero r1
+        ; 8:12 read var text($0)
+        addrOf r0, [0@global]
+        load r1, [r0] (8)
+        ; 8:11 deref
+        load r0, [r1] (1)
+        ; 8:2 assign chr(%1)
+        addrOf r1, [1@function]
+        store [r1], r0 (1)
+        ; 9:8 read var chr(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        ; 9:2 print i64
+        printint r0
+@main_ret:
+
+@printLength:
+ Local variables
+   0: length
+   1: ptr
+        ; 13:15 int lit 0
+        ld r0, 0 (2)
+        ; 13:2 assign length(%0)
+        addrOf r1, [0@function]
+        store [r1], r0 (2)
+        ; 14:17 read var text($0)
+        addrOf r0, [0@global]
+        load r1, [r0] (8)
+        ; 14:7 assign ptr(%1)
+        addrOf r0, [1@function]
+        store [r0], r1 (8)
+        ; 14:2 for *ptr != 0
+@for_1:
+        ; 14:24 read var ptr(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (8)
+        ; 14:23 deref
+        load r0, [r1] (1)
+        ; 14:31 int lit 0
+        ld r1, 0 (1)
+        ; 14:28 !=
+        cmp r2, (r0 != r1) (u8)
+        ; for-condition
+        branch-false r2, @for_1_end
+        ; 15:12 read var length(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (2)
+        ; 15:21 int lit 1
+        ld r0, 1 (1)
+        cast r3 (i16), r0 (u8)
+        ; 15:19 add
+        binary+ r1, r3 (2)
+        ; 15:3 var length(%0)
+        addrOf r0, [0@function]
+        ; 15:10 assign
+        store [r0], r1 (2)
+        ; for iteration
+        ; 14:40 read var ptr(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (8)
+        ; 14:46 int lit 1
+        ld r0, 1 (8)
+        ; 14:44 add
+        binary+ r1, r0 (8)
+        ; 14:34 var ptr(%1)
+        addrOf r0, [1@function]
+        ; 14:38 assign
+        store [r0], r1 (8)
+        jmp @for_1
+@for_1_end:
+        ; 17:8 read var length(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (2)
+        cast r0 (i64), r1 (i16)
+        ; 17:2 print i64
+        printint r0
+@printLength_ret:
+
+Global variables
+  0: text (8)
+
+String literals
+  string lit 0 "hello world\n\0"

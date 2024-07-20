@@ -1,0 +1,77 @@
+@main:
+ Local variables
+   0: foo
+   1: bar
+        ; 2:15 int lit 4
+        ld r0, 4 (1)
+        ; 2:19 int lit 3
+        ld r1, 3 (1)
+        ; 2:17 multiply
+        binary* r0, r1 (1)
+        ; 2:23 int lit 2
+        ld r1, 2 (1)
+        ; 2:25 int lit 5
+        ld r2, 5 (1)
+        ; 2:24 multiply
+        binary* r1, r2 (1)
+        ; 2:21 add
+        binary+ r0, r1 (1)
+        cast r1 (i16), r0 (u8)
+        ; 2:5 assign foo(%0)
+        addrOf r0, [0@function]
+        store [r0], r1 (2)
+        ; 3:15 read var foo(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (2)
+        ; 3:21 read var foo(%0)
+        addrOf r0, [0@function]
+        load r2, [r0] (2)
+        ; 3:19 multiply
+        binary* r1, r2 (2)
+        ; 3:5 assign bar(%1)
+        addrOf r0, [1@function]
+        store [r0], r1 (2)
+        ; 4:11 int lit 1
+        ld r0, 1 (2)
+        ; 4:5 var foo(%0)
+        addrOf r1, [0@function]
+        ; 4:9 assign
+        store [r1], r0 (2)
+        ; 5:11 read var bar(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (2)
+        ; 5:17 read var foo(%0)
+        addrOf r0, [0@function]
+        load r2, [r0] (2)
+        ; 5:15 add
+        binary+ r1, r2 (2)
+        cast r0 (i64), r1 (i16)
+        ; 5:5 print i64
+        printint r0
+        ; 6:12 int lit 1
+        ld r0, 1 (1)
+        ; 6:16 int lit 2
+        ld r1, 2 (1)
+        ; 6:14 add
+        binary+ r0, r1 (1)
+        ; 6:22 int lit 3
+        ld r1, 3 (1)
+        ; 6:26 int lit 4
+        ld r2, 4 (1)
+        ; 6:24 add
+        binary+ r1, r2 (1)
+        ; 6:19 multiply
+        binary* r0, r1 (1)
+        cast r1 (i16), r0 (u8)
+        ; 6:5 var foo(%0)
+        addrOf r0, [0@function]
+        ; 6:9 assign
+        store [r0], r1 (2)
+        ; 7:11 read var foo(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (2)
+        cast r0 (i64), r1 (i16)
+        ; 7:5 print i64
+        printint r0
+@main_ret:
+

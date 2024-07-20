@@ -1,6 +1,7 @@
 package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.ir.*;
 
 import java.io.*;
 import java.nio.charset.*;
@@ -11,38 +12,31 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public class X86Win64 {
+public final class X86Win64 {
 
 	private static final String INDENTATION = "        ";
 	private static final String EMIT = "__emit";
 	private static final String PRINT_STRING = "__printString";
 	private static final String PRINT_STRING_ZERO = "__printStringZero";
 	private static final String PRINT_UINT = "__printUint";
-	private static final int TRUE = 1;
-	private static final int FALSE = 0;
 
-	private final Writer writer;
+	private final BufferedWriter writer;
 
-	private int labelIndex;
-	private int freeRegs;
 	@SuppressWarnings("unused") private boolean debug;
-	private String functionRetLabel;
 
-	public X86Win64(Writer writer) {
+	public X86Win64(@NotNull BufferedWriter writer) {
 		this.writer = writer;
 	}
 
-	public void write(Program program) throws IOException {
-		final Variables variables = new Variables(program.globalVariables());
-
+	public void write(IRProgram program) throws IOException {
 		writePreample();
 
-		for (Function function : program.functions()) {
-			write(function, variables);
+		for (IRFunction function : program.functions()) {
+			write(function);
 		}
 
-		writeInit(program.globalVars(), variables);
-		writePostamble(program.globalVariables(), program.stringLiterals(), variables);
+		writeInit();
+		writePostamble(program.globalVars(), program.stringLiterals());
 	}
 
 	private void writePreample() throws IOException {
@@ -65,39 +59,14 @@ public class X86Win64 {
 		writeIndented("sub rsp, 8");
 		writeIndented("  call init");
 		writeIndented("add rsp, 8");
-		writeIndented("  call " + getFunctionLabel("main"));
+		writeIndented("  call @main");
 		writeIndented("mov rcx, 0");
 		writeIndented("sub rsp, 0x20");
 		writeIndented("  call [ExitProcess]");
 		writeNL();
 	}
 
-	private void write(Function function, Variables variables) throws IOException {
-		variables = new Variables(function.localVars(), variables);
-		final String functionLabel = getFunctionLabel(function.name());
-		functionRetLabel = functionLabel + "_ret";
-		writeComment(function.toString());
-		writeLabel(functionLabel);
-
-		final int size = variables.getSize();
-		if (size > 0) {
-			writeComment("reserve space for local variables");
-			writeIndented("sub rsp, " + size);
-		}
-		writeStatement(function.statement(), variables);
-		writeLabel(functionRetLabel);
-		if (size > 0) {
-			writeComment("release space for local variables");
-			writeIndented("add rsp, " + size);
-		}
-		writeIndented("ret");
-	}
-
-	private String getFunctionLabel(String name) {
-		return "@" + name;
-	}
-
-	private void writeInit(List<StmtDeclaration> declarations, Variables variables) throws IOException {
+	private void writeInit() throws IOException {
 		writeLabel("init");
 		writeIndented("""
 				              sub rsp, 20h
@@ -119,18 +88,11 @@ public class X86Win64 {
 				                lea rcx, [hStdErr]
 				                mov qword [rcx], rax
 				              add rsp, 20h
+				              ret
 				              """);
-
-		for (StmtDeclaration declaration : declarations) {
-			if (declaration instanceof StmtVarDeclaration varDeclaration) {
-				writeAssignment(varDeclaration.index(), varDeclaration.scope(), varDeclaration.expression(), varDeclaration.location(), variables);
-			}
-		}
-
-		writeIndented("ret");
 	}
 
-	private void writePostamble(List<Variable> globalVariables, List<StringLiteral> stringLiterals, Variables variables) throws IOException {
+	private void writePostamble(List<IRGlobalVar> globalVariables, List<IRStringLiteral> stringLiterals) throws IOException {
 		writeEmit();
 		writeStringPrint();
 		writeUintPrint();
@@ -141,18 +103,16 @@ public class X86Win64 {
 				              hStdIn  rb 8
 				              hStdOut rb 8
 				              hStdErr rb 8""");
-		for (Variable variable : globalVariables) {
-			final int size = getVariableSize(variable);
-			final VariableDetails details = variables.get(variable.index(), variable.scope());
-			writeComment("variable " + details);
-			writeIndented(getGlobalVarName(details) + " rb " + size);
+		for (IRGlobalVar variable : globalVariables) {
+			writeComment("variable " + variable);
+			writeIndented(getGlobalVarName(variable.index()) + " rb " + variable.size());
 		}
 		writeNL();
 
 		if (stringLiterals.size() > 0) {
 			writeLines("section '.data' data readable");
-			for (StringLiteral literal : stringLiterals) {
-				final String encoded = encode((literal.text() + '\0').getBytes(StandardCharsets.UTF_8));
+			for (IRStringLiteral literal : stringLiterals) {
+				final String encoded = encode((literal.text()).getBytes(StandardCharsets.UTF_8));
 				writeIndented(getStringLiteralName(literal.index()) + " db " + encoded);
 			}
 			writeNL();
@@ -173,478 +133,6 @@ public class X86Win64 {
 				           import msvcrt,\\
 				                  _getch,'_getch'
 				           """);
-	}
-
-	private void writeStatements(List<Statement> statements, Variables variables) throws IOException {
-		for (Statement statement : statements) {
-			writeStatement(statement, variables);
-		}
-	}
-
-	private void writeStatement(Statement statement, Variables variables) throws IOException {
-		switch (statement) {
-		case StmtVarDeclaration declaration -> writeAssignment(declaration.index(), declaration.scope(), declaration.expression(), declaration.location(), variables);
-		case StmtCompound compound -> writeStatements(compound.statements(), variables);
-		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
-		case StmtLoop forStatement -> writeFor(forStatement, variables);
-		case StmtExpr stmt -> write(stmt.expression(), variables);
-		case StmtReturn ret -> writeReturn(ret.expression(), variables);
-		case null, default -> throw new UnsupportedOperationException(String.valueOf(statement));
-		}
-	}
-
-	private int writeCall(ExprFuncCall call, Variables variables) throws IOException {
-		final List<Expression> expressions = call.argExpressions();
-		final String name = call.name();
-		if (name.equals("printString")) {
-			if (expressions.size() != 1) {
-				throw new IllegalStateException("Unsupported arguments " + expressions);
-			}
-			final Expression expression = expressions.getFirst();
-			final int reg = write(expression, variables);
-			final String regName = getRegName(reg);
-			freeReg(reg);
-			final Type type = expression.typeNotNull();
-			if (type.toType() != Type.U8) {
-				throw new IllegalStateException("Unsupported type");
-			}
-			writeComment("print " + type, call.location());
-			writeIndented("sub rsp, 8");
-			if (!regName.equals("rcx")) {
-				writeIndented("  mov rcx, " + regName);
-			}
-			writeIndented("  call " + PRINT_STRING_ZERO);
-			writeIndented("add rsp, 8");
-		}
-		else if (name.equals("print")) {
-			if (expressions.size() != 1) {
-				throw new IllegalStateException("Unsupported arguments " + expressions);
-			}
-			final Expression expression = expressions.getFirst();
-			final int reg = write(expression, variables);
-			final String regName = getRegName(reg);
-			freeReg(reg);
-			final Type type = expression.typeNotNull();
-			writeComment("print " + type, call.location());
-			writeIndented("sub rsp, 8");
-			if (!regName.equals("rcx")) {
-				writeIndented("  mov rcx, " + regName);
-			}
-			writeIndented("  call " + PRINT_UINT);
-			writeIndented("  mov rcx, 0x0a");
-			writeIndented("  call " + EMIT);
-			writeIndented("add rsp, 8");
-		}
-		else {
-			if (expressions.size() > 1) {
-				throw new IllegalStateException("Unsupported arguments " + expressions);
-			}
-			if (expressions.size() == 1) {
-				final Expression first = expressions.getFirst();
-				final int reg = write(first, variables);
-				final String regName = getRegName(reg);
-				freeReg(reg);
-				final int size = getTypeSize(first.typeNotNull());
-				if (size != 8) {
-					writeIndented("movzx rcx, " + getRegName(reg, size));
-				}
-				else if (!regName.equals("rcx")) {
-					writeIndented("mov rcx, " + regName);
-				}
-			}
-			writeComment("call " + name, call.location());
-			writeIndented("sub rsp, 8");
-			writeIndented("  call " + getFunctionLabel(name));
-			writeIndented("add rsp, 8");
-		}
-		return call.typeNotNull() == Type.VOID ? -1 : 1; // rax
-	}
-
-	private void writeReturn(@Nullable Expression expression, Variables variables) throws IOException {
-		if (expression != null) {
-			writeComment("return " + expression.toUserString(), expression.location());
-			final int reg = write(expression, variables);
-			final String regName = getRegName(reg);
-			freeReg(reg);
-			if (!regName.equals("rax")) {
-				writeIndented("mov rax, " + regName);
-			}
-		}
-		else {
-			writeComment("return");
-		}
-		writeIndented("jmp " + Objects.requireNonNull(functionRetLabel));
-	}
-
-	private void writeAssignment(int index, VariableScope scope, Expression expression, Location location, Variables variables) throws IOException {
-		final int expressionReg = write(expression, variables);
-		final int varReg = getFreeReg();
-		final VariableDetails variable = variables.get(index, scope);
-		Utils.assertTrue(variable.isScalar());
-		final int typeSize = getTypeSize(variable.type());
-		writeComment("assign " + variable, location);
-		writeAddrOfVar(varReg, variable);
-		writeIndented("mov [" + getRegName(varReg) + "], " + getRegName(expressionReg, typeSize));
-		freeReg(expressionReg);
-		freeReg(varReg);
-	}
-
-	private int write(Expression node, Variables variables) throws IOException {
-		return switch (node) {
-			case ExprIntLiteral literal -> {
-				final int value = literal.value();
-				final int size = getTypeSize(literal.typeNotNull());
-				writeComment("int lit " + value, node.location());
-				final int reg = getFreeReg();
-				writeIndented("mov " + getRegName(reg, size) + ", " + value);
-				yield reg;
-			}
-			case ExprBoolLiteral literal -> {
-				final boolean value = literal.value();
-				final int size = getTypeSize(literal.typeNotNull());
-				writeComment("bool lit " + value, node.location());
-				final int reg = getFreeReg();
-				writeIndented("mov " + getRegName(reg, size) + ", " + (value ? TRUE : FALSE));
-				yield reg;
-			}
-			case ExprStringLiteral literal -> {
-				final int i = literal.index();
-				final String stringLiteralName = getStringLiteralName(i);
-				writeComment("string literal " + stringLiteralName, node.location());
-				final int reg = getFreeReg();
-				writeIndented("lea " + getRegName(reg) + ", [" + stringLiteralName + "]");
-				yield reg;
-			}
-			case ExprVarAccess var -> {
-				final VariableDetails variable = variables.get(var.index(), var.scope());
-				final Expression arrayIndex = var.arrayIndex();
-				final int addrReg;
-				if (arrayIndex != null) {
-					writeComment("array " + variable, node.location());
-					addrReg = writeArrayAccess(variable, arrayIndex, var.typeNotNull(), variables);
-				}
-				else {
-					writeComment("read var " + variable, node.location());
-					addrReg = writeAddressOf(variable);
-				}
-				final int valueReg = writeRead(addrReg, var.typeNotNull());
-				freeReg(addrReg);
-				yield valueReg;
-			}
-			case ExprBinary binary -> writeBinary(binary, variables);
-			case ExprUnary unary -> processUnary(unary, variables);
-			case ExprFuncCall call -> writeCall(call, variables);
-			case ExprCast cast -> {
-				final Expression expression = cast.expression();
-				final int reg = write(expression, variables);
-				final int exprSize = getTypeSize(expression.typeNotNull());
-				final int size = getTypeSize(cast.typeNotNull());
-				if (size > exprSize) {
-					final int targetReg = getFreeReg();
-					writeIndented("movzx " + getRegName(targetReg, size) + ", " + getRegName(reg, exprSize));
-					freeReg(reg);
-					yield targetReg;
-				}
-				yield reg;
-			}
-			case ExprAddrOf addrOf -> {
-				final VariableDetails variable = variables.get(addrOf.index(), addrOf.scope());
-				final Expression arrayIndex = addrOf.arrayIndex();
-				if (arrayIndex != null) {
-					writeComment("address of array " + variable + "[...]", node.location());
-					yield writeArrayAccess(variable, arrayIndex, Objects.requireNonNull(addrOf.typeNotNull().toType()), variables);
-				}
-
-				writeComment("address of var " + variable, node.location());
-				yield writeAddressOf(variable);
-			}
-			default -> throw new UnsupportedOperationException("unsupported expression " + node);
-		};
-	}
-
-	private int writeAddressOf(VariableDetails variable) throws IOException {
-		final int reg = getFreeReg();
-		Utils.assertTrue(variable.isScalar());
-		writeAddrOfVar(reg, variable);
-		return reg;
-	}
-
-	private int writeRead(int addrReg, Type type) throws IOException {
-		final int valueReg = getFreeReg();
-		final String addrRegName = getRegName(addrReg);
-		final int typeSize = getTypeSize(type);
-		final String valueRegName = getRegName(valueReg, typeSize);
-		writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
-		freeReg(addrReg);
-		return valueReg;
-	}
-
-	private int writeBinary(ExprBinary node, Variables variables) throws IOException {
-		switch (node.op()) {
-		case Assign -> {
-			final int expressionReg = write(node.right(), variables);
-			final int lValueReg = writeLValue(node.left(), variables);
-			final String addrReg = getRegName(lValueReg);
-			final int typeSize = getTypeSize(node.typeNotNull());
-			writeComment("assign", node.location());
-			writeIndented("mov [" + addrReg + "], " + getRegName(expressionReg, typeSize));
-			freeReg(expressionReg);
-			freeReg(lValueReg);
-			return -1;
-		}
-		case Add -> {
-			return writeSimpleArithmetic("add", node, variables);
-		}
-		case Sub -> {
-			return writeSimpleArithmetic("sub", node, variables);
-		}
-		case And -> {
-			return writeSimpleArithmetic("and", node, variables);
-		}
-		case Or -> {
-			return writeSimpleArithmetic("or", node, variables);
-		}
-		case Xor -> {
-			return writeSimpleArithmetic("xor", node, variables);
-		}
-		case AndLog -> {
-			final int labelIndex = nextLabelIndex();
-			final String nextLabel = "@next_" + labelIndex;
-			writeComment("logic and", node.location());
-			final int conditionReg = write(node.left(), variables);
-			final String conditionRegName = getRegName(conditionReg, getTypeSize(node.typeNotNull()));
-			writeIndented("or " + conditionRegName + ", " + conditionRegName);
-			writeIndented("jz " + nextLabel);
-			final int conditionReg2 = write(node.right(), variables);
-			if (conditionReg2 != conditionReg) {
-				writeIndented("mov " + conditionRegName + ", " + getRegName(conditionReg2, getTypeSize(node.typeNotNull())));
-			}
-			freeReg(conditionReg2);
-			writeLabel(nextLabel);
-			return conditionReg;
-		}
-		case OrLog -> {
-			final int labelIndex = nextLabelIndex();
-			final String nextLabel = "@next_" + labelIndex;
-			writeComment("logic or", node.location());
-			final int conditionReg = write(node.left(), variables);
-			final String conditionRegName = getRegName(conditionReg, getTypeSize(node.typeNotNull()));
-			writeIndented("or " + conditionRegName + ", " + conditionRegName);
-			writeIndented("jnz " + nextLabel);
-			final int conditionReg2 = write(node.right(), variables);
-			if (conditionReg2 != conditionReg) {
-				writeIndented("mov " + conditionRegName + ", " + getRegName(conditionReg2, getTypeSize(node.typeNotNull())));
-			}
-			freeReg(conditionReg2);
-			writeLabel(nextLabel);
-			return conditionReg;
-		}
-		case Multiply -> {
-			final int leftReg = write(node.left(), variables);
-			final int rightReg = write(node.right(), variables);
-			final int size = getTypeSize(node.typeNotNull());
-			writeComment("multiply", node.location());
-			if (size != 8) {
-				writeIndented("movsx " + getRegName(leftReg) + ", " + getRegName(leftReg, size));
-				writeIndented("movsx " + getRegName(rightReg) + ", " + getRegName(rightReg, size));
-			}
-			writeIndented("imul " + getRegName(leftReg) + ", " + getRegName(rightReg));
-			freeReg(rightReg);
-			return leftReg;
-		}
-		case Divide -> {
-			throw new UnsupportedOperationException();
-		}
-		default -> {
-			final int leftReg = write(node.left(), variables);
-			final int rightReg = write(node.right(), variables);
-			final int resultReg = getFreeReg();
-			final String resultRegName = getRegName(resultReg, 1);
-			final int size = getTypeSize(node.typeNotNull());
-			writeComment(node.op().toString(), node.location());
-			final String leftRegName = getRegName(leftReg, size);
-			writeIndented("cmp " + leftRegName + ", " + getRegName(rightReg, size));
-			writeIndented(switch (node.op()) {
-				case Lt -> "setl";
-				case LtEq -> "setle";
-				case Equals -> "sete";
-				case NotEquals -> "setne";
-				case GtEq -> "setge";
-				case Gt -> "setg";
-				default -> throw new UnsupportedOperationException("Unsupported operand " + node.op());
-			} + " " + resultRegName);
-			writeIndented("and " + resultRegName + ", 0xFF");
-			freeReg(leftReg);
-			freeReg(rightReg);
-			return resultReg;
-		}
-		}
-	}
-
-	private int processUnary(ExprUnary unary, Variables variables) throws IOException {
-		final ExprUnary.Op op = unary.op();
-		return switch (op) {
-			case Deref -> {
-				final int addrReg = write(unary.expression(), variables);
-				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
-				writeComment("deref", unary.location());
-				final int valueReg = getFreeReg();
-				final String addrRegName = getRegName(addrReg, 8);
-				final String valueRegName = getRegName(valueReg, typeSize);
-				writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
-				freeReg(addrReg);
-				yield valueReg;
-			}
-			case Neg -> {
-				final int reg = write(unary.expression(), variables);
-				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
-				writeComment("neg", unary.location());
-				writeIndented("neg " + getRegName(reg, typeSize));
-				yield reg;
-			}
-			case Com -> {
-				final int reg = write(unary.expression(), variables);
-				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
-				writeComment("com", unary.location());
-				writeIndented("not " + getRegName(reg, typeSize));
-				yield reg;
-			}
-			case NotLog -> {
-				final int reg = write(unary.expression(), variables);
-				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
-				final String regName = getRegName(reg, typeSize);
-				writeComment("not", unary.location());
-				writeIndented("or " + regName + ", " + regName);
-				writeIndented("sete " + regName);
-				yield reg;
-			}
-			default -> throw new UnsupportedOperationException("unsupported operation " + op);
-		};
-	}
-
-	private int writeSimpleArithmetic(String mnemonic, ExprBinary node, Variables variables) throws IOException {
-		final int leftReg = write(node.left(), variables);
-		final int rightReg = write(node.right(), variables);
-		final int size = getTypeSize(node.typeNotNull());
-		writeComment(mnemonic, node.location());
-		writeIndented(mnemonic + " " + getRegName(leftReg, size) + ", " + getRegName(rightReg, size));
-		freeReg(rightReg);
-		return leftReg;
-	}
-
-	/**
-	 * @return register of the target address
-	 */
-	private int writeLValue(Expression lValue, Variables variables) throws IOException {
-		return switch (lValue) {
-			case ExprVarAccess var -> {
-				final VariableDetails variable = variables.get(var.index(), var.scope());
-				final Location location = var.location();
-				final Expression arrayIndex = var.arrayIndex();
-				if (arrayIndex != null) {
-					Utils.assertTrue(!variable.isScalar());
-					writeComment("array " + variable, location);
-					yield writeArrayAccess(variable, arrayIndex, var.typeNotNull(), variables);
-				}
-				else {
-					Utils.assertTrue(variable.isScalar());
-					final int varReg = getFreeReg();
-					writeComment("var " + variable, location);
-					writeAddrOfVar(varReg, variable);
-					yield varReg;
-				}
-			}
-			case ExprUnary deref -> write(deref.expression(), variables);
-			default -> throw new IllegalStateException(String.valueOf(lValue));
-		};
-	}
-
-	private int writeArrayAccess(@NotNull VariableDetails variable, @NotNull Expression index, @NotNull Type type, @NotNull Variables variables) throws IOException {
-		final int offsetReg = write(index, variables);
-		final String offsetRegName = getRegName(offsetReg);
-		writeIndented("imul " + offsetRegName + ", " + getTypeSize(type));
-
-		final int addrReg = getFreeReg();
-		final String addrRegName = getRegName(addrReg);
-		if (variable.isScalar()) {
-			final int varReg = getFreeReg();
-			final String varRegName = getRegName(varReg);
-			writeAddrOfVar(varReg, variable);
-			writeIndented("mov " + addrRegName + ", [" + varRegName + "]");
-			freeReg(varReg);
-		}
-		else {
-			writeAddrOfVar(addrReg, variable);
-		}
-		writeIndented("add " + addrRegName + ", " + offsetRegName);
-		freeReg(offsetReg);
-		return addrReg;
-	}
-
-	private void writeIfElse(StmtIf statement, Variables variables) throws IOException {
-		final Expression condition = statement.condition();
-		final Statement thenStatement = statement.thenStatement();
-		final Statement elseStatement = statement.elseStatement();
-		final int labelIndex = nextLabelIndex();
-		final String elseLabel = "@else_" + labelIndex;
-		final String nextLabel = "@endif_" + labelIndex;
-		writeComment("if " + condition.toUserString(), statement.location());
-		final int conditionReg = write(condition, variables);
-		final String conditionRegName = getRegName(conditionReg, getTypeSize(condition.typeNotNull()));
-		writeComment("if-condition");
-		writeIndented("or " + conditionRegName + ", " + conditionRegName);
-		writeIndented("jz " + (elseStatement != null ? elseLabel : nextLabel));
-		writeStatement(thenStatement, variables);
-		if (elseStatement != null) {
-			writeIndented("jmp " + nextLabel);
-		}
-		if (elseStatement != null) {
-			writeLabel(elseLabel);
-			writeStatement(elseStatement, variables);
-		}
-		writeLabel(nextLabel);
-	}
-
-	private void writeFor(StmtLoop statement, Variables variables) throws IOException {
-		final List<Statement> iteration = statement.iteration();
-		final String loopName = iteration.isEmpty() ? "while" : "for";
-		final int labelIndex = nextLabelIndex();
-		final String label = "@" + loopName + "_" + labelIndex;
-		final String nextLabel = "@" + loopName + "_" + labelIndex + "_end";
-
-		final Expression condition = statement.condition();
-		writeComment(loopName + " " + condition.toUserString(), statement.location());
-		writeLabel(label);
-		final int conditionReg = write(condition, variables);
-		final String conditionRegName = getRegName(conditionReg, getTypeSize(condition.typeNotNull()));
-		writeComment(loopName + "-condition");
-		writeIndented("or " + conditionRegName + ", " + conditionRegName);
-		writeIndented("jz " + nextLabel);
-		final Statement body = statement.bodyStatement();
-		writeStatement(body, variables);
-
-		if (iteration.size() > 0) {
-			writeComment("for iteration");
-			writeStatements(iteration, variables);
-		}
-		writeIndented("jmp " + label);
-
-		writeLabel(nextLabel);
-	}
-
-	private int getFreeReg() {
-		int mask = 1;
-		for (int i = 0; i < 4; i++, mask += mask) {
-			if ((freeRegs & mask) == 0) {
-				freeRegs |= mask;
-				return i;
-			}
-		}
-		throw new IllegalStateException("no free reg");
-	}
-
-	private void freeReg(int reg) {
-		freeRegs &= ~(1 << reg);
 	}
 
 	private void writeEmit() throws IOException {
@@ -768,13 +256,223 @@ public class X86Win64 {
 				              """);
 	}
 
+	private void write(IRFunction function) throws IOException {
+		writeComment(function.toString());
+		writeLabel(function.label());
+
+		final List<IRLocalVar> localVars = function.localVars();
+		int size = 0;
+		for (IRLocalVar var : localVars) {
+			size += var.size();
+		}
+		size = (size + 15) / 16 * 16;
+		if (size > 0) {
+			writeComment("reserve space for local variables");
+			writeIndented("sub rsp, " + size);
+		}
+		writeInstructions(function.instructions());
+		if (size > 0) {
+			writeComment("release space for local variables");
+			writeIndented("add rsp, " + size);
+		}
+		writeIndented("ret");
+	}
+
+	private void writeInstructions(List<IRInstruction> instructions) throws IOException {
+		for (IRInstruction instruction : instructions) {
+			writeInstruction(instruction);
+		}
+	}
+
+	private void writeInstruction(IRInstruction instruction) throws IOException {
+		switch (instruction) {
+		case IRLabel label -> writeLabel(label.label());
+		case IRComment comment -> writeComment(comment.comment());
+		case IRCopy copy -> writeCopy(copy);
+		case IRLoad load -> writeLoad(load);
+		case IRLdIntLiteral load -> writeLoad(load);
+		case IRLdStringLiteral load -> writeLoadStringLit(load);
+		case IRAddrOfVar addrOf -> writeAddrOfVar(addrOf);
+		case IRStore store -> writeStore(store);
+		case IRUnary unary -> writeUnary(unary);
+		case IRBinary binary -> writeBinary(binary);
+		case IRCompare compare -> writeCompare(compare);
+		case IRCast cast -> writeCast(cast);
+		case IRMul mul -> writeMul(mul);
+		case IRBranch branch -> writeBranch(branch);
+		case IRJump jump -> writeJump(jump);
+		case IRPrintStringZero print -> writePrintStringZero(print);
+		case IRPrintInt print -> writePrintInt(print);
+		case IRCall call -> writeCall(call);
+		case IRReturnValue ret -> writeReturnValue(ret);
+		default -> throw new UnsupportedOperationException(instruction.getClass() +" " + String.valueOf(instruction));
+		}
+	}
+
+	private void writeCopy(IRCopy copy) throws IOException {
+		final int size = copy.size();
+		writeIndented("mov " + getRegName(copy.targetReg(), size) + ", " + getRegName(copy.sourceReg(), size));
+	}
+
+	private void writeLoad(IRLdIntLiteral load) throws IOException {
+		writeIndented("mov " + getRegName(load.valueReg(), load.size()) + ", " + load.constant());
+	}
+
+	private void writeLoad(IRLoad load) throws IOException {
+		final String addrRegName = getRegName(load.addrReg());
+		final String valueRegName = getRegName(load.valueReg(), load.size());
+		writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
+	}
+
+	private void writeLoadStringLit(IRLdStringLiteral load) throws IOException {
+		writeIndented("lea " + getRegName(load.addrReg()) + ", [" + getStringLiteralName(load.literalIndex()) + "]");
+	}
+
+	private void writeAddrOfVar(IRAddrOfVar addrOf) throws IOException {
+		final String addrReg = getRegName(addrOf.reg());
+		if (addrOf.scope() == VariableScope.global) {
+			writeIndented("lea " + addrReg + ", [" + getGlobalVarName(addrOf.index()) + "]");
+		}
+		else {
+			writeIndented("lea " + addrReg + ", [rsp+" + addrOf.offset() + "]");
+		}
+	}
+
+	private void writeStore(IRStore store) throws IOException {
+		writeIndented("mov [" + getRegName(store.addrReg()) + "], " + getRegName(store.valueReg(), store.size()));
+	}
+
+	private void writeUnary(IRUnary unary) throws IOException {
+		final String regName = getRegName(unary.valueReg(), unary.size());
+
+		switch (unary.op()) {
+		case neg -> writeIndented("neg " + regName);
+		case not -> writeIndented("not " + regName);
+		case notLog -> {
+			writeIndented("or " + regName + ", " + regName);
+			writeIndented("sete " + regName);
+		}
+		default -> throw new UnsupportedOperationException("Unsupported " + unary.op());
+		}
+	}
+
+	private void writeBinary(IRBinary binary) throws IOException {
+		final int targetReg = binary.targetReg();
+		final int sourceReg = binary.sourceReg();
+		final int size = binary.size();
+		final String targetRegName = getRegName(targetReg, size);
+		final String sourceRegName = getRegName(sourceReg, size);
+
+		switch (binary.op()) {
+		case Add -> writeIndented("add " + targetRegName + ", " + sourceRegName);
+		case Sub -> writeIndented("sub " + targetRegName + ", " + sourceRegName);
+		case And -> writeIndented("and " + targetRegName + ", " + sourceRegName);
+		case Or -> writeIndented("or " + targetRegName + ", " + sourceRegName);
+		case Xor -> writeIndented("xor " + targetRegName + ", " + sourceRegName);
+		case Multiply -> {
+			if (size != 8) {
+				writeIndented("movsx " + getRegName(targetReg) + ", " + getRegName(targetReg, size));
+				writeIndented("movsx " + getRegName(sourceReg) + ", " + getRegName(sourceReg, size));
+			}
+			writeIndented("imul " + getRegName(targetReg) + ", " + getRegName(sourceReg));
+		}
+		default -> throw new UnsupportedOperationException("binary " + binary.op());
+		}
+	}
+
+	private void writeCompare(IRCompare compare) throws IOException {
+		final int size = getTypeSize(compare.type());
+		final String leftRegName = getRegName(compare.leftReg(), size);
+		final String resultRegName = getRegName(compare.resultReg(), 1);
+		writeIndented("cmp " + leftRegName + ", " + getRegName(compare.rightReg(), size));
+		writeIndented(switch (compare.op()) {
+			case Lt -> "setl";
+			case LtEq -> "setle";
+			case Equals -> "sete";
+			case NotEquals -> "setne";
+			case GtEq -> "setge";
+			case Gt -> "setg";
+			default -> throw new UnsupportedOperationException("Unsupported operand " + compare.op());
+		} + " " + resultRegName);
+		writeIndented("and " + resultRegName + ", 0xFF");
+	}
+
+	private void writeCast(IRCast cast) throws IOException {
+		final int sourceSize = getTypeSize(cast.sourceType());
+		final int targetSize = getTypeSize(cast.targetType());
+		if (targetSize > sourceSize) {
+			writeIndented("movzx " + getRegName(cast.targetReg(), targetSize) + ", " + getRegName(cast.sourceReg(), sourceSize));
+		}
+	}
+
+	private void writeMul(IRMul mul) throws IOException {
+		writeIndented("imul " + getRegName(mul.reg()) + ", " + mul.factor());
+	}
+
+	private void writeBranch(IRBranch branch) throws IOException {
+		final String conditionRegName = getRegName(branch.conditionReg(), 1);
+		writeIndented("or " + conditionRegName + ", " + conditionRegName);
+		if (branch.jumpOnTrue()) {
+			writeIndented("jnz " + branch.label());
+		}
+		else {
+			writeIndented("jz " + branch.label());
+		}
+	}
+
+	private void writeJump(IRJump jump) throws IOException {
+		writeIndented("jmp " + jump.target());
+	}
+
+	private void writePrintStringZero(IRPrintStringZero print) throws IOException {
+		final String regName = getRegName(print.addrReg());
+		writeIndented("sub rsp, 8");
+		if (!regName.equals("rcx")) {
+			writeIndented("  mov rcx, " + regName);
+		}
+		writeIndented("  call " + PRINT_STRING_ZERO);
+		writeIndented("add rsp, 8");
+	}
+
+	private void writePrintInt(IRPrintInt print) throws IOException {
+		final String regName = getRegName(print.reg());
+		writeIndented("sub rsp, 8");
+		if (!regName.equals("rcx")) {
+			writeIndented("  mov rcx, " + regName);
+		}
+		writeIndented("  call " + PRINT_UINT);
+		writeIndented("  mov rcx, 0x0a");
+		writeIndented("  call " + EMIT);
+		writeIndented("add rsp, 8");
+	}
+
+	private void writeCall(IRCall call) throws IOException {
+		for (IRCall.Arg arg : call.args()) {
+			final int reg = arg.reg();
+			final int size = getTypeSize(arg.type());
+			final String regName = getRegName(reg);
+			if (size != 8) {
+				writeIndented("movzx rcx, " + getRegName(reg, size));
+			}
+			else if (!regName.equals("rcx")) {
+				writeIndented("mov rcx, " + regName);
+			}
+		}
+		writeIndented("sub rsp, 8");
+		writeIndented("  call " + call.label());
+		writeIndented("add rsp, 8");
+	}
+
+	private void writeReturnValue(IRReturnValue ret) throws IOException {
+		final String regName = getRegName(ret.reg());
+		if (!regName.equals("rax")) {
+			writeIndented("mov rax, " + regName);
+		}
+	}
+
 	private void writeLabel(String label) throws IOException {
 		write(label + ":");
 		writeNL();
-	}
-
-	private void writeComment(String s, Location location) throws IOException {
-		writeComment(location + " " + s);
 	}
 
 	private void writeComment(String s) throws IOException {
@@ -809,16 +507,6 @@ public class X86Win64 {
 		if (debug) {
 			System.out.print(text);
 		}
-	}
-
-	private int nextLabelIndex() {
-		labelIndex++;
-		return labelIndex;
-	}
-
-	@NotNull
-	private static String getStringLiteralName(int i) {
-		return "string_" + i;
 	}
 
 	private static String getRegName(int reg) {
@@ -890,83 +578,11 @@ public class X86Win64 {
 		return buffer.toString();
 	}
 
-	private void writeAddrOfVar(int reg, VariableDetails variable) throws IOException {
-		final String addrReg = getRegName(reg);
-		if (variable.scope() == VariableScope.global) {
-			writeIndented("lea " + addrReg + ", [" + getGlobalVarName(variable) + "]");
-		}
-		else {
-			writeIndented("lea " + addrReg + ", [rsp+" + variable.offset() + "]");
-		}
+	private static String getGlobalVarName(int index) {
+		return "var" + index;
 	}
 
-	private static String getGlobalVarName(VariableDetails details) {
-		return "var" + details.index();
-	}
-
-	private static int getVariableSize(Variable variable) {
-		return getTypeSize(variable.type()) * Math.max(1, variable.arraySize());
-	}
-
-	private static class Variables {
-		private final Map<Integer, VariableDetails> indexToVar = new HashMap<>();
-		private final Variables parent;
-		private final int size;
-
-		public Variables(@NotNull List<Variable> globalVariables) {
-			this.parent = null;
-			int offset = 0;
-			for (Variable variable : globalVariables) {
-				Utils.assertTrue(!indexToVar.containsKey(variable.index()));
-				Utils.assertTrue(variable.scope() == VariableScope.global);
-				indexToVar.put(variable.index(), new VariableDetails(variable.name(), variable.scope(), variable.index(), offset, variable.isScalar(), variable.type()));
-				offset += getVariableSize(variable);
-			}
-			size = -1;
-		}
-
-		public Variables(@NotNull List<Variable> variables, @NotNull Variables parent) {
-			this.parent = parent;
-			int offset = 0;
-			for (Variable variable : variables) {
-				Utils.assertTrue(!indexToVar.containsKey(variable.index()));
-				Utils.assertTrue(variable.scope() == VariableScope.function);
-				indexToVar.put(variable.index(), new VariableDetails(variable.name(), variable.scope(), variable.index(), offset, variable.isScalar(), variable.type()));
-				offset += getVariableSize(variable);
-			}
-			this.size = (offset + 15) / 16 * 16;
-		}
-
-		@NotNull
-		public VariableDetails get(int index, @NotNull VariableScope scope) {
-			if (parent == null) {
-				Utils.assertTrue(scope == VariableScope.global);
-				return indexToVar.get(index);
-			}
-
-			if (scope == VariableScope.function) {
-				return indexToVar.get(index);
-			}
-
-			return parent.get(index, scope);
-		}
-
-		public int getSize() {
-			Utils.assertTrue(size >= 0);
-			return size;
-		}
-	}
-
-	private record VariableDetails(String name, VariableScope scope, int index, int offset, boolean isScalar, Type type) {
-		@Override
-		public String toString() {
-			final StringBuilder buffer = new StringBuilder();
-			buffer.append(name);
-			buffer.append("(");
-			buffer.append(scope == VariableScope.global ? "$" : "%");
-			buffer.append(index);
-			buffer.append(")");
-			return buffer.toString();
-		}
+	private static String getStringLiteralName(int index) {
+		return "string_" + index;
 	}
 }
