@@ -11,7 +11,7 @@ import org.jetbrains.annotations.*;
  */
 public final class TypeChecker {
 
-	private final Map<String, Symbol> symbolMap = new HashMap<>();
+	private final Map<String, Symbol> globalSymbols = new HashMap<>();
 	private final List<Variable> globalVariables = new ArrayList<>();
 	private final Map<String, StringLiteral> stringLiteralMap = new HashMap<>();
 	private final List<StringLiteral> stringLiterals = new ArrayList<>();
@@ -23,8 +23,8 @@ public final class TypeChecker {
 	public TypeChecker(@NotNull Type pointerIntType) {
 		Utils.assertTrue(pointerIntType.isInt());
 		this.pointerIntType = pointerIntType;
-		symbolMap.put("printString", new Symbol.Func(Type.VOID, List.of(Type.pointer(Type.U8)), new Location(-1, -1)));
-		symbolMap.put("print", new Symbol.Func(Type.VOID, List.of(Type.I64), new Location(-1, -1)));
+		globalSymbols.put("printString", new Symbol.Func(Type.VOID, List.of(Type.pointer(Type.U8)), new Location(-1, -1)));
+		globalSymbols.put("print", new Symbol.Func(Type.VOID, List.of(Type.I64), new Location(-1, -1)));
 	}
 
 	@NotNull
@@ -78,7 +78,7 @@ public final class TypeChecker {
 			args.add(new Function.Arg(arg.typeString(), argType, arg.name(), arg.location()));
 			argTypes.add(argType);
 		}
-		symbolMap.put(name, new Symbol.Func(returnType, argTypes, location));
+		globalSymbols.put(name, new Symbol.Func(returnType, argTypes, location));
 		return new Function(name, function.typeString(), returnType, args, function.statement(), location);
 	}
 
@@ -86,35 +86,35 @@ public final class TypeChecker {
 	private List<Function> determineStatementTypes(List<Function> typedFunctions) {
 		final List<Function> functions = new ArrayList<>();
 		for (Function typedFunction : typedFunctions) {
-			expectedReturnType = typedFunction.returnType();
-			try {
-				final Function function = determineTypes(typedFunction);
-				functions.add(function);
-			}
-			finally {
-				expectedReturnType = null;
-			}
+			final Function function = determineTypes(typedFunction);
+			functions.add(function);
 		}
 		return functions;
 	}
 
 	@NotNull
 	private Function determineTypes(Function function) {
-		final Statement statement = processStatement(function.statement());
-		final StmtCompound compound = statement instanceof StmtCompound c ? c : new StmtCompound(List.of(statement));
-		if (expectedReturnType != Type.VOID) {
-			if (!(Utils.getLastOrNull(compound.statements()) instanceof StmtReturn)) {
-				throw new SyntaxException(Messages.functionMustReturnType(expectedReturnType), function.location());
+		expectedReturnType = function.returnType();
+		try {
+			final Statement statement = processStatement(function.statement());
+			final StmtCompound compound = statement instanceof StmtCompound c ? c : new StmtCompound(List.of(statement));
+			if (expectedReturnType != Type.VOID) {
+				if (!(Utils.getLastOrNull(compound.statements()) instanceof StmtReturn)) {
+					throw new SyntaxException(Messages.functionMustReturnType(expectedReturnType), function.location());
+				}
 			}
+			return new Function(function.name(), function.typeString(), function.returnType(), function.args(), statement, function.location());
 		}
-		return new Function(function.name(), function.typeString(), function.returnType(), function.args(), statement, function.location());
+		finally {
+			expectedReturnType = null;
+		}
 	}
 
 	@NotNull
 	private Statement processStatement(Statement statement) {
 		return switch (statement) {
 			case StmtVarDeclaration declaration -> processVarDeclaration(declaration);
-			case StmtCompound compound -> new StmtCompound(processStatements(compound.statements()));
+			case StmtCompound compound -> processCompound(compound);
 			case StmtIf ifStatement -> processIf(ifStatement);
 			case StmtLoop forStatement -> processFor(forStatement);
 			case StmtReturn stmt -> processReturn(stmt.expression(), stmt.location());
@@ -125,25 +125,31 @@ public final class TypeChecker {
 
 	@NotNull
 	private StmtVarDeclaration processVarDeclaration(StmtVarDeclaration declaration) {
-		String varName = declaration.varName();
+		final String varName = declaration.varName();
 		final Location location = declaration.location();
 		Expression expression = processExpression(declaration.expression());
 		final Type type = getType(declaration.typeString(), location);
 		expression = autoCastTo(type, expression, location);
 
-		varName = addVariable(varName, type, 0, location);
-		return new StmtVarDeclaration(declaration.typeString(), varName, type, expression, location);
+		final Variable variable = addVariable(varName, type, 0, location);
+		return new StmtVarDeclaration(declaration.typeString(), varName, variable.index(), type, expression, location);
 	}
 
 	@NotNull
 	private StmtArrayDeclaration processArrayDeclaration(StmtArrayDeclaration declaration) {
 		Utils.assertTrue(declaration.size() > 0);
-		String varName = declaration.varName();
+		final String varName = declaration.varName();
 		final Location location = declaration.location();
 		Type type = getType(declaration.typeString(), location);
 		type = Type.pointer(type);
-		varName = addVariable(varName, type, declaration.size(), location);
-		return new StmtArrayDeclaration(declaration.typeString(), varName, type, declaration.size(), location);
+		final Variable variable = addVariable(varName, type, declaration.size(), location);
+		return new StmtArrayDeclaration(declaration.typeString(), varName, variable.index(), type, declaration.size(), location);
+	}
+
+	@NotNull
+	private StmtCompound processCompound(StmtCompound compound) {
+		final List<Statement> statements = processStatements(compound.statements());
+		return new StmtCompound(statements);
 	}
 
 	@NotNull
@@ -297,9 +303,9 @@ public final class TypeChecker {
 			}
 
 			final Expression expression = processArrayIndex(arrayIndex, location);
-			return new ExprVarAccess(variable.name(), type, expression, location);
+			return new ExprVarAccess(name, variable.index(), type, expression, location);
 		}
-		return new ExprVarAccess(variable.name(), type, null, location);
+		return new ExprVarAccess(name, variable.index(), type, null, location);
 	}
 
 	@NotNull
@@ -320,9 +326,9 @@ public final class TypeChecker {
 		Expression arrayIndex = addrOf.arrayIndex();
 		if (arrayIndex != null) {
 			arrayIndex = processArrayIndex(arrayIndex, location);
-			return new ExprAddrOf(variable.name(), variable.type(), arrayIndex, location);
+			return new ExprAddrOf(name, variable.index(), variable.type(), arrayIndex, location);
 		}
-		return new ExprAddrOf(variable.name(), Type.pointer(variable.type()), null, location);
+		return new ExprAddrOf(name, variable.index(), Type.pointer(variable.type()), null, location);
 	}
 
 	@NotNull
@@ -365,7 +371,7 @@ public final class TypeChecker {
 
 	@NotNull
 	private ExprFuncCall processFuncCall(String name, List<Expression> argExpressions, Location location) {
-		final Symbol symbol = symbolMap.get(name);
+		final Symbol symbol = globalSymbols.get(name);
 		if (!(symbol instanceof Symbol.Func function)) {
 			throw new SyntaxException(Messages.undeclaredFunction(name), location);
 		}
@@ -400,7 +406,7 @@ public final class TypeChecker {
 				}
 			}
 			else if (op == ExprBinary.Op.Add
-			    || op == ExprBinary.Op.Sub) {
+			         || op == ExprBinary.Op.Sub) {
 				final Type toType = leftType.toType();
 				if (toType != null && rightType.isInt()) {
 					final int size = getTypeSize(toType);
@@ -493,17 +499,17 @@ public final class TypeChecker {
 			}
 			final Expression expression = processArrayIndex(arrayIndex, location);
 			final Type type = Objects.requireNonNull(variable.type().toType());
-			return new ExprVarAccess(variable.name(), type, expression, location);
+			return new ExprVarAccess(name, variable.index(), type, expression, location);
 		}
 
 		if (variable.isArray()) {
 			throw new SyntaxException(Messages.arraysAreImmutable(), location);
 		}
-		return new ExprVarAccess(variable.name(), variable.type(), null, location);
+		return new ExprVarAccess(name, variable.index(), variable.type(), null, location);
 	}
 
 	private void checkNoSymbolNamed(String name, Location location) {
-		final Symbol existingSymbol = symbolMap.get(name);
+		final Symbol existingSymbol = globalSymbols.get(name);
 		if (existingSymbol instanceof Symbol.Func) {
 			throw new SyntaxException(Messages.functionAlreadDeclaredAt(name, existingSymbol.location()), location);
 		}
@@ -513,17 +519,18 @@ public final class TypeChecker {
 		Utils.assertTrue(existingSymbol == null);
 	}
 
-	private String addVariable(String varName, Type type, int arraySize, Location location) {
+	@NotNull
+	private Variable addVariable(String varName, Type type, int arraySize, Location location) {
 		checkNoSymbolNamed(varName, location);
 		final Variable variable = new Variable(varName, globalVariables.size(), type, arraySize, location);
-		symbolMap.put(varName, variable);
+		globalSymbols.put(varName, variable);
 		globalVariables.add(variable);
-		return varName;
+		return variable;
 	}
 
 	@NotNull
 	private Variable getVariable(String name, Location location) {
-		final Symbol symbol = symbolMap.get(name);
+		final Symbol symbol = globalSymbols.get(name);
 		if (!(symbol instanceof Variable variable)) {
 			throw new SyntaxException(Messages.undeclaredVariable(name), location);
 		}

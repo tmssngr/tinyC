@@ -24,19 +24,19 @@ start:
 @main:
         ; 2:9 int lit 1
         mov cl, 1
-        ; 2:2 assign a
+        ; 2:2 assign a(0)
         lea rax, [var0]
         mov [rax], cl
         ; 3:9 int lit 2
         mov cl, 2
-        ; 3:2 assign b
+        ; 3:2 assign b(1)
         lea rax, [var1]
         mov [rax], cl
         ; 4:2 if a > b
-        ; 4:6 read var a
+        ; 4:6 read var a(0)
         lea rcx, [var0]
         mov al, [rcx]
-        ; 4:10 read var b
+        ; 4:10 read var b(1)
         lea rcx, [var1]
         mov bl, [rcx]
         ; 4:8 >
@@ -46,7 +46,7 @@ start:
         ; if-condition
         or cl, cl
         jz @else_1
-        ; 5:9 read var a
+        ; 5:9 read var a(0)
         lea rax, [var0]
         mov bl, [rax]
         movzx rax, bl
@@ -59,7 +59,7 @@ start:
         add rsp, 8
         jmp @endif_1
 @else_1:
-        ; 8:9 read var b
+        ; 8:9 read var b(1)
         lea rax, [var1]
         mov bl, [rax]
         movzx rax, bl
@@ -185,7 +185,9 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
+        ; variable a(0)
         var0 rb 1
+        ; variable b(1)
         var1 rb 1
 
 section '.idata' import data readable writeable

@@ -41,32 +41,32 @@ start:
         ; 2:21 add
         add cl, al
         movzx ax, cl
-        ; 2:5 assign foo
+        ; 2:5 assign foo(0)
         lea rcx, [var0]
         mov [rcx], ax
-        ; 3:15 read var foo
+        ; 3:15 read var foo(0)
         lea rcx, [var0]
         mov ax, [rcx]
-        ; 3:21 read var foo
+        ; 3:21 read var foo(0)
         lea rcx, [var0]
         mov bx, [rcx]
         ; 3:19 multiply
         movsx rax, ax
         movsx rbx, bx
         imul rax, rbx
-        ; 3:5 assign bar
+        ; 3:5 assign bar(1)
         lea rcx, [var1]
         mov [rcx], ax
         ; 4:11 int lit 1
         mov cx, 1
-        ; 4:5 var foo
+        ; 4:5 var foo(0)
         lea rax, [var0]
         ; 4:9 assign
         mov [rax], cx
-        ; 5:11 read var bar
+        ; 5:11 read var bar(1)
         lea rcx, [var1]
         mov ax, [rcx]
-        ; 5:17 read var foo
+        ; 5:17 read var foo(0)
         lea rcx, [var0]
         mov bx, [rcx]
         ; 5:15 add
@@ -95,11 +95,11 @@ start:
         movsx rax, al
         imul rcx, rax
         movzx ax, cl
-        ; 6:5 var foo
+        ; 6:5 var foo(0)
         lea rcx, [var0]
         ; 6:9 assign
         mov [rcx], ax
-        ; 7:11 read var foo
+        ; 7:11 read var foo(0)
         lea rcx, [var0]
         mov ax, [rcx]
         movzx rcx, ax
@@ -223,7 +223,9 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
+        ; variable foo(0)
         var0 rb 2
+        ; variable bar(1)
         var1 rb 2
 
 section '.idata' import data readable writeable

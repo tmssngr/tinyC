@@ -24,13 +24,13 @@ start:
 @main:
         ; 4:12 int lit 32
         mov cl, 32
-        ; 4:3 assign chr
+        ; 4:3 assign chr(1)
         lea rax, [var1]
         mov [rax], cl
-        ; 5:14 read var chr
+        ; 5:14 read var chr(1)
         lea rcx, [var1]
         mov al, [rcx]
-        ; 5:3 array chars
+        ; 5:3 array chars(0)
         ; 5:9 int lit 0
         mov rcx, 0
         imul rcx, 1
@@ -38,7 +38,7 @@ start:
         add rbx, rcx
         ; 5:12 assign
         mov [rbx], al
-        ; 6:14 array chars
+        ; 6:14 array chars(0)
         ; 6:20 int lit 0
         mov rcx, 0
         imul rcx, 1
@@ -49,7 +49,7 @@ start:
         mov al, 1
         ; 6:23 add
         add cl, al
-        ; 6:3 array chars
+        ; 6:3 array chars(0)
         ; 6:9 int lit 1
         mov rax, 1
         imul rax, 1
@@ -57,7 +57,7 @@ start:
         add rbx, rax
         ; 6:12 assign
         mov [rbx], cl
-        ; 7:16 array chars
+        ; 7:16 array chars(0)
         ; 7:22 int lit 1
         mov rcx, 1
         imul rcx, 1
@@ -68,7 +68,7 @@ start:
         mov al, 2
         ; 7:25 add
         add cl, al
-        ; 7:3 array chars
+        ; 7:3 array chars(0)
         ; 7:9 int lit 1
         mov al, 1
         ; 7:11 int lit 1
@@ -81,17 +81,17 @@ start:
         add rax, rbx
         ; 7:14 assign
         mov [rax], cl
-        ; 8:15 array chars
+        ; 8:15 array chars(0)
         ; 8:21 int lit 2
         mov rcx, 2
         imul rcx, 1
         lea rax, [var0]
         add rax, rcx
         mov cl, [rax]
-        ; 8:3 assign result
+        ; 8:3 assign result(2)
         lea rax, [var2]
         mov [rax], cl
-        ; 9:9 read var result
+        ; 9:9 read var result(2)
         lea rcx, [var2]
         mov al, [rcx]
         movzx rcx, al
@@ -215,8 +215,11 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
+        ; variable chars(0)
         var0 rb 2048
+        ; variable chr(1)
         var1 rb 1
+        ; variable result(2)
         var2 rb 1
 
 section '.idata' import data readable writeable

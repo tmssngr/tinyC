@@ -42,7 +42,7 @@ public class X86Win64 {
 		}
 
 		writeInit(program.globalVars(), variables);
-		writePostamble(program.globalVariables(), program.stringLiterals());
+		writePostamble(program.globalVariables(), program.stringLiterals(), variables);
 	}
 
 	private void writePreample() throws IOException {
@@ -77,6 +77,7 @@ public class X86Win64 {
 		functionRetLabel = functionLabel + "_ret";
 		writeComment(function.toString());
 		writeLabel(functionLabel);
+
 		writeStatement(function.statement(), variables);
 		writeLabel(functionRetLabel);
 		writeIndented("ret");
@@ -112,14 +113,14 @@ public class X86Win64 {
 
 		for (StmtDeclaration declaration : declarations) {
 			if (declaration instanceof StmtVarDeclaration varDeclaration) {
-				writeAssignment(varDeclaration.varName(), varDeclaration.expression(), varDeclaration.location(), variables);
+				writeAssignment(varDeclaration.index(), varDeclaration.expression(), varDeclaration.location(), variables);
 			}
 		}
 
 		writeIndented("ret");
 	}
 
-	private void writePostamble(List<Variable> globalVariables, List<StringLiteral> stringLiterals) throws IOException {
+	private void writePostamble(List<Variable> globalVariables, List<StringLiteral> stringLiterals, Variables variables) throws IOException {
 		writeEmit();
 		writeStringPrint();
 		writeUintPrint();
@@ -131,9 +132,10 @@ public class X86Win64 {
 				              hStdOut rb 8
 				              hStdErr rb 8""");
 		for (Variable variable : globalVariables) {
-			final int size = getTypeSize(variable.type()) * Math.max(1, variable.arraySize());
-			final String asmName = getVarName(variable.index());
-			writeIndented(asmName + " rb " + size);
+			final int size = getVariableSize(variable);
+			final VariableDetails details = variables.get(variable.index());
+			writeComment("variable " + details);
+			writeIndented(getGlobalVarName(details) + " rb " + size);
 		}
 		writeNL();
 
@@ -171,7 +173,7 @@ public class X86Win64 {
 
 	private void writeStatement(Statement statement, Variables variables) throws IOException {
 		switch (statement) {
-		case StmtVarDeclaration declaration -> writeAssignment(declaration.varName(), declaration.expression(), declaration.location(), variables);
+		case StmtVarDeclaration declaration -> writeAssignment(declaration.index(), declaration.expression(), declaration.location(), variables);
 		case StmtCompound compound -> writeStatements(compound.statements(), variables);
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtLoop forStatement -> writeFor(forStatement, variables);
@@ -264,16 +266,15 @@ public class X86Win64 {
 		writeIndented("jmp " + Objects.requireNonNull(functionRetLabel));
 	}
 
-	private void writeAssignment(String varName, Expression expression, Location location, Variables variables) throws IOException {
+	private void writeAssignment(int index, Expression expression, Location location, Variables variables) throws IOException {
 		final int expressionReg = write(expression, variables);
 		final int varReg = getFreeReg();
-		final Variable variable = variables.get(varName);
+		final VariableDetails variable = variables.get(index);
 		Utils.assertTrue(variable.isScalar());
 		final int typeSize = getTypeSize(variable.type());
-		final String addrReg = getRegName(varReg);
-		writeComment("assign " + varName, location);
-		writeIndented("lea " + addrReg + ", [" + getVarName(variable.index()) + "]");
-		writeIndented("mov [" + addrReg + "], " + getRegName(expressionReg, typeSize));
+		writeComment("assign " + variable, location);
+		writeAddrOfVar(varReg, variable);
+		writeIndented("mov [" + getRegName(varReg) + "], " + getRegName(expressionReg, typeSize));
 		freeReg(expressionReg);
 		freeReg(varReg);
 	}
@@ -305,16 +306,16 @@ public class X86Win64 {
 				yield reg;
 			}
 			case ExprVarAccess var -> {
-				final String name = var.varName();
+				final VariableDetails variable = variables.get(var.index());
 				final Expression arrayIndex = var.arrayIndex();
 				final int addrReg;
 				if (arrayIndex != null) {
-					writeComment("array " + name, node.location());
-					addrReg = writeArrayAccess(name, arrayIndex, var.typeNotNull(), variables);
+					writeComment("array " + variable, node.location());
+					addrReg = writeArrayAccess(variable, arrayIndex, var.typeNotNull(), variables);
 				}
 				else {
-					writeComment("read var " + name, node.location());
-					addrReg = writeAddressOf(name, variables);
+					writeComment("read var " + variable, node.location());
+					addrReg = writeAddressOf(variable);
 				}
 				final int valueReg = writeRead(addrReg, var.typeNotNull());
 				freeReg(addrReg);
@@ -337,27 +338,24 @@ public class X86Win64 {
 				yield reg;
 			}
 			case ExprAddrOf addrOf -> {
-				final String name = addrOf.varName();
+				final VariableDetails variable = variables.get(addrOf.index());
 				final Expression arrayIndex = addrOf.arrayIndex();
 				if (arrayIndex != null) {
-					writeComment("address of array " + name + "[...]", node.location());
-					yield writeArrayAccess(name, arrayIndex, Objects.requireNonNull(addrOf.typeNotNull().toType()), variables);
+					writeComment("address of array " + variable + "[...]", node.location());
+					yield writeArrayAccess(variable, arrayIndex, Objects.requireNonNull(addrOf.typeNotNull().toType()), variables);
 				}
 
-				writeComment("address of var " + name, node.location());
-				yield writeAddressOf(name, variables);
+				writeComment("address of var " + variable, node.location());
+				yield writeAddressOf(variable);
 			}
 			default -> throw new UnsupportedOperationException("unsupported expression " + node);
 		};
 	}
 
-	private int writeAddressOf(String name, Variables variables) throws IOException {
+	private int writeAddressOf(VariableDetails variable) throws IOException {
 		final int reg = getFreeReg();
-		final Variable variable = variables.get(name);
 		Utils.assertTrue(variable.isScalar());
-		final String varName = getVarName(variable.index());
-		final String addrReg = getRegName(reg);
-		writeIndented("lea " + addrReg + ", [" + varName + "]");
+		writeAddrOfVar(reg, variable);
 		return reg;
 	}
 
@@ -530,20 +528,19 @@ public class X86Win64 {
 	private int writeLValue(Expression lValue, Variables variables) throws IOException {
 		return switch (lValue) {
 			case ExprVarAccess var -> {
-				final String varName = var.varName();
+				final VariableDetails variable = variables.get(var.index());
 				final Location location = var.location();
 				final Expression arrayIndex = var.arrayIndex();
 				if (arrayIndex != null) {
-					writeComment("array " + varName, location);
-					yield writeArrayAccess(varName, arrayIndex, var.typeNotNull(), variables);
+					Utils.assertTrue(!variable.isScalar());
+					writeComment("array " + variable, location);
+					yield writeArrayAccess(variable, arrayIndex, var.typeNotNull(), variables);
 				}
 				else {
-					final int varReg = getFreeReg();
-					final Variable variable = variables.get(varName);
 					Utils.assertTrue(variable.isScalar());
-					final String addrReg = getRegName(varReg);
-					writeComment("var " + varName, location);
-					writeIndented("lea " + addrReg + ", [" + getVarName(variable.index()) + "]");
+					final int varReg = getFreeReg();
+					writeComment("var " + variable, location);
+					writeAddrOfVar(varReg, variable);
 					yield varReg;
 				}
 			}
@@ -552,9 +549,7 @@ public class X86Win64 {
 		};
 	}
 
-	private int writeArrayAccess(@NotNull String varName, @NotNull Expression index, @NotNull Type type, @NotNull Variables variables) throws IOException {
-		final Variable variable = variables.get(varName);
-		final String asmVarName = getVarName(variable.index());
+	private int writeArrayAccess(@NotNull VariableDetails variable, @NotNull Expression index, @NotNull Type type, @NotNull Variables variables) throws IOException {
 		final int offsetReg = write(index, variables);
 		final String offsetRegName = getRegName(offsetReg);
 		writeIndented("imul " + offsetRegName + ", " + getTypeSize(type));
@@ -564,12 +559,12 @@ public class X86Win64 {
 		if (variable.isScalar()) {
 			final int varReg = getFreeReg();
 			final String varRegName = getRegName(varReg);
-			writeIndented("lea " + varRegName + ", [" + asmVarName + "]");
+			writeAddrOfVar(varReg, variable);
 			writeIndented("mov " + addrRegName + ", [" + varRegName + "]");
 			freeReg(varReg);
 		}
 		else {
-			writeIndented("lea " + addrRegName + ", [" + asmVarName + "]");
+			writeAddrOfVar(addrReg, variable);
 		}
 		writeIndented("add " + addrRegName + ", " + offsetRegName);
 		freeReg(offsetReg);
@@ -812,11 +807,6 @@ public class X86Win64 {
 	}
 
 	@NotNull
-	private static String getVarName(int i) {
-		return "var" + i;
-	}
-
-	@NotNull
 	private static String getStringLiteralName(int i) {
 		return "string_" + i;
 	}
@@ -890,18 +880,46 @@ public class X86Win64 {
 		return buffer.toString();
 	}
 
-	private static class Variables {
-		private final Map<String, Variable> nameToVariable = new HashMap<>();
+	private void writeAddrOfVar(int reg, VariableDetails variable) throws IOException {
+		final String addrReg = getRegName(reg);
+		writeIndented("lea " + addrReg + ", [" + getGlobalVarName(variable) + "]");
+	}
 
-		public Variables(List<Variable> globalVariables) {
+	private static String getGlobalVarName(VariableDetails details) {
+		return "var" + details.index();
+	}
+
+	private static int getVariableSize(Variable variable) {
+		return getTypeSize(variable.type()) * Math.max(1, variable.arraySize());
+	}
+
+	private static class Variables {
+		private final Map<Integer, VariableDetails> indexToVar = new HashMap<>();
+
+		public Variables(@NotNull List<Variable> globalVariables) {
+			int offset = 0;
 			for (Variable variable : globalVariables) {
-				Utils.assertTrue(nameToVariable.put(variable.name(), variable) == null);
+				Utils.assertTrue(!indexToVar.containsKey(variable.index()));
+				indexToVar.put(variable.index(), new VariableDetails(variable.name(), variable.index(), offset, variable.isScalar(), variable.type()));
+				offset += getVariableSize(variable);
 			}
 		}
 
 		@NotNull
-		public Variable get(String name) {
-			return nameToVariable.get(name);
+		public VariableDetails get(int index) {
+			return indexToVar.get(index);
+		}
+	}
+
+	private record VariableDetails(String name, int index, int offset, boolean isScalar, Type type) {
+		@Override
+		public String toString() {
+			final StringBuilder buffer = new StringBuilder();
+			buffer.append(name);
+			buffer.append("(");
+			buffer.append(index);
+			buffer.append(")");
+			return buffer.toString();
 		}
 	}
 }

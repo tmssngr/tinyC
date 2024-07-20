@@ -22,7 +22,7 @@ start:
 
         ; void main
 @main:
-        ; 4:14 read var text
+        ; 4:14 read var text(0)
         lea rcx, [var0]
         mov rax, [rcx]
         ; 4:2 print u8*
@@ -34,17 +34,17 @@ start:
         sub rsp, 8
           call @printLength
         add rsp, 8
-        ; 6:15 address of array text[...]
+        ; 6:15 address of array text(0)[...]
         ; 6:21 int lit 1
         mov rcx, 1
         imul rcx, 1
         lea rbx, [var0]
         mov rax, [rbx]
         add rax, rcx
-        ; 6:2 assign second
+        ; 6:2 assign second(1)
         lea rcx, [var1]
         mov [rcx], rax
-        ; 7:14 read var second
+        ; 7:14 read var second(1)
         lea rcx, [var1]
         mov rax, [rcx]
         ; 7:2 print u8*
@@ -52,15 +52,15 @@ start:
           mov rcx, rax
           call __printStringZero
         add rsp, 8
-        ; 8:12 read var text
+        ; 8:12 read var text(0)
         lea rcx, [var0]
         mov rax, [rcx]
         ; 8:11 deref
         mov cl, [rax]
-        ; 8:2 assign chr
+        ; 8:2 assign chr(2)
         lea rax, [var2]
         mov [rax], cl
-        ; 9:8 read var chr
+        ; 9:8 read var chr(2)
         lea rcx, [var2]
         mov al, [rcx]
         movzx rcx, al
@@ -76,18 +76,18 @@ start:
 @printLength:
         ; 13:15 int lit 0
         mov cx, 0
-        ; 13:2 assign length
+        ; 13:2 assign length(3)
         lea rax, [var3]
         mov [rax], cx
-        ; 14:17 read var text
+        ; 14:17 read var text(0)
         lea rcx, [var0]
         mov rax, [rcx]
-        ; 14:7 assign ptr
+        ; 14:7 assign ptr(4)
         lea rcx, [var4]
         mov [rcx], rax
         ; 14:2 for *ptr != 0
 @for_1:
-        ; 14:24 read var ptr
+        ; 14:24 read var ptr(4)
         lea rcx, [var4]
         mov rax, [rcx]
         ; 14:23 deref
@@ -101,7 +101,7 @@ start:
         ; for-condition
         or bl, bl
         jz @for_1_end
-        ; 15:12 read var length
+        ; 15:12 read var length(3)
         lea rcx, [var3]
         mov ax, [rcx]
         ; 15:21 int lit 1
@@ -109,25 +109,25 @@ start:
         movzx dx, cl
         ; 15:19 add
         add ax, dx
-        ; 15:3 var length
+        ; 15:3 var length(3)
         lea rcx, [var3]
         ; 15:10 assign
         mov [rcx], ax
         ; for iteration
-        ; 14:40 read var ptr
+        ; 14:40 read var ptr(4)
         lea rcx, [var4]
         mov rax, [rcx]
         ; 14:46 int lit 1
         mov rcx, 1
         ; 14:44 add
         add rax, rcx
-        ; 14:34 var ptr
+        ; 14:34 var ptr(4)
         lea rcx, [var4]
         ; 14:38 assign
         mov [rcx], rax
         jmp @for_1
 @for_1_end:
-        ; 17:8 read var length
+        ; 17:8 read var length(3)
         lea rcx, [var3]
         mov ax, [rcx]
         movzx rcx, ax
@@ -161,7 +161,7 @@ init:
         add rsp, 20h
         ; 1:12 string literal string_0
         lea rcx, [string_0]
-        ; 1:1 assign text
+        ; 1:1 assign text(0)
         lea rax, [var0]
         mov [rax], rcx
         ret
@@ -256,10 +256,15 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
+        ; variable text(0)
         var0 rb 8
+        ; variable second(1)
         var1 rb 8
+        ; variable chr(2)
         var2 rb 1
+        ; variable length(3)
         var3 rb 2
+        ; variable ptr(4)
         var4 rb 8
 
 section '.data' data readable

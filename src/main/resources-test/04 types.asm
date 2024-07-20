@@ -24,12 +24,12 @@ start:
 @main:
         ; 2:15 int lit 250
         mov cl, 250
-        ; 2:8 assign i
+        ; 2:8 assign i(0)
         lea rax, [var0]
         mov [rax], cl
         ; 2:3 for i != 2
 @for_1:
-        ; 2:20 read var i
+        ; 2:20 read var i(0)
         lea rcx, [var0]
         mov al, [rcx]
         ; 2:25 int lit 2
@@ -41,7 +41,7 @@ start:
         ; for-condition
         or bl, bl
         jz @for_1_end
-        ; 3:11 read var i
+        ; 3:11 read var i(0)
         lea rcx, [var0]
         mov al, [rcx]
         movzx rcx, al
@@ -52,14 +52,14 @@ start:
           call __emit
         add rsp, 8
         ; for iteration
-        ; 2:32 read var i
+        ; 2:32 read var i(0)
         lea rcx, [var0]
         mov al, [rcx]
         ; 2:36 int lit 1
         mov cl, 1
         ; 2:34 add
         add al, cl
-        ; 2:28 var i
+        ; 2:28 var i(0)
         lea rcx, [var0]
         ; 2:30 assign
         mov [rcx], al
@@ -67,10 +67,10 @@ start:
 @for_1_end:
         ; 6:11 int lit 260
         mov cx, 260
-        ; 6:3 assign v
+        ; 6:3 assign v(1)
         lea rax, [var1]
         mov [rax], cx
-        ; 7:13 read var v
+        ; 7:13 read var v(1)
         lea rcx, [var1]
         mov ax, [rcx]
         movzx rcx, al
@@ -194,7 +194,9 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
+        ; variable i(0)
         var0 rb 1
+        ; variable v(1)
         var1 rb 2
 
 section '.idata' import data readable writeable

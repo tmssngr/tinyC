@@ -26,10 +26,10 @@ start:
         sub rsp, 8
           call @one
         add rsp, 8
-        ; 2:2 assign i
+        ; 2:2 assign i(0)
         lea rcx, [var0]
         mov [rcx], al
-        ; 3:10 read var i
+        ; 3:10 read var i(0)
         lea rcx, [var0]
         mov al, [rcx]
         movzx rcx, al
@@ -172,6 +172,7 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
+        ; variable i(0)
         var0 rb 1
 
 section '.idata' import data readable writeable

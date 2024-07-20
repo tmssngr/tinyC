@@ -24,10 +24,10 @@ start:
 @main:
         ; 2:10 int lit 10
         mov cx, 10
-        ; 2:2 assign a
+        ; 2:2 assign a(0)
         lea rax, [var0]
         mov [rax], cx
-        ; 3:8 read var a
+        ; 3:8 read var a(0)
         lea rcx, [var0]
         mov ax, [rcx]
         movzx rcx, ax
@@ -37,12 +37,12 @@ start:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 4:11 address of var a
+        ; 4:11 address of var a(0)
         lea rcx, [var0]
-        ; 4:2 assign b
+        ; 4:2 assign b(1)
         lea rax, [var1]
         mov [rax], rcx
-        ; 5:11 read var b
+        ; 5:11 read var b(1)
         lea rcx, [var1]
         mov rax, [rcx]
         ; 5:10 deref
@@ -52,10 +52,10 @@ start:
         movzx bx, al
         ; 5:13 sub
         sub cx, bx
-        ; 5:2 assign c
+        ; 5:2 assign c(2)
         lea rax, [var2]
         mov [rax], cx
-        ; 6:8 read var c
+        ; 6:8 read var c(2)
         lea rcx, [var2]
         mov ax, [rcx]
         movzx rcx, ax
@@ -65,12 +65,12 @@ start:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 7:11 address of var c
+        ; 7:11 address of var c(2)
         lea rcx, [var2]
-        ; 7:2 assign d
+        ; 7:2 assign d(3)
         lea rax, [var3]
         mov [rax], rcx
-        ; 8:8 read var d
+        ; 8:8 read var d(3)
         lea rcx, [var3]
         mov rax, [rcx]
         ; 8:7 deref
@@ -80,12 +80,12 @@ start:
         movzx bx, al
         ; 8:10 sub
         sub cx, bx
-        ; 8:3 read var d
+        ; 8:3 read var d(3)
         lea rax, [var3]
         mov rbx, [rax]
         ; 8:5 assign
         mov [rbx], cx
-        ; 9:8 read var c
+        ; 9:8 read var c(2)
         lea rcx, [var2]
         mov ax, [rcx]
         movzx rcx, ax
@@ -209,9 +209,13 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
+        ; variable a(0)
         var0 rb 2
+        ; variable b(1)
         var1 rb 8
+        ; variable c(2)
         var2 rb 2
+        ; variable d(3)
         var3 rb 8
 
 section '.idata' import data readable writeable

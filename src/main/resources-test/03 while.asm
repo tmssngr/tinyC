@@ -24,12 +24,12 @@ start:
 @main:
         ; 2:9 int lit 5
         mov cl, 5
-        ; 2:2 assign i
+        ; 2:2 assign i(0)
         lea rax, [var0]
         mov [rax], cl
         ; 3:2 while i > 0
 @while_1:
-        ; 3:9 read var i
+        ; 3:9 read var i(0)
         lea rcx, [var0]
         mov al, [rcx]
         ; 3:13 int lit 0
@@ -41,7 +41,7 @@ start:
         ; while-condition
         or bl, bl
         jz @while_1_end
-        ; 4:9 read var i
+        ; 4:9 read var i(0)
         lea rcx, [var0]
         mov al, [rcx]
         movzx rcx, al
@@ -51,14 +51,14 @@ start:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 5:7 read var i
+        ; 5:7 read var i(0)
         lea rcx, [var0]
         mov al, [rcx]
         ; 5:11 int lit 1
         mov cl, 1
         ; 5:9 sub
         sub al, cl
-        ; 5:3 var i
+        ; 5:3 var i(0)
         lea rcx, [var0]
         ; 5:5 assign
         mov [rcx], al
@@ -189,6 +189,7 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
+        ; variable i(0)
         var0 rb 1
 
 section '.idata' import data readable writeable
