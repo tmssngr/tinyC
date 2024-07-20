@@ -4,8 +4,9 @@
    1: v
         ; 2:15 int lit 250
         ld r0, 250 (1)
-        ; 2:8 assign i(%0)
+        ; 2:8 var i(%0)
         addrOf r1, [0@function]
+        ; 2:8 assign
         store [r1], r0 (1)
         ; 2:3 for i != 2
 @for_1:
@@ -40,8 +41,9 @@
 @for_1_end:
         ; 6:11 int lit 260
         ld r0, 260 (2)
-        ; 6:3 assign v(%1)
+        ; 6:3 var v(%1)
         addrOf r1, [1@function]
+        ; 6:3 assign
         store [r1], r0 (2)
         ; 7:13 read var v(%1)
         addrOf r0, [1@function]

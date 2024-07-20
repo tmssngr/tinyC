@@ -17,8 +17,9 @@
         ; 2:21 add
         binary+ r0, r1 (1)
         cast r1 (i16), r0 (u8)
-        ; 2:5 assign foo(%0)
+        ; 2:5 var foo(%0)
         addrOf r0, [0@function]
+        ; 2:5 assign
         store [r0], r1 (2)
         ; 3:15 read var foo(%0)
         addrOf r0, [0@function]
@@ -28,8 +29,9 @@
         load r2, [r0] (2)
         ; 3:19 multiply
         binary* r1, r2 (2)
-        ; 3:5 assign bar(%1)
+        ; 3:5 var bar(%1)
         addrOf r0, [1@function]
+        ; 3:5 assign
         store [r0], r1 (2)
         ; 4:11 int lit 1
         ld r0, 1 (2)

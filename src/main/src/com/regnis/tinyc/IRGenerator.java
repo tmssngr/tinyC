@@ -68,13 +68,11 @@ public class IRGenerator {
 	private void writeInit(List<Statement> declarations, Variables variables) {
 		boolean isFirst = true;
 		for (Statement declaration : declarations) {
-			if (declaration instanceof StmtVarDeclaration varDeclaration) {
-				if (isFirst) {
-					isFirst = false;
-					writeComment("begin initialize global variables");
-				}
-				writeAssignment(varDeclaration.index(), varDeclaration.scope(), varDeclaration.expression(), varDeclaration.location(), variables);
+			if (isFirst) {
+				isFirst = false;
+				writeComment("begin initialize global variables");
 			}
+			writeStatement(declaration, variables);
 		}
 
 		if (!isFirst) {

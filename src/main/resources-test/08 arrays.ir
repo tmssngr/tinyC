@@ -4,8 +4,9 @@
    1: result
         ; 4:12 int lit 32
         ld r0, 32 (1)
-        ; 4:3 assign chr(%0)
+        ; 4:3 var chr(%0)
         addrOf r1, [0@function]
+        ; 4:3 assign
         store [r1], r0 (1)
         ; 5:14 read var chr(%0)
         addrOf r0, [0@function]
@@ -68,8 +69,9 @@
         addrOf r1, [0@global]
         binary+ r1, r0 (0)
         load r0, [r1] (1)
-        ; 8:3 assign result(%1)
+        ; 8:3 var result(%1)
         addrOf r1, [1@function]
+        ; 8:3 assign
         store [r1], r0 (1)
         ; 9:9 read var result(%1)
         addrOf r0, [1@function]
