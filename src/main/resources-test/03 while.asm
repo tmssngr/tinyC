@@ -22,15 +22,17 @@ start:
 
         ; void main
 @main:
+        ; reserve space for local variables
+        sub rsp, 16
         ; 2:9 int lit 5
         mov cl, 5
-        ; 2:2 assign i(0)
-        lea rax, [var0]
+        ; 2:2 assign i(%0)
+        lea rax, [rsp+0]
         mov [rax], cl
         ; 3:2 while i > 0
 @while_1:
-        ; 3:9 read var i(0)
-        lea rcx, [var0]
+        ; 3:9 read var i(%0)
+        lea rcx, [rsp+0]
         mov al, [rcx]
         ; 3:13 int lit 0
         mov cl, 0
@@ -41,8 +43,8 @@ start:
         ; while-condition
         or bl, bl
         jz @while_1_end
-        ; 4:9 read var i(0)
-        lea rcx, [var0]
+        ; 4:9 read var i(%0)
+        lea rcx, [rsp+0]
         mov al, [rcx]
         movzx rcx, al
         ; 4:3 print i64
@@ -51,15 +53,15 @@ start:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 5:7 read var i(0)
-        lea rcx, [var0]
+        ; 5:7 read var i(%0)
+        lea rcx, [rsp+0]
         mov al, [rcx]
         ; 5:11 int lit 1
         mov cl, 1
         ; 5:9 sub
         sub al, cl
-        ; 5:3 var i(0)
-        lea rcx, [var0]
+        ; 5:3 var i(%0)
+        lea rcx, [rsp+0]
         ; 5:5 assign
         mov [rcx], al
         jmp @while_1
@@ -76,6 +78,8 @@ start:
         jmp @while_2
 @while_2_end:
 @main_ret:
+        ; release space for local variables
+        add rsp, 16
         ret
 init:
         sub rsp, 20h
@@ -189,8 +193,6 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable i(0)
-        var0 rb 1
 
 section '.idata' import data readable writeable
 

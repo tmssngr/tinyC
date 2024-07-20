@@ -9,13 +9,13 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record StmtArrayDeclaration(@NotNull String typeString, @NotNull String varName, int index, @Nullable Type type, int size, @NotNull Location location) implements StmtDeclaration {
+public record StmtArrayDeclaration(@NotNull String typeString, @NotNull String varName, int index, @Nullable VariableScope scope, @Nullable Type type, int size, @NotNull Location location) implements StmtDeclaration {
 	public StmtArrayDeclaration {
 		Utils.assertTrue(size > 0);
 	}
 
 	public StmtArrayDeclaration(@NotNull String typeString, @NotNull String varName, int size, @NotNull Location location) {
-		this(typeString, varName, 0, null, size, location);
+		this(typeString, varName, 0, null, null, size, location);
 	}
 
 	@Override

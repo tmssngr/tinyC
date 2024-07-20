@@ -22,7 +22,7 @@ start:
 
         ; void main
 @main:
-        ; 6:15 read var ptrToSpace(2)
+        ; 6:15 read var ptrToSpace($2)
         lea rcx, [var2]
         mov rax, [rcx]
         ; 6:28 int lit 1
@@ -33,11 +33,11 @@ start:
         imul rcx, rbx
         ; 6:26 add
         add rax, rcx
-        ; 6:2 var ptrToSpace(2)
+        ; 6:2 var ptrToSpace($2)
         lea rcx, [var2]
         ; 6:13 assign
         mov [rcx], rax
-        ; 7:9 read var ptrToSpace(2)
+        ; 7:9 read var ptrToSpace($2)
         lea rcx, [var2]
         mov rax, [rcx]
         ; 7:8 deref
@@ -74,17 +74,17 @@ init:
         add rsp, 20h
         ; 1:13 int lit 32
         mov cx, 32
-        ; 1:1 assign space(0)
+        ; 1:1 assign space($0)
         lea rax, [var0]
         mov [rax], cx
         ; 2:12 int lit 63
         mov cx, 63
-        ; 2:1 assign next(1)
+        ; 2:1 assign next($1)
         lea rax, [var1]
         mov [rax], cx
-        ; 3:19 address of var space(0)
+        ; 3:19 address of var space($0)
         lea rcx, [var0]
-        ; 3:1 assign ptrToSpace(2)
+        ; 3:1 assign ptrToSpace($2)
         lea rax, [var2]
         mov [rax], rcx
         ret
@@ -179,11 +179,11 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable space(0)
+        ; variable space($0)
         var0 rb 2
-        ; variable next(1)
+        ; variable next($1)
         var1 rb 2
-        ; variable ptrToSpace(2)
+        ; variable ptrToSpace($2)
         var2 rb 8
 
 section '.idata' import data readable writeable

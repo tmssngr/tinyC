@@ -65,6 +65,11 @@ public class CompilerTest {
 		compileAndRun("10 operators.c");
 	}
 
+	@Test
+	public void testLocalVars() throws IOException, InterruptedException {
+		compileAndRun("11 localvars.c");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}

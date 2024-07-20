@@ -505,6 +505,7 @@ public class ParserTest {
 		Assert.assertEquals(expectedFunction.typeString(), currentFunction.typeString());
 		Assert.assertEquals(expectedFunction.returnType(), currentFunction.returnType());
 		Assert.assertEquals(expectedFunction.args(), currentFunction.args());
+		Assert.assertEquals(expectedFunction.localVars(), currentFunction.localVars());
 		assertEquals(expectedFunction.statement(), currentFunction.statement());
 	}
 

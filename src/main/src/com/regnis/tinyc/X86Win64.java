@@ -73,13 +73,23 @@ public class X86Win64 {
 	}
 
 	private void write(Function function, Variables variables) throws IOException {
+		variables = new Variables(function.localVars(), variables);
 		final String functionLabel = getFunctionLabel(function.name());
 		functionRetLabel = functionLabel + "_ret";
 		writeComment(function.toString());
 		writeLabel(functionLabel);
 
+		final int size = variables.getSize();
+		if (size > 0) {
+			writeComment("reserve space for local variables");
+			writeIndented("sub rsp, " + size);
+		}
 		writeStatement(function.statement(), variables);
 		writeLabel(functionRetLabel);
+		if (size > 0) {
+			writeComment("release space for local variables");
+			writeIndented("add rsp, " + size);
+		}
 		writeIndented("ret");
 	}
 
@@ -113,7 +123,7 @@ public class X86Win64 {
 
 		for (StmtDeclaration declaration : declarations) {
 			if (declaration instanceof StmtVarDeclaration varDeclaration) {
-				writeAssignment(varDeclaration.index(), varDeclaration.expression(), varDeclaration.location(), variables);
+				writeAssignment(varDeclaration.index(), varDeclaration.scope(), varDeclaration.expression(), varDeclaration.location(), variables);
 			}
 		}
 
@@ -133,7 +143,7 @@ public class X86Win64 {
 				              hStdErr rb 8""");
 		for (Variable variable : globalVariables) {
 			final int size = getVariableSize(variable);
-			final VariableDetails details = variables.get(variable.index());
+			final VariableDetails details = variables.get(variable.index(), variable.scope());
 			writeComment("variable " + details);
 			writeIndented(getGlobalVarName(details) + " rb " + size);
 		}
@@ -173,7 +183,7 @@ public class X86Win64 {
 
 	private void writeStatement(Statement statement, Variables variables) throws IOException {
 		switch (statement) {
-		case StmtVarDeclaration declaration -> writeAssignment(declaration.index(), declaration.expression(), declaration.location(), variables);
+		case StmtVarDeclaration declaration -> writeAssignment(declaration.index(), declaration.scope(), declaration.expression(), declaration.location(), variables);
 		case StmtCompound compound -> writeStatements(compound.statements(), variables);
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtLoop forStatement -> writeFor(forStatement, variables);
@@ -266,10 +276,10 @@ public class X86Win64 {
 		writeIndented("jmp " + Objects.requireNonNull(functionRetLabel));
 	}
 
-	private void writeAssignment(int index, Expression expression, Location location, Variables variables) throws IOException {
+	private void writeAssignment(int index, VariableScope scope, Expression expression, Location location, Variables variables) throws IOException {
 		final int expressionReg = write(expression, variables);
 		final int varReg = getFreeReg();
-		final VariableDetails variable = variables.get(index);
+		final VariableDetails variable = variables.get(index, scope);
 		Utils.assertTrue(variable.isScalar());
 		final int typeSize = getTypeSize(variable.type());
 		writeComment("assign " + variable, location);
@@ -306,7 +316,7 @@ public class X86Win64 {
 				yield reg;
 			}
 			case ExprVarAccess var -> {
-				final VariableDetails variable = variables.get(var.index());
+				final VariableDetails variable = variables.get(var.index(), var.scope());
 				final Expression arrayIndex = var.arrayIndex();
 				final int addrReg;
 				if (arrayIndex != null) {
@@ -338,7 +348,7 @@ public class X86Win64 {
 				yield reg;
 			}
 			case ExprAddrOf addrOf -> {
-				final VariableDetails variable = variables.get(addrOf.index());
+				final VariableDetails variable = variables.get(addrOf.index(), addrOf.scope());
 				final Expression arrayIndex = addrOf.arrayIndex();
 				if (arrayIndex != null) {
 					writeComment("address of array " + variable + "[...]", node.location());
@@ -528,7 +538,7 @@ public class X86Win64 {
 	private int writeLValue(Expression lValue, Variables variables) throws IOException {
 		return switch (lValue) {
 			case ExprVarAccess var -> {
-				final VariableDetails variable = variables.get(var.index());
+				final VariableDetails variable = variables.get(var.index(), var.scope());
 				final Location location = var.location();
 				final Expression arrayIndex = var.arrayIndex();
 				if (arrayIndex != null) {
@@ -882,7 +892,12 @@ public class X86Win64 {
 
 	private void writeAddrOfVar(int reg, VariableDetails variable) throws IOException {
 		final String addrReg = getRegName(reg);
-		writeIndented("lea " + addrReg + ", [" + getGlobalVarName(variable) + "]");
+		if (variable.scope() == VariableScope.global) {
+			writeIndented("lea " + addrReg + ", [" + getGlobalVarName(variable) + "]");
+		}
+		else {
+			writeIndented("lea " + addrReg + ", [rsp+" + variable.offset() + "]");
+		}
 	}
 
 	private static String getGlobalVarName(VariableDetails details) {
@@ -895,28 +910,60 @@ public class X86Win64 {
 
 	private static class Variables {
 		private final Map<Integer, VariableDetails> indexToVar = new HashMap<>();
+		private final Variables parent;
+		private final int size;
 
 		public Variables(@NotNull List<Variable> globalVariables) {
+			this.parent = null;
 			int offset = 0;
 			for (Variable variable : globalVariables) {
 				Utils.assertTrue(!indexToVar.containsKey(variable.index()));
-				indexToVar.put(variable.index(), new VariableDetails(variable.name(), variable.index(), offset, variable.isScalar(), variable.type()));
+				Utils.assertTrue(variable.scope() == VariableScope.global);
+				indexToVar.put(variable.index(), new VariableDetails(variable.name(), variable.scope(), variable.index(), offset, variable.isScalar(), variable.type()));
 				offset += getVariableSize(variable);
 			}
+			size = -1;
+		}
+
+		public Variables(@NotNull List<Variable> variables, @NotNull Variables parent) {
+			this.parent = parent;
+			int offset = 0;
+			for (Variable variable : variables) {
+				Utils.assertTrue(!indexToVar.containsKey(variable.index()));
+				Utils.assertTrue(variable.scope() == VariableScope.function);
+				indexToVar.put(variable.index(), new VariableDetails(variable.name(), variable.scope(), variable.index(), offset, variable.isScalar(), variable.type()));
+				offset += getVariableSize(variable);
+			}
+			this.size = (offset + 15) / 16 * 16;
 		}
 
 		@NotNull
-		public VariableDetails get(int index) {
-			return indexToVar.get(index);
+		public VariableDetails get(int index, @NotNull VariableScope scope) {
+			if (parent == null) {
+				Utils.assertTrue(scope == VariableScope.global);
+				return indexToVar.get(index);
+			}
+
+			if (scope == VariableScope.function) {
+				return indexToVar.get(index);
+			}
+
+			return parent.get(index, scope);
+		}
+
+		public int getSize() {
+			Utils.assertTrue(size >= 0);
+			return size;
 		}
 	}
 
-	private record VariableDetails(String name, int index, int offset, boolean isScalar, Type type) {
+	private record VariableDetails(String name, VariableScope scope, int index, int offset, boolean isScalar, Type type) {
 		@Override
 		public String toString() {
 			final StringBuilder buffer = new StringBuilder();
 			buffer.append(name);
 			buffer.append("(");
+			buffer.append(scope == VariableScope.global ? "$" : "%");
 			buffer.append(index);
 			buffer.append(")");
 			return buffer.toString();

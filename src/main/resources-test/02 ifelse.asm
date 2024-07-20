@@ -22,22 +22,24 @@ start:
 
         ; void main
 @main:
+        ; reserve space for local variables
+        sub rsp, 16
         ; 2:9 int lit 1
         mov cl, 1
-        ; 2:2 assign a(0)
-        lea rax, [var0]
+        ; 2:2 assign a(%0)
+        lea rax, [rsp+0]
         mov [rax], cl
         ; 3:9 int lit 2
         mov cl, 2
-        ; 3:2 assign b(1)
-        lea rax, [var1]
+        ; 3:2 assign b(%1)
+        lea rax, [rsp+1]
         mov [rax], cl
         ; 4:2 if a > b
-        ; 4:6 read var a(0)
-        lea rcx, [var0]
+        ; 4:6 read var a(%0)
+        lea rcx, [rsp+0]
         mov al, [rcx]
-        ; 4:10 read var b(1)
-        lea rcx, [var1]
+        ; 4:10 read var b(%1)
+        lea rcx, [rsp+1]
         mov bl, [rcx]
         ; 4:8 >
         cmp al, bl
@@ -46,8 +48,8 @@ start:
         ; if-condition
         or cl, cl
         jz @else_1
-        ; 5:9 read var a(0)
-        lea rax, [var0]
+        ; 5:9 read var a(%0)
+        lea rax, [rsp+0]
         mov bl, [rax]
         movzx rax, bl
         ; 5:3 print i64
@@ -59,8 +61,8 @@ start:
         add rsp, 8
         jmp @endif_1
 @else_1:
-        ; 8:9 read var b(1)
-        lea rax, [var1]
+        ; 8:9 read var b(%1)
+        lea rax, [rsp+1]
         mov bl, [rax]
         movzx rax, bl
         ; 8:3 print i64
@@ -72,6 +74,8 @@ start:
         add rsp, 8
 @endif_1:
 @main_ret:
+        ; release space for local variables
+        add rsp, 16
         ret
 init:
         sub rsp, 20h
@@ -185,10 +189,6 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable a(0)
-        var0 rb 1
-        ; variable b(1)
-        var1 rb 1
 
 section '.idata' import data readable writeable
 

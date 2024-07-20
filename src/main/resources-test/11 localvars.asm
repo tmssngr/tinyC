@@ -24,65 +24,45 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 16
-        ; 2:15 int lit 250
-        mov cl, 250
-        ; 2:8 assign i(%0)
+        ; 2:9 int lit 10
+        mov cl, 10
+        ; 2:2 assign a(%0)
         lea rax, [rsp+0]
         mov [rax], cl
-        ; 2:3 for i != 2
-@for_1:
-        ; 2:20 read var i(%0)
-        lea rcx, [rsp+0]
-        mov al, [rcx]
-        ; 2:25 int lit 2
-        mov cl, 2
-        ; 2:22 !=
-        cmp al, cl
-        setne bl
-        and bl, 0xFF
-        ; for-condition
-        or bl, bl
-        jz @for_1_end
-        ; 3:11 read var i(%0)
+        ; 3:8 read var a(%0)
         lea rcx, [rsp+0]
         mov al, [rcx]
         movzx rcx, al
-        ; 3:5 print i64
-        sub rsp, 8
-          call __printUint
-          mov rcx, 0x0a
-          call __emit
-        add rsp, 8
-        ; for iteration
-        ; 2:32 read var i(%0)
-        lea rcx, [rsp+0]
-        mov al, [rcx]
-        ; 2:36 int lit 1
-        mov cl, 1
-        ; 2:34 add
-        add al, cl
-        ; 2:28 var i(%0)
-        lea rcx, [rsp+0]
-        ; 2:30 assign
-        mov [rcx], al
-        jmp @for_1
-@for_1_end:
-        ; 6:11 int lit 260
-        mov cx, 260
-        ; 6:3 assign v(%1)
-        lea rax, [rsp+1]
-        mov [rax], cx
-        ; 7:13 read var v(%1)
-        lea rcx, [rsp+1]
-        mov ax, [rcx]
-        movzx rcx, al
-        ; 7:3 print i64
+        ; 3:2 print i64
         sub rsp, 8
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
 @main_ret:
+        ; release space for local variables
+        add rsp, 16
+        ret
+        ; void foo
+@foo:
+        ; reserve space for local variables
+        sub rsp, 16
+        ; 7:9 int lit 20
+        mov cl, 20
+        ; 7:2 assign a(%0)
+        lea rax, [rsp+0]
+        mov [rax], cl
+        ; 8:8 read var a(%0)
+        lea rcx, [rsp+0]
+        mov al, [rcx]
+        movzx rcx, al
+        ; 8:2 print i64
+        sub rsp, 8
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
+@foo_ret:
         ; release space for local variables
         add rsp, 16
         ret

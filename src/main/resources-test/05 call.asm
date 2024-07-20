@@ -22,15 +22,17 @@ start:
 
         ; void main
 @main:
+        ; reserve space for local variables
+        sub rsp, 16
         ; 2:9 call one
         sub rsp, 8
           call @one
         add rsp, 8
-        ; 2:2 assign i(0)
-        lea rcx, [var0]
+        ; 2:2 assign i(%0)
+        lea rcx, [rsp+0]
         mov [rcx], al
-        ; 3:10 read var i(0)
-        lea rcx, [var0]
+        ; 3:10 read var i(%0)
+        lea rcx, [rsp+0]
         mov al, [rcx]
         movzx rcx, al
         ; 3:2 call doPrint
@@ -38,6 +40,8 @@ start:
           call @doPrint
         add rsp, 8
 @main_ret:
+        ; release space for local variables
+        add rsp, 16
         ret
         ; u8 one
 @one:
@@ -172,8 +176,6 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable i(0)
-        var0 rb 1
 
 section '.idata' import data readable writeable
 

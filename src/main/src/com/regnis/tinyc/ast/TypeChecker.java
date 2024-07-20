@@ -19,6 +19,7 @@ public final class TypeChecker {
 	private final Type pointerIntType;
 
 	@Nullable private Type expectedReturnType;
+	@Nullable private LocalVariables localVariables;
 
 	public TypeChecker(@NotNull Type pointerIntType) {
 		Utils.assertTrue(pointerIntType.isInt());
@@ -79,7 +80,7 @@ public final class TypeChecker {
 			argTypes.add(argType);
 		}
 		globalSymbols.put(name, new Symbol.Func(returnType, argTypes, location));
-		return new Function(name, function.typeString(), returnType, args, function.statement(), location);
+		return new Function(name, function.typeString(), returnType, args, List.of(), function.statement(), location);
 	}
 
 	@NotNull
@@ -95,6 +96,7 @@ public final class TypeChecker {
 	@NotNull
 	private Function determineTypes(Function function) {
 		expectedReturnType = function.returnType();
+		localVariables = new LocalVariables();
 		try {
 			final Statement statement = processStatement(function.statement());
 			final StmtCompound compound = statement instanceof StmtCompound c ? c : new StmtCompound(List.of(statement));
@@ -103,9 +105,10 @@ public final class TypeChecker {
 					throw new SyntaxException(Messages.functionMustReturnType(expectedReturnType), function.location());
 				}
 			}
-			return new Function(function.name(), function.typeString(), function.returnType(), function.args(), statement, function.location());
+			return new Function(function.name(), function.typeString(), function.returnType(), function.args(), localVariables.getList(), statement, function.location());
 		}
 		finally {
+			localVariables = null;
 			expectedReturnType = null;
 		}
 	}
@@ -132,7 +135,7 @@ public final class TypeChecker {
 		expression = autoCastTo(type, expression, location);
 
 		final Variable variable = addVariable(varName, type, 0, location);
-		return new StmtVarDeclaration(declaration.typeString(), varName, variable.index(), type, expression, location);
+		return new StmtVarDeclaration(declaration.typeString(), varName, variable.index(), variable.scope(), type, expression, location);
 	}
 
 	@NotNull
@@ -143,13 +146,20 @@ public final class TypeChecker {
 		Type type = getType(declaration.typeString(), location);
 		type = Type.pointer(type);
 		final Variable variable = addVariable(varName, type, declaration.size(), location);
-		return new StmtArrayDeclaration(declaration.typeString(), varName, variable.index(), type, declaration.size(), location);
+		return new StmtArrayDeclaration(declaration.typeString(), varName, variable.index(), variable.scope(), type, declaration.size(), location);
 	}
 
 	@NotNull
 	private StmtCompound processCompound(StmtCompound compound) {
-		final List<Statement> statements = processStatements(compound.statements());
-		return new StmtCompound(statements);
+		final LocalVariables prevLocalVariables = Objects.requireNonNull(localVariables);
+		localVariables = new LocalVariables(prevLocalVariables);
+		try {
+			final List<Statement> statements = processStatements(compound.statements());
+			return new StmtCompound(statements);
+		}
+		finally {
+			localVariables = prevLocalVariables;
+		}
 	}
 
 	@NotNull
@@ -303,9 +313,9 @@ public final class TypeChecker {
 			}
 
 			final Expression expression = processArrayIndex(arrayIndex, location);
-			return new ExprVarAccess(name, variable.index(), type, expression, location);
+			return new ExprVarAccess(name, variable.index(), variable.scope(), type, expression, location);
 		}
-		return new ExprVarAccess(name, variable.index(), type, null, location);
+		return new ExprVarAccess(name, variable.index(), variable.scope(), type, null, location);
 	}
 
 	@NotNull
@@ -326,9 +336,9 @@ public final class TypeChecker {
 		Expression arrayIndex = addrOf.arrayIndex();
 		if (arrayIndex != null) {
 			arrayIndex = processArrayIndex(arrayIndex, location);
-			return new ExprAddrOf(name, variable.index(), variable.type(), arrayIndex, location);
+			return new ExprAddrOf(name, variable.index(), variable.scope(), variable.type(), arrayIndex, location);
 		}
-		return new ExprAddrOf(name, variable.index(), Type.pointer(variable.type()), null, location);
+		return new ExprAddrOf(name, variable.index(), variable.scope(), Type.pointer(variable.type()), null, location);
 	}
 
 	@NotNull
@@ -499,13 +509,13 @@ public final class TypeChecker {
 			}
 			final Expression expression = processArrayIndex(arrayIndex, location);
 			final Type type = Objects.requireNonNull(variable.type().toType());
-			return new ExprVarAccess(name, variable.index(), type, expression, location);
+			return new ExprVarAccess(name, variable.index(), variable.scope(), type, expression, location);
 		}
 
 		if (variable.isArray()) {
 			throw new SyntaxException(Messages.arraysAreImmutable(), location);
 		}
-		return new ExprVarAccess(name, variable.index(), variable.type(), null, location);
+		return new ExprVarAccess(name, variable.index(), variable.scope(), variable.type(), null, location);
 	}
 
 	private void checkNoSymbolNamed(String name, Location location) {
@@ -522,7 +532,16 @@ public final class TypeChecker {
 	@NotNull
 	private Variable addVariable(String varName, Type type, int arraySize, Location location) {
 		checkNoSymbolNamed(varName, location);
-		final Variable variable = new Variable(varName, globalVariables.size(), type, arraySize, location);
+		if (localVariables == null) {
+			return addGlobalVariable(varName, type, arraySize, location);
+		}
+
+		return localVariables.add(varName, type, arraySize, location);
+	}
+
+	@NotNull
+	private Variable addGlobalVariable(String varName, Type type, int arraySize, Location location) {
+		final Variable variable = new Variable(varName, globalVariables.size(), VariableScope.global, type, arraySize, location);
 		globalSymbols.put(varName, variable);
 		globalVariables.add(variable);
 		return variable;
@@ -530,6 +549,12 @@ public final class TypeChecker {
 
 	@NotNull
 	private Variable getVariable(String name, Location location) {
+		if (localVariables != null) {
+			final Variable localVariable = localVariables.get(name);
+			if (localVariable != null) {
+				return localVariable;
+			}
+		}
 		final Symbol symbol = globalSymbols.get(name);
 		if (!(symbol instanceof Variable variable)) {
 			throw new SyntaxException(Messages.undeclaredVariable(name), location);
@@ -548,5 +573,43 @@ public final class TypeChecker {
 			case "i16" -> Type.I16;
 			default -> throw new SyntaxException(Messages.unknownType(type), location);
 		};
+	}
+
+	private static final class LocalVariables {
+
+		private final Map<String, Variable> nameToVariable = new HashMap<>();
+		private final List<Variable> vars;
+		@Nullable private final LocalVariables parent;
+
+		public LocalVariables() {
+			this.parent = null;
+			vars = new ArrayList<>();
+		}
+
+		public LocalVariables(@NotNull LocalVariables parent) {
+			this.parent = parent;
+			vars = parent.vars;
+		}
+
+		@NotNull
+		public Variable add(String varName, Type type, int arraySize, Location location) {
+			final Variable variable = new Variable(varName, vars.size(), VariableScope.function, type, arraySize, location);
+			nameToVariable.put(varName, variable);
+			vars.add(variable);
+			return variable;
+		}
+
+		@Nullable
+		public Variable get(String name) {
+			final Variable variable = nameToVariable.get(name);
+			if (variable == null && parent != null) {
+				return parent.get(name);
+			}
+			return variable;
+		}
+
+		public List<Variable> getList() {
+			return Collections.unmodifiableList(vars);
+		}
 	}
 }
