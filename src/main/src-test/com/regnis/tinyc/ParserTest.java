@@ -15,10 +15,13 @@ import org.junit.*;
 public class ParserTest {
 
 	public static void assertEquals(@NotNull Program expectedProgram, @NotNull Program currentProgram) {
-		assertEquals(expectedProgram.globalVars(), currentProgram.globalVars(),
-		             ParserTest::assertEquals);
+		assertEquals(expectedProgram.globalVars(), currentProgram.globalVars());
 		assertEquals(expectedProgram.functions(), currentProgram.functions(),
 		             ParserTest::assertEquals);
+		assertEquals(expectedProgram.globalVariables(), currentProgram.globalVariables(),
+		             Assert::assertEquals);
+		assertEquals(expectedProgram.stringLiterals(), currentProgram.stringLiterals(),
+		             Assert::assertEquals);
 	}
 
 	public static Location loc(int line, int column) {

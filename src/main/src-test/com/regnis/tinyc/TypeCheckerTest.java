@@ -186,7 +186,10 @@ public class TypeCheckerTest {
 				                                      ),
 				                                      loc(0, 0))
 		                         ),
-		                         List.of(), List.of()
+		                         List.of(
+				                         new Variable("array", 0, VariableScope.global, Type.pointer(Type.U8), 2, loc(0, 0))
+		                         ),
+		                         List.of()
 		             ),
 		             checkType("""
 				                       u8 array[2];
