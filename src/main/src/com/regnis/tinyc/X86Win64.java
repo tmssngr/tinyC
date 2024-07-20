@@ -215,11 +215,7 @@ public class X86Win64 {
 			final Type type = expression.typeNotNull();
 			writeComment("print " + type, call.location());
 			writeIndented("sub rsp, 8");
-			final int size = getTypeSize(type);
-			if (size != 8) {
-				writeIndented("  movzx rcx, " + getRegName(reg, size));
-			}
-			else if (!regName.equals("rcx")) {
+			if (!regName.equals("rcx")) {
 				writeIndented("  mov rcx, " + regName);
 			}
 			writeIndented("  call " + PRINT_UINT);
