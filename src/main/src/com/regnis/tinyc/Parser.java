@@ -52,7 +52,7 @@ public class Parser {
 					}
 				}
 				final Statement statement = getStatementNotNull();
-				functions.add(new Function(typeString, name, args, statement, location));
+				functions.add(new Function(name, typeString, args, statement, location));
 				continue;
 			}
 
