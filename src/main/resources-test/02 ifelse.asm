@@ -50,10 +50,10 @@ start:
         ; 5:9 read var a
         lea rax, [var0]
         mov bl, [rax]
-        movzx rbx, bl
+        movzx rax, bl
         ; 5:3 print i64
         sub rsp, 8
-          mov rcx, rbx
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -63,10 +63,10 @@ start:
         ; 8:9 read var b
         lea rax, [var1]
         mov bl, [rax]
-        movzx rbx, bl
+        movzx rax, bl
         ; 8:3 print i64
         sub rsp, 8
-          mov rcx, rbx
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
