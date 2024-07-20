@@ -151,11 +151,11 @@ public class TypeCheckerTest {
 						                                      new Variable("s", 2, VariableScope.function, Type.U8, 0, loc(6, 2))
 				                                      ),
 				                                      List.of(
-						                                      new StmtVarDeclaration("u8", "first", 0, VariableScope.function, Type.U8,
-						                                                             new ExprVarAccess("array", 0, VariableScope.global, Type.U8,
-						                                                                               new ExprIntLiteral(0, Type.I64, loc(2, 19)),
-						                                                                               loc(2, 13)),
-						                                                             loc(2, 2)),
+						                                      declare("first", 0, VariableScope.function, Type.U8,
+						                                              new ExprVarAccess("array", 0, VariableScope.global, Type.U8,
+						                                                               new ExprIntLiteral(0, Type.I64, loc(2, 19)),
+						                                                               loc(2, 13)),
+						                                              loc(2, 2)),
 						                                      new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
 						                                                                  Type.U8,
 						                                                                  new ExprVarAccess("array", 0, VariableScope.global, Type.U8,
@@ -172,17 +172,17 @@ public class TypeCheckerTest {
 						                                                                                    loc(4, 2)),
 						                                                                  new ExprVarAccess("first", 0, VariableScope.function, Type.U8, null, loc(4, 13)),
 						                                                                  loc(4, 11))),
-						                                      new StmtVarDeclaration("u8*", "second", 1, VariableScope.function, Type.pointer(Type.U8),
-						                                                             new ExprAddrOf("array",
-						                                                                            0, VariableScope.global, Type.pointer(Type.U8),
-						                                                                            new ExprIntLiteral(1, Type.I64, loc(5, 22)),
-						                                                                            loc(5, 15)),
-						                                                             loc(5, 2)),
-						                                      new StmtVarDeclaration("u8", "s", 2, VariableScope.function, Type.U8,
-						                                                             new ExprVarAccess("second", 1, VariableScope.function, Type.U8,
-						                                                                               new ExprIntLiteral(0, Type.I64, loc(6, 16)),
-						                                                                               loc(6, 9)),
-						                                                             loc(6, 2))
+						                                      declare("second", 1, VariableScope.function, Type.pointer(Type.U8),
+						                                              new ExprAddrOf("array",
+						                                                            0, VariableScope.global, Type.pointer(Type.U8),
+						                                                            new ExprIntLiteral(1, Type.I64, loc(5, 22)),
+						                                                            loc(5, 15)),
+						                                              loc(5, 2)),
+						                                      declare("s", 2, VariableScope.function, Type.U8,
+						                                              new ExprVarAccess("second", 1, VariableScope.function, Type.U8,
+						                                                               new ExprIntLiteral(0, Type.I64, loc(6, 16)),
+						                                                               loc(6, 9)),
+						                                              loc(6, 2))
 				                                      ),
 				                                      loc(0, 0))
 		                         ),
@@ -246,11 +246,11 @@ public class TypeCheckerTest {
 				                         new Function("main", "void", Type.VOID, List.of(),
 				                                      List.of(new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(1, 2))),
 				                                      List.of(
-						                                      new StmtVarDeclaration("u8", "a", 0, VariableScope.function, Type.U8,
-						                                                             new ExprIntLiteral(10,
-						                                                                                Type.U8,
-						                                                                                loc(1, 9)),
-						                                                             loc(1, 2)),
+						                                      declare("a", 0, VariableScope.function, Type.U8,
+						                                              new ExprIntLiteral(10,
+						                                                                Type.U8,
+						                                                                loc(1, 9)),
+						                                              loc(1, 2)),
 						                                      new StmtExpr(
 								                                      new ExprFuncCall("print", Type.VOID,
 								                                                       List.of(
@@ -263,11 +263,11 @@ public class TypeCheckerTest {
 				                         new Function("foo", "void", Type.VOID, List.of(),
 				                                      List.of(new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(6, 2))),
 				                                      List.of(
-						                                      new StmtVarDeclaration("u8", "a", 0, VariableScope.function, Type.U8,
-						                                                             new ExprIntLiteral(20,
-						                                                                                Type.U8,
-						                                                                                loc(6, 9)),
-						                                                             loc(6, 2)),
+						                                      declare("a", 0, VariableScope.function, Type.U8,
+						                                              new ExprIntLiteral(20,
+						                                                                Type.U8,
+						                                                                loc(6, 9)),
+						                                              loc(6, 2)),
 						                                      new StmtExpr(
 								                                      new ExprFuncCall("print", Type.VOID, List.of(
 										                                      ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, null, loc(7, 8)),
@@ -300,19 +300,19 @@ public class TypeCheckerTest {
 						                                      new Variable("b", 2, VariableScope.function, Type.I16, 0, loc(7, 4))
 				                                      ),
 				                                      List.of(
-						                                      new StmtVarDeclaration("u8", "a", 0, VariableScope.function, Type.U8,
-						                                                             new ExprIntLiteral(10,
-						                                                                                Type.U8,
-						                                                                                loc(1, 9)),
-						                                                             loc(1, 2)),
+						                                      declare("a", 0, VariableScope.function, Type.U8,
+						                                              new ExprIntLiteral(10,
+						                                                                Type.U8,
+						                                                                loc(1, 9)),
+						                                              loc(1, 2)),
 						                                      new StmtIf(new ExprBinary(ExprBinary.Op.Gt, Type.BOOL,
 						                                                                new ExprVarAccess("a", 0, VariableScope.function, Type.U8, null, loc(2, 6)),
 						                                                                new ExprIntLiteral(0, loc(2, 10)),
 						                                                                loc(2, 8)),
 						                                                 List.of(
-								                                                 new StmtVarDeclaration("u8", "b", 1, VariableScope.function, Type.U8,
-								                                                                        new ExprIntLiteral(1, Type.U8, loc(3, 11)),
-								                                                                        loc(3, 4)),
+								                                                 declare("b", 1, VariableScope.function, Type.U8,
+								                                                         new ExprIntLiteral(1, Type.U8, loc(3, 11)),
+								                                                         loc(3, 4)),
 								                                                 new StmtExpr(
 										                                                 new ExprFuncCall("print", Type.VOID,
 										                                                                  List.of(
@@ -322,9 +322,9 @@ public class TypeCheckerTest {
 								                                                 )
 						                                                 ),
 						                                                 List.of(
-								                                                 new StmtVarDeclaration("i16", "b", 2, VariableScope.function, Type.I16,
-								                                                                        new ExprIntLiteral(2, Type.I16, loc(7, 12)),
-								                                                                        loc(7, 4)),
+								                                                 declare("b", 2, VariableScope.function, Type.I16,
+								                                                         new ExprIntLiteral(2, Type.I16, loc(7, 12)),
+								                                                         loc(7, 4)),
 								                                                 new StmtExpr(
 										                                                 new ExprFuncCall("print", Type.VOID,
 										                                                                  List.of(
@@ -390,5 +390,12 @@ public class TypeCheckerTest {
 		final Program program = new Parser(new Lexer(input)).parse();
 		final TypeChecker checker = new TypeChecker(Type.I64);
 		return checker.check(program);
+	}
+
+	@NotNull
+	private static Statement declare(String varName, int index, VariableScope scope, Type type, Expression expression, Location location) {
+		return new StmtVarDeclaration(type.toString(), varName, index, scope, type,
+		                              expression,
+		                              location);
 	}
 }
