@@ -34,7 +34,7 @@ public class IRGenerator {
 			functions.add(convertFunction(function, program.globalVars(), variables));
 		}
 
-		final List<IRGlobalVar> globalVars = createGlobalVars(program.globalVariables(), variables);
+		final List<IRGlobalVar> globalVars = createGlobalVars(program.globalVariables());
 		final List<IRStringLiteral> stringLiterals = createStringLiterals(program.stringLiterals());
 		return new IRProgram(functions, globalVars, stringLiterals);
 	}
@@ -56,7 +56,7 @@ public class IRGenerator {
 			}
 			variables = new Variables(function.localVars(), variables);
 
-			writeStatement(function.statement(), variables);
+			writeStatements(function.statements(), variables);
 			writeLabel(functionRetLabel);
 			return new IRFunction(name, functionLabel, Objects.requireNonNull(function.returnType()), instructions, localVars);
 		}
@@ -82,7 +82,7 @@ public class IRGenerator {
 		}
 	}
 
-	private List<IRGlobalVar> createGlobalVars(List<Variable> globalVariables, Variables variables) {
+	private List<IRGlobalVar> createGlobalVars(List<Variable> globalVariables) {
 		final List<IRGlobalVar> globalVars = new ArrayList<>();
 		for (Variable variable : globalVariables) {
 			Utils.assertTrue(variable.scope() == VariableScope.global);
@@ -429,8 +429,8 @@ public class IRGenerator {
 
 	private void writeIfElse(StmtIf statement, Variables variables) {
 		final Expression condition = statement.condition();
-		final Statement thenStatement = statement.thenStatement();
-		final Statement elseStatement = statement.elseStatement();
+		final List<Statement> thenStatements = statement.thenStatements();
+		final List<Statement> elseStatements = statement.elseStatements();
 		final int labelIndex = nextLabelIndex();
 		final String elseLabel = "@else_" + labelIndex;
 		final String nextLabel = "@endif_" + labelIndex;
@@ -438,15 +438,11 @@ public class IRGenerator {
 		final int conditionReg = write(condition, variables);
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
 		writeComment("if-condition");
-		write(new IRBranch(conditionReg, false, elseStatement != null ? elseLabel : nextLabel));
-		writeStatement(thenStatement, variables);
-		if (elseStatement != null) {
-			write(new IRJump(nextLabel));
-		}
-		if (elseStatement != null) {
-			writeLabel(elseLabel);
-			writeStatement(elseStatement, variables);
-		}
+		write(new IRBranch(conditionReg, false, elseLabel));
+		writeStatements(thenStatements, variables);
+		write(new IRJump(nextLabel));
+		writeLabel(elseLabel);
+		writeStatements(elseStatements, variables);
 		writeLabel(nextLabel);
 	}
 
@@ -464,8 +460,8 @@ public class IRGenerator {
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
 		writeComment(loopName + "-condition");
 		write(new IRBranch(conditionReg, false, nextLabel));
-		final Statement body = statement.bodyStatement();
-		writeStatement(body, variables);
+		final List<Statement> body = statement.bodyStatements();
+		writeStatements(body, variables);
 
 		if (iteration.size() > 0) {
 			writeComment("for iteration");

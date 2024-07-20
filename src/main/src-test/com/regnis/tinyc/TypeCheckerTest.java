@@ -150,7 +150,7 @@ public class TypeCheckerTest {
 						                                      new Variable("second", 1, VariableScope.function, Type.pointer(Type.U8), 0, loc(5, 2)),
 						                                      new Variable("s", 2, VariableScope.function, Type.U8, 0, loc(6, 2))
 				                                      ),
-				                                      new StmtCompound(List.of(
+				                                      List.of(
 						                                      new StmtVarDeclaration("u8", "first", 0, VariableScope.function, Type.U8,
 						                                                             new ExprVarAccess("array", 0, VariableScope.global, Type.U8,
 						                                                                               new ExprIntLiteral(0, Type.I64, loc(2, 19)),
@@ -183,7 +183,7 @@ public class TypeCheckerTest {
 						                                                                               new ExprIntLiteral(0, Type.I64, loc(6, 16)),
 						                                                                               loc(6, 9)),
 						                                                             loc(6, 2))
-				                                      )),
+				                                      ),
 				                                      loc(0, 0))
 		                         ),
 		                         List.of(), List.of()
@@ -219,7 +219,7 @@ public class TypeCheckerTest {
 		                         List.of(
 				                         new Function("main", "void", Type.VOID, List.of(),
 				                                      List.of(new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(1, 2))),
-				                                      new StmtCompound(List.of(
+				                                      List.of(
 						                                      new StmtVarDeclaration("u8", "a", 0, VariableScope.function, Type.U8,
 						                                                             new ExprIntLiteral(10,
 						                                                                                Type.U8,
@@ -232,11 +232,11 @@ public class TypeCheckerTest {
 										                                                                         Type.I64)
 								                                                       ), loc(2, 2))
 						                                      )
-				                                      )),
+				                                      ),
 				                                      loc(0, 0)),
 				                         new Function("foo", "void", Type.VOID, List.of(),
 				                                      List.of(new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(6, 2))),
-				                                      new StmtCompound(List.of(
+				                                      List.of(
 						                                      new StmtVarDeclaration("u8", "a", 0, VariableScope.function, Type.U8,
 						                                                             new ExprIntLiteral(20,
 						                                                                                Type.U8,
@@ -248,7 +248,7 @@ public class TypeCheckerTest {
 										                                                        Type.I64)
 								                                      ), loc(7, 2))
 						                                      )
-				                                      )),
+				                                      ),
 				                                      loc(5, 0))
 		                         ),
 		                         List.of(), List.of()
@@ -273,7 +273,7 @@ public class TypeCheckerTest {
 						                                      new Variable("b", 1, VariableScope.function, Type.U8, 0, loc(3, 4)),
 						                                      new Variable("b", 2, VariableScope.function, Type.I16, 0, loc(7, 4))
 				                                      ),
-				                                      new StmtCompound(List.of(
+				                                      List.of(
 						                                      new StmtVarDeclaration("u8", "a", 0, VariableScope.function, Type.U8,
 						                                                             new ExprIntLiteral(10,
 						                                                                                Type.U8,
@@ -283,7 +283,7 @@ public class TypeCheckerTest {
 						                                                                new ExprVarAccess("a", 0, VariableScope.function, Type.U8, null, loc(2, 6)),
 						                                                                new ExprIntLiteral(0, loc(2, 10)),
 						                                                                loc(2, 8)),
-						                                                 new StmtCompound(List.of(
+						                                                 List.of(
 								                                                 new StmtVarDeclaration("u8", "b", 1, VariableScope.function, Type.U8,
 								                                                                        new ExprIntLiteral(1, Type.U8, loc(3, 11)),
 								                                                                        loc(3, 4)),
@@ -294,8 +294,8 @@ public class TypeCheckerTest {
 												                                                                                    Type.I64)
 										                                                                  ), loc(4, 4))
 								                                                 )
-						                                                 )),
-						                                                 new StmtCompound(List.of(
+						                                                 ),
+						                                                 List.of(
 								                                                 new StmtVarDeclaration("i16", "b", 2, VariableScope.function, Type.I16,
 								                                                                        new ExprIntLiteral(2, Type.I16, loc(7, 12)),
 								                                                                        loc(7, 4)),
@@ -306,9 +306,9 @@ public class TypeCheckerTest {
 												                                                                                    Type.I64)
 										                                                                  ), loc(8, 4))
 								                                                 )
-						                                                 )),
+						                                                 ),
 						                                                 loc(2, 2))
-				                                      )),
+				                                      ),
 				                                      loc(0, 0))
 		                         ),
 		                         List.of(), List.of()

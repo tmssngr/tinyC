@@ -173,10 +173,10 @@ public class ParserTest {
 		                                       intLit(1, loc(0, 4)),
 		                                       intLit(2, loc(0, 8)),
 		                                       loc(0, 6)),
-		                        new StmtCompound(List.of(printStmt(intLit(1, loc(1, 8)),
-		                                                           loc(1, 2)))),
-		                        new StmtCompound(List.of(printStmt(intLit(2, loc(4, 8)),
-		                                                           loc(4, 2)))),
+		                        List.of(printStmt(intLit(1, loc(1, 8)),
+		                                          loc(1, 2))),
+		                        List.of(printStmt(intLit(2, loc(4, 8)),
+		                                          loc(4, 2))),
 		                        loc(0, 0)
 		             ),
 		             new Parser(new Lexer("""
@@ -194,21 +194,21 @@ public class ParserTest {
 				new StmtVarDeclaration("u16", "i", intLit(5, loc(1, 8)),
 				                       loc(1, 0)),
 				new StmtLoop(new ExprBinary(ExprBinary.Op.Gt,
-				                             ExprVarAccess.scalar("i", loc(2, 7)),
-				                             intLit(0, loc(2, 11)),
-				                             loc(2, 9)),
-				              new StmtCompound(List.of(
-						              printStmt(ExprVarAccess.scalar("i", loc(3, 8)),
-						                        loc(3, 2)),
-						              assignStmt(ExprVarAccess.scalar("i", loc(4, 2)),
-						                         new ExprBinary(ExprBinary.Op.Sub,
-						                                        ExprVarAccess.scalar("i", loc(4, 6)),
-						                                        intLit(1, loc(4, 10)),
-						                                        loc(4, 8)),
-						                         loc(4, 4))
-				              )),
-							  List.of(),
-				              loc(2, 0)
+				                            ExprVarAccess.scalar("i", loc(2, 7)),
+				                            intLit(0, loc(2, 11)),
+				                            loc(2, 9)),
+				             List.of(
+						             printStmt(ExprVarAccess.scalar("i", loc(3, 8)),
+						                       loc(3, 2)),
+						             assignStmt(ExprVarAccess.scalar("i", loc(4, 2)),
+						                        new ExprBinary(ExprBinary.Op.Sub,
+						                                       ExprVarAccess.scalar("i", loc(4, 6)),
+						                                       intLit(1, loc(4, 10)),
+						                                       loc(4, 8)),
+						                        loc(4, 4))
+				             ),
+				             List.of(),
+				             loc(2, 0)
 				)
 		)), new Parser(new Lexer("""
 				                         {
@@ -220,12 +220,12 @@ public class ParserTest {
 				                         }""")).getStatementNotNull());
 
 		assertEquals(new StmtLoop(new ExprBoolLiteral(true, loc(0, 7)),
-		                           new StmtCompound(List.of(
-				                           printStmt(ExprVarAccess.scalar("i", loc(1, 8)),
-				                                     loc(1, 2))
-		                           )),
-								   List.of(),
-		                           loc(0, 0)),
+		                          List.of(
+				                          printStmt(ExprVarAccess.scalar("i", loc(1, 8)),
+				                                    loc(1, 2))
+		                          ),
+		                          List.of(),
+		                          loc(0, 0)),
 		             new Parser(new Lexer("""
 				                                  while (true) {
 				                                    print(i);
@@ -241,10 +241,10 @@ public class ParserTest {
 				                                         ExprVarAccess.scalar("i", loc(0, 16)),
 				                                         intLit(10, loc(0, 20)),
 				                                         loc(0, 18)),
-				                          new StmtCompound(List.of(
+				                          List.of(
 						                          printStmt(ExprVarAccess.scalar("i", loc(1, 8)),
 						                                    loc(1, 2))
-				                          )),
+				                          ),
 				                          List.of(
 						                          assignStmt(ExprVarAccess.scalar("i", loc(0, 24)),
 						                                     new ExprBinary(ExprBinary.Op.Add,
@@ -264,10 +264,10 @@ public class ParserTest {
 				             new StmtVarDeclaration("u8", "i", intLit(1, loc(1, 7)),
 				                                    loc(1, 0)),
 				             new StmtLoop(new ExprBinary(ExprBinary.Op.Lt, ExprVarAccess.scalar("i", loc(2, 7)), intLit(10, loc(2, 11)), loc(2, 9)),
-				                          new StmtCompound(List.of(
+				                          List.of(
 						                          printStmt(ExprVarAccess.scalar("i", loc(3, 8)),
 						                                    loc(3, 2))
-				                          )),
+				                          ),
 				                          List.of(
 						                          assignStmt(ExprVarAccess.scalar("i", loc(2, 15)),
 						                                     new ExprBinary(ExprBinary.Op.Add,
@@ -294,7 +294,7 @@ public class ParserTest {
 				                                         ExprVarAccess.scalar("i", loc(2, 6)),
 				                                         intLit(0, loc(2, 10)),
 				                                         loc(2, 8)),
-				                          new StmtCompound(List.of(
+				                          List.of(
 						                          printStmt(ExprVarAccess.scalar("i", loc(3, 8)),
 						                                    loc(3, 2)),
 						                          assignStmt(ExprVarAccess.scalar("i", loc(4, 2)),
@@ -303,7 +303,7 @@ public class ParserTest {
 						                                                    intLit(1, loc(4, 10)),
 						                                                    loc(4, 8)),
 						                                     loc(4, 4))
-				                          )),
+				                          ),
 				                          List.of(),
 				                          loc(2, 0))
 		             )),
@@ -320,7 +320,7 @@ public class ParserTest {
 				             new StmtVarDeclaration("u8", "i", intLit(5, loc(1, 7)),
 				                                    loc(1, 0)),
 				             new StmtLoop(new ExprIntLiteral(1, loc(2, 0)),
-				                          new StmtCompound(List.of(
+				                          List.of(
 						                          printStmt(ExprVarAccess.scalar("i", loc(3, 8)),
 						                                    loc(3, 2)),
 						                          assignStmt(ExprVarAccess.scalar("i", loc(4, 2)),
@@ -329,7 +329,7 @@ public class ParserTest {
 						                                                    intLit(1, loc(4, 10)),
 						                                                    loc(4, 8)),
 						                                     loc(4, 4))
-				                          )),
+				                          ),
 				                          List.of(),
 				                          loc(2, 0))
 		             )),
@@ -348,15 +348,15 @@ public class ParserTest {
 		Assert.assertEquals(new Program(List.of(),
 		                                List.of(
 				                                new Function("main", "void", List.of(),
-				                                             new StmtCompound(List.of(
+				                                             List.of(
 						                                             new StmtVarDeclaration("u8", "i", intLit(10, loc(1, 11)),
 						                                                                    loc(1, 4)),
 						                                             printStmt(ExprVarAccess.scalar("i", loc(2, 10)),
 						                                                       loc(2, 4))
-				                                             )),
+				                                             ),
 				                                             loc(0, 0)),
 				                                new Function("fooBar", "void", List.of(new Function.Arg("u8", "a", loc(4, 12))),
-				                                             new StmtCompound(List.of()),
+				                                             List.of(),
 				                                             loc(4, 0))
 		                                ),
 		                                List.of(),
@@ -373,7 +373,7 @@ public class ParserTest {
 		assertEquals(new Program(List.of(),
 		                         List.of(
 				                         new Function("main", "void", List.of(),
-				                                      new StmtCompound(List.of(
+				                                      List.of(
 						                                      new StmtVarDeclaration("u8", "i",
 						                                                             new ExprFuncCall("one", List.of(), loc(1, 11)),
 						                                                             loc(1, 4)),
@@ -381,18 +381,20 @@ public class ParserTest {
 						                                                                ExprVarAccess.scalar("i", loc(2, 8)),
 						                                                                new ExprIntLiteral(0, loc(2, 13)),
 						                                                                loc(2, 10)),
-						                                                 new StmtReturn(null, loc(3, 8)),
-						                                                 null,
+						                                                 List.of(
+																				 new StmtReturn(null, loc(3, 8))
+						                                                 ),
+						                                                 List.of(),
 						                                                 loc(2, 4)),
 						                                      printStmt(ExprVarAccess.scalar("i", loc(4, 10)),
 						                                                loc(4, 4))
-				                                      )),
+				                                      ),
 				                                      loc(0, 0)),
 				                         new Function("one", "u8", List.of(),
-				                                      new StmtCompound(List.of(
+				                                      List.of(
 						                                      new StmtReturn(new ExprIntLiteral(1, loc(7, 10)),
 						                                                     loc(7, 3))
-				                                      )),
+				                                      ),
 				                                      loc(4, 0))
 		                         ),
 		                         List.of(),
@@ -506,7 +508,12 @@ public class ParserTest {
 		Assert.assertEquals(expectedFunction.returnType(), currentFunction.returnType());
 		Assert.assertEquals(expectedFunction.args(), currentFunction.args());
 		Assert.assertEquals(expectedFunction.localVars(), currentFunction.localVars());
-		assertEquals(expectedFunction.statement(), currentFunction.statement());
+		assertEquals(expectedFunction.statements(), currentFunction.statements());
+	}
+
+	private static void assertEquals(List<Statement> expectedStatements, List<Statement> currentStatements) {
+		assertEquals(expectedStatements, currentStatements,
+		             ParserTest::assertEquals);
 	}
 
 	private static void assertEquals(@Nullable Statement expectedStatement, @Nullable Statement currentStatement) {
@@ -518,14 +525,19 @@ public class ParserTest {
 		Assert.assertNotNull(currentStatement);
 		if (expectedStatement instanceof StmtCompound expC
 		    && currentStatement instanceof StmtCompound currC) {
-			assertEquals(expC.statements(), currC.statements(),
-			             ParserTest::assertEquals);
+			assertEquals(expC.statements(), currC.statements());
 		}
 		else if (expectedStatement instanceof StmtIf expIf
 		         && currentStatement instanceof StmtIf currIf) {
 			assertEquals(expIf.condition(), currIf.condition());
-			assertEquals(expIf.thenStatement(), currIf.thenStatement());
-			assertEquals(expIf.elseStatement(), currIf.elseStatement());
+			assertEquals(expIf.thenStatements(), currIf.thenStatements());
+			assertEquals(expIf.elseStatements(), currIf.elseStatements());
+		}
+		else if (expectedStatement instanceof StmtLoop expLoop
+		         && currentStatement instanceof StmtLoop currLoop) {
+			assertEquals(expLoop.condition(), currLoop.condition());
+			assertEquals(expLoop.bodyStatements(), currLoop.bodyStatements());
+			assertEquals(expLoop.iteration(), currLoop.iteration());
 		}
 		else if (expectedStatement instanceof StmtExpr expExpr
 		         && currentStatement instanceof StmtExpr currExpr) {
