@@ -9,10 +9,10 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRFunction(@NotNull String name, @NotNull String label, @NotNull Type type, @NotNull List<IRInstruction> instructions, @NotNull List<IRLocalVar> localVars) {
+public record IRFunction(@NotNull String name, @NotNull String label, @NotNull Type returnType, @NotNull List<IRLocalVar> localVars, @NotNull List<IRInstruction> instructions) {
 
 	@Override
 	public String toString() {
-		return type + " " + name;
+		return returnType + " " + name;
 	}
 }

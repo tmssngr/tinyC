@@ -10,8 +10,9 @@ u8 one() {
 }
 
 void doPrint(u8 value) {
-	i64 $.0;
+	u8 value;
+	i64 $.1;
 
-	$.0 = 2;
-	print($.0);
+	$.1 = (i64)value;
+	print($.1);
 }

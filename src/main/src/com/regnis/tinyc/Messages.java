@@ -101,4 +101,9 @@ public class Messages {
 	public static String expectedIntegerType(Type type) {
 		return "Expected integer type, but got " + type;
 	}
+
+	@NotNull
+	public static String duplicateArgumentName(String name) {
+		return "Duplicate definition of argument '" + name + "'";
+	}
 }

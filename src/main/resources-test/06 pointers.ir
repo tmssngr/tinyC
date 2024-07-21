@@ -1,12 +1,12 @@
 @main:
  Local variables
-   0: a
-   1: $.1
-   2: b
-   3: c
-   4: $.4
-   5: d
-   6: $.6
+   var 0: a
+   var 1: $.1
+   var 2: b
+   var 3: c
+   var 4: $.4
+   var 5: d
+   var 6: $.6
         ; 2:10 int lit 10
         ld r0, 10 (2)
         ; 2:2 var a(%0)

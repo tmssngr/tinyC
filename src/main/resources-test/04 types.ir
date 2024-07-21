@@ -1,9 +1,9 @@
 @main:
  Local variables
-   0: i
-   1: $.1
-   2: v
-   3: $.3
+   var 0: i
+   var 1: $.1
+   var 2: v
+   var 3: $.3
         ; 2:15 int lit 250
         ld r0, 250 (1)
         ; 2:8 var i(%0)

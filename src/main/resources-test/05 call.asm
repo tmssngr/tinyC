@@ -33,12 +33,11 @@ start:
         lea rax, [rsp+0]
         ; 2:2 assign
         mov [rax], cl
-        ; 3:10 read var i(%0)
-        lea rcx, [rsp+0]
-        mov al, [rcx]
         ; 3:2 call doPrint
-        movzx rcx, al
-        sub rsp, 8
+        lea rax, [rsp+0]
+        mov al, [rax]
+        push rax
+        sub rsp, 0
           call @doPrint
         add rsp, 8
 @main_ret:
@@ -60,13 +59,15 @@ start:
 @doPrint:
         ; reserve space for local variables
         sub rsp, 16
-        ; 11:8 int lit 2
-        mov rcx, 2
-        ; 11:8 var $.0(%0)
+        ; 11:8 read var value(%0)
+        lea rcx, [rsp+24]
+        mov al, [rcx]
+        movzx rcx, al
+        ; 11:8 var $.1(%1)
         lea rax, [rsp+0]
         ; 11:8 assign
         mov [rax], rcx
-        ; 11:8 read var $.0(%0)
+        ; 11:8 read var $.1(%1)
         lea rcx, [rsp+0]
         mov rax, [rcx]
         ; 11:2 print i64

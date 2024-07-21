@@ -8,5 +8,5 @@ u8 one() {
 }
 
 void doPrint(u8 value) {
-	print(2);
+	print(value);
 }
