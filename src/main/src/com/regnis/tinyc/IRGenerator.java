@@ -510,7 +510,7 @@ public class IRGenerator {
 	}
 
 	private void writeAddrOfVar(int reg, VariableDetails variable) {
-		write(new IRAddrOfVar(reg, variable.scope(), variable.index(), variable.offset()));
+		write(new IRAddrOfVar(reg, variable.scope(), variable.index()));
 	}
 
 	@NotNull
