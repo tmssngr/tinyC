@@ -41,9 +41,9 @@ start:
         cmp al, cl
         setne bl
         and bl, 0xFF
-        ; for-condition
         or bl, bl
         jz @for_1_end
+        ; for body
         ; 3:11 read var i(%0)
         lea rcx, [rsp+0]
         mov al, [rcx]

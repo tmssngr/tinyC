@@ -116,9 +116,9 @@ start:
         cmp cl, al
         setne bl
         and bl, 0xFF
-        ; for-condition
         or bl, bl
         jz @for_1_end
+        ; for body
         ; 15:12 read var length(%0)
         lea rcx, [rsp+0]
         mov ax, [rcx]

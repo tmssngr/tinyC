@@ -41,9 +41,9 @@ start:
         cmp al, cl
         setg bl
         and bl, 0xFF
-        ; while-condition
         or bl, bl
         jz @while_1_end
+        ; while body
         ; 4:9 read var i(%0)
         lea rcx, [rsp+0]
         mov al, [rcx]
@@ -71,9 +71,9 @@ start:
 @while_2:
         ; 8:9 bool lit true
         mov cl, 1
-        ; while-condition
         or cl, cl
         jz @while_2_end
+        ; while body
         ; return
         jmp @main_ret
         jmp @while_2

@@ -266,8 +266,8 @@ public class IRGenerator {
 	}
 
 	private int writeAddressOf(VariableDetails variable) {
-		final int reg = getFreeReg();
 		Utils.assertTrue(variable.isScalar());
+		final int reg = getFreeReg();
 		writeAddrOfVar(reg, variable);
 		return reg;
 	}
@@ -435,10 +435,11 @@ public class IRGenerator {
 		writeComment("if " + condition.toUserString(), statement.location());
 		final int conditionReg = write(condition, variables);
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
-		writeComment("if-condition");
 		write(new IRBranch(conditionReg, false, elseLabel));
+		writeComment("then");
 		writeStatements(thenStatements, variables);
 		write(new IRJump(nextLabel));
+		writeComment("else");
 		writeLabel(elseLabel);
 		writeStatements(elseStatements, variables);
 		writeLabel(nextLabel);
@@ -456,8 +457,8 @@ public class IRGenerator {
 		writeLabel(label);
 		final int conditionReg = write(condition, variables);
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
-		writeComment(loopName + "-condition");
 		write(new IRBranch(conditionReg, false, nextLabel));
+		writeComment(loopName + " body");
 		final List<Statement> body = statement.bodyStatements();
 		writeStatements(body, variables);
 

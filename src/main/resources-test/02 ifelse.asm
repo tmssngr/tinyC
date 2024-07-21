@@ -47,9 +47,9 @@ start:
         cmp al, bl
         setg cl
         and cl, 0xFF
-        ; if-condition
         or cl, cl
         jz @else_1
+        ; then
         ; 5:9 read var a(%0)
         lea rax, [rsp+0]
         mov bl, [rax]
@@ -62,6 +62,7 @@ start:
           call __emit
         add rsp, 8
         jmp @endif_1
+        ; else
 @else_1:
         ; 8:9 read var b(%1)
         lea rax, [rsp+1]

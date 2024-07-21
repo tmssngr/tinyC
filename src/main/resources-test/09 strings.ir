@@ -78,8 +78,8 @@
         ld r1, 0 (1)
         ; 14:28 !=
         cmp r2, (r0 != r1) (u8)
-        ; for-condition
         branch-false r2, @for_1_end
+        ; for body
         ; 15:12 read var length(%0)
         addrOf r0, [0@function]
         load r1, [r0] (2)
