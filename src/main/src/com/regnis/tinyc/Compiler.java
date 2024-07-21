@@ -70,60 +70,11 @@ public class Compiler {
 
 	private static void write(IRProgram program, Path file) throws IOException {
 		try (final BufferedWriter writer = Files.newBufferedWriter(file)) {
-			writeFunctions(program.functions(), writer);
-
-			final List<IRGlobalVar> globalVars = program.globalVars();
-			if (globalVars.size() > 0) {
-				writeln("Global variables", writer);
-				for (IRGlobalVar var : globalVars) {
-					writeln("  " + var.toString(), writer);
-				}
-				writeln("", writer);
-			}
-
-			final List<IRStringLiteral> stringLiterals = program.stringLiterals();
-			if (stringLiterals.size() > 0) {
-				writeln("String literals", writer);
-				for (IRStringLiteral literal : stringLiterals) {
-					writeln("  " + literal.toString(), writer);
-				}
-			}
+			final IRWriter irWriter = new IRWriter(writer);
+			irWriter.write(program);
 		}
 	}
 
-	private static void writeFunctions(List<IRFunction> functions, BufferedWriter writer) throws IOException {
-		for (IRFunction function : functions) {
-			writeln(function.label() + ":", writer);
-			final List<IRLocalVar> localVars = function.localVars();
-			if (localVars.size() > 0) {
-				writeln(" Local variables", writer);
-				for (IRLocalVar var : localVars) {
-					writeln("   " + var.toString(), writer);
-				}
-			}
-
-			for (IRInstruction instruction : function.instructions()) {
-				if (instruction instanceof IRLabel label) {
-					writeln(label.label() + ":", writer);
-				}
-				else {
-					writer.write("        ");
-					if (instruction instanceof IRComment c) {
-						writeln("; " + c.comment(), writer);
-					}
-					else {
-						writeln(instruction.toString(), writer);
-					}
-				}
-			}
-			writeln("", writer);
-		}
-	}
-
-	private static void writeln(String text, BufferedWriter writer) throws IOException {
-		writer.write(text);
-		writer.newLine();
-	}
 
 	private static boolean launchFasm(Path asmFile) throws IOException, InterruptedException {
 		final Path fasmDir = Path.of(System.getProperty("user.home"), "Apps/fasm");
