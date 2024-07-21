@@ -1,6 +1,7 @@
 @main:
  Local variables
    0: i
+   1: $.1
         ; 2:9 int lit 5
         ld r0, 5 (1)
         ; 2:2 var i(%0)
@@ -22,8 +23,15 @@
         addrOf r0, [0@function]
         load r1, [r0] (1)
         cast r0 (i64), r1 (u8)
+        ; 4:9 var $.1(%1)
+        addrOf r1, [1@function]
+        ; 4:9 assign
+        store [r1], r0 (8)
+        ; 4:9 read var $.1(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (8)
         ; 4:3 print i64
-        printint r0
+        printint r1
         ; 5:7 read var i(%0)
         addrOf r0, [0@function]
         load r1, [r0] (1)

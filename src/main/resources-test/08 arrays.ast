@@ -3,11 +3,13 @@ u8* chars[256];
 void main() {
 	u8 chr;
 	u8 result;
+	i64 $.2;
 
 	chr = 32;
 	chars[0] = chr;
 	chars[1] = chars[0] + 1;
 	chars[(i64)(1 + 1)] = chars[1] + 2;
 	result = chars[2];
-	print((i64)result);
+	$.2 = (i64)result;
+	print($.2);
 }

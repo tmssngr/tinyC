@@ -1,8 +1,50 @@
 @main:
+ Local variables
+   0: $.0
+   1: $.1
+   2: $.2
+   3: $.3
+   4: $.4
+   5: $.5
+   6: $.6
+   7: $.7
+   8: $.8
+   9: $.9
+   10: $.10
+   11: $.11
+   12: $.12
+   13: $.13
+   14: $.14
+   15: $.15
+   16: $.16
+   17: $.17
+   18: $.18
+   19: $.19
+   20: $.20
+   21: $.21
+   22: $.22
+   23: $.23
+   24: $.24
+   25: $.25
+   26: $.26
+   27: $.27
+   28: $.28
+   29: $.29
+   30: $.30
+   31: $.31
+   32: $.32
+   33: $.33
         ; 2:14 string literal string_0
         load r0, stringlit-0
+        ; 2:14 var $.0(%0)
+        addrOf r1, [0@function]
+        ; 2:14 assign
+        store [r1], r0 (8)
+        ; 2:14 read var $.0(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (8)
         ; 2:2 print u8*
-        printStringZero r0
+        printStringZero r1
         ; 3:8 int lit 0
         ld r0, 0 (1)
         ; 3:12 int lit 0
@@ -10,6 +52,13 @@
         ; 3:10 and
         binary& r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 3:10 var $.1(%1)
+        addrOf r0, [1@function]
+        ; 3:10 assign
+        store [r0], r1 (8)
+        ; 3:10 read var $.1(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (8)
         ; 3:2 print i64
         printint r1
         ; 4:8 int lit 0
@@ -19,6 +68,13 @@
         ; 4:10 and
         binary& r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 4:10 var $.2(%2)
+        addrOf r0, [2@function]
+        ; 4:10 assign
+        store [r0], r1 (8)
+        ; 4:10 read var $.2(%2)
+        addrOf r0, [2@function]
+        load r1, [r0] (8)
         ; 4:2 print i64
         printint r1
         ; 5:8 int lit 1
@@ -28,6 +84,13 @@
         ; 5:10 and
         binary& r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 5:10 var $.3(%3)
+        addrOf r0, [3@function]
+        ; 5:10 assign
+        store [r0], r1 (8)
+        ; 5:10 read var $.3(%3)
+        addrOf r0, [3@function]
+        load r1, [r0] (8)
         ; 5:2 print i64
         printint r1
         ; 6:8 int lit 1
@@ -37,12 +100,26 @@
         ; 6:10 and
         binary& r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 6:10 var $.4(%4)
+        addrOf r0, [4@function]
+        ; 6:10 assign
+        store [r0], r1 (8)
+        ; 6:10 read var $.4(%4)
+        addrOf r0, [4@function]
+        load r1, [r0] (8)
         ; 6:2 print i64
         printint r1
         ; 7:14 string literal string_1
         load r0, stringlit-1
+        ; 7:14 var $.5(%5)
+        addrOf r1, [5@function]
+        ; 7:14 assign
+        store [r1], r0 (8)
+        ; 7:14 read var $.5(%5)
+        addrOf r0, [5@function]
+        load r1, [r0] (8)
         ; 7:2 print u8*
-        printStringZero r0
+        printStringZero r1
         ; 8:8 int lit 0
         ld r0, 0 (1)
         ; 8:12 int lit 0
@@ -50,6 +127,13 @@
         ; 8:10 or
         binary| r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 8:10 var $.6(%6)
+        addrOf r0, [6@function]
+        ; 8:10 assign
+        store [r0], r1 (8)
+        ; 8:10 read var $.6(%6)
+        addrOf r0, [6@function]
+        load r1, [r0] (8)
         ; 8:2 print i64
         printint r1
         ; 9:8 int lit 0
@@ -59,6 +143,13 @@
         ; 9:10 or
         binary| r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 9:10 var $.7(%7)
+        addrOf r0, [7@function]
+        ; 9:10 assign
+        store [r0], r1 (8)
+        ; 9:10 read var $.7(%7)
+        addrOf r0, [7@function]
+        load r1, [r0] (8)
         ; 9:2 print i64
         printint r1
         ; 10:8 int lit 1
@@ -68,6 +159,13 @@
         ; 10:10 or
         binary| r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 10:10 var $.8(%8)
+        addrOf r0, [8@function]
+        ; 10:10 assign
+        store [r0], r1 (8)
+        ; 10:10 read var $.8(%8)
+        addrOf r0, [8@function]
+        load r1, [r0] (8)
         ; 10:2 print i64
         printint r1
         ; 11:8 int lit 1
@@ -77,12 +175,26 @@
         ; 11:10 or
         binary| r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 11:10 var $.9(%9)
+        addrOf r0, [9@function]
+        ; 11:10 assign
+        store [r0], r1 (8)
+        ; 11:10 read var $.9(%9)
+        addrOf r0, [9@function]
+        load r1, [r0] (8)
         ; 11:2 print i64
         printint r1
         ; 12:14 string literal string_2
         load r0, stringlit-2
+        ; 12:14 var $.10(%10)
+        addrOf r1, [10@function]
+        ; 12:14 assign
+        store [r1], r0 (8)
+        ; 12:14 read var $.10(%10)
+        addrOf r0, [10@function]
+        load r1, [r0] (8)
         ; 12:2 print u8*
-        printStringZero r0
+        printStringZero r1
         ; 13:8 int lit 0
         ld r0, 0 (1)
         ; 13:12 int lit 0
@@ -90,6 +202,13 @@
         ; 13:10 xor
         binary^ r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 13:10 var $.11(%11)
+        addrOf r0, [11@function]
+        ; 13:10 assign
+        store [r0], r1 (8)
+        ; 13:10 read var $.11(%11)
+        addrOf r0, [11@function]
+        load r1, [r0] (8)
         ; 13:2 print i64
         printint r1
         ; 14:8 int lit 0
@@ -99,6 +218,13 @@
         ; 14:10 xor
         binary^ r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 14:10 var $.12(%12)
+        addrOf r0, [12@function]
+        ; 14:10 assign
+        store [r0], r1 (8)
+        ; 14:10 read var $.12(%12)
+        addrOf r0, [12@function]
+        load r1, [r0] (8)
         ; 14:2 print i64
         printint r1
         ; 15:8 int lit 1
@@ -108,6 +234,13 @@
         ; 15:10 xor
         binary^ r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 15:10 var $.13(%13)
+        addrOf r0, [13@function]
+        ; 15:10 assign
+        store [r0], r1 (8)
+        ; 15:10 read var $.13(%13)
+        addrOf r0, [13@function]
+        load r1, [r0] (8)
         ; 15:2 print i64
         printint r1
         ; 16:8 int lit 1
@@ -117,12 +250,26 @@
         ; 16:10 xor
         binary^ r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 16:10 var $.14(%14)
+        addrOf r0, [14@function]
+        ; 16:10 assign
+        store [r0], r1 (8)
+        ; 16:10 read var $.14(%14)
+        addrOf r0, [14@function]
+        load r1, [r0] (8)
         ; 16:2 print i64
         printint r1
         ; 17:14 string literal string_3
         load r0, stringlit-3
+        ; 17:14 var $.15(%15)
+        addrOf r1, [15@function]
+        ; 17:14 assign
+        store [r1], r0 (8)
+        ; 17:14 read var $.15(%15)
+        addrOf r0, [15@function]
+        load r1, [r0] (8)
         ; 17:2 print u8*
-        printStringZero r0
+        printStringZero r1
         ; 18:14 logic and
         ; 18:8 bool lit false
         ld r0, 0 (1)
@@ -132,6 +279,13 @@
         ld r0, r1
 @and_next_1:
         cast r1 (i64), r0 (bool)
+        ; 18:14 var $.16(%16)
+        addrOf r0, [16@function]
+        ; 18:14 assign
+        store [r0], r1 (8)
+        ; 18:14 read var $.16(%16)
+        addrOf r0, [16@function]
+        load r1, [r0] (8)
         ; 18:2 print i64
         printint r1
         ; 19:14 logic and
@@ -143,6 +297,13 @@
         ld r0, r1
 @and_next_2:
         cast r1 (i64), r0 (bool)
+        ; 19:14 var $.17(%17)
+        addrOf r0, [17@function]
+        ; 19:14 assign
+        store [r0], r1 (8)
+        ; 19:14 read var $.17(%17)
+        addrOf r0, [17@function]
+        load r1, [r0] (8)
         ; 19:2 print i64
         printint r1
         ; 20:13 logic and
@@ -154,6 +315,13 @@
         ld r0, r1
 @and_next_3:
         cast r1 (i64), r0 (bool)
+        ; 20:13 var $.18(%18)
+        addrOf r0, [18@function]
+        ; 20:13 assign
+        store [r0], r1 (8)
+        ; 20:13 read var $.18(%18)
+        addrOf r0, [18@function]
+        load r1, [r0] (8)
         ; 20:2 print i64
         printint r1
         ; 21:13 logic and
@@ -165,12 +333,26 @@
         ld r0, r1
 @and_next_4:
         cast r1 (i64), r0 (bool)
+        ; 21:13 var $.19(%19)
+        addrOf r0, [19@function]
+        ; 21:13 assign
+        store [r0], r1 (8)
+        ; 21:13 read var $.19(%19)
+        addrOf r0, [19@function]
+        load r1, [r0] (8)
         ; 21:2 print i64
         printint r1
         ; 22:14 string literal string_4
         load r0, stringlit-4
+        ; 22:14 var $.20(%20)
+        addrOf r1, [20@function]
+        ; 22:14 assign
+        store [r1], r0 (8)
+        ; 22:14 read var $.20(%20)
+        addrOf r0, [20@function]
+        load r1, [r0] (8)
         ; 22:2 print u8*
-        printStringZero r0
+        printStringZero r1
         ; 23:14 logic or
         ; 23:8 bool lit false
         ld r0, 0 (1)
@@ -180,6 +362,13 @@
         ld r0, r1
 @or_next_5:
         cast r1 (i64), r0 (bool)
+        ; 23:14 var $.21(%21)
+        addrOf r0, [21@function]
+        ; 23:14 assign
+        store [r0], r1 (8)
+        ; 23:14 read var $.21(%21)
+        addrOf r0, [21@function]
+        load r1, [r0] (8)
         ; 23:2 print i64
         printint r1
         ; 24:14 logic or
@@ -191,6 +380,13 @@
         ld r0, r1
 @or_next_6:
         cast r1 (i64), r0 (bool)
+        ; 24:14 var $.22(%22)
+        addrOf r0, [22@function]
+        ; 24:14 assign
+        store [r0], r1 (8)
+        ; 24:14 read var $.22(%22)
+        addrOf r0, [22@function]
+        load r1, [r0] (8)
         ; 24:2 print i64
         printint r1
         ; 25:13 logic or
@@ -202,6 +398,13 @@
         ld r0, r1
 @or_next_7:
         cast r1 (i64), r0 (bool)
+        ; 25:13 var $.23(%23)
+        addrOf r0, [23@function]
+        ; 25:13 assign
+        store [r0], r1 (8)
+        ; 25:13 read var $.23(%23)
+        addrOf r0, [23@function]
+        load r1, [r0] (8)
         ; 25:2 print i64
         printint r1
         ; 26:13 logic or
@@ -213,17 +416,38 @@
         ld r0, r1
 @or_next_8:
         cast r1 (i64), r0 (bool)
+        ; 26:13 var $.24(%24)
+        addrOf r0, [24@function]
+        ; 26:13 assign
+        store [r0], r1 (8)
+        ; 26:13 read var $.24(%24)
+        addrOf r0, [24@function]
+        load r1, [r0] (8)
         ; 26:2 print i64
         printint r1
         ; 27:14 string literal string_5
         load r0, stringlit-5
+        ; 27:14 var $.25(%25)
+        addrOf r1, [25@function]
+        ; 27:14 assign
+        store [r1], r0 (8)
+        ; 27:14 read var $.25(%25)
+        addrOf r0, [25@function]
+        load r1, [r0] (8)
         ; 27:2 print u8*
-        printStringZero r0
+        printStringZero r1
         ; 28:9 bool lit false
         ld r0, 0 (1)
         ; 28:8 not
         notLog r0 (1)
         cast r1 (i64), r0 (bool)
+        ; 28:8 var $.26(%26)
+        addrOf r0, [26@function]
+        ; 28:8 assign
+        store [r0], r1 (8)
+        ; 28:8 read var $.26(%26)
+        addrOf r0, [26@function]
+        load r1, [r0] (8)
         ; 28:2 print i64
         printint r1
         ; 29:9 bool lit true
@@ -231,12 +455,26 @@
         ; 29:8 not
         notLog r0 (1)
         cast r1 (i64), r0 (bool)
+        ; 29:8 var $.27(%27)
+        addrOf r0, [27@function]
+        ; 29:8 assign
+        store [r0], r1 (8)
+        ; 29:8 read var $.27(%27)
+        addrOf r0, [27@function]
+        load r1, [r0] (8)
         ; 29:2 print i64
         printint r1
         ; 30:14 string literal string_6
         load r0, stringlit-6
+        ; 30:14 var $.28(%28)
+        addrOf r1, [28@function]
+        ; 30:14 assign
+        store [r1], r0 (8)
+        ; 30:14 read var $.28(%28)
+        addrOf r0, [28@function]
+        load r1, [r0] (8)
         ; 30:2 print u8*
-        printStringZero r0
+        printStringZero r1
         ; 31:8 int lit 10
         ld r0, 10 (1)
         ; 31:17 int lit 6
@@ -248,6 +486,13 @@
         ; 31:24 or
         binary| r0, r1 (1)
         cast r1 (i64), r0 (u8)
+        ; 31:24 var $.29(%29)
+        addrOf r0, [29@function]
+        ; 31:24 assign
+        store [r0], r1 (8)
+        ; 31:24 read var $.29(%29)
+        addrOf r0, [29@function]
+        load r1, [r0] (8)
         ; 31:2 print i64
         printint r1
         ; 32:15 logic or
@@ -267,8 +512,15 @@
         ld r2, r3
 @or_next_9:
         cast r0 (i64), r2 (bool)
+        ; 32:15 var $.30(%30)
+        addrOf r1, [30@function]
+        ; 32:15 assign
+        store [r1], r0 (8)
+        ; 32:15 read var $.30(%30)
+        addrOf r0, [30@function]
+        load r1, [r0] (8)
         ; 32:2 print i64
-        printint r0
+        printint r1
         ; 33:15 logic and
         ; 33:8 int lit 1
         ld r0, 1 (1)
@@ -286,13 +538,27 @@
         ld r2, r3
 @and_next_10:
         cast r0 (i64), r2 (bool)
+        ; 33:15 var $.31(%31)
+        addrOf r1, [31@function]
+        ; 33:15 assign
+        store [r1], r0 (8)
+        ; 33:15 read var $.31(%31)
+        addrOf r0, [31@function]
+        load r1, [r0] (8)
         ; 33:2 print i64
-        printint r0
+        printint r1
         ; 34:9 int lit 1
         ld r0, 1 (2)
         ; 34:8 neg
         neg r0 (2)
         cast r1 (i64), r0 (i16)
+        ; 34:8 var $.32(%32)
+        addrOf r0, [32@function]
+        ; 34:8 assign
+        store [r0], r1 (8)
+        ; 34:8 read var $.32(%32)
+        addrOf r0, [32@function]
+        load r1, [r0] (8)
         ; 34:2 print i64
         printint r1
         ; 35:9 int lit 1
@@ -300,6 +566,13 @@
         ; 35:8 com
         not r0 (1)
         cast r1 (i64), r0 (u8)
+        ; 35:8 var $.33(%33)
+        addrOf r0, [33@function]
+        ; 35:8 assign
+        store [r0], r1 (8)
+        ; 35:8 read var $.33(%33)
+        addrOf r0, [33@function]
+        load r1, [r0] (8)
         ; 35:2 print i64
         printint r1
 @main_ret:

@@ -23,9 +23,18 @@
 @one_ret:
 
 @doPrint:
+ Local variables
+   0: $.0
         ; 11:8 int lit 2
         ld r0, 2 (8)
+        ; 11:8 var $.0(%0)
+        addrOf r1, [0@function]
+        ; 11:8 assign
+        store [r1], r0 (8)
+        ; 11:8 read var $.0(%0)
+        addrOf r0, [0@function]
+        load r1, [r0] (8)
         ; 11:2 print i64
-        printint r0
+        printint r1
 @doPrint_ret:
 

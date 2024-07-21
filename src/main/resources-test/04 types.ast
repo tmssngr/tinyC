@@ -1,11 +1,15 @@
 void main() {
 	u8 i;
+	i64 $.1;
 	i16 v;
+	i64 $.3;
 
 	i = 250;
 	for (; i != 2; i = i + 1) {
-		print((i64)i);
+		$.1 = (i64)i;
+		print($.1);
 	}
 	v = 260;
-	print((i64)((u8)v));
+	$.3 = (i64)((u8)v);
+	print($.3);
 }

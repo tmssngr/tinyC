@@ -2,6 +2,8 @@
  Local variables
    0: a
    1: b
+   2: $.2
+   3: $.3
         ; 2:9 int lit 1
         ld r0, 1 (1)
         ; 2:2 var a(%0)
@@ -29,8 +31,15 @@
         addrOf r0, [0@function]
         load r1, [r0] (1)
         cast r0 (i64), r1 (u8)
+        ; 5:9 var $.2(%2)
+        addrOf r1, [2@function]
+        ; 5:9 assign
+        store [r1], r0 (8)
+        ; 5:9 read var $.2(%2)
+        addrOf r0, [2@function]
+        load r1, [r0] (8)
         ; 5:3 print i64
-        printint r0
+        printint r1
         jmp @endif_1
         ; else
 @else_1:
@@ -38,8 +47,15 @@
         addrOf r0, [1@function]
         load r1, [r0] (1)
         cast r0 (i64), r1 (u8)
+        ; 8:9 var $.3(%3)
+        addrOf r1, [3@function]
+        ; 8:9 assign
+        store [r1], r0 (8)
+        ; 8:9 read var $.3(%3)
+        addrOf r0, [3@function]
+        load r1, [r0] (8)
         ; 8:3 print i64
-        printint r0
+        printint r1
 @endif_1:
 @main_ret:
 

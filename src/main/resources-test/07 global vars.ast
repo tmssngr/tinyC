@@ -3,6 +3,9 @@ i16 next;
 i16* ptrToSpace;
 
 void main() {
+	i64 $.0;
+
 	ptrToSpace = (i16*)(((i64)ptrToSpace) + (1 * 2));
-	print((i64)(*ptrToSpace));
+	$.0 = (i64)(*ptrToSpace);
+	print($.0);
 }

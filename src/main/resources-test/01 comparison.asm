@@ -23,6 +23,8 @@ start:
 
         ; void main
 @main:
+        ; reserve space for local variables
+        sub rsp, 80
         ; 2:11 int lit 1
         mov cl, 1
         ; 2:15 int lit 2
@@ -32,8 +34,16 @@ start:
         setl bl
         and bl, 0xFF
         movzx rcx, bl
+        ; 2:13 var $.0(%0)
+        lea rax, [rsp+0]
+        ; 2:13 assign
+        mov [rax], rcx
+        ; 2:13 read var $.0(%0)
+        lea rcx, [rsp+0]
+        mov rax, [rcx]
         ; 2:5 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -47,8 +57,16 @@ start:
         setl bl
         and bl, 0xFF
         movzx rcx, bl
+        ; 3:13 var $.1(%1)
+        lea rax, [rsp+8]
+        ; 3:13 assign
+        mov [rax], rcx
+        ; 3:13 read var $.1(%1)
+        lea rcx, [rsp+8]
+        mov rax, [rcx]
         ; 3:5 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -62,8 +80,16 @@ start:
         setle bl
         and bl, 0xFF
         movzx rcx, bl
+        ; 5:13 var $.2(%2)
+        lea rax, [rsp+16]
+        ; 5:13 assign
+        mov [rax], rcx
+        ; 5:13 read var $.2(%2)
+        lea rcx, [rsp+16]
+        mov rax, [rcx]
         ; 5:5 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -77,8 +103,16 @@ start:
         setle bl
         and bl, 0xFF
         movzx rcx, bl
+        ; 6:13 var $.3(%3)
+        lea rax, [rsp+24]
+        ; 6:13 assign
+        mov [rax], rcx
+        ; 6:13 read var $.3(%3)
+        lea rcx, [rsp+24]
+        mov rax, [rcx]
         ; 6:5 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -92,8 +126,16 @@ start:
         sete bl
         and bl, 0xFF
         movzx rcx, bl
+        ; 8:13 var $.4(%4)
+        lea rax, [rsp+32]
+        ; 8:13 assign
+        mov [rax], rcx
+        ; 8:13 read var $.4(%4)
+        lea rcx, [rsp+32]
+        mov rax, [rcx]
         ; 8:5 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -107,8 +149,16 @@ start:
         setne bl
         and bl, 0xFF
         movzx rcx, bl
+        ; 10:13 var $.5(%5)
+        lea rax, [rsp+40]
+        ; 10:13 assign
+        mov [rax], rcx
+        ; 10:13 read var $.5(%5)
+        lea rcx, [rsp+40]
+        mov rax, [rcx]
         ; 10:5 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -122,8 +172,16 @@ start:
         setge bl
         and bl, 0xFF
         movzx rcx, bl
+        ; 12:13 var $.6(%6)
+        lea rax, [rsp+48]
+        ; 12:13 assign
+        mov [rax], rcx
+        ; 12:13 read var $.6(%6)
+        lea rcx, [rsp+48]
+        mov rax, [rcx]
         ; 12:5 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -137,8 +195,16 @@ start:
         setge bl
         and bl, 0xFF
         movzx rcx, bl
+        ; 13:13 var $.7(%7)
+        lea rax, [rsp+56]
+        ; 13:13 assign
+        mov [rax], rcx
+        ; 13:13 read var $.7(%7)
+        lea rcx, [rsp+56]
+        mov rax, [rcx]
         ; 13:5 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -152,8 +218,16 @@ start:
         setg bl
         and bl, 0xFF
         movzx rcx, bl
+        ; 15:13 var $.8(%8)
+        lea rax, [rsp+64]
+        ; 15:13 assign
+        mov [rax], rcx
+        ; 15:13 read var $.8(%8)
+        lea rcx, [rsp+64]
+        mov rax, [rcx]
         ; 15:5 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -167,13 +241,23 @@ start:
         setg bl
         and bl, 0xFF
         movzx rcx, bl
+        ; 16:13 var $.9(%9)
+        lea rax, [rsp+72]
+        ; 16:13 assign
+        mov [rax], rcx
+        ; 16:13 read var $.9(%9)
+        lea rcx, [rsp+72]
+        mov rax, [rcx]
         ; 16:5 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
 @main_ret:
+        ; release space for local variables
+        add rsp, 80
         ret
 init:
         sub rsp, 20h

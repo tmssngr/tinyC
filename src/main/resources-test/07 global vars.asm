@@ -23,6 +23,8 @@ start:
 
         ; void main
 @main:
+        ; reserve space for local variables
+        sub rsp, 16
         ; begin initialize global variables
         ; 1:13 int lit 32
         mov cx, 32
@@ -64,6 +66,13 @@ start:
         ; 7:8 deref
         mov cx, [rax]
         movzx rax, cx
+        ; 7:8 var $.0(%0)
+        lea rcx, [rsp+0]
+        ; 7:8 assign
+        mov [rcx], rax
+        ; 7:8 read var $.0(%0)
+        lea rcx, [rsp+0]
+        mov rax, [rcx]
         ; 7:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -72,6 +81,8 @@ start:
           call __emit
         add rsp, 8
 @main_ret:
+        ; release space for local variables
+        add rsp, 16
         ret
 init:
         sub rsp, 20h
