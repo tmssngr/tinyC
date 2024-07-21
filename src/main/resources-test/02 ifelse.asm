@@ -51,12 +51,11 @@ start:
         jz @else_1
         ; then
         ; 5:9 read var a(%0)
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        movzx rax, bl
+        lea rcx, [rsp+0]
+        mov al, [rcx]
+        movzx rcx, al
         ; 5:3 print i64
         sub rsp, 8
-          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -65,12 +64,11 @@ start:
         ; else
 @else_1:
         ; 8:9 read var b(%1)
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        movzx rax, bl
+        lea rcx, [rsp+1]
+        mov al, [rcx]
+        movzx rcx, al
         ; 8:3 print i64
         sub rsp, 8
-          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit

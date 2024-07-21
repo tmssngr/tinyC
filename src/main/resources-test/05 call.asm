@@ -29,9 +29,9 @@ start:
           call @one
         add rsp, 8
         ; 2:2 var i(%0)
-        lea rcx, [rsp+0]
+        lea rax, [rsp+0]
         ; 2:2 assign
-        mov [rcx], al
+        mov [rax], cl
         ; 3:10 read var i(%0)
         lea rcx, [rsp+0]
         mov al, [rcx]

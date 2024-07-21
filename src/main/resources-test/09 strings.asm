@@ -124,9 +124,9 @@ start:
         mov ax, [rcx]
         ; 15:21 int lit 1
         mov cl, 1
-        movzx dx, cl
+        movzx bx, cl
         ; 15:19 add
-        add ax, dx
+        add ax, bx
         ; 15:3 var length(%0)
         lea rcx, [rsp+0]
         ; 15:10 assign

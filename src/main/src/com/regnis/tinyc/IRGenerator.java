@@ -109,6 +109,7 @@ public class IRGenerator {
 	}
 
 	private void writeStatement(Statement statement, Variables variables) {
+		Utils.assertTrue(registerAllocator.isNoneUsed());
 		switch (statement) {
 		case StmtVarDeclaration declaration -> writeAssignment(declaration.index(), declaration.scope(), declaration.expression(), declaration.location(), variables);
 		case StmtCompound compound -> writeStatements(compound.statements(), variables);
@@ -118,6 +119,7 @@ public class IRGenerator {
 		case StmtReturn ret -> writeReturn(ret.expression(), variables);
 		case null, default -> throw new UnsupportedOperationException(String.valueOf(statement));
 		}
+		Utils.assertTrue(registerAllocator.isNoneUsed());
 	}
 
 	private int writeCall(ExprFuncCall call, Variables variables) {
@@ -163,7 +165,7 @@ public class IRGenerator {
 				freeReg(arg.reg());
 			}
 		}
-		return call.typeNotNull() == Type.VOID ? -1 : 1; // rax
+		return call.typeNotNull() == Type.VOID ? -1 : getFreeReg();
 	}
 
 	private void writeReturn(@Nullable Expression expression, Variables variables) {
@@ -230,9 +232,7 @@ public class IRGenerator {
 					writeComment("read var " + variable, node.location());
 					addrReg = writeAddressOf(variable);
 				}
-				final int valueReg = writeRead(addrReg, var.typeNotNull());
-				freeReg(addrReg);
-				yield valueReg;
+				yield writeRead(addrReg, var.typeNotNull());
 			}
 			case ExprBinary binary -> writeBinary(binary, variables);
 			case ExprUnary unary -> processUnary(unary, variables);
@@ -436,6 +436,7 @@ public class IRGenerator {
 		final int conditionReg = write(condition, variables);
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
 		write(new IRBranch(conditionReg, false, elseLabel));
+		freeReg(conditionReg);
 		writeComment("then");
 		writeStatements(thenStatements, variables);
 		write(new IRJump(nextLabel));
@@ -458,6 +459,7 @@ public class IRGenerator {
 		final int conditionReg = write(condition, variables);
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
 		write(new IRBranch(conditionReg, false, nextLabel));
+		freeReg(conditionReg);
 		writeComment(loopName + " body");
 		final List<Statement> body = statement.bodyStatements();
 		writeStatements(body, variables);
