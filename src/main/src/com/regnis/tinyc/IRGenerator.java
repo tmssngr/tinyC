@@ -15,8 +15,8 @@ public class IRGenerator {
 	private static final int TRUE = 1;
 	private static final int FALSE = 0;
 
+	private final TrivialRegisterAllocator registerAllocator = new TrivialRegisterAllocator();
 	private int labelIndex;
-	private int freeRegs;
 	@SuppressWarnings("unused") private boolean debug;
 	private String functionRetLabel;
 	private List<IRInstruction> instructions;
@@ -472,18 +472,18 @@ public class IRGenerator {
 	}
 
 	private int getFreeReg() {
-		int mask = 1;
-		for (int i = 0; i < 4; i++, mask += mask) {
-			if ((freeRegs & mask) == 0) {
-				freeRegs |= mask;
-				return i;
-			}
+		final int allocate = registerAllocator.allocate();
+		if (debug) {
+			writeComment("got " + allocate + ", " + registerAllocator);
 		}
-		throw new IllegalStateException("no free reg");
+		return allocate;
 	}
 
 	private void freeReg(int reg) {
-		freeRegs &= ~(1 << reg);
+		registerAllocator.free(reg);
+		if (debug) {
+			writeComment("freed " + reg + ", " + registerAllocator);
+		}
 	}
 
 	private void writeLabel(String label) {
@@ -570,6 +570,57 @@ public class IRGenerator {
 			buffer.append(index);
 			buffer.append(")");
 			return buffer.toString();
+		}
+	}
+
+	private static class TrivialRegisterAllocator {
+
+		private static final int MAX_REGISTERS = 4;
+
+		private int freeRegs;
+
+		@Override
+		public String toString() {
+			final StringBuilder buffer = new StringBuilder();
+			buffer.append("used: ");
+			int mask = 1;
+			boolean first = true;
+			for (int i = 0; i < MAX_REGISTERS; i++, mask += mask) {
+				if ((freeRegs & mask) != 0) {
+					if (first) {
+						first = false;
+					}
+					else {
+						buffer.append(", ");
+					}
+					buffer.append(i);
+				}
+			}
+			if (first) {
+				buffer.append("none");
+			}
+			return buffer.toString();
+		}
+
+		public int allocate() {
+			int mask = 1;
+			for (int i = 0; i < MAX_REGISTERS; i++, mask += mask) {
+				if ((freeRegs & mask) == 0) {
+					freeRegs |= mask;
+					return i;
+				}
+			}
+			throw new IllegalStateException("no free reg");
+		}
+
+		public void free(int reg) {
+			final int mask = 1 << reg;
+			Utils.assertTrue((freeRegs & mask) != 0);
+			freeRegs ^= mask;
+		}
+
+		public boolean isNoneUsed() {
+			return freeRegs == 0;
 		}
 	}
 }
