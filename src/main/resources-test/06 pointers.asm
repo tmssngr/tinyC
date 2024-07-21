@@ -23,7 +23,7 @@ start:
         ; void main
 @main:
         ; reserve space for local variables
-        sub rsp, 32
+        sub rsp, 48
         ; 2:10 int lit 10
         mov cx, 10
         ; 2:2 var a(%0)
@@ -34,20 +34,28 @@ start:
         lea rcx, [rsp+0]
         mov ax, [rcx]
         movzx rcx, ax
+        ; 3:8 var $.1(%1)
+        lea rax, [rsp+2]
+        ; 3:8 assign
+        mov [rax], rcx
+        ; 3:8 read var $.1(%1)
+        lea rcx, [rsp+2]
+        mov rax, [rcx]
         ; 3:2 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 4:11 address of var a(%0)
         lea rcx, [rsp+0]
-        ; 4:2 var b(%1)
-        lea rax, [rsp+2]
+        ; 4:2 var b(%2)
+        lea rax, [rsp+10]
         ; 4:2 assign
         mov [rax], rcx
-        ; 5:11 read var b(%1)
-        lea rcx, [rsp+2]
+        ; 5:11 read var b(%2)
+        lea rcx, [rsp+10]
         mov rax, [rcx]
         ; 5:10 deref
         mov cx, [rax]
@@ -55,28 +63,36 @@ start:
         mov ax, 1
         ; 5:13 sub
         sub cx, ax
-        ; 5:2 var c(%2)
-        lea rax, [rsp+10]
+        ; 5:2 var c(%3)
+        lea rax, [rsp+18]
         ; 5:2 assign
         mov [rax], cx
-        ; 6:8 read var c(%2)
-        lea rcx, [rsp+10]
+        ; 6:8 read var c(%3)
+        lea rcx, [rsp+18]
         mov ax, [rcx]
         movzx rcx, ax
+        ; 6:8 var $.4(%4)
+        lea rax, [rsp+20]
+        ; 6:8 assign
+        mov [rax], rcx
+        ; 6:8 read var $.4(%4)
+        lea rcx, [rsp+20]
+        mov rax, [rcx]
         ; 6:2 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 7:11 address of var c(%2)
-        lea rcx, [rsp+10]
-        ; 7:2 var d(%3)
-        lea rax, [rsp+12]
+        ; 7:11 address of var c(%3)
+        lea rcx, [rsp+18]
+        ; 7:2 var d(%5)
+        lea rax, [rsp+28]
         ; 7:2 assign
         mov [rax], rcx
-        ; 8:8 read var d(%3)
-        lea rcx, [rsp+12]
+        ; 8:8 read var d(%5)
+        lea rcx, [rsp+28]
         mov rax, [rcx]
         ; 8:7 deref
         mov cx, [rax]
@@ -84,24 +100,32 @@ start:
         mov ax, 1
         ; 8:10 sub
         sub cx, ax
-        ; 8:3 read var d(%3)
-        lea rax, [rsp+12]
+        ; 8:3 read var d(%5)
+        lea rax, [rsp+28]
         mov rbx, [rax]
         ; 8:5 assign
         mov [rbx], cx
-        ; 9:8 read var c(%2)
-        lea rcx, [rsp+10]
+        ; 9:8 read var c(%3)
+        lea rcx, [rsp+18]
         mov ax, [rcx]
         movzx rcx, ax
+        ; 9:8 var $.6(%6)
+        lea rax, [rsp+36]
+        ; 9:8 assign
+        mov [rax], rcx
+        ; 9:8 read var $.6(%6)
+        lea rcx, [rsp+36]
+        mov rax, [rcx]
         ; 9:2 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
 @main_ret:
         ; release space for local variables
-        add rsp, 32
+        add rsp, 48
         ret
 init:
         sub rsp, 20h

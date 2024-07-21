@@ -1,13 +1,19 @@
 void main() {
 	i16 foo;
 	i16 bar;
+	i64 $.2;
+	i64 $.3;
 	i16 bazz;
+	i64 $.5;
 
 	foo = (i16)((4 * 3) + (2 * 5));
 	bar = foo * foo;
 	foo = 1;
-	print((i64)(bar + foo));
+	$.2 = (i64)(bar + foo);
+	print($.2);
 	foo = (i16)((1 + 2) * (3 + 4));
-	print((i64)foo);
-	print((i64)bazz);
+	$.3 = (i64)foo;
+	print($.3);
+	$.5 = (i64)bazz;
+	print($.5);
 }

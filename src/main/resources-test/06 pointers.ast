@@ -1,15 +1,21 @@
 void main() {
 	i16 a;
+	i64 $.1;
 	i16* b;
 	i16 c;
+	i64 $.4;
 	i16* d;
+	i64 $.6;
 
 	a = 10;
-	print((i64)a);
+	$.1 = (i64)a;
+	print($.1);
 	b = &a;
 	c = (*b) - 1;
-	print((i64)c);
+	$.4 = (i64)c;
+	print($.4);
 	d = &c;
 	*d = (*d) - 1;
-	print((i64)c);
+	$.6 = (i64)c;
+	print($.6);
 }

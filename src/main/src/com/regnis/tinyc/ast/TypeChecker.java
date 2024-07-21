@@ -271,6 +271,17 @@ public final class TypeChecker {
 	}
 
 	@NotNull
+	private Expression splitIntoTempVarAssignment(Expression expression) {
+		if (expression instanceof ExprVarAccess varAccess && varAccess.scope() == VariableScope.function) {
+			return expression;
+		}
+
+		final Variable variable = addVariable(null, expression.typeNotNull(), 0, expression.location());
+		addAssignment(variable, expression, expression.location());
+		return new ExprVarAccess(variable.name(), variable.index(), variable.scope(), variable.type(), null, variable.location());
+	}
+
+	@NotNull
 	private ExprStringLiteral processStringLiteral(ExprStringLiteral literal) {
 		final String text = literal.text();
 		StringLiteral stringLiteral = stringLiteralMap.get(text);
@@ -393,6 +404,7 @@ public final class TypeChecker {
 			final Expression argExpr = argExprIt.next();
 			Expression expression = processExpression(argExpr);
 			expression = autoCastTo(expectedType, expression, location);
+			expression = splitIntoTempVarAssignment(expression);
 			expressions.add(expression);
 		}
 		return new ExprFuncCall(name, function.returnType(), expressions, location);
@@ -526,8 +538,10 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private Variable addVariable(String varName, Type type, int arraySize, Location location) {
-		checkNoSymbolNamed(varName, location);
+	private Variable addVariable(@Nullable String varName, Type type, int arraySize, Location location) {
+		if (varName != null) {
+			checkNoSymbolNamed(varName, location);
+		}
 		if (localVariables == null) {
 			return addGlobalVariable(varName, type, arraySize, location);
 		}
@@ -536,7 +550,8 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private Variable addGlobalVariable(String varName, Type type, int arraySize, Location location) {
+	private Variable addGlobalVariable(@Nullable String varName, Type type, int arraySize, Location location) {
+		varName = getTempVarName(varName, globalVariables);
 		final Variable variable = new Variable(varName, globalVariables.size(), VariableScope.global, type, arraySize, location);
 		globalSymbols.put(varName, variable);
 		globalVariables.add(variable);
@@ -571,6 +586,14 @@ public final class TypeChecker {
 		};
 	}
 
+	@NotNull
+	private static String getTempVarName(@Nullable String varName, List<Variable> globalVariables) {
+		if (varName == null) {
+			varName = "$." + globalVariables.size();
+		}
+		return varName;
+	}
+
 	private static final class LocalVariables {
 
 		private final Map<String, Variable> nameToVariable = new HashMap<>();
@@ -588,7 +611,8 @@ public final class TypeChecker {
 		}
 
 		@NotNull
-		public Variable add(String varName, Type type, int arraySize, Location location) {
+		public Variable add(@Nullable String varName, Type type, int arraySize, Location location) {
+			varName = getTempVarName(varName, vars);
 			final Variable variable = new Variable(varName, vars.size(), VariableScope.function, type, arraySize, location);
 			nameToVariable.put(varName, variable);
 			vars.add(variable);

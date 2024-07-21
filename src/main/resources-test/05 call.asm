@@ -57,15 +57,27 @@ start:
 
         ; void doPrint
 @doPrint:
+        ; reserve space for local variables
+        sub rsp, 16
         ; 11:8 int lit 2
         mov rcx, 2
+        ; 11:8 var $.0(%0)
+        lea rax, [rsp+0]
+        ; 11:8 assign
+        mov [rax], rcx
+        ; 11:8 read var $.0(%0)
+        lea rcx, [rsp+0]
+        mov rax, [rcx]
         ; 11:2 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
 @doPrint_ret:
+        ; release space for local variables
+        add rsp, 16
         ret
 init:
         sub rsp, 20h

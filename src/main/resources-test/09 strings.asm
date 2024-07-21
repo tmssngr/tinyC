@@ -23,7 +23,7 @@ start:
         ; void main
 @main:
         ; reserve space for local variables
-        sub rsp, 16
+        sub rsp, 32
         ; begin initialize global variables
         ; 1:12 string literal string_0
         lea rcx, [string_0]
@@ -34,6 +34,13 @@ start:
         ; end initialize global variables
         ; 4:14 read var text($0)
         lea rcx, [var0]
+        mov rax, [rcx]
+        ; 4:14 var $.0(%0)
+        lea rcx, [rsp+0]
+        ; 4:14 assign
+        mov [rcx], rax
+        ; 4:14 read var $.0(%0)
+        lea rcx, [rsp+0]
         mov rax, [rcx]
         ; 4:2 print u8*
         sub rsp, 8
@@ -51,12 +58,12 @@ start:
         lea rbx, [var0]
         mov rax, [rbx]
         add rax, rcx
-        ; 6:2 var second(%0)
-        lea rcx, [rsp+0]
+        ; 6:2 var second(%1)
+        lea rcx, [rsp+8]
         ; 6:2 assign
         mov [rcx], rax
-        ; 7:14 read var second(%0)
-        lea rcx, [rsp+0]
+        ; 7:14 read var second(%1)
+        lea rcx, [rsp+8]
         mov rax, [rcx]
         ; 7:2 print u8*
         sub rsp, 8
@@ -68,29 +75,37 @@ start:
         mov rax, [rcx]
         ; 8:11 deref
         mov cl, [rax]
-        ; 8:2 var chr(%1)
-        lea rax, [rsp+8]
+        ; 8:2 var chr(%2)
+        lea rax, [rsp+16]
         ; 8:2 assign
         mov [rax], cl
-        ; 9:8 read var chr(%1)
-        lea rcx, [rsp+8]
+        ; 9:8 read var chr(%2)
+        lea rcx, [rsp+16]
         mov al, [rcx]
         movzx rcx, al
+        ; 9:8 var $.3(%3)
+        lea rax, [rsp+17]
+        ; 9:8 assign
+        mov [rax], rcx
+        ; 9:8 read var $.3(%3)
+        lea rcx, [rsp+17]
+        mov rax, [rcx]
         ; 9:2 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
 @main_ret:
         ; release space for local variables
-        add rsp, 16
+        add rsp, 32
         ret
 
         ; void printLength
 @printLength:
         ; reserve space for local variables
-        sub rsp, 16
+        sub rsp, 32
         ; 13:15 int lit 0
         mov cx, 0
         ; 13:2 var length(%0)
@@ -149,15 +164,23 @@ start:
         lea rcx, [rsp+0]
         mov ax, [rcx]
         movzx rcx, ax
+        ; 17:8 var $.2(%2)
+        lea rax, [rsp+10]
+        ; 17:8 assign
+        mov [rax], rcx
+        ; 17:8 read var $.2(%2)
+        lea rcx, [rsp+10]
+        mov rax, [rcx]
         ; 17:2 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
 @printLength_ret:
         ; release space for local variables
-        add rsp, 16
+        add rsp, 32
         ret
 init:
         sub rsp, 20h

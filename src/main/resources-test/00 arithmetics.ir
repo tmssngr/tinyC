@@ -2,7 +2,10 @@
  Local variables
    0: foo
    1: bar
-   2: bazz
+   2: $.2
+   3: $.3
+   4: bazz
+   5: $.5
         ; 2:15 int lit 4
         ld r0, 4 (1)
         ; 2:19 int lit 3
@@ -49,8 +52,15 @@
         ; 5:15 add
         binary+ r1, r2 (2)
         cast r0 (i64), r1 (i16)
+        ; 5:15 var $.2(%2)
+        addrOf r1, [2@function]
+        ; 5:15 assign
+        store [r1], r0 (8)
+        ; 5:15 read var $.2(%2)
+        addrOf r0, [2@function]
+        load r1, [r0] (8)
         ; 5:5 print i64
-        printint r0
+        printint r1
         ; 6:12 int lit 1
         ld r0, 1 (1)
         ; 6:16 int lit 2
@@ -74,13 +84,27 @@
         addrOf r0, [0@function]
         load r1, [r0] (2)
         cast r0 (i64), r1 (i16)
+        ; 7:11 var $.3(%3)
+        addrOf r1, [3@function]
+        ; 7:11 assign
+        store [r1], r0 (8)
+        ; 7:11 read var $.3(%3)
+        addrOf r0, [3@function]
+        load r1, [r0] (8)
         ; 7:5 print i64
-        printint r0
-        ; 9:11 read var bazz(%2)
-        addrOf r0, [2@function]
+        printint r1
+        ; 9:11 read var bazz(%4)
+        addrOf r0, [4@function]
         load r1, [r0] (2)
         cast r0 (i64), r1 (i16)
+        ; 9:11 var $.5(%5)
+        addrOf r1, [5@function]
+        ; 9:11 assign
+        store [r1], r0 (8)
+        ; 9:11 read var $.5(%5)
+        addrOf r0, [5@function]
+        load r1, [r0] (8)
         ; 9:5 print i64
-        printint r0
+        printint r1
 @main_ret:
 

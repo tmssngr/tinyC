@@ -99,8 +99,16 @@ start:
         lea rcx, [rsp+1]
         mov al, [rcx]
         movzx rcx, al
+        ; 9:9 var $.2(%2)
+        lea rax, [rsp+2]
+        ; 9:9 assign
+        mov [rax], rcx
+        ; 9:9 read var $.2(%2)
+        lea rcx, [rsp+2]
+        mov rax, [rcx]
         ; 9:3 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit

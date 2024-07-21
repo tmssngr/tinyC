@@ -1,13 +1,17 @@
 void main() {
 	u8 a;
+	i64 $.1;
 
 	a = 10;
-	print((i64)a);
+	$.1 = (i64)a;
+	print($.1);
 }
 
 void foo() {
 	u8 a;
+	i64 $.1;
 
 	a = 20;
-	print((i64)a);
+	$.1 = (i64)a;
+	print($.1);
 }

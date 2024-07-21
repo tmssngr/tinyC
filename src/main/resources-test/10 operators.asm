@@ -22,10 +22,20 @@ start:
 
         ; void main
 @main:
+        ; reserve space for local variables
+        sub rsp, 272
         ; 2:14 string literal string_0
         lea rcx, [string_0]
+        ; 2:14 var $.0(%0)
+        lea rax, [rsp+0]
+        ; 2:14 assign
+        mov [rax], rcx
+        ; 2:14 read var $.0(%0)
+        lea rcx, [rsp+0]
+        mov rax, [rcx]
         ; 2:2 print u8*
         sub rsp, 8
+          mov rcx, rax
           call __printStringZero
         add rsp, 8
         ; 3:8 int lit 0
@@ -35,6 +45,13 @@ start:
         ; 3:10 and
         and cl, al
         movzx rax, cl
+        ; 3:10 var $.1(%1)
+        lea rcx, [rsp+8]
+        ; 3:10 assign
+        mov [rcx], rax
+        ; 3:10 read var $.1(%1)
+        lea rcx, [rsp+8]
+        mov rax, [rcx]
         ; 3:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -49,6 +66,13 @@ start:
         ; 4:10 and
         and cl, al
         movzx rax, cl
+        ; 4:10 var $.2(%2)
+        lea rcx, [rsp+16]
+        ; 4:10 assign
+        mov [rcx], rax
+        ; 4:10 read var $.2(%2)
+        lea rcx, [rsp+16]
+        mov rax, [rcx]
         ; 4:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -63,6 +87,13 @@ start:
         ; 5:10 and
         and cl, al
         movzx rax, cl
+        ; 5:10 var $.3(%3)
+        lea rcx, [rsp+24]
+        ; 5:10 assign
+        mov [rcx], rax
+        ; 5:10 read var $.3(%3)
+        lea rcx, [rsp+24]
+        mov rax, [rcx]
         ; 5:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -77,6 +108,13 @@ start:
         ; 6:10 and
         and cl, al
         movzx rax, cl
+        ; 6:10 var $.4(%4)
+        lea rcx, [rsp+32]
+        ; 6:10 assign
+        mov [rcx], rax
+        ; 6:10 read var $.4(%4)
+        lea rcx, [rsp+32]
+        mov rax, [rcx]
         ; 6:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -86,8 +124,16 @@ start:
         add rsp, 8
         ; 7:14 string literal string_1
         lea rcx, [string_1]
+        ; 7:14 var $.5(%5)
+        lea rax, [rsp+40]
+        ; 7:14 assign
+        mov [rax], rcx
+        ; 7:14 read var $.5(%5)
+        lea rcx, [rsp+40]
+        mov rax, [rcx]
         ; 7:2 print u8*
         sub rsp, 8
+          mov rcx, rax
           call __printStringZero
         add rsp, 8
         ; 8:8 int lit 0
@@ -97,6 +143,13 @@ start:
         ; 8:10 or
         or cl, al
         movzx rax, cl
+        ; 8:10 var $.6(%6)
+        lea rcx, [rsp+48]
+        ; 8:10 assign
+        mov [rcx], rax
+        ; 8:10 read var $.6(%6)
+        lea rcx, [rsp+48]
+        mov rax, [rcx]
         ; 8:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -111,6 +164,13 @@ start:
         ; 9:10 or
         or cl, al
         movzx rax, cl
+        ; 9:10 var $.7(%7)
+        lea rcx, [rsp+56]
+        ; 9:10 assign
+        mov [rcx], rax
+        ; 9:10 read var $.7(%7)
+        lea rcx, [rsp+56]
+        mov rax, [rcx]
         ; 9:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -125,6 +185,13 @@ start:
         ; 10:10 or
         or cl, al
         movzx rax, cl
+        ; 10:10 var $.8(%8)
+        lea rcx, [rsp+64]
+        ; 10:10 assign
+        mov [rcx], rax
+        ; 10:10 read var $.8(%8)
+        lea rcx, [rsp+64]
+        mov rax, [rcx]
         ; 10:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -139,6 +206,13 @@ start:
         ; 11:10 or
         or cl, al
         movzx rax, cl
+        ; 11:10 var $.9(%9)
+        lea rcx, [rsp+72]
+        ; 11:10 assign
+        mov [rcx], rax
+        ; 11:10 read var $.9(%9)
+        lea rcx, [rsp+72]
+        mov rax, [rcx]
         ; 11:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -148,8 +222,16 @@ start:
         add rsp, 8
         ; 12:14 string literal string_2
         lea rcx, [string_2]
+        ; 12:14 var $.10(%10)
+        lea rax, [rsp+80]
+        ; 12:14 assign
+        mov [rax], rcx
+        ; 12:14 read var $.10(%10)
+        lea rcx, [rsp+80]
+        mov rax, [rcx]
         ; 12:2 print u8*
         sub rsp, 8
+          mov rcx, rax
           call __printStringZero
         add rsp, 8
         ; 13:8 int lit 0
@@ -159,6 +241,13 @@ start:
         ; 13:10 xor
         xor cl, al
         movzx rax, cl
+        ; 13:10 var $.11(%11)
+        lea rcx, [rsp+88]
+        ; 13:10 assign
+        mov [rcx], rax
+        ; 13:10 read var $.11(%11)
+        lea rcx, [rsp+88]
+        mov rax, [rcx]
         ; 13:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -173,6 +262,13 @@ start:
         ; 14:10 xor
         xor cl, al
         movzx rax, cl
+        ; 14:10 var $.12(%12)
+        lea rcx, [rsp+96]
+        ; 14:10 assign
+        mov [rcx], rax
+        ; 14:10 read var $.12(%12)
+        lea rcx, [rsp+96]
+        mov rax, [rcx]
         ; 14:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -187,6 +283,13 @@ start:
         ; 15:10 xor
         xor cl, al
         movzx rax, cl
+        ; 15:10 var $.13(%13)
+        lea rcx, [rsp+104]
+        ; 15:10 assign
+        mov [rcx], rax
+        ; 15:10 read var $.13(%13)
+        lea rcx, [rsp+104]
+        mov rax, [rcx]
         ; 15:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -201,6 +304,13 @@ start:
         ; 16:10 xor
         xor cl, al
         movzx rax, cl
+        ; 16:10 var $.14(%14)
+        lea rcx, [rsp+112]
+        ; 16:10 assign
+        mov [rcx], rax
+        ; 16:10 read var $.14(%14)
+        lea rcx, [rsp+112]
+        mov rax, [rcx]
         ; 16:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -210,8 +320,16 @@ start:
         add rsp, 8
         ; 17:14 string literal string_3
         lea rcx, [string_3]
+        ; 17:14 var $.15(%15)
+        lea rax, [rsp+120]
+        ; 17:14 assign
+        mov [rax], rcx
+        ; 17:14 read var $.15(%15)
+        lea rcx, [rsp+120]
+        mov rax, [rcx]
         ; 17:2 print u8*
         sub rsp, 8
+          mov rcx, rax
           call __printStringZero
         add rsp, 8
         ; 18:14 logic and
@@ -224,6 +342,13 @@ start:
         mov cl, al
 @and_next_1:
         movzx rax, cl
+        ; 18:14 var $.16(%16)
+        lea rcx, [rsp+128]
+        ; 18:14 assign
+        mov [rcx], rax
+        ; 18:14 read var $.16(%16)
+        lea rcx, [rsp+128]
+        mov rax, [rcx]
         ; 18:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -241,6 +366,13 @@ start:
         mov cl, al
 @and_next_2:
         movzx rax, cl
+        ; 19:14 var $.17(%17)
+        lea rcx, [rsp+136]
+        ; 19:14 assign
+        mov [rcx], rax
+        ; 19:14 read var $.17(%17)
+        lea rcx, [rsp+136]
+        mov rax, [rcx]
         ; 19:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -258,6 +390,13 @@ start:
         mov cl, al
 @and_next_3:
         movzx rax, cl
+        ; 20:13 var $.18(%18)
+        lea rcx, [rsp+144]
+        ; 20:13 assign
+        mov [rcx], rax
+        ; 20:13 read var $.18(%18)
+        lea rcx, [rsp+144]
+        mov rax, [rcx]
         ; 20:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -275,6 +414,13 @@ start:
         mov cl, al
 @and_next_4:
         movzx rax, cl
+        ; 21:13 var $.19(%19)
+        lea rcx, [rsp+152]
+        ; 21:13 assign
+        mov [rcx], rax
+        ; 21:13 read var $.19(%19)
+        lea rcx, [rsp+152]
+        mov rax, [rcx]
         ; 21:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -284,8 +430,16 @@ start:
         add rsp, 8
         ; 22:14 string literal string_4
         lea rcx, [string_4]
+        ; 22:14 var $.20(%20)
+        lea rax, [rsp+160]
+        ; 22:14 assign
+        mov [rax], rcx
+        ; 22:14 read var $.20(%20)
+        lea rcx, [rsp+160]
+        mov rax, [rcx]
         ; 22:2 print u8*
         sub rsp, 8
+          mov rcx, rax
           call __printStringZero
         add rsp, 8
         ; 23:14 logic or
@@ -298,6 +452,13 @@ start:
         mov cl, al
 @or_next_5:
         movzx rax, cl
+        ; 23:14 var $.21(%21)
+        lea rcx, [rsp+168]
+        ; 23:14 assign
+        mov [rcx], rax
+        ; 23:14 read var $.21(%21)
+        lea rcx, [rsp+168]
+        mov rax, [rcx]
         ; 23:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -315,6 +476,13 @@ start:
         mov cl, al
 @or_next_6:
         movzx rax, cl
+        ; 24:14 var $.22(%22)
+        lea rcx, [rsp+176]
+        ; 24:14 assign
+        mov [rcx], rax
+        ; 24:14 read var $.22(%22)
+        lea rcx, [rsp+176]
+        mov rax, [rcx]
         ; 24:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -332,6 +500,13 @@ start:
         mov cl, al
 @or_next_7:
         movzx rax, cl
+        ; 25:13 var $.23(%23)
+        lea rcx, [rsp+184]
+        ; 25:13 assign
+        mov [rcx], rax
+        ; 25:13 read var $.23(%23)
+        lea rcx, [rsp+184]
+        mov rax, [rcx]
         ; 25:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -349,6 +524,13 @@ start:
         mov cl, al
 @or_next_8:
         movzx rax, cl
+        ; 26:13 var $.24(%24)
+        lea rcx, [rsp+192]
+        ; 26:13 assign
+        mov [rcx], rax
+        ; 26:13 read var $.24(%24)
+        lea rcx, [rsp+192]
+        mov rax, [rcx]
         ; 26:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -358,8 +540,16 @@ start:
         add rsp, 8
         ; 27:14 string literal string_5
         lea rcx, [string_5]
+        ; 27:14 var $.25(%25)
+        lea rax, [rsp+200]
+        ; 27:14 assign
+        mov [rax], rcx
+        ; 27:14 read var $.25(%25)
+        lea rcx, [rsp+200]
+        mov rax, [rcx]
         ; 27:2 print u8*
         sub rsp, 8
+          mov rcx, rax
           call __printStringZero
         add rsp, 8
         ; 28:9 bool lit false
@@ -368,6 +558,13 @@ start:
         or cl, cl
         sete cl
         movzx rax, cl
+        ; 28:8 var $.26(%26)
+        lea rcx, [rsp+208]
+        ; 28:8 assign
+        mov [rcx], rax
+        ; 28:8 read var $.26(%26)
+        lea rcx, [rsp+208]
+        mov rax, [rcx]
         ; 28:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -381,6 +578,13 @@ start:
         or cl, cl
         sete cl
         movzx rax, cl
+        ; 29:8 var $.27(%27)
+        lea rcx, [rsp+216]
+        ; 29:8 assign
+        mov [rcx], rax
+        ; 29:8 read var $.27(%27)
+        lea rcx, [rsp+216]
+        mov rax, [rcx]
         ; 29:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -390,8 +594,16 @@ start:
         add rsp, 8
         ; 30:14 string literal string_6
         lea rcx, [string_6]
+        ; 30:14 var $.28(%28)
+        lea rax, [rsp+224]
+        ; 30:14 assign
+        mov [rax], rcx
+        ; 30:14 read var $.28(%28)
+        lea rcx, [rsp+224]
+        mov rax, [rcx]
         ; 30:2 print u8*
         sub rsp, 8
+          mov rcx, rax
           call __printStringZero
         add rsp, 8
         ; 31:8 int lit 10
@@ -405,6 +617,13 @@ start:
         ; 31:24 or
         or cl, al
         movzx rax, cl
+        ; 31:24 var $.29(%29)
+        lea rcx, [rsp+232]
+        ; 31:24 assign
+        mov [rcx], rax
+        ; 31:24 read var $.29(%29)
+        lea rcx, [rsp+232]
+        mov rax, [rcx]
         ; 31:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -434,8 +653,16 @@ start:
         mov bl, dl
 @or_next_9:
         movzx rcx, bl
+        ; 32:15 var $.30(%30)
+        lea rax, [rsp+240]
+        ; 32:15 assign
+        mov [rax], rcx
+        ; 32:15 read var $.30(%30)
+        lea rcx, [rsp+240]
+        mov rax, [rcx]
         ; 32:2 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -462,8 +689,16 @@ start:
         mov bl, dl
 @and_next_10:
         movzx rcx, bl
+        ; 33:15 var $.31(%31)
+        lea rax, [rsp+248]
+        ; 33:15 assign
+        mov [rax], rcx
+        ; 33:15 read var $.31(%31)
+        lea rcx, [rsp+248]
+        mov rax, [rcx]
         ; 33:2 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -473,6 +708,13 @@ start:
         ; 34:8 neg
         neg cx
         movzx rax, cx
+        ; 34:8 var $.32(%32)
+        lea rcx, [rsp+256]
+        ; 34:8 assign
+        mov [rcx], rax
+        ; 34:8 read var $.32(%32)
+        lea rcx, [rsp+256]
+        mov rax, [rcx]
         ; 34:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -485,6 +727,13 @@ start:
         ; 35:8 com
         not cl
         movzx rax, cl
+        ; 35:8 var $.33(%33)
+        lea rcx, [rsp+264]
+        ; 35:8 assign
+        mov [rcx], rax
+        ; 35:8 read var $.33(%33)
+        lea rcx, [rsp+264]
+        mov rax, [rcx]
         ; 35:2 print i64
         sub rsp, 8
           mov rcx, rax
@@ -493,6 +742,8 @@ start:
           call __emit
         add rsp, 8
 @main_ret:
+        ; release space for local variables
+        add rsp, 272
         ret
 init:
         sub rsp, 20h

@@ -1,7 +1,9 @@
 @main:
  Local variables
    0: i
-   1: v
+   1: $.1
+   2: v
+   3: $.3
         ; 2:15 int lit 250
         ld r0, 250 (1)
         ; 2:8 var i(%0)
@@ -23,8 +25,15 @@
         addrOf r0, [0@function]
         load r1, [r0] (1)
         cast r0 (i64), r1 (u8)
+        ; 3:11 var $.1(%1)
+        addrOf r1, [1@function]
+        ; 3:11 assign
+        store [r1], r0 (8)
+        ; 3:11 read var $.1(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (8)
         ; 3:5 print i64
-        printint r0
+        printint r1
         ; for iteration
         ; 2:32 read var i(%0)
         addrOf r0, [0@function]
@@ -41,15 +50,22 @@
 @for_1_end:
         ; 6:11 int lit 260
         ld r0, 260 (2)
-        ; 6:3 var v(%1)
-        addrOf r1, [1@function]
+        ; 6:3 var v(%2)
+        addrOf r1, [2@function]
         ; 6:3 assign
         store [r1], r0 (2)
-        ; 7:13 read var v(%1)
-        addrOf r0, [1@function]
+        ; 7:13 read var v(%2)
+        addrOf r0, [2@function]
         load r1, [r0] (2)
         cast r0 (i64), r1 (u8)
+        ; 7:10 var $.3(%3)
+        addrOf r1, [3@function]
+        ; 7:10 assign
+        store [r1], r0 (8)
+        ; 7:10 read var $.3(%3)
+        addrOf r0, [3@function]
+        load r1, [r0] (8)
         ; 7:3 print i64
-        printint r0
+        printint r1
 @main_ret:
 

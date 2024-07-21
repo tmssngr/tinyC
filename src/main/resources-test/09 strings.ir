@@ -1,7 +1,9 @@
 @main:
  Local variables
-   0: second
-   1: chr
+   0: $.0
+   1: second
+   2: chr
+   3: $.3
         ; begin initialize global variables
         ; 1:12 string literal string_0
         load r0, stringlit-0
@@ -12,6 +14,13 @@
         ; end initialize global variables
         ; 4:14 read var text($0)
         addrOf r0, [0@global]
+        load r1, [r0] (8)
+        ; 4:14 var $.0(%0)
+        addrOf r0, [0@function]
+        ; 4:14 assign
+        store [r0], r1 (8)
+        ; 4:14 read var $.0(%0)
+        addrOf r0, [0@function]
         load r1, [r0] (8)
         ; 4:2 print u8*
         printStringZero r1
@@ -24,12 +33,12 @@
         addrOf r2, [0@global]
         load r1, [r2] (0)
         binary+ r1, r0 (0)
-        ; 6:2 var second(%0)
-        addrOf r0, [0@function]
+        ; 6:2 var second(%1)
+        addrOf r0, [1@function]
         ; 6:2 assign
         store [r0], r1 (8)
-        ; 7:14 read var second(%0)
-        addrOf r0, [0@function]
+        ; 7:14 read var second(%1)
+        addrOf r0, [1@function]
         load r1, [r0] (8)
         ; 7:2 print u8*
         printStringZero r1
@@ -38,22 +47,30 @@
         load r1, [r0] (8)
         ; 8:11 deref
         load r0, [r1] (1)
-        ; 8:2 var chr(%1)
-        addrOf r1, [1@function]
+        ; 8:2 var chr(%2)
+        addrOf r1, [2@function]
         ; 8:2 assign
         store [r1], r0 (1)
-        ; 9:8 read var chr(%1)
-        addrOf r0, [1@function]
+        ; 9:8 read var chr(%2)
+        addrOf r0, [2@function]
         load r1, [r0] (1)
         cast r0 (i64), r1 (u8)
+        ; 9:8 var $.3(%3)
+        addrOf r1, [3@function]
+        ; 9:8 assign
+        store [r1], r0 (8)
+        ; 9:8 read var $.3(%3)
+        addrOf r0, [3@function]
+        load r1, [r0] (8)
         ; 9:2 print i64
-        printint r0
+        printint r1
 @main_ret:
 
 @printLength:
  Local variables
    0: length
    1: ptr
+   2: $.2
         ; 13:15 int lit 0
         ld r0, 0 (2)
         ; 13:2 var length(%0)
@@ -109,8 +126,15 @@
         addrOf r0, [0@function]
         load r1, [r0] (2)
         cast r0 (i64), r1 (i16)
+        ; 17:8 var $.2(%2)
+        addrOf r1, [2@function]
+        ; 17:8 assign
+        store [r1], r0 (8)
+        ; 17:8 read var $.2(%2)
+        addrOf r0, [2@function]
+        load r1, [r0] (8)
         ; 17:2 print i64
-        printint r0
+        printint r1
 @printLength_ret:
 
 Global variables

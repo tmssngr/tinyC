@@ -1,25 +1,31 @@
 u8* text;
 
 void main() {
+	u8* $.0;
 	u8* second;
 	u8 chr;
+	i64 $.3;
 
-	printString(text);
+	$.0 = text;
+	printString($.0);
 	printLength();
 	second = &text[1];
 	printString(second);
 	chr = *text;
-	print((i64)chr);
+	$.3 = (i64)chr;
+	print($.3);
 }
 
 void printLength() {
 	i16 length;
 	u8* ptr;
+	i64 $.2;
 
 	length = 0;
 	ptr = text;
 	for (; (*ptr) != 0; ptr = (u8*)(((i64)ptr) + 1)) {
 		length = length + 1;
 	}
-	print((i64)length);
+	$.2 = (i64)length;
+	print($.2);
 }

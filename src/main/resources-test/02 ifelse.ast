@@ -1,13 +1,17 @@
 void main() {
 	u8 a;
 	u8 b;
+	i64 $.2;
+	i64 $.3;
 
 	a = 1;
 	b = 2;
 	if (a > b) {
-		print((i64)a);
+		$.2 = (i64)a;
+		print($.2);
 	}
 	else {
-		print((i64)b);
+		$.3 = (i64)b;
+		print($.3);
 	}
 }

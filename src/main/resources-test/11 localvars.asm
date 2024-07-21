@@ -34,8 +34,16 @@ start:
         lea rcx, [rsp+0]
         mov al, [rcx]
         movzx rcx, al
+        ; 3:8 var $.1(%1)
+        lea rax, [rsp+1]
+        ; 3:8 assign
+        mov [rax], rcx
+        ; 3:8 read var $.1(%1)
+        lea rcx, [rsp+1]
+        mov rax, [rcx]
         ; 3:2 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -59,8 +67,16 @@ start:
         lea rcx, [rsp+0]
         mov al, [rcx]
         movzx rcx, al
+        ; 8:8 var $.1(%1)
+        lea rax, [rsp+1]
+        ; 8:8 assign
+        mov [rax], rcx
+        ; 8:8 read var $.1(%1)
+        lea rcx, [rsp+1]
+        mov rax, [rcx]
         ; 8:2 print i64
         sub rsp, 8
+          mov rcx, rax
           call __printUint
           mov rcx, 0x0a
           call __emit

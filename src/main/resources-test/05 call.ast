@@ -10,5 +10,8 @@ u8 one() {
 }
 
 void doPrint(u8 value) {
-	print(2);
+	i64 $.0;
+
+	$.0 = 2;
+	print($.0);
 }
