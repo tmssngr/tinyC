@@ -23,6 +23,7 @@ public final class X86Win64 {
 	private final BufferedWriter writer;
 
 	@SuppressWarnings("unused") private boolean debug;
+	private int[] localVarOffsets = new int[0];
 
 	public X86Win64(@NotNull BufferedWriter writer) {
 		this.writer = writer;
@@ -262,11 +263,7 @@ public final class X86Win64 {
 		writeLabel(function.label());
 
 		final List<IRLocalVar> localVars = function.localVars();
-		int size = 0;
-		for (IRLocalVar var : localVars) {
-			size += var.size();
-		}
-		size = (size + 15) / 16 * 16;
+		final int size = prepareLocalVars(localVars);
 		if (size > 0) {
 			writeComment("reserve space for local variables");
 			writeIndented("sub rsp, " + size);
@@ -276,7 +273,20 @@ public final class X86Win64 {
 			writeComment("release space for local variables");
 			writeIndented("add rsp, " + size);
 		}
+		localVarOffsets = new int[0];
 		writeIndented("ret");
+	}
+
+	private int prepareLocalVars(List<IRLocalVar> localVars) {
+		localVarOffsets = new int[localVars.size()];
+		int i = 0;
+		int offset = 0;
+		for (IRLocalVar var : localVars) {
+			localVarOffsets[i] = offset;
+			offset += var.size();
+			i++;
+		}
+		return (offset + 15) / 16 * 16;
 	}
 
 	private void writeInstructions(List<IRInstruction> instructions) throws IOException {
@@ -306,7 +316,7 @@ public final class X86Win64 {
 		case IRPrintInt print -> writePrintInt(print);
 		case IRCall call -> writeCall(call);
 		case IRReturnValue ret -> writeReturnValue(ret);
-		default -> throw new UnsupportedOperationException(instruction.getClass() +" " + String.valueOf(instruction));
+		default -> throw new UnsupportedOperationException(instruction.getClass() + " " + String.valueOf(instruction));
 		}
 	}
 
@@ -335,7 +345,8 @@ public final class X86Win64 {
 			writeIndented("lea " + addrReg + ", [" + getGlobalVarName(addrOf.index()) + "]");
 		}
 		else {
-			writeIndented("lea " + addrReg + ", [rsp+" + addrOf.offset() + "]");
+			final int offset = localVarOffsets[addrOf.index()];
+			writeIndented("lea " + addrReg + ", [rsp+" + offset + "]");
 		}
 	}
 
