@@ -25,90 +25,90 @@ start:
         ; reserve space for local variables
         sub rsp, 16
         ; 4:12 int lit 32
-        mov cl, 32
+        mov al, 32
         ; 4:3 var chr(%0)
-        lea rax, [rsp+0]
+        lea rbx, [rsp+0]
         ; 4:3 assign
-        mov [rax], cl
+        mov [rbx], al
         ; 5:14 read var chr(%0)
-        lea rcx, [rsp+0]
-        mov al, [rcx]
+        lea rax, [rsp+0]
+        mov bl, [rax]
         ; 5:3 array chars($0)
         ; 5:9 int lit 0
-        mov rcx, 0
-        imul rcx, 1
-        lea rbx, [var0]
-        add rbx, rcx
+        mov rax, 0
+        imul rax, 1
+        lea rcx, [var0]
+        add rcx, rax
         ; 5:12 assign
-        mov [rbx], al
+        mov [rcx], bl
         ; 6:14 array chars($0)
         ; 6:20 int lit 0
-        mov rcx, 0
-        imul rcx, 1
-        lea rax, [var0]
-        add rax, rcx
-        mov cl, [rax]
+        mov rax, 0
+        imul rax, 1
+        lea rbx, [var0]
+        add rbx, rax
+        mov al, [rbx]
         ; 6:25 int lit 1
-        mov al, 1
+        mov bl, 1
         ; 6:23 add
-        add cl, al
+        add al, bl
         ; 6:3 array chars($0)
         ; 6:9 int lit 1
+        mov rbx, 1
+        imul rbx, 1
+        lea rcx, [var0]
+        add rcx, rbx
+        ; 6:12 assign
+        mov [rcx], al
+        ; 7:16 array chars($0)
+        ; 7:22 int lit 1
         mov rax, 1
         imul rax, 1
         lea rbx, [var0]
         add rbx, rax
-        ; 6:12 assign
-        mov [rbx], cl
-        ; 7:16 array chars($0)
-        ; 7:22 int lit 1
-        mov rcx, 1
-        imul rcx, 1
-        lea rax, [var0]
-        add rax, rcx
-        mov cl, [rax]
+        mov al, [rbx]
         ; 7:27 int lit 2
-        mov al, 2
+        mov bl, 2
         ; 7:25 add
-        add cl, al
+        add al, bl
         ; 7:3 array chars($0)
         ; 7:9 int lit 1
-        mov al, 1
-        ; 7:11 int lit 1
         mov bl, 1
+        ; 7:11 int lit 1
+        mov cl, 1
         ; 7:10 add
-        add al, bl
-        movzx rbx, al
-        imul rbx, 1
-        lea rax, [var0]
-        add rax, rbx
+        add bl, cl
+        movzx rcx, bl
+        imul rcx, 1
+        lea rbx, [var0]
+        add rbx, rcx
         ; 7:14 assign
-        mov [rax], cl
+        mov [rbx], al
         ; 8:15 array chars($0)
         ; 8:21 int lit 2
-        mov rcx, 2
-        imul rcx, 1
-        lea rax, [var0]
-        add rax, rcx
-        mov cl, [rax]
+        mov rax, 2
+        imul rax, 1
+        lea rbx, [var0]
+        add rbx, rax
+        mov al, [rbx]
         ; 8:3 var result(%1)
-        lea rax, [rsp+1]
+        lea rbx, [rsp+1]
         ; 8:3 assign
-        mov [rax], cl
+        mov [rbx], al
         ; 9:9 read var result(%1)
-        lea rcx, [rsp+1]
-        mov al, [rcx]
-        movzx rcx, al
+        lea rax, [rsp+1]
+        mov bl, [rax]
+        movzx rax, bl
         ; 9:9 var $.2(%2)
-        lea rax, [rsp+2]
+        lea rbx, [rsp+2]
         ; 9:9 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 9:9 read var $.2(%2)
-        lea rcx, [rsp+2]
-        mov rax, [rcx]
+        lea rax, [rsp+2]
+        mov rbx, [rax]
         ; 9:3 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit

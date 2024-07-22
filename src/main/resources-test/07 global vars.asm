@@ -26,55 +26,55 @@ start:
         sub rsp, 16
         ; begin initialize global variables
         ; 1:13 int lit 32
-        mov cx, 32
+        mov ax, 32
         ; 1:1 var space($0)
-        lea rax, [var0]
+        lea rbx, [var0]
         ; 1:1 assign
-        mov [rax], cx
+        mov [rbx], ax
         ; 2:12 int lit 63
-        mov cx, 63
+        mov ax, 63
         ; 2:1 var next($1)
-        lea rax, [var1]
+        lea rbx, [var1]
         ; 2:1 assign
-        mov [rax], cx
+        mov [rbx], ax
         ; 3:19 address of var space($0)
-        lea rcx, [var0]
+        lea rax, [var0]
         ; 3:1 var ptrToSpace($2)
-        lea rax, [var2]
+        lea rbx, [var2]
         ; 3:1 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; end initialize global variables
         ; 6:15 read var ptrToSpace($2)
-        lea rcx, [var2]
-        mov rax, [rcx]
+        lea rax, [var2]
+        mov rbx, [rax]
         ; 6:28 int lit 1
-        mov rcx, 1
+        mov rax, 1
         ; 6:28 int lit 2
-        mov rbx, 2
+        mov rcx, 2
         ; 6:28 multiply
-        imul rcx, rbx
+        imul rax, rcx
         ; 6:26 add
-        add rax, rcx
+        add rbx, rax
         ; 6:2 var ptrToSpace($2)
-        lea rcx, [var2]
+        lea rax, [var2]
         ; 6:13 assign
-        mov [rcx], rax
+        mov [rax], rbx
         ; 7:9 read var ptrToSpace($2)
-        lea rcx, [var2]
-        mov rax, [rcx]
+        lea rax, [var2]
+        mov rbx, [rax]
         ; 7:8 deref
-        mov cx, [rax]
-        movzx rax, cx
+        mov ax, [rbx]
+        movzx rbx, ax
         ; 7:8 var $.0(%0)
-        lea rcx, [rsp+0]
+        lea rax, [rsp+0]
         ; 7:8 assign
-        mov [rcx], rax
+        mov [rax], rbx
         ; 7:8 read var $.0(%0)
-        lea rcx, [rsp+0]
-        mov rax, [rcx]
+        lea rax, [rsp+0]
+        mov rbx, [rax]
         ; 7:2 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit

@@ -25,61 +25,61 @@ start:
         ; reserve space for local variables
         sub rsp, 16
         ; 2:9 int lit 5
-        mov cl, 5
+        mov al, 5
         ; 2:2 var i(%0)
-        lea rax, [rsp+0]
+        lea rbx, [rsp+0]
         ; 2:2 assign
-        mov [rax], cl
+        mov [rbx], al
         ; 3:2 while i > 0
 @while_1:
         ; 3:9 read var i(%0)
-        lea rcx, [rsp+0]
-        mov al, [rcx]
+        lea rax, [rsp+0]
+        mov bl, [rax]
         ; 3:13 int lit 0
-        mov cl, 0
+        mov al, 0
         ; 3:11 >
-        cmp al, cl
-        setg bl
-        and bl, 0xFF
-        or bl, bl
+        cmp bl, al
+        setg cl
+        and cl, 0xFF
+        or cl, cl
         jz @while_1_end
         ; while body
         ; 4:9 read var i(%0)
-        lea rcx, [rsp+0]
-        mov al, [rcx]
-        movzx rcx, al
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        movzx rax, bl
         ; 4:9 var $.1(%1)
-        lea rax, [rsp+1]
+        lea rbx, [rsp+1]
         ; 4:9 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 4:9 read var $.1(%1)
-        lea rcx, [rsp+1]
-        mov rax, [rcx]
+        lea rax, [rsp+1]
+        mov rbx, [rax]
         ; 4:3 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 5:7 read var i(%0)
-        lea rcx, [rsp+0]
-        mov al, [rcx]
+        lea rax, [rsp+0]
+        mov bl, [rax]
         ; 5:11 int lit 1
-        mov cl, 1
+        mov al, 1
         ; 5:9 sub
-        sub al, cl
+        sub bl, al
         ; 5:3 var i(%0)
-        lea rcx, [rsp+0]
+        lea rax, [rsp+0]
         ; 5:5 assign
-        mov [rcx], al
+        mov [rax], bl
         jmp @while_1
 @while_1_end:
         ; 8:2 while true
 @while_2:
         ; 8:9 bool lit true
-        mov cl, 1
-        or cl, cl
+        mov al, 1
+        or al, al
         jz @while_2_end
         ; while body
         ; return

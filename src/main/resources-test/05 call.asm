@@ -29,14 +29,14 @@ start:
           call @one
         add rsp, 8
         ; 2:2 var i(%0)
-        lea rax, [rsp+0]
+        lea rbx, [rsp+0]
         ; 2:2 assign
-        mov [rax], cl
+        mov [rbx], al
         ; 3:10 read var i(%0)
-        lea rcx, [rsp+0]
-        mov al, [rcx]
+        lea rax, [rsp+0]
+        mov bl, [rax]
         ; 3:2 call doPrint
-        movzx rcx, al
+        movzx rcx, bl
         sub rsp, 8
           call @doPrint
         add rsp, 8
@@ -49,8 +49,7 @@ start:
 @one:
         ; 7:9 return 1
         ; 7:9 int lit 1
-        mov cl, 1
-        mov rax, rcx
+        mov al, 1
         jmp @one_ret
 @one_ret:
         ret
@@ -60,17 +59,17 @@ start:
         ; reserve space for local variables
         sub rsp, 16
         ; 11:8 int lit 2
-        mov rcx, 2
+        mov rax, 2
         ; 11:8 var $.0(%0)
-        lea rax, [rsp+0]
+        lea rbx, [rsp+0]
         ; 11:8 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 11:8 read var $.0(%0)
-        lea rcx, [rsp+0]
-        mov rax, [rcx]
+        lea rax, [rsp+0]
+        mov rbx, [rax]
         ; 11:2 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit

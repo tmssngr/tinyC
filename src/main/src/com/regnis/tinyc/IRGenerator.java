@@ -172,7 +172,15 @@ public final class IRGenerator {
 				freeReg(arg.reg());
 			}
 		}
-		return call.typeNotNull() == Type.VOID ? -1 : getFreeReg();
+		final int resultReg;
+		if (call.typeNotNull() == Type.VOID) {
+			resultReg = -1;
+		}
+		else {
+			resultReg = getFreeReg();
+			Utils.assertTrue(resultReg == 0);
+		}
+		return resultReg;
 	}
 
 	private void writeReturn(@Nullable Expression expression, Variables variables) {

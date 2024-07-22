@@ -18,7 +18,7 @@
         ; 7:9 return 1
         ; 7:9 int lit 1
         ld r0, 1 (1)
-        IRReturnValue[reg=0, size=1]
+        return r0 (1)
         jmp @one_ret
 @one_ret:
 

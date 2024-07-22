@@ -25,231 +25,231 @@ start:
         ; reserve space for local variables
         sub rsp, 80
         ; 2:11 int lit 1
-        mov cl, 1
+        mov al, 1
         ; 2:15 int lit 2
-        mov al, 2
+        mov bl, 2
         ; 2:13 <
-        cmp cl, al
-        setl bl
-        and bl, 0xFF
-        movzx rcx, bl
+        cmp al, bl
+        setl cl
+        and cl, 0xFF
+        movzx rax, cl
         ; 2:13 var $.0(%0)
-        lea rax, [rsp+0]
+        lea rbx, [rsp+0]
         ; 2:13 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 2:13 read var $.0(%0)
-        lea rcx, [rsp+0]
-        mov rax, [rcx]
+        lea rax, [rsp+0]
+        mov rbx, [rax]
         ; 2:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 3:11 int lit 2
-        mov cl, 2
+        mov al, 2
         ; 3:15 int lit 1
-        mov al, 1
+        mov bl, 1
         ; 3:13 <
-        cmp cl, al
-        setl bl
-        and bl, 0xFF
-        movzx rcx, bl
+        cmp al, bl
+        setl cl
+        and cl, 0xFF
+        movzx rax, cl
         ; 3:13 var $.1(%1)
-        lea rax, [rsp+8]
+        lea rbx, [rsp+8]
         ; 3:13 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 3:13 read var $.1(%1)
-        lea rcx, [rsp+8]
-        mov rax, [rcx]
+        lea rax, [rsp+8]
+        mov rbx, [rax]
         ; 3:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 5:11 int lit 1
-        mov cl, 1
+        mov al, 1
         ; 5:16 int lit 2
-        mov al, 2
+        mov bl, 2
         ; 5:13 <=
-        cmp cl, al
-        setle bl
-        and bl, 0xFF
-        movzx rcx, bl
+        cmp al, bl
+        setle cl
+        and cl, 0xFF
+        movzx rax, cl
         ; 5:13 var $.2(%2)
-        lea rax, [rsp+16]
+        lea rbx, [rsp+16]
         ; 5:13 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 5:13 read var $.2(%2)
-        lea rcx, [rsp+16]
-        mov rax, [rcx]
+        lea rax, [rsp+16]
+        mov rbx, [rax]
         ; 5:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 6:11 int lit 2
-        mov cl, 2
+        mov al, 2
         ; 6:16 int lit 1
-        mov al, 1
+        mov bl, 1
         ; 6:13 <=
-        cmp cl, al
-        setle bl
-        and bl, 0xFF
-        movzx rcx, bl
+        cmp al, bl
+        setle cl
+        and cl, 0xFF
+        movzx rax, cl
         ; 6:13 var $.3(%3)
-        lea rax, [rsp+24]
+        lea rbx, [rsp+24]
         ; 6:13 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 6:13 read var $.3(%3)
-        lea rcx, [rsp+24]
-        mov rax, [rcx]
+        lea rax, [rsp+24]
+        mov rbx, [rax]
         ; 6:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 8:11 int lit 1
-        mov cl, 1
+        mov al, 1
         ; 8:16 int lit 2
-        mov al, 2
+        mov bl, 2
         ; 8:13 ==
-        cmp cl, al
-        sete bl
-        and bl, 0xFF
-        movzx rcx, bl
+        cmp al, bl
+        sete cl
+        and cl, 0xFF
+        movzx rax, cl
         ; 8:13 var $.4(%4)
-        lea rax, [rsp+32]
+        lea rbx, [rsp+32]
         ; 8:13 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 8:13 read var $.4(%4)
-        lea rcx, [rsp+32]
-        mov rax, [rcx]
+        lea rax, [rsp+32]
+        mov rbx, [rax]
         ; 8:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 10:11 int lit 1
-        mov cl, 1
+        mov al, 1
         ; 10:16 int lit 2
-        mov al, 2
+        mov bl, 2
         ; 10:13 !=
-        cmp cl, al
-        setne bl
-        and bl, 0xFF
-        movzx rcx, bl
+        cmp al, bl
+        setne cl
+        and cl, 0xFF
+        movzx rax, cl
         ; 10:13 var $.5(%5)
-        lea rax, [rsp+40]
+        lea rbx, [rsp+40]
         ; 10:13 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 10:13 read var $.5(%5)
-        lea rcx, [rsp+40]
-        mov rax, [rcx]
+        lea rax, [rsp+40]
+        mov rbx, [rax]
         ; 10:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 12:11 int lit 1
-        mov cl, 1
+        mov al, 1
         ; 12:16 int lit 2
-        mov al, 2
+        mov bl, 2
         ; 12:13 >=
-        cmp cl, al
-        setge bl
-        and bl, 0xFF
-        movzx rcx, bl
+        cmp al, bl
+        setge cl
+        and cl, 0xFF
+        movzx rax, cl
         ; 12:13 var $.6(%6)
-        lea rax, [rsp+48]
+        lea rbx, [rsp+48]
         ; 12:13 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 12:13 read var $.6(%6)
-        lea rcx, [rsp+48]
-        mov rax, [rcx]
+        lea rax, [rsp+48]
+        mov rbx, [rax]
         ; 12:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 13:11 int lit 2
-        mov cl, 2
+        mov al, 2
         ; 13:16 int lit 1
-        mov al, 1
+        mov bl, 1
         ; 13:13 >=
-        cmp cl, al
-        setge bl
-        and bl, 0xFF
-        movzx rcx, bl
+        cmp al, bl
+        setge cl
+        and cl, 0xFF
+        movzx rax, cl
         ; 13:13 var $.7(%7)
-        lea rax, [rsp+56]
+        lea rbx, [rsp+56]
         ; 13:13 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 13:13 read var $.7(%7)
-        lea rcx, [rsp+56]
-        mov rax, [rcx]
+        lea rax, [rsp+56]
+        mov rbx, [rax]
         ; 13:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 15:11 int lit 1
-        mov cl, 1
+        mov al, 1
         ; 15:15 int lit 2
-        mov al, 2
+        mov bl, 2
         ; 15:13 >
-        cmp cl, al
-        setg bl
-        and bl, 0xFF
-        movzx rcx, bl
+        cmp al, bl
+        setg cl
+        and cl, 0xFF
+        movzx rax, cl
         ; 15:13 var $.8(%8)
-        lea rax, [rsp+64]
+        lea rbx, [rsp+64]
         ; 15:13 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 15:13 read var $.8(%8)
-        lea rcx, [rsp+64]
-        mov rax, [rcx]
+        lea rax, [rsp+64]
+        mov rbx, [rax]
         ; 15:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 16:11 int lit 2
-        mov cl, 2
+        mov al, 2
         ; 16:15 int lit 1
-        mov al, 1
+        mov bl, 1
         ; 16:13 >
-        cmp cl, al
-        setg bl
-        and bl, 0xFF
-        movzx rcx, bl
+        cmp al, bl
+        setg cl
+        and cl, 0xFF
+        movzx rax, cl
         ; 16:13 var $.9(%9)
-        lea rax, [rsp+72]
+        lea rbx, [rsp+72]
         ; 16:13 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 16:13 read var $.9(%9)
-        lea rcx, [rsp+72]
-        mov rax, [rcx]
+        lea rax, [rsp+72]
+        mov rbx, [rax]
         ; 16:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit

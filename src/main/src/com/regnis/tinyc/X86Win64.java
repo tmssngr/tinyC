@@ -531,9 +531,10 @@ public final class X86Win64 {
 
 	private static String getRegName(int reg, int size) {
 		return switch (reg) {
-			case 0 -> getXRegName('c', size);
-			case 1 -> getXRegName('a', size);
-			case 2 -> getXRegName('b', size);
+			// ofset 0 mean result reg -> rax
+			case 0 -> getXRegName('a', size);
+			case 1 -> getXRegName('b', size);
+			case 2 -> getXRegName('c', size);
 			case 3 -> getXRegName('d', size);
 			case 4 -> switch (size) {
 				case 1 -> "r9b";

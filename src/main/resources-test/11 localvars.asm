@@ -25,25 +25,25 @@ start:
         ; reserve space for local variables
         sub rsp, 16
         ; 2:9 int lit 10
-        mov cl, 10
+        mov al, 10
         ; 2:2 var a(%0)
-        lea rax, [rsp+0]
+        lea rbx, [rsp+0]
         ; 2:2 assign
-        mov [rax], cl
+        mov [rbx], al
         ; 3:8 read var a(%0)
-        lea rcx, [rsp+0]
-        mov al, [rcx]
-        movzx rcx, al
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        movzx rax, bl
         ; 3:8 var $.1(%1)
-        lea rax, [rsp+1]
+        lea rbx, [rsp+1]
         ; 3:8 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 3:8 read var $.1(%1)
-        lea rcx, [rsp+1]
-        mov rax, [rcx]
+        lea rax, [rsp+1]
+        mov rbx, [rax]
         ; 3:2 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -58,25 +58,25 @@ start:
         ; reserve space for local variables
         sub rsp, 16
         ; 7:9 int lit 20
-        mov cl, 20
+        mov al, 20
         ; 7:2 var a(%0)
-        lea rax, [rsp+0]
+        lea rbx, [rsp+0]
         ; 7:2 assign
-        mov [rax], cl
+        mov [rbx], al
         ; 8:8 read var a(%0)
-        lea rcx, [rsp+0]
-        mov al, [rcx]
-        movzx rcx, al
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        movzx rax, bl
         ; 8:8 var $.1(%1)
-        lea rax, [rsp+1]
+        lea rbx, [rsp+1]
         ; 8:8 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 8:8 read var $.1(%1)
-        lea rcx, [rsp+1]
-        mov rax, [rcx]
+        lea rax, [rsp+1]
+        mov rbx, [rax]
         ; 8:2 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit

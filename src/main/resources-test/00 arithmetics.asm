@@ -25,124 +25,124 @@ start:
         ; reserve space for local variables
         sub rsp, 32
         ; 2:15 int lit 4
-        mov cl, 4
+        mov al, 4
         ; 2:19 int lit 3
-        mov al, 3
+        mov bl, 3
         ; 2:17 multiply
-        movsx rcx, cl
-        movsx rax, al
-        imul rcx, rax
-        ; 2:23 int lit 2
-        mov al, 2
-        ; 2:25 int lit 5
-        mov bl, 5
-        ; 2:24 multiply
         movsx rax, al
         movsx rbx, bl
         imul rax, rbx
+        ; 2:23 int lit 2
+        mov bl, 2
+        ; 2:25 int lit 5
+        mov cl, 5
+        ; 2:24 multiply
+        movsx rbx, bl
+        movsx rcx, cl
+        imul rbx, rcx
         ; 2:21 add
-        add cl, al
-        movzx ax, cl
+        add al, bl
+        movzx bx, al
         ; 2:5 var foo(%0)
-        lea rcx, [rsp+0]
-        ; 2:5 assign
-        mov [rcx], ax
-        ; 3:15 read var foo(%0)
-        lea rcx, [rsp+0]
-        mov ax, [rcx]
-        ; 3:21 read var foo(%0)
-        lea rcx, [rsp+0]
-        mov bx, [rcx]
-        ; 3:19 multiply
-        movsx rax, ax
-        movsx rbx, bx
-        imul rax, rbx
-        ; 3:5 var bar(%1)
-        lea rcx, [rsp+2]
-        ; 3:5 assign
-        mov [rcx], ax
-        ; 4:11 int lit 1
-        mov cx, 1
-        ; 4:5 var foo(%0)
         lea rax, [rsp+0]
+        ; 2:5 assign
+        mov [rax], bx
+        ; 3:15 read var foo(%0)
+        lea rax, [rsp+0]
+        mov bx, [rax]
+        ; 3:21 read var foo(%0)
+        lea rax, [rsp+0]
+        mov cx, [rax]
+        ; 3:19 multiply
+        movsx rbx, bx
+        movsx rcx, cx
+        imul rbx, rcx
+        ; 3:5 var bar(%1)
+        lea rax, [rsp+2]
+        ; 3:5 assign
+        mov [rax], bx
+        ; 4:11 int lit 1
+        mov ax, 1
+        ; 4:5 var foo(%0)
+        lea rbx, [rsp+0]
         ; 4:9 assign
-        mov [rax], cx
+        mov [rbx], ax
         ; 5:11 read var bar(%1)
-        lea rcx, [rsp+2]
-        mov ax, [rcx]
+        lea rax, [rsp+2]
+        mov bx, [rax]
         ; 5:17 read var foo(%0)
-        lea rcx, [rsp+0]
-        mov bx, [rcx]
+        lea rax, [rsp+0]
+        mov cx, [rax]
         ; 5:15 add
-        add ax, bx
-        movzx rcx, ax
+        add bx, cx
+        movzx rax, bx
         ; 5:15 var $.2(%2)
-        lea rax, [rsp+4]
+        lea rbx, [rsp+4]
         ; 5:15 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 5:15 read var $.2(%2)
-        lea rcx, [rsp+4]
-        mov rax, [rcx]
+        lea rax, [rsp+4]
+        mov rbx, [rax]
         ; 5:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 6:12 int lit 1
-        mov cl, 1
+        mov al, 1
         ; 6:16 int lit 2
-        mov al, 2
+        mov bl, 2
         ; 6:14 add
-        add cl, al
-        ; 6:22 int lit 3
-        mov al, 3
-        ; 6:26 int lit 4
-        mov bl, 4
-        ; 6:24 add
         add al, bl
+        ; 6:22 int lit 3
+        mov bl, 3
+        ; 6:26 int lit 4
+        mov cl, 4
+        ; 6:24 add
+        add bl, cl
         ; 6:19 multiply
-        movsx rcx, cl
         movsx rax, al
-        imul rcx, rax
-        movzx ax, cl
+        movsx rbx, bl
+        imul rax, rbx
+        movzx bx, al
         ; 6:5 var foo(%0)
-        lea rcx, [rsp+0]
+        lea rax, [rsp+0]
         ; 6:9 assign
-        mov [rcx], ax
+        mov [rax], bx
         ; 7:11 read var foo(%0)
-        lea rcx, [rsp+0]
-        mov ax, [rcx]
-        movzx rcx, ax
+        lea rax, [rsp+0]
+        mov bx, [rax]
+        movzx rax, bx
         ; 7:11 var $.3(%3)
-        lea rax, [rsp+12]
+        lea rbx, [rsp+12]
         ; 7:11 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 7:11 read var $.3(%3)
-        lea rcx, [rsp+12]
-        mov rax, [rcx]
+        lea rax, [rsp+12]
+        mov rbx, [rax]
         ; 7:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
         add rsp, 8
         ; 9:11 read var bazz(%4)
-        lea rcx, [rsp+20]
-        mov ax, [rcx]
-        movzx rcx, ax
+        lea rax, [rsp+20]
+        mov bx, [rax]
+        movzx rax, bx
         ; 9:11 var $.5(%5)
-        lea rax, [rsp+22]
+        lea rbx, [rsp+22]
         ; 9:11 assign
-        mov [rax], rcx
+        mov [rbx], rax
         ; 9:11 read var $.5(%5)
-        lea rcx, [rsp+22]
-        mov rax, [rcx]
+        lea rax, [rsp+22]
+        mov rbx, [rax]
         ; 9:5 print i64
         sub rsp, 8
-          mov rcx, rax
+          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
