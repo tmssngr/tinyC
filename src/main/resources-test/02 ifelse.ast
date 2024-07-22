@@ -1,0 +1,13 @@
+void main() {
+	u8 a;
+	u8 b;
+
+	a = 1;
+	b = 2;
+	if (a > b) {
+		print((i64)a);
+	}
+	else {
+		print((i64)b);
+	}
+}

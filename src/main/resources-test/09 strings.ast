@@ -1,0 +1,25 @@
+u8* text;
+
+void main() {
+	u8* second;
+	u8 chr;
+
+	printString(text);
+	printLength();
+	second = &text[1];
+	printString(second);
+	chr = *text;
+	print((i64)chr);
+}
+
+void printLength() {
+	i16 length;
+	u8* ptr;
+
+	length = 0;
+	ptr = text;
+	for (; (*ptr) != 0; ptr = (u8*)(((i64)ptr) + 1)) {
+		length = length + ((i16)1);
+	}
+	print((i64)length);
+}

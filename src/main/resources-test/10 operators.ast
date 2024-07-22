@@ -1,0 +1,36 @@
+void main() {
+	printString("Bit-&:\n");
+	print((i64)(0 & 0));
+	print((i64)(0 & 1));
+	print((i64)(1 & 0));
+	print((i64)(1 & 1));
+	printString("\nBit-|:\n");
+	print((i64)(0 | 0));
+	print((i64)(0 | 1));
+	print((i64)(1 | 0));
+	print((i64)(1 | 1));
+	printString("\nBit-^:\n");
+	print((i64)(0 ^ 0));
+	print((i64)(0 ^ 2));
+	print((i64)(1 ^ 0));
+	print((i64)(1 ^ 2));
+	printString("\nLogic-&&:\n");
+	print((i64)((false) && (false)));
+	print((i64)((false) && (true)));
+	print((i64)((true) && (false)));
+	print((i64)((true) && (true)));
+	printString("\nLogic-||:\n");
+	print((i64)((false) || (false)));
+	print((i64)((false) || (true)));
+	print((i64)((true) || (false)));
+	print((i64)((true) || (true)));
+	printString("\nLogic-!:\n");
+	print((i64)(!(false)));
+	print((i64)(!(true)));
+	printString("\nmisc:\n");
+	print((i64)((10 & 6) | 1));
+	print((i64)((1 == 2) || (2 < 3)));
+	print((i64)((1 == 2) && (2 < 3)));
+	print((i64)(-1));
+	print((i64)(~1));
+}

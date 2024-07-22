@@ -1,0 +1,15 @@
+void main() {
+	i16 a;
+	i16* b;
+	i16 c;
+	i16* d;
+
+	a = 10;
+	print((i64)a);
+	b = &a;
+	c = (*b) - ((i16)1);
+	print((i64)c);
+	d = &c;
+	*d = (*d) - ((i16)1);
+	print((i64)c);
+}

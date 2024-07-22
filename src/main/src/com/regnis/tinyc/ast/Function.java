@@ -20,9 +20,19 @@ public record Function(@NotNull String name, @NotNull String typeString, @Nullab
 		return typeString + " " + name;
 	}
 
+	@NotNull
+	public Type returnTypeNotNull() {
+		return Objects.requireNonNull(returnType);
+	}
+
 	public record Arg(@NotNull String typeString, @Nullable Type type, @NotNull String name, @NotNull Location location) {
 		public Arg(@NotNull String typeString, @NotNull String name, @NotNull Location location) {
 			this(typeString, null, name, location);
+		}
+
+		@NotNull
+		public Type typeNotNull() {
+			return Objects.requireNonNull(type);
 		}
 	}
 }
