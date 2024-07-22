@@ -27,6 +27,7 @@ public class Compiler {
 		final Path irFile = useExtension(inputFile, ".ir");
 		final Path asmFile = useExtension(inputFile, ".asm");
 		final Path exeFile = useExtension(inputFile, ".exe");
+		Files.deleteIfExists(irFile);
 		Files.deleteIfExists(asmFile);
 		Files.deleteIfExists(exeFile);
 
