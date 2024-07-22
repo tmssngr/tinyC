@@ -170,9 +170,6 @@ public class IRGenerator {
 
 	private int writeCall(ExprFuncCall call, String name) {
 		final List<Expression> expressions = call.argExpressions();
-		if (expressions.size() > 1) {
-			throw new IllegalStateException("Unsupported arguments " + expressions);
-		}
 		final List<IRCall.Arg> args = new ArrayList<>();
 		for (Expression expression : expressions) {
 			if (expression instanceof ExprVarAccess varAccess) {

@@ -25,52 +25,187 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 16
-        ; 2:9 call one
-        sub rsp, 8
-          call @one
-        add rsp, 8
-        ; 2:2 var i(%0)
-        lea rax, [rsp+0]
-        ; 2:2 assign
+        ; begin initialize global variables
+        ; 5:8 int lit 0
+        mov cl, 0
+        ; 5:1 var i($0)
+        lea rax, [var0]
+        ; 5:1 assign
         mov [rax], cl
-        ; 3:2 call doPrint
+        ; end initialize global variables
+        ; 2:10 call next
+        sub rsp, 8
+          call @next
+        add rsp, 8
+        ; 2:10 var $.0(%0)
         lea rax, [rsp+0]
+        ; 2:10 assign
+        mov [rax], cl
+        ; 2:18 call next
+        sub rsp, 8
+          call @next
+        add rsp, 8
+        ; 2:18 var $.1(%1)
+        lea rax, [rsp+1]
+        ; 2:18 assign
+        mov [rax], cl
+        ; 2:26 call next
+        sub rsp, 8
+          call @next
+        add rsp, 8
+        ; 2:26 var $.2(%2)
+        lea rax, [rsp+2]
+        ; 2:26 assign
+        mov [rax], cl
+        ; 2:34 call next
+        sub rsp, 8
+          call @next
+        add rsp, 8
+        ; 2:34 var $.3(%3)
+        lea rax, [rsp+3]
+        ; 2:34 assign
+        mov [rax], cl
+        ; 2:42 call next
+        sub rsp, 8
+          call @next
+        add rsp, 8
+        ; 2:42 var $.4(%4)
+        lea rax, [rsp+4]
+        ; 2:42 assign
+        mov [rax], cl
+        ; 2:2 call doPrint
+        lea rax, [rsp+0]
+        mov al, [rax]
+        push rax
+        lea rax, [rsp+1]
+        mov al, [rax]
+        push rax
+        lea rax, [rsp+2]
+        mov al, [rax]
+        push rax
+        lea rax, [rsp+3]
+        mov al, [rax]
+        push rax
+        lea rax, [rsp+4]
         mov al, [rax]
         push rax
         sub rsp, 0
           call @doPrint
-        add rsp, 8
+        add rsp, 40
 @main_ret:
         ; release space for local variables
         add rsp, 16
         ret
 
-        ; u8 one
-@one:
-        ; 7:9 return 1
-        ; 7:9 int lit 1
+        ; u8 next
+@next:
+        ; 8:6 read var i($0)
+        lea rcx, [var0]
+        mov al, [rcx]
+        ; 8:10 int lit 1
         mov cl, 1
-        mov rax, rcx
-        jmp @one_ret
-@one_ret:
+        ; 8:8 add
+        add al, cl
+        ; 8:2 var i($0)
+        lea rcx, [var0]
+        ; 8:4 assign
+        mov [rcx], al
+        ; 9:9 return i
+        ; 9:9 read var i($0)
+        lea rcx, [var0]
+        mov al, [rcx]
+        jmp @next_ret
+@next_ret:
         ret
 
         ; void doPrint
 @doPrint:
         ; reserve space for local variables
-        sub rsp, 16
-        ; 11:8 read var value(%0)
-        lea rcx, [rsp+24]
+        sub rsp, 48
+        ; 13:8 read var a(%0)
+        lea rcx, [rsp+88]
         mov al, [rcx]
         movzx rcx, al
-        ; 11:8 var $.1(%1)
+        ; 13:8 var $.5(%5)
         lea rax, [rsp+0]
-        ; 11:8 assign
+        ; 13:8 assign
         mov [rax], rcx
-        ; 11:8 read var $.1(%1)
+        ; 13:8 read var $.5(%5)
         lea rcx, [rsp+0]
         mov rax, [rcx]
-        ; 11:2 print i64
+        ; 13:2 print i64
+        sub rsp, 8
+          mov rcx, rax
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
+        ; 14:8 read var b(%1)
+        lea rcx, [rsp+80]
+        mov al, [rcx]
+        movzx rcx, al
+        ; 14:8 var $.6(%6)
+        lea rax, [rsp+8]
+        ; 14:8 assign
+        mov [rax], rcx
+        ; 14:8 read var $.6(%6)
+        lea rcx, [rsp+8]
+        mov rax, [rcx]
+        ; 14:2 print i64
+        sub rsp, 8
+          mov rcx, rax
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
+        ; 15:8 read var c(%2)
+        lea rcx, [rsp+72]
+        mov al, [rcx]
+        movzx rcx, al
+        ; 15:8 var $.7(%7)
+        lea rax, [rsp+16]
+        ; 15:8 assign
+        mov [rax], rcx
+        ; 15:8 read var $.7(%7)
+        lea rcx, [rsp+16]
+        mov rax, [rcx]
+        ; 15:2 print i64
+        sub rsp, 8
+          mov rcx, rax
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
+        ; 16:8 read var d(%3)
+        lea rcx, [rsp+64]
+        mov al, [rcx]
+        movzx rcx, al
+        ; 16:8 var $.8(%8)
+        lea rax, [rsp+24]
+        ; 16:8 assign
+        mov [rax], rcx
+        ; 16:8 read var $.8(%8)
+        lea rcx, [rsp+24]
+        mov rax, [rcx]
+        ; 16:2 print i64
+        sub rsp, 8
+          mov rcx, rax
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
+        ; 17:8 read var e(%4)
+        lea rcx, [rsp+56]
+        mov al, [rcx]
+        movzx rcx, al
+        ; 17:8 var $.9(%9)
+        lea rax, [rsp+32]
+        ; 17:8 assign
+        mov [rax], rcx
+        ; 17:8 read var $.9(%9)
+        lea rcx, [rsp+32]
+        mov rax, [rcx]
+        ; 17:2 print i64
         sub rsp, 8
           mov rcx, rax
           call __printUint
@@ -79,7 +214,7 @@ start:
         add rsp, 8
 @doPrint_ret:
         ; release space for local variables
-        add rsp, 16
+        add rsp, 48
         ret
 init:
         sub rsp, 20h
@@ -193,6 +328,8 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
+        ; variable 0: i (1)
+        var0 rb 1
 
 section '.idata' import data readable writeable
 
