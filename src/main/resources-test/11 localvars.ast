@@ -1,0 +1,13 @@
+void main() {
+	u8 a;
+
+	a = 10;
+	print((i64)a);
+}
+
+void foo() {
+	u8 a;
+
+	a = 20;
+	print((i64)a);
+}

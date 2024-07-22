@@ -1,0 +1,12 @@
+void main() {
+	u8 i;
+
+	i = 5;
+	while (i > 0) {
+		print((i64)i);
+		i = i - 1;
+	}
+	while (true) {
+		return;
+	}
+}

@@ -1,0 +1,8 @@
+i16 space;
+i16 next;
+i16* ptrToSpace;
+
+void main() {
+	ptrToSpace = (i16*)(((i64)ptrToSpace) + (1 * 2));
+	print((i64)(*ptrToSpace));
+}

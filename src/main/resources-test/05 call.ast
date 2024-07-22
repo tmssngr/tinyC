@@ -1,0 +1,14 @@
+void main() {
+	u8 i;
+
+	i = one();
+	doPrint(i);
+}
+
+u8 one() {
+	return 1;
+}
+
+void doPrint(u8 value) {
+	print(2);
+}

@@ -1,0 +1,11 @@
+void main() {
+	u8 i;
+	i16 v;
+
+	i = 250;
+	for (; i != 2; i = i + 1) {
+		print((i64)i);
+	}
+	v = 260;
+	print((i64)((u8)v));
+}

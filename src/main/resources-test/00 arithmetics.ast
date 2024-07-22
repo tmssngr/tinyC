@@ -1,0 +1,11 @@
+void main() {
+	i16 foo;
+	i16 bar;
+
+	foo = (i16)((4 * 3) + (2 * 5));
+	bar = foo * foo;
+	foo = 1;
+	print((i64)(bar + foo));
+	foo = (i16)((1 + 2) * (3 + 4));
+	print((i64)foo);
+}

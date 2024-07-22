@@ -24,12 +24,16 @@ public class Compiler {
 		final TypeChecker checker = new TypeChecker(Type.I64);
 		final Program program = checker.check(parsedProgram);
 
+		final Path astFile = useExtension(inputFile, ".ast");
 		final Path irFile = useExtension(inputFile, ".ir");
 		final Path asmFile = useExtension(inputFile, ".asm");
 		final Path exeFile = useExtension(inputFile, ".exe");
+		Files.deleteIfExists(astFile);
 		Files.deleteIfExists(irFile);
 		Files.deleteIfExists(asmFile);
 		Files.deleteIfExists(exeFile);
+
+		write(program, astFile);
 
 		final IRGenerator generator = new IRGenerator();
 		final IRProgram irProgram = generator.convert(program);
@@ -66,6 +70,13 @@ public class Compiler {
 				}
 			}));
 			return parser.parse();
+		}
+	}
+
+	private static void write(Program program, Path file) throws IOException {
+		try (final BufferedWriter writer = Files.newBufferedWriter(file)) {
+			final ProgramWriter irWriter = new ProgramWriter(writer);
+			irWriter.write(program);
 		}
 	}
 
