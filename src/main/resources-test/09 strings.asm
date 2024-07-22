@@ -87,6 +87,7 @@ start:
         ; release space for local variables
         add rsp, 16
         ret
+
         ; void printLength
 @printLength:
         ; reserve space for local variables
