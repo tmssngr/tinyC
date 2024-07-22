@@ -56,10 +56,13 @@ public final class ProgramWriter {
 	}
 
 	private void writeVariables(String indentation, List<Variable> variables) throws IOException {
-		if (variables.isEmpty()) {
-			return;
-		}
+		boolean printed = false;
 		for (Variable variable : variables) {
+			if (variable.scope() == VariableScope.argument) {
+				continue;
+			}
+
+			printed = true;
 			write(indentation);
 			write(variable.type().toString());
 			write(" ");
@@ -71,7 +74,9 @@ public final class ProgramWriter {
 			}
 			writeln(";");
 		}
-		writeln("");
+		if (printed) {
+			writeln("");
+		}
 	}
 
 	private void writeStatements(List<Statement> statements) throws IOException {
