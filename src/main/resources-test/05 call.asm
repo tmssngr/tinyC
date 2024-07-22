@@ -44,6 +44,7 @@ start:
         ; release space for local variables
         add rsp, 16
         ret
+
         ; u8 one
 @one:
         ; 7:9 return 1
@@ -53,6 +54,7 @@ start:
         jmp @one_ret
 @one_ret:
         ret
+
         ; void doPrint
 @doPrint:
         ; 11:8 int lit 2

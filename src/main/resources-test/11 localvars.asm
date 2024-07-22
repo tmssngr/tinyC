@@ -44,6 +44,7 @@ start:
         ; release space for local variables
         add rsp, 16
         ret
+
         ; void foo
 @foo:
         ; reserve space for local variables

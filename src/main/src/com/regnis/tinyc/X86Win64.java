@@ -32,8 +32,13 @@ public final class X86Win64 {
 	public void write(IRProgram program) throws IOException {
 		writePreample();
 
+		boolean addEmptyLine = false;
 		for (IRFunction function : program.functions()) {
+			if (addEmptyLine) {
+				writeNL();
+			}
 			write(function);
+			addEmptyLine = true;
 		}
 
 		writeInit();
