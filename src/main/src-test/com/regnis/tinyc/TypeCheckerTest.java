@@ -141,6 +141,16 @@ public class TypeCheckerTest {
 	}
 
 	@Test
+	public void testWhile() {
+		testIllegal(Messages.expectedExpression(), 1, 8,
+		            """
+				            void foo() {
+				              while() {
+				              };
+				            }""");
+	}
+
+	@Test
 	public void testArrays() {
 		assertEquals(new Program(List.of(),
 		                         List.of(

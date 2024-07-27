@@ -351,7 +351,7 @@ public class Parser {
 	private Expression getExpressionPrimaryNotNull(Location location) {
 		final Expression primary = getExpressionPrimary(location);
 		if (primary == null) {
-			throw new SyntaxException(Messages.unexpectedToken(token), location);
+			throw new SyntaxException(Messages.expectedExpression(), location);
 		}
 		return primary;
 	}
