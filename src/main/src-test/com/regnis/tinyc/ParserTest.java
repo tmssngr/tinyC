@@ -71,6 +71,19 @@ public class ParserTest {
 		                                    loc(0, 0)),
 		             new Parser(new Lexer("i16 foo = 1 - 2 + 3;")).getStatementNotNull());
 
+		assertEquals(new StmtVarDeclaration("i16", "foo", new ExprUnary(ExprUnary.Op.Neg,
+		                                                                intLit(2, loc(0, 11)),
+		                                                                loc(0, 10)),
+		                                    loc(0, 0)),
+		             new Parser(new Lexer("i16 foo = -2;")).getStatementNotNull());
+
+		assertEquals(new StmtVarDeclaration("i16", "foo", new ExprBinary(ExprBinary.Op.Sub,
+		                                                                 new ExprVarAccess("a", 0, null, null, null, loc(0, 10)),
+		                                                                 intLit(2, loc(0, 12)),
+		                                                                 loc(0, 11)),
+		                                    loc(0, 0)),
+		             new Parser(new Lexer("i16 foo = a-2;")).getStatementNotNull());
+
 		assertEquals(new StmtVarDeclaration("i16*", "foo", ExprVarAccess.scalar("bar", loc(0, 11)),
 		                                    loc(0, 0)),
 		             new Parser(new Lexer("i16* foo = bar;")).getStatementNotNull());
@@ -577,6 +590,7 @@ public class ParserTest {
 		         && currentNode instanceof ExprVarAccess currArray) {
 			assertEquals(exprArray.arrayIndex(), currArray.arrayIndex());
 		}
+		Assert.assertEquals(expectedNode.getClass(), currentNode.getClass());
 		Assert.assertEquals(expectedNode.location(), currentNode.location());
 		Assert.assertEquals(expectedNode, currentNode);
 	}
