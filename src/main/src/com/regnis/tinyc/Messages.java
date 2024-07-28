@@ -111,4 +111,9 @@ public class Messages {
 	public static String breakContinueOnlyAllowedWithinWhileOrFor() {
 		return "'break' and 'continue' are only allowed in 'for' or 'while' loops";
 	}
+
+	@NotNull
+	public static String addressOfArray() {
+		return "The address of an array is not supported";
+	}
 }

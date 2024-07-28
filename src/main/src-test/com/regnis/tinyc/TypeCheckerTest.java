@@ -217,6 +217,12 @@ public class TypeCheckerTest {
 				            void main() {
 				              array = 1;
 				            }""");
+		testIllegal(Messages.addressOfArray(), 2, 12,
+		            """
+				            u8 array[12];
+				            void main() {
+				              u8* foo = &array;
+				            }""");
 		testIllegal(Messages.arrayIndexMustBeInt(), 3, 2,
 		            """
 				            u8 array[12];

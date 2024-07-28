@@ -351,6 +351,9 @@ public final class TypeChecker {
 			arrayIndex = processArrayIndex(arrayIndex, location);
 			return new ExprAddrOf(name, variable.index(), variable.scope(), variable.type(), arrayIndex, location);
 		}
+		else if (variable.isArray()) {
+			throw new SyntaxException(Messages.addressOfArray(), location);
+		}
 		return new ExprAddrOf(name, variable.index(), variable.scope(), Type.pointer(variable.type()), null, location);
 	}
 
