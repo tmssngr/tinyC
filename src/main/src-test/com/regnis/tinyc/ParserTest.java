@@ -202,6 +202,36 @@ public class ParserTest {
 				                                  else {
 				                                    print(2);
 				                                  }""")).getStatementNotNull());
+
+		assertEquals(new StmtCompound(List.of(
+				             new StmtIf(new ExprBinary(ExprBinary.Op.Gt,
+				                                       new ExprVarAccess("i", 0, null, null, null, loc(1, 6)),
+				                                       intLit(0, loc(1, 10)),
+				                                       loc(1, 8)),
+				                        List.of(
+						                        new StmtIf(new ExprBinary(ExprBinary.Op.Gt,
+						                                                  new ExprVarAccess("i", 0, null, null, null, loc(2, 8)),
+						                                                  intLit(9, loc(2, 12)),
+						                                                  loc(2, 10)),
+						                                   List.of(
+								                                   new StmtExpr(new ExprFuncCall("print1", List.of(), loc(3, 6)))
+						                                   ),
+						                                   List.of(
+								                                   new StmtExpr(new ExprFuncCall("print2", List.of(), loc(6, 6)))
+						                                   ),
+						                                   loc(2, 4))
+				                        ), List.of(), loc(1, 2))
+		             )),
+		             new Parser(new Lexer("""
+				                                  {
+				                                    if (i > 0)
+				                                      if (i > 9) {
+				                                        print1();
+				                                      }
+				                                      else {
+				                                        print2();
+				                                      }
+				                                  }""")).getStatementNotNull());
 	}
 
 	@Test
@@ -398,7 +428,7 @@ public class ParserTest {
 						                                                                new ExprIntLiteral(0, loc(2, 13)),
 						                                                                loc(2, 10)),
 						                                                 List.of(
-																				 new StmtReturn(null, loc(3, 8))
+								                                                 new StmtReturn(null, loc(3, 8))
 						                                                 ),
 						                                                 List.of(),
 						                                                 loc(2, 4)),
