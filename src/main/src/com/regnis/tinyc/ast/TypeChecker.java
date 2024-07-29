@@ -260,7 +260,7 @@ public final class TypeChecker {
 			case ExprBoolLiteral ignored -> expression;
 			case ExprStringLiteral literal -> processStringLiteral(literal);
 			case ExprCast cast -> processCast(cast);
-			case ExprVarAccess var -> processVarRead(var);
+			case ExprVarAccess var -> processVarAccess(var);
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
 			case ExprBinary binary -> {
 				if (binary.op() == ExprBinary.Op.Assign) {
@@ -313,7 +313,7 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private Expression processVarRead(ExprVarAccess var) {
+	private Expression processVarAccess(ExprVarAccess var) {
 		final String name = var.varName();
 		final Location location = var.location();
 		final Expression arrayIndex = var.arrayIndex();
