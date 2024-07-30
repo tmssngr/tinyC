@@ -41,7 +41,7 @@ start:
         add rcx, rax
         ; 5:12 assign
         mov [rcx], bl
-        ; 6:14 array chars($0)
+        ; 6:20 array chars($0)
         ; 6:20 int lit 0
         mov rax, 0
         imul rax, 1
@@ -60,7 +60,7 @@ start:
         add rcx, rbx
         ; 6:12 assign
         mov [rcx], al
-        ; 7:16 array chars($0)
+        ; 7:22 array chars($0)
         ; 7:22 int lit 1
         mov rax, 1
         imul rax, 1
@@ -84,7 +84,7 @@ start:
         add rbx, rcx
         ; 7:14 assign
         mov [rbx], al
-        ; 8:15 array chars($0)
+        ; 8:21 array chars($0)
         ; 8:21 int lit 2
         mov rax, 2
         imul rax, 1

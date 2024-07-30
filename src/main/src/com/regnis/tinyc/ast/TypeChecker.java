@@ -161,7 +161,7 @@ public final class TypeChecker {
 	private void addAssignment(Variable variable, Expression expression, Location location) {
 		add(new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
 		                                variable.type(),
-		                                new ExprVarAccess(variable.name(), variable.index(), variable.scope(), variable.type(), null, location),
+		                                new ExprVarAccess(variable.name(), variable.index(), variable.scope(), variable.type(), location),
 		                                expression,
 		                                location)));
 	}
@@ -261,6 +261,7 @@ public final class TypeChecker {
 			case ExprStringLiteral literal -> processStringLiteral(literal);
 			case ExprCast cast -> processCast(cast);
 			case ExprVarAccess var -> processVarAccess(var);
+			case ExprArrayAccess access -> processArrayAccess(access);
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
 			case ExprBinary binary -> {
 				if (binary.op() == ExprBinary.Op.Assign) {
@@ -284,7 +285,7 @@ public final class TypeChecker {
 
 		final Variable variable = addVariable(null, expression.typeNotNull(), 0, expression.location());
 		addAssignment(variable, expression, expression.location());
-		return new ExprVarAccess(variable.name(), variable.index(), variable.scope(), variable.type(), null, variable.location());
+		return new ExprVarAccess(variable.name(), variable.index(), variable.scope(), variable.type(), variable.location());
 	}
 
 	@NotNull
@@ -313,26 +314,29 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private Expression processVarAccess(ExprVarAccess var) {
+	private ExprVarAccess processVarAccess(ExprVarAccess var) {
 		final String name = var.varName();
 		final Location location = var.location();
-		final Expression arrayIndex = var.arrayIndex();
 		final Variable variable = getVariable(name, location);
-		Type type = variable.type();
-		if (arrayIndex != null) {
-			type = type.toType();
-			if (type == null) {
-				throw new SyntaxException(Messages.expectedPointerButGot(variable.type()), location);
-			}
-
-			final Expression expression = processArrayIndex(arrayIndex, location);
-			return new ExprVarAccess(name, variable.index(), variable.scope(), type, expression, location);
-		}
-		return new ExprVarAccess(name, variable.index(), variable.scope(), type, null, location);
+		final Type type = variable.type();
+		return new ExprVarAccess(name, variable.index(), variable.scope(), type, location);
 	}
 
 	@NotNull
-	private Expression processArrayIndex(Expression arrayIndex, Location location) {
+	private ExprArrayAccess processArrayAccess(ExprArrayAccess access) {
+		final ExprVarAccess varAccess = processVarAccess(access.varAccess());
+		final Type type = varAccess.typeNotNull();
+		final Type resolvedType = type.toType();
+		if (resolvedType == null) {
+			throw new SyntaxException(Messages.expectedPointerButGot(type), varAccess.location());
+		}
+		final Expression index = processArrayIndex(access.index());
+		return new ExprArrayAccess(varAccess, resolvedType, index);
+	}
+
+	@NotNull
+	private Expression processArrayIndex(Expression arrayIndex) {
+		final Location location = arrayIndex.location();
 		Expression expression = processExpression(arrayIndex);
 		if (!expression.typeNotNull().isInt()) {
 			throw new SyntaxException(Messages.arrayIndexMustBeInt(), location);
@@ -348,7 +352,7 @@ public final class TypeChecker {
 		final Variable variable = getVariable(name, location);
 		Expression arrayIndex = addrOf.arrayIndex();
 		if (arrayIndex != null) {
-			arrayIndex = processArrayIndex(arrayIndex, location);
+			arrayIndex = processArrayIndex(arrayIndex);
 			return new ExprAddrOf(name, variable.index(), variable.scope(), variable.type(), arrayIndex, location);
 		}
 		else if (variable.isArray()) {
@@ -509,6 +513,7 @@ public final class TypeChecker {
 	private Expression processLValue(Expression expression) {
 		return switch (expression) {
 			case ExprVarAccess varRead -> processLValueVar(varRead);
+			case ExprArrayAccess arrayAccess -> processArrayAccess(arrayAccess);
 			case ExprUnary deref -> processUnary(deref);
 			default -> throw new SyntaxException(Messages.expectedLValue(), expression.location());
 		};
@@ -519,20 +524,10 @@ public final class TypeChecker {
 		final String name = var.varName();
 		final Location location = var.location();
 		final Variable variable = getVariable(name, location);
-		final Expression arrayIndex = var.arrayIndex();
-		if (arrayIndex != null) {
-			if (!variable.isArray()) {
-				throw new SyntaxException(Messages.arraysAreImmutable(), location);
-			}
-			final Expression expression = processArrayIndex(arrayIndex, location);
-			final Type type = Objects.requireNonNull(variable.type().toType());
-			return new ExprVarAccess(name, variable.index(), variable.scope(), type, expression, location);
-		}
-
 		if (variable.isArray()) {
 			throw new SyntaxException(Messages.arraysAreImmutable(), location);
 		}
-		return new ExprVarAccess(name, variable.index(), variable.scope(), variable.type(), null, location);
+		return new ExprVarAccess(name, variable.index(), variable.scope(), variable.type(), location);
 	}
 
 	private void checkNoSymbolNamed(String name, Location location) {

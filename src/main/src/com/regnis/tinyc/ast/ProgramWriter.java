@@ -187,6 +187,7 @@ public final class ProgramWriter {
 
 	private void writeExpressionMaybeInParentesis(Expression expression) throws IOException {
 		final boolean addParentesis = !(expression instanceof ExprVarAccess)
+		                              && !(expression instanceof ExprArrayAccess)
 		                              && !(expression instanceof ExprIntLiteral);
 		if (addParentesis) {
 			write("(");
@@ -203,7 +204,8 @@ public final class ProgramWriter {
 		case ExprBoolLiteral literal -> write(String.valueOf(literal.value()));
 		case ExprStringLiteral literal -> write(Utils.escape(literal.text()));
 		case ExprBinary binary -> writeBinary(binary);
-		case ExprVarAccess access -> writeVarAccess(access.varName(), access.arrayIndex());
+		case ExprVarAccess access -> writeVarAccess(access.varName(), null);
+		case ExprArrayAccess access -> writeArrayAccess(access);
 		case ExprAddrOf addrOf -> writeAddrOf(addrOf);
 		case ExprCast cast -> writeCast(cast);
 		case ExprFuncCall call -> writeCall(call);
@@ -241,6 +243,13 @@ public final class ProgramWriter {
 			writeExpression(arrayIndex);
 			write("]");
 		}
+	}
+
+	private void writeArrayAccess(ExprArrayAccess access) throws IOException {
+		writeVarAccess(access.varAccess().varName(), null);
+		write("[");
+		writeExpression(access.index());
+		write("]");
 	}
 
 	private void writeAddrOf(ExprAddrOf addrOf) throws IOException {

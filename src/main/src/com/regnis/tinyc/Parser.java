@@ -421,12 +421,13 @@ public class Parser {
 			final List<Expression> args = getCallArgExpressions();
 			return new ExprFuncCall(identifier, args, location);
 		}
+		final ExprVarAccess varAccess = new ExprVarAccess(identifier, location);
 		if (isConsume(TokenType.L_BRACKET)) {
 			final Expression expression = getExpression();
 			consume(TokenType.R_BRACKET);
-			return ExprVarAccess.array(identifier, expression, location);
+			return new ExprArrayAccess(varAccess, null, expression);
 		}
-		return ExprVarAccess.scalar(identifier, location);
+		return varAccess;
 	}
 
 	@NotNull

@@ -182,7 +182,6 @@ public final class IRGenerator {
 		final List<IRCall.Arg> args = new ArrayList<>();
 		for (Expression expression : expressions) {
 			if (expression instanceof ExprVarAccess varAccess) {
-				Utils.assertTrue(varAccess.arrayIndex() == null);
 				args.add(new IRCall.Arg(varAccess.index(), expression.typeNotNull()));
 			}
 			else {
@@ -256,17 +255,18 @@ public final class IRGenerator {
 			}
 			case ExprVarAccess var -> {
 				final VariableDetails variable = variables.get(var.index(), var.scope());
-				final Expression arrayIndex = var.arrayIndex();
-				final int addrReg;
-				if (arrayIndex != null) {
-					writeComment("array " + variable, node.location());
-					addrReg = writeArrayAccess(variable, arrayIndex, var.typeNotNull(), variables);
-				}
-				else {
-					writeComment("read var " + variable, node.location());
-					addrReg = writeAddressOf(variable);
-				}
+				writeComment("read var " + variable, node.location());
+				final int addrReg = writeAddressOf(variable);
 				yield writeRead(addrReg, var.typeNotNull());
+			}
+			case ExprArrayAccess access -> {
+				final ExprVarAccess var = access.varAccess();
+				final VariableDetails variable = variables.get(var.index(), var.scope());
+				final Expression arrayIndex = access.index();
+				writeComment("array " + variable, node.location());
+				final Type type = access.typeNotNull();
+				final int addrReg = writeArrayAccess(variable, arrayIndex, type, variables);
+				yield writeRead(addrReg, type);
 			}
 			case ExprBinary binary -> writeBinary(binary, variables);
 			case ExprUnary unary -> processUnary(unary, variables);
@@ -421,19 +421,20 @@ public final class IRGenerator {
 			case ExprVarAccess var -> {
 				final VariableDetails variable = variables.get(var.index(), var.scope());
 				final Location location = var.location();
-				final Expression arrayIndex = var.arrayIndex();
-				if (arrayIndex != null) {
-					Utils.assertTrue(!variable.isScalar());
-					writeComment("array " + variable, location);
-					yield writeArrayAccess(variable, arrayIndex, var.typeNotNull(), variables);
-				}
-				else {
-					Utils.assertTrue(variable.isScalar());
-					final int varReg = getFreeReg();
-					writeComment("var " + variable, location);
-					writeAddrOfVar(varReg, variable);
-					yield varReg;
-				}
+				Utils.assertTrue(variable.isScalar());
+				final int varReg = getFreeReg();
+				writeComment("var " + variable, location);
+				writeAddrOfVar(varReg, variable);
+				yield varReg;
+			}
+			case ExprArrayAccess access -> {
+				final ExprVarAccess var = access.varAccess();
+				final VariableDetails variable = variables.get(var.index(), var.scope());
+				final Location location = var.location();
+				final Expression arrayIndex = access.index();
+				Utils.assertTrue(!variable.isScalar());
+				writeComment("array " + variable, location);
+				yield writeArrayAccess(variable, arrayIndex, access.typeNotNull(), variables);
 			}
 			case ExprUnary deref -> write(deref.expression(), variables);
 			default -> throw new IllegalStateException(String.valueOf(lValue));
