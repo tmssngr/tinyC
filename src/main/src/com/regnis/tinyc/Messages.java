@@ -116,4 +116,9 @@ public class Messages {
 	public static String addressOfArray() {
 		return "The address of an array is not supported";
 	}
+
+	@NotNull
+	public static String expectedAddressableObject() {
+		return "The address-of-operator only works on scalar variables or array elements";
+	}
 }

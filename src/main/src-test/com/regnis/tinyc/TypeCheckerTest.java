@@ -141,6 +141,15 @@ public class TypeCheckerTest {
 	}
 
 	@Test
+	public void testAddrOf() {
+		testIllegal(Messages.expectedAddressableObject(), 1, 13,
+		            """
+				            void main() {
+				              u8* foo = &1;
+				            }""");
+	}
+
+	@Test
 	public void testWhile() {
 		testIllegal(Messages.expectedExpression(), 1, 8,
 		            """
@@ -183,10 +192,12 @@ public class TypeCheckerTest {
 						                                                                  new ExprVarAccess("first", 0, VariableScope.function, Type.U8, loc(4, 13)),
 						                                                                  loc(4, 11))),
 						                                      assign("second", 1, VariableScope.function, Type.pointer(Type.U8),
-						                                             new ExprAddrOf("array",
-						                                                            0, VariableScope.global, Type.pointer(Type.U8),
-						                                                            new ExprIntLiteral(1, Type.I64, loc(5, 22)),
-						                                                            loc(5, 15)),
+						                                             new ExprUnary(ExprUnary.Op.AddrOf,
+						                                                           new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(5, 16)),
+						                                                                               Type.U8,
+						                                                                               new ExprIntLiteral(1, Type.I64, loc(5, 22))),
+						                                                           Type.pointer(Type.U8),
+						                                                           loc(5, 15)),
 						                                             loc(5, 2)),
 						                                      assign("s", 2, VariableScope.function, Type.U8,
 						                                             new ExprArrayAccess(new ExprVarAccess("second", 1, VariableScope.function, Type.pointer(Type.U8), loc(6, 9)),

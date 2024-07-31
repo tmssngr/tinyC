@@ -28,7 +28,7 @@ public record ExprUnary(@NotNull Op op, @NotNull Expression expression, @Nullabl
 	}
 
 	public enum Op {
-		Deref("*"), Neg("-"), Com("~"), NotLog("!");
+		AddrOf("&"), Deref("*"), Neg("-"), Com("~"), NotLog("!");
 
 		private final String s;
 

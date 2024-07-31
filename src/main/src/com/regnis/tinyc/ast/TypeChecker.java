@@ -271,7 +271,6 @@ public final class TypeChecker {
 				final Expression right = processExpression(binary.right());
 				yield processBinary(binary.op(), left, right, binary.location());
 			}
-			case ExprAddrOf addrOf -> processAddrOf(addrOf);
 			case ExprUnary unary -> processUnary(unary);
 			default -> throw new IllegalStateException("Unexpected expression: " + expression);
 		};
@@ -346,22 +345,6 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private Expression processAddrOf(ExprAddrOf addrOf) {
-		final String name = addrOf.varName();
-		final Location location = addrOf.location();
-		final Variable variable = getVariable(name, location);
-		Expression arrayIndex = addrOf.arrayIndex();
-		if (arrayIndex != null) {
-			arrayIndex = processArrayIndex(arrayIndex);
-			return new ExprAddrOf(name, variable.index(), variable.scope(), variable.type(), arrayIndex, location);
-		}
-		else if (variable.isArray()) {
-			throw new SyntaxException(Messages.addressOfArray(), location);
-		}
-		return new ExprAddrOf(name, variable.index(), variable.scope(), Type.pointer(variable.type()), null, location);
-	}
-
-	@NotNull
 	private Expression processUnary(ExprUnary unary) {
 		final ExprUnary.Op op = unary.op();
 		final Location location = unary.location();
@@ -369,6 +352,19 @@ public final class TypeChecker {
 		final Type expressionType = expression.typeNotNull();
 		Type type = expressionType;
 		switch (op) {
+		case AddrOf -> {
+			if (expression instanceof ExprVarAccess access) {
+				final String name = access.varName();
+				final Variable variable = getVariable(name, location);
+				if (variable.isArray()) {
+					throw new SyntaxException(Messages.addressOfArray(), location);
+				}
+			}
+			else if (!(expression instanceof ExprArrayAccess)) {
+				throw new SyntaxException(Messages.expectedAddressableObject(), expression.location());
+			}
+			type = Type.pointer(type);
+		}
 		case Deref -> {
 			type = type.toType();
 			if (type == null) {

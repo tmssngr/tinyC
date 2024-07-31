@@ -284,17 +284,6 @@ public final class IRGenerator {
 				}
 				yield reg;
 			}
-			case ExprAddrOf addrOf -> {
-				final VariableDetails variable = variables.get(addrOf.index(), addrOf.scope());
-				final Expression arrayIndex = addrOf.arrayIndex();
-				if (arrayIndex != null) {
-					writeComment("address of array " + variable + "[...]", node.location());
-					yield writeArrayAccess(variable, arrayIndex, Objects.requireNonNull(addrOf.typeNotNull().toType()), variables);
-				}
-
-				writeComment("address of var " + variable, node.location());
-				yield writeAddressOf(variable);
-			}
 			default -> throw new UnsupportedOperationException("unsupported expression " + node);
 		};
 	}
@@ -377,10 +366,27 @@ public final class IRGenerator {
 	}
 
 	private int processUnary(ExprUnary unary, Variables variables) {
+		final Expression expression = unary.expression();
 		final ExprUnary.Op op = unary.op();
 		return switch (op) {
+			case AddrOf -> {
+				if (expression instanceof ExprVarAccess access) {
+					final VariableDetails variable = variables.get(access.index(), access.scope());
+					writeComment("address of var " + variable, unary.location());
+					yield writeAddressOf(variable);
+				}
+				else if (expression instanceof ExprArrayAccess access) {
+					final ExprVarAccess varAccess = access.varAccess();
+					final VariableDetails variable = variables.get(varAccess.index(), varAccess.scope());
+					writeComment("address of array " + variable + "[...]", unary.location());
+					yield writeArrayAccess(variable, access.index(), Objects.requireNonNull(access.typeNotNull()), variables);
+				}
+				else {
+					throw new IllegalStateException(String.valueOf(expression));
+				}
+			}
 			case Deref -> {
-				final int addrReg = write(unary.expression(), variables);
+				final int addrReg = write(expression, variables);
 				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
 				writeComment("deref", unary.location());
 				final int valueReg = getFreeReg();
@@ -389,21 +395,21 @@ public final class IRGenerator {
 				yield valueReg;
 			}
 			case Neg -> {
-				final int reg = write(unary.expression(), variables);
+				final int reg = write(expression, variables);
 				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
 				writeComment("neg", unary.location());
 				write(new IRUnary(IRUnary.Op.neg, reg, typeSize));
 				yield reg;
 			}
 			case Com -> {
-				final int reg = write(unary.expression(), variables);
+				final int reg = write(expression, variables);
 				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
 				writeComment("com", unary.location());
 				write(new IRUnary(IRUnary.Op.not, reg, typeSize));
 				yield reg;
 			}
 			case NotLog -> {
-				final int reg = write(unary.expression(), variables);
+				final int reg = write(expression, variables);
 				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
 				writeComment("not", unary.location());
 				write(new IRUnary(IRUnary.Op.notLog, reg, typeSize));

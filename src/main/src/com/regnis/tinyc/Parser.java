@@ -389,16 +389,7 @@ public class Parser {
 				final String identifier = consumeIdentifier();
 				yield getExpressionPrimary(identifier, location);
 			}
-			case AMP -> {
-				consume(TokenType.AMP);
-				final String name = consumeIdentifier();
-				Expression arrayIndex = null;
-				if (isConsume(TokenType.L_BRACKET)) {
-					arrayIndex = getExpression();
-					consume(TokenType.R_BRACKET);
-				}
-				yield new ExprAddrOf(name, arrayIndex, location);
-			}
+			case AMP -> getUnary(ExprUnary.Op.AddrOf, location);
 			case STAR -> getUnary(ExprUnary.Op.Deref, location);
 			case MINUS -> getUnary(ExprUnary.Op.Neg, location);
 			case TILDE -> getUnary(ExprUnary.Op.Com, location);
