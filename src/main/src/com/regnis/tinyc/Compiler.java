@@ -35,8 +35,7 @@ public class Compiler {
 
 		write(program, astFile);
 
-		final IRGenerator generator = new IRGenerator();
-		final IRProgram irProgram = generator.convert(program);
+		final IRProgram irProgram = IRGenerator.convert(program);
 		write(irProgram, irFile);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {

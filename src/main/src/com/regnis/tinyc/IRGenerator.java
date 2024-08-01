@@ -10,22 +10,29 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public class IRGenerator {
+public final class IRGenerator {
 
 	private static final int TRUE = 1;
 	private static final int FALSE = 0;
 
+	@NotNull
+	public static IRProgram convert(Program program) {
+		final IRGenerator generator = new IRGenerator();
+		return generator.convertProgram(program);
+	}
+
 	private final TrivialRegisterAllocator registerAllocator = new TrivialRegisterAllocator();
+
 	private int labelIndex;
 	@SuppressWarnings("unused") private boolean debug;
 	private String functionRetLabel;
 	private List<IRInstruction> instructions;
 
-	public IRGenerator() {
+	private IRGenerator() {
 	}
 
 	@NotNull
-	public IRProgram convert(Program program) {
+	private IRProgram convertProgram(Program program) {
 		final Variables variables = new Variables(program.globalVariables());
 
 		final List<IRFunction> functions = new ArrayList<>();
