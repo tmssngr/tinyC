@@ -111,7 +111,7 @@ public class IRGenerator {
 	private void writeStatement(Statement statement, Variables variables) {
 		Utils.assertTrue(registerAllocator.isNoneUsed());
 		switch (statement) {
-		case StmtVarDeclaration declaration -> writeAssignment(declaration.index(), declaration.scope(), declaration.expression(), declaration.location(), variables);
+		case StmtVarDeclaration declaration -> writeAssignment(declaration.index(), declaration.scope(), Objects.requireNonNull(declaration.expression()), declaration.location(), variables);
 		case StmtCompound compound -> writeStatements(compound.statements(), variables);
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtLoop forStatement -> writeFor(forStatement, variables);

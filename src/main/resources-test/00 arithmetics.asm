@@ -113,6 +113,16 @@ start:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
+        ; 9:11 read var bazz(%2)
+        lea rcx, [rsp+4]
+        mov ax, [rcx]
+        movzx rcx, ax
+        ; 9:5 print i64
+        sub rsp, 8
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
 @main_ret:
         ; release space for local variables
         add rsp, 16

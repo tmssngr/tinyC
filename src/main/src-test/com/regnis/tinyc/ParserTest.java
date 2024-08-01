@@ -31,12 +31,12 @@ public class ParserTest {
 	@Test
 	public void testDeclaration() {
 		assertEquals(new Program(List.of(
-				             new StmtVarDeclaration("u8", "foo", intLit(0, loc(0, 0)),
+				             new StmtVarDeclaration("u8", "foo", null,
 				                                    loc(0, 0))
 		             ), List.of(), List.of(), List.of()),
 		             new Parser(new Lexer("u8 foo;")).parse());
 
-		assertEquals(new StmtVarDeclaration("u8", "foo", intLit(0, loc(0, 0)),
+		assertEquals(new StmtVarDeclaration("u8", "foo", null,
 		                                    loc(0, 0)),
 		             new Parser(new Lexer("u8 foo;")).getStatementNotNull());
 

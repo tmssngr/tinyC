@@ -2,6 +2,7 @@
  Local variables
    0: foo
    1: bar
+   2: bazz
         ; 2:15 int lit 4
         ld r0, 4 (1)
         ; 2:19 int lit 3
@@ -74,6 +75,12 @@
         load r1, [r0] (2)
         cast r0 (i64), r1 (i16)
         ; 7:5 print i64
+        printint r0
+        ; 9:11 read var bazz(%2)
+        addrOf r0, [2@function]
+        load r1, [r0] (2)
+        cast r0 (i64), r1 (i16)
+        ; 9:5 print i64
         printint r0
 @main_ret:
 

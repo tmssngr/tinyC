@@ -63,7 +63,7 @@ public class Parser {
 				continue;
 			}
 			if (isConsume(TokenType.SEMI)) {
-				globalVars.add(new StmtVarDeclaration(typeString, name, new ExprIntLiteral(0, location), location));
+				globalVars.add(new StmtVarDeclaration(typeString, name, null, location));
 				continue;
 			}
 			if (isConsume(TokenType.L_BRACKET)) {
@@ -167,12 +167,9 @@ public class Parser {
 					return getArrayDeclaration(typeString, identifier2, location);
 				}
 
-				final Expression expression;
+				Expression expression = null;
 				if (isConsume(TokenType.EQUAL)) {
 					expression = getExpression();
-				}
-				else {
-					expression = new ExprIntLiteral(0, location);
 				}
 				return new StmtVarDeclaration(typeString, identifier2, expression, location);
 			}

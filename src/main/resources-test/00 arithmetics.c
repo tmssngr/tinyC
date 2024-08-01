@@ -5,4 +5,6 @@ void main() {
     print(bar + foo);
     foo = (1 + 2) * (3 + 4);
     print(foo);
+    i16 bazz;
+    print(bazz);
 }
