@@ -87,7 +87,6 @@ public class Compiler {
 		}
 	}
 
-
 	private static boolean launchFasm(Path asmFile) throws IOException, InterruptedException {
 		final Path fasmDir = Path.of(System.getProperty("user.home"), "Apps/fasm");
 		final ProcessBuilder processBuilder = new ProcessBuilder(List.of(

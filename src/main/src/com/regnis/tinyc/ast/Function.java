@@ -1,6 +1,6 @@
 package com.regnis.tinyc.ast;
 
-import com.regnis.tinyc.Location;
+import com.regnis.tinyc.*;
 
 import java.util.*;
 

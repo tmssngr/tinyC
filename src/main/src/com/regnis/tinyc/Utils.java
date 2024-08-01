@@ -45,10 +45,10 @@ public class Utils {
 		for (int i = 0; i < text.length(); i++) {
 			final char chr = text.charAt(i);
 			switch (chr) {
-				case 0 -> buffer.append("\\0");
-				case '\n' -> buffer.append("\\n");
-				case '"' -> buffer.append("\\\"");
-				case '\\' -> buffer.append("\\\\");
+			case 0 -> buffer.append("\\0");
+			case '\n' -> buffer.append("\\n");
+			case '"' -> buffer.append("\\\"");
+			case '\\' -> buffer.append("\\\\");
 			default -> {
 				if (chr < 0x20 || chr >= 0x80) {
 					buffer.append("\\u");

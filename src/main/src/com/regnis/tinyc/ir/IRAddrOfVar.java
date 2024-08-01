@@ -8,6 +8,6 @@ import com.regnis.tinyc.ast.*;
 public record IRAddrOfVar(int reg, VariableScope scope, int index) implements IRInstruction {
 	@Override
 	public String toString() {
-		return "addrOf r" + reg + ", [" + index + "@"+ scope.name() + "]";
+		return "addrOf r" + reg + ", [" + index + "@" + scope.name() + "]";
 	}
 }
