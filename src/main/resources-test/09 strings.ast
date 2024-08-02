@@ -19,7 +19,7 @@ void printLength() {
 	length = 0;
 	ptr = text;
 	for (; (*ptr) != 0; ptr = (u8*)(((i64)ptr) + 1)) {
-		length = length + ((i16)1);
+		length = length + 1;
 	}
 	print((i64)length);
 }

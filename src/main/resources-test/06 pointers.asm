@@ -52,10 +52,9 @@ start:
         ; 5:10 deref
         mov cx, [rax]
         ; 5:15 int lit 1
-        mov al, 1
-        movzx bx, al
+        mov ax, 1
         ; 5:13 sub
-        sub cx, bx
+        sub cx, ax
         ; 5:2 var c(%2)
         lea rax, [rsp+10]
         ; 5:2 assign
@@ -82,10 +81,9 @@ start:
         ; 8:7 deref
         mov cx, [rax]
         ; 8:12 int lit 1
-        mov al, 1
-        movzx bx, al
+        mov ax, 1
         ; 8:10 sub
-        sub cx, bx
+        sub cx, ax
         ; 8:3 read var d(%3)
         lea rax, [rsp+12]
         mov rbx, [rax]

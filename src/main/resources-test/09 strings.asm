@@ -124,10 +124,9 @@ start:
         lea rcx, [rsp+0]
         mov ax, [rcx]
         ; 15:21 int lit 1
-        mov cl, 1
-        movzx bx, cl
+        mov cx, 1
         ; 15:19 add
-        add ax, bx
+        add ax, cx
         ; 15:3 var length(%0)
         lea rcx, [rsp+0]
         ; 15:10 assign

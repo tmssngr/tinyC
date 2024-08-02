@@ -448,11 +448,11 @@ public final class TypeChecker {
 			type = leftType;
 			if (!Objects.equals(leftType, rightType)) {
 				if (leftType == Type.U8) {
-					left = ExprCast.autocast(left, rightType);
+					left = autoCastTo(rightType, left, left.location());
 					type = rightType;
 				}
 				else {
-					right = ExprCast.autocast(right, leftType);
+					right = autoCastTo(leftType, right, right.location());
 				}
 			}
 		}
@@ -460,10 +460,10 @@ public final class TypeChecker {
 			type = Type.BOOL;
 			if (!Objects.equals(leftType, rightType)) {
 				if (leftType == Type.U8) {
-					left = ExprCast.autocast(left, rightType);
+					left = autoCastTo(rightType, left, left.location());
 				}
 				else {
-					right = ExprCast.autocast(right, leftType);
+					right = autoCastTo(leftType, right, right.location());
 				}
 			}
 		}

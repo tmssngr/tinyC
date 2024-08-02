@@ -84,10 +84,9 @@
         addrOf r0, [0@function]
         load r1, [r0] (2)
         ; 15:21 int lit 1
-        ld r0, 1 (1)
-        cast r2 (i16), r0 (u8)
+        ld r0, 1 (2)
         ; 15:19 add
-        binary+ r1, r2 (2)
+        binary+ r1, r0 (2)
         ; 15:3 var length(%0)
         addrOf r0, [0@function]
         ; 15:10 assign

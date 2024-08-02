@@ -28,10 +28,9 @@
         ; 5:10 deref
         load r0, [r1] (2)
         ; 5:15 int lit 1
-        ld r1, 1 (1)
-        cast r2 (i16), r1 (u8)
+        ld r1, 1 (2)
         ; 5:13 sub
-        binary- r0, r2 (2)
+        binary- r0, r1 (2)
         ; 5:2 var c(%2)
         addrOf r1, [2@function]
         ; 5:2 assign
@@ -54,10 +53,9 @@
         ; 8:7 deref
         load r0, [r1] (2)
         ; 8:12 int lit 1
-        ld r1, 1 (1)
-        cast r2 (i16), r1 (u8)
+        ld r1, 1 (2)
         ; 8:10 sub
-        binary- r0, r2 (2)
+        binary- r0, r1 (2)
         ; 8:3 read var d(%3)
         addrOf r1, [3@function]
         load r2, [r1] (8)

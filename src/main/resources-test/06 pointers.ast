@@ -7,9 +7,9 @@ void main() {
 	a = 10;
 	print((i64)a);
 	b = &a;
-	c = (*b) - ((i16)1);
+	c = (*b) - 1;
 	print((i64)c);
 	d = &c;
-	*d = (*d) - ((i16)1);
+	*d = (*d) - 1;
 	print((i64)c);
 }
