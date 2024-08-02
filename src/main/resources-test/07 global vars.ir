@@ -14,7 +14,7 @@
         addrOf r1, [1@global]
         ; 2:1 assign
         store [r1], r0 (2)
-        ; 3:19 address of var space($0)
+        ; 3:20 var space($0)
         addrOf r0, [0@global]
         ; 3:1 var ptrToSpace($2)
         addrOf r1, [2@global]

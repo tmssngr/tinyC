@@ -48,7 +48,7 @@ start:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 4:11 address of var a(%0)
+        ; 4:12 var a(%0)
         lea rax, [rsp+0]
         ; 4:2 var b(%2)
         lea rbx, [rsp+10]
@@ -85,7 +85,7 @@ start:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; 7:11 address of var c(%3)
+        ; 7:12 var c(%3)
         lea rax, [rsp+18]
         ; 7:2 var d(%5)
         lea rbx, [rsp+28]

@@ -33,7 +33,7 @@ start:
         ; 5:14 read var chr(%0)
         lea rax, [rsp+0]
         mov bl, [rax]
-        ; 5:3 array chars($0)
+        ; 5:9 array chars($0)
         ; 5:9 int lit 0
         mov rax, 0
         imul rax, 1
@@ -52,7 +52,7 @@ start:
         mov bl, 1
         ; 6:23 add
         add al, bl
-        ; 6:3 array chars($0)
+        ; 6:9 array chars($0)
         ; 6:9 int lit 1
         mov rbx, 1
         imul rbx, 1
@@ -71,7 +71,7 @@ start:
         mov bl, 2
         ; 7:25 add
         add al, bl
-        ; 7:3 array chars($0)
+        ; 7:10 array chars($0)
         ; 7:9 int lit 1
         mov bl, 1
         ; 7:11 int lit 1

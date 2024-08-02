@@ -12,7 +12,7 @@
         ; 5:14 read var chr(%0)
         addrOf r0, [0@function]
         load r1, [r0] (1)
-        ; 5:3 array chars($0)
+        ; 5:9 array chars($0)
         ; 5:9 int lit 0
         ld r0, 0 (8)
         mul r0, 1
@@ -31,7 +31,7 @@
         ld r1, 1 (1)
         ; 6:23 add
         binary+ r0, r1 (1)
-        ; 6:3 array chars($0)
+        ; 6:9 array chars($0)
         ; 6:9 int lit 1
         ld r1, 1 (8)
         mul r1, 1
@@ -50,7 +50,7 @@
         ld r1, 2 (1)
         ; 7:25 add
         binary+ r0, r1 (1)
-        ; 7:3 array chars($0)
+        ; 7:10 array chars($0)
         ; 7:9 int lit 1
         ld r1, 1 (1)
         ; 7:11 int lit 1

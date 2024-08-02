@@ -26,7 +26,7 @@
         load r1, [r0] (8)
         ; 3:2 print i64
         printint r1
-        ; 4:11 address of var a(%0)
+        ; 4:12 var a(%0)
         addrOf r0, [0@function]
         ; 4:2 var b(%2)
         addrOf r1, [2@function]
@@ -58,7 +58,7 @@
         load r1, [r0] (8)
         ; 6:2 print i64
         printint r1
-        ; 7:11 address of var c(%3)
+        ; 7:12 var c(%3)
         addrOf r0, [3@function]
         ; 7:2 var d(%5)
         addrOf r1, [5@function]

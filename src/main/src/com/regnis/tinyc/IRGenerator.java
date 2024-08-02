@@ -123,7 +123,7 @@ public final class IRGenerator {
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtLoop forStatement -> writeFor(forStatement, variables);
 		case StmtBreakContinue breakContinue -> writeBreakContinue(breakContinue);
-		case StmtExpr stmt -> write(stmt.expression(), variables);
+		case StmtExpr stmt -> write(stmt.expression(), variables, true);
 		case StmtReturn ret -> writeReturn(ret.expression(), variables);
 		case null, default -> throw new UnsupportedOperationException(String.valueOf(statement));
 		}
@@ -152,7 +152,7 @@ public final class IRGenerator {
 			throw new IllegalStateException("Unsupported arguments " + expressions);
 		}
 		final Expression expression = expressions.getFirst();
-		final int reg = write(expression, variables);
+		final int reg = write(expression, variables, true);
 		final Type type = expression.typeNotNull();
 		if (type.toType() != Type.U8) {
 			throw new IllegalStateException("Unsupported type");
@@ -169,7 +169,7 @@ public final class IRGenerator {
 			throw new IllegalStateException("Unsupported arguments " + expressions);
 		}
 		final Expression expression = expressions.getFirst();
-		final int reg = write(expression, variables);
+		final int reg = write(expression, variables, true);
 		final Type type = expression.typeNotNull();
 		writeComment("print " + type, call.location());
 		write(new IRPrintInt(reg));
@@ -204,7 +204,7 @@ public final class IRGenerator {
 	private void writeReturn(@Nullable Expression expression, Variables variables) {
 		if (expression != null) {
 			writeComment("return " + expression.toUserString(), expression.location());
-			final int reg = write(expression, variables);
+			final int reg = write(expression, variables, true);
 			write(new IRReturnValue(reg, getTypeSize(expression.typeNotNull())));
 			freeReg(reg);
 		}
@@ -215,7 +215,7 @@ public final class IRGenerator {
 	}
 
 	private void writeAssignment(int index, VariableScope scope, Expression expression, Location location, Variables variables) {
-		final int expressionReg = write(expression, variables);
+		final int expressionReg = write(expression, variables, true);
 		final int varReg = getFreeReg();
 		final VariableDetails variable = variables.get(index, scope);
 		Utils.assertTrue(variable.isScalar());
@@ -227,7 +227,7 @@ public final class IRGenerator {
 		freeReg(varReg);
 	}
 
-	private int write(Expression node, Variables variables) {
+	private int write(Expression node, Variables variables, boolean readVar) {
 		return switch (node) {
 			case ExprIntLiteral literal -> {
 				final int value = literal.value();
@@ -255,9 +255,11 @@ public final class IRGenerator {
 			}
 			case ExprVarAccess var -> {
 				final VariableDetails variable = variables.get(var.index(), var.scope());
-				writeComment("read var " + variable, node.location());
+				writeComment((readVar ? "read " : "") + "var " + variable, node.location());
 				final int addrReg = writeAddressOf(variable);
-				yield writeRead(addrReg, var.typeNotNull());
+				yield readVar
+						? writeRead(addrReg, var.typeNotNull())
+						: addrReg;
 			}
 			case ExprArrayAccess access -> {
 				final ExprVarAccess var = access.varAccess();
@@ -266,14 +268,16 @@ public final class IRGenerator {
 				writeComment("array " + variable, node.location());
 				final Type type = access.typeNotNull();
 				final int addrReg = writeArrayAccess(variable, arrayIndex, type, variables);
-				yield writeRead(addrReg, type);
+				yield readVar
+						? writeRead(addrReg, type)
+						: addrReg;
 			}
 			case ExprBinary binary -> writeBinary(binary, variables);
-			case ExprUnary unary -> processUnary(unary, variables);
+			case ExprUnary unary -> processUnary(unary, variables, readVar);
 			case ExprFuncCall call -> writeCall(call, variables);
 			case ExprCast cast -> {
 				final Expression expression = cast.expression();
-				final int reg = write(expression, variables);
+				final int reg = write(expression, variables, true);
 				final int exprSize = getTypeSize(expression.typeNotNull());
 				final int size = getTypeSize(cast.typeNotNull());
 				if (size > exprSize) {
@@ -306,8 +310,8 @@ public final class IRGenerator {
 	private int writeBinary(ExprBinary node, Variables variables) {
 		switch (node.op()) {
 		case Assign -> {
-			final int expressionReg = write(node.right(), variables);
-			final int lValueReg = writeLValue(node.left(), variables);
+			final int expressionReg = write(node.right(), variables, true);
+			final int lValueReg = write(node.left(), variables, false);
 			final int typeSize = getTypeSize(node.typeNotNull());
 			writeComment("assign", node.location());
 			write(new IRMemStore(lValueReg, expressionReg, typeSize));
@@ -316,8 +320,8 @@ public final class IRGenerator {
 			return -1;
 		}
 		case Add, Sub, Multiply, Divide, And, Or, Xor -> {
-			final int leftReg = write(node.left(), variables);
-			final int rightReg = write(node.right(), variables);
+			final int leftReg = write(node.left(), variables, true);
+			final int rightReg = write(node.right(), variables, true);
 			final int size = getTypeSize(node.typeNotNull());
 			writeComment(node.op().name().toLowerCase(Locale.ROOT), node.location());
 			write(new IRBinary(node.op(), leftReg, rightReg, size));
@@ -328,9 +332,9 @@ public final class IRGenerator {
 			final int labelIndex = nextLabelIndex();
 			final String nextLabel = "@and_next_" + labelIndex;
 			writeComment("logic and", node.location());
-			final int conditionReg = write(node.left(), variables);
+			final int conditionReg = write(node.left(), variables, true);
 			write(new IRBranch(conditionReg, false, nextLabel));
-			final int conditionReg2 = write(node.right(), variables);
+			final int conditionReg2 = write(node.right(), variables, true);
 			if (conditionReg2 != conditionReg) {
 				write(new IRLoadReg(conditionReg, conditionReg2, getTypeSize(node.typeNotNull())));
 			}
@@ -342,9 +346,9 @@ public final class IRGenerator {
 			final int labelIndex = nextLabelIndex();
 			final String nextLabel = "@or_next_" + labelIndex;
 			writeComment("logic or", node.location());
-			final int conditionReg = write(node.left(), variables);
+			final int conditionReg = write(node.left(), variables, true);
 			write(new IRBranch(conditionReg, true, nextLabel));
-			final int conditionReg2 = write(node.right(), variables);
+			final int conditionReg2 = write(node.right(), variables, true);
 			if (conditionReg2 != conditionReg) {
 				write(new IRLoadReg(conditionReg, conditionReg2, getTypeSize(node.typeNotNull())));
 			}
@@ -353,8 +357,8 @@ public final class IRGenerator {
 			return conditionReg;
 		}
 		default -> {
-			final int leftReg = write(node.left(), variables);
-			final int rightReg = write(node.right(), variables);
+			final int leftReg = write(node.left(), variables, true);
+			final int rightReg = write(node.right(), variables, true);
 			final int resultReg = getFreeReg();
 			writeComment(node.op().toString(), node.location());
 			write(new IRCompare(node.op(), resultReg, leftReg, rightReg, node.left().typeNotNull()));
@@ -365,29 +369,19 @@ public final class IRGenerator {
 		}
 	}
 
-	private int processUnary(ExprUnary unary, Variables variables) {
+	private int processUnary(ExprUnary unary, Variables variables, boolean readVar) {
 		final Expression expression = unary.expression();
 		final ExprUnary.Op op = unary.op();
 		return switch (op) {
-			case AddrOf -> {
-				if (expression instanceof ExprVarAccess access) {
-					final VariableDetails variable = variables.get(access.index(), access.scope());
-					writeComment("address of var " + variable, unary.location());
-					yield writeAddressOf(variable);
-				}
-				else if (expression instanceof ExprArrayAccess access) {
-					final ExprVarAccess varAccess = access.varAccess();
-					final VariableDetails variable = variables.get(varAccess.index(), varAccess.scope());
-					writeComment("address of array " + variable + "[...]", unary.location());
-					yield writeArrayAccess(variable, access.index(), Objects.requireNonNull(access.typeNotNull()), variables);
-				}
-				else {
-					throw new IllegalStateException(String.valueOf(expression));
-				}
-			}
+			case AddrOf -> write(expression, variables, false);
 			case Deref -> {
-				final int addrReg = write(expression, variables);
-				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
+				Utils.assertTrue(expression.typeNotNull().isPointer());
+				final int addrReg = write(expression, variables, true);
+				if (!readVar) {
+					yield addrReg;
+				}
+
+				final int typeSize = getTypeSize(unary.typeNotNull());
 				writeComment("deref", unary.location());
 				final int valueReg = getFreeReg();
 				write(new IRMemLoad(valueReg, addrReg, typeSize));
@@ -395,60 +389,33 @@ public final class IRGenerator {
 				yield valueReg;
 			}
 			case Neg -> {
-				final int reg = write(expression, variables);
-				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
+				final int reg = write(expression, variables, true);
+				final int typeSize = getTypeSize(unary.typeNotNull());
 				writeComment("neg", unary.location());
 				write(new IRUnary(IRUnary.Op.neg, reg, typeSize));
 				yield reg;
 			}
 			case Com -> {
-				final int reg = write(expression, variables);
-				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
+				final int reg = write(expression, variables, true);
+				final int typeSize = getTypeSize(unary.typeNotNull());
 				writeComment("com", unary.location());
 				write(new IRUnary(IRUnary.Op.not, reg, typeSize));
 				yield reg;
 			}
 			case NotLog -> {
-				final int reg = write(expression, variables);
-				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
+				final int reg = write(expression, variables, true);
+				final int typeSize = getTypeSize(unary.typeNotNull());
 				writeComment("not", unary.location());
 				write(new IRUnary(IRUnary.Op.notLog, reg, typeSize));
 				yield reg;
 			}
+			//noinspection UnnecessaryDefault
 			default -> throw new UnsupportedOperationException("unsupported operation " + op);
 		};
 	}
 
-	/**
-	 * @return register of the target address
-	 */
-	private int writeLValue(Expression lValue, Variables variables) {
-		return switch (lValue) {
-			case ExprVarAccess var -> {
-				final VariableDetails variable = variables.get(var.index(), var.scope());
-				final Location location = var.location();
-				Utils.assertTrue(variable.isScalar());
-				final int varReg = getFreeReg();
-				writeComment("var " + variable, location);
-				writeAddrOfVar(varReg, variable);
-				yield varReg;
-			}
-			case ExprArrayAccess access -> {
-				final ExprVarAccess var = access.varAccess();
-				final VariableDetails variable = variables.get(var.index(), var.scope());
-				final Location location = var.location();
-				final Expression arrayIndex = access.index();
-				Utils.assertTrue(!variable.isScalar());
-				writeComment("array " + variable, location);
-				yield writeArrayAccess(variable, arrayIndex, access.typeNotNull(), variables);
-			}
-			case ExprUnary deref -> write(deref.expression(), variables);
-			default -> throw new IllegalStateException(String.valueOf(lValue));
-		};
-	}
-
 	private int writeArrayAccess(@NotNull VariableDetails variable, @NotNull Expression index, @NotNull Type type, @NotNull Variables variables) {
-		final int offsetReg = write(index, variables);
+		final int offsetReg = write(index, variables, true);
 		write(new IRMul(offsetReg, getTypeSize(type)));
 
 		final int addrReg = getFreeReg();
@@ -474,7 +441,7 @@ public final class IRGenerator {
 		final String elseLabel = "@else_" + labelIndex;
 		final String nextLabel = "@endif_" + labelIndex;
 		writeComment("if " + condition.toUserString(), statement.location());
-		final int conditionReg = write(condition, variables);
+		final int conditionReg = write(condition, variables, true);
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
 		write(new IRBranch(conditionReg, false, elseLabel));
 		freeReg(conditionReg);
@@ -498,7 +465,7 @@ public final class IRGenerator {
 		final Expression condition = statement.condition();
 		writeComment(loopName + " " + condition.toUserString(), statement.location());
 		writeLabel(label);
-		final int conditionReg = write(condition, variables);
+		final int conditionReg = write(condition, variables, true);
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
 		write(new IRBranch(conditionReg, false, breakLabel));
 		freeReg(conditionReg);

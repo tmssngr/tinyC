@@ -37,7 +37,7 @@ start:
         lea rbx, [var1]
         ; 2:1 assign
         mov [rbx], ax
-        ; 3:19 address of var space($0)
+        ; 3:20 var space($0)
         lea rax, [var0]
         ; 3:1 var ptrToSpace($2)
         lea rbx, [var2]

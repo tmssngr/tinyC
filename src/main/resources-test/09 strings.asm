@@ -51,7 +51,7 @@ start:
         sub rsp, 8
           call @printLength
         add rsp, 8
-        ; 6:15 address of array text($0)[...]
+        ; 6:21 array text($0)
         ; 6:21 int lit 1
         mov rax, 1
         imul rax, 1
