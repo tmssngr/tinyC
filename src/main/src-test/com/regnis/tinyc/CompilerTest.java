@@ -75,6 +75,11 @@ public class CompilerTest {
 		compileAndRun("12 structs.c");
 	}
 
+	@Test
+	public void testInclude() throws IOException, InterruptedException {
+		compileAndRun("13 include.c");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}

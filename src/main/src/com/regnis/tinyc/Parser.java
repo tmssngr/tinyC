@@ -1,10 +1,12 @@
 package com.regnis.tinyc;
 
+import com.regnis.tinyc.ast.Function;
 import com.regnis.tinyc.ast.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -14,37 +16,42 @@ import org.jetbrains.annotations.*;
 public final class Parser {
 
 	public static Program parse(String input) {
-		return new Parser(new Lexer(input)).doParse();
+		return parse(new IncludeHandler() {
+			@Override
+			public void parse(@NotNull String fileName, @NotNull Location location, @NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
+				throw new RuntimeException("Includes are not supported");
+			}
+
+			@Override
+			public void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
+				final Parser parser = new Parser(new Lexer(input), this);
+				parser.parse(typeDefs, globalVars, functions);
+			}
+		});
 	}
 
 	public static Program parse(Path inputFile) throws IOException {
-		try (final BufferedReader reader = Files.newBufferedReader(inputFile)) {
-			return new Parser(new Lexer(() -> {
-				try {
-					return reader.read();
-				}
-				catch (IOException ex) {
-					throw new UncheckedIOException(ex);
-				}
-			})).doParse();
+		try {
+			return parse(new FileIncludeHandler(inputFile, null));
+		}
+		catch (UncheckedIOException e) {
+			throw e.getCause();
 		}
 	}
 
 	private final Lexer lexer;
+	private final IncludeHandler includeHandler;
 
 	private TokenType token;
 
-	private Parser(@NotNull Lexer lexer) {
+	private Parser(@NotNull Lexer lexer, @NotNull IncludeHandler includeHandler) {
 		this.lexer = lexer;
+		this.includeHandler = includeHandler;
 
 		consume();
 	}
 
-	@NotNull
-	private Program doParse() {
-		final List<TypeDef> typeDefs = new ArrayList<>();
-		final List<Statement> globalVars = new ArrayList<>();
-		final List<Function> functions = new ArrayList<>();
+	public void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
 		while (token != TokenType.EOF) {
 			final Location location = getLocation();
 			if (token == TokenType.IDENTIFIER) {
@@ -64,24 +71,24 @@ public final class Parser {
 						}
 					}
 					final List<Statement> statements = getStatements();
-					functions.add(new Function(name, typeString, args, statements, location));
+					functions.accept(new Function(name, typeString, args, statements, location));
 					continue;
 				}
 
 				if (isConsume(TokenType.EQUAL)) {
 					final Expression expression = getExpression();
 					consume(TokenType.SEMI);
-					globalVars.add(new StmtVarDeclaration(typeString, name, expression, location));
+					globalVars.accept(new StmtVarDeclaration(typeString, name, expression, location));
 					continue;
 				}
 				if (isConsume(TokenType.SEMI)) {
-					globalVars.add(new StmtVarDeclaration(typeString, name, null, location));
+					globalVars.accept(new StmtVarDeclaration(typeString, name, null, location));
 					continue;
 				}
 				if (isConsume(TokenType.L_BRACKET)) {
 					final StmtArrayDeclaration array = getArrayDeclaration(typeString, name, location);
 					consume(TokenType.SEMI);
-					globalVars.add(array);
+					globalVars.accept(array);
 					continue;
 				}
 			}
@@ -99,13 +106,18 @@ public final class Parser {
 				while (isConsume(TokenType.COMMA));
 				consume(TokenType.R_PAREN);
 				consume(TokenType.SEMI);
-				typeDefs.add(new TypeDef(typeName, null, parts, location));
+				typeDefs.accept(new TypeDef(typeName, null, parts, location));
+				continue;
+			}
+			else if (isConsume(TokenType.INCLUDE)) {
+				expectType(TokenType.STRING);
+				final String fileName = consumeText();
+				includeHandler.parse(fileName, location, typeDefs, globalVars, functions);
 				continue;
 			}
 
 			throw new SyntaxException(Messages.expectedRootElement(), location);
 		}
-		return new Program(typeDefs, globalVars, functions, List.of(), List.of());
 	}
 
 	private List<Statement> getStatements() {
@@ -563,5 +575,66 @@ public final class Parser {
 			case STAR, SLASH -> 10;
 			default -> 0;
 		};
+	}
+
+	@NotNull
+	private static Program parse(IncludeHandler handler) {
+		final List<TypeDef> typeDefs = new ArrayList<>();
+		final List<Statement> globalVars = new ArrayList<>();
+		final List<Function> functions = new ArrayList<>();
+		handler.parse(typeDefs::add, globalVars::add, functions::add);
+		return new Program(typeDefs, globalVars, functions, List.of(), List.of());
+	}
+
+	private interface IncludeHandler {
+		void parse(@NotNull String fileName, @NotNull Location location, @NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions);
+
+		void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions);
+	}
+
+	private static final class FileIncludeHandler implements IncludeHandler {
+		private final Path file;
+		private final FileIncludeHandler parent;
+
+		public FileIncludeHandler(@NotNull Path file, @Nullable FileIncludeHandler parent) {
+			this.file = file;
+			this.parent = parent;
+		}
+
+		@Override
+		public void parse(@NotNull String fileName, @NotNull Location location, @NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
+			final Path includeFile = file.resolveSibling(fileName);
+			if (alreadyIncluded(includeFile)) {
+				throw new SyntaxException("File '" + fileName + "' is included recursively", location);
+			}
+
+			final FileIncludeHandler handler = new FileIncludeHandler(includeFile, this);
+			handler.parse(typeDefs, globalVars, functions);
+		}
+
+		public void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
+			try (final BufferedReader reader = Files.newBufferedReader(file)) {
+				new Parser(new Lexer(() -> {
+					try {
+						return reader.read();
+					}
+					catch (IOException ex) {
+						throw new UncheckedIOException(ex);
+					}
+				}), this).parse(typeDefs, globalVars, functions);
+			}
+			catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+		}
+
+		private boolean alreadyIncluded(Path file) {
+			for (FileIncludeHandler handler = this; handler != null; handler = handler.parent) {
+				if (handler.file.equals(file)) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }

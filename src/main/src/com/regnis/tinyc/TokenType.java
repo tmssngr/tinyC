@@ -15,6 +15,6 @@ public enum TokenType {
 	IF, ELSE,
 	FOR, WHILE, BREAK, CONTINUE,
 	RETURN,
-	TYPEDEF
-	;
+	TYPEDEF,
+	INCLUDE
 }

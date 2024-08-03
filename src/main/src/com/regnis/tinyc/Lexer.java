@@ -179,6 +179,7 @@ public final class Lexer {
 			case "break" -> TokenType.BREAK;
 			case "continue" -> TokenType.CONTINUE;
 			case "typedef" -> TokenType.TYPEDEF;
+			case "#include" -> TokenType.INCLUDE;
 			default -> TokenType.IDENTIFIER;
 		};
 	}
