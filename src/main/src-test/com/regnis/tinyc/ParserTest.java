@@ -33,359 +33,359 @@ public class ParserTest {
 				             new StmtVarDeclaration("u8", "foo", null,
 				                                    loc(0, 0))
 		             ), List.of(), List.of(), List.of()),
-		             new Parser(new Lexer("u8 foo;")).parse());
+		             parseProgram("u8 foo;"));
 
 		assertEquals(new StmtVarDeclaration("u8", "foo", null,
-		                                    loc(0, 0)),
-		             new Parser(new Lexer("u8 foo;")).getStatementNotNull());
+		                                    locS(0, 0)),
+		             parseStatement("u8 foo;"));
 
-		assertEquals(new StmtVarDeclaration("u8", "foo", intLit(1, loc(0, 9)),
-		                                    loc(0, 0)),
-		             new Parser(new Lexer("u8 foo = 1;")).getStatementNotNull());
+		assertEquals(new StmtVarDeclaration("u8", "foo", intLit(1, locS(0, 9)),
+		                                    locS(0, 0)),
+		             parseStatement("u8 foo = 1;"));
 
 		assertEquals(new StmtVarDeclaration("i16", "foo", new ExprBinary(ExprBinary.Op.Add,
-		                                                                 intLit(1, loc(1, 12)),
-		                                                                 intLit(2, loc(1, 16)),
-		                                                                 loc(1, 14)),
-		                                    loc(1, 2)),
-		             new Parser(new Lexer("\n  i16 foo = 1 + 2;")).getStatementNotNull());
+		                                                                 intLit(1, locS(1, 12)),
+		                                                                 intLit(2, locS(1, 16)),
+		                                                                 locS(1, 14)),
+		                                    locS(1, 2)),
+		             parseStatement("\n  i16 foo = 1 + 2;"));
 
 		assertEquals(new StmtVarDeclaration("u16", "foo", new ExprBinary(ExprBinary.Op.Add,
 		                                                                 new ExprBinary(ExprBinary.Op.Add,
-		                                                                                intLit(1, loc(0, 10)),
-		                                                                                intLit(2, loc(0, 14)),
-		                                                                                loc(0, 12)),
-		                                                                 intLit(3, loc(0, 18)),
-		                                                                 loc(0, 16)),
-		                                    loc(0, 0)),
-		             new Parser(new Lexer("u16 foo = 1 + 2 + 3;")).getStatementNotNull());
+		                                                                                intLit(1, locS(0, 10)),
+		                                                                                intLit(2, locS(0, 14)),
+		                                                                                locS(0, 12)),
+		                                                                 intLit(3, locS(0, 18)),
+		                                                                 locS(0, 16)),
+		                                    locS(0, 0)),
+		             parseStatement("u16 foo = 1 + 2 + 3;"));
 
 		assertEquals(new StmtVarDeclaration("i16", "foo", new ExprBinary(ExprBinary.Op.Add,
 		                                                                 new ExprBinary(ExprBinary.Op.Sub,
-		                                                                                intLit(1, loc(0, 10)),
-		                                                                                intLit(2, loc(0, 14)),
-		                                                                                loc(0, 12)),
-		                                                                 intLit(3, loc(0, 18)),
-		                                                                 loc(0, 16)),
-		                                    loc(0, 0)),
-		             new Parser(new Lexer("i16 foo = 1 - 2 + 3;")).getStatementNotNull());
+		                                                                                intLit(1, locS(0, 10)),
+		                                                                                intLit(2, locS(0, 14)),
+		                                                                                locS(0, 12)),
+		                                                                 intLit(3, locS(0, 18)),
+		                                                                 locS(0, 16)),
+		                                    locS(0, 0)),
+		             parseStatement("i16 foo = 1 - 2 + 3;"));
 
 		assertEquals(new StmtVarDeclaration("i16", "foo", new ExprUnary(ExprUnary.Op.Neg,
-		                                                                intLit(2, loc(0, 11)),
-		                                                                loc(0, 10)),
-		                                    loc(0, 0)),
-		             new Parser(new Lexer("i16 foo = -2;")).getStatementNotNull());
+		                                                                intLit(2, locS(0, 11)),
+		                                                                locS(0, 10)),
+		                                    locS(0, 0)),
+		             parseStatement("i16 foo = -2;"));
 
 		assertEquals(new StmtVarDeclaration("i16", "foo", new ExprBinary(ExprBinary.Op.Sub,
-		                                                                 new ExprVarAccess("a", 0, null, null, loc(0, 10)),
-		                                                                 intLit(2, loc(0, 12)),
-		                                                                 loc(0, 11)),
-		                                    loc(0, 0)),
-		             new Parser(new Lexer("i16 foo = a-2;")).getStatementNotNull());
+		                                                                 new ExprVarAccess("a", 0, null, null, locS(0, 10)),
+		                                                                 intLit(2, locS(0, 12)),
+		                                                                 locS(0, 11)),
+		                                    locS(0, 0)),
+		             parseStatement("i16 foo = a-2;"));
 
-		assertEquals(new StmtVarDeclaration("i16*", "foo", new ExprVarAccess("bar", loc(0, 11)),
-		                                    loc(0, 0)),
-		             new Parser(new Lexer("i16* foo = bar;")).getStatementNotNull());
+		assertEquals(new StmtVarDeclaration("i16*", "foo", new ExprVarAccess("bar", locS(0, 11)),
+		                                    locS(0, 0)),
+		             parseStatement("i16* foo = bar;"));
 
-		assertEquals(new StmtVarDeclaration("u8*", "text", new ExprStringLiteral("hello", -1, loc(0, 11)),
-		                                    loc(0, 0)),
-		             new Parser(new Lexer("u8* text = \"hello\";")).getStatementNotNull());
+		assertEquals(new StmtVarDeclaration("u8*", "text", new ExprStringLiteral("hello", -1, locS(0, 11)),
+		                                    locS(0, 0)),
+		             parseStatement("u8* text = \"hello\";"));
 	}
 
 	@Test
 	public void testAssignment() {
-		assertEquals(assignStmt(new ExprVarAccess("foo", loc(0, 0)),
+		assertEquals(assignStmt(new ExprVarAccess("foo", locS(0, 0)),
 		                        new ExprBinary(ExprBinary.Op.Sub,
 		                                       new ExprBinary(ExprBinary.Op.Add,
-		                                                      intLit(1, loc(0, 6)),
-		                                                      intLit(2, loc(0, 10)),
-		                                                      loc(0, 8)),
-		                                       intLit(3, loc(0, 14)),
-		                                       loc(0, 12)),
-		                        loc(0, 4)),
-		             new Parser(new Lexer("foo = 1 + 2 - 3;")).getStatementNotNull());
+		                                                      intLit(1, locS(0, 6)),
+		                                                      intLit(2, locS(0, 10)),
+		                                                      locS(0, 8)),
+		                                       intLit(3, locS(0, 14)),
+		                                       locS(0, 12)),
+		                        locS(0, 4)),
+		             parseStatement("foo = 1 + 2 - 3;"));
 
-		assertEquals(assignStmt(new ExprVarAccess("foo", loc(0, 0)),
+		assertEquals(assignStmt(new ExprVarAccess("foo", locS(0, 0)),
 		                        new ExprBinary(ExprBinary.Op.Add,
 		                                       new ExprBinary(ExprBinary.Op.Multiply,
-		                                                      intLit(1, loc(0, 6)),
-		                                                      intLit(3, loc(0, 10)),
-		                                                      loc(0, 8)),
+		                                                      intLit(1, locS(0, 6)),
+		                                                      intLit(3, locS(0, 10)),
+		                                                      locS(0, 8)),
 		                                       new ExprBinary(ExprBinary.Op.Multiply,
-		                                                      intLit(2, loc(0, 14)),
-		                                                      intLit(4, loc(0, 18)),
-		                                                      loc(0, 16)),
-		                                       loc(0, 12)),
-		                        loc(0, 4)),
-		             new Parser(new Lexer("foo = 1 * 3 + 2 * 4;")).getStatementNotNull());
+		                                                      intLit(2, locS(0, 14)),
+		                                                      intLit(4, locS(0, 18)),
+		                                                      locS(0, 16)),
+		                                       locS(0, 12)),
+		                        locS(0, 4)),
+		             parseStatement("foo = 1 * 3 + 2 * 4;"));
 
-		assertEquals(assignStmt(new ExprVarAccess("foo", loc(0, 0)),
+		assertEquals(assignStmt(new ExprVarAccess("foo", locS(0, 0)),
 		                        new ExprBinary(ExprBinary.Op.Gt,
 		                                       new ExprBinary(ExprBinary.Op.Add,
-		                                                      intLit(1, loc(0, 6)),
-		                                                      intLit(3, loc(0, 10)),
-		                                                      loc(0, 8)),
+		                                                      intLit(1, locS(0, 6)),
+		                                                      intLit(3, locS(0, 10)),
+		                                                      locS(0, 8)),
 		                                       new ExprBinary(ExprBinary.Op.Multiply,
-		                                                      intLit(2, loc(0, 14)),
-		                                                      intLit(4, loc(0, 18)),
-		                                                      loc(0, 16)),
-		                                       loc(0, 12)),
-		                        loc(0, 4)),
-		             new Parser(new Lexer("foo = 1 + 3 > 2 * 4;")).getStatementNotNull());
+		                                                      intLit(2, locS(0, 14)),
+		                                                      intLit(4, locS(0, 18)),
+		                                                      locS(0, 16)),
+		                                       locS(0, 12)),
+		                        locS(0, 4)),
+		             parseStatement("foo = 1 + 3 > 2 * 4;"));
 
-		assertEquals(assignStmt(new ExprVarAccess("foo", loc(0, 0)),
+		assertEquals(assignStmt(new ExprVarAccess("foo", locS(0, 0)),
 		                        new ExprBinary(ExprBinary.Op.Multiply,
-		                                       new ExprIntLiteral(2, loc(0, 6)),
+		                                       new ExprIntLiteral(2, locS(0, 6)),
 		                                       new ExprBinary(ExprBinary.Op.Add,
-		                                                      new ExprVarAccess("bar", loc(0, 11)),
-		                                                      new ExprIntLiteral(1, loc(0, 17)),
-		                                                      loc(0, 15)),
-		                                       loc(0, 8)),
-		                        loc(0, 4)),
-		             new Parser(new Lexer("foo = 2 * (bar + 1);")).getStatementNotNull());
+		                                                      new ExprVarAccess("bar", locS(0, 11)),
+		                                                      new ExprIntLiteral(1, locS(0, 17)),
+		                                                      locS(0, 15)),
+		                                       locS(0, 8)),
+		                        locS(0, 4)),
+		             parseStatement("foo = 2 * (bar + 1);"));
 
 		assertEquals(assignStmt(new ExprUnary(ExprUnary.Op.Deref,
-		                                      new ExprVarAccess("foo", loc(0, 1)),
-		                                      loc(0, 0)),
-		                        new ExprVarAccess("bar", loc(0, 7)),
-		                        loc(0, 5)),
-		             new Parser(new Lexer("*foo = bar;")).getStatementNotNull());
+		                                      new ExprVarAccess("foo", locS(0, 1)),
+		                                      locS(0, 0)),
+		                        new ExprVarAccess("bar", locS(0, 7)),
+		                        locS(0, 5)),
+		             parseStatement("*foo = bar;"));
 
 		assertEquals(assignStmt(new ExprUnary(ExprUnary.Op.Deref,
 		                                      new ExprBinary(ExprBinary.Op.Add,
-		                                                     new ExprVarAccess("foo", loc(0, 2)),
-		                                                     new ExprIntLiteral(2, loc(0, 8)),
-		                                                     loc(0, 6)),
-		                                      loc(0, 0)),
-		                        new ExprVarAccess("bar", loc(0, 13)),
-		                        loc(0, 11)),
-		             new Parser(new Lexer("*(foo + 2) = bar;")).getStatementNotNull());
+		                                                     new ExprVarAccess("foo", locS(0, 2)),
+		                                                     new ExprIntLiteral(2, locS(0, 8)),
+		                                                     locS(0, 6)),
+		                                      locS(0, 0)),
+		                        new ExprVarAccess("bar", locS(0, 13)),
+		                        locS(0, 11)),
+		             parseStatement("*(foo + 2) = bar;"));
 
-		assertEquals(assignStmt(new ExprVarAccess("text", loc(0, 0)),
-		                        new ExprStringLiteral("hello", -1, loc(0, 7)),
-		                        loc(0, 5)),
-		             new Parser(new Lexer("text = \"hello\";")).getStatementNotNull());
+		assertEquals(assignStmt(new ExprVarAccess("text", locS(0, 0)),
+		                        new ExprStringLiteral("hello", -1, locS(0, 7)),
+		                        locS(0, 5)),
+		             parseStatement("text = \"hello\";"));
 	}
 
 	@Test
 	public void testCompound() {
 		assertEquals(new StmtCompound(List.of(
-				             new StmtVarDeclaration("u16", "foo", intLit(10, loc(1, 10)),
-				                                    loc(1, 0)),
-				             new StmtVarDeclaration("u8", "bar", intLit(20, loc(2, 9)),
-				                                    loc(2, 0))
+				             new StmtVarDeclaration("u16", "foo", intLit(10, locS(1, 10)),
+				                                    locS(1, 0)),
+				             new StmtVarDeclaration("u8", "bar", intLit(20, locS(2, 9)),
+				                                    locS(2, 0))
 		             )),
-		             new Parser(new Lexer("""
-				                                  {
-				                                  u16 foo = 10;
-				                                  u8 bar = 20;
-				                                  }""")).getStatementNotNull());
+		             parseStatement("""
+				                            {
+				                            u16 foo = 10;
+				                            u8 bar = 20;
+				                            }"""));
 	}
 
 	@Test
 	public void testIf() {
 		assertEquals(new StmtIf(new ExprBinary(ExprBinary.Op.Lt,
-		                                       intLit(1, loc(0, 4)),
-		                                       intLit(2, loc(0, 8)),
-		                                       loc(0, 6)),
-		                        List.of(printStmt(intLit(1, loc(1, 8)),
-		                                          loc(1, 2))),
-		                        List.of(printStmt(intLit(2, loc(4, 8)),
-		                                          loc(4, 2))),
-		                        loc(0, 0)
+		                                       intLit(1, locS(0, 4)),
+		                                       intLit(2, locS(0, 8)),
+		                                       locS(0, 6)),
+		                        List.of(printStmt(intLit(1, locS(1, 8)),
+		                                          locS(1, 2))),
+		                        List.of(printStmt(intLit(2, locS(4, 8)),
+		                                          locS(4, 2))),
+		                        locS(0, 0)
 		             ),
-		             new Parser(new Lexer("""
-				                                  if (1 < 2) {
-				                                    print(1);
-				                                  }
-				                                  else {
-				                                    print(2);
-				                                  }""")).getStatementNotNull());
+		             parseStatement("""
+				                            if (1 < 2) {
+				                              print(1);
+				                            }
+				                            else {
+				                              print(2);
+				                            }"""));
 
 		assertEquals(new StmtCompound(List.of(
 				             new StmtIf(new ExprBinary(ExprBinary.Op.Gt,
-				                                       new ExprVarAccess("i", 0, null, null, loc(1, 6)),
-				                                       intLit(0, loc(1, 10)),
-				                                       loc(1, 8)),
+				                                       new ExprVarAccess("i", 0, null, null, locS(1, 6)),
+				                                       intLit(0, locS(1, 10)),
+				                                       locS(1, 8)),
 				                        List.of(
 						                        new StmtIf(new ExprBinary(ExprBinary.Op.Gt,
-						                                                  new ExprVarAccess("i", 0, null, null, loc(2, 8)),
-						                                                  intLit(9, loc(2, 12)),
-						                                                  loc(2, 10)),
+						                                                  new ExprVarAccess("i", 0, null, null, locS(2, 8)),
+						                                                  intLit(9, locS(2, 12)),
+						                                                  locS(2, 10)),
 						                                   List.of(
-								                                   new StmtExpr(new ExprFuncCall("print1", List.of(), loc(3, 6)))
+								                                   new StmtExpr(new ExprFuncCall("print1", List.of(), locS(3, 6)))
 						                                   ),
 						                                   List.of(
-								                                   new StmtExpr(new ExprFuncCall("print2", List.of(), loc(6, 6)))
+								                                   new StmtExpr(new ExprFuncCall("print2", List.of(), locS(6, 6)))
 						                                   ),
-						                                   loc(2, 4))
-				                        ), List.of(), loc(1, 2))
+						                                   locS(2, 4))
+				                        ), List.of(), locS(1, 2))
 		             )),
-		             new Parser(new Lexer("""
-				                                  {
-				                                    if (i > 0)
-				                                      if (i > 9) {
-				                                        print1();
-				                                      }
-				                                      else {
-				                                        print2();
-				                                      }
-				                                  }""")).getStatementNotNull());
+		             parseStatement("""
+				                            {
+				                              if (i > 0)
+				                                if (i > 9) {
+				                                  print1();
+				                                }
+				                                else {
+				                                  print2();
+				                                }
+				                            }"""));
 	}
 
 	@Test
 	public void testWhile() {
 		assertEquals(new StmtCompound(List.of(
-				new StmtVarDeclaration("u16", "i", intLit(5, loc(1, 8)),
-				                       loc(1, 0)),
+				new StmtVarDeclaration("u16", "i", intLit(5, locS(1, 8)),
+				                       locS(1, 0)),
 				new StmtLoop(new ExprBinary(ExprBinary.Op.Gt,
-				                            new ExprVarAccess("i", loc(2, 7)),
-				                            intLit(0, loc(2, 11)),
-				                            loc(2, 9)),
+				                            new ExprVarAccess("i", locS(2, 7)),
+				                            intLit(0, locS(2, 11)),
+				                            locS(2, 9)),
 				             List.of(
-						             printStmt(new ExprVarAccess("i", loc(3, 8)),
-						                       loc(3, 2)),
-						             assignStmt(new ExprVarAccess("i", loc(4, 2)),
+						             printStmt(new ExprVarAccess("i", locS(3, 8)),
+						                       locS(3, 2)),
+						             assignStmt(new ExprVarAccess("i", locS(4, 2)),
 						                        new ExprBinary(ExprBinary.Op.Sub,
-						                                       new ExprVarAccess("i", loc(4, 6)),
-						                                       intLit(1, loc(4, 10)),
-						                                       loc(4, 8)),
-						                        loc(4, 4))
+						                                       new ExprVarAccess("i", locS(4, 6)),
+						                                       intLit(1, locS(4, 10)),
+						                                       locS(4, 8)),
+						                        locS(4, 4))
 				             ),
 				             List.of(),
-				             loc(2, 0)
+				             locS(2, 0)
 				)
-		)), new Parser(new Lexer("""
-				                         {
-				                         u16 i = 5;
-				                         while (i > 0) {
-				                           print(i);
-				                           i = i - 1;
-				                         }
-				                         }""")).getStatementNotNull());
+		)), parseStatement("""
+				                   {
+				                   u16 i = 5;
+				                   while (i > 0) {
+				                     print(i);
+				                     i = i - 1;
+				                   }
+				                   }"""));
 
-		assertEquals(new StmtLoop(new ExprBoolLiteral(true, loc(0, 7)),
+		assertEquals(new StmtLoop(new ExprBoolLiteral(true, locS(0, 7)),
 		                          List.of(
-				                          printStmt(new ExprVarAccess("i", loc(1, 8)),
-				                                    loc(1, 2))
+				                          printStmt(new ExprVarAccess("i", locS(1, 8)),
+				                                    locS(1, 2))
 		                          ),
 		                          List.of(),
-		                          loc(0, 0)),
-		             new Parser(new Lexer("""
-				                                  while (true) {
-				                                    print(i);
-				                                  }""")).getStatementNotNull());
+		                          locS(0, 0)),
+		             parseStatement("""
+				                            while (true) {
+				                              print(i);
+				                            }"""));
 	}
 
 	@Test
 	public void testFor() {
 		assertEquals(new StmtCompound(List.of(
-				             new StmtVarDeclaration("i16", "i", intLit(0, loc(0, 13)),
-				                                    loc(0, 5)),
+				             new StmtVarDeclaration("i16", "i", intLit(0, locS(0, 13)),
+				                                    locS(0, 5)),
 				             new StmtLoop(new ExprBinary(ExprBinary.Op.Lt,
-				                                         new ExprVarAccess("i", loc(0, 16)),
-				                                         intLit(10, loc(0, 20)),
-				                                         loc(0, 18)),
+				                                         new ExprVarAccess("i", locS(0, 16)),
+				                                         intLit(10, locS(0, 20)),
+				                                         locS(0, 18)),
 				                          List.of(
-						                          printStmt(new ExprVarAccess("i", loc(1, 8)),
-						                                    loc(1, 2))
+						                          printStmt(new ExprVarAccess("i", locS(1, 8)),
+						                                    locS(1, 2))
 				                          ),
 				                          List.of(
-						                          assignStmt(new ExprVarAccess("i", loc(0, 24)),
+						                          assignStmt(new ExprVarAccess("i", locS(0, 24)),
 						                                     new ExprBinary(ExprBinary.Op.Add,
-						                                                    new ExprVarAccess("i", loc(0, 28)),
-						                                                    intLit(1, loc(0, 32)),
-						                                                    loc(0, 30)),
-						                                     loc(0, 26))
+						                                                    new ExprVarAccess("i", locS(0, 28)),
+						                                                    intLit(1, locS(0, 32)),
+						                                                    locS(0, 30)),
+						                                     locS(0, 26))
 				                          ),
-				                          loc(0, 0))
+				                          locS(0, 0))
 		             )),
-		             new Parser(new Lexer("""
-				                                  for (i16 i = 0; i < 10; i = i + 1) {
-				                                    print(i);
-				                                  }""")).getStatementNotNull());
+		             parseStatement("""
+				                            for (i16 i = 0; i < 10; i = i + 1) {
+				                              print(i);
+				                            }"""));
 
 		assertEquals(new StmtCompound(List.of(
-				             new StmtVarDeclaration("u8", "i", intLit(1, loc(1, 7)),
-				                                    loc(1, 0)),
-				             new StmtLoop(new ExprBinary(ExprBinary.Op.Lt, new ExprVarAccess("i", loc(2, 7)), intLit(10, loc(2, 11)), loc(2, 9)),
+				             new StmtVarDeclaration("u8", "i", intLit(1, locS(1, 7)),
+				                                    locS(1, 0)),
+				             new StmtLoop(new ExprBinary(ExprBinary.Op.Lt, new ExprVarAccess("i", locS(2, 7)), intLit(10, locS(2, 11)), locS(2, 9)),
 				                          List.of(
-						                          printStmt(new ExprVarAccess("i", loc(3, 8)),
-						                                    loc(3, 2))
+						                          printStmt(new ExprVarAccess("i", locS(3, 8)),
+						                                    locS(3, 2))
 				                          ),
 				                          List.of(
-						                          assignStmt(new ExprVarAccess("i", loc(2, 15)),
+						                          assignStmt(new ExprVarAccess("i", locS(2, 15)),
 						                                     new ExprBinary(ExprBinary.Op.Add,
-						                                                    new ExprVarAccess("i", loc(2, 19)),
-						                                                    intLit(1, loc(2, 23)),
-						                                                    loc(2, 21)),
-						                                     loc(2, 17))
+						                                                    new ExprVarAccess("i", locS(2, 19)),
+						                                                    intLit(1, locS(2, 23)),
+						                                                    locS(2, 21)),
+						                                     locS(2, 17))
 				                          ),
-				                          loc(2, 0)
+				                          locS(2, 0)
 				             )
 		             )),
-		             new Parser(new Lexer("""
-				                                  {
-				                                  u8 i = 1;
-				                                  for (; i < 10; i = i + 1) {
-				                                    print(i);
-				                                  }
-				                                  }""")).getStatementNotNull());
+		             parseStatement("""
+				                            {
+				                            u8 i = 1;
+				                            for (; i < 10; i = i + 1) {
+				                              print(i);
+				                            }
+				                            }"""));
 
 		assertEquals(new StmtCompound(List.of(
-				             new StmtVarDeclaration("u8", "i", intLit(5, loc(1, 7)),
-				                                    loc(1, 0)),
+				             new StmtVarDeclaration("u8", "i", intLit(5, locS(1, 7)),
+				                                    locS(1, 0)),
 				             new StmtLoop(new ExprBinary(ExprBinary.Op.Gt,
-				                                         new ExprVarAccess("i", loc(2, 6)),
-				                                         intLit(0, loc(2, 10)),
-				                                         loc(2, 8)),
+				                                         new ExprVarAccess("i", locS(2, 6)),
+				                                         intLit(0, locS(2, 10)),
+				                                         locS(2, 8)),
 				                          List.of(
-						                          printStmt(new ExprVarAccess("i", loc(3, 8)),
-						                                    loc(3, 2)),
-						                          assignStmt(new ExprVarAccess("i", loc(4, 2)),
+						                          printStmt(new ExprVarAccess("i", locS(3, 8)),
+						                                    locS(3, 2)),
+						                          assignStmt(new ExprVarAccess("i", locS(4, 2)),
 						                                     new ExprBinary(ExprBinary.Op.Sub,
-						                                                    new ExprVarAccess("i", loc(4, 6)),
-						                                                    intLit(1, loc(4, 10)),
-						                                                    loc(4, 8)),
-						                                     loc(4, 4))
+						                                                    new ExprVarAccess("i", locS(4, 6)),
+						                                                    intLit(1, locS(4, 10)),
+						                                                    locS(4, 8)),
+						                                     locS(4, 4))
 				                          ),
 				                          List.of(),
-				                          loc(2, 0))
+				                          locS(2, 0))
 		             )),
-		             new Parser(new Lexer("""
-				                                  {
-				                                  u8 i = 5;
-				                                  for (;i > 0;) {
-				                                    print(i);
-				                                    i = i - 1;
-				                                  }
-				                                  }""")).getStatementNotNull());
+		             parseStatement("""
+				                            {
+				                            u8 i = 5;
+				                            for (;i > 0;) {
+				                              print(i);
+				                              i = i - 1;
+				                            }
+				                            }"""));
 
 		assertEquals(new StmtCompound(List.of(
-				             new StmtVarDeclaration("u8", "i", intLit(5, loc(1, 7)),
-				                                    loc(1, 0)),
-				             new StmtLoop(new ExprIntLiteral(1, loc(2, 0)),
+				             new StmtVarDeclaration("u8", "i", intLit(5, locS(1, 7)),
+				                                    locS(1, 0)),
+				             new StmtLoop(new ExprIntLiteral(1, locS(2, 0)),
 				                          List.of(
-						                          printStmt(new ExprVarAccess("i", loc(3, 8)),
-						                                    loc(3, 2)),
-						                          assignStmt(new ExprVarAccess("i", loc(4, 2)),
+						                          printStmt(new ExprVarAccess("i", locS(3, 8)),
+						                                    locS(3, 2)),
+						                          assignStmt(new ExprVarAccess("i", locS(4, 2)),
 						                                     new ExprBinary(ExprBinary.Op.Sub,
-						                                                    new ExprVarAccess("i", loc(4, 6)),
-						                                                    intLit(1, loc(4, 10)),
-						                                                    loc(4, 8)),
-						                                     loc(4, 4))
+						                                                    new ExprVarAccess("i", locS(4, 6)),
+						                                                    intLit(1, locS(4, 10)),
+						                                                    locS(4, 8)),
+						                                     locS(4, 4))
 				                          ),
 				                          List.of(),
-				                          loc(2, 0))
+				                          locS(2, 0))
 		             )),
-		             new Parser(new Lexer("""
-				                                  {
-				                                  u8 i = 5;
-				                                  for (;;) {
-				                                    print(i);
-				                                    i = i - 1;
-				                                  }
-				                                  }""")).getStatementNotNull());
+		             parseStatement("""
+				                            {
+				                            u8 i = 5;
+				                            for (;;) {
+				                              print(i);
+				                              i = i - 1;
+				                            }
+				                            }"""));
 	}
 
 	@Test
@@ -407,13 +407,13 @@ public class ParserTest {
 		                                List.of(),
 		                                List.of()
 		                    ),
-		                    new Parser(new Lexer("""
-				                                         void main() {
-				                                             u8 i = 10;
-				                                             print(i);
-				                                         }
-				                                         void fooBar(u8 a) {
-				                                         }""")).parse());
+		                    parseProgram("""
+				                                 void main() {
+				                                     u8 i = 10;
+				                                     print(i);
+				                                 }
+				                                 void fooBar(u8 a) {
+				                                 }"""));
 
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
@@ -445,16 +445,16 @@ public class ParserTest {
 		                         List.of(),
 		                         List.of()
 		             ),
-		             new Parser(new Lexer("""
-				                                  void main() {
-				                                      u8 i = one();
-				                                      if (i == 0)
-				                                          return;
-				                                      print(i);
-				                                  }
-				                                  u8 one() {
-				                                     return 1;
-				                                  }""")).parse());
+		             parseProgram("""
+				                          void main() {
+				                              u8 i = one();
+				                              if (i == 0)
+				                                  return;
+				                              print(i);
+				                          }
+				                          u8 one() {
+				                             return 1;
+				                          }"""));
 	}
 
 	@Test
@@ -463,54 +463,54 @@ public class ParserTest {
 				             new StmtArrayDeclaration("u8", "str", 4,
 				                                      loc(0, 0))
 		             ), List.of(), List.of(), List.of()),
-		             new Parser(new Lexer("u8 str[4];")).parse());
+		             parseProgram("u8 str[4];"));
 
 		assertEquals(new StmtArrayDeclaration("u8", "buffer", 256,
-		                                      loc(0, 0)),
-		             new Parser(new Lexer("u8 buffer[256];")).getStatementNotNull());
+		                                      locS(0, 0)),
+		             parseStatement("u8 buffer[256];"));
 
-		assertEquals(assignStmt(new ExprArrayAccess(new ExprVarAccess("buffer", loc(0, 0)),
-		                                            new ExprVarAccess("i", loc(0, 7))),
-		                        new ExprArrayAccess(new ExprVarAccess("buffer", loc(0, 12)),
+		assertEquals(assignStmt(new ExprArrayAccess(new ExprVarAccess("buffer", locS(0, 0)),
+		                                            new ExprVarAccess("i", locS(0, 7))),
+		                        new ExprArrayAccess(new ExprVarAccess("buffer", locS(0, 12)),
 		                                            new ExprBinary(ExprBinary.Op.Add,
-		                                                           new ExprVarAccess("i", loc(0, 19)),
-		                                                           new ExprIntLiteral(1, loc(0, 23)),
-		                                                           loc(0, 21))),
-		                        loc(0, 10)),
-		             new Parser(new Lexer("buffer[i] = buffer[i + 1];")).getStatementNotNull());
+		                                                           new ExprVarAccess("i", locS(0, 19)),
+		                                                           new ExprIntLiteral(1, locS(0, 23)),
+		                                                           locS(0, 21))),
+		                        locS(0, 10)),
+		             parseStatement("buffer[i] = buffer[i + 1];"));
 	}
 
 	@Test
 	public void testUnaryOperators() {
-		assertEquals(assignStmt(new ExprVarAccess("a", loc(0, 0)),
+		assertEquals(assignStmt(new ExprVarAccess("a", locS(0, 0)),
 		                        new ExprUnary(ExprUnary.Op.Neg,
-		                                      new ExprVarAccess("a", loc(0, 5)),
-		                                      loc(0, 4)),
-		                        loc(0, 2)),
-		             new Parser(new Lexer("a = -a;")).getStatementNotNull());
+		                                      new ExprVarAccess("a", locS(0, 5)),
+		                                      locS(0, 4)),
+		                        locS(0, 2)),
+		             parseStatement("a = -a;"));
 
-		assertEquals(assignStmt(new ExprVarAccess("a", loc(0, 0)),
+		assertEquals(assignStmt(new ExprVarAccess("a", locS(0, 0)),
 		                        new ExprUnary(ExprUnary.Op.Com,
-		                                      new ExprVarAccess("a", loc(0, 5)),
-		                                      loc(0, 4)),
-		                        loc(0, 2)),
-		             new Parser(new Lexer("a = ~a;")).getStatementNotNull());
+		                                      new ExprVarAccess("a", locS(0, 5)),
+		                                      locS(0, 4)),
+		                        locS(0, 2)),
+		             parseStatement("a = ~a;"));
 
-		assertEquals(assignStmt(new ExprVarAccess("a", loc(0, 0)),
+		assertEquals(assignStmt(new ExprVarAccess("a", locS(0, 0)),
 		                        new ExprUnary(ExprUnary.Op.NotLog,
-		                                      new ExprVarAccess("a", loc(0, 5)),
-		                                      loc(0, 4)),
-		                        loc(0, 2)),
-		             new Parser(new Lexer("a = !a;")).getStatementNotNull());
+		                                      new ExprVarAccess("a", locS(0, 5)),
+		                                      locS(0, 4)),
+		                        locS(0, 2)),
+		             parseStatement("a = !a;"));
 	}
 
 	@Test
 	public void testCast() {
-		assertEquals(assignStmt(new ExprVarAccess("b", loc(0, 0)),
-		                        ExprCast.cast("u8", new ExprVarAccess("a", loc(0, 8)),
-		                                      loc(0, 5)),
-		                        loc(0, 2)),
-		             new Parser(new Lexer("b = (u8)a;")).getStatementNotNull());
+		assertEquals(assignStmt(new ExprVarAccess("b", locS(0, 0)),
+		                        ExprCast.cast("u8", new ExprVarAccess("a", locS(0, 8)),
+		                                      locS(0, 5)),
+		                        locS(0, 2)),
+		             parseStatement("b = (u8)a;"));
 	}
 
 	@Test
@@ -539,13 +539,29 @@ public class ParserTest {
 		                         List.of(),
 		                         List.of()
 		             ),
-		             new Parser(new Lexer("""
-				                                  typedef Foo (u8 x, u8 y);
+		             parseProgram("""
+				                          typedef Foo (u8 x, u8 y);
 
-				                                  void bla() {
-				                                    Foo foos[10];
-				                                    foos[0].x = 1;
-				                                  }""")).parse());
+				                          void bla() {
+				                            Foo foos[10];
+				                            foos[0].x = 1;
+				                          }"""));
+	}
+
+	@NotNull
+	private static Program parseProgram(String text) {
+		return new Parser(new Lexer(text)).parse();
+	}
+
+	@NotNull
+	private static Statement parseStatement(String text) {
+		final Program program = parseProgram("void main() {\n" + text + "\n}");
+		return program.functions().getFirst().statements().getFirst();
+	}
+
+	@NotNull
+	private static Location locS(int line, int column) {
+		return new Location(line + 1, column);
 	}
 
 	@NotNull

@@ -22,15 +22,6 @@ public class Parser {
 	}
 
 	@NotNull
-	public Statement getStatementNotNull() {
-		final Statement statement = getStatement();
-		if (statement == null) {
-			throw new SyntaxException(Messages.unexpectedToken(token), getLocation());
-		}
-		return statement;
-	}
-
-	@NotNull
 	public Program parse() {
 		final List<TypeDef> typeDefs = new ArrayList<>();
 		final List<Statement> globalVars = new ArrayList<>();
@@ -99,7 +90,10 @@ public class Parser {
 	}
 
 	private List<Statement> getStatements() {
-		final Statement statement = getStatementNotNull();
+		final Statement statement = getStatement();
+		if (statement == null) {
+			throw new SyntaxException(Messages.unexpectedToken(token), getLocation());
+		}
 		return statement instanceof StmtCompound c
 				? c.statements()
 				: List.of(statement);
