@@ -141,7 +141,7 @@ public class IRGeneratorTest {
 
 	@NotNull
 	private IRProgram convert(String input) {
-		final Program rawProgram = new Parser(new Lexer(input)).parse();
+		final Program rawProgram = Parser.parse(input);
 		final TypeChecker checker = new TypeChecker(Type.I64);
 		final Program program = checker.check(rawProgram);
 		return IRGenerator.convert(program);

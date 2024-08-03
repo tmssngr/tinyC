@@ -20,7 +20,7 @@ public class Compiler {
 	}
 
 	public static void compileAndRun(@NotNull Path inputFile, @Nullable Path outputFile) throws IOException, InterruptedException {
-		final Program parsedProgram = parse(inputFile);
+		final Program parsedProgram = Parser.parse(inputFile);
 		final TypeChecker checker = new TypeChecker(Type.I64);
 		final Program program = checker.check(parsedProgram);
 
@@ -56,20 +56,6 @@ public class Compiler {
 		final String derivedName = dotIndex > 1 ? fileName.substring(0, dotIndex) + extension
 				: fileName + extension;
 		return path.resolveSibling(derivedName);
-	}
-
-	private static Program parse(Path inputFile) throws IOException {
-		try (final BufferedReader reader = Files.newBufferedReader(inputFile)) {
-			final Parser parser = new Parser(new Lexer(() -> {
-				try {
-					return reader.read();
-				}
-				catch (IOException ex) {
-					throw new UncheckedIOException(ex);
-				}
-			}));
-			return parser.parse();
-		}
 	}
 
 	private static void write(Program program, Path file) throws IOException {

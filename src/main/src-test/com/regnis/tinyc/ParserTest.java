@@ -550,7 +550,7 @@ public class ParserTest {
 
 	@NotNull
 	private static Program parseProgram(String text) {
-		return new Parser(new Lexer(text)).parse();
+		return Parser.parse(text);
 	}
 
 	@NotNull

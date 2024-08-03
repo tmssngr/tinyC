@@ -2,6 +2,8 @@ package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
 
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 
 import org.jetbrains.annotations.*;
@@ -9,20 +11,37 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public class Parser {
+public final class Parser {
+
+	public static Program parse(String input) {
+		return new Parser(new Lexer(input)).doParse();
+	}
+
+	public static Program parse(Path inputFile) throws IOException {
+		try (final BufferedReader reader = Files.newBufferedReader(inputFile)) {
+			return new Parser(new Lexer(() -> {
+				try {
+					return reader.read();
+				}
+				catch (IOException ex) {
+					throw new UncheckedIOException(ex);
+				}
+			})).doParse();
+		}
+	}
 
 	private final Lexer lexer;
 
 	private TokenType token;
 
-	public Parser(@NotNull Lexer lexer) {
+	private Parser(@NotNull Lexer lexer) {
 		this.lexer = lexer;
 
 		consume();
 	}
 
 	@NotNull
-	public Program parse() {
+	private Program doParse() {
 		final List<TypeDef> typeDefs = new ArrayList<>();
 		final List<Statement> globalVars = new ArrayList<>();
 		final List<Function> functions = new ArrayList<>();

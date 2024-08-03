@@ -499,7 +499,7 @@ public class TypeCheckerTest {
 
 	@NotNull
 	private Program checkType(String input) {
-		final Program program = new Parser(new Lexer(input)).parse();
+		final Program program = Parser.parse(input);
 		final TypeChecker checker = new TypeChecker(Type.I64);
 		return checker.check(program);
 	}
