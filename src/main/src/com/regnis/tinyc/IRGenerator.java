@@ -153,54 +153,11 @@ public final class IRGenerator {
 		Utils.assertTrue(registerAllocator.isNoneUsed());
 	}
 
-	private int writeCall(ExprFuncCall call, Variables variables) {
+	private int writeCall(ExprFuncCall call) {
 		// ensure no register is currently used, so we can pass the arguments in whatever register we need for the calling convention
 		Utils.assertTrue(registerAllocator.isNoneUsed());
 
 		final String name = call.name();
-		if (name.equals("printString")) {
-			return writeCallPrintString(call, variables);
-		}
-
-		if (name.equals("print")) {
-			return writeCallPrint(call, variables);
-		}
-
-		return writeCall(call, name);
-	}
-
-	private int writeCallPrintString(ExprFuncCall call, Variables variables) {
-		final List<Expression> expressions = call.argExpressions();
-		if (expressions.size() != 1) {
-			throw new IllegalStateException("Unsupported arguments " + expressions);
-		}
-		final Expression expression = expressions.getFirst();
-		final int reg = write(expression, variables, true);
-		final Type type = expression.typeNotNull();
-		if (type.toType() != Type.U8) {
-			throw new IllegalStateException("Unsupported type");
-		}
-		writeComment("print " + type, call.location());
-		write(new IRPrintStringZero(reg));
-		freeReg(reg);
-		return -1;
-	}
-
-	private int writeCallPrint(ExprFuncCall call, Variables variables) {
-		final List<Expression> expressions = call.argExpressions();
-		if (expressions.size() != 1) {
-			throw new IllegalStateException("Unsupported arguments " + expressions);
-		}
-		final Expression expression = expressions.getFirst();
-		final int reg = write(expression, variables, true);
-		final Type type = expression.typeNotNull();
-		writeComment("print " + type, call.location());
-		write(new IRPrintInt(reg));
-		freeReg(reg);
-		return -1;
-	}
-
-	private int writeCall(ExprFuncCall call, String name) {
 		final List<Expression> expressions = call.argExpressions();
 		final List<IRCall.Arg> args = new ArrayList<>();
 		for (Expression expression : expressions) {
@@ -281,7 +238,7 @@ public final class IRGenerator {
 			case ExprMemberAccess access -> writeMemberAccess(access, variables, readVar);
 			case ExprBinary binary -> writeBinary(binary, variables);
 			case ExprUnary unary -> processUnary(unary, variables, readVar);
-			case ExprFuncCall call -> writeCall(call, variables);
+			case ExprFuncCall call -> writeCall(call);
 			case ExprCast cast -> {
 				final Expression expression = cast.expression();
 				final int reg = write(expression, variables, true);

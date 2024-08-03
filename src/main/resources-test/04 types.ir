@@ -29,11 +29,8 @@
         addrOf r1, [1@function]
         ; 3:11 assign
         store [r1], r0 (8)
-        ; 3:11 read var $.1(%1)
-        addrOf r0, [1@function]
-        load r1, [r0] (8)
-        ; 3:5 print i64
-        printint r1
+        ; 3:5 call print
+        call @print (1)
 @for_1_continue:
         ; 2:32 read var i(%0)
         addrOf r0, [0@function]
@@ -62,10 +59,7 @@
         addrOf r1, [3@function]
         ; 7:10 assign
         store [r1], r0 (8)
-        ; 7:10 read var $.3(%3)
-        addrOf r0, [3@function]
-        load r1, [r0] (8)
-        ; 7:3 print i64
-        printint r1
+        ; 7:3 call print
+        call @print (3)
 @main_ret:
 

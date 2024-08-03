@@ -52,11 +52,9 @@ start:
         lea rbx, [rsp+1]
         ; 3:11 assign
         mov [rbx], rax
-        ; 3:11 read var $.1(%1)
+        ; 3:5 call print
         lea rax, [rsp+1]
-        mov rbx, [rax]
-        ; 3:5 print i64
-        mov rcx, rbx
+        mov rcx, [rax]
         sub rsp, 8
           call __printUint
           mov rcx, 0x0a
@@ -90,11 +88,9 @@ start:
         lea rbx, [rsp+11]
         ; 7:10 assign
         mov [rbx], rax
-        ; 7:10 read var $.3(%3)
+        ; 7:3 call print
         lea rax, [rsp+11]
-        mov rbx, [rax]
-        ; 7:3 print i64
-        mov rcx, rbx
+        mov rcx, [rax]
         sub rsp, 8
           call __printUint
           mov rcx, 0x0a

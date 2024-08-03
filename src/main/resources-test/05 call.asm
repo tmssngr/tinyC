@@ -130,11 +130,9 @@ start:
         lea rbx, [rsp+0]
         ; 13:8 assign
         mov [rbx], rax
-        ; 13:8 read var $.5(%5)
+        ; 13:2 call print
         lea rax, [rsp+0]
-        mov rbx, [rax]
-        ; 13:2 print i64
-        mov rcx, rbx
+        mov rcx, [rax]
         sub rsp, 8
           call __printUint
           mov rcx, 0x0a
@@ -148,11 +146,9 @@ start:
         lea rbx, [rsp+8]
         ; 14:8 assign
         mov [rbx], rax
-        ; 14:8 read var $.6(%6)
+        ; 14:2 call print
         lea rax, [rsp+8]
-        mov rbx, [rax]
-        ; 14:2 print i64
-        mov rcx, rbx
+        mov rcx, [rax]
         sub rsp, 8
           call __printUint
           mov rcx, 0x0a
@@ -166,11 +162,9 @@ start:
         lea rbx, [rsp+16]
         ; 15:8 assign
         mov [rbx], rax
-        ; 15:8 read var $.7(%7)
+        ; 15:2 call print
         lea rax, [rsp+16]
-        mov rbx, [rax]
-        ; 15:2 print i64
-        mov rcx, rbx
+        mov rcx, [rax]
         sub rsp, 8
           call __printUint
           mov rcx, 0x0a
@@ -184,11 +178,9 @@ start:
         lea rbx, [rsp+24]
         ; 16:8 assign
         mov [rbx], rax
-        ; 16:8 read var $.8(%8)
+        ; 16:2 call print
         lea rax, [rsp+24]
-        mov rbx, [rax]
-        ; 16:2 print i64
-        mov rcx, rbx
+        mov rcx, [rax]
         sub rsp, 8
           call __printUint
           mov rcx, 0x0a
@@ -202,11 +194,9 @@ start:
         lea rbx, [rsp+32]
         ; 17:8 assign
         mov [rbx], rax
-        ; 17:8 read var $.9(%9)
+        ; 17:2 call print
         lea rax, [rsp+32]
-        mov rbx, [rax]
-        ; 17:2 print i64
-        mov rcx, rbx
+        mov rcx, [rax]
         sub rsp, 8
           call __printUint
           mov rcx, 0x0a

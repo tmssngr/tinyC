@@ -21,11 +21,8 @@
         addrOf r1, [0@function]
         ; 2:13 assign
         store [r1], r0 (8)
-        ; 2:13 read var $.0(%0)
-        addrOf r0, [0@function]
-        load r1, [r0] (8)
-        ; 2:5 print i64
-        printint r1
+        ; 2:5 call print
+        call @print (0)
         ; 3:11 int lit 2
         ld r0, 2 (1)
         ; 3:15 int lit 1
@@ -37,11 +34,8 @@
         addrOf r1, [1@function]
         ; 3:13 assign
         store [r1], r0 (8)
-        ; 3:13 read var $.1(%1)
-        addrOf r0, [1@function]
-        load r1, [r0] (8)
-        ; 3:5 print i64
-        printint r1
+        ; 3:5 call print
+        call @print (1)
         ; 5:11 int lit 1
         ld r0, 1 (1)
         ; 5:16 int lit 2
@@ -53,11 +47,8 @@
         addrOf r1, [2@function]
         ; 5:13 assign
         store [r1], r0 (8)
-        ; 5:13 read var $.2(%2)
-        addrOf r0, [2@function]
-        load r1, [r0] (8)
-        ; 5:5 print i64
-        printint r1
+        ; 5:5 call print
+        call @print (2)
         ; 6:11 int lit 2
         ld r0, 2 (1)
         ; 6:16 int lit 1
@@ -69,11 +60,8 @@
         addrOf r1, [3@function]
         ; 6:13 assign
         store [r1], r0 (8)
-        ; 6:13 read var $.3(%3)
-        addrOf r0, [3@function]
-        load r1, [r0] (8)
-        ; 6:5 print i64
-        printint r1
+        ; 6:5 call print
+        call @print (3)
         ; 8:11 int lit 1
         ld r0, 1 (1)
         ; 8:16 int lit 2
@@ -85,11 +73,8 @@
         addrOf r1, [4@function]
         ; 8:13 assign
         store [r1], r0 (8)
-        ; 8:13 read var $.4(%4)
-        addrOf r0, [4@function]
-        load r1, [r0] (8)
-        ; 8:5 print i64
-        printint r1
+        ; 8:5 call print
+        call @print (4)
         ; 10:11 int lit 1
         ld r0, 1 (1)
         ; 10:16 int lit 2
@@ -101,11 +86,8 @@
         addrOf r1, [5@function]
         ; 10:13 assign
         store [r1], r0 (8)
-        ; 10:13 read var $.5(%5)
-        addrOf r0, [5@function]
-        load r1, [r0] (8)
-        ; 10:5 print i64
-        printint r1
+        ; 10:5 call print
+        call @print (5)
         ; 12:11 int lit 1
         ld r0, 1 (1)
         ; 12:16 int lit 2
@@ -117,11 +99,8 @@
         addrOf r1, [6@function]
         ; 12:13 assign
         store [r1], r0 (8)
-        ; 12:13 read var $.6(%6)
-        addrOf r0, [6@function]
-        load r1, [r0] (8)
-        ; 12:5 print i64
-        printint r1
+        ; 12:5 call print
+        call @print (6)
         ; 13:11 int lit 2
         ld r0, 2 (1)
         ; 13:16 int lit 1
@@ -133,11 +112,8 @@
         addrOf r1, [7@function]
         ; 13:13 assign
         store [r1], r0 (8)
-        ; 13:13 read var $.7(%7)
-        addrOf r0, [7@function]
-        load r1, [r0] (8)
-        ; 13:5 print i64
-        printint r1
+        ; 13:5 call print
+        call @print (7)
         ; 15:11 int lit 1
         ld r0, 1 (1)
         ; 15:15 int lit 2
@@ -149,11 +125,8 @@
         addrOf r1, [8@function]
         ; 15:13 assign
         store [r1], r0 (8)
-        ; 15:13 read var $.8(%8)
-        addrOf r0, [8@function]
-        load r1, [r0] (8)
-        ; 15:5 print i64
-        printint r1
+        ; 15:5 call print
+        call @print (8)
         ; 16:11 int lit 2
         ld r0, 2 (1)
         ; 16:15 int lit 1
@@ -165,10 +138,7 @@
         addrOf r1, [9@function]
         ; 16:13 assign
         store [r1], r0 (8)
-        ; 16:13 read var $.9(%9)
-        addrOf r0, [9@function]
-        load r1, [r0] (8)
-        ; 16:5 print i64
-        printint r1
+        ; 16:5 call print
+        call @print (9)
 @main_ret:
 

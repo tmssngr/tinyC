@@ -87,11 +87,8 @@
         addrOf r1, [5@function]
         ; 13:8 assign
         store [r1], r0 (8)
-        ; 13:8 read var $.5(%5)
-        addrOf r0, [5@function]
-        load r1, [r0] (8)
-        ; 13:2 print i64
-        printint r1
+        ; 13:2 call print
+        call @print (5)
         ; 14:8 read var b(%1)
         addrOf r0, [1@argument]
         load r1, [r0] (1)
@@ -100,11 +97,8 @@
         addrOf r1, [6@function]
         ; 14:8 assign
         store [r1], r0 (8)
-        ; 14:8 read var $.6(%6)
-        addrOf r0, [6@function]
-        load r1, [r0] (8)
-        ; 14:2 print i64
-        printint r1
+        ; 14:2 call print
+        call @print (6)
         ; 15:8 read var c(%2)
         addrOf r0, [2@argument]
         load r1, [r0] (1)
@@ -113,11 +107,8 @@
         addrOf r1, [7@function]
         ; 15:8 assign
         store [r1], r0 (8)
-        ; 15:8 read var $.7(%7)
-        addrOf r0, [7@function]
-        load r1, [r0] (8)
-        ; 15:2 print i64
-        printint r1
+        ; 15:2 call print
+        call @print (7)
         ; 16:8 read var d(%3)
         addrOf r0, [3@argument]
         load r1, [r0] (1)
@@ -126,11 +117,8 @@
         addrOf r1, [8@function]
         ; 16:8 assign
         store [r1], r0 (8)
-        ; 16:8 read var $.8(%8)
-        addrOf r0, [8@function]
-        load r1, [r0] (8)
-        ; 16:2 print i64
-        printint r1
+        ; 16:2 call print
+        call @print (8)
         ; 17:8 read var e(%4)
         addrOf r0, [4@argument]
         load r1, [r0] (1)
@@ -139,11 +127,8 @@
         addrOf r1, [9@function]
         ; 17:8 assign
         store [r1], r0 (8)
-        ; 17:8 read var $.9(%9)
-        addrOf r0, [9@function]
-        load r1, [r0] (8)
-        ; 17:2 print i64
-        printint r1
+        ; 17:2 call print
+        call @print (9)
 @doPrint_ret:
 
 Global variables

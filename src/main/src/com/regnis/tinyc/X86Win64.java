@@ -353,8 +353,6 @@ public final class X86Win64 {
 		case IRMul mul -> writeMul(mul);
 		case IRBranch branch -> writeBranch(branch);
 		case IRJump jump -> writeJump(jump);
-		case IRPrintStringZero print -> writePrintStringZero(print);
-		case IRPrintInt print -> writePrintInt(print);
 		case IRCall call -> writeCall(call);
 		case IRReturnValue ret -> writeReturnValue(ret);
 		default -> throw new UnsupportedOperationException(instruction.getClass() + " " + String.valueOf(instruction));
@@ -482,43 +480,49 @@ public final class X86Win64 {
 		writeIndented("jmp " + jump.target());
 	}
 
-	private void writePrintStringZero(IRPrintStringZero print) throws IOException {
-		final int reg = print.addrReg();
-		Utils.assertTrue(reg == 1);
-		writeIndented("mov rcx, " + getRegName(reg));
-		writeIndented("sub rsp, 8");
-		writeIndented("  call " + PRINT_STRING_ZERO);
-		writeIndented("add rsp, 8");
-	}
-
-	private void writePrintInt(IRPrintInt print) throws IOException {
-		final int reg = print.reg();
-		Utils.assertTrue(reg == 1);
-		writeIndented("mov rcx, " + getRegName(reg));
-		writeIndented("sub rsp, 8");
-		writeIndented("  call " + PRINT_UINT);
-		writeIndented("  mov rcx, 0x0a");
-		writeIndented("  call " + EMIT);
-		writeIndented("add rsp, 8");
-	}
-
 	private void writeCall(IRCall call) throws IOException {
-		final int argsSize = call.args().size() * 8;
-		final int offset = (call.args().size() + 1) % 2 * 8;
-		int localVarOffset = 0;
-		for (IRCall.Arg arg : call.args()) {
-			final int size = getTypeSize(arg.type());
+		final String label = call.label();
+		final List<IRCall.Arg> args = call.args();
+		if (label.equals("@print") && args.size() == 1 && args.getFirst().type().equals(Type.I64)) {
+			final IRCall.Arg arg = args.getFirst();
 			final char regChr = 'a';
 			final String addrRegName = getXRegName(regChr, 0);
-			writeAddressOfLocalVar(addrRegName, arg.localVarIndex(), localVarOffset);
-			writeIndented("mov " + getXRegName(regChr, size) + ", [" + addrRegName + "]");
-			writeIndented("push " + addrRegName);
-			// we have pushed 8 bytes, so the local variables are accessed with an 8 byte larger offset
-			localVarOffset += 8;
+			writeAddressOfLocalVar(addrRegName, arg.localVarIndex(), 0);
+			writeIndented("mov rcx, [" + addrRegName + "]");
+			writeIndented("sub rsp, 8");
+			writeIndented("  call " + PRINT_UINT);
+			writeIndented("  mov rcx, 0x0a");
+			writeIndented("  call " + EMIT);
+			writeIndented("add rsp, 8");
 		}
-		writeIndented("sub rsp, " + offset);
-		writeIndented("  call " + call.label());
-		writeIndented("add rsp, " + (offset + argsSize));
+		else if (label.equals("@printString") && args.size() == 1 && args.getFirst().type().equals(Type.POINTER_U8)) {
+			final IRCall.Arg arg = args.getFirst();
+			final char regChr = 'a';
+			final String addrRegName = getXRegName(regChr, 0);
+			writeAddressOfLocalVar(addrRegName, arg.localVarIndex(), 0);
+			writeIndented("mov rcx, [" + addrRegName + "]");
+			writeIndented("sub rsp, 8");
+			writeIndented("  call " + PRINT_STRING_ZERO);
+			writeIndented("add rsp, 8");
+		}
+		else {
+			final int argsSize = args.size() * 8;
+			final int offset = (args.size() + 1) % 2 * 8;
+			int localVarOffset = 0;
+			for (IRCall.Arg arg : args) {
+				final int size = getTypeSize(arg.type());
+				final char regChr = 'a';
+				final String addrRegName = getXRegName(regChr, 0);
+				writeAddressOfLocalVar(addrRegName, arg.localVarIndex(), localVarOffset);
+				writeIndented("mov " + getXRegName(regChr, size) + ", [" + addrRegName + "]");
+				writeIndented("push " + addrRegName);
+				// we have pushed 8 bytes, so the local variables are accessed with an 8 byte larger offset
+				localVarOffset += 8;
+			}
+			writeIndented("sub rsp, " + offset);
+			writeIndented("  call " + label);
+			writeIndented("add rsp, " + (offset + argsSize));
+		}
 	}
 
 	private void writeReturnValue(IRReturnValue ret) throws IOException {

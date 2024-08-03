@@ -16,11 +16,8 @@
         addrOf r1, [1@function]
         ; 7:12 assign
         store [r1], r0 (8)
-        ; 7:12 read var $.1(%1)
-        addrOf r0, [1@function]
-        load r1, [r0] (8)
-        ; 7:2 print i64
-        printint r1
+        ; 7:2 call print
+        call @print (1)
         ; 8:10 int lit 1
         ld r0, 1 (1)
         ; 8:2 var pos(%0)
@@ -50,11 +47,8 @@
         addrOf r1, [2@function]
         ; 10:12 assign
         store [r1], r0 (8)
-        ; 10:12 read var $.2(%2)
-        addrOf r0, [2@function]
-        load r1, [r0] (8)
-        ; 10:2 print i64
-        printint r1
+        ; 10:2 call print
+        call @print (2)
         ; 11:11 var pos(%0)
         addrOf r0, [0@function]
         ; 11:15 Pos.x
@@ -72,10 +66,7 @@
         addrOf r0, [4@function]
         ; 12:8 assign
         store [r0], r1 (8)
-        ; 12:8 read var $.4(%4)
-        addrOf r0, [4@function]
-        load r1, [r0] (8)
-        ; 12:2 print i64
-        printint r1
+        ; 12:2 call print
+        call @print (4)
 @main_ret:
 

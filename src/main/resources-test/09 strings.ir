@@ -19,11 +19,8 @@
         addrOf r0, [0@function]
         ; 4:14 assign
         store [r0], r1 (8)
-        ; 4:14 read var $.0(%0)
-        addrOf r0, [0@function]
-        load r1, [r0] (8)
-        ; 4:2 print u8*
-        printStringZero r1
+        ; 4:2 call printString
+        call @printString (0)
         ; 5:2 call printLength
         call @printLength ()
         ; 6:21 array text($0)
@@ -37,11 +34,8 @@
         addrOf r0, [1@function]
         ; 6:2 assign
         store [r0], r1 (8)
-        ; 7:14 read var second(%1)
-        addrOf r0, [1@function]
-        load r1, [r0] (8)
-        ; 7:2 print u8*
-        printStringZero r1
+        ; 7:2 call printString
+        call @printString (1)
         ; 8:12 read var text($0)
         addrOf r0, [0@global]
         load r1, [r0] (8)
@@ -59,11 +53,8 @@
         addrOf r1, [3@function]
         ; 9:8 assign
         store [r1], r0 (8)
-        ; 9:8 read var $.3(%3)
-        addrOf r0, [3@function]
-        load r1, [r0] (8)
-        ; 9:2 print i64
-        printint r1
+        ; 9:2 call print
+        call @print (3)
 @main_ret:
 
 @printLength:
@@ -130,11 +121,8 @@
         addrOf r1, [2@function]
         ; 17:8 assign
         store [r1], r0 (8)
-        ; 17:8 read var $.2(%2)
-        addrOf r0, [2@function]
-        load r1, [r0] (8)
-        ; 17:2 print i64
-        printint r1
+        ; 17:2 call print
+        call @print (2)
 @printLength_ret:
 
 Global variables

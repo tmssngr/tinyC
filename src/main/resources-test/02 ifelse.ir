@@ -35,11 +35,8 @@
         addrOf r1, [2@function]
         ; 5:9 assign
         store [r1], r0 (8)
-        ; 5:9 read var $.2(%2)
-        addrOf r0, [2@function]
-        load r1, [r0] (8)
-        ; 5:3 print i64
-        printint r1
+        ; 5:3 call print
+        call @print (2)
         jmp @endif_1
         ; else
 @else_1:
@@ -51,11 +48,8 @@
         addrOf r1, [3@function]
         ; 8:9 assign
         store [r1], r0 (8)
-        ; 8:9 read var $.3(%3)
-        addrOf r0, [3@function]
-        load r1, [r0] (8)
-        ; 8:3 print i64
-        printint r1
+        ; 8:3 call print
+        call @print (3)
 @endif_1:
 @main_ret:
 
