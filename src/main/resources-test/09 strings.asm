@@ -43,8 +43,8 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         ; 4:2 print u8*
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printStringZero
         add rsp, 8
         ; 5:2 call printLength
@@ -66,8 +66,8 @@ start:
         lea rax, [rsp+8]
         mov rbx, [rax]
         ; 7:2 print u8*
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printStringZero
         add rsp, 8
         ; 8:12 read var text($0)
@@ -91,8 +91,8 @@ start:
         lea rax, [rsp+17]
         mov rbx, [rax]
         ; 9:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -172,8 +172,8 @@ start:
         lea rax, [rsp+10]
         mov rbx, [rax]
         ; 17:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit

@@ -34,8 +34,8 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         ; 2:2 print u8*
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printStringZero
         add rsp, 8
         ; 3:8 int lit 0
@@ -53,8 +53,8 @@ start:
         lea rax, [rsp+8]
         mov rbx, [rax]
         ; 3:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -74,8 +74,8 @@ start:
         lea rax, [rsp+16]
         mov rbx, [rax]
         ; 4:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -95,8 +95,8 @@ start:
         lea rax, [rsp+24]
         mov rbx, [rax]
         ; 5:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -116,8 +116,8 @@ start:
         lea rax, [rsp+32]
         mov rbx, [rax]
         ; 6:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -132,8 +132,8 @@ start:
         lea rax, [rsp+40]
         mov rbx, [rax]
         ; 7:2 print u8*
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printStringZero
         add rsp, 8
         ; 8:8 int lit 0
@@ -151,8 +151,8 @@ start:
         lea rax, [rsp+48]
         mov rbx, [rax]
         ; 8:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -172,8 +172,8 @@ start:
         lea rax, [rsp+56]
         mov rbx, [rax]
         ; 9:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -193,8 +193,8 @@ start:
         lea rax, [rsp+64]
         mov rbx, [rax]
         ; 10:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -214,8 +214,8 @@ start:
         lea rax, [rsp+72]
         mov rbx, [rax]
         ; 11:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -230,8 +230,8 @@ start:
         lea rax, [rsp+80]
         mov rbx, [rax]
         ; 12:2 print u8*
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printStringZero
         add rsp, 8
         ; 13:8 int lit 0
@@ -249,8 +249,8 @@ start:
         lea rax, [rsp+88]
         mov rbx, [rax]
         ; 13:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -270,8 +270,8 @@ start:
         lea rax, [rsp+96]
         mov rbx, [rax]
         ; 14:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -291,8 +291,8 @@ start:
         lea rax, [rsp+104]
         mov rbx, [rax]
         ; 15:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -312,8 +312,8 @@ start:
         lea rax, [rsp+112]
         mov rbx, [rax]
         ; 16:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -328,8 +328,8 @@ start:
         lea rax, [rsp+120]
         mov rbx, [rax]
         ; 17:2 print u8*
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printStringZero
         add rsp, 8
         ; 18:14 logic and
@@ -350,8 +350,8 @@ start:
         lea rax, [rsp+128]
         mov rbx, [rax]
         ; 18:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -374,8 +374,8 @@ start:
         lea rax, [rsp+136]
         mov rbx, [rax]
         ; 19:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -398,8 +398,8 @@ start:
         lea rax, [rsp+144]
         mov rbx, [rax]
         ; 20:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -422,8 +422,8 @@ start:
         lea rax, [rsp+152]
         mov rbx, [rax]
         ; 21:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -438,8 +438,8 @@ start:
         lea rax, [rsp+160]
         mov rbx, [rax]
         ; 22:2 print u8*
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printStringZero
         add rsp, 8
         ; 23:14 logic or
@@ -460,8 +460,8 @@ start:
         lea rax, [rsp+168]
         mov rbx, [rax]
         ; 23:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -484,8 +484,8 @@ start:
         lea rax, [rsp+176]
         mov rbx, [rax]
         ; 24:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -508,8 +508,8 @@ start:
         lea rax, [rsp+184]
         mov rbx, [rax]
         ; 25:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -532,8 +532,8 @@ start:
         lea rax, [rsp+192]
         mov rbx, [rax]
         ; 26:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -548,8 +548,8 @@ start:
         lea rax, [rsp+200]
         mov rbx, [rax]
         ; 27:2 print u8*
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printStringZero
         add rsp, 8
         ; 28:9 bool lit false
@@ -566,8 +566,8 @@ start:
         lea rax, [rsp+208]
         mov rbx, [rax]
         ; 28:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -586,8 +586,8 @@ start:
         lea rax, [rsp+216]
         mov rbx, [rax]
         ; 29:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -602,8 +602,8 @@ start:
         lea rax, [rsp+224]
         mov rbx, [rax]
         ; 30:2 print u8*
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printStringZero
         add rsp, 8
         ; 31:8 int lit 10
@@ -625,8 +625,8 @@ start:
         lea rax, [rsp+232]
         mov rbx, [rax]
         ; 31:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -661,8 +661,8 @@ start:
         lea rax, [rsp+240]
         mov rbx, [rax]
         ; 32:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -697,8 +697,8 @@ start:
         lea rax, [rsp+248]
         mov rbx, [rax]
         ; 33:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -716,8 +716,8 @@ start:
         lea rax, [rsp+256]
         mov rbx, [rax]
         ; 34:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -735,8 +735,8 @@ start:
         lea rax, [rsp+264]
         mov rbx, [rax]
         ; 35:2 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit

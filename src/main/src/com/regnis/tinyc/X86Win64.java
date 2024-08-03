@@ -483,21 +483,19 @@ public final class X86Win64 {
 	}
 
 	private void writePrintStringZero(IRPrintStringZero print) throws IOException {
-		final String regName = getRegName(print.addrReg());
+		final int reg = print.addrReg();
+		Utils.assertTrue(reg == 1);
+		writeIndented("mov rcx, " + getRegName(reg));
 		writeIndented("sub rsp, 8");
-		if (!regName.equals("rcx")) {
-			writeIndented("  mov rcx, " + regName);
-		}
 		writeIndented("  call " + PRINT_STRING_ZERO);
 		writeIndented("add rsp, 8");
 	}
 
 	private void writePrintInt(IRPrintInt print) throws IOException {
-		final String regName = getRegName(print.reg());
+		final int reg = print.reg();
+		Utils.assertTrue(reg == 1);
+		writeIndented("mov rcx, " + getRegName(reg));
 		writeIndented("sub rsp, 8");
-		if (!regName.equals("rcx")) {
-			writeIndented("  mov rcx, " + regName);
-		}
 		writeIndented("  call " + PRINT_UINT);
 		writeIndented("  mov rcx, 0x0a");
 		writeIndented("  call " + EMIT);

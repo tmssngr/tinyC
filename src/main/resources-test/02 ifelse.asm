@@ -62,8 +62,8 @@ start:
         lea rax, [rsp+2]
         mov rbx, [rax]
         ; 5:3 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
@@ -83,8 +83,8 @@ start:
         lea rax, [rsp+10]
         mov rbx, [rax]
         ; 8:3 print i64
+        mov rcx, rbx
         sub rsp, 8
-          mov rcx, rbx
           call __printUint
           mov rcx, 0x0a
           call __emit
