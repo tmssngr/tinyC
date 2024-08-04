@@ -37,6 +37,18 @@ public record Type(@NotNull String name, @Nullable Type toType, boolean isInt) {
 		throw new IllegalStateException("Unknown type " + type);
 	}
 
+	@Nullable
+	public static Type getDefaultType(@NotNull String type) {
+		return switch (type) {
+			case "void" -> VOID;
+			case "u8" -> U8;
+			case "i16" -> I16;
+			case "i32" -> I32;
+			case "i64" -> I64;
+			default -> null;
+		};
+	}
+
 	@Override
 	public String toString() {
 		return name;

@@ -574,16 +574,17 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private Type getType(@NotNull String type, @NotNull Location location) {
-		if (type.endsWith("*")) {
-			return Type.pointer(getType(type.substring(0, type.length() - 1), location));
+	private Type getType(@NotNull String typeString, @NotNull Location location) {
+		if (typeString.endsWith("*")) {
+			return Type.pointer(getType(typeString.substring(0, typeString.length() - 1), location));
 		}
-		return switch (type) {
-			case "void" -> Type.VOID;
-			case "u8" -> Type.U8;
-			case "i16" -> Type.I16;
-			default -> throw new SyntaxException(Messages.unknownType(type), location);
-		};
+
+		final Type type = Type.getDefaultType(typeString);
+		if (type != null) {
+			return type;
+		}
+
+		throw new SyntaxException(Messages.unknownType(typeString), location);
 	}
 
 	@NotNull
