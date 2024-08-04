@@ -61,59 +61,88 @@ start:
         add rsp, 32
         ret
 
+        ; void printChar
+@printChar:
+        ; reserve space for local variables
+        sub rsp, 16
+        ; 36:21 var chr(%0)
+        lea rax, [rsp+24]
+        ; 36:20 var $.1(%1)
+        lea rbx, [rsp+0]
+        ; 36:20 assign
+        mov [rbx], rax
+        ; 36:26 int lit 1
+        mov rax, 1
+        ; 36:26 var $.2(%2)
+        lea rbx, [rsp+8]
+        ; 36:26 assign
+        mov [rbx], rax
+        ; 36:2 call printStringLength
+        lea rax, [rsp+0]
+        mov rcx, [rax]
+        lea rax, [rsp+8]
+        mov rdx, [rax]
+        sub rsp, 8
+          call __printStringLength
+        add rsp, 8
+@printChar_ret:
+        ; release space for local variables
+        add rsp, 16
+        ret
+
         ; i64 strlen
 @strlen:
         ; reserve space for local variables
         sub rsp, 16
-        ; 36:15 int lit 0
+        ; 40:15 int lit 0
         mov rax, 0
-        ; 36:2 var length(%1)
+        ; 40:2 var length(%1)
         lea rbx, [rsp+0]
-        ; 36:2 assign
+        ; 40:2 assign
         mov [rbx], rax
-        ; 37:2 for *str != 0
+        ; 41:2 for *str != 0
 @for_1:
-        ; 37:10 read var str(%0)
+        ; 41:10 read var str(%0)
         lea rax, [rsp+24]
         mov rbx, [rax]
-        ; 37:9 deref
+        ; 41:9 deref
         mov al, [rbx]
-        ; 37:17 int lit 0
+        ; 41:17 int lit 0
         mov bl, 0
-        ; 37:14 !=
+        ; 41:14 !=
         cmp al, bl
         setne cl
         and cl, 0xFF
         or cl, cl
         jz @for_1_break
         ; for body
-        ; 38:12 read var length(%1)
+        ; 42:12 read var length(%1)
         lea rax, [rsp+0]
         mov rbx, [rax]
-        ; 38:21 int lit 1
+        ; 42:21 int lit 1
         mov rax, 1
-        ; 38:19 add
+        ; 42:19 add
         add rbx, rax
-        ; 38:3 var length(%1)
+        ; 42:3 var length(%1)
         lea rax, [rsp+0]
-        ; 38:10 assign
+        ; 42:10 assign
         mov [rax], rbx
 @for_1_continue:
-        ; 37:26 read var str(%0)
+        ; 41:26 read var str(%0)
         lea rax, [rsp+24]
         mov rbx, [rax]
-        ; 37:32 int lit 1
+        ; 41:32 int lit 1
         mov rax, 1
-        ; 37:30 add
+        ; 41:30 add
         add rbx, rax
-        ; 37:20 var str(%0)
+        ; 41:20 var str(%0)
         lea rax, [rsp+24]
-        ; 37:24 assign
+        ; 41:24 assign
         mov [rax], rbx
         jmp @for_1
 @for_1_break:
-        ; 40:9 return length
-        ; 40:9 read var length(%1)
+        ; 44:9 return length
+        ; 44:9 read var length(%1)
         lea rax, [rsp+0]
         mov rbx, [rax]
         mov rax, rbx

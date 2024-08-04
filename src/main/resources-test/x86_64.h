@@ -32,6 +32,10 @@ void printString(u8* str) {
 	printStringLength(str, length);
 }
 
+void printChar(u8 chr) {
+	printStringLength(&chr, 1);
+}
+
 i64 strlen(u8* str) {
 	i64 length = 0;
 	for (; *str != 0; str = str + 1) {

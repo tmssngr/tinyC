@@ -9,6 +9,15 @@ void printString(u8* str) {
 	printStringLength($.3, length);
 }
 
+void printChar(u8 chr) {
+	u8* $.1;
+	i64 $.2;
+
+	$.1 = &chr;
+	$.2 = 1;
+	printStringLength($.1, $.2);
+}
+
 i64 strlen(u8* str) {
 	i64 length;
 
