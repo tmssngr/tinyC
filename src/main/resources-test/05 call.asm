@@ -88,7 +88,6 @@ start:
         lea rax, [rsp+36]
         mov al, [rax]
         push rax
-        sub rsp, 0
           call @doPrint
         add rsp, 40
 @main_ret:
@@ -231,20 +230,10 @@ __emit:
         push rcx ; = sub rsp, 8
           mov rcx, rsp
           mov rdx, 1
-          call __printString
+          call __printStringLength
         pop rcx
         ret
-__printStringZero:
-        mov rdx, rcx
-__printStringZero_1:
-        mov r9l, [rdx]
-        or  r9l, r9l
-        jz __printStringZero_2
-        add rdx, 1
-        jmp __printStringZero_1
-__printStringZero_2:
-        sub rdx, rcx
-__printString:
+__printStringLength:
         mov     rdi, rsp
         and     spl, 0xf0
 
@@ -309,7 +298,7 @@ __printUint:
         sub    rdx, rax
 
         ;sub    rsp, 8  not necessary because initial push rbp
-          call   __printString
+          call   __printStringLength
         ;add    rsp, 8
         leave ; Set SP to BP, then pop BP
         ret

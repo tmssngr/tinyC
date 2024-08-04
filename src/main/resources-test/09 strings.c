@@ -1,3 +1,5 @@
+#include "x86_64.h"
+
 u8* text = "hello world\n";
 
 void main() {

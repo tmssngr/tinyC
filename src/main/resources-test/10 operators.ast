@@ -1,3 +1,24 @@
+void printString(u8* str) {
+	i64 length;
+	u8* $.2;
+	u8* $.3;
+
+	$.2 = str;
+	length = strlen($.2);
+	$.3 = str;
+	printStringLength($.3, length);
+}
+
+i64 strlen(u8* str) {
+	i64 length;
+
+	length = 0;
+	for (; (*str) != 0; str = (u8*)(((i64)str) + 1)) {
+		length = length + 1;
+	}
+	return length;
+}
+
 void main() {
 	u8* $.0;
 	i64 $.1;

@@ -16,8 +16,7 @@ public final class X86Win64 {
 
 	private static final String INDENTATION = "        ";
 	private static final String EMIT = "__emit";
-	private static final String PRINT_STRING = "__printString";
-	private static final String PRINT_STRING_ZERO = "__printStringZero";
+	private static final String PRINT_STRING_LENGTH = "__printStringLength";
 	private static final String PRINT_UINT = "__printUint";
 
 	private final BufferedWriter writer;
@@ -150,24 +149,12 @@ public final class X86Win64 {
 		writeIndented("push rcx ; = sub rsp, 8");
 		writeIndented("  mov rcx, rsp");
 		writeIndented("  mov rdx, 1");
-		writeIndented("  call " + PRINT_STRING);
+		writeIndented("  call " + PRINT_STRING_LENGTH);
 		writeIndented("pop rcx");
 		writeIndented("ret");
 	}
 
 	private void writeStringPrint() throws IOException {
-		// rcx = pointer to text
-		writeLabel(PRINT_STRING_ZERO);
-		writeIndented("mov rdx, rcx");
-		writeLabel(PRINT_STRING_ZERO + "_1");
-		writeIndented("mov r9l, [rdx]");
-		writeIndented("or  r9l, r9l");
-		writeIndented("jz " + PRINT_STRING_ZERO + "_2");
-		writeIndented("add rdx, 1");
-		writeIndented("jmp " + PRINT_STRING_ZERO + "_1");
-		writeLabel(PRINT_STRING_ZERO + "_2");
-		writeIndented("sub rdx, rcx");
-
 		// rcx = pointer to text
 		// rdx = length
 		// BOOL WriteFile(
@@ -177,7 +164,7 @@ public final class X86Win64 {
 		//  [out, optional]     LPDWORD      lpNumberOfBytesWritten,   r9
 		//  [in, out, optional] LPOVERLAPPED lpOverlapped              stack
 		//);
-		writeLabel(PRINT_STRING);
+		writeLabel(PRINT_STRING_LENGTH);
 		writeIndented("""
 				              mov     rdi, rsp
 				              and     spl, 0xf0
@@ -254,7 +241,7 @@ public final class X86Win64 {
 				              sub    rdx, rax
 
 				              ;sub    rsp, 8  not necessary because initial push rbp""");
-		writeIndented("  call   " + PRINT_STRING);
+		writeIndented("  call   " + PRINT_STRING_LENGTH);
 		writeIndented("""
 				              ;add    rsp, 8
 				              leave ; Set SP to BP, then pop BP
@@ -531,14 +518,20 @@ public final class X86Win64 {
 			writeIndented("  call " + EMIT);
 			writeIndented("add rsp, 8");
 		}
-		else if (label.equals("@printString") && args.size() == 1 && args.getFirst().type().equals(Type.POINTER_U8)) {
-			final IRCall.Arg arg = args.getFirst();
+		else if (label.equals("@printStringLength")) {
+			Utils.assertTrue(args.size() == 2);
+			final IRCall.Arg arg1 = args.getFirst();
+			final IRCall.Arg arg2 = args.get(1);
+			Utils.assertTrue(arg1.type().equals(Type.POINTER_U8));
+			Utils.assertTrue(arg2.type().equals(Type.I64));
 			final char regChr = 'a';
 			final String addrRegName = getXRegName(regChr, 0);
-			writeAddressOfLocalVar(addrRegName, arg.localVarIndex(), 0);
+			writeAddressOfLocalVar(addrRegName, arg1.localVarIndex(), 0);
 			writeIndented("mov rcx, [" + addrRegName + "]");
+			writeAddressOfLocalVar(addrRegName, arg2.localVarIndex(), 0);
+			writeIndented("mov rdx, [" + addrRegName + "]");
 			writeIndented("sub rsp, 8");
-			writeIndented("  call " + PRINT_STRING_ZERO);
+			writeIndented("  call " + PRINT_STRING_LENGTH);
 			writeIndented("add rsp, 8");
 		}
 		else {
@@ -555,7 +548,9 @@ public final class X86Win64 {
 				// we have pushed 8 bytes, so the local variables are accessed with an 8 byte larger offset
 				localVarOffset += 8;
 			}
-			writeIndented("sub rsp, " + offset);
+			if (offset != 0) {
+				writeIndented("sub rsp, " + offset);
+			}
 			writeIndented("  call " + label);
 			writeIndented("add rsp, " + (offset + argsSize));
 		}

@@ -1,3 +1,89 @@
+@printString:
+ Local variables
+   arg 0: str
+   var 1: length
+   var 2: $.2
+   var 3: $.3
+        ; 31:22 read var str(%0)
+        addrOf r0, [0@argument]
+        load r1, [r0] (8)
+        ; 31:22 var $.2(%2)
+        addrOf r0, [2@function]
+        ; 31:22 assign
+        store [r0], r1 (8)
+        ; 31:15 call strlen
+        call r0, @strlen (2)
+        ; 31:2 var length(%1)
+        addrOf r1, [1@function]
+        ; 31:2 assign
+        store [r1], r0 (8)
+        ; 32:20 read var str(%0)
+        addrOf r0, [0@argument]
+        load r1, [r0] (8)
+        ; 32:20 var $.3(%3)
+        addrOf r0, [3@function]
+        ; 32:20 assign
+        store [r0], r1 (8)
+        ; 32:2 call printStringLength
+        call @printStringLength (3, 1)
+@printString_ret:
+
+@strlen:
+ Local variables
+   arg 0: str
+   var 1: length
+        ; 36:15 int lit 0
+        ld r0, 0 (8)
+        ; 36:2 var length(%1)
+        addrOf r1, [1@function]
+        ; 36:2 assign
+        store [r1], r0 (8)
+        ; 37:2 for *str != 0
+@for_1:
+        ; 37:10 read var str(%0)
+        addrOf r0, [0@argument]
+        load r1, [r0] (8)
+        ; 37:9 deref
+        load r0, [r1] (1)
+        ; 37:17 int lit 0
+        ld r1, 0 (1)
+        ; 37:14 !=
+        cmp r2, (r0 != r1) (u8)
+        branch-false r2, @for_1_break
+        ; for body
+        ; 38:12 read var length(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (8)
+        ; 38:21 int lit 1
+        ld r0, 1 (8)
+        ; 38:19 add
+        add r1, r0 (8)
+        ; 38:3 var length(%1)
+        addrOf r0, [1@function]
+        ; 38:10 assign
+        store [r0], r1 (8)
+@for_1_continue:
+        ; 37:26 read var str(%0)
+        addrOf r0, [0@argument]
+        load r1, [r0] (8)
+        ; 37:32 int lit 1
+        ld r0, 1 (8)
+        ; 37:30 add
+        add r1, r0 (8)
+        ; 37:20 var str(%0)
+        addrOf r0, [0@argument]
+        ; 37:24 assign
+        store [r0], r1 (8)
+        jmp @for_1
+@for_1_break:
+        ; 40:9 return length
+        ; 40:9 read var length(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (8)
+        return r1 (8)
+        jmp @strlen_ret
+@strlen_ret:
+
 @main:
  Local variables
    var 0: $.0
@@ -5,55 +91,55 @@
    var 2: chr
    var 3: $.3
         ; begin initialize global variables
-        ; 1:12 string literal string_0
+        ; 3:12 string literal string_0
         load r0, stringlit-0
-        ; 1:1 var text($0)
+        ; 3:1 var text($0)
         addrOf r1, [0@global]
-        ; 1:1 assign
+        ; 3:1 assign
         store [r1], r0 (8)
         ; end initialize global variables
-        ; 4:14 read var text($0)
+        ; 6:14 read var text($0)
         addrOf r0, [0@global]
         load r1, [r0] (8)
-        ; 4:14 var $.0(%0)
+        ; 6:14 var $.0(%0)
         addrOf r0, [0@function]
-        ; 4:14 assign
+        ; 6:14 assign
         store [r0], r1 (8)
-        ; 4:2 call printString
+        ; 6:2 call printString
         call @printString (0)
-        ; 5:2 call printLength
+        ; 7:2 call printLength
         call @printLength ()
-        ; 6:21 array text($0)
-        ; 6:21 int lit 1
+        ; 8:21 array text($0)
+        ; 8:21 int lit 1
         ld r0, 1 (8)
         mul r0, 1
         addrOf r2, [0@global]
         load r1, [r2] (0)
         add r1, r0 (0)
-        ; 6:2 var second(%1)
+        ; 8:2 var second(%1)
         addrOf r0, [1@function]
-        ; 6:2 assign
+        ; 8:2 assign
         store [r0], r1 (8)
-        ; 7:2 call printString
+        ; 9:2 call printString
         call @printString (1)
-        ; 8:12 read var text($0)
+        ; 10:12 read var text($0)
         addrOf r0, [0@global]
         load r1, [r0] (8)
-        ; 8:11 deref
+        ; 10:11 deref
         load r0, [r1] (1)
-        ; 8:2 var chr(%2)
+        ; 10:2 var chr(%2)
         addrOf r1, [2@function]
-        ; 8:2 assign
+        ; 10:2 assign
         store [r1], r0 (1)
-        ; 9:8 read var chr(%2)
+        ; 11:8 read var chr(%2)
         addrOf r0, [2@function]
         load r1, [r0] (1)
         cast r0 (i64), r1 (u8)
-        ; 9:8 var $.3(%3)
+        ; 11:8 var $.3(%3)
         addrOf r1, [3@function]
-        ; 9:8 assign
+        ; 11:8 assign
         store [r1], r0 (8)
-        ; 9:2 call print
+        ; 11:2 call print
         call @print (3)
 @main_ret:
 
@@ -62,66 +148,66 @@
    var 0: length
    var 1: ptr
    var 2: $.2
-        ; 13:15 int lit 0
+        ; 15:15 int lit 0
         ld r0, 0 (2)
-        ; 13:2 var length(%0)
+        ; 15:2 var length(%0)
         addrOf r1, [0@function]
-        ; 13:2 assign
+        ; 15:2 assign
         store [r1], r0 (2)
-        ; 14:17 read var text($0)
+        ; 16:17 read var text($0)
         addrOf r0, [0@global]
         load r1, [r0] (8)
-        ; 14:7 var ptr(%1)
+        ; 16:7 var ptr(%1)
         addrOf r0, [1@function]
-        ; 14:7 assign
+        ; 16:7 assign
         store [r0], r1 (8)
-        ; 14:2 for *ptr != 0
-@for_1:
-        ; 14:24 read var ptr(%1)
+        ; 16:2 for *ptr != 0
+@for_2:
+        ; 16:24 read var ptr(%1)
         addrOf r0, [1@function]
         load r1, [r0] (8)
-        ; 14:23 deref
+        ; 16:23 deref
         load r0, [r1] (1)
-        ; 14:31 int lit 0
+        ; 16:31 int lit 0
         ld r1, 0 (1)
-        ; 14:28 !=
+        ; 16:28 !=
         cmp r2, (r0 != r1) (u8)
-        branch-false r2, @for_1_break
+        branch-false r2, @for_2_break
         ; for body
-        ; 15:12 read var length(%0)
+        ; 17:12 read var length(%0)
         addrOf r0, [0@function]
         load r1, [r0] (2)
-        ; 15:21 int lit 1
+        ; 17:21 int lit 1
         ld r0, 1 (2)
-        ; 15:19 add
+        ; 17:19 add
         add r1, r0 (2)
-        ; 15:3 var length(%0)
+        ; 17:3 var length(%0)
         addrOf r0, [0@function]
-        ; 15:10 assign
+        ; 17:10 assign
         store [r0], r1 (2)
-@for_1_continue:
-        ; 14:40 read var ptr(%1)
+@for_2_continue:
+        ; 16:40 read var ptr(%1)
         addrOf r0, [1@function]
         load r1, [r0] (8)
-        ; 14:46 int lit 1
+        ; 16:46 int lit 1
         ld r0, 1 (8)
-        ; 14:44 add
+        ; 16:44 add
         add r1, r0 (8)
-        ; 14:34 var ptr(%1)
+        ; 16:34 var ptr(%1)
         addrOf r0, [1@function]
-        ; 14:38 assign
+        ; 16:38 assign
         store [r0], r1 (8)
-        jmp @for_1
-@for_1_break:
-        ; 17:8 read var length(%0)
+        jmp @for_2
+@for_2_break:
+        ; 19:8 read var length(%0)
         addrOf r0, [0@function]
         load r1, [r0] (2)
         cast r0 (i64), r1 (i16)
-        ; 17:8 var $.2(%2)
+        ; 19:8 var $.2(%2)
         addrOf r1, [2@function]
-        ; 17:8 assign
+        ; 19:8 assign
         store [r1], r0 (8)
-        ; 17:2 call print
+        ; 19:2 call print
         call @print (2)
 @printLength_ret:
 

@@ -1,3 +1,5 @@
+#include "x86_64.h"
+
 void main() {
 	printString("Bit-&:\n");
 	print(0 & 0);

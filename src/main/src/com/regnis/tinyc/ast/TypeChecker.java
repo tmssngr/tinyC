@@ -25,7 +25,7 @@ public final class TypeChecker {
 	public TypeChecker(@NotNull Type pointerIntType) {
 		Utils.assertTrue(pointerIntType.isInt());
 		this.pointerIntType = pointerIntType;
-		globalSymbols.put("printString", new Symbol.Func(Type.VOID, List.of(Type.pointer(Type.U8)), new Location(-1, -1)));
+		globalSymbols.put("printStringLength", new Symbol.Func(Type.VOID, List.of(Type.pointer(Type.U8), Type.I64), new Location(-1, -1)));
 		globalSymbols.put("print", new Symbol.Func(Type.VOID, List.of(Type.I64), new Location(-1, -1)));
 	}
 

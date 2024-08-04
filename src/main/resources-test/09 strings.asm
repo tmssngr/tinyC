@@ -20,70 +20,173 @@ start:
         sub rsp, 0x20
           call [ExitProcess]
 
+        ; void printString
+@printString:
+        ; reserve space for local variables
+        sub rsp, 32
+        ; 31:22 read var str(%0)
+        lea rax, [rsp+40]
+        mov rbx, [rax]
+        ; 31:22 var $.2(%2)
+        lea rax, [rsp+8]
+        ; 31:22 assign
+        mov [rax], rbx
+        ; 31:15 call strlen
+        lea rax, [rsp+8]
+        mov rax, [rax]
+        push rax
+          call @strlen
+        add rsp, 8
+        ; 31:2 var length(%1)
+        lea rbx, [rsp+0]
+        ; 31:2 assign
+        mov [rbx], rax
+        ; 32:20 read var str(%0)
+        lea rax, [rsp+40]
+        mov rbx, [rax]
+        ; 32:20 var $.3(%3)
+        lea rax, [rsp+16]
+        ; 32:20 assign
+        mov [rax], rbx
+        ; 32:2 call printStringLength
+        lea rax, [rsp+16]
+        mov rcx, [rax]
+        lea rax, [rsp+0]
+        mov rdx, [rax]
+        sub rsp, 8
+          call __printStringLength
+        add rsp, 8
+@printString_ret:
+        ; release space for local variables
+        add rsp, 32
+        ret
+
+        ; i64 strlen
+@strlen:
+        ; reserve space for local variables
+        sub rsp, 16
+        ; 36:15 int lit 0
+        mov rax, 0
+        ; 36:2 var length(%1)
+        lea rbx, [rsp+0]
+        ; 36:2 assign
+        mov [rbx], rax
+        ; 37:2 for *str != 0
+@for_1:
+        ; 37:10 read var str(%0)
+        lea rax, [rsp+24]
+        mov rbx, [rax]
+        ; 37:9 deref
+        mov al, [rbx]
+        ; 37:17 int lit 0
+        mov bl, 0
+        ; 37:14 !=
+        cmp al, bl
+        setne cl
+        and cl, 0xFF
+        or cl, cl
+        jz @for_1_break
+        ; for body
+        ; 38:12 read var length(%1)
+        lea rax, [rsp+0]
+        mov rbx, [rax]
+        ; 38:21 int lit 1
+        mov rax, 1
+        ; 38:19 add
+        add rbx, rax
+        ; 38:3 var length(%1)
+        lea rax, [rsp+0]
+        ; 38:10 assign
+        mov [rax], rbx
+@for_1_continue:
+        ; 37:26 read var str(%0)
+        lea rax, [rsp+24]
+        mov rbx, [rax]
+        ; 37:32 int lit 1
+        mov rax, 1
+        ; 37:30 add
+        add rbx, rax
+        ; 37:20 var str(%0)
+        lea rax, [rsp+24]
+        ; 37:24 assign
+        mov [rax], rbx
+        jmp @for_1
+@for_1_break:
+        ; 40:9 return length
+        ; 40:9 read var length(%1)
+        lea rax, [rsp+0]
+        mov rbx, [rax]
+        mov rax, rbx
+        jmp @strlen_ret
+@strlen_ret:
+        ; release space for local variables
+        add rsp, 16
+        ret
+
         ; void main
 @main:
         ; reserve space for local variables
         sub rsp, 32
         ; begin initialize global variables
-        ; 1:12 string literal string_0
+        ; 3:12 string literal string_0
         lea rax, [string_0]
-        ; 1:1 var text($0)
+        ; 3:1 var text($0)
         lea rbx, [var0]
-        ; 1:1 assign
+        ; 3:1 assign
         mov [rbx], rax
         ; end initialize global variables
-        ; 4:14 read var text($0)
+        ; 6:14 read var text($0)
         lea rax, [var0]
         mov rbx, [rax]
-        ; 4:14 var $.0(%0)
+        ; 6:14 var $.0(%0)
         lea rax, [rsp+0]
-        ; 4:14 assign
+        ; 6:14 assign
         mov [rax], rbx
-        ; 4:2 call printString
+        ; 6:2 call printString
         lea rax, [rsp+0]
-        mov rcx, [rax]
-        sub rsp, 8
-          call __printStringZero
+        mov rax, [rax]
+        push rax
+          call @printString
         add rsp, 8
-        ; 5:2 call printLength
+        ; 7:2 call printLength
         sub rsp, 8
           call @printLength
         add rsp, 8
-        ; 6:21 array text($0)
-        ; 6:21 int lit 1
+        ; 8:21 array text($0)
+        ; 8:21 int lit 1
         mov rax, 1
         imul rax, 1
         lea rcx, [var0]
         mov rbx, [rcx]
         add rbx, rax
-        ; 6:2 var second(%1)
+        ; 8:2 var second(%1)
         lea rax, [rsp+8]
-        ; 6:2 assign
+        ; 8:2 assign
         mov [rax], rbx
-        ; 7:2 call printString
+        ; 9:2 call printString
         lea rax, [rsp+8]
-        mov rcx, [rax]
-        sub rsp, 8
-          call __printStringZero
+        mov rax, [rax]
+        push rax
+          call @printString
         add rsp, 8
-        ; 8:12 read var text($0)
+        ; 10:12 read var text($0)
         lea rax, [var0]
         mov rbx, [rax]
-        ; 8:11 deref
+        ; 10:11 deref
         mov al, [rbx]
-        ; 8:2 var chr(%2)
+        ; 10:2 var chr(%2)
         lea rbx, [rsp+16]
-        ; 8:2 assign
+        ; 10:2 assign
         mov [rbx], al
-        ; 9:8 read var chr(%2)
+        ; 11:8 read var chr(%2)
         lea rax, [rsp+16]
         mov bl, [rax]
         movzx rax, bl
-        ; 9:8 var $.3(%3)
+        ; 11:8 var $.3(%3)
         lea rbx, [rsp+17]
-        ; 9:8 assign
+        ; 11:8 assign
         mov [rbx], rax
-        ; 9:2 call print
+        ; 11:2 call print
         lea rax, [rsp+17]
         mov rcx, [rax]
         sub rsp, 8
@@ -100,69 +203,69 @@ start:
 @printLength:
         ; reserve space for local variables
         sub rsp, 32
-        ; 13:15 int lit 0
+        ; 15:15 int lit 0
         mov ax, 0
-        ; 13:2 var length(%0)
+        ; 15:2 var length(%0)
         lea rbx, [rsp+0]
-        ; 13:2 assign
+        ; 15:2 assign
         mov [rbx], ax
-        ; 14:17 read var text($0)
+        ; 16:17 read var text($0)
         lea rax, [var0]
         mov rbx, [rax]
-        ; 14:7 var ptr(%1)
+        ; 16:7 var ptr(%1)
         lea rax, [rsp+2]
-        ; 14:7 assign
+        ; 16:7 assign
         mov [rax], rbx
-        ; 14:2 for *ptr != 0
-@for_1:
-        ; 14:24 read var ptr(%1)
+        ; 16:2 for *ptr != 0
+@for_2:
+        ; 16:24 read var ptr(%1)
         lea rax, [rsp+2]
         mov rbx, [rax]
-        ; 14:23 deref
+        ; 16:23 deref
         mov al, [rbx]
-        ; 14:31 int lit 0
+        ; 16:31 int lit 0
         mov bl, 0
-        ; 14:28 !=
+        ; 16:28 !=
         cmp al, bl
         setne cl
         and cl, 0xFF
         or cl, cl
-        jz @for_1_break
+        jz @for_2_break
         ; for body
-        ; 15:12 read var length(%0)
+        ; 17:12 read var length(%0)
         lea rax, [rsp+0]
         mov bx, [rax]
-        ; 15:21 int lit 1
+        ; 17:21 int lit 1
         mov ax, 1
-        ; 15:19 add
+        ; 17:19 add
         add bx, ax
-        ; 15:3 var length(%0)
+        ; 17:3 var length(%0)
         lea rax, [rsp+0]
-        ; 15:10 assign
+        ; 17:10 assign
         mov [rax], bx
-@for_1_continue:
-        ; 14:40 read var ptr(%1)
+@for_2_continue:
+        ; 16:40 read var ptr(%1)
         lea rax, [rsp+2]
         mov rbx, [rax]
-        ; 14:46 int lit 1
+        ; 16:46 int lit 1
         mov rax, 1
-        ; 14:44 add
+        ; 16:44 add
         add rbx, rax
-        ; 14:34 var ptr(%1)
+        ; 16:34 var ptr(%1)
         lea rax, [rsp+2]
-        ; 14:38 assign
+        ; 16:38 assign
         mov [rax], rbx
-        jmp @for_1
-@for_1_break:
-        ; 17:8 read var length(%0)
+        jmp @for_2
+@for_2_break:
+        ; 19:8 read var length(%0)
         lea rax, [rsp+0]
         mov bx, [rax]
         movzx rax, bx
-        ; 17:8 var $.2(%2)
+        ; 19:8 var $.2(%2)
         lea rbx, [rsp+10]
-        ; 17:8 assign
+        ; 19:8 assign
         mov [rbx], rax
-        ; 17:2 call print
+        ; 19:2 call print
         lea rax, [rsp+10]
         mov rcx, [rax]
         sub rsp, 8
@@ -199,20 +302,10 @@ __emit:
         push rcx ; = sub rsp, 8
           mov rcx, rsp
           mov rdx, 1
-          call __printString
+          call __printStringLength
         pop rcx
         ret
-__printStringZero:
-        mov rdx, rcx
-__printStringZero_1:
-        mov r9l, [rdx]
-        or  r9l, r9l
-        jz __printStringZero_2
-        add rdx, 1
-        jmp __printStringZero_1
-__printStringZero_2:
-        sub rdx, rcx
-__printString:
+__printStringLength:
         mov     rdi, rsp
         and     spl, 0xf0
 
@@ -277,7 +370,7 @@ __printUint:
         sub    rdx, rax
 
         ;sub    rsp, 8  not necessary because initial push rbp
-          call   __printString
+          call   __printStringLength
         ;add    rsp, 8
         leave ; Set SP to BP, then pop BP
         ret
