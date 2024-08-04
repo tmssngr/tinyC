@@ -23,7 +23,7 @@ start:
         ; void main
 @main:
         ; reserve space for local variables
-        sub rsp, 32
+        sub rsp, 48
         ; 2:15 int lit 4
         mov al, 4
         ; 2:19 int lit 3
@@ -141,9 +141,31 @@ start:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
+        ; 11:11 int lit 1000
+        mov ax, 1000
+        ; 11:16 int lit 10
+        mov bx, 10
+        ; 11:15 divide
+        movsx rax, ax
+        movsx rbx, bx
+        cqo
+        idiv rbx
+        movzx rbx, ax
+        ; 11:15 var $.6(%6)
+        lea rax, [rsp+30]
+        ; 11:15 assign
+        mov [rax], rbx
+        ; 11:5 call print
+        lea rax, [rsp+30]
+        mov rcx, [rax]
+        sub rsp, 8
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
 @main_ret:
         ; release space for local variables
-        add rsp, 32
+        add rsp, 48
         ret
 init:
         sub rsp, 20h

@@ -432,6 +432,18 @@ public final class X86Win64 {
 			}
 			writeIndented("imul " + getRegName(targetReg) + ", " + getRegName(sourceReg));
 		}
+		case Div -> {
+			// https://www.felixcloutier.com/x86/idiv
+			// (edx eax) / %reg -> eax
+			Utils.assertTrue(getRegName(targetReg).equals("rax"));
+			Utils.assertTrue(getRegName(sourceReg).equals("rbx"));
+			if (size != 8) { // TODO use movzx for unsigned types
+				writeIndented("movsx rax, " + targetRegName);
+				writeIndented("movsx rbx, " + sourceRegName);
+			}
+			writeIndented("cqo"); // rdx := signbit(rax)
+			writeIndented("idiv rbx"); // div-result in rax, remainder in rdx
+		}
 		default -> throw new UnsupportedOperationException("binary " + binary.op());
 		}
 	}

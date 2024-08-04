@@ -6,6 +6,7 @@
    var 3: $.3
    var 4: bazz
    var 5: $.5
+   var 6: $.6
         ; 2:15 int lit 4
         ld r0, 4 (1)
         ; 2:19 int lit 3
@@ -97,5 +98,18 @@
         store [r1], r0 (8)
         ; 9:5 call print
         call @print (5)
+        ; 11:11 int lit 1000
+        ld r0, 1000 (2)
+        ; 11:16 int lit 10
+        ld r1, 10 (2)
+        ; 11:15 divide
+        div r0, r1 (2)
+        cast r1 (i64), r0 (i16)
+        ; 11:15 var $.6(%6)
+        addrOf r0, [6@function]
+        ; 11:15 assign
+        store [r0], r1 (8)
+        ; 11:5 call print
+        call @print (6)
 @main_ret:
 

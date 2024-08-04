@@ -7,4 +7,6 @@ void main() {
     print(foo);
     i16 bazz;
     print(bazz);
+
+    print(1000/10);
 }

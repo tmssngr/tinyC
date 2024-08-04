@@ -5,6 +5,7 @@ void main() {
 	i64 $.3;
 	i16 bazz;
 	i64 $.5;
+	i64 $.6;
 
 	foo = (i16)((4 * 3) + (2 * 5));
 	bar = foo * foo;
@@ -16,4 +17,6 @@ void main() {
 	print($.3);
 	$.5 = (i64)bazz;
 	print($.5);
+	$.6 = (i64)(1000 / 10);
+	print($.6);
 }
