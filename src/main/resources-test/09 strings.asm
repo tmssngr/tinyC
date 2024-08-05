@@ -90,59 +90,272 @@ start:
         add rsp, 16
         ret
 
+        ; void printUint
+@printUint:
+        ; reserve space for local variables
+        sub rsp, 48
+        ; 41:11 int lit 20
+        mov al, 20
+        ; 41:2 var pos(%2)
+        lea rbx, [rsp+20]
+        ; 41:2 assign
+        mov [rbx], al
+        ; 42:2 while true
+@while_1:
+        ; 42:9 bool lit true
+        mov al, 1
+        or al, al
+        jz @while_1_break
+        ; while body
+        ; 43:9 read var pos(%2)
+        lea rax, [rsp+20]
+        mov bl, [rax]
+        ; 43:15 int lit 1
+        mov al, 1
+        ; 43:13 sub
+        sub bl, al
+        ; 43:3 var pos(%2)
+        lea rax, [rsp+20]
+        ; 43:7 assign
+        mov [rax], bl
+        ; 44:19 read var number(%0)
+        lea rax, [rsp+56]
+        mov rbx, [rax]
+        ; 44:28 int lit 10
+        mov rax, 10
+        ; 44:26 mod
+        mov rdx, rax
+        mov rax, rbx
+        mov rbx, rdx
+        cqo
+        idiv rbx
+        mov rbx, rdx
+        ; 44:3 var remainder(%3)
+        lea rax, [rsp+21]
+        ; 44:3 assign
+        mov [rax], rbx
+        ; 45:12 read var number(%0)
+        lea rax, [rsp+56]
+        mov rbx, [rax]
+        ; 45:21 int lit 10
+        mov rax, 10
+        ; 45:19 divide
+        mov rdx, rax
+        mov rax, rbx
+        mov rbx, rdx
+        cqo
+        idiv rbx
+        mov rbx, rax
+        ; 45:3 var number(%0)
+        lea rax, [rsp+56]
+        ; 45:10 assign
+        mov [rax], rbx
+        ; 46:18 read var remainder(%3)
+        lea rax, [rsp+21]
+        mov rbx, [rax]
+        ; 46:30 int lit 48
+        mov al, 48
+        ; 46:28 add
+        add bl, al
+        ; 46:3 var digit(%4)
+        lea rax, [rsp+29]
+        ; 46:3 assign
+        mov [rax], bl
+        ; 47:17 read var digit(%4)
+        lea rax, [rsp+29]
+        mov bl, [rax]
+        ; 47:10 array buffer(%1)
+        ; 47:10 read var pos(%2)
+        lea rax, [rsp+20]
+        mov cl, [rax]
+        movzx rax, cl
+        imul rax, 1
+        lea rcx, [rsp+0]
+        add rcx, rax
+        ; 47:15 assign
+        mov [rcx], bl
+        ; 48:3 if number == 0
+        ; 48:7 read var number(%0)
+        lea rax, [rsp+56]
+        mov rbx, [rax]
+        ; 48:17 int lit 0
+        mov rax, 0
+        ; 48:14 ==
+        cmp rbx, rax
+        sete cl
+        and cl, 0xFF
+        or cl, cl
+        jz @else_2
+        ; then
+        jmp @while_1_break
+        jmp @endif_2
+        ; else
+@else_2:
+@endif_2:
+        jmp @while_1
+@while_1_break:
+        ; 52:28 array buffer(%1)
+        ; 52:28 read var pos(%2)
+        lea rax, [rsp+20]
+        mov bl, [rax]
+        movzx rax, bl
+        imul rax, 1
+        lea rbx, [rsp+0]
+        add rbx, rax
+        ; 52:20 var $.5(%5)
+        lea rax, [rsp+30]
+        ; 52:20 assign
+        mov [rax], rbx
+        ; 52:34 int lit 20
+        mov al, 20
+        ; 52:39 read var pos(%2)
+        lea rbx, [rsp+20]
+        mov cl, [rbx]
+        ; 52:37 sub
+        sub al, cl
+        movzx rbx, al
+        ; 52:37 var $.6(%6)
+        lea rax, [rsp+38]
+        ; 52:37 assign
+        mov [rax], rbx
+        ; 52:2 call printStringLength
+        lea rax, [rsp+30]
+        mov rcx, [rax]
+        lea rax, [rsp+38]
+        mov rdx, [rax]
+        sub rsp, 8
+          call __printStringLength
+        add rsp, 8
+@printUint_ret:
+        ; release space for local variables
+        add rsp, 48
+        ret
+
+        ; void printIntLf
+@printIntLf:
+        ; reserve space for local variables
+        sub rsp, 16
+        ; 56:2 if number < 0
+        ; 56:6 read var number(%0)
+        lea rax, [rsp+24]
+        mov rbx, [rax]
+        ; 56:15 int lit 0
+        mov rax, 0
+        ; 56:13 <
+        cmp rbx, rax
+        setl cl
+        and cl, 0xFF
+        or cl, cl
+        jz @else_3
+        ; then
+        ; 57:13 int lit 45
+        mov al, 45
+        ; 57:13 var $.1(%1)
+        lea rbx, [rsp+0]
+        ; 57:13 assign
+        mov [rbx], al
+        ; 57:3 call printChar
+        lea rax, [rsp+0]
+        mov al, [rax]
+        push rax
+          call @printChar
+        add rsp, 8
+        ; 58:13 read var number(%0)
+        lea rax, [rsp+24]
+        mov rbx, [rax]
+        ; 58:12 neg
+        neg rbx
+        ; 58:3 var number(%0)
+        lea rax, [rsp+24]
+        ; 58:10 assign
+        mov [rax], rbx
+        jmp @endif_3
+        ; else
+@else_3:
+@endif_3:
+        ; 60:12 read var number(%0)
+        lea rax, [rsp+24]
+        mov rbx, [rax]
+        ; 60:12 var $.2(%2)
+        lea rax, [rsp+1]
+        ; 60:12 assign
+        mov [rax], rbx
+        ; 60:2 call printUint
+        lea rax, [rsp+1]
+        mov rax, [rax]
+        push rax
+          call @printUint
+        add rsp, 8
+        ; 61:12 int lit 10
+        mov al, 10
+        ; 61:12 var $.3(%3)
+        lea rbx, [rsp+9]
+        ; 61:12 assign
+        mov [rbx], al
+        ; 61:2 call printChar
+        lea rax, [rsp+9]
+        mov al, [rax]
+        push rax
+          call @printChar
+        add rsp, 8
+@printIntLf_ret:
+        ; release space for local variables
+        add rsp, 16
+        ret
+
         ; i64 strlen
 @strlen:
         ; reserve space for local variables
         sub rsp, 16
-        ; 40:15 int lit 0
+        ; 65:15 int lit 0
         mov rax, 0
-        ; 40:2 var length(%1)
+        ; 65:2 var length(%1)
         lea rbx, [rsp+0]
-        ; 40:2 assign
+        ; 65:2 assign
         mov [rbx], rax
-        ; 41:2 for *str != 0
-@for_1:
-        ; 41:10 read var str(%0)
+        ; 66:2 for *str != 0
+@for_4:
+        ; 66:10 read var str(%0)
         lea rax, [rsp+24]
         mov rbx, [rax]
-        ; 41:9 deref
+        ; 66:9 deref
         mov al, [rbx]
-        ; 41:17 int lit 0
+        ; 66:17 int lit 0
         mov bl, 0
-        ; 41:14 !=
+        ; 66:14 !=
         cmp al, bl
         setne cl
         and cl, 0xFF
         or cl, cl
-        jz @for_1_break
+        jz @for_4_break
         ; for body
-        ; 42:12 read var length(%1)
+        ; 67:12 read var length(%1)
         lea rax, [rsp+0]
         mov rbx, [rax]
-        ; 42:21 int lit 1
+        ; 67:21 int lit 1
         mov rax, 1
-        ; 42:19 add
+        ; 67:19 add
         add rbx, rax
-        ; 42:3 var length(%1)
+        ; 67:3 var length(%1)
         lea rax, [rsp+0]
-        ; 42:10 assign
+        ; 67:10 assign
         mov [rax], rbx
-@for_1_continue:
-        ; 41:26 read var str(%0)
+@for_4_continue:
+        ; 66:26 read var str(%0)
         lea rax, [rsp+24]
         mov rbx, [rax]
-        ; 41:32 int lit 1
+        ; 66:32 int lit 1
         mov rax, 1
-        ; 41:30 add
+        ; 66:30 add
         add rbx, rax
-        ; 41:20 var str(%0)
+        ; 66:20 var str(%0)
         lea rax, [rsp+24]
-        ; 41:24 assign
+        ; 66:24 assign
         mov [rax], rbx
-        jmp @for_1
-@for_1_break:
-        ; 44:9 return length
-        ; 44:9 read var length(%1)
+        jmp @for_4
+@for_4_break:
+        ; 69:9 return length
+        ; 69:9 read var length(%1)
         lea rax, [rsp+0]
         mov rbx, [rax]
         mov rax, rbx
@@ -207,21 +420,19 @@ start:
         lea rbx, [rsp+16]
         ; 10:2 assign
         mov [rbx], al
-        ; 11:8 read var chr(%2)
+        ; 11:13 read var chr(%2)
         lea rax, [rsp+16]
         mov bl, [rax]
         movzx rax, bl
-        ; 11:8 var $.3(%3)
+        ; 11:13 var $.3(%3)
         lea rbx, [rsp+17]
-        ; 11:8 assign
+        ; 11:13 assign
         mov [rbx], rax
-        ; 11:2 call print
+        ; 11:2 call printIntLf
         lea rax, [rsp+17]
-        mov rcx, [rax]
-        sub rsp, 8
-          call __printUint
-          mov rcx, 0x0a
-          call __emit
+        mov rax, [rax]
+        push rax
+          call @printIntLf
         add rsp, 8
 @main_ret:
         ; release space for local variables
@@ -246,7 +457,7 @@ start:
         ; 16:7 assign
         mov [rax], rbx
         ; 16:2 for *ptr != 0
-@for_2:
+@for_5:
         ; 16:24 read var ptr(%1)
         lea rax, [rsp+2]
         mov rbx, [rax]
@@ -259,7 +470,7 @@ start:
         setne cl
         and cl, 0xFF
         or cl, cl
-        jz @for_2_break
+        jz @for_5_break
         ; for body
         ; 17:12 read var length(%0)
         lea rax, [rsp+0]
@@ -272,7 +483,7 @@ start:
         lea rax, [rsp+0]
         ; 17:10 assign
         mov [rax], bx
-@for_2_continue:
+@for_5_continue:
         ; 16:40 read var ptr(%1)
         lea rax, [rsp+2]
         mov rbx, [rax]
@@ -284,23 +495,21 @@ start:
         lea rax, [rsp+2]
         ; 16:38 assign
         mov [rax], rbx
-        jmp @for_2
-@for_2_break:
-        ; 19:8 read var length(%0)
+        jmp @for_5
+@for_5_break:
+        ; 19:13 read var length(%0)
         lea rax, [rsp+0]
         mov bx, [rax]
         movzx rax, bx
-        ; 19:8 var $.2(%2)
+        ; 19:13 var $.2(%2)
         lea rbx, [rsp+10]
-        ; 19:8 assign
+        ; 19:13 assign
         mov [rbx], rax
-        ; 19:2 call print
+        ; 19:2 call printIntLf
         lea rax, [rsp+10]
-        mov rcx, [rax]
-        sub rsp, 8
-          call __printUint
-          mov rcx, 0x0a
-          call __emit
+        mov rax, [rax]
+        push rax
+          call @printIntLf
         add rsp, 8
 @printLength_ret:
         ; release space for local variables

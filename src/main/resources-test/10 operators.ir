@@ -49,56 +49,235 @@
         call @printStringLength (1, 2)
 @printChar_ret:
 
+@printUint:
+ Local variables
+   arg 0: number
+   var 1: buffer
+   var 2: pos
+   var 3: remainder
+   var 4: digit
+   var 5: $.5
+   var 6: $.6
+        ; 41:11 int lit 20
+        ld r0, 20 (1)
+        ; 41:2 var pos(%2)
+        addrOf r1, [2@function]
+        ; 41:2 assign
+        store [r1], r0 (1)
+        ; 42:2 while true
+@while_1:
+        ; 42:9 bool lit true
+        ld r0, 1 (1)
+        branch-false r0, @while_1_break
+        ; while body
+        ; 43:9 read var pos(%2)
+        addrOf r0, [2@function]
+        load r1, [r0] (1)
+        ; 43:15 int lit 1
+        ld r0, 1 (1)
+        ; 43:13 sub
+        sub r1, r0 (1)
+        ; 43:3 var pos(%2)
+        addrOf r0, [2@function]
+        ; 43:7 assign
+        store [r0], r1 (1)
+        ; 44:19 read var number(%0)
+        addrOf r0, [0@argument]
+        load r1, [r0] (8)
+        ; 44:28 int lit 10
+        ld r0, 10 (8)
+        ; 44:26 mod
+        mod r1, r0 (8)
+        ; 44:3 var remainder(%3)
+        addrOf r0, [3@function]
+        ; 44:3 assign
+        store [r0], r1 (8)
+        ; 45:12 read var number(%0)
+        addrOf r0, [0@argument]
+        load r1, [r0] (8)
+        ; 45:21 int lit 10
+        ld r0, 10 (8)
+        ; 45:19 divide
+        div r1, r0 (8)
+        ; 45:3 var number(%0)
+        addrOf r0, [0@argument]
+        ; 45:10 assign
+        store [r0], r1 (8)
+        ; 46:18 read var remainder(%3)
+        addrOf r0, [3@function]
+        load r1, [r0] (8)
+        ; 46:30 int lit 48
+        ld r0, 48 (1)
+        ; 46:28 add
+        add r1, r0 (1)
+        ; 46:3 var digit(%4)
+        addrOf r0, [4@function]
+        ; 46:3 assign
+        store [r0], r1 (1)
+        ; 47:17 read var digit(%4)
+        addrOf r0, [4@function]
+        load r1, [r0] (1)
+        ; 47:10 array buffer(%1)
+        ; 47:10 read var pos(%2)
+        addrOf r0, [2@function]
+        load r2, [r0] (1)
+        cast r0 (i64), r2 (u8)
+        mul r0, 1
+        addrOf r2, [1@function]
+        add r2, r0 (0)
+        ; 47:15 assign
+        store [r2], r1 (1)
+        ; 48:3 if number == 0
+        ; 48:7 read var number(%0)
+        addrOf r0, [0@argument]
+        load r1, [r0] (8)
+        ; 48:17 int lit 0
+        ld r0, 0 (8)
+        ; 48:14 ==
+        cmp r2, (r1 == r0) (i64)
+        branch-false r2, @else_2
+        ; then
+        jmp @while_1_break
+        jmp @endif_2
+        ; else
+@else_2:
+@endif_2:
+        jmp @while_1
+@while_1_break:
+        ; 52:28 array buffer(%1)
+        ; 52:28 read var pos(%2)
+        addrOf r0, [2@function]
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        mul r0, 1
+        addrOf r1, [1@function]
+        add r1, r0 (0)
+        ; 52:20 var $.5(%5)
+        addrOf r0, [5@function]
+        ; 52:20 assign
+        store [r0], r1 (8)
+        ; 52:34 int lit 20
+        ld r0, 20 (1)
+        ; 52:39 read var pos(%2)
+        addrOf r1, [2@function]
+        load r2, [r1] (1)
+        ; 52:37 sub
+        sub r0, r2 (1)
+        cast r1 (i64), r0 (u8)
+        ; 52:37 var $.6(%6)
+        addrOf r0, [6@function]
+        ; 52:37 assign
+        store [r0], r1 (8)
+        ; 52:2 call printStringLength
+        call @printStringLength (5, 6)
+@printUint_ret:
+
+@printIntLf:
+ Local variables
+   arg 0: number
+   var 1: $.1
+   var 2: $.2
+   var 3: $.3
+        ; 56:2 if number < 0
+        ; 56:6 read var number(%0)
+        addrOf r0, [0@argument]
+        load r1, [r0] (8)
+        ; 56:15 int lit 0
+        ld r0, 0 (8)
+        ; 56:13 <
+        cmp r2, (r1 < r0) (i64)
+        branch-false r2, @else_3
+        ; then
+        ; 57:13 int lit 45
+        ld r0, 45 (1)
+        ; 57:13 var $.1(%1)
+        addrOf r1, [1@function]
+        ; 57:13 assign
+        store [r1], r0 (1)
+        ; 57:3 call printChar
+        call @printChar (1)
+        ; 58:13 read var number(%0)
+        addrOf r0, [0@argument]
+        load r1, [r0] (8)
+        ; 58:12 neg
+        neg r1 (8)
+        ; 58:3 var number(%0)
+        addrOf r0, [0@argument]
+        ; 58:10 assign
+        store [r0], r1 (8)
+        jmp @endif_3
+        ; else
+@else_3:
+@endif_3:
+        ; 60:12 read var number(%0)
+        addrOf r0, [0@argument]
+        load r1, [r0] (8)
+        ; 60:12 var $.2(%2)
+        addrOf r0, [2@function]
+        ; 60:12 assign
+        store [r0], r1 (8)
+        ; 60:2 call printUint
+        call @printUint (2)
+        ; 61:12 int lit 10
+        ld r0, 10 (1)
+        ; 61:12 var $.3(%3)
+        addrOf r1, [3@function]
+        ; 61:12 assign
+        store [r1], r0 (1)
+        ; 61:2 call printChar
+        call @printChar (3)
+@printIntLf_ret:
+
 @strlen:
  Local variables
    arg 0: str
    var 1: length
-        ; 40:15 int lit 0
+        ; 65:15 int lit 0
         ld r0, 0 (8)
-        ; 40:2 var length(%1)
+        ; 65:2 var length(%1)
         addrOf r1, [1@function]
-        ; 40:2 assign
+        ; 65:2 assign
         store [r1], r0 (8)
-        ; 41:2 for *str != 0
-@for_1:
-        ; 41:10 read var str(%0)
+        ; 66:2 for *str != 0
+@for_4:
+        ; 66:10 read var str(%0)
         addrOf r0, [0@argument]
         load r1, [r0] (8)
-        ; 41:9 deref
+        ; 66:9 deref
         load r0, [r1] (1)
-        ; 41:17 int lit 0
+        ; 66:17 int lit 0
         ld r1, 0 (1)
-        ; 41:14 !=
+        ; 66:14 !=
         cmp r2, (r0 != r1) (u8)
-        branch-false r2, @for_1_break
+        branch-false r2, @for_4_break
         ; for body
-        ; 42:12 read var length(%1)
+        ; 67:12 read var length(%1)
         addrOf r0, [1@function]
         load r1, [r0] (8)
-        ; 42:21 int lit 1
+        ; 67:21 int lit 1
         ld r0, 1 (8)
-        ; 42:19 add
+        ; 67:19 add
         add r1, r0 (8)
-        ; 42:3 var length(%1)
+        ; 67:3 var length(%1)
         addrOf r0, [1@function]
-        ; 42:10 assign
+        ; 67:10 assign
         store [r0], r1 (8)
-@for_1_continue:
-        ; 41:26 read var str(%0)
+@for_4_continue:
+        ; 66:26 read var str(%0)
         addrOf r0, [0@argument]
         load r1, [r0] (8)
-        ; 41:32 int lit 1
+        ; 66:32 int lit 1
         ld r0, 1 (8)
-        ; 41:30 add
+        ; 66:30 add
         add r1, r0 (8)
-        ; 41:20 var str(%0)
+        ; 66:20 var str(%0)
         addrOf r0, [0@argument]
-        ; 41:24 assign
+        ; 66:24 assign
         store [r0], r1 (8)
-        jmp @for_1
-@for_1_break:
-        ; 44:9 return length
-        ; 44:9 read var length(%1)
+        jmp @for_4
+@for_4_break:
+        ; 69:9 return length
+        ; 69:9 read var length(%1)
         addrOf r0, [1@function]
         load r1, [r0] (8)
         return r1 (8)
@@ -332,11 +511,11 @@
         ; 20:14 logic and
         ; 20:8 bool lit false
         ld r0, 0 (1)
-        branch-false r0, @and_next_2
+        branch-false r0, @and_next_5
         ; 20:17 bool lit false
         ld r1, 0 (1)
         ld r0, r1
-@and_next_2:
+@and_next_5:
         cast r1 (i64), r0 (bool)
         ; 20:14 var $.16(%16)
         addrOf r0, [16@function]
@@ -347,11 +526,11 @@
         ; 21:14 logic and
         ; 21:8 bool lit false
         ld r0, 0 (1)
-        branch-false r0, @and_next_3
+        branch-false r0, @and_next_6
         ; 21:17 bool lit true
         ld r1, 1 (1)
         ld r0, r1
-@and_next_3:
+@and_next_6:
         cast r1 (i64), r0 (bool)
         ; 21:14 var $.17(%17)
         addrOf r0, [17@function]
@@ -362,11 +541,11 @@
         ; 22:13 logic and
         ; 22:8 bool lit true
         ld r0, 1 (1)
-        branch-false r0, @and_next_4
+        branch-false r0, @and_next_7
         ; 22:16 bool lit false
         ld r1, 0 (1)
         ld r0, r1
-@and_next_4:
+@and_next_7:
         cast r1 (i64), r0 (bool)
         ; 22:13 var $.18(%18)
         addrOf r0, [18@function]
@@ -377,11 +556,11 @@
         ; 23:13 logic and
         ; 23:8 bool lit true
         ld r0, 1 (1)
-        branch-false r0, @and_next_5
+        branch-false r0, @and_next_8
         ; 23:16 bool lit true
         ld r1, 1 (1)
         ld r0, r1
-@and_next_5:
+@and_next_8:
         cast r1 (i64), r0 (bool)
         ; 23:13 var $.19(%19)
         addrOf r0, [19@function]
@@ -400,11 +579,11 @@
         ; 25:14 logic or
         ; 25:8 bool lit false
         ld r0, 0 (1)
-        branch-true r0, @or_next_6
+        branch-true r0, @or_next_9
         ; 25:17 bool lit false
         ld r1, 0 (1)
         ld r0, r1
-@or_next_6:
+@or_next_9:
         cast r1 (i64), r0 (bool)
         ; 25:14 var $.21(%21)
         addrOf r0, [21@function]
@@ -415,11 +594,11 @@
         ; 26:14 logic or
         ; 26:8 bool lit false
         ld r0, 0 (1)
-        branch-true r0, @or_next_7
+        branch-true r0, @or_next_10
         ; 26:17 bool lit true
         ld r1, 1 (1)
         ld r0, r1
-@or_next_7:
+@or_next_10:
         cast r1 (i64), r0 (bool)
         ; 26:14 var $.22(%22)
         addrOf r0, [22@function]
@@ -430,11 +609,11 @@
         ; 27:13 logic or
         ; 27:8 bool lit true
         ld r0, 1 (1)
-        branch-true r0, @or_next_8
+        branch-true r0, @or_next_11
         ; 27:16 bool lit false
         ld r1, 0 (1)
         ld r0, r1
-@or_next_8:
+@or_next_11:
         cast r1 (i64), r0 (bool)
         ; 27:13 var $.23(%23)
         addrOf r0, [23@function]
@@ -445,11 +624,11 @@
         ; 28:13 logic or
         ; 28:8 bool lit true
         ld r0, 1 (1)
-        branch-true r0, @or_next_9
+        branch-true r0, @or_next_12
         ; 28:16 bool lit true
         ld r1, 1 (1)
         ld r0, r1
-@or_next_9:
+@or_next_12:
         cast r1 (i64), r0 (bool)
         ; 28:13 var $.24(%24)
         addrOf r0, [24@function]
@@ -519,7 +698,7 @@
         ld r1, 2 (1)
         ; 34:10 ==
         cmp r2, (r0 == r1) (u8)
-        branch-true r2, @or_next_10
+        branch-true r2, @or_next_13
         ; 34:18 int lit 2
         ld r0, 2 (1)
         ; 34:22 int lit 3
@@ -527,7 +706,7 @@
         ; 34:20 <
         cmp r3, (r0 < r1) (u8)
         ld r2, r3
-@or_next_10:
+@or_next_13:
         cast r0 (i64), r2 (bool)
         ; 34:15 var $.30(%30)
         addrOf r1, [30@function]
@@ -542,7 +721,7 @@
         ld r1, 2 (1)
         ; 35:10 ==
         cmp r2, (r0 == r1) (u8)
-        branch-false r2, @and_next_11
+        branch-false r2, @and_next_14
         ; 35:18 int lit 2
         ld r0, 2 (1)
         ; 35:22 int lit 3
@@ -550,7 +729,7 @@
         ; 35:20 <
         cmp r3, (r0 < r1) (u8)
         ld r2, r3
-@and_next_11:
+@and_next_14:
         cast r0 (i64), r2 (bool)
         ; 35:15 var $.31(%31)
         addrOf r1, [31@function]

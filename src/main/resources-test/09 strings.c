@@ -8,7 +8,7 @@ void main() {
 	u8* second = &text[1];
 	printString(second);
 	u8 chr = *text;
-	print(chr);
+	printIntLf(chr);
 }
 
 void printLength() {
@@ -16,5 +16,5 @@ void printLength() {
 	for (u8* ptr = text; *ptr != 0; ptr = ptr + 1) {
 		length = length + 1;
 	}
-	print(length);
+	printIntLf(length);
 }

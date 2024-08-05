@@ -36,6 +36,31 @@ void printChar(u8 chr) {
 	printStringLength(&chr, 1);
 }
 
+void printUint(i64 number) {
+	u8 buffer[20];
+	u8 pos = 20;
+	while (true) {
+		pos = pos - 1;
+		i64 remainder = number % 10;
+		number = number / 10;
+		u8 digit = (u8)remainder + '0';
+		buffer[pos] = digit;
+		if (number == 0) {
+			break;
+		}
+	}
+	printStringLength(&buffer[pos], 20 - pos);
+}
+
+void printIntLf(i64 number) {
+	if (number < 0) {
+		printChar('-');
+		number = -number;
+	}
+	printUint(number);
+	printChar('\n');
+}
+
 i64 strlen(u8* str) {
 	i64 length = 0;
 	for (; *str != 0; str = str + 1) {
