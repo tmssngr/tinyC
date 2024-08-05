@@ -23,7 +23,7 @@ start:
         ; void main
 @main:
         ; reserve space for local variables
-        sub rsp, 16
+        sub rsp, 32
         ; 2:9 int lit 5
         mov al, 5
         ; 2:2 var i(%0)
@@ -42,7 +42,7 @@ start:
         setg cl
         and cl, 0xFF
         or cl, cl
-        jz @while_1_end
+        jz @while_1_break
         ; while body
         ; 4:9 read var i(%0)
         lea rax, [rsp+0]
@@ -74,21 +74,78 @@ start:
         ; 5:5 assign
         mov [rax], bl
         jmp @while_1
-@while_1_end:
+@while_1_break:
         ; 8:2 while true
 @while_2:
         ; 8:9 bool lit true
         mov al, 1
         or al, al
-        jz @while_2_end
+        jz @while_2_break
+        ; while body
+        ; 9:9 read var i(%0)
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        movzx rax, bl
+        ; 9:9 var $.2(%2)
+        lea rbx, [rsp+9]
+        ; 9:9 assign
+        mov [rbx], rax
+        ; 9:9 read var $.2(%2)
+        lea rax, [rsp+9]
+        mov rbx, [rax]
+        ; 9:3 print i64
+        sub rsp, 8
+          mov rcx, rbx
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
+        ; 10:7 read var i(%0)
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        ; 10:11 int lit 1
+        mov al, 1
+        ; 10:9 add
+        add bl, al
+        ; 10:3 var i(%0)
+        lea rax, [rsp+0]
+        ; 10:5 assign
+        mov [rax], bl
+        ; 11:3 if i < 5
+        ; 11:7 read var i(%0)
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        ; 11:11 int lit 5
+        mov al, 5
+        ; 11:9 <
+        cmp bl, al
+        setl cl
+        and cl, 0xFF
+        or cl, cl
+        jz @else_3
+        ; then
+        jmp @while_2
+        jmp @endif_3
+        ; else
+@else_3:
+@endif_3:
+        jmp @while_2_break
+        jmp @while_2
+@while_2_break:
+        ; 17:2 while true
+@while_4:
+        ; 17:9 bool lit true
+        mov al, 1
+        or al, al
+        jz @while_4_break
         ; while body
         ; return
         jmp @main_ret
-        jmp @while_2
-@while_2_end:
+        jmp @while_4
+@while_4_break:
 @main_ret:
         ; release space for local variables
-        add rsp, 16
+        add rsp, 32
         ret
 init:
         sub rsp, 20h

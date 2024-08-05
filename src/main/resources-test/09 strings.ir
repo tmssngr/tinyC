@@ -95,7 +95,7 @@
         ld r1, 0 (1)
         ; 14:28 !=
         cmp r2, (r0 != r1) (u8)
-        branch-false r2, @for_1_end
+        branch-false r2, @for_1_break
         ; for body
         ; 15:12 read var length(%0)
         addrOf r0, [0@function]
@@ -108,7 +108,7 @@
         addrOf r0, [0@function]
         ; 15:10 assign
         store [r0], r1 (2)
-        ; for iteration
+@for_1_continue:
         ; 14:40 read var ptr(%1)
         addrOf r0, [1@function]
         load r1, [r0] (8)
@@ -121,7 +121,7 @@
         ; 14:38 assign
         store [r0], r1 (8)
         jmp @for_1
-@for_1_end:
+@for_1_break:
         ; 17:8 read var length(%0)
         addrOf r0, [0@function]
         load r1, [r0] (2)

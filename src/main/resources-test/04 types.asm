@@ -42,7 +42,7 @@ start:
         setne cl
         and cl, 0xFF
         or cl, cl
-        jz @for_1_end
+        jz @for_1_break
         ; for body
         ; 3:11 read var i(%0)
         lea rax, [rsp+0]
@@ -62,7 +62,7 @@ start:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
-        ; for iteration
+@for_1_continue:
         ; 2:32 read var i(%0)
         lea rax, [rsp+0]
         mov bl, [rax]
@@ -75,7 +75,7 @@ start:
         ; 2:30 assign
         mov [rax], bl
         jmp @for_1
-@for_1_end:
+@for_1_break:
         ; 6:11 int lit 260
         mov ax, 260
         ; 6:3 var v(%2)

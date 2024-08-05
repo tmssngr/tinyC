@@ -6,6 +6,15 @@ void main() {
 	}
 
 	while (true) {
+		print(i);
+		i = i + 1;
+		if (i < 5) {
+			continue;
+		}
+		break;
+	}
+
+	while (true) {
 		return;
 	}
 }

@@ -88,10 +88,12 @@ public class Parser {
 	@Nullable
 	private Statement getStatement() {
 		return switch (token) {
-			case FOR -> handleFor();
 			case IF -> handleIf();
-			case RETURN -> handleReturn();
+			case FOR -> handleFor();
 			case WHILE -> handleWhile();
+			case RETURN -> handleReturn();
+			case BREAK -> handleBreak();
+			case CONTINUE -> handleContinue();
 			case L_BRACE -> handleCompound();
 			default -> {
 				final Location location = getLocation();
@@ -284,6 +286,22 @@ public class Parser {
 		final Expression condition = getExpressionInParenthesis();
 		final List<Statement> bodyStatements = getStatements();
 		return new StmtLoop(condition, bodyStatements, List.of(), location);
+	}
+
+	@NotNull
+	private StmtBreakContinue handleBreak() {
+		final Location location = getLocation();
+		consume(TokenType.BREAK);
+		consume(TokenType.SEMI);
+		return new StmtBreakContinue(true, location);
+	}
+
+	@NotNull
+	private StmtBreakContinue handleContinue() {
+		final Location location = getLocation();
+		consume(TokenType.CONTINUE);
+		consume(TokenType.SEMI);
+		return new StmtBreakContinue(false, location);
 	}
 
 	@NotNull

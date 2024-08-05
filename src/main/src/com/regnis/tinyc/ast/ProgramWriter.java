@@ -112,9 +112,11 @@ public final class ProgramWriter {
 				writeReturn(ret);
 				yield true;
 			}
-			default -> {
-				throw new UnsupportedOperationException();
+			case StmtBreakContinue breakContinue -> {
+				writeBreakContinue(breakContinue);
+				yield true;
 			}
+			default -> throw new UnsupportedOperationException(String.valueOf(statement));
 		};
 	}
 
@@ -172,6 +174,15 @@ public final class ProgramWriter {
 
 		write(" ");
 		writeExpression(ret.expression());
+	}
+
+	private void writeBreakContinue(StmtBreakContinue breakContinue) throws IOException {
+		if (breakContinue.isBreak()) {
+			write("break");
+		}
+		else {
+			write("continue");
+		}
 	}
 
 	private void writeExpressionMaybeInParentesis(Expression expression) throws IOException {

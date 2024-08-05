@@ -4,7 +4,6 @@ import com.regnis.tinyc.ast.Function;
 import com.regnis.tinyc.ast.*;
 
 import java.util.*;
-import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 import org.junit.*;
@@ -16,12 +15,12 @@ public class ParserTest {
 
 	public static void assertEquals(@NotNull Program expectedProgram, @NotNull Program currentProgram) {
 		assertEquals(expectedProgram.globalVars(), currentProgram.globalVars());
-		assertEquals(expectedProgram.functions(), currentProgram.functions(),
-		             ParserTest::assertEquals);
-		assertEquals(expectedProgram.globalVariables(), currentProgram.globalVariables(),
-		             Assert::assertEquals);
-		assertEquals(expectedProgram.stringLiterals(), currentProgram.stringLiterals(),
-		             Assert::assertEquals);
+		TestUtils.assertEquals(expectedProgram.functions(), currentProgram.functions(),
+		                       ParserTest::assertEquals);
+		TestUtils.assertEquals(expectedProgram.globalVariables(), currentProgram.globalVariables(),
+		                       Assert::assertEquals);
+		TestUtils.assertEquals(expectedProgram.stringLiterals(), currentProgram.stringLiterals(),
+		                       Assert::assertEquals);
 	}
 
 	public static Location loc(int line, int column) {
@@ -532,22 +531,6 @@ public class ParserTest {
 		return new ExprIntLiteral(value, location);
 	}
 
-	private static <E> void assertEquals(List<E> expList, List<E> currList, BiConsumer<E, E> consumer) {
-		Assert.assertEquals(expList.size(), currList.size());
-		final Iterator<E> expIt = expList.iterator();
-		final Iterator<E> currIt = currList.iterator();
-		while (true) {
-			final E expected = expIt.hasNext() ? expIt.next() : null;
-			final E current = currIt.hasNext() ? currIt.next() : null;
-			if (expected == null || current == null) {
-				Assert.assertEquals(expected, current);
-				return;
-			}
-
-			consumer.accept(expected, current);
-		}
-	}
-
 	private static void assertEquals(@NotNull Function expectedFunction, @NotNull Function currentFunction) {
 		Assert.assertEquals(expectedFunction.name(), currentFunction.name());
 		Assert.assertEquals(expectedFunction.typeString(), currentFunction.typeString());
@@ -558,8 +541,8 @@ public class ParserTest {
 	}
 
 	private static void assertEquals(List<Statement> expectedStatements, List<Statement> currentStatements) {
-		assertEquals(expectedStatements, currentStatements,
-		             ParserTest::assertEquals);
+		TestUtils.assertEquals(expectedStatements, currentStatements,
+		                       ParserTest::assertEquals);
 	}
 
 	private static void assertEquals(@Nullable Statement expectedStatement, @Nullable Statement currentStatement) {

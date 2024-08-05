@@ -139,6 +139,8 @@ public final class TypeChecker {
 		case StmtLoop forStatement -> processFor(forStatement);
 		case StmtReturn stmt -> processReturn(stmt.expression(), stmt.location());
 		case StmtExpr stmt -> add(new StmtExpr(processExpression(stmt.expression())));
+		// nothing to do here
+		case StmtBreakContinue breakContinue -> add(breakContinue);
 		default -> throw new IllegalStateException("Unexpected value: " + statement);
 		}
 	}

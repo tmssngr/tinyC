@@ -27,6 +27,7 @@ public final class IRGenerator {
 	@SuppressWarnings("unused") private boolean debug;
 	private String functionRetLabel;
 	private List<IRInstruction> instructions;
+	private BreakContinueLabels breakContinueLabels;
 
 	private IRGenerator() {
 	}
@@ -121,6 +122,7 @@ public final class IRGenerator {
 		case StmtCompound compound -> writeStatements(compound.statements(), variables);
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtLoop forStatement -> writeFor(forStatement, variables);
+		case StmtBreakContinue breakContinue -> writeBreakContinue(breakContinue);
 		case StmtExpr stmt -> write(stmt.expression(), variables);
 		case StmtReturn ret -> writeReturn(ret.expression(), variables);
 		case null, default -> throw new UnsupportedOperationException(String.valueOf(statement));
@@ -483,26 +485,43 @@ public final class IRGenerator {
 		final String loopName = iteration.isEmpty() ? "while" : "for";
 		final int labelIndex = nextLabelIndex();
 		final String label = "@" + loopName + "_" + labelIndex;
-		final String nextLabel = "@" + loopName + "_" + labelIndex + "_end";
+		final String continueLabel = iteration.isEmpty() ? label : "@" + loopName + "_" + labelIndex + "_continue";
+		final String breakLabel = "@" + loopName + "_" + labelIndex + "_break";
 
 		final Expression condition = statement.condition();
 		writeComment(loopName + " " + condition.toUserString(), statement.location());
 		writeLabel(label);
 		final int conditionReg = write(condition, variables);
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
-		write(new IRBranch(conditionReg, false, nextLabel));
+		write(new IRBranch(conditionReg, false, breakLabel));
 		freeReg(conditionReg);
 		writeComment(loopName + " body");
 		final List<Statement> body = statement.bodyStatements();
-		writeStatements(body, variables);
+
+		final BreakContinueLabels prevBreakContinueLabels = this.breakContinueLabels;
+		try {
+			breakContinueLabels = new BreakContinueLabels(breakLabel, continueLabel);
+			writeStatements(body, variables);
+		}
+		finally {
+			breakContinueLabels = prevBreakContinueLabels;
+		}
 
 		if (iteration.size() > 0) {
-			writeComment("for iteration");
+			writeLabel(continueLabel);
 			writeStatements(iteration, variables);
 		}
 		write(new IRJump(label));
 
-		writeLabel(nextLabel);
+		writeLabel(breakLabel);
+	}
+
+	private void writeBreakContinue(StmtBreakContinue breakContinue) {
+		if (breakContinueLabels == null) {
+			throw new SyntaxException(Messages.breakContinueOnlyAllowedWithinWhileOrFor(), breakContinue.location());
+		}
+
+		write(new IRJump(breakContinue.isBreak() ? breakContinueLabels.breakLabel() : breakContinueLabels.continueLabel()));
 	}
 
 	private int getFreeReg() {
@@ -559,6 +578,9 @@ public final class IRGenerator {
 
 	private static int getVariableSize(Variable variable) {
 		return getTypeSize(variable.type()) * Math.max(1, variable.arraySize());
+	}
+
+	private record BreakContinueLabels(String breakLabel, String continueLabel) {
 	}
 
 	private static class Variables {

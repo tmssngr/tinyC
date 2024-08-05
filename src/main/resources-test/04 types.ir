@@ -19,7 +19,7 @@
         ld r0, 2 (1)
         ; 2:22 !=
         cmp r2, (r1 != r0) (u8)
-        branch-false r2, @for_1_end
+        branch-false r2, @for_1_break
         ; for body
         ; 3:11 read var i(%0)
         addrOf r0, [0@function]
@@ -34,7 +34,7 @@
         load r1, [r0] (8)
         ; 3:5 print i64
         printint r1
-        ; for iteration
+@for_1_continue:
         ; 2:32 read var i(%0)
         addrOf r0, [0@function]
         load r1, [r0] (1)
@@ -47,7 +47,7 @@
         ; 2:30 assign
         store [r0], r1 (1)
         jmp @for_1
-@for_1_end:
+@for_1_break:
         ; 6:11 int lit 260
         ld r0, 260 (2)
         ; 6:3 var v(%2)

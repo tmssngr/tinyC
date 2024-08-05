@@ -166,13 +166,15 @@ public final class Lexer {
 		}
 
 		return switch (text) {
-			case "for" -> TokenType.FOR;
-			case "if" -> TokenType.IF;
-			case "else" -> TokenType.ELSE;
-			case "return" -> TokenType.RETURN;
-			case "while" -> TokenType.WHILE;
 			case "true" -> TokenType.TRUE;
 			case "false" -> TokenType.FALSE;
+			case "return" -> TokenType.RETURN;
+			case "if" -> TokenType.IF;
+			case "else" -> TokenType.ELSE;
+			case "for" -> TokenType.FOR;
+			case "while" -> TokenType.WHILE;
+			case "break" -> TokenType.BREAK;
+			case "continue" -> TokenType.CONTINUE;
 			default -> TokenType.IDENTIFIER;
 		};
 	}

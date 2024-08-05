@@ -133,7 +133,7 @@ start:
         setne cl
         and cl, 0xFF
         or cl, cl
-        jz @for_1_end
+        jz @for_1_break
         ; for body
         ; 15:12 read var length(%0)
         lea rax, [rsp+0]
@@ -146,7 +146,7 @@ start:
         lea rax, [rsp+0]
         ; 15:10 assign
         mov [rax], bx
-        ; for iteration
+@for_1_continue:
         ; 14:40 read var ptr(%1)
         lea rax, [rsp+2]
         mov rbx, [rax]
@@ -159,7 +159,7 @@ start:
         ; 14:38 assign
         mov [rax], rbx
         jmp @for_1
-@for_1_end:
+@for_1_break:
         ; 17:8 read var length(%0)
         lea rax, [rsp+0]
         mov bx, [rax]

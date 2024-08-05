@@ -414,7 +414,7 @@ public class TypeCheckerTest {
 	private void testIllegal(String expectedMessage, int row, int column, String input) {
 		try {
 			checkType(input);
-			Assert.fail();
+			Assert.fail("no exception thrown");
 		}
 		catch (SyntaxException ex) {
 			Assert.assertEquals(loc(row, column) + " " + expectedMessage, ex.toString());

@@ -106,4 +106,9 @@ public class Messages {
 	public static String duplicateArgumentName(String name) {
 		return "Duplicate definition of argument '" + name + "'";
 	}
+
+	@NotNull
+	public static String breakContinueOnlyAllowedWithinWhileOrFor() {
+		return "'break' and 'continue' are only allowed in 'for' or 'while' loops";
+	}
 }
