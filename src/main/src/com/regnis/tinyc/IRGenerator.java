@@ -287,7 +287,7 @@ public final class IRGenerator {
 		else {
 			writeAddrOfVar(addrReg, variable);
 		}
-		write(new IRBinary(ExprBinary.Op.Add, addrReg, offsetReg));
+		write(new IRBinary(IRBinary.Op.Add, addrReg, offsetReg));
 		freeReg(offsetReg);
 
 		return readVar
@@ -307,7 +307,7 @@ public final class IRGenerator {
 		if (offset != 0) {
 			final int offsetReg = getFreeReg();
 			write(new IRLoadInt(offsetReg, offset, 8));
-			write(new IRBinary(ExprBinary.Op.Add, addrReg, offsetReg));
+			write(new IRBinary(IRBinary.Op.Add, addrReg, offsetReg));
 			freeReg(offsetReg);
 		}
 
@@ -336,14 +336,26 @@ public final class IRGenerator {
 			freeReg(lValueReg);
 			return -1;
 		}
-		case Add, Sub, Multiply, Divide, And, Or, Xor -> {
-			final int leftReg = write(node.left(), variables, true);
-			final int rightReg = write(node.right(), variables, true);
-			final int size = getTypeSize(node.typeNotNull());
-			writeComment(node.op().name().toLowerCase(Locale.ROOT), node.location());
-			write(new IRBinary(node.op(), leftReg, rightReg, size));
-			freeReg(rightReg);
-			return leftReg;
+		case Add -> {
+			return writeBinaryArithmetic(IRBinary.Op.Add, node, variables);
+		}
+		case Sub -> {
+			return writeBinaryArithmetic(IRBinary.Op.Sub, node, variables);
+		}
+		case Multiply -> {
+			return writeBinaryArithmetic(IRBinary.Op.Mul, node, variables);
+		}
+		case Divide -> {
+			return writeBinaryArithmetic(IRBinary.Op.Div, node, variables);
+		}
+		case And -> {
+			return writeBinaryArithmetic(IRBinary.Op.And, node, variables);
+		}
+		case Or -> {
+			return writeBinaryArithmetic(IRBinary.Op.Or, node, variables);
+		}
+		case Xor -> {
+			return writeBinaryArithmetic(IRBinary.Op.Xor, node, variables);
 		}
 		case AndLog -> {
 			final int labelIndex = nextLabelIndex();
@@ -393,6 +405,16 @@ public final class IRGenerator {
 		}
 		default -> throw new UnsupportedOperationException(String.valueOf(node.op()));
 		}
+	}
+
+	private int writeBinaryArithmetic(IRBinary.Op op, ExprBinary node, Variables variables) {
+		final int leftReg = write(node.left(), variables, true);
+		final int rightReg = write(node.right(), variables, true);
+		final int size = getTypeSize(node.typeNotNull());
+		writeComment(node.op().name().toLowerCase(Locale.ROOT), node.location());
+		write(new IRBinary(op, leftReg, rightReg, size));
+		freeReg(rightReg);
+		return leftReg;
 	}
 
 	private int writeBinaryCompare(IRCompare.Op op, ExprBinary node, Variables variables) {

@@ -1,17 +1,21 @@
 package com.regnis.tinyc.ir;
 
-import com.regnis.tinyc.ast.*;
+import java.util.*;
 
 /**
  * @author Thomas Singer
  */
-public record IRBinary(ExprBinary.Op op, int targetReg, int sourceReg, int size) implements IRInstruction {
-	public IRBinary(ExprBinary.Op op, int valueReg, int sourceReg) {
+public record IRBinary(Op op, int targetReg, int sourceReg, int size) implements IRInstruction {
+	public IRBinary(Op op, int valueReg, int sourceReg) {
 		this(op, valueReg, sourceReg, 0);
 	}
 
 	@Override
 	public String toString() {
-		return "binary" + op + " r" + targetReg + ", r" + sourceReg + " (" + size + ")";
+		return op.toString().toLowerCase(Locale.ROOT) + " r" + targetReg + ", r" + sourceReg + " (" + size + ")";
+	}
+
+	public enum Op {
+		Sub, Mul, Div, And, Or, Xor, Add
 	}
 }

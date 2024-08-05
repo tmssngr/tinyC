@@ -29,7 +29,7 @@
         mul r0, 1
         addrOf r2, [0@global]
         load r1, [r2] (0)
-        binary+ r1, r0 (0)
+        add r1, r0 (0)
         ; 6:2 var second(%1)
         addrOf r0, [1@function]
         ; 6:2 assign
@@ -94,7 +94,7 @@
         ; 15:21 int lit 1
         ld r0, 1 (2)
         ; 15:19 add
-        binary+ r1, r0 (2)
+        add r1, r0 (2)
         ; 15:3 var length(%0)
         addrOf r0, [0@function]
         ; 15:10 assign
@@ -106,7 +106,7 @@
         ; 14:46 int lit 1
         ld r0, 1 (8)
         ; 14:44 add
-        binary+ r1, r0 (8)
+        add r1, r0 (8)
         ; 14:34 var ptr(%1)
         addrOf r0, [1@function]
         ; 14:38 assign

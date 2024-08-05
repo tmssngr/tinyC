@@ -9,7 +9,7 @@
         addrOf r0, [0@function]
         ; 7:12 Pos.y
         ld r1, 1 (8)
-        binary+ r0, r1 (0)
+        add r0, r1 (0)
         load r1, [r0] (1)
         cast r0 (i64), r1 (u8)
         ; 7:12 var $.1(%1)
@@ -33,14 +33,14 @@
         addrOf r0, [0@function]
         ; 9:6 Pos.y
         ld r2, 1 (8)
-        binary+ r0, r2 (0)
+        add r0, r2 (0)
         ; 9:8 assign
         store [r0], r1 (1)
         ; 10:8 var pos(%0)
         addrOf r0, [0@function]
         ; 10:12 Pos.y
         ld r1, 1 (8)
-        binary+ r0, r1 (0)
+        add r0, r1 (0)
         load r1, [r0] (1)
         cast r0 (i64), r1 (u8)
         ; 10:12 var $.2(%2)

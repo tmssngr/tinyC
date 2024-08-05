@@ -425,7 +425,7 @@ public final class X86Win64 {
 		case And -> writeIndented("and " + targetRegName + ", " + sourceRegName);
 		case Or -> writeIndented("or " + targetRegName + ", " + sourceRegName);
 		case Xor -> writeIndented("xor " + targetRegName + ", " + sourceRegName);
-		case Multiply -> {
+		case Mul -> {
 			if (size != 8) {
 				writeIndented("movsx " + getRegName(targetReg) + ", " + getRegName(targetReg, size));
 				writeIndented("movsx " + getRegName(sourceReg) + ", " + getRegName(sourceReg, size));

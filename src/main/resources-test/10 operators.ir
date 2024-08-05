@@ -47,7 +47,7 @@
         ; 3:12 int lit 0
         ld r1, 0 (1)
         ; 3:10 and
-        binary& r0, r1 (1)
+        and r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 3:10 var $.1(%1)
         addrOf r0, [1@function]
@@ -60,7 +60,7 @@
         ; 4:12 int lit 1
         ld r1, 1 (1)
         ; 4:10 and
-        binary& r0, r1 (1)
+        and r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 4:10 var $.2(%2)
         addrOf r0, [2@function]
@@ -73,7 +73,7 @@
         ; 5:12 int lit 0
         ld r1, 0 (1)
         ; 5:10 and
-        binary& r0, r1 (1)
+        and r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 5:10 var $.3(%3)
         addrOf r0, [3@function]
@@ -86,7 +86,7 @@
         ; 6:12 int lit 1
         ld r1, 1 (1)
         ; 6:10 and
-        binary& r0, r1 (1)
+        and r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 6:10 var $.4(%4)
         addrOf r0, [4@function]
@@ -107,7 +107,7 @@
         ; 8:12 int lit 0
         ld r1, 0 (1)
         ; 8:10 or
-        binary| r0, r1 (1)
+        or r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 8:10 var $.6(%6)
         addrOf r0, [6@function]
@@ -120,7 +120,7 @@
         ; 9:12 int lit 1
         ld r1, 1 (1)
         ; 9:10 or
-        binary| r0, r1 (1)
+        or r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 9:10 var $.7(%7)
         addrOf r0, [7@function]
@@ -133,7 +133,7 @@
         ; 10:12 int lit 0
         ld r1, 0 (1)
         ; 10:10 or
-        binary| r0, r1 (1)
+        or r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 10:10 var $.8(%8)
         addrOf r0, [8@function]
@@ -146,7 +146,7 @@
         ; 11:12 int lit 1
         ld r1, 1 (1)
         ; 11:10 or
-        binary| r0, r1 (1)
+        or r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 11:10 var $.9(%9)
         addrOf r0, [9@function]
@@ -167,7 +167,7 @@
         ; 13:12 int lit 0
         ld r1, 0 (1)
         ; 13:10 xor
-        binary^ r0, r1 (1)
+        xor r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 13:10 var $.11(%11)
         addrOf r0, [11@function]
@@ -180,7 +180,7 @@
         ; 14:12 int lit 2
         ld r1, 2 (1)
         ; 14:10 xor
-        binary^ r0, r1 (1)
+        xor r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 14:10 var $.12(%12)
         addrOf r0, [12@function]
@@ -193,7 +193,7 @@
         ; 15:12 int lit 0
         ld r1, 0 (1)
         ; 15:10 xor
-        binary^ r0, r1 (1)
+        xor r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 15:10 var $.13(%13)
         addrOf r0, [13@function]
@@ -206,7 +206,7 @@
         ; 16:12 int lit 2
         ld r1, 2 (1)
         ; 16:10 xor
-        binary^ r0, r1 (1)
+        xor r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 16:10 var $.14(%14)
         addrOf r0, [14@function]
@@ -393,11 +393,11 @@
         ; 31:17 int lit 6
         ld r1, 6 (1)
         ; 31:15 and
-        binary& r0, r1 (1)
+        and r0, r1 (1)
         ; 31:26 int lit 1
         ld r1, 1 (1)
         ; 31:24 or
-        binary| r0, r1 (1)
+        or r0, r1 (1)
         cast r1 (i64), r0 (u8)
         ; 31:24 var $.29(%29)
         addrOf r0, [29@function]

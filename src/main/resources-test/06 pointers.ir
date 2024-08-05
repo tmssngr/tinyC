@@ -37,7 +37,7 @@
         ; 5:15 int lit 1
         ld r1, 1 (2)
         ; 5:13 sub
-        binary- r0, r1 (2)
+        sub r0, r1 (2)
         ; 5:2 var c(%3)
         addrOf r1, [3@function]
         ; 5:2 assign
@@ -66,7 +66,7 @@
         ; 8:12 int lit 1
         ld r1, 1 (2)
         ; 8:10 sub
-        binary- r0, r1 (2)
+        sub r0, r1 (2)
         ; 8:3 read var d(%5)
         addrOf r1, [5@function]
         load r2, [r1] (8)

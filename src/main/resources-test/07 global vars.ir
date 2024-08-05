@@ -29,9 +29,9 @@
         ; 6:28 int lit 2
         ld r2, 2 (8)
         ; 6:28 multiply
-        binary* r0, r2 (8)
+        mul r0, r2 (8)
         ; 6:26 add
-        binary+ r1, r0 (8)
+        add r1, r0 (8)
         ; 6:2 var ptrToSpace($2)
         addrOf r0, [2@global]
         ; 6:13 assign

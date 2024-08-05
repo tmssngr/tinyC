@@ -11,15 +11,15 @@
         ; 2:19 int lit 3
         ld r1, 3 (1)
         ; 2:17 multiply
-        binary* r0, r1 (1)
+        mul r0, r1 (1)
         ; 2:23 int lit 2
         ld r1, 2 (1)
         ; 2:25 int lit 5
         ld r2, 5 (1)
         ; 2:24 multiply
-        binary* r1, r2 (1)
+        mul r1, r2 (1)
         ; 2:21 add
-        binary+ r0, r1 (1)
+        add r0, r1 (1)
         cast r1 (i16), r0 (u8)
         ; 2:5 var foo(%0)
         addrOf r0, [0@function]
@@ -32,7 +32,7 @@
         addrOf r0, [0@function]
         load r2, [r0] (2)
         ; 3:19 multiply
-        binary* r1, r2 (2)
+        mul r1, r2 (2)
         ; 3:5 var bar(%1)
         addrOf r0, [1@function]
         ; 3:5 assign
@@ -50,7 +50,7 @@
         addrOf r0, [0@function]
         load r2, [r0] (2)
         ; 5:15 add
-        binary+ r1, r2 (2)
+        add r1, r2 (2)
         cast r0 (i64), r1 (i16)
         ; 5:15 var $.2(%2)
         addrOf r1, [2@function]
@@ -63,15 +63,15 @@
         ; 6:16 int lit 2
         ld r1, 2 (1)
         ; 6:14 add
-        binary+ r0, r1 (1)
+        add r0, r1 (1)
         ; 6:22 int lit 3
         ld r1, 3 (1)
         ; 6:26 int lit 4
         ld r2, 4 (1)
         ; 6:24 add
-        binary+ r1, r2 (1)
+        add r1, r2 (1)
         ; 6:19 multiply
-        binary* r0, r1 (1)
+        mul r0, r1 (1)
         cast r1 (i16), r0 (u8)
         ; 6:5 var foo(%0)
         addrOf r0, [0@function]

@@ -17,7 +17,7 @@
         ld r0, 0 (8)
         mul r0, 1
         addrOf r2, [0@global]
-        binary+ r2, r0 (0)
+        add r2, r0 (0)
         ; 5:12 assign
         store [r2], r1 (1)
         ; 6:20 array chars($0)
@@ -25,18 +25,18 @@
         ld r0, 0 (8)
         mul r0, 1
         addrOf r1, [0@global]
-        binary+ r1, r0 (0)
+        add r1, r0 (0)
         load r0, [r1] (1)
         ; 6:25 int lit 1
         ld r1, 1 (1)
         ; 6:23 add
-        binary+ r0, r1 (1)
+        add r0, r1 (1)
         ; 6:9 array chars($0)
         ; 6:9 int lit 1
         ld r1, 1 (8)
         mul r1, 1
         addrOf r2, [0@global]
-        binary+ r2, r1 (0)
+        add r2, r1 (0)
         ; 6:12 assign
         store [r2], r0 (1)
         ; 7:22 array chars($0)
@@ -44,23 +44,23 @@
         ld r0, 1 (8)
         mul r0, 1
         addrOf r1, [0@global]
-        binary+ r1, r0 (0)
+        add r1, r0 (0)
         load r0, [r1] (1)
         ; 7:27 int lit 2
         ld r1, 2 (1)
         ; 7:25 add
-        binary+ r0, r1 (1)
+        add r0, r1 (1)
         ; 7:10 array chars($0)
         ; 7:9 int lit 1
         ld r1, 1 (1)
         ; 7:11 int lit 1
         ld r2, 1 (1)
         ; 7:10 add
-        binary+ r1, r2 (1)
+        add r1, r2 (1)
         cast r2 (i64), r1 (u8)
         mul r2, 1
         addrOf r1, [0@global]
-        binary+ r1, r2 (0)
+        add r1, r2 (0)
         ; 7:14 assign
         store [r1], r0 (1)
         ; 8:21 array chars($0)
@@ -68,7 +68,7 @@
         ld r0, 2 (8)
         mul r0, 1
         addrOf r1, [0@global]
-        binary+ r1, r0 (0)
+        add r1, r0 (0)
         load r0, [r1] (1)
         ; 8:3 var result(%1)
         addrOf r1, [1@function]
