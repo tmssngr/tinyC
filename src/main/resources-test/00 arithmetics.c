@@ -9,4 +9,5 @@ void main() {
     print(bazz);
 
     print(1000/10);
+    print(1000 % 256);
 }

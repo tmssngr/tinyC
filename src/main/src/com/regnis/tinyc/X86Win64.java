@@ -432,17 +432,41 @@ public final class X86Win64 {
 			}
 			writeIndented("imul " + getRegName(targetReg) + ", " + getRegName(sourceReg));
 		}
-		case Div -> {
+		case Div, Mod -> {
 			// https://www.felixcloutier.com/x86/idiv
 			// (edx eax) / %reg -> eax
-			Utils.assertTrue(getRegName(targetReg).equals("rax"));
-			Utils.assertTrue(getRegName(sourceReg).equals("rbx"));
-			if (size != 8) { // TODO use movzx for unsigned types
-				writeIndented("movsx rax, " + targetRegName);
-				writeIndented("movsx rbx, " + sourceRegName);
+			// (edx eax) % %reg -> edx
+			if (getRegName(targetReg).equals("rax") && getRegName(sourceReg).equals("rbx")) {
+				if (size != 8) { // TODO use movzx for unsigned types
+					writeIndented("movsx rax, " + targetRegName);
+					writeIndented("movsx rbx, " + sourceRegName);
+				}
+				writeIndented("cqo"); // rdx := signbit(rax)
+				writeIndented("idiv rbx"); // div-result in rax, remainder in rdx
+				if (binary.op() == IRBinary.Op.Mod) {
+					writeIndented("mov rax, rdx");
+				}
 			}
-			writeIndented("cqo"); // rdx := signbit(rax)
-			writeIndented("idiv rbx"); // div-result in rax, remainder in rdx
+			else if (getRegName(targetReg).equals("rbx") && getRegName(sourceReg).equals("rax")) {
+				if (size != 8) { // TODO use movzx for unsigned types
+					writeIndented("movsx rax, " + targetRegName);
+					writeIndented("movsx rbx, " + sourceRegName);
+				}
+				writeIndented("mov rdx, rax");
+				writeIndented("mov rax, rbx");
+				writeIndented("mov rbx, rdx");
+				writeIndented("cqo"); // rdx := signbit(rax)
+				writeIndented("idiv rbx"); // div-result in rax, remainder in rdx
+				if (binary.op() == IRBinary.Op.Mod) {
+					writeIndented("mov rbx, rdx");
+				}
+				else {
+					writeIndented("mov rbx, rax");
+				}
+			}
+			else {
+				throw new UnsupportedOperationException("unsupported registers " + targetReg + ", " + sourceReg);
+			}
 		}
 		default -> throw new UnsupportedOperationException("binary " + binary.op());
 		}

@@ -16,6 +16,6 @@ public record IRBinary(Op op, int targetReg, int sourceReg, int size) implements
 	}
 
 	public enum Op {
-		Sub, Mul, Div, And, Or, Xor, Add
+		Sub, Mul, Div, Mod, And, Or, Xor, Add
 	}
 }

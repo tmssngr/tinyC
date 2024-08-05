@@ -163,6 +163,29 @@ start:
           mov rcx, 0x0a
           call __emit
         add rsp, 8
+        ; 12:11 int lit 1000
+        mov ax, 1000
+        ; 12:18 int lit 256
+        mov bx, 256
+        ; 12:16 mod
+        movsx rax, ax
+        movsx rbx, bx
+        cqo
+        idiv rbx
+        mov rax, rdx
+        movzx rbx, ax
+        ; 12:16 var $.7(%7)
+        lea rax, [rsp+38]
+        ; 12:16 assign
+        mov [rax], rbx
+        ; 12:5 call print
+        lea rax, [rsp+38]
+        mov rcx, [rax]
+        sub rsp, 8
+          call __printUint
+          mov rcx, 0x0a
+          call __emit
+        add rsp, 8
 @main_ret:
         ; release space for local variables
         add rsp, 48

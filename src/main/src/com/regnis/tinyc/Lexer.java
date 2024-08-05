@@ -83,6 +83,9 @@ public final class Lexer {
 		if (isConsume('*')) {
 			return TokenType.STAR;
 		}
+		if (isConsume('%')) {
+			return TokenType.PERCENT;
+		}
 		if (isConsume('!')) {
 			return isConsume('=')
 					? TokenType.EXCL_EQ
