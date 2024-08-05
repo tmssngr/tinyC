@@ -373,17 +373,37 @@ public final class IRGenerator {
 			writeLabel(nextLabel);
 			return conditionReg;
 		}
-		default -> {
-			final int leftReg = write(node.left(), variables, true);
-			final int rightReg = write(node.right(), variables, true);
-			final int resultReg = getFreeReg();
-			writeComment(node.op().toString(), node.location());
-			write(new IRCompare(node.op(), resultReg, leftReg, rightReg, node.left().typeNotNull()));
-			freeReg(leftReg);
-			freeReg(rightReg);
-			return resultReg;
+		case Lt -> {
+			return writeBinaryCompare(IRCompare.Op.Lt, node, variables);
 		}
+		case LtEq -> {
+			return writeBinaryCompare(IRCompare.Op.LtEq, node, variables);
 		}
+		case Equals -> {
+			return writeBinaryCompare(IRCompare.Op.Equals, node, variables);
+		}
+		case NotEquals -> {
+			return writeBinaryCompare(IRCompare.Op.NotEquals, node, variables);
+		}
+		case GtEq -> {
+			return writeBinaryCompare(IRCompare.Op.GtEq, node, variables);
+		}
+		case Gt -> {
+			return writeBinaryCompare(IRCompare.Op.Gt, node, variables);
+		}
+		default -> throw new UnsupportedOperationException(String.valueOf(node.op()));
+		}
+	}
+
+	private int writeBinaryCompare(IRCompare.Op op, ExprBinary node, Variables variables) {
+		final int leftReg = write(node.left(), variables, true);
+		final int rightReg = write(node.right(), variables, true);
+		final int resultReg = getFreeReg();
+		writeComment(node.op().toString(), node.location());
+		write(new IRCompare(op, resultReg, leftReg, rightReg, node.left().typeNotNull()));
+		freeReg(leftReg);
+		freeReg(rightReg);
+		return resultReg;
 	}
 
 	private int processUnary(ExprUnary unary, Variables variables, boolean readVar) {
