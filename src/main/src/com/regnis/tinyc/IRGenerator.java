@@ -201,7 +201,7 @@ public class IRGenerator {
 				final int size = getTypeSize(literal.typeNotNull());
 				writeComment("int lit " + value, node.location());
 				final int reg = getFreeReg();
-				write(new IRLdIntLiteral(reg, value, size));
+				write(new IRLoadInt(reg, value, size));
 				yield reg;
 			}
 			case ExprBoolLiteral literal -> {
@@ -209,7 +209,7 @@ public class IRGenerator {
 				final int size = getTypeSize(literal.typeNotNull());
 				writeComment("bool lit " + value, node.location());
 				final int reg = getFreeReg();
-				write(new IRLdIntLiteral(reg, value ? TRUE : FALSE, size));
+				write(new IRLoadInt(reg, value ? TRUE : FALSE, size));
 				yield reg;
 			}
 			case ExprStringLiteral literal -> {
@@ -217,7 +217,7 @@ public class IRGenerator {
 				final String stringLiteralName = getStringLiteralName(i);
 				writeComment("string literal " + stringLiteralName, node.location());
 				final int reg = getFreeReg();
-				write(new IRLdStringLiteral(reg, i));
+				write(new IRLoadString(reg, i));
 				yield reg;
 			}
 			case ExprVarAccess var -> {
@@ -309,7 +309,7 @@ public class IRGenerator {
 			write(new IRBranch(conditionReg, false, nextLabel));
 			final int conditionReg2 = write(node.right(), variables);
 			if (conditionReg2 != conditionReg) {
-				write(new IRCopy(conditionReg, conditionReg2, getTypeSize(node.typeNotNull())));
+				write(new IRLoadReg(conditionReg, conditionReg2, getTypeSize(node.typeNotNull())));
 			}
 			freeReg(conditionReg2);
 			writeLabel(nextLabel);
@@ -323,7 +323,7 @@ public class IRGenerator {
 			write(new IRBranch(conditionReg, true, nextLabel));
 			final int conditionReg2 = write(node.right(), variables);
 			if (conditionReg2 != conditionReg) {
-				write(new IRCopy(conditionReg, conditionReg2, getTypeSize(node.typeNotNull())));
+				write(new IRLoadReg(conditionReg, conditionReg2, getTypeSize(node.typeNotNull())));
 			}
 			freeReg(conditionReg2);
 			writeLabel(nextLabel);

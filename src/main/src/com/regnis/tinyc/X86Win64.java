@@ -303,10 +303,10 @@ public final class X86Win64 {
 		switch (instruction) {
 		case IRLabel label -> writeLabel(label.label());
 		case IRComment comment -> writeComment(comment.comment());
-		case IRCopy copy -> writeCopy(copy);
+		case IRLoadReg copy -> writeCopy(copy);
 		case IRMemLoad load -> writeLoad(load);
-		case IRLdIntLiteral load -> writeLoad(load);
-		case IRLdStringLiteral load -> writeLoadStringLit(load);
+		case IRLoadInt load -> writeLoad(load);
+		case IRLoadString load -> writeLoadStringLit(load);
 		case IRAddrOfVar addrOf -> writeAddrOfVar(addrOf);
 		case IRMemStore store -> writeStore(store);
 		case IRUnary unary -> writeUnary(unary);
@@ -324,12 +324,12 @@ public final class X86Win64 {
 		}
 	}
 
-	private void writeCopy(IRCopy copy) throws IOException {
+	private void writeCopy(IRLoadReg copy) throws IOException {
 		final int size = copy.size();
 		writeIndented("mov " + getRegName(copy.targetReg(), size) + ", " + getRegName(copy.sourceReg(), size));
 	}
 
-	private void writeLoad(IRLdIntLiteral load) throws IOException {
+	private void writeLoad(IRLoadInt load) throws IOException {
 		writeIndented("mov " + getRegName(load.valueReg(), load.size()) + ", " + load.constant());
 	}
 
@@ -339,7 +339,7 @@ public final class X86Win64 {
 		writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
 	}
 
-	private void writeLoadStringLit(IRLdStringLiteral load) throws IOException {
+	private void writeLoadStringLit(IRLoadString load) throws IOException {
 		writeIndented("lea " + getRegName(load.addrReg()) + ", [" + getStringLiteralName(load.literalIndex()) + "]");
 	}
 
