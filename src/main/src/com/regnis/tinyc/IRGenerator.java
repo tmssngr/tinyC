@@ -253,25 +253,8 @@ public final class IRGenerator {
 				write(new IRLoadString(reg, i));
 				yield reg;
 			}
-			case ExprVarAccess var -> {
-				final VariableDetails variable = variables.get(var.index(), var.scope());
-				writeComment((readVar ? "read " : "") + "var " + variable, node.location());
-				final int addrReg = writeAddressOf(variable);
-				yield readVar
-						? writeRead(addrReg, var.typeNotNull())
-						: addrReg;
-			}
-			case ExprArrayAccess access -> {
-				final ExprVarAccess var = access.varAccess();
-				final VariableDetails variable = variables.get(var.index(), var.scope());
-				final Expression arrayIndex = access.index();
-				writeComment("array " + variable, node.location());
-				final Type type = access.typeNotNull();
-				final int addrReg = writeArrayAccess(variable, arrayIndex, type, variables);
-				yield readVar
-						? writeRead(addrReg, type)
-						: addrReg;
-			}
+			case ExprVarAccess var -> writeVarAccess(var, variables, readVar);
+			case ExprArrayAccess access -> writeArrayAccess(access, variables, readVar);
 			case ExprBinary binary -> writeBinary(binary, variables);
 			case ExprUnary unary -> processUnary(unary, variables, readVar);
 			case ExprFuncCall call -> writeCall(call, variables);
@@ -292,11 +275,43 @@ public final class IRGenerator {
 		};
 	}
 
-	private int writeAddressOf(VariableDetails variable) {
+	private int writeVarAccess(ExprVarAccess access, Variables variables, boolean readVar) {
+		final VariableDetails variable = variables.get(access.index(), access.scope());
+		writeComment((readVar ? "read " : "") + "var " + variable, access.location());
 		Utils.assertTrue(variable.isScalar());
-		final int reg = getFreeReg();
-		writeAddrOfVar(reg, variable);
-		return reg;
+		final int addrReg = getFreeReg();
+		writeAddrOfVar(addrReg, variable);
+		return readVar
+				? writeRead(addrReg, access.typeNotNull())
+				: addrReg;
+	}
+
+	private int writeArrayAccess(ExprArrayAccess access, Variables variables, boolean readVar) {
+		final ExprVarAccess var = access.varAccess();
+		final VariableDetails variable = variables.get(var.index(), var.scope());
+		final Expression arrayIndex = access.index();
+		final Type type = access.typeNotNull();
+
+		writeComment("array " + variable, access.location());
+		final int offsetReg = write(arrayIndex, variables, true);
+		write(new IRMul(offsetReg, getTypeSize(type)));
+
+		final int addrReg = getFreeReg();
+		if (variable.isScalar()) {
+			final int varReg = getFreeReg();
+			writeAddrOfVar(varReg, variable);
+			write(new IRMemLoad(addrReg, varReg));
+			freeReg(varReg);
+		}
+		else {
+			writeAddrOfVar(addrReg, variable);
+		}
+		write(new IRBinary(ExprBinary.Op.Add, addrReg, offsetReg));
+		freeReg(offsetReg);
+
+		return readVar
+				? writeRead(addrReg, type)
+				: addrReg;
 	}
 
 	private int writeRead(int addrReg, Type type) {
@@ -412,25 +427,6 @@ public final class IRGenerator {
 			//noinspection UnnecessaryDefault
 			default -> throw new UnsupportedOperationException("unsupported operation " + op);
 		};
-	}
-
-	private int writeArrayAccess(@NotNull VariableDetails variable, @NotNull Expression index, @NotNull Type type, @NotNull Variables variables) {
-		final int offsetReg = write(index, variables, true);
-		write(new IRMul(offsetReg, getTypeSize(type)));
-
-		final int addrReg = getFreeReg();
-		if (variable.isScalar()) {
-			final int varReg = getFreeReg();
-			writeAddrOfVar(varReg, variable);
-			write(new IRMemLoad(addrReg, varReg));
-			freeReg(varReg);
-		}
-		else {
-			writeAddrOfVar(addrReg, variable);
-		}
-		write(new IRBinary(ExprBinary.Op.Add, addrReg, offsetReg));
-		freeReg(offsetReg);
-		return addrReg;
 	}
 
 	private void writeIfElse(StmtIf statement, Variables variables) {
