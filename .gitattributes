@@ -1,0 +1,2 @@
+* text=auto
+src/main/resources-test/*.out text eol=lf
