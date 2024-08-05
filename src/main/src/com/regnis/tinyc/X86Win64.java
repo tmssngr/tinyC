@@ -37,7 +37,7 @@ public final class X86Win64 {
 			if (addEmptyLine) {
 				writeNL();
 			}
-			write(function);
+			writeFunction(function);
 			addEmptyLine = true;
 		}
 
@@ -262,22 +262,17 @@ public final class X86Win64 {
 				              """);
 	}
 
-	private void write(IRFunction function) throws IOException {
+	private void writeFunction(IRFunction function) throws IOException {
 		writeComment(function.toString());
 		writeLabel(function.label());
 
 		final int size = prepareLocalVars(function.localVars());
-		if (size > 0) {
-			writeComment("reserve space for local variables");
-			writeIndented("sub rsp, " + size);
-		}
+		writeFunctionProlog(size);
+
 		writeInstructions(function.instructions());
-		if (size > 0) {
-			writeComment("release space for local variables");
-			writeIndented("add rsp, " + size);
-		}
+
+		writeFunctionEpilog(size);
 		localVarOffsets = new int[0];
-		writeIndented("ret");
 	}
 
 	private int prepareLocalVars(List<IRLocalVar> localVars) {
@@ -316,6 +311,21 @@ public final class X86Win64 {
 		return localVarSize;
 	}
 
+	private void writeFunctionProlog(int size) throws IOException {
+		if (size > 0) {
+			writeComment("reserve space for local variables");
+			writeIndented("sub rsp, " + size);
+		}
+	}
+
+	private void writeFunctionEpilog(int size) throws IOException {
+		if (size > 0) {
+			writeComment("release space for local variables");
+			writeIndented("add rsp, " + size);
+		}
+		writeIndented("ret");
+	}
+
 	private int alignTo16(int offset) {
 		return (offset + 15) / 16 * 16;
 	}
@@ -330,10 +340,10 @@ public final class X86Win64 {
 		switch (instruction) {
 		case IRLabel label -> writeLabel(label.label());
 		case IRComment comment -> writeComment(comment.comment());
-		case IRLoadReg copy -> writeCopy(copy);
+		case IRLoadReg copy -> writeLoadReg(copy);
 		case IRMemLoad load -> writeLoad(load);
-		case IRLoadInt load -> writeLoad(load);
-		case IRLoadString load -> writeLoadStringLit(load);
+		case IRLoadInt load -> writeLoadInt(load);
+		case IRLoadString load -> writeLoadString(load);
 		case IRAddrOfVar addrOf -> writeAddrOfVar(addrOf);
 		case IRMemStore store -> writeStore(store);
 		case IRUnary unary -> writeUnary(unary);
@@ -351,23 +361,23 @@ public final class X86Win64 {
 		}
 	}
 
-	private void writeCopy(IRLoadReg copy) throws IOException {
+	private void writeLoadReg(IRLoadReg copy) throws IOException {
 		final int size = copy.size();
 		writeIndented("mov " + getRegName(copy.targetReg(), size) + ", " + getRegName(copy.sourceReg(), size));
 	}
 
-	private void writeLoad(IRLoadInt load) throws IOException {
+	private void writeLoadInt(IRLoadInt load) throws IOException {
 		writeIndented("mov " + getRegName(load.valueReg(), load.size()) + ", " + load.constant());
+	}
+
+	private void writeLoadString(IRLoadString load) throws IOException {
+		writeIndented("lea " + getRegName(load.addrReg()) + ", [" + getStringLiteralName(load.literalIndex()) + "]");
 	}
 
 	private void writeLoad(IRMemLoad load) throws IOException {
 		final String addrRegName = getRegName(load.addrReg());
 		final String valueRegName = getRegName(load.valueReg(), load.size());
 		writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
-	}
-
-	private void writeLoadStringLit(IRLoadString load) throws IOException {
-		writeIndented("lea " + getRegName(load.addrReg()) + ", [" + getStringLiteralName(load.literalIndex()) + "]");
 	}
 
 	private void writeAddrOfVar(IRAddrOfVar addrOf) throws IOException {
