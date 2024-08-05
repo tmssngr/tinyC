@@ -59,7 +59,11 @@ public final class IRGenerator {
 
 			final List<IRLocalVar> localVars = new ArrayList<>();
 			for (Variable variable : function.localVars()) {
-				localVars.add(new IRLocalVar(variable.name(), variable.index(), variable.scope() == VariableScope.argument, getTypeSize(variable.type())));
+				final Type type = variable.type();
+				final int size = variable.isArray()
+						? getTypeSize(Objects.requireNonNull(type.toType())) * variable.arraySize()
+						: getTypeSize(type);
+				localVars.add(new IRLocalVar(variable.name(), variable.index(), variable.scope() == VariableScope.argument, size));
 			}
 			variables = new Variables(function.localVars(), variables);
 
