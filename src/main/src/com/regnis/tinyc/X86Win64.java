@@ -304,11 +304,11 @@ public final class X86Win64 {
 		case IRLabel label -> writeLabel(label.label());
 		case IRComment comment -> writeComment(comment.comment());
 		case IRCopy copy -> writeCopy(copy);
-		case IRLoad load -> writeLoad(load);
+		case IRMemLoad load -> writeLoad(load);
 		case IRLdIntLiteral load -> writeLoad(load);
 		case IRLdStringLiteral load -> writeLoadStringLit(load);
 		case IRAddrOfVar addrOf -> writeAddrOfVar(addrOf);
-		case IRStore store -> writeStore(store);
+		case IRMemStore store -> writeStore(store);
 		case IRUnary unary -> writeUnary(unary);
 		case IRBinary binary -> writeBinary(binary);
 		case IRCompare compare -> writeCompare(compare);
@@ -333,7 +333,7 @@ public final class X86Win64 {
 		writeIndented("mov " + getRegName(load.valueReg(), load.size()) + ", " + load.constant());
 	}
 
-	private void writeLoad(IRLoad load) throws IOException {
+	private void writeLoad(IRMemLoad load) throws IOException {
 		final String addrRegName = getRegName(load.addrReg());
 		final String valueRegName = getRegName(load.valueReg(), load.size());
 		writeIndented("mov " + valueRegName + ", [" + addrRegName + "]");
@@ -354,7 +354,7 @@ public final class X86Win64 {
 		}
 	}
 
-	private void writeStore(IRStore store) throws IOException {
+	private void writeStore(IRMemStore store) throws IOException {
 		writeIndented("mov [" + getRegName(store.addrReg()) + "], " + getRegName(store.valueReg(), store.size()));
 	}
 

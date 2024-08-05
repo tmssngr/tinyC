@@ -3,8 +3,8 @@ package com.regnis.tinyc.ir;
 /**
  * @author Thomas Singer
  */
-public record IRLoad(int valueReg, int addrReg, int size) implements IRInstruction {
-	public IRLoad(int valueReg, int addrReg) {
+public record IRMemLoad(int valueReg, int addrReg, int size) implements IRInstruction {
+	public IRMemLoad(int valueReg, int addrReg) {
 		this(valueReg, addrReg, 0);
 	}
 

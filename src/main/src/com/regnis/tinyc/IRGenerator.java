@@ -189,7 +189,7 @@ public class IRGenerator {
 		final int typeSize = getTypeSize(variable.type());
 		writeComment("assign " + variable, location);
 		writeAddrOfVar(varReg, variable);
-		write(new IRStore(varReg, expressionReg, typeSize));
+		write(new IRMemStore(varReg, expressionReg, typeSize));
 		freeReg(expressionReg);
 		freeReg(varReg);
 	}
@@ -275,7 +275,7 @@ public class IRGenerator {
 	private int writeRead(int addrReg, Type type) {
 		final int valueReg = getFreeReg();
 		final int typeSize = getTypeSize(type);
-		write(new IRLoad(valueReg, addrReg, typeSize));
+		write(new IRMemLoad(valueReg, addrReg, typeSize));
 		freeReg(addrReg);
 		return valueReg;
 	}
@@ -287,7 +287,7 @@ public class IRGenerator {
 			final int lValueReg = writeLValue(node.left(), variables);
 			final int typeSize = getTypeSize(node.typeNotNull());
 			writeComment("assign", node.location());
-			write(new IRStore(lValueReg, expressionReg, typeSize));
+			write(new IRMemStore(lValueReg, expressionReg, typeSize));
 			freeReg(expressionReg);
 			freeReg(lValueReg);
 			return -1;
@@ -350,7 +350,7 @@ public class IRGenerator {
 				final int typeSize = getTypeSize(Objects.requireNonNull(unary.type()));
 				writeComment("deref", unary.location());
 				final int valueReg = getFreeReg();
-				write(new IRLoad(valueReg, addrReg, typeSize));
+				write(new IRMemLoad(valueReg, addrReg, typeSize));
 				freeReg(addrReg);
 				yield valueReg;
 			}
@@ -414,7 +414,7 @@ public class IRGenerator {
 		if (variable.isScalar()) {
 			final int varReg = getFreeReg();
 			writeAddrOfVar(varReg, variable);
-			write(new IRLoad(addrReg, varReg));
+			write(new IRMemLoad(addrReg, varReg));
 			freeReg(varReg);
 		}
 		else {
