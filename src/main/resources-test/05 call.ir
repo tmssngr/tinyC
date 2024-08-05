@@ -1,40 +1,151 @@
 @main:
  Local variables
-   0: i
-        ; 2:9 call one
-        IRCall[label=@one, args=[]]
-        ; 2:2 var i(%0)
-        addrOf r1, [0@function]
-        ; 2:2 assign
+   var 0: $.0
+   var 1: $.1
+   var 2: $.2
+   var 3: $.3
+   var 4: $.4
+        ; begin initialize global variables
+        ; 5:8 int lit 0
+        ld r0, 0 (1)
+        ; 5:1 var i($0)
+        addrOf r1, [0@global]
+        ; 5:1 assign
         store [r1], r0 (1)
-        ; 3:10 read var i(%0)
-        addrOf r0, [0@function]
-        load r1, [r0] (1)
-        ; 3:2 call doPrint
-        IRCall[label=@doPrint, args=[Arg[reg=1, type=u8]]]
+        ; end initialize global variables
+        ; 2:10 call next
+        call r0, @next ()
+        ; 2:10 var $.0(%0)
+        addrOf r1, [0@function]
+        ; 2:10 assign
+        store [r1], r0 (1)
+        ; 2:18 call next
+        call r0, @next ()
+        ; 2:18 var $.1(%1)
+        addrOf r1, [1@function]
+        ; 2:18 assign
+        store [r1], r0 (1)
+        ; 2:26 call next
+        call r0, @next ()
+        ; 2:26 var $.2(%2)
+        addrOf r1, [2@function]
+        ; 2:26 assign
+        store [r1], r0 (1)
+        ; 2:34 call next
+        call r0, @next ()
+        ; 2:34 var $.3(%3)
+        addrOf r1, [3@function]
+        ; 2:34 assign
+        store [r1], r0 (1)
+        ; 2:42 call next
+        call r0, @next ()
+        ; 2:42 var $.4(%4)
+        addrOf r1, [4@function]
+        ; 2:42 assign
+        store [r1], r0 (1)
+        ; 2:2 call doPrint
+        call @doPrint (0, 1, 2, 3, 4)
 @main_ret:
 
-@one:
-        ; 7:9 return 1
-        ; 7:9 int lit 1
+@next:
+        ; 8:6 read var i($0)
+        addrOf r0, [0@global]
+        load r1, [r0] (1)
+        ; 8:10 int lit 1
         ld r0, 1 (1)
-        return r0 (1)
-        jmp @one_ret
-@one_ret:
+        ; 8:8 add
+        binary+ r1, r0 (1)
+        ; 8:2 var i($0)
+        addrOf r0, [0@global]
+        ; 8:4 assign
+        store [r0], r1 (1)
+        ; 9:9 return i
+        ; 9:9 read var i($0)
+        addrOf r0, [0@global]
+        load r1, [r0] (1)
+        return r1 (1)
+        jmp @next_ret
+@next_ret:
 
 @doPrint:
  Local variables
-   0: $.0
-        ; 11:8 int lit 2
-        ld r0, 2 (8)
-        ; 11:8 var $.0(%0)
-        addrOf r1, [0@function]
-        ; 11:8 assign
+   arg 0: a
+   arg 1: b
+   arg 2: c
+   arg 3: d
+   arg 4: e
+   var 5: $.5
+   var 6: $.6
+   var 7: $.7
+   var 8: $.8
+   var 9: $.9
+        ; 13:8 read var a(%0)
+        addrOf r0, [0@argument]
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        ; 13:8 var $.5(%5)
+        addrOf r1, [5@function]
+        ; 13:8 assign
         store [r1], r0 (8)
-        ; 11:8 read var $.0(%0)
-        addrOf r0, [0@function]
+        ; 13:8 read var $.5(%5)
+        addrOf r0, [5@function]
         load r1, [r0] (8)
-        ; 11:2 print i64
+        ; 13:2 print i64
+        printint r1
+        ; 14:8 read var b(%1)
+        addrOf r0, [1@argument]
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        ; 14:8 var $.6(%6)
+        addrOf r1, [6@function]
+        ; 14:8 assign
+        store [r1], r0 (8)
+        ; 14:8 read var $.6(%6)
+        addrOf r0, [6@function]
+        load r1, [r0] (8)
+        ; 14:2 print i64
+        printint r1
+        ; 15:8 read var c(%2)
+        addrOf r0, [2@argument]
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        ; 15:8 var $.7(%7)
+        addrOf r1, [7@function]
+        ; 15:8 assign
+        store [r1], r0 (8)
+        ; 15:8 read var $.7(%7)
+        addrOf r0, [7@function]
+        load r1, [r0] (8)
+        ; 15:2 print i64
+        printint r1
+        ; 16:8 read var d(%3)
+        addrOf r0, [3@argument]
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        ; 16:8 var $.8(%8)
+        addrOf r1, [8@function]
+        ; 16:8 assign
+        store [r1], r0 (8)
+        ; 16:8 read var $.8(%8)
+        addrOf r0, [8@function]
+        load r1, [r0] (8)
+        ; 16:2 print i64
+        printint r1
+        ; 17:8 read var e(%4)
+        addrOf r0, [4@argument]
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        ; 17:8 var $.9(%9)
+        addrOf r1, [9@function]
+        ; 17:8 assign
+        store [r1], r0 (8)
+        ; 17:8 read var $.9(%9)
+        addrOf r0, [9@function]
+        load r1, [r0] (8)
+        ; 17:2 print i64
         printint r1
 @doPrint_ret:
+
+Global variables
+  0: i (1)
 

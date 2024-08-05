@@ -1,8 +1,8 @@
 @main:
  Local variables
-   0: chr
-   1: result
-   2: $.2
+   var 0: chr
+   var 1: result
+   var 2: $.2
         ; 4:12 int lit 32
         ld r0, 32 (1)
         ; 4:3 var chr(%0)

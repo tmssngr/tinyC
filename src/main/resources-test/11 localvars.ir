@@ -1,7 +1,7 @@
 @main:
  Local variables
-   0: a
-   1: $.1
+   var 0: a
+   var 1: $.1
         ; 2:9 int lit 10
         ld r0, 10 (1)
         ; 2:2 var a(%0)
@@ -25,8 +25,8 @@
 
 @foo:
  Local variables
-   0: a
-   1: $.1
+   var 0: a
+   var 1: $.1
         ; 7:9 int lit 20
         ld r0, 20 (1)
         ; 7:2 var a(%0)

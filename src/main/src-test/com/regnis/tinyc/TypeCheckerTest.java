@@ -56,6 +56,9 @@ public class TypeCheckerTest {
 				            void foo() {
 				                bar();
 				            }""");
+		testIllegal(Messages.duplicateArgumentName("a"), 0, 15,
+		            // 234567890123456789012
+		            "void bar(u8 a, u8 a) {}");
 	}
 
 	@Test

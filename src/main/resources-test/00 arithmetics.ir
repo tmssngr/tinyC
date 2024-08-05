@@ -1,11 +1,11 @@
 @main:
  Local variables
-   0: foo
-   1: bar
-   2: $.2
-   3: $.3
-   4: bazz
-   5: $.5
+   var 0: foo
+   var 1: bar
+   var 2: $.2
+   var 3: $.3
+   var 4: bazz
+   var 5: $.5
         ; 2:15 int lit 4
         ld r0, 4 (1)
         ; 2:19 int lit 3

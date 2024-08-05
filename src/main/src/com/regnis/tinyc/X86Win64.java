@@ -266,8 +266,7 @@ public final class X86Win64 {
 		writeComment(function.toString());
 		writeLabel(function.label());
 
-		final List<IRLocalVar> localVars = function.localVars();
-		final int size = prepareLocalVars(localVars);
+		final int size = prepareLocalVars(function.localVars());
 		if (size > 0) {
 			writeComment("reserve space for local variables");
 			writeIndented("sub rsp, " + size);
@@ -283,13 +282,41 @@ public final class X86Win64 {
 
 	private int prepareLocalVars(List<IRLocalVar> localVars) {
 		localVarOffsets = new int[localVars.size()];
-		int i = 0;
+		int argCount = 0;
 		int offset = 0;
+		int i = 0;
 		for (IRLocalVar var : localVars) {
-			localVarOffsets[i] = offset;
-			offset += var.size();
+			if (var.isArg()) {
+				argCount++;
+			}
+			else {
+				localVarOffsets[i] = offset;
+				offset += var.size();
+			}
 			i++;
 		}
+		final int localVarSize = alignTo16(offset);
+		// first arg 8 bytes
+		// second arg 8 bytes
+		// third arg 8 bytes
+		// fill area 0/8 bytes
+		// return address 8 bytes
+		// local vars <size> bytes
+		int argOffset = alignTo16(argCount * 8) + localVarSize;
+		i = 0;
+		for (IRLocalVar var : localVars) {
+			if (!var.isArg()) {
+				break;
+			}
+
+			argOffset -= 8;
+			localVarOffsets[i] = argOffset;
+			i++;
+		}
+		return localVarSize;
+	}
+
+	private int alignTo16(int offset) {
 		return (offset + 15) / 16 * 16;
 	}
 
@@ -345,13 +372,18 @@ public final class X86Win64 {
 
 	private void writeAddrOfVar(IRAddrOfVar addrOf) throws IOException {
 		final String addrReg = getRegName(addrOf.reg());
-		if (addrOf.scope() == VariableScope.global) {
+		final VariableScope scope = addrOf.scope();
+		if (scope == VariableScope.global) {
 			writeIndented("lea " + addrReg + ", [" + getGlobalVarName(addrOf.index()) + "]");
 		}
 		else {
-			final int offset = localVarOffsets[addrOf.index()];
-			writeIndented("lea " + addrReg + ", [rsp+" + offset + "]");
+			writeAddressOfLocalVar(addrReg, addrOf.index(), 0);
 		}
+	}
+
+	private void writeAddressOfLocalVar(String addrReg, int index, int offset) throws IOException {
+		offset += localVarOffsets[index];
+		writeIndented("lea " + addrReg + ", [rsp+" + offset + "]");
 	}
 
 	private void writeStore(IRMemStore store) throws IOException {
@@ -463,20 +495,22 @@ public final class X86Win64 {
 	}
 
 	private void writeCall(IRCall call) throws IOException {
+		final int argsSize = call.args().size() * 8;
+		final int offset = (call.args().size() + 1) % 2 * 8;
+		int localVarOffset = 0;
 		for (IRCall.Arg arg : call.args()) {
-			final int reg = arg.reg();
 			final int size = getTypeSize(arg.type());
-			final String regName = getRegName(reg);
-			if (size != 8) {
-				writeIndented("movzx rcx, " + getRegName(reg, size));
-			}
-			else if (!regName.equals("rcx")) {
-				writeIndented("mov rcx, " + regName);
-			}
+			final char regChr = 'a';
+			final String addrRegName = getXRegName(regChr, 0);
+			writeAddressOfLocalVar(addrRegName, arg.localVarIndex(), localVarOffset);
+			writeIndented("mov " + getXRegName(regChr, size) + ", [" + addrRegName + "]");
+			writeIndented("push " + addrRegName);
+			// we have pushed 8 bytes, so the local variables are accessed with an 8 byte larger offset
+			localVarOffset += 8;
 		}
-		writeIndented("sub rsp, 8");
+		writeIndented("sub rsp, " + offset);
 		writeIndented("  call " + call.label());
-		writeIndented("add rsp, 8");
+		writeIndented("add rsp, " + (offset + argsSize));
 	}
 
 	private void writeReturnValue(IRReturnValue ret) throws IOException {

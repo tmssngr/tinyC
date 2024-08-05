@@ -58,14 +58,13 @@ public final class IRGenerator {
 
 			final List<IRLocalVar> localVars = new ArrayList<>();
 			for (Variable variable : function.localVars()) {
-				Utils.assertTrue(variable.scope() == VariableScope.function);
-				localVars.add(new IRLocalVar(variable.name(), variable.index(), getTypeSize(variable.type())));
+				localVars.add(new IRLocalVar(variable.name(), variable.index(), variable.scope() == VariableScope.argument, getTypeSize(variable.type())));
 			}
 			variables = new Variables(function.localVars(), variables);
 
 			writeStatements(function.statements(), variables);
 			writeLabel(functionRetLabel);
-			return new IRFunction(name, functionLabel, Objects.requireNonNull(function.returnType()), instructions, localVars);
+			return new IRFunction(name, functionLabel, Objects.requireNonNull(function.returnType()), localVars, instructions);
 		}
 		finally {
 			instructions = List.of();
@@ -130,46 +129,62 @@ public final class IRGenerator {
 	}
 
 	private int writeCall(ExprFuncCall call, Variables variables) {
-		final List<Expression> expressions = call.argExpressions();
+		// ensure no register is currently used, so we can pass the arguments in whatever register we need for the calling convention
+		Utils.assertTrue(registerAllocator.isNoneUsed());
+
 		final String name = call.name();
 		if (name.equals("printString")) {
-			if (expressions.size() != 1) {
-				throw new IllegalStateException("Unsupported arguments " + expressions);
-			}
-			final Expression expression = expressions.getFirst();
-			final int reg = write(expression, variables);
-			final Type type = expression.typeNotNull();
-			if (type.toType() != Type.U8) {
-				throw new IllegalStateException("Unsupported type");
-			}
-			writeComment("print " + type, call.location());
-			write(new IRPrintStringZero(reg));
-			freeReg(reg);
+			return writeCallPrintString(call, variables);
 		}
-		else if (name.equals("print")) {
-			if (expressions.size() != 1) {
-				throw new IllegalStateException("Unsupported arguments " + expressions);
-			}
-			final Expression expression = expressions.getFirst();
-			final int reg = write(expression, variables);
-			final Type type = expression.typeNotNull();
-			writeComment("print " + type, call.location());
-			write(new IRPrintInt(reg));
-			freeReg(reg);
+
+		if (name.equals("print")) {
+			return writeCallPrint(call, variables);
 		}
-		else {
-			if (expressions.size() > 1) {
-				throw new IllegalStateException("Unsupported arguments " + expressions);
+
+		return writeCall(call, name);
+	}
+
+	private int writeCallPrintString(ExprFuncCall call, Variables variables) {
+		final List<Expression> expressions = call.argExpressions();
+		if (expressions.size() != 1) {
+			throw new IllegalStateException("Unsupported arguments " + expressions);
+		}
+		final Expression expression = expressions.getFirst();
+		final int reg = write(expression, variables);
+		final Type type = expression.typeNotNull();
+		if (type.toType() != Type.U8) {
+			throw new IllegalStateException("Unsupported type");
+		}
+		writeComment("print " + type, call.location());
+		write(new IRPrintStringZero(reg));
+		freeReg(reg);
+		return -1;
+	}
+
+	private int writeCallPrint(ExprFuncCall call, Variables variables) {
+		final List<Expression> expressions = call.argExpressions();
+		if (expressions.size() != 1) {
+			throw new IllegalStateException("Unsupported arguments " + expressions);
+		}
+		final Expression expression = expressions.getFirst();
+		final int reg = write(expression, variables);
+		final Type type = expression.typeNotNull();
+		writeComment("print " + type, call.location());
+		write(new IRPrintInt(reg));
+		freeReg(reg);
+		return -1;
+	}
+
+	private int writeCall(ExprFuncCall call, String name) {
+		final List<Expression> expressions = call.argExpressions();
+		final List<IRCall.Arg> args = new ArrayList<>();
+		for (Expression expression : expressions) {
+			if (expression instanceof ExprVarAccess varAccess) {
+				Utils.assertTrue(varAccess.arrayIndex() == null);
+				args.add(new IRCall.Arg(varAccess.index(), expression.typeNotNull()));
 			}
-			final List<IRCall.Arg> args = new ArrayList<>();
-			for (Expression expression : expressions) {
-				final int reg = write(expression, variables);
-				args.add(new IRCall.Arg(reg, expression.typeNotNull()));
-			}
-			writeComment("call " + name, call.location());
-			write(new IRCall(getFunctionLabel(name), args));
-			for (IRCall.Arg arg : args) {
-				freeReg(arg.reg());
+			else {
+				throw new IllegalStateException();
 			}
 		}
 		final int resultReg;
@@ -180,6 +195,8 @@ public final class IRGenerator {
 			resultReg = getFreeReg();
 			Utils.assertTrue(resultReg == 0);
 		}
+		writeComment("call " + name, call.location());
+		write(new IRCall(getFunctionLabel(name), args, resultReg));
 		return resultReg;
 	}
 
@@ -569,7 +586,7 @@ public final class IRGenerator {
 				return indexToVar.get(index);
 			}
 
-			if (scope == VariableScope.function) {
+			if (scope == VariableScope.function || scope == VariableScope.argument) {
 				return indexToVar.get(index);
 			}
 

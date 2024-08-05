@@ -79,6 +79,10 @@ public final class TypeChecker {
 		expectedReturnType = function.returnType();
 		localVariables = new LocalVariables();
 		try {
+			for (Function.Arg arg : function.args()) {
+				localVariables.addArg(arg.name(), arg.typeNotNull(), arg.location());
+			}
+
 			final List<Statement> statements = processStatements(function.statements());
 			if (expectedReturnType != Type.VOID) {
 				if (!(Utils.getLastOrNull(statements) instanceof StmtReturn)) {
@@ -613,10 +617,14 @@ public final class TypeChecker {
 		@NotNull
 		public Variable add(@Nullable String varName, Type type, int arraySize, Location location) {
 			varName = getTempVarName(varName, vars);
-			final Variable variable = new Variable(varName, vars.size(), VariableScope.function, type, arraySize, location);
-			nameToVariable.put(varName, variable);
-			vars.add(variable);
-			return variable;
+			return add(new Variable(varName, vars.size(), VariableScope.function, type, arraySize, location));
+		}
+
+		public void addArg(@NotNull String name, @NotNull Type type, @NotNull Location location) {
+			if (nameToVariable.containsKey(name)) {
+				throw new SyntaxException(Messages.duplicateArgumentName(name), location);
+			}
+			add(new Variable(name, vars.size(), VariableScope.argument, type, 0, location));
 		}
 
 		@Nullable
@@ -630,6 +638,12 @@ public final class TypeChecker {
 
 		public List<Variable> getList() {
 			return Collections.unmodifiableList(vars);
+		}
+
+		private Variable add(@NotNull Variable variable) {
+			nameToVariable.put(variable.name(), variable);
+			vars.add(variable);
+			return variable;
 		}
 	}
 }

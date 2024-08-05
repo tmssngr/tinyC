@@ -1,6 +1,6 @@
 @main:
  Local variables
-   0: $.0
+   var 0: $.0
         ; begin initialize global variables
         ; 1:13 int lit 32
         ld r0, 32 (2)

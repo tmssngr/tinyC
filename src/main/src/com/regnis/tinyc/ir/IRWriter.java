@@ -34,7 +34,9 @@ public final class IRWriter {
 		if (localVars.size() > 0) {
 			writeln(" Local variables");
 			for (IRLocalVar var : localVars) {
-				writeln("   " + var.toString());
+				writer.write("   ");
+				writer.write(var.isArg() ? "arg " : "var ");
+				writeln(var.toString());
 			}
 		}
 

@@ -1,17 +1,40 @@
+u8 i;
+
 void main() {
-	u8 i;
+	u8 $.0;
+	u8 $.1;
+	u8 $.2;
+	u8 $.3;
+	u8 $.4;
 
-	i = one();
-	doPrint(i);
+	$.0 = next();
+	$.1 = next();
+	$.2 = next();
+	$.3 = next();
+	$.4 = next();
+	doPrint($.0, $.1, $.2, $.3, $.4);
 }
 
-u8 one() {
-	return 1;
+u8 next() {
+	i = i + 1;
+	return i;
 }
 
-void doPrint(u8 value) {
-	i64 $.0;
+void doPrint(u8 a, u8 b, u8 c, u8 d, u8 e) {
+	i64 $.5;
+	i64 $.6;
+	i64 $.7;
+	i64 $.8;
+	i64 $.9;
 
-	$.0 = 2;
-	print($.0);
+	$.5 = (i64)a;
+	print($.5);
+	$.6 = (i64)b;
+	print($.6);
+	$.7 = (i64)c;
+	print($.7);
+	$.8 = (i64)d;
+	print($.8);
+	$.9 = (i64)e;
+	print($.9);
 }
