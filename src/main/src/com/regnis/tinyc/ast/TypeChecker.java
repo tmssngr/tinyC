@@ -115,7 +115,7 @@ public final class TypeChecker {
 			argTypes.add(argType);
 		}
 		globalSymbols.put(name, new Symbol.Func(returnType, argTypes, location));
-		return new Function(name, function.typeString(), returnType, args, List.of(), function.statements(), location);
+		return Function.typedInstance(name, function.typeString(), returnType, args, List.of(), function.statements(), location);
 	}
 
 	@NotNull
@@ -143,7 +143,7 @@ public final class TypeChecker {
 					throw new SyntaxException(Messages.functionMustReturnType(expectedReturnType), function.location());
 				}
 			}
-			return new Function(function.name(), function.typeString(), function.returnType(), function.args(), localVariables.getList(), statements, function.location());
+			return Function.typedInstance(function.name(), function.typeString(), function.returnType(), function.args(), localVariables.getList(), statements, function.location());
 		}
 		finally {
 			localVariables = null;

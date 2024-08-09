@@ -392,17 +392,17 @@ public class ParserTest {
 	public void testFunctions() {
 		Assert.assertEquals(new Program(List.of(), List.of(),
 		                                List.of(
-				                                new Function("main", "void", List.of(),
-				                                             List.of(
-						                                             new StmtVarDeclaration("u8", "i", intLit(10, loc(1, 11)),
-						                                                                    loc(1, 4)),
-						                                             printStmt(new ExprVarAccess("i", loc(2, 10)),
-						                                                       loc(2, 4))
-				                                             ),
-				                                             loc(0, 0)),
-				                                new Function("fooBar", "void", List.of(new Function.Arg("u8", "a", loc(4, 12))),
-				                                             List.of(),
-				                                             loc(4, 0))
+				                                Function.createInstance("main", "void", List.of(),
+				                                                        List.of(
+						                                                        new StmtVarDeclaration("u8", "i", intLit(10, loc(1, 11)),
+						                                                                               loc(1, 4)),
+						                                                        printStmt(new ExprVarAccess("i", loc(2, 10)),
+						                                                                  loc(2, 4))
+				                                                        ),
+				                                                        loc(0, 0)),
+				                                Function.createInstance("fooBar", "void", List.of(new Function.Arg("u8", "a", loc(4, 12))),
+				                                                        List.of(),
+				                                                        loc(4, 0))
 		                                ),
 		                                List.of(),
 		                                List.of()
@@ -417,30 +417,30 @@ public class ParserTest {
 
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
-				                         new Function("main", "void", List.of(),
-				                                      List.of(
-						                                      new StmtVarDeclaration("u8", "i",
-						                                                             new ExprFuncCall("one", List.of(), loc(1, 11)),
-						                                                             loc(1, 4)),
-						                                      new StmtIf(new ExprBinary(ExprBinary.Op.Equals,
-						                                                                new ExprVarAccess("i", loc(2, 8)),
-						                                                                new ExprIntLiteral(0, loc(2, 13)),
-						                                                                loc(2, 10)),
-						                                                 List.of(
-								                                                 new StmtReturn(null, loc(3, 8))
-						                                                 ),
-						                                                 List.of(),
-						                                                 loc(2, 4)),
-						                                      printStmt(new ExprVarAccess("i", loc(4, 10)),
-						                                                loc(4, 4))
-				                                      ),
-				                                      loc(0, 0)),
-				                         new Function("one", "u8", List.of(),
-				                                      List.of(
-						                                      new StmtReturn(new ExprIntLiteral(1, loc(7, 10)),
-						                                                     loc(7, 3))
-				                                      ),
-				                                      loc(6, 0))
+				                         Function.createInstance("main", "void", List.of(),
+				                                                 List.of(
+						                                                 new StmtVarDeclaration("u8", "i",
+						                                                                        new ExprFuncCall("one", List.of(), loc(1, 11)),
+						                                                                        loc(1, 4)),
+						                                                 new StmtIf(new ExprBinary(ExprBinary.Op.Equals,
+						                                                                           new ExprVarAccess("i", loc(2, 8)),
+						                                                                           new ExprIntLiteral(0, loc(2, 13)),
+						                                                                           loc(2, 10)),
+						                                                            List.of(
+								                                                            new StmtReturn(null, loc(3, 8))
+						                                                            ),
+						                                                            List.of(),
+						                                                            loc(2, 4)),
+						                                                 printStmt(new ExprVarAccess("i", loc(4, 10)),
+						                                                           loc(4, 4))
+				                                                 ),
+				                                                 loc(0, 0)),
+				                         Function.createInstance("one", "u8", List.of(),
+				                                                 List.of(
+						                                                 new StmtReturn(new ExprIntLiteral(1, loc(7, 10)),
+						                                                                loc(7, 3))
+				                                                 ),
+				                                                 loc(6, 0))
 		                         ),
 		                         List.of(),
 		                         List.of()
@@ -522,18 +522,18 @@ public class ParserTest {
 				             ), loc(0, 0))
 		             ), List.of(),
 		                         List.of(
-				                         new Function("bla", "void", List.of(),
-				                                      List.of(
-						                                      new StmtArrayDeclaration("Foo", "foos", 10, loc(3, 2)),
-						                                      assignStmt(new ExprMemberAccess(new ExprArrayAccess(new ExprVarAccess("foos", loc(4, 2)),
-						                                                                                          new ExprIntLiteral(0, loc(4, 7))),
-						                                                                      "x",
-						                                                                      null,
-						                                                                      loc(4, 10)),
-						                                                 new ExprIntLiteral(1, loc(4, 14)),
-						                                                 loc(4, 12))
-				                                      ),
-				                                      loc(2, 0)
+				                         Function.createInstance("bla", "void", List.of(),
+				                                                 List.of(
+						                                                 new StmtArrayDeclaration("Foo", "foos", 10, loc(3, 2)),
+						                                                 assignStmt(new ExprMemberAccess(new ExprArrayAccess(new ExprVarAccess("foos", loc(4, 2)),
+						                                                                                                     new ExprIntLiteral(0, loc(4, 7))),
+						                                                                                 "x",
+						                                                                                 null,
+						                                                                                 loc(4, 10)),
+						                                                            new ExprIntLiteral(1, loc(4, 14)),
+						                                                            loc(4, 12))
+				                                                 ),
+				                                                 loc(2, 0)
 				                         )
 		                         ),
 		                         List.of(),

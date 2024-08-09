@@ -71,7 +71,7 @@ public final class Parser {
 						}
 					}
 					final List<Statement> statements = getStatements();
-					functions.accept(new Function(name, typeString, args, statements, location));
+					functions.accept(Function.createInstance(name, typeString, args, statements, location));
 					continue;
 				}
 

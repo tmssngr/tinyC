@@ -163,49 +163,49 @@ public class TypeCheckerTest {
 	public void testArrays() {
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
-				                         new Function("main", "void", Type.VOID, List.of(),
-				                                      List.of(
-						                                      new Variable("first", 0, VariableScope.function, Type.U8, 0, loc(2, 2)),
-						                                      new Variable("second", 1, VariableScope.function, Type.pointer(Type.U8), 0, loc(5, 2)),
-						                                      new Variable("s", 2, VariableScope.function, Type.U8, 0, loc(6, 2))
-				                                      ),
-				                                      List.of(
-						                                      assign("first", 0, VariableScope.function, Type.U8,
-						                                             new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(2, 13)),
-						                                                                 Type.U8,
-						                                                                 new ExprIntLiteral(0, Type.I64, loc(2, 19))),
-						                                             loc(2, 2)),
-						                                      new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-						                                                                  Type.U8,
-						                                                                  new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(3, 2)),
-						                                                                                      Type.U8,
-						                                                                                      new ExprIntLiteral(0, Type.I64, loc(3, 8))),
-						                                                                  new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(3, 13)),
-						                                                                                      Type.U8,
-						                                                                                      new ExprIntLiteral(1, Type.I64, loc(3, 19))),
-						                                                                  loc(3, 11))),
-						                                      new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-						                                                                  Type.U8,
-						                                                                  new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(4, 2)),
-						                                                                                      Type.U8,
-						                                                                                      new ExprIntLiteral(1, Type.I64, loc(4, 8))),
-						                                                                  new ExprVarAccess("first", 0, VariableScope.function, Type.U8, loc(4, 13)),
-						                                                                  loc(4, 11))),
-						                                      assign("second", 1, VariableScope.function, Type.pointer(Type.U8),
-						                                             new ExprUnary(ExprUnary.Op.AddrOf,
-						                                                           new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(5, 16)),
-						                                                                               Type.U8,
-						                                                                               new ExprIntLiteral(1, Type.I64, loc(5, 22))),
-						                                                           Type.pointer(Type.U8),
-						                                                           loc(5, 15)),
-						                                             loc(5, 2)),
-						                                      assign("s", 2, VariableScope.function, Type.U8,
-						                                             new ExprArrayAccess(new ExprVarAccess("second", 1, VariableScope.function, Type.pointer(Type.U8), loc(6, 9)),
-						                                                                 Type.U8,
-						                                                                 new ExprIntLiteral(0, Type.I64, loc(6, 16))),
-						                                             loc(6, 2))
-				                                      ),
-				                                      loc(1, 0))
+				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
+				                                                List.of(
+						                                                new Variable("first", 0, VariableScope.function, Type.U8, 0, loc(2, 2)),
+						                                                new Variable("second", 1, VariableScope.function, Type.pointer(Type.U8), 0, loc(5, 2)),
+						                                                new Variable("s", 2, VariableScope.function, Type.U8, 0, loc(6, 2))
+				                                                ),
+				                                                List.of(
+						                                                assign("first", 0, VariableScope.function, Type.U8,
+						                                                       new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(2, 13)),
+						                                                                           Type.U8,
+						                                                                           new ExprIntLiteral(0, Type.I64, loc(2, 19))),
+						                                                       loc(2, 2)),
+						                                                new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
+						                                                                            Type.U8,
+						                                                                            new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(3, 2)),
+						                                                                                                Type.U8,
+						                                                                                                new ExprIntLiteral(0, Type.I64, loc(3, 8))),
+						                                                                            new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(3, 13)),
+						                                                                                                Type.U8,
+						                                                                                                new ExprIntLiteral(1, Type.I64, loc(3, 19))),
+						                                                                            loc(3, 11))),
+						                                                new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
+						                                                                            Type.U8,
+						                                                                            new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(4, 2)),
+						                                                                                                Type.U8,
+						                                                                                                new ExprIntLiteral(1, Type.I64, loc(4, 8))),
+						                                                                            new ExprVarAccess("first", 0, VariableScope.function, Type.U8, loc(4, 13)),
+						                                                                            loc(4, 11))),
+						                                                assign("second", 1, VariableScope.function, Type.pointer(Type.U8),
+						                                                       new ExprUnary(ExprUnary.Op.AddrOf,
+						                                                                     new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(5, 16)),
+						                                                                                         Type.U8,
+						                                                                                         new ExprIntLiteral(1, Type.I64, loc(5, 22))),
+						                                                                     Type.pointer(Type.U8),
+						                                                                     loc(5, 15)),
+						                                                       loc(5, 2)),
+						                                                assign("s", 2, VariableScope.function, Type.U8,
+						                                                       new ExprArrayAccess(new ExprVarAccess("second", 1, VariableScope.function, Type.pointer(Type.U8), loc(6, 9)),
+						                                                                           Type.U8,
+						                                                                           new ExprIntLiteral(0, Type.I64, loc(6, 16))),
+						                                                       loc(6, 2))
+				                                                ),
+				                                                loc(1, 0))
 		                         ),
 		                         List.of(
 				                         new Variable("array", 0, VariableScope.global, Type.pointer(Type.U8), 2, loc(0, 0))
@@ -247,20 +247,20 @@ public class TypeCheckerTest {
 	public void testFlattenNestedCompounds() {
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
-				                         new Function("main", "void", Type.VOID, List.of(),
-				                                      List.of(
-						                                      new Variable("$.0", 0, VariableScope.function, Type.I64, 0, loc(2, 10))
-				                                      ),
-				                                      List.of(
-						                                      assign("$.0", 0, VariableScope.function, Type.I64,
-						                                             new ExprIntLiteral(1, Type.I64, loc(2, 10)),
-						                                             loc(2, 10)),
-						                                      new StmtExpr(new ExprFuncCall("print", Type.VOID,
-						                                                                    List.of(
-								                                                                    new ExprVarAccess("$.0", 0, VariableScope.function, Type.I64, loc(2, 10))
-						                                                                    ),
-						                                                                    loc(2, 4)))
-				                                      ), loc(0, 0))),
+				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
+				                                                List.of(
+						                                                new Variable("$.0", 0, VariableScope.function, Type.I64, 0, loc(2, 10))
+				                                                ),
+				                                                List.of(
+						                                                assign("$.0", 0, VariableScope.function, Type.I64,
+						                                                       new ExprIntLiteral(1, Type.I64, loc(2, 10)),
+						                                                       loc(2, 10)),
+						                                                new StmtExpr(new ExprFuncCall("print", Type.VOID,
+						                                                                              List.of(
+								                                                                              new ExprVarAccess("$.0", 0, VariableScope.function, Type.I64, loc(2, 10))
+						                                                                              ),
+						                                                                              loc(2, 4)))
+				                                                ), loc(0, 0))),
 		                         List.of(),
 		                         List.of()),
 		             checkType("""
@@ -276,51 +276,51 @@ public class TypeCheckerTest {
 	public void testLocalVars() {
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
-				                         new Function("main", "void", Type.VOID, List.of(),
-				                                      List.of(
-						                                      new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(1, 2)),
-						                                      new Variable("$.1", 1, VariableScope.function, Type.I64, 0, loc(2, 8))
-				                                      ),
-				                                      List.of(
-						                                      assign("a", 0, VariableScope.function, Type.U8,
-						                                             new ExprIntLiteral(10,
-						                                                                Type.U8,
-						                                                                loc(1, 9)),
-						                                             loc(1, 2)),
-						                                      assign("$.1", 1, VariableScope.function, Type.I64,
-						                                             ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, loc(2, 8)),
-						                                                               Type.I64),
-						                                             loc(2, 8)),
-						                                      new StmtExpr(
-								                                      new ExprFuncCall("print", Type.VOID,
-								                                                       List.of(
-										                                                       new ExprVarAccess("$.1", 1, VariableScope.function, Type.I64, loc(2, 8))
-								                                                       ), loc(2, 2))
-						                                      )
-				                                      ),
-				                                      loc(0, 0)),
-				                         new Function("foo", "void", Type.VOID, List.of(),
-				                                      List.of(
-						                                      new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(6, 2)),
-						                                      new Variable("$.1", 1, VariableScope.function, Type.I64, 0, loc(7, 8))
-				                                      ),
-				                                      List.of(
-						                                      assign("a", 0, VariableScope.function, Type.U8,
-						                                             new ExprIntLiteral(20,
-						                                                                Type.U8,
-						                                                                loc(6, 9)),
-						                                             loc(6, 2)),
-						                                      assign("$.1", 1, VariableScope.function, Type.I64,
-						                                             ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, loc(7, 8)),
-						                                                               Type.I64),
-						                                             loc(7, 8)),
-						                                      new StmtExpr(
-								                                      new ExprFuncCall("print", Type.VOID, List.of(
-										                                      new ExprVarAccess("$.1", 1, VariableScope.function, Type.I64, loc(7, 8))
-								                                      ), loc(7, 2))
-						                                      )
-				                                      ),
-				                                      loc(5, 0))
+				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
+				                                                List.of(
+						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(1, 2)),
+						                                                new Variable("$.1", 1, VariableScope.function, Type.I64, 0, loc(2, 8))
+				                                                ),
+				                                                List.of(
+						                                                assign("a", 0, VariableScope.function, Type.U8,
+						                                                       new ExprIntLiteral(10,
+						                                                                          Type.U8,
+						                                                                          loc(1, 9)),
+						                                                       loc(1, 2)),
+						                                                assign("$.1", 1, VariableScope.function, Type.I64,
+						                                                       ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, loc(2, 8)),
+						                                                                         Type.I64),
+						                                                       loc(2, 8)),
+						                                                new StmtExpr(
+								                                                new ExprFuncCall("print", Type.VOID,
+								                                                                 List.of(
+										                                                                 new ExprVarAccess("$.1", 1, VariableScope.function, Type.I64, loc(2, 8))
+								                                                                 ), loc(2, 2))
+						                                                )
+				                                                ),
+				                                                loc(0, 0)),
+				                         Function.typedInstance("foo", "void", Type.VOID, List.of(),
+				                                                List.of(
+						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(6, 2)),
+						                                                new Variable("$.1", 1, VariableScope.function, Type.I64, 0, loc(7, 8))
+				                                                ),
+				                                                List.of(
+						                                                assign("a", 0, VariableScope.function, Type.U8,
+						                                                       new ExprIntLiteral(20,
+						                                                                          Type.U8,
+						                                                                          loc(6, 9)),
+						                                                       loc(6, 2)),
+						                                                assign("$.1", 1, VariableScope.function, Type.I64,
+						                                                       ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, loc(7, 8)),
+						                                                                         Type.I64),
+						                                                       loc(7, 8)),
+						                                                new StmtExpr(
+								                                                new ExprFuncCall("print", Type.VOID, List.of(
+										                                                new ExprVarAccess("$.1", 1, VariableScope.function, Type.I64, loc(7, 8))
+								                                                ), loc(7, 2))
+						                                                )
+				                                                ),
+				                                                loc(5, 0))
 		                         ),
 		                         List.of(), List.of()
 		             ),
@@ -338,57 +338,57 @@ public class TypeCheckerTest {
 
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
-				                         new Function("main", "void", Type.VOID, List.of(),
-				                                      List.of(
-						                                      new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(1, 2)),
-						                                      new Variable("b", 1, VariableScope.function, Type.U8, 0, loc(3, 4)),
-						                                      new Variable("$.2", 2, VariableScope.function, Type.I64, 0, loc(4, 10)),
-						                                      new Variable("b", 3, VariableScope.function, Type.I16, 0, loc(7, 4)),
-						                                      new Variable("$.4", 4, VariableScope.function, Type.I64, 0, loc(8, 10))
-				                                      ),
-				                                      List.of(
-						                                      assign("a", 0, VariableScope.function, Type.U8,
-						                                             new ExprIntLiteral(10,
-						                                                                Type.U8,
-						                                                                loc(1, 9)),
-						                                             loc(1, 2)),
-						                                      new StmtIf(new ExprBinary(ExprBinary.Op.Gt, Type.BOOL,
-						                                                                new ExprVarAccess("a", 0, VariableScope.function, Type.U8, loc(2, 6)),
-						                                                                new ExprIntLiteral(0, loc(2, 10)),
-						                                                                loc(2, 8)),
-						                                                 List.of(
-								                                                 assign("b", 1, VariableScope.function, Type.U8,
-								                                                        new ExprIntLiteral(1, Type.U8, loc(3, 11)),
-								                                                        loc(3, 4)),
-								                                                 assign("$.2", 2, VariableScope.function, Type.I64,
-								                                                        ExprCast.autocast(new ExprVarAccess("b", 1, VariableScope.function, Type.U8, loc(4, 10)),
-								                                                                          Type.I64),
-								                                                        loc(4, 10)),
-								                                                 new StmtExpr(
-										                                                 new ExprFuncCall("print", Type.VOID,
-										                                                                  List.of(
-												                                                                  new ExprVarAccess("$.2", 2, VariableScope.function, Type.I64, loc(4, 10))
-										                                                                  ), loc(4, 4))
-								                                                 )
-						                                                 ),
-						                                                 List.of(
-								                                                 assign("b", 3, VariableScope.function, Type.I16,
-								                                                        new ExprIntLiteral(2, Type.I16, loc(7, 12)),
-								                                                        loc(7, 4)),
-								                                                 assign("$.4", 4, VariableScope.function, Type.I64,
-								                                                        ExprCast.autocast(new ExprVarAccess("b", 3, VariableScope.function, Type.I16, loc(8, 10)),
-								                                                                          Type.I64),
-								                                                        loc(8, 10)),
-								                                                 new StmtExpr(
-										                                                 new ExprFuncCall("print", Type.VOID,
-										                                                                  List.of(
-												                                                                  new ExprVarAccess("$.4", 4, VariableScope.function, Type.I64, loc(8, 10))
-										                                                                  ), loc(8, 4))
-								                                                 )
-						                                                 ),
-						                                                 loc(2, 2))
-				                                      ),
-				                                      loc(0, 0))
+				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
+				                                                List.of(
+						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(1, 2)),
+						                                                new Variable("b", 1, VariableScope.function, Type.U8, 0, loc(3, 4)),
+						                                                new Variable("$.2", 2, VariableScope.function, Type.I64, 0, loc(4, 10)),
+						                                                new Variable("b", 3, VariableScope.function, Type.I16, 0, loc(7, 4)),
+						                                                new Variable("$.4", 4, VariableScope.function, Type.I64, 0, loc(8, 10))
+				                                                ),
+				                                                List.of(
+						                                                assign("a", 0, VariableScope.function, Type.U8,
+						                                                       new ExprIntLiteral(10,
+						                                                                          Type.U8,
+						                                                                          loc(1, 9)),
+						                                                       loc(1, 2)),
+						                                                new StmtIf(new ExprBinary(ExprBinary.Op.Gt, Type.BOOL,
+						                                                                          new ExprVarAccess("a", 0, VariableScope.function, Type.U8, loc(2, 6)),
+						                                                                          new ExprIntLiteral(0, loc(2, 10)),
+						                                                                          loc(2, 8)),
+						                                                           List.of(
+								                                                           assign("b", 1, VariableScope.function, Type.U8,
+								                                                                  new ExprIntLiteral(1, Type.U8, loc(3, 11)),
+								                                                                  loc(3, 4)),
+								                                                           assign("$.2", 2, VariableScope.function, Type.I64,
+								                                                                  ExprCast.autocast(new ExprVarAccess("b", 1, VariableScope.function, Type.U8, loc(4, 10)),
+								                                                                                    Type.I64),
+								                                                                  loc(4, 10)),
+								                                                           new StmtExpr(
+										                                                           new ExprFuncCall("print", Type.VOID,
+										                                                                            List.of(
+												                                                                            new ExprVarAccess("$.2", 2, VariableScope.function, Type.I64, loc(4, 10))
+										                                                                            ), loc(4, 4))
+								                                                           )
+						                                                           ),
+						                                                           List.of(
+								                                                           assign("b", 3, VariableScope.function, Type.I16,
+								                                                                  new ExprIntLiteral(2, Type.I16, loc(7, 12)),
+								                                                                  loc(7, 4)),
+								                                                           assign("$.4", 4, VariableScope.function, Type.I64,
+								                                                                  ExprCast.autocast(new ExprVarAccess("b", 3, VariableScope.function, Type.I16, loc(8, 10)),
+								                                                                                    Type.I64),
+								                                                                  loc(8, 10)),
+								                                                           new StmtExpr(
+										                                                           new ExprFuncCall("print", Type.VOID,
+										                                                                            List.of(
+												                                                                            new ExprVarAccess("$.4", 4, VariableScope.function, Type.I64, loc(8, 10))
+										                                                                            ), loc(8, 4))
+								                                                           )
+						                                                           ),
+						                                                           loc(2, 2))
+				                                                ),
+				                                                loc(0, 0))
 		                         ),
 		                         List.of(), List.of()
 		             ),
@@ -435,23 +435,23 @@ public class TypeCheckerTest {
 		             ),
 		                         List.of(),
 		                         List.of(
-				                         new Function("bla", "void", Type.VOID, List.of(),
-				                                      List.of(
-						                                      new Variable("foos", 0, VariableScope.function, Type.pointer(Type.struct("Foo")), 10, loc(3, 2))
-				                                      ),
-				                                      List.of(
-						                                      new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-						                                                                  Type.U8,
-						                                                                  new ExprMemberAccess(new ExprArrayAccess(new ExprVarAccess("foos", 0, VariableScope.function, Type.pointer(Type.struct("Foo")), loc(4, 2)),
-						                                                                                                           Type.struct("Foo"),
-						                                                                                                           new ExprIntLiteral(0, Type.I64, loc(4, 7))),
-						                                                                                       "x",
-						                                                                                       Type.U8,
-						                                                                                       loc(4, 10)),
-						                                                                  new ExprIntLiteral(1, Type.U8, loc(4, 14)),
-						                                                                  loc(4, 12)))
-				                                      ),
-				                                      loc(2, 0))
+				                         Function.typedInstance("bla", "void", Type.VOID, List.of(),
+				                                                List.of(
+						                                                new Variable("foos", 0, VariableScope.function, Type.pointer(Type.struct("Foo")), 10, loc(3, 2))
+				                                                ),
+				                                                List.of(
+						                                                new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
+						                                                                            Type.U8,
+						                                                                            new ExprMemberAccess(new ExprArrayAccess(new ExprVarAccess("foos", 0, VariableScope.function, Type.pointer(Type.struct("Foo")), loc(4, 2)),
+						                                                                                                                     Type.struct("Foo"),
+						                                                                                                                     new ExprIntLiteral(0, Type.I64, loc(4, 7))),
+						                                                                                                 "x",
+						                                                                                                 Type.U8,
+						                                                                                                 loc(4, 10)),
+						                                                                            new ExprIntLiteral(1, Type.U8, loc(4, 14)),
+						                                                                            loc(4, 12)))
+				                                                ),
+				                                                loc(2, 0))
 		                         ),
 		                         List.of(),
 		                         List.of()
