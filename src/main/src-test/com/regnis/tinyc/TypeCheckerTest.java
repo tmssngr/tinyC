@@ -249,24 +249,19 @@ public class TypeCheckerTest {
 		                         List.of(
 				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
 				                                                List.of(
-						                                                new Variable("$.0", 0, VariableScope.function, Type.I64, 0, loc(2, 10))
+						                                                new Variable("x", 0, VariableScope.function, Type.U8, 0, loc(2, 4))
 				                                                ),
 				                                                List.of(
-						                                                assign("$.0", 0, VariableScope.function, Type.I64,
-						                                                       new ExprIntLiteral(1, Type.I64, loc(2, 10)),
-						                                                       loc(2, 10)),
-						                                                new StmtExpr(new ExprFuncCall("print", Type.VOID,
-						                                                                              List.of(
-								                                                                              new ExprVarAccess("$.0", 0, VariableScope.function, Type.I64, loc(2, 10))
-						                                                                              ),
-						                                                                              loc(2, 4)))
+						                                                assign("x", 0, VariableScope.function, Type.U8,
+						                                                       new ExprIntLiteral(0, Type.U8, loc(2, 11)),
+						                                                       loc(2, 4))
 				                                                ), loc(0, 0))),
 		                         List.of(),
 		                         List.of()),
 		             checkType("""
 				                       void main() {
 				                         {
-				                           print(1);
+				                           u8 x = 0;
 				                         }
 				                       }
 				                       """));
@@ -292,7 +287,7 @@ public class TypeCheckerTest {
 						                                                                         Type.I64),
 						                                                       loc(2, 8)),
 						                                                new StmtExpr(
-								                                                new ExprFuncCall("print", Type.VOID,
+								                                                new ExprFuncCall("prInt", Type.VOID,
 								                                                                 List.of(
 										                                                                 new ExprVarAccess("$.1", 1, VariableScope.function, Type.I64, loc(2, 8))
 								                                                                 ), loc(2, 2))
@@ -315,25 +310,34 @@ public class TypeCheckerTest {
 						                                                                         Type.I64),
 						                                                       loc(7, 8)),
 						                                                new StmtExpr(
-								                                                new ExprFuncCall("print", Type.VOID, List.of(
+								                                                new ExprFuncCall("prInt", Type.VOID, List.of(
 										                                                new ExprVarAccess("$.1", 1, VariableScope.function, Type.I64, loc(7, 8))
 								                                                ), loc(7, 2))
 						                                                )
 				                                                ),
-				                                                loc(5, 0))
+				                                                loc(5, 0)),
+				                         Function.typedInstance("prInt", "void", Type.VOID, List.of(
+						                                                new Function.Arg("i64", Type.I64, "x", loc(10, 11))
+				                                                ),
+				                                                List.of(
+						                                                new Variable("x", 0, VariableScope.argument, Type.I64, 0, loc(10, 11))
+				                                                ),
+				                                                List.of(), loc(10, 0))
 		                         ),
 		                         List.of(), List.of()
 		             ),
 		             checkType("""
 				                       void main() {
 				                         u8 a = 10;
-				                         print(a);
+				                         prInt(a);
 				                       }
 
 				                       void foo() {
 				                         u8 a = 20;
-				                         print(a);
+				                         prInt(a);
 				                       }
+
+				                       void prInt(i64 x) {}
 				                       """));
 
 		assertEquals(new Program(List.of(), List.of(),
@@ -365,7 +369,7 @@ public class TypeCheckerTest {
 								                                                                                    Type.I64),
 								                                                                  loc(4, 10)),
 								                                                           new StmtExpr(
-										                                                           new ExprFuncCall("print", Type.VOID,
+										                                                           new ExprFuncCall("prInt", Type.VOID,
 										                                                                            List.of(
 												                                                                            new ExprVarAccess("$.2", 2, VariableScope.function, Type.I64, loc(4, 10))
 										                                                                            ), loc(4, 4))
@@ -380,7 +384,7 @@ public class TypeCheckerTest {
 								                                                                                    Type.I64),
 								                                                                  loc(8, 10)),
 								                                                           new StmtExpr(
-										                                                           new ExprFuncCall("print", Type.VOID,
+										                                                           new ExprFuncCall("prInt", Type.VOID,
 										                                                                            List.of(
 												                                                                            new ExprVarAccess("$.4", 4, VariableScope.function, Type.I64, loc(8, 10))
 										                                                                            ), loc(8, 4))
@@ -388,7 +392,14 @@ public class TypeCheckerTest {
 						                                                           ),
 						                                                           loc(2, 2))
 				                                                ),
-				                                                loc(0, 0))
+				                                                loc(0, 0)),
+				                         Function.typedInstance("prInt", "void", Type.VOID, List.of(
+						                                                new Function.Arg("i64", Type.I64, "x", loc(12, 11))
+				                                                ),
+				                                                List.of(
+						                                                new Variable("x", 0, VariableScope.argument, Type.I64, 0, loc(12, 11))
+				                                                ),
+				                                                List.of(), loc(12, 0))
 		                         ),
 		                         List.of(), List.of()
 		             ),
@@ -397,13 +408,15 @@ public class TypeCheckerTest {
 				                         u8 a = 10;
 				                         if (a > 0) {
 				                           u8 b = 1;
-				                           print(b);
+				                           prInt(b);
 				                         }
 				                         else {
 				                           i16 b = 2;
-				                           print(b);
+				                           prInt(b);
 				                         }
-				                       }"""));
+				                       }
+
+				                       void prInt(i64 x) {}"""));
 	}
 
 	@Test
