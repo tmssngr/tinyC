@@ -335,9 +335,6 @@ public final class Lexer {
 			}
 			consume();
 		}
-		if (buffer.isEmpty()) {
-			throw new InvalidTokenException("An empty string can only be done with L\"\"", location);
-		}
 		return buffer.toString();
 	}
 
