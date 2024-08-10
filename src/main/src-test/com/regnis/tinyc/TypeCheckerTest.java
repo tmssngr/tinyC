@@ -205,7 +205,7 @@ public class TypeCheckerTest {
 						                                                                           new ExprIntLiteral(0, Type.I64, loc(6, 16))),
 						                                                       loc(6, 2))
 				                                                ),
-				                                                loc(1, 0))
+				                                                List.of(), loc(1, 0))
 		                         ),
 		                         List.of(
 				                         new Variable("array", 0, VariableScope.global, Type.pointer(Type.U8), 2, loc(0, 0))
@@ -255,7 +255,7 @@ public class TypeCheckerTest {
 						                                                assign("x", 0, VariableScope.function, Type.U8,
 						                                                       new ExprIntLiteral(0, Type.U8, loc(2, 11)),
 						                                                       loc(2, 4))
-				                                                ), loc(0, 0))),
+				                                                ), List.of(), loc(0, 0))),
 		                         List.of(),
 		                         List.of()),
 		             checkType("""
@@ -293,7 +293,7 @@ public class TypeCheckerTest {
 								                                                                 ), loc(2, 2))
 						                                                )
 				                                                ),
-				                                                loc(0, 0)),
+				                                                List.of(), loc(0, 0)),
 				                         Function.typedInstance("foo", "void", Type.VOID, List.of(),
 				                                                List.of(
 						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(6, 2)),
@@ -315,14 +315,14 @@ public class TypeCheckerTest {
 								                                                ), loc(7, 2))
 						                                                )
 				                                                ),
-				                                                loc(5, 0)),
+				                                                List.of(), loc(5, 0)),
 				                         Function.typedInstance("prInt", "void", Type.VOID, List.of(
 						                                                new Function.Arg("i64", Type.I64, "x", loc(10, 11))
 				                                                ),
 				                                                List.of(
 						                                                new Variable("x", 0, VariableScope.argument, Type.I64, 0, loc(10, 11))
 				                                                ),
-				                                                List.of(), loc(10, 0))
+				                                                List.of(), List.of(), loc(10, 0))
 		                         ),
 		                         List.of(), List.of()
 		             ),
@@ -392,14 +392,14 @@ public class TypeCheckerTest {
 						                                                           ),
 						                                                           loc(2, 2))
 				                                                ),
-				                                                loc(0, 0)),
+				                                                List.of(), loc(0, 0)),
 				                         Function.typedInstance("prInt", "void", Type.VOID, List.of(
 						                                                new Function.Arg("i64", Type.I64, "x", loc(12, 11))
 				                                                ),
 				                                                List.of(
 						                                                new Variable("x", 0, VariableScope.argument, Type.I64, 0, loc(12, 11))
 				                                                ),
-				                                                List.of(), loc(12, 0))
+				                                                List.of(), List.of(), loc(12, 0))
 		                         ),
 		                         List.of(), List.of()
 		             ),
@@ -464,7 +464,7 @@ public class TypeCheckerTest {
 						                                                                            new ExprIntLiteral(1, Type.U8, loc(4, 14)),
 						                                                                            loc(4, 12)))
 				                                                ),
-				                                                loc(2, 0))
+				                                                List.of(), loc(2, 0))
 		                         ),
 		                         List.of(),
 		                         List.of()

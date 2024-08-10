@@ -1,3 +1,5 @@
+#include "x86_64.h"
+
 void main() {
 	doPrint(next(), next(), next(), next(), next());
 }
@@ -10,9 +12,9 @@ u8 next() {
 }
 
 void doPrint(u8 a, u8 b, u8 c, u8 d, u8 e) {
-	print(a);
-	print(b);
-	print(c);
-	print(d);
-	print(e);
+	printIntLf(a);
+	printIntLf(b);
+	printIntLf(c);
+	printIntLf(d);
+	printIntLf(e);
 }

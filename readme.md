@@ -1,45 +1,13 @@
-void printString(u8* str) {
-	i64 length = strlen(str);
-	printStringLength(str, length);
-}
+# TinyC
 
-void printChar(u8 chr) {
-	printStringLength(&chr, 1);
-}
+This is a compiler implemented in Java to parse a language similar to a subset of C.
+Currently, it produced X86_64 binaries for Windows using the excellent [FASM assembler](http://flatassembler.net/).
 
-void printUint(i64 number) {
-	u8 buffer[20];
-	u8 pos = 20;
-	while (true) {
-		pos = pos - 1;
-		i64 remainder = number % 10;
-		number = number / 10;
-		u8 digit = (u8)remainder + '0';
-		buffer[pos] = digit;
-		if (number == 0) {
-			break;
-		}
-	}
-	printStringLength(&buffer[pos], 20 - pos);
-}
+## Assembler
 
-void printIntLf(i64 number) {
-	if (number < 0) {
-		printChar('-');
-		number = -number;
-	}
-	printUint(number);
-	printChar('\n');
-}
+To be able to implement more functions, it is possible to implement functions completely in ASM.
 
-i64 strlen(u8* str) {
-	i64 length = 0;
-	for (; *str != 0; str = str + 1) {
-		length = length + 1;
-	}
-	return length;
-}
-
+```
 void printStringLength(u8* str, i64 length) asm {
 	// rsp+0    calling address
 	// rsp+8    nothing (offset to get rsp % 10 == 0)
@@ -65,3 +33,4 @@ void printStringLength(u8* str, i64 length) asm {
 	"mov     rsp, rdi"
 	"ret"
 }
+```

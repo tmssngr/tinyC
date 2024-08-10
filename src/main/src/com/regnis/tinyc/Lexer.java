@@ -183,6 +183,7 @@ public final class Lexer {
 			case "continue" -> TokenType.CONTINUE;
 			case "typedef" -> TokenType.TYPEDEF;
 			case "#include" -> TokenType.INCLUDE;
+			case "asm" -> TokenType.ASM;
 			default -> TokenType.IDENTIFIER;
 		};
 	}

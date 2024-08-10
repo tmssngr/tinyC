@@ -70,6 +70,9 @@ i64 strlen(u8* str) {
 	return length;
 }
 
+void printStringLength(u8* str, i64 length) {
+}
+
 void main() {
 	u8* $.0;
 	u8* second;

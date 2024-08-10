@@ -1,17 +1,19 @@
+#include "x86_64.h"
+
 void main() {
-    print(1 < 2);
-    print(2 < 1);
+    printIntLf(1 < 2);
+    printIntLf(2 < 1);
 
-    print(1 <= 2);
-    print(2 <= 1);
+    printIntLf(1 <= 2);
+    printIntLf(2 <= 1);
 
-    print(1 == 2);
+    printIntLf(1 == 2);
 
-    print(1 != 2);
+    printIntLf(1 != 2);
 
-    print(1 >= 2);
-    print(2 >= 1);
+    printIntLf(1 >= 2);
+    printIntLf(2 >= 1);
 
-    print(1 > 2);
-    print(2 > 1);
+    printIntLf(1 > 2);
+    printIntLf(2 > 1);
 }

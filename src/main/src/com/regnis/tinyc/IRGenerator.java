@@ -68,9 +68,15 @@ public final class IRGenerator {
 
 	private IRFunction convertFunction(Function function, List<Statement> declarations, Variables variables) {
 		final String name = function.name();
+		final String functionLabel = getFunctionLabel(name);
+		if (function.asmLines().size() > 0) {
+			Utils.assertTrue(function.localVars().isEmpty());
+			Utils.assertTrue(function.statements().isEmpty());
+			return new IRFunction(name, functionLabel, function.returnTypeNotNull(), List.of(), List.of(), function.asmLines());
+		}
+
 		instructions = new ArrayList<>();
 		try {
-			final String functionLabel = getFunctionLabel(name);
 			functionRetLabel = functionLabel + "_ret";
 			if (name.equals("main")) {
 				writeInit(declarations, variables);
@@ -88,7 +94,7 @@ public final class IRGenerator {
 
 			writeStatements(function.statements(), variables);
 			writeLabel(functionRetLabel);
-			return new IRFunction(name, functionLabel, Objects.requireNonNull(function.returnType()), localVars, instructions);
+			return new IRFunction(name, functionLabel, Objects.requireNonNull(function.returnType()), localVars, instructions, List.of());
 		}
 		finally {
 			instructions = List.of();

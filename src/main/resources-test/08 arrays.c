@@ -1,3 +1,5 @@
+#include "x86_64.h"
+
 u8 chars[256];
 
 void main() {
@@ -6,5 +8,5 @@ void main() {
   chars[1] = chars[0] + 1;
   chars[1+1] = chars[1] + 2;
   u8 result = chars[2];
-  print(result);
+  printIntLf(result);
 }

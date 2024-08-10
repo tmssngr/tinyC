@@ -70,6 +70,13 @@ public final class Parser {
 							consume(TokenType.COMMA);
 						}
 					}
+
+					if (isConsume(TokenType.ASM)) {
+						final List<String> asmLines = getAsmLines();
+						functions.accept(Function.createAsmInstance(name, typeString, args, asmLines, location));
+						continue;
+					}
+
 					final List<Statement> statements = getStatements();
 					functions.accept(Function.createInstance(name, typeString, args, statements, location));
 					continue;
@@ -118,6 +125,18 @@ public final class Parser {
 
 			throw new SyntaxException(Messages.expectedRootElement(), location);
 		}
+	}
+
+	private List<String> getAsmLines() {
+		consume(TokenType.L_BRACE);
+		final List<String> lines = new ArrayList<>();
+		do {
+			expectType(TokenType.STRING);
+			final String s = consumeText();
+			lines.add(s);
+		}
+		while (!isConsume(TokenType.R_BRACE));
+		return lines;
 	}
 
 	private List<Statement> getStatements() {

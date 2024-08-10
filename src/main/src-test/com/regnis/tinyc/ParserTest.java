@@ -548,6 +548,25 @@ public class ParserTest {
 				                          }"""));
 	}
 
+	@Test
+	public void testAsm() {
+		assertEquals(new Program(List.of(), List.of(),
+		                         List.of(
+				                         Function.createAsmInstance("zero", "i64", List.of(), List.of(
+						                                                    "mov rax, 0"
+				                                                    ),
+				                                                    loc(0, 0)
+				                         )
+		                         ),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram("""
+				                          i64 zero() asm {
+				                            "mov rax, 0"
+				                          }"""));
+	}
+
 	@NotNull
 	private static Program parseProgram(String text) {
 		return Parser.parse(text);
@@ -588,6 +607,7 @@ public class ParserTest {
 		Assert.assertEquals(expectedFunction.localVars(), currentFunction.localVars());
 		Assert.assertEquals(expectedFunction.location(), currentFunction.location());
 		assertEquals(expectedFunction.statements(), currentFunction.statements());
+		Assert.assertEquals(expectedFunction.asmLines(), currentFunction.asmLines());
 		Assert.assertEquals(expectedFunction, currentFunction);
 	}
 

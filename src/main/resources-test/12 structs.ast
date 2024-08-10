@@ -1,3 +1,76 @@
+void printString(u8* str) {
+	i64 length;
+	u8* $.2;
+	u8* $.3;
+
+	$.2 = str;
+	length = strlen($.2);
+	$.3 = str;
+	printStringLength($.3, length);
+}
+
+void printChar(u8 chr) {
+	u8* $.1;
+	i64 $.2;
+
+	$.1 = &chr;
+	$.2 = 1;
+	printStringLength($.1, $.2);
+}
+
+void printUint(i64 number) {
+	u8* buffer[20];
+	u8 pos;
+	i64 remainder;
+	u8 digit;
+	u8* $.5;
+	i64 $.6;
+
+	pos = 20;
+	while (true) {
+		pos = pos - 1;
+		remainder = number % 10;
+		number = number / 10;
+		digit = ((u8)remainder) + 48;
+		buffer[(i64)pos] = digit;
+		if (number == 0) {
+			break;
+		}
+	}
+	$.5 = &buffer[(i64)pos];
+	$.6 = (i64)(20 - pos);
+	printStringLength($.5, $.6);
+}
+
+void printIntLf(i64 number) {
+	u8 $.1;
+	i64 $.2;
+	u8 $.3;
+
+	if (number < 0) {
+		$.1 = 45;
+		printChar($.1);
+		number = -number;
+	}
+	$.2 = number;
+	printUint($.2);
+	$.3 = 10;
+	printChar($.3);
+}
+
+i64 strlen(u8* str) {
+	i64 length;
+
+	length = 0;
+	for (; (*str) != 0; str = (u8*)(((i64)str) + 1)) {
+		length = length + 1;
+	}
+	return length;
+}
+
+void printStringLength(u8* str, i64 length) {
+}
+
 void main() {
 	Pos pos;
 	i64 $.1;
@@ -5,13 +78,13 @@ void main() {
 	u8* x;
 	i64 $.4;
 
-	$.1 = (i64)(pos.y);
-	print($.1);
 	pos.x = 1;
-	pos.y = pos.x;
+	pos.y = (pos.x) + 1;
+	$.1 = (i64)(pos.x);
+	printIntLf($.1);
 	$.2 = (i64)(pos.y);
-	print($.2);
+	printIntLf($.2);
 	x = &(pos.x);
 	$.4 = (i64)(*x);
-	print($.4);
+	printIntLf($.4);
 }

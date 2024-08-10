@@ -54,6 +54,11 @@ public final class IRWriter {
 				}
 			}
 		}
+
+		for (String asmLine : function.asmLines()) {
+			writer.write("\t");
+			writeln(asmLine);
+		}
 		writeln("");
 	}
 

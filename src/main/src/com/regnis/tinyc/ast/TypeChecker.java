@@ -25,8 +25,6 @@ public final class TypeChecker {
 	public TypeChecker(@NotNull Type pointerIntType) {
 		Utils.assertTrue(pointerIntType.isInt());
 		this.pointerIntType = pointerIntType;
-		globalSymbols.put("printStringLength", new Symbol.Func(Type.VOID, List.of(Type.pointer(Type.U8), Type.I64), new Location(-1, -1)));
-		globalSymbols.put("print", new Symbol.Func(Type.VOID, List.of(Type.I64), new Location(-1, -1)));
 	}
 
 	@NotNull
@@ -115,7 +113,7 @@ public final class TypeChecker {
 			argTypes.add(argType);
 		}
 		globalSymbols.put(name, new Symbol.Func(returnType, argTypes, location));
-		return Function.typedInstance(name, function.typeString(), returnType, args, List.of(), function.statements(), location);
+		return new Function(name, function.typeString(), returnType, args, List.of(), function.statements(), function.asmLines(), location);
 	}
 
 	@NotNull
@@ -130,6 +128,12 @@ public final class TypeChecker {
 
 	@NotNull
 	private Function determineTypes(Function function) {
+		if (function.asmLines().size() > 0) {
+			Utils.assertTrue(function.localVars().isEmpty());
+			Utils.assertTrue(function.statements().isEmpty());
+			return new Function(function.name(), function.typeString(), function.returnTypeNotNull(), function.args(), List.of(), List.of(), function.asmLines(), function.location());
+		}
+
 		expectedReturnType = function.returnType();
 		localVariables = new LocalVariables();
 		try {
@@ -143,7 +147,7 @@ public final class TypeChecker {
 					throw new SyntaxException(Messages.functionMustReturnType(expectedReturnType), function.location());
 				}
 			}
-			return Function.typedInstance(function.name(), function.typeString(), function.returnType(), function.args(), localVariables.getList(), statements, function.location());
+			return Function.typedInstance(function.name(), function.typeString(), function.returnTypeNotNull(), function.args(), localVariables.getList(), statements, List.of(), function.location());
 		}
 		finally {
 			localVariables = null;

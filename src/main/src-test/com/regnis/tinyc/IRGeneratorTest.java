@@ -35,7 +35,7 @@ public class IRGeneratorTest {
 									 new IRReturnValue(0, 1),
 									 new IRJump("@get_ret"),
 									 new IRLabel("@get_ret")
-				             )),
+				             ), List.of()),
 				             new IRFunction("foo", "@foo", Type.VOID, List.of(
 									 new IRLocalVar("chr", 0, false, 1)
 				             ), List.of(
@@ -88,7 +88,7 @@ public class IRGeneratorTest {
 									 new IRJump("@while_1"),
 									 new IRLabel("@while_1_break"),
 									 new IRLabel("@foo_ret")
-				             ))
+				             ), List.of())
 		             ), List.of(), List.of()),
 		             convert("""
 				                     u8 get() {

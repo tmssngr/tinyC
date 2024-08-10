@@ -2,9 +2,9 @@
 - char literals, including escape sequences
 - structs
 - implement some API already in language (printString, printUint, printChar)
+- ability to define API as ASM which is tunneled through to the ASM output literally
 
 # Pending features
-- ability to define API as ASM which is tunneled through to the ASM output literally
 - labeled (nested) loops (break/continue with label)
 - composites
 	- unions

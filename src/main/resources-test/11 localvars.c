@@ -1,9 +1,11 @@
+#include "x86_64.h"
+
 void main() {
 	u8 a = 10;
-	print(a);
+	printIntLf(a);
 }
 
 void foo() {
 	u8 a = 20;
-	print(a);
+	printIntLf(a);
 }

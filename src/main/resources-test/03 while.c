@@ -1,12 +1,14 @@
+#include "x86_64.h"
+
 void main() {
 	u8 i = 5;
 	while (i > 0) {
-		print(i);
+		printIntLf(i);
 		i = i - 1;
 	}
 
 	while (true) {
-		print(i);
+		printIntLf(i);
 		i = i + 1;
 		if (i < 5) {
 			continue;
