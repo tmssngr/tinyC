@@ -121,4 +121,34 @@ public class Messages {
 	public static String expectedAddressableObject() {
 		return "The address-of-operator only works on scalar variables or array elements";
 	}
+
+	@NotNull
+	public static String expectedRootElement() {
+		return "Expected typedef, global variable declaration or function declaration";
+	}
+
+	@NotNull
+	public static String cantRedefineDefaultTypes() {
+		return "Can't redefine default types";
+	}
+
+	@NotNull
+	public static String typeAlreadyDefined(String name, Location location) {
+		return "The type '" + name + "' has already been defined at " + location;
+	}
+
+	@NotNull
+	public static String memberAlreadyDefinedAt(String name, Location location) {
+		return "The member '" + name + "' has already been defined at " + location;
+	}
+
+	@NotNull
+	public static String expectedStruct(String name) {
+		return "Expected struct type, but got '" + name + "'";
+	}
+
+	@NotNull
+	public static String structDoesNotHaveMember(String struct, String member) {
+		return "Type '" + struct + "' does not have member '" + member + "'";
+	}
 }

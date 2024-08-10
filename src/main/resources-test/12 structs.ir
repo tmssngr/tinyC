@@ -1,0 +1,81 @@
+@main:
+ Local variables
+   var 0: pos
+   var 1: $.1
+   var 2: $.2
+   var 3: x
+   var 4: $.4
+        ; 7:8 var pos(%0)
+        addrOf r0, [0@function]
+        ; 7:12 Pos.y
+        ld r1, 1 (8)
+        binary+ r0, r1 (0)
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        ; 7:12 var $.1(%1)
+        addrOf r1, [1@function]
+        ; 7:12 assign
+        store [r1], r0 (8)
+        ; 7:12 read var $.1(%1)
+        addrOf r0, [1@function]
+        load r1, [r0] (8)
+        ; 7:2 print i64
+        printint r1
+        ; 8:10 int lit 1
+        ld r0, 1 (1)
+        ; 8:2 var pos(%0)
+        addrOf r1, [0@function]
+        ; 8:6 Pos.x
+        ; 8:8 assign
+        store [r1], r0 (1)
+        ; 9:10 var pos(%0)
+        addrOf r0, [0@function]
+        ; 9:14 Pos.x
+        load r1, [r0] (1)
+        ; 9:2 var pos(%0)
+        addrOf r0, [0@function]
+        ; 9:6 Pos.y
+        ld r2, 1 (8)
+        binary+ r0, r2 (0)
+        ; 9:8 assign
+        store [r0], r1 (1)
+        ; 10:8 var pos(%0)
+        addrOf r0, [0@function]
+        ; 10:12 Pos.y
+        ld r1, 1 (8)
+        binary+ r0, r1 (0)
+        load r1, [r0] (1)
+        cast r0 (i64), r1 (u8)
+        ; 10:12 var $.2(%2)
+        addrOf r1, [2@function]
+        ; 10:12 assign
+        store [r1], r0 (8)
+        ; 10:12 read var $.2(%2)
+        addrOf r0, [2@function]
+        load r1, [r0] (8)
+        ; 10:2 print i64
+        printint r1
+        ; 11:11 var pos(%0)
+        addrOf r0, [0@function]
+        ; 11:15 Pos.x
+        ; 11:2 var x(%3)
+        addrOf r1, [3@function]
+        ; 11:2 assign
+        store [r1], r0 (8)
+        ; 12:9 read var x(%3)
+        addrOf r0, [3@function]
+        load r1, [r0] (8)
+        ; 12:8 deref
+        load r0, [r1] (1)
+        cast r1 (i64), r0 (u8)
+        ; 12:8 var $.4(%4)
+        addrOf r0, [4@function]
+        ; 12:8 assign
+        store [r0], r1 (8)
+        ; 12:8 read var $.4(%4)
+        addrOf r0, [4@function]
+        load r1, [r0] (8)
+        ; 12:2 print i64
+        printint r1
+@main_ret:
+

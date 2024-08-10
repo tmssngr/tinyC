@@ -22,6 +22,7 @@ public final class IRGenerator {
 	}
 
 	private final TrivialRegisterAllocator registerAllocator = new TrivialRegisterAllocator();
+	private final Map<Type, TypeInfo> types = new HashMap<>();
 
 	private int labelIndex;
 	@SuppressWarnings("unused") private boolean debug;
@@ -34,6 +35,8 @@ public final class IRGenerator {
 
 	@NotNull
 	private IRProgram convertProgram(Program program) {
+		initializeTypes(program.typeDefs());
+
 		final Variables variables = new Variables(program.globalVariables());
 
 		final List<IRFunction> functions = new ArrayList<>();
@@ -45,6 +48,22 @@ public final class IRGenerator {
 		final List<IRGlobalVar> globalVars = createGlobalVars(program.globalVariables());
 		final List<IRStringLiteral> stringLiterals = createStringLiterals(program.stringLiterals());
 		return new IRProgram(functions, globalVars, stringLiterals);
+	}
+
+	private void initializeTypes(List<TypeDef> typeDefs) {
+		for (TypeDef typeDef : typeDefs) {
+			types.put(typeDef.typeNotNull(), createTypeInfo(typeDef.parts()));
+		}
+	}
+
+	private TypeInfo createTypeInfo(List<TypeDef.Part> parts) {
+		final Map<String, Integer> memberToOffset = new HashMap<>();
+		int offset = 0;
+		for (TypeDef.Part part : parts) {
+			memberToOffset.put(part.name(), offset);
+			offset += getTypeSize(part.typeNotNull());
+		}
+		return new TypeInfo(offset, memberToOffset);
 	}
 
 	private IRFunction convertFunction(Function function, List<Statement> declarations, Variables variables) {
@@ -259,6 +278,7 @@ public final class IRGenerator {
 			}
 			case ExprVarAccess var -> writeVarAccess(var, variables, readVar);
 			case ExprArrayAccess access -> writeArrayAccess(access, variables, readVar);
+			case ExprMemberAccess access -> writeMemberAccess(access, variables, readVar);
 			case ExprBinary binary -> writeBinary(binary, variables);
 			case ExprUnary unary -> processUnary(unary, variables, readVar);
 			case ExprFuncCall call -> writeCall(call, variables);
@@ -315,6 +335,27 @@ public final class IRGenerator {
 
 		return readVar
 				? writeRead(addrReg, type)
+				: addrReg;
+	}
+
+	private int writeMemberAccess(ExprMemberAccess access, Variables variables, boolean readVar) {
+		final Expression expression = access.expression();
+		final TypeInfo typeInfo = types.get(expression.typeNotNull());
+		if (typeInfo == null) {
+			throw new IllegalStateException();
+		}
+		final int offset = typeInfo.get(access.member());
+		final int addrReg = write(expression, variables, false);
+		writeComment(expression.typeNotNull() + "." + access.member(), access.location());
+		if (offset != 0) {
+			final int offsetReg = getFreeReg();
+			write(new IRLoadInt(offsetReg, offset, 8));
+			write(new IRBinary(ExprBinary.Op.Add, addrReg, offsetReg));
+			freeReg(offsetReg);
+		}
+
+		return readVar
+				? writeRead(addrReg, access.typeNotNull())
 				: addrReg;
 	}
 
@@ -538,26 +579,27 @@ public final class IRGenerator {
 		write(new IRAddrOfVar(reg, variable.scope(), variable.index()));
 	}
 
-	@NotNull
-	private static String getStringLiteralName(int i) {
-		return "string_" + i;
-	}
-
-	private static int getTypeSize(Type type) {
+	private int getTypeSize(Type type) {
+		final TypeInfo typeInfo = types.get(type);
+		if (typeInfo != null) {
+			return typeInfo.size;
+		}
 		if (type.isPointer()) {
 			return 8;
 		}
 		return Type.getSize(type);
 	}
 
-	private static int getVariableSize(Variable variable) {
+	private int getVariableSize(Variable variable) {
 		return getTypeSize(variable.type()) * Math.max(1, variable.arraySize());
 	}
 
-	private record BreakContinueLabels(String breakLabel, String continueLabel) {
+	@NotNull
+	private static String getStringLiteralName(int i) {
+		return "string_" + i;
 	}
 
-	private static class Variables {
+	private class Variables {
 		private final Map<Integer, VariableDetails> indexToVar = new HashMap<>();
 		private final Variables parent;
 
@@ -588,6 +630,9 @@ public final class IRGenerator {
 
 			return parent.get(index, scope);
 		}
+	}
+
+	private record BreakContinueLabels(String breakLabel, String continueLabel) {
 	}
 
 	private record VariableDetails(String name, VariableScope scope, int index, int offset, boolean isScalar, Type type) {
@@ -651,6 +696,12 @@ public final class IRGenerator {
 
 		public boolean isNoneUsed() {
 			return freeRegs == 0;
+		}
+	}
+
+	private record TypeInfo(int size, Map<String, Integer> memberToOffset) {
+		public int get(String member) {
+			return memberToOffset.get(member);
 		}
 	}
 }

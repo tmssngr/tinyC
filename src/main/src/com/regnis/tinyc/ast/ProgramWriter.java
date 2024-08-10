@@ -206,6 +206,7 @@ public final class ProgramWriter {
 		case ExprBinary binary -> writeBinary(binary);
 		case ExprVarAccess access -> writeVarAccess(access.varName(), null);
 		case ExprArrayAccess access -> writeArrayAccess(access);
+		case ExprMemberAccess access -> writeMemberAccess(access);
 		case ExprCast cast -> writeCast(cast);
 		case ExprFuncCall call -> writeCall(call);
 		case ExprUnary unary -> writeUnary(unary);
@@ -249,6 +250,12 @@ public final class ProgramWriter {
 		write("[");
 		writeExpression(access.index());
 		write("]");
+	}
+
+	private void writeMemberAccess(ExprMemberAccess access) throws IOException {
+		writeExpression(access.expression());
+		write(".");
+		write(access.member());
 	}
 
 	private void writeCast(ExprCast cast) throws IOException {

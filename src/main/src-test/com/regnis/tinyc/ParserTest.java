@@ -20,6 +20,7 @@ public class ParserTest {
 		                       Assert::assertEquals);
 		TestUtils.assertEquals(expectedProgram.stringLiterals(), currentProgram.stringLiterals(),
 		                       Assert::assertEquals);
+		Assert.assertEquals(expectedProgram, currentProgram);
 	}
 
 	public static Location loc(int line, int column) {
@@ -28,7 +29,7 @@ public class ParserTest {
 
 	@Test
 	public void testDeclaration() {
-		assertEquals(new Program(List.of(
+		assertEquals(new Program(List.of(), List.of(
 				             new StmtVarDeclaration("u8", "foo", null,
 				                                    loc(0, 0))
 		             ), List.of(), List.of(), List.of()),
@@ -389,7 +390,7 @@ public class ParserTest {
 
 	@Test
 	public void testFunctions() {
-		Assert.assertEquals(new Program(List.of(),
+		Assert.assertEquals(new Program(List.of(), List.of(),
 		                                List.of(
 				                                new Function("main", "void", List.of(),
 				                                             List.of(
@@ -414,7 +415,7 @@ public class ParserTest {
 				                                         void fooBar(u8 a) {
 				                                         }""")).parse());
 
-		assertEquals(new Program(List.of(),
+		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
 				                         new Function("main", "void", List.of(),
 				                                      List.of(
@@ -439,7 +440,7 @@ public class ParserTest {
 						                                      new StmtReturn(new ExprIntLiteral(1, loc(7, 10)),
 						                                                     loc(7, 3))
 				                                      ),
-				                                      loc(4, 0))
+				                                      loc(6, 0))
 		                         ),
 		                         List.of(),
 		                         List.of()
@@ -458,7 +459,7 @@ public class ParserTest {
 
 	@Test
 	public void testArrays() {
-		assertEquals(new Program(List.of(
+		assertEquals(new Program(List.of(), List.of(
 				             new StmtArrayDeclaration("u8", "str", 4,
 				                                      loc(0, 0))
 		             ), List.of(), List.of(), List.of()),
@@ -470,11 +471,11 @@ public class ParserTest {
 
 		assertEquals(assignStmt(new ExprArrayAccess(new ExprVarAccess("buffer", loc(0, 0)),
 		                                            new ExprVarAccess("i", loc(0, 7))),
-								new ExprArrayAccess(new ExprVarAccess("buffer", loc(0, 12)),
-								                    new ExprBinary(ExprBinary.Op.Add,
-								                                   new ExprVarAccess("i", loc(0, 19)),
-								                                   new ExprIntLiteral(1, loc(0, 23)),
-								                                   loc(0, 21))),
+		                        new ExprArrayAccess(new ExprVarAccess("buffer", loc(0, 12)),
+		                                            new ExprBinary(ExprBinary.Op.Add,
+		                                                           new ExprVarAccess("i", loc(0, 19)),
+		                                                           new ExprIntLiteral(1, loc(0, 23)),
+		                                                           loc(0, 21))),
 		                        loc(0, 10)),
 		             new Parser(new Lexer("buffer[i] = buffer[i + 1];")).getStatementNotNull());
 	}
@@ -512,6 +513,41 @@ public class ParserTest {
 		             new Parser(new Lexer("b = (u8)a;")).getStatementNotNull());
 	}
 
+	@Test
+	public void testStruct() {
+		assertEquals(new Program(List.of(
+				             new TypeDef("Foo", null, List.of(
+						             new TypeDef.Part("x", "u8", null, loc(0, 13)),
+						             new TypeDef.Part("y", "u8", null, loc(0, 19))
+				             ), loc(0, 0))
+		             ), List.of(),
+		                         List.of(
+				                         new Function("bla", "void", List.of(),
+				                                      List.of(
+						                                      new StmtArrayDeclaration("Foo", "foos", 10, loc(3, 2)),
+						                                      assignStmt(new ExprMemberAccess(new ExprArrayAccess(new ExprVarAccess("foos", loc(4, 2)),
+						                                                                                          new ExprIntLiteral(0, loc(4, 7))),
+						                                                                      "x",
+						                                                                      null,
+						                                                                      loc(4, 10)),
+						                                                 new ExprIntLiteral(1, loc(4, 14)),
+						                                                 loc(4, 12))
+				                                      ),
+				                                      loc(2, 0)
+				                         )
+		                         ),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             new Parser(new Lexer("""
+				                                  typedef Foo (u8 x, u8 y);
+
+				                                  void bla() {
+				                                    Foo foos[10];
+				                                    foos[0].x = 1;
+				                                  }""")).parse());
+	}
+
 	@NotNull
 	private static StmtExpr assignStmt(Expression left, Expression right, Location loc) {
 		return new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
@@ -534,7 +570,9 @@ public class ParserTest {
 		Assert.assertEquals(expectedFunction.returnType(), currentFunction.returnType());
 		Assert.assertEquals(expectedFunction.args(), currentFunction.args());
 		Assert.assertEquals(expectedFunction.localVars(), currentFunction.localVars());
+		Assert.assertEquals(expectedFunction.location(), currentFunction.location());
 		assertEquals(expectedFunction.statements(), currentFunction.statements());
+		Assert.assertEquals(expectedFunction, currentFunction);
 	}
 
 	private static void assertEquals(List<Statement> expectedStatements, List<Statement> currentStatements) {

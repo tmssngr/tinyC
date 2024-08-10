@@ -161,7 +161,7 @@ public class TypeCheckerTest {
 
 	@Test
 	public void testArrays() {
-		assertEquals(new Program(List.of(),
+		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
 				                         new Function("main", "void", Type.VOID, List.of(),
 				                                      List.of(
@@ -205,7 +205,7 @@ public class TypeCheckerTest {
 						                                                                 new ExprIntLiteral(0, Type.I64, loc(6, 16))),
 						                                             loc(6, 2))
 				                                      ),
-				                                      loc(0, 0))
+				                                      loc(1, 0))
 		                         ),
 		                         List.of(
 				                         new Variable("array", 0, VariableScope.global, Type.pointer(Type.U8), 2, loc(0, 0))
@@ -245,7 +245,7 @@ public class TypeCheckerTest {
 
 	@Test
 	public void testFlattenNestedCompounds() {
-		assertEquals(new Program(List.of(),
+		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
 				                         new Function("main", "void", Type.VOID, List.of(),
 				                                      List.of(
@@ -274,7 +274,7 @@ public class TypeCheckerTest {
 
 	@Test
 	public void testLocalVars() {
-		assertEquals(new Program(List.of(),
+		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
 				                         new Function("main", "void", Type.VOID, List.of(),
 				                                      List.of(
@@ -336,7 +336,7 @@ public class TypeCheckerTest {
 				                       }
 				                       """));
 
-		assertEquals(new Program(List.of(),
+		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
 				                         new Function("main", "void", Type.VOID, List.of(),
 				                                      List.of(
@@ -403,6 +403,65 @@ public class TypeCheckerTest {
 				                           i16 b = 2;
 				                           print(b);
 				                         }
+				                       }"""));
+	}
+
+	@Test
+	public void testMemberAccess() {
+		testIllegal(Messages.cantRedefineDefaultTypes(), 0, 0,
+		            "typedef u8 (u8 x);");
+		testIllegal(Messages.memberAlreadyDefinedAt("x", loc(0, 13)), 0, 19,
+		            "typedef Foo (u8 x, u8 x);");
+		testIllegal(Messages.typeAlreadyDefined("Foo", loc(0, 0)), 1, 0,
+		            """
+				            typedef Foo (u8 x);
+				            typedef Foo (u8 y);
+				            """);
+		testIllegal(Messages.unknownType("Foo"), 0, 0,
+		            "Foo foo = 1;");
+		testIllegal(Messages.structDoesNotHaveMember("Foo", "y"), 4, 10,
+		            """
+				            typedef Foo (u8 x);
+
+				            void bla() {
+				              Foo foos[10];
+				              foos[0].y = foos[0].y + 1;
+				            }""");
+		assertEquals(new Program(List.of(
+				             new TypeDef("Foo", Type.struct("Foo"), List.of(
+						             new TypeDef.Part("x", "u8", Type.U8, loc(0, 13)),
+						             new TypeDef.Part("y", "u8", Type.U8, loc(0, 19))
+				             ), loc(0, 0))
+		             ),
+		                         List.of(),
+		                         List.of(
+				                         new Function("bla", "void", Type.VOID, List.of(),
+				                                      List.of(
+						                                      new Variable("foos", 0, VariableScope.function, Type.pointer(Type.struct("Foo")), 10, loc(3, 2))
+				                                      ),
+				                                      List.of(
+						                                      new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
+						                                                                  Type.U8,
+						                                                                  new ExprMemberAccess(new ExprArrayAccess(new ExprVarAccess("foos", 0, VariableScope.function, Type.pointer(Type.struct("Foo")), loc(4, 2)),
+						                                                                                                           Type.struct("Foo"),
+						                                                                                                           new ExprIntLiteral(0, Type.I64, loc(4, 7))),
+						                                                                                       "x",
+						                                                                                       Type.U8,
+						                                                                                       loc(4, 10)),
+						                                                                  new ExprIntLiteral(1, Type.U8, loc(4, 14)),
+						                                                                  loc(4, 12)))
+				                                      ),
+				                                      loc(2, 0))
+		                         ),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             checkType("""
+				                       typedef Foo (u8 x, u8 y);
+
+				                       void bla() {
+				                         Foo foos[10];
+				                         foos[0].x = 1;
 				                       }"""));
 	}
 

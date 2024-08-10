@@ -32,50 +32,70 @@ public class Parser {
 
 	@NotNull
 	public Program parse() {
-		final List<Function> functions = new ArrayList<>();
+		final List<TypeDef> typeDefs = new ArrayList<>();
 		final List<Statement> globalVars = new ArrayList<>();
+		final List<Function> functions = new ArrayList<>();
 		while (token != TokenType.EOF) {
 			final Location location = getLocation();
-			final String type = consumeIdentifier();
-			final String typeString = getTypeString(type);
-			final String name = consumeIdentifier();
-			if (isConsume(TokenType.L_PAREN)) {
-				final List<Function.Arg> args = new ArrayList<>();
-				while (!isConsume(TokenType.R_PAREN)) {
-					final Location argLocation = getLocation();
-					final String identifier = consumeIdentifier();
-					final String argType = getTypeString(identifier);
-					final String argName = consumeIdentifier();
-					args.add(new Function.Arg(argType, argName, argLocation));
-					if (token != TokenType.R_PAREN) {
-						consume(TokenType.COMMA);
+			if (token == TokenType.IDENTIFIER) {
+				final String type = consumeIdentifier();
+				final String typeString = getTypeString(type);
+				final String name = consumeIdentifier();
+				if (isConsume(TokenType.L_PAREN)) {
+					final List<Function.Arg> args = new ArrayList<>();
+					while (!isConsume(TokenType.R_PAREN)) {
+						final Location argLocation = getLocation();
+						final String identifier = consumeIdentifier();
+						final String argType = getTypeString(identifier);
+						final String argName = consumeIdentifier();
+						args.add(new Function.Arg(argType, argName, argLocation));
+						if (token != TokenType.R_PAREN) {
+							consume(TokenType.COMMA);
+						}
 					}
+					final List<Statement> statements = getStatements();
+					functions.add(new Function(name, typeString, args, statements, location));
+					continue;
 				}
-				final List<Statement> statements = getStatements();
-				functions.add(new Function(name, typeString, args, statements, location));
+
+				if (isConsume(TokenType.EQUAL)) {
+					final Expression expression = getExpression();
+					consume(TokenType.SEMI);
+					globalVars.add(new StmtVarDeclaration(typeString, name, expression, location));
+					continue;
+				}
+				if (isConsume(TokenType.SEMI)) {
+					globalVars.add(new StmtVarDeclaration(typeString, name, null, location));
+					continue;
+				}
+				if (isConsume(TokenType.L_BRACKET)) {
+					final StmtArrayDeclaration array = getArrayDeclaration(typeString, name, location);
+					consume(TokenType.SEMI);
+					globalVars.add(array);
+					continue;
+				}
+			}
+			else if (isConsume(TokenType.TYPEDEF)) {
+				final String typeName = consumeIdentifier();
+				consume(TokenType.L_PAREN);
+				final List<TypeDef.Part> parts = new ArrayList<>();
+				do {
+					final Location partLocation = getLocation();
+					String partType = consumeIdentifier();
+					partType = getTypeString(partType);
+					final String partName = consumeIdentifier();
+					parts.add(new TypeDef.Part(partName, partType, null, partLocation));
+				}
+				while (isConsume(TokenType.COMMA));
+				consume(TokenType.R_PAREN);
+				consume(TokenType.SEMI);
+				typeDefs.add(new TypeDef(typeName, null, parts, location));
 				continue;
 			}
 
-			if (isConsume(TokenType.EQUAL)) {
-				final Expression expression = getExpression();
-				consume(TokenType.SEMI);
-				globalVars.add(new StmtVarDeclaration(typeString, name, expression, location));
-				continue;
-			}
-			if (isConsume(TokenType.SEMI)) {
-				globalVars.add(new StmtVarDeclaration(typeString, name, null, location));
-				continue;
-			}
-			if (isConsume(TokenType.L_BRACKET)) {
-				final StmtArrayDeclaration array = getArrayDeclaration(typeString, name, location);
-				consume(TokenType.SEMI);
-				globalVars.add(array);
-				continue;
-			}
-
-			throw new SyntaxException("Expected method or global variable declaration", location);
+			throw new SyntaxException(Messages.expectedRootElement(), location);
 		}
-		return new Program(globalVars, functions, List.of(), List.of());
+		return new Program(typeDefs, globalVars, functions, List.of(), List.of());
 	}
 
 	private List<Statement> getStatements() {
@@ -176,7 +196,7 @@ public class Parser {
 				return new StmtVarDeclaration(typeString, identifier2, expression, location);
 			}
 
-			primary = getExpressionPrimary(identifier1, location);
+			primary = getExpressionPrimaryDot(identifier1, location);
 		}
 		else {
 			primary = getExpressionPrimary(location);
@@ -387,7 +407,7 @@ public class Parser {
 			case L_PAREN -> getExpressionInParenthesis();
 			case IDENTIFIER -> {
 				final String identifier = consumeIdentifier();
-				yield getExpressionPrimary(identifier, location);
+				yield getExpressionPrimaryDot(identifier, location);
 			}
 			case AMP -> getUnary(ExprUnary.Op.AddrOf, location);
 			case STAR -> getUnary(ExprUnary.Op.Deref, location);
@@ -404,6 +424,17 @@ public class Parser {
 		final Location exprLocation = getLocation();
 		final Expression expression = getExpressionPrimaryNotNull(exprLocation);
 		return new ExprUnary(op, expression, location);
+	}
+
+	@NotNull
+	private Expression getExpressionPrimaryDot(String identifier, Location location) {
+		Expression expression = getExpressionPrimary(identifier, location);
+		if (isConsume(TokenType.DOT)) {
+			final Location memberLocation = getLocation();
+			final String member = consumeIdentifier();
+			expression = new ExprMemberAccess(expression, member, null, memberLocation);
+		}
+		return expression;
 	}
 
 	@NotNull
@@ -433,7 +464,7 @@ public class Parser {
 				return ExprCast.cast(identifier, expression, location);
 			}
 
-			primary = getExpressionPrimary(identifier, location);
+			primary = getExpressionPrimaryDot(identifier, location);
 		}
 		else {
 			primary = getExpressionPrimaryNotNull(location);

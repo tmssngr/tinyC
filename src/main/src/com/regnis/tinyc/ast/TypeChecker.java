@@ -12,6 +12,7 @@ import org.jetbrains.annotations.*;
 public final class TypeChecker {
 
 	private final Map<String, Symbol> globalSymbols = new HashMap<>();
+	private final Map<String, TypeDef> typeDefs = new HashMap<>();
 	private final List<Variable> globalVariables = new ArrayList<>();
 	private final Map<String, StringLiteral> stringLiteralMap = new HashMap<>();
 	private final List<StringLiteral> stringLiterals = new ArrayList<>();
@@ -30,10 +31,63 @@ public final class TypeChecker {
 
 	@NotNull
 	public Program check(@NotNull Program program) {
+		final List<TypeDef> typeDefs = processTypeDefs(program.typeDefs());
 		final List<Statement> globalVars = processStatements(program.globalVars());
 		final List<Function> typedFunctions = determineFunctionDeclarationTypes(program.functions());
 		final List<Function> functions = determineStatementTypes(typedFunctions);
-		return new Program(globalVars, functions, globalVariables, stringLiterals);
+		return new Program(typeDefs, globalVars, functions, globalVariables, stringLiterals);
+	}
+
+	private List<TypeDef> processTypeDefs(List<TypeDef> rawTypeDefs) {
+		// split into preProcessTypeDef and processTypeDef, so it is
+		// possible to reference one type in another (without caring for the order)
+		for (TypeDef typeDef : rawTypeDefs) {
+			preProcessTypeDef(typeDef);
+		}
+
+		final List<TypeDef> typeDefs = new ArrayList<>();
+		for (TypeDef typeDef : rawTypeDefs) {
+			typeDefs.add(processTypeDef(typeDef));
+		}
+		return typeDefs;
+	}
+
+	private void preProcessTypeDef(TypeDef typeDef) {
+		final String name = typeDef.name();
+		if (Type.getDefaultType(name) != null) {
+			throw new SyntaxException(Messages.cantRedefineDefaultTypes(), typeDef.location());
+		}
+
+		final TypeDef prevTypeDef = this.typeDefs.get(name);
+		if (prevTypeDef != null) {
+			throw new SyntaxException(Messages.typeAlreadyDefined(name, prevTypeDef.location()), typeDef.location());
+		}
+
+		final Type type = Type.struct(name);
+		this.typeDefs.put(name, new TypeDef(name, type, typeDef.parts(), typeDef.location()));
+	}
+
+	private TypeDef processTypeDef(TypeDef rawTypeDef) {
+		final String name = rawTypeDef.name();
+		final Type type = Type.struct(name);
+
+		final List<TypeDef.Part> typedParts = new ArrayList<>();
+		final Map<String, Location> partNameToLocation = new HashMap<>();
+		for (TypeDef.Part part : rawTypeDef.parts()) {
+			final String partName = part.name();
+			final Location partLocation = part.location();
+			final Location prevLocation = partNameToLocation.put(partName, partLocation);
+			if (prevLocation != null) {
+				throw new SyntaxException(Messages.memberAlreadyDefinedAt(partName, prevLocation), partLocation);
+			}
+			final String typeName = part.typeName();
+			final Type partType = getType(typeName, partLocation);
+			typedParts.add(new TypeDef.Part(partName, typeName, partType, partLocation));
+		}
+
+		final TypeDef typeDef = new TypeDef(name, type, typedParts, rawTypeDef.location());
+		this.typeDefs.put(name, typeDef);
+		return typeDef;
 	}
 
 	@NotNull
@@ -262,6 +316,7 @@ public final class TypeChecker {
 			case ExprCast cast -> processCast(cast);
 			case ExprVarAccess var -> processVarAccess(var);
 			case ExprArrayAccess access -> processArrayAccess(access);
+			case ExprMemberAccess access -> processMemberAccess(access);
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
 			case ExprBinary binary -> {
 				if (binary.op() == ExprBinary.Op.Assign) {
@@ -334,6 +389,34 @@ public final class TypeChecker {
 	}
 
 	@NotNull
+	private ExprMemberAccess processMemberAccess(ExprMemberAccess access) {
+		final Expression expression = processExpression(access.expression());
+		Type type = expression.typeNotNull();
+		final String member = access.member();
+		type = getMemberType(type, member, access.location());
+		return new ExprMemberAccess(expression, member, type, access.location());
+	}
+
+	@NotNull
+	private Type getMemberType(Type type, String member, Location location) {
+		String name = type.name();
+		if (isPointer(name)) {
+			name = stripPointer(name);
+		}
+		final TypeDef typeDef = typeDefs.get(name);
+		if (typeDef == null) {
+			throw new SyntaxException(Messages.expectedStruct(name), location);
+		}
+
+		for (TypeDef.Part part : typeDef.parts()) {
+			if (part.name().equals(member)) {
+				return part.typeNotNull();
+			}
+		}
+		throw new SyntaxException(Messages.structDoesNotHaveMember(name, member), location);
+	}
+
+	@NotNull
 	private Expression processArrayIndex(Expression arrayIndex) {
 		final Location location = arrayIndex.location();
 		Expression expression = processExpression(arrayIndex);
@@ -360,7 +443,8 @@ public final class TypeChecker {
 					throw new SyntaxException(Messages.addressOfArray(), location);
 				}
 			}
-			else if (!(expression instanceof ExprArrayAccess)) {
+			else if (!(expression instanceof ExprArrayAccess)
+			         && !(expression instanceof ExprMemberAccess)) {
 				throw new SyntaxException(Messages.expectedAddressableObject(), expression.location());
 			}
 			type = Type.pointer(type);
@@ -510,6 +594,7 @@ public final class TypeChecker {
 		return switch (expression) {
 			case ExprVarAccess varRead -> processLValueVar(varRead);
 			case ExprArrayAccess arrayAccess -> processArrayAccess(arrayAccess);
+			case ExprMemberAccess memberAccess -> processMemberAccess(memberAccess);
 			case ExprUnary deref -> processUnary(deref);
 			default -> throw new SyntaxException(Messages.expectedLValue(), expression.location());
 		};
@@ -575,8 +660,8 @@ public final class TypeChecker {
 
 	@NotNull
 	private Type getType(@NotNull String typeString, @NotNull Location location) {
-		if (typeString.endsWith("*")) {
-			return Type.pointer(getType(typeString.substring(0, typeString.length() - 1), location));
+		if (isPointer(typeString)) {
+			return Type.pointer(getType(stripPointer(typeString), location));
 		}
 
 		final Type type = Type.getDefaultType(typeString);
@@ -584,7 +669,21 @@ public final class TypeChecker {
 			return type;
 		}
 
+		final TypeDef typeDef = typeDefs.get(typeString);
+		if (typeDef != null) {
+			return typeDef.typeNotNull();
+		}
+
 		throw new SyntaxException(Messages.unknownType(typeString), location);
+	}
+
+	private boolean isPointer(@NotNull String typeString) {
+		return typeString.endsWith("*");
+	}
+
+	@NotNull
+	private String stripPointer(@NotNull String typeString) {
+		return typeString.substring(0, typeString.length() - 1);
 	}
 
 	@NotNull

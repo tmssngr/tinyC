@@ -18,6 +18,10 @@ public record Type(@NotNull String name, @Nullable Type toType, boolean isInt) {
 		return new Type(toType.name + "*", toType, false);
 	}
 
+	public static Type struct(@NotNull String name) {
+		return new Type(name, null, false);
+	}
+
 	public static int getSize(@NotNull Type type) {
 		if (type == VOID) {
 			return 0;

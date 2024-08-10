@@ -70,6 +70,11 @@ public class CompilerTest {
 		compileAndRun("11 localvars.c");
 	}
 
+	@Test
+	public void testStructs() throws IOException, InterruptedException {
+		compileAndRun("12 structs.c");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}

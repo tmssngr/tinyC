@@ -148,6 +148,9 @@ public final class Lexer {
 		if (isConsume('~')) {
 			return TokenType.TILDE;
 		}
+		if (isConsume('.')) {
+			return TokenType.DOT;
+		}
 
 		final StringBuilder buffer = new StringBuilder();
 		do {
@@ -175,6 +178,7 @@ public final class Lexer {
 			case "while" -> TokenType.WHILE;
 			case "break" -> TokenType.BREAK;
 			case "continue" -> TokenType.CONTINUE;
+			case "typedef" -> TokenType.TYPEDEF;
 			default -> TokenType.IDENTIFIER;
 		};
 	}
