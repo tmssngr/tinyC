@@ -316,22 +316,27 @@ public final class X86Win64 {
 			// https://www.felixcloutier.com/x86/idiv
 			// (edx eax) / %reg -> eax
 			// (edx eax) % %reg -> edx
+
+			// we can't be 100% sure that other registers are not currently in use, so we need to push/pop them
 			if (getRegName(targetReg).equals("rax") && getRegName(sourceReg).equals("rbx")) {
 				if (size != 8) { // TODO use movzx for unsigned types
 					writeIndented("movsx rax, " + targetRegName);
 					writeIndented("movsx rbx, " + sourceRegName);
 				}
 				writeIndented("cqo"); // rdx := signbit(rax)
+				writeIndented("push rdx");
 				writeIndented("idiv rbx"); // div-result in rax, remainder in rdx
 				if (binary.op() == IRBinary.Op.Mod) {
 					writeIndented("mov rax, rdx");
 				}
+				writeIndented("pop rdx");
 			}
 			else if (getRegName(targetReg).equals("rbx") && getRegName(sourceReg).equals("rax")) {
 				if (size != 8) { // TODO use movzx for unsigned types
-					writeIndented("movsx rax, " + targetRegName);
-					writeIndented("movsx rbx, " + sourceRegName);
+					writeIndented("movsx rax, " + sourceRegName);
+					writeIndented("movsx rbx, " + targetRegName);
 				}
+				writeIndented("push rdx");
 				writeIndented("mov rdx, rax");
 				writeIndented("mov rax, rbx");
 				writeIndented("mov rbx, rdx");
@@ -343,6 +348,26 @@ public final class X86Win64 {
 				else {
 					writeIndented("mov rbx, rax");
 				}
+				writeIndented("pop rdx");
+			}
+			else if (getRegName(targetReg).equals("rbx") && getRegName(sourceReg).equals("rcx")) {
+				if (size != 8) { // TODO use movzx for unsigned types
+					writeIndented("movsx rbx, " + targetRegName);
+					writeIndented("movsx rcx, " + sourceRegName);
+				}
+				writeIndented("push rax");
+				writeIndented("push rdx");
+				writeIndented("mov rax, rbx");
+				writeIndented("cqo"); // rdx := signbit(rax)
+				writeIndented("idiv rcx"); // div-result in rax, remainder in rdx
+				if (binary.op() == IRBinary.Op.Mod) {
+					writeIndented("mov rbx, rdx");
+				}
+				else {
+					writeIndented("mov rbx, rax");
+				}
+				writeIndented("pop rdx");
+				writeIndented("pop rax");
 			}
 			else {
 				throw new UnsupportedOperationException("unsupported registers " + targetReg + ", " + sourceReg);

@@ -85,12 +85,14 @@ start:
         ; 15:28 int lit 10
         mov rax, 10
         ; 15:26 mod
+        push rdx
         mov rdx, rax
         mov rax, rbx
         mov rbx, rdx
         cqo
         idiv rbx
         mov rbx, rdx
+        pop rdx
         ; 15:3 var remainder(%3)
         lea rax, [rsp+21]
         ; 15:3 assign
@@ -101,12 +103,14 @@ start:
         ; 16:21 int lit 10
         mov rax, 10
         ; 16:19 divide
+        push rdx
         mov rdx, rax
         mov rax, rbx
         mov rbx, rdx
         cqo
         idiv rbx
         mov rbx, rax
+        pop rdx
         ; 16:3 var number(%0)
         lea rax, [rsp+56]
         ; 16:10 assign
@@ -404,7 +408,9 @@ start:
         movsx rax, ax
         movsx rbx, bx
         cqo
+        push rdx
         idiv rbx
+        pop rdx
         movzx rbx, ax
         ; 13:20 var $.6(%6)
         lea rax, [rsp+30]
@@ -424,8 +430,10 @@ start:
         movsx rax, ax
         movsx rbx, bx
         cqo
+        push rdx
         idiv rbx
         mov rax, rdx
+        pop rdx
         movzx rbx, ax
         ; 14:21 var $.7(%7)
         lea rax, [rsp+38]

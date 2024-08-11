@@ -128,12 +128,14 @@ start:
         ; 15:28 int lit 10
         mov rax, 10
         ; 15:26 mod
+        push rdx
         mov rdx, rax
         mov rax, rbx
         mov rbx, rdx
         cqo
         idiv rbx
         mov rbx, rdx
+        pop rdx
         ; 15:3 var remainder(%3)
         lea rax, [rsp+21]
         ; 15:3 assign
@@ -144,12 +146,14 @@ start:
         ; 16:21 int lit 10
         mov rax, 10
         ; 16:19 divide
+        push rdx
         mov rdx, rax
         mov rax, rbx
         mov rbx, rdx
         cqo
         idiv rbx
         mov rbx, rax
+        pop rdx
         ; 16:3 var number(%0)
         lea rax, [rsp+56]
         ; 16:10 assign
