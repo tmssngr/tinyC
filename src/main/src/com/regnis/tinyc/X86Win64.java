@@ -175,9 +175,9 @@ public final class X86Win64 {
 		// second arg 8 bytes
 		// third arg 8 bytes
 		// fill area 0/8 bytes
-		// return address 8 bytes
-		// local vars <size> bytes
-		int argOffset = alignTo16(argCount * 8) + localVarSize;
+		// return address 8 bytes ----------------------
+		// local vars <localVarSize> bytes              v
+		int argOffset = alignTo16(argCount * 8 + 8) + localVarSize;
 		i = 0;
 		for (IRLocalVar var : localVars) {
 			if (!var.isArg()) {
