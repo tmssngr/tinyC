@@ -65,3 +65,37 @@ void printStringLength(u8* str, i64 length) asm {
 	"mov     rsp, rdi"
 	"ret"
 }
+
+i16 getChar() asm {
+	"sub    rsp, 28h" // 8h to compensate for return address, 20h for calling _getch
+	"  call [_getch]"
+	"add    rsp, 28h"
+	"ret"
+}
+
+void setCursor(i16 x, i16 y) asm {
+	// rsp+0    calling address
+	// rsp+8    nothing (offset to get rsp % 10 == 0)
+	// rsp+10h  y
+	// rsp+18h  x
+	// BOOL WINAPI SetConsoleCursorPosition(
+	//  _In_ HANDLE hConsoleOutput,            rcx
+	//  _In_ COORD  dwCursorPosition           rdx
+	// );
+	// typedef struct _COORD {
+	//   SHORT X;
+	//   SHORT Y;
+	// } COORD, *PCOORD;
+	"mov     rdi, rsp"
+	"and     spl, 0xf0"
+	""
+	"lea     rcx, [hStdOut]"
+	"mov     rcx, [rcx]"
+	"mov     dx, [rdi+10h]"
+	"shl     rdx, 16"
+	"mov     dx, [rdi+18h]"
+	"sub     rsp, 20h"
+	"  call   [SetConsoleCursorPosition]"
+	"mov     rsp, rdi"
+	"ret"
+}

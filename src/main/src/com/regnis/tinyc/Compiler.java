@@ -14,12 +14,27 @@ import org.jetbrains.annotations.*;
  */
 public class Compiler {
 
+	public static void main(String[] args) throws IOException, InterruptedException {
+		if (args.length != 1) {
+			System.out.println("file.c is missing");
+			return;
+		}
+
+		compile(Paths.get(args[0]));
+	}
+
 	public static void compileAndRun(@NotNull Path inputFile) throws IOException, InterruptedException {
 		final Path outputFile = useExtension(inputFile, ".out");
 		compileAndRun(inputFile, outputFile);
 	}
 
 	public static void compileAndRun(@NotNull Path inputFile, @Nullable Path outputFile) throws IOException, InterruptedException {
+		final Path exeFile = compile(inputFile);
+		launchExe(exeFile, outputFile);
+	}
+
+	@NotNull
+	private static Path compile(@NotNull Path inputFile) throws IOException, InterruptedException {
 		final Program parsedProgram = Parser.parse(inputFile);
 
 		final TypeChecker checker = new TypeChecker(Type.I64);
@@ -49,8 +64,7 @@ public class Compiler {
 		if (!launchFasm(asmFile)) {
 			throw new IOException("Failed to compile");
 		}
-
-		launchExe(exeFile, outputFile);
+		return exeFile;
 	}
 
 	private static Path useExtension(Path path, String extension) {
