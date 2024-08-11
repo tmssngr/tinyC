@@ -908,7 +908,7 @@ start:
         mov bl, 3
         ; 34:25 <
         cmp al, bl
-        setl dl
+        setb dl
         and dl, 0xFF
         mov cl, dl
 @or_next_13:
@@ -940,7 +940,7 @@ start:
         mov bl, 3
         ; 35:25 <
         cmp al, bl
-        setl dl
+        setb dl
         and dl, 0xFF
         mov cl, dl
 @and_next_14:

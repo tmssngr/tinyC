@@ -306,7 +306,7 @@ start:
         mov cl, [rax]
         ; 6:8 >
         cmp bl, cl
-        setg al
+        seta al
         and al, 0xFF
         or al, al
         jz @else_4

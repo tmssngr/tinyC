@@ -300,7 +300,7 @@ start:
         mov al, 0
         ; 5:11 >
         cmp bl, al
-        setg cl
+        seta cl
         and cl, 0xFF
         or cl, cl
         jz @while_4_break
@@ -372,7 +372,7 @@ start:
         mov al, 5
         ; 13:9 <
         cmp bl, al
-        setl cl
+        setb cl
         and cl, 0xFF
         or cl, cl
         jz @else_6

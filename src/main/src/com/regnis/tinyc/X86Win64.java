@@ -353,17 +353,19 @@ public final class X86Win64 {
 	}
 
 	private void writeCompare(IRCompare compare) throws IOException {
-		final int size = getTypeSize(compare.type());
+		final Type type = compare.type();
+		final boolean signed = type != Type.U8;
+		final int size = getTypeSize(type);
 		final String leftRegName = getRegName(compare.leftReg(), size);
 		final String resultRegName = getRegName(compare.resultReg(), 1);
 		writeIndented("cmp " + leftRegName + ", " + getRegName(compare.rightReg(), size));
 		writeIndented(switch (compare.op()) {
-			case Lt -> "setl";
-			case LtEq -> "setle";
+			case Lt -> signed ? "setl" : "setb" ; // setb (below) = setc (carry)
+			case LtEq -> signed ? "setle" : "setbe";
 			case Equals -> "sete";
 			case NotEquals -> "setne";
-			case GtEq -> "setge";
-			case Gt -> "setg";
+			case GtEq -> signed ? "setge" : "setae"; // setae (above or equal) == setnc (not carry)
+			case Gt -> signed ? "setg" : "seta";
 			default -> throw new UnsupportedOperationException("Unsupported operand " + compare.op());
 		} + " " + resultRegName);
 		writeIndented("and " + resultRegName + ", 0xFF");
