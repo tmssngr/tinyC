@@ -140,7 +140,7 @@ public final class X86Win64 {
 
 		final List<String> asmLines = function.asmLines();
 		if (asmLines.isEmpty()) {
-			final int size = prepareLocalVars(function.localVars());
+			final int size = prepareLocalVarsOffsets(function.localVars());
 			writeFunctionProlog(size);
 
 			writeInstructions(function.instructions());
@@ -155,7 +155,7 @@ public final class X86Win64 {
 		}
 	}
 
-	private int prepareLocalVars(List<IRLocalVar> localVars) {
+	private int prepareLocalVarsOffsets(List<IRLocalVar> localVars) {
 		localVarOffsets = new int[localVars.size()];
 		int argCount = 0;
 		int offset = 0;
@@ -165,8 +165,10 @@ public final class X86Win64 {
 				argCount++;
 			}
 			else {
+				final int varSize = var.size();
+				offset = alignTo(offset, varSize);
 				localVarOffsets[i] = offset;
-				offset += var.size();
+				offset += varSize;
 			}
 			i++;
 		}
@@ -204,10 +206,6 @@ public final class X86Win64 {
 			writeIndented("add rsp, " + size);
 		}
 		writeIndented("ret");
-	}
-
-	private int alignTo16(int offset) {
-		return (offset + 15) / 16 * 16;
 	}
 
 	private void writeInstructions(List<IRInstruction> instructions) throws IOException {
@@ -385,7 +383,7 @@ public final class X86Win64 {
 		final String resultRegName = getRegName(compare.resultReg(), 1);
 		writeIndented("cmp " + leftRegName + ", " + getRegName(compare.rightReg(), size));
 		writeIndented(switch (compare.op()) {
-			case Lt -> signed ? "setl" : "setb" ; // setb (below) = setc (carry)
+			case Lt -> signed ? "setl" : "setb"; // setb (below) = setc (carry)
 			case LtEq -> signed ? "setle" : "setbe";
 			case Equals -> "sete";
 			case NotEquals -> "setne";
@@ -490,6 +488,14 @@ public final class X86Win64 {
 		if (debug) {
 			System.out.print(text);
 		}
+	}
+
+	private static int alignTo16(int offset) {
+		return alignTo(offset, 16);
+	}
+
+	private static int alignTo(int offset, int alignment) {
+		return (offset + alignment - 1) / alignment * alignment;
 	}
 
 	private static String getRegName(int reg) {
