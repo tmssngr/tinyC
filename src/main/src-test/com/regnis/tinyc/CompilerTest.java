@@ -80,6 +80,11 @@ public class CompilerTest {
 		compileAndRun("13 include.c");
 	}
 
+	@Test
+	public void testPrintAsciiListing() throws IOException, InterruptedException {
+		compileAndRun("14 print-ascii-listing.c");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}

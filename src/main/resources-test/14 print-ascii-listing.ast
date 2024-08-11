@@ -1,0 +1,92 @@
+void printString(u8* str) {
+	i64 length;
+	u8* $.2;
+	u8* $.3;
+
+	$.2 = str;
+	length = strlen($.2);
+	$.3 = str;
+	printStringLength($.3, length);
+}
+
+void printChar(u8 chr) {
+	u8* $.1;
+	i64 $.2;
+
+	$.1 = &chr;
+	$.2 = 1;
+	printStringLength($.1, $.2);
+}
+
+i64 strlen(u8* str) {
+	i64 length;
+
+	length = 0;
+	for (; (*str) != 0; str = (u8*)(((i64)str) + 1)) {
+		length = length + 1;
+	}
+	return length;
+}
+
+void printStringLength(u8* str, i64 length) {
+}
+
+void printNibble(u8 x) {
+	u8 $.1;
+
+	x = x & 15;
+	if (x > 9) {
+		x = x + ((65 - 57) - 1);
+	}
+	x = x + 48;
+	$.1 = x;
+	printChar($.1);
+}
+
+void printHex2(u8 x) {
+	u8 $.1;
+	u8 $.2;
+
+	$.1 = x / 16;
+	printNibble($.1);
+	$.2 = x;
+	printNibble($.2);
+}
+
+void main() {
+	u8* $.0;
+	u8 i;
+	u8 $.2;
+	u8 $.3;
+	u8 i;
+	u8 $.5;
+	u8 $.6;
+
+	$.0 = " x";
+	printString($.0);
+	i = 0;
+	for (; i < 16; i = i + 1) {
+		if ((i & 7) == 0) {
+			$.2 = 32;
+			printChar($.2);
+		}
+		printNibble(i);
+	}
+	$.3 = 10;
+	printChar($.3);
+	i = 32;
+	for (; i < 128; i = i + 1) {
+		if ((i & 15) == 0) {
+			printHex2(i);
+		}
+		if ((i & 7) == 0) {
+			$.5 = 32;
+			printChar($.5);
+		}
+		printChar(i);
+		if ((i & 15) == 15) {
+			$.6 = 10;
+			printChar($.6);
+		}
+	}
+}
