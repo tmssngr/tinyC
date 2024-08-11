@@ -1,33 +1,3 @@
-@printString:
- Local variables
-   arg 0: str
-   var 1: length
-   var 2: $.2
-   var 3: $.3
-        ; 2:22 read var str(%0)
-        addrOf r0, [0@argument]
-        load r1, [r0] (8)
-        ; 2:22 var $.2(%2)
-        addrOf r0, [2@function]
-        ; 2:22 assign
-        store [r0], r1 (8)
-        ; 2:15 call strlen
-        call r0, @strlen (2)
-        ; 2:2 var length(%1)
-        addrOf r1, [1@function]
-        ; 2:2 assign
-        store [r1], r0 (8)
-        ; 3:20 read var str(%0)
-        addrOf r0, [0@argument]
-        load r1, [r0] (8)
-        ; 3:20 var $.3(%3)
-        addrOf r0, [3@function]
-        ; 3:20 assign
-        store [r0], r1 (8)
-        ; 3:2 call printStringLength
-        call @printStringLength (3, 1)
-@printString_ret:
-
 @printChar:
  Local variables
    arg 0: chr
@@ -228,62 +198,6 @@
         call @printChar (3)
 @printIntLf_ret:
 
-@strlen:
- Local variables
-   arg 0: str
-   var 1: length
-        ; 36:15 int lit 0
-        ld r0, 0 (8)
-        ; 36:2 var length(%1)
-        addrOf r1, [1@function]
-        ; 36:2 assign
-        store [r1], r0 (8)
-        ; 37:2 for *str != 0
-@for_4:
-        ; 37:10 read var str(%0)
-        addrOf r0, [0@argument]
-        load r1, [r0] (8)
-        ; 37:9 deref
-        load r0, [r1] (1)
-        ; 37:17 int lit 0
-        ld r1, 0 (1)
-        ; 37:14 !=
-        cmp r2, (r0 != r1) (u8)
-        branch-false r2, @for_4_break
-        ; for body
-        ; 38:12 read var length(%1)
-        addrOf r0, [1@function]
-        load r1, [r0] (8)
-        ; 38:21 int lit 1
-        ld r0, 1 (8)
-        ; 38:19 add
-        add r1, r0 (8)
-        ; 38:3 var length(%1)
-        addrOf r0, [1@function]
-        ; 38:10 assign
-        store [r0], r1 (8)
-@for_4_continue:
-        ; 37:26 read var str(%0)
-        addrOf r0, [0@argument]
-        load r1, [r0] (8)
-        ; 37:32 int lit 1
-        ld r0, 1 (8)
-        ; 37:30 add
-        add r1, r0 (8)
-        ; 37:20 var str(%0)
-        addrOf r0, [0@argument]
-        ; 37:24 assign
-        store [r0], r1 (8)
-        jmp @for_4
-@for_4_break:
-        ; 40:9 return length
-        ; 40:9 read var length(%1)
-        addrOf r0, [1@function]
-        load r1, [r0] (8)
-        return r1 (8)
-        jmp @strlen_ret
-@strlen_ret:
-
 @printStringLength:
 	mov     rdi, rsp
 	
@@ -295,8 +209,6 @@
 	push    0
 	sub     rsp, 20h
 	  call    [WriteFile]
-	;add     rsp, 20h
-	
 	mov     rsp, rdi
 	ret
 
@@ -312,7 +224,7 @@
         ; 4:2 assign
         store [r1], r0 (1)
         ; 5:2 while i > 0
-@while_5:
+@while_4:
         ; 5:9 read var i(%0)
         addrOf r0, [0@function]
         load r1, [r0] (1)
@@ -320,7 +232,7 @@
         ld r0, 0 (1)
         ; 5:11 >
         cmp r2, (r1 > r0) (u8)
-        branch-false r2, @while_5_break
+        branch-false r2, @while_4_break
         ; while body
         ; 6:14 read var i(%0)
         addrOf r0, [0@function]
@@ -343,13 +255,13 @@
         addrOf r0, [0@function]
         ; 7:5 assign
         store [r0], r1 (1)
-        jmp @while_5
-@while_5_break:
+        jmp @while_4
+@while_4_break:
         ; 10:2 while true
-@while_6:
+@while_5:
         ; 10:9 bool lit true
         ld r0, 1 (1)
-        branch-false r0, @while_6_break
+        branch-false r0, @while_5_break
         ; while body
         ; 11:14 read var i(%0)
         addrOf r0, [0@function]
@@ -380,25 +292,25 @@
         ld r0, 5 (1)
         ; 13:9 <
         cmp r2, (r1 < r0) (u8)
-        branch-false r2, @else_7
+        branch-false r2, @else_6
         ; then
-        jmp @while_6
-        jmp @endif_7
+        jmp @while_5
+        jmp @endif_6
         ; else
-@else_7:
-@endif_7:
-        jmp @while_6_break
-        jmp @while_6
-@while_6_break:
+@else_6:
+@endif_6:
+        jmp @while_5_break
+        jmp @while_5
+@while_5_break:
         ; 19:2 while true
-@while_8:
+@while_7:
         ; 19:9 bool lit true
         ld r0, 1 (1)
-        branch-false r0, @while_8_break
+        branch-false r0, @while_7_break
         ; while body
         ; return
         jmp @main_ret
-        jmp @while_8
-@while_8_break:
+        jmp @while_7
+@while_7_break:
 @main_ret:
 

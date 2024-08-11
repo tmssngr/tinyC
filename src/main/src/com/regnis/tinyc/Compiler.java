@@ -21,8 +21,11 @@ public class Compiler {
 
 	public static void compileAndRun(@NotNull Path inputFile, @Nullable Path outputFile) throws IOException, InterruptedException {
 		final Program parsedProgram = Parser.parse(inputFile);
+
 		final TypeChecker checker = new TypeChecker(Type.I64);
-		final Program program = checker.check(parsedProgram);
+		final Program typedProgram = checker.check(parsedProgram);
+
+		final Program program = UnusedFunctionRemover.removeUnusedFunctions(typedProgram);
 
 		final Path astFile = useExtension(inputFile, ".ast");
 		final Path irFile = useExtension(inputFile, ".ir");

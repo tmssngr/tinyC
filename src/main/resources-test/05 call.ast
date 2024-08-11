@@ -1,16 +1,5 @@
 u8 i;
 
-void printString(u8* str) {
-	i64 length;
-	u8* $.2;
-	u8* $.3;
-
-	$.2 = str;
-	length = strlen($.2);
-	$.3 = str;
-	printStringLength($.3, length);
-}
-
 void printChar(u8 chr) {
 	u8* $.1;
 	i64 $.2;
@@ -58,16 +47,6 @@ void printIntLf(i64 number) {
 	printUint($.2);
 	$.3 = 10;
 	printChar($.3);
-}
-
-i64 strlen(u8* str) {
-	i64 length;
-
-	length = 0;
-	for (; (*str) != 0; str = (u8*)(((i64)str) + 1)) {
-		length = length + 1;
-	}
-	return length;
 }
 
 void printStringLength(u8* str, i64 length) {

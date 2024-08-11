@@ -383,8 +383,6 @@ start:
         push    0
         sub     rsp, 20h
           call    [WriteFile]
-        ;add     rsp, 20h
-
         mov     rsp, rdi
         ret
 

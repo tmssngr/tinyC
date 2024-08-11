@@ -20,49 +20,6 @@ start:
         sub rsp, 0x20
           call [ExitProcess]
 
-        ; void printString
-@printString:
-        ; reserve space for local variables
-        sub rsp, 32
-        ; 2:22 read var str(%0)
-        lea rax, [rsp+40]
-        mov rbx, [rax]
-        ; 2:22 var $.2(%2)
-        lea rax, [rsp+8]
-        ; 2:22 assign
-        mov [rax], rbx
-        ; 2:15 call strlen
-        lea rax, [rsp+8]
-        mov rax, [rax]
-        push rax
-          call @strlen
-        add rsp, 8
-        ; 2:2 var length(%1)
-        lea rbx, [rsp+0]
-        ; 2:2 assign
-        mov [rbx], rax
-        ; 3:20 read var str(%0)
-        lea rax, [rsp+40]
-        mov rbx, [rax]
-        ; 3:20 var $.3(%3)
-        lea rax, [rsp+16]
-        ; 3:20 assign
-        mov [rax], rbx
-        ; 3:2 call printStringLength
-        lea rax, [rsp+16]
-        mov rax, [rax]
-        push rax
-        lea rax, [rsp+8]
-        mov rax, [rax]
-        push rax
-        sub rsp, 8
-          call @printStringLength
-        add rsp, 24
-@printString_ret:
-        ; release space for local variables
-        add rsp, 32
-        ret
-
         ; void printChar
 @printChar:
         ; reserve space for local variables
@@ -309,68 +266,6 @@ start:
         add rsp, 16
         ret
 
-        ; i64 strlen
-@strlen:
-        ; reserve space for local variables
-        sub rsp, 16
-        ; 36:15 int lit 0
-        mov rax, 0
-        ; 36:2 var length(%1)
-        lea rbx, [rsp+0]
-        ; 36:2 assign
-        mov [rbx], rax
-        ; 37:2 for *str != 0
-@for_4:
-        ; 37:10 read var str(%0)
-        lea rax, [rsp+24]
-        mov rbx, [rax]
-        ; 37:9 deref
-        mov al, [rbx]
-        ; 37:17 int lit 0
-        mov bl, 0
-        ; 37:14 !=
-        cmp al, bl
-        setne cl
-        and cl, 0xFF
-        or cl, cl
-        jz @for_4_break
-        ; for body
-        ; 38:12 read var length(%1)
-        lea rax, [rsp+0]
-        mov rbx, [rax]
-        ; 38:21 int lit 1
-        mov rax, 1
-        ; 38:19 add
-        add rbx, rax
-        ; 38:3 var length(%1)
-        lea rax, [rsp+0]
-        ; 38:10 assign
-        mov [rax], rbx
-@for_4_continue:
-        ; 37:26 read var str(%0)
-        lea rax, [rsp+24]
-        mov rbx, [rax]
-        ; 37:32 int lit 1
-        mov rax, 1
-        ; 37:30 add
-        add rbx, rax
-        ; 37:20 var str(%0)
-        lea rax, [rsp+24]
-        ; 37:24 assign
-        mov [rax], rbx
-        jmp @for_4
-@for_4_break:
-        ; 40:9 return length
-        ; 40:9 read var length(%1)
-        lea rax, [rsp+0]
-        mov rbx, [rax]
-        mov rax, rbx
-        jmp @strlen_ret
-@strlen_ret:
-        ; release space for local variables
-        add rsp, 16
-        ret
-
         ; void printStringLength
 @printStringLength:
         mov     rdi, rsp
@@ -383,8 +278,6 @@ start:
         push    0
         sub     rsp, 20h
           call    [WriteFile]
-        ;add     rsp, 20h
-
         mov     rsp, rdi
         ret
 
@@ -399,7 +292,7 @@ start:
         ; 4:2 assign
         mov [rbx], al
         ; 5:2 while i > 0
-@while_5:
+@while_4:
         ; 5:9 read var i(%0)
         lea rax, [rsp+0]
         mov bl, [rax]
@@ -410,7 +303,7 @@ start:
         setg cl
         and cl, 0xFF
         or cl, cl
-        jz @while_5_break
+        jz @while_4_break
         ; while body
         ; 6:14 read var i(%0)
         lea rax, [rsp+0]
@@ -437,14 +330,14 @@ start:
         lea rax, [rsp+0]
         ; 7:5 assign
         mov [rax], bl
-        jmp @while_5
-@while_5_break:
+        jmp @while_4
+@while_4_break:
         ; 10:2 while true
-@while_6:
+@while_5:
         ; 10:9 bool lit true
         mov al, 1
         or al, al
-        jz @while_6_break
+        jz @while_5_break
         ; while body
         ; 11:14 read var i(%0)
         lea rax, [rsp+0]
@@ -482,27 +375,27 @@ start:
         setl cl
         and cl, 0xFF
         or cl, cl
-        jz @else_7
+        jz @else_6
         ; then
-        jmp @while_6
-        jmp @endif_7
+        jmp @while_5
+        jmp @endif_6
         ; else
-@else_7:
-@endif_7:
-        jmp @while_6_break
-        jmp @while_6
-@while_6_break:
+@else_6:
+@endif_6:
+        jmp @while_5_break
+        jmp @while_5
+@while_5_break:
         ; 19:2 while true
-@while_8:
+@while_7:
         ; 19:9 bool lit true
         mov al, 1
         or al, al
-        jz @while_8_break
+        jz @while_7_break
         ; while body
         ; return
         jmp @main_ret
-        jmp @while_8
-@while_8_break:
+        jmp @while_7
+@while_7_break:
 @main_ret:
         ; release space for local variables
         add rsp, 32
