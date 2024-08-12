@@ -31,6 +31,27 @@ public class LexerTest {
 	}
 
 	@Test
+	public void textIdentifiers() {
+		//               012345678901234567890
+		new LexerTester("const BOARD_CAP = 30;") {
+			@Override
+			protected void test() {
+				assertType(TokenType.CONST);
+				assertLocation(0, 0);
+				assertIdentifier("BOARD_CAP");
+				assertLocation(0, 6);
+				assertType(TokenType.EQUAL);
+				assertLocation(0, 16);
+				assertIntLiteral(30);
+				assertLocation(0, 18);
+				assertType(TokenType.SEMI);
+				assertLocation(0, 20);
+				assertEof();
+			}
+		}.test();
+	}
+
+	@Test
 	public void textAssignment() {
 		//               012345678901234567890123456
 		new LexerTester("i16 foo = bar - bazz - blup") {

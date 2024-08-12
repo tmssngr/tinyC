@@ -410,7 +410,8 @@ public final class Lexer {
 	private static boolean isIdentifierChar(int chr) {
 		return isInInterval(chr, '0', '9')
 		       || isInInterval(chr, 'A', 'Z')
-		       || isInInterval(chr, 'a', 'z');
+		       || isInInterval(chr, 'a', 'z')
+		       || chr == '_';
 	}
 
 	private static boolean isInInterval(int chr, char from, char to) {
