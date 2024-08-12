@@ -39,6 +39,7 @@ public final class Parser {
 		}
 	}
 
+	private final Map<String, Expression> constants = new HashMap<>();
 	private final Lexer lexer;
 	private final IncludeHandler includeHandler;
 
@@ -122,9 +123,133 @@ public final class Parser {
 				includeHandler.parse(fileName, location, typeDefs, globalVars, functions);
 				continue;
 			}
+			else if (isConsume(TokenType.CONST)) {
+				final String name = consumeIdentifier();
+				final Expression prevExpr = constants.get(name);
+				if (prevExpr != null) {
+					throw new SyntaxException(Messages.constantAlreadyDefinedAt(name, prevExpr.location()), location);
+				}
+				consume(TokenType.EQUAL);
+				final Expression expression = getExpression();
+				consume(TokenType.SEMI);
+				final Expression resolvedExpression = resolveConstExpression(expression);
+				constants.put(name, resolvedExpression);
+				continue;
+			}
 
 			throw new SyntaxException(Messages.expectedRootElement(), location);
 		}
+	}
+
+	private Expression resolveConstExpression(Expression expression) {
+		if (expression instanceof ExprIntLiteral
+		    || expression instanceof ExprBoolLiteral) {
+			return expression;
+		}
+
+		if (expression instanceof ExprVarAccess access) {
+			final String name = access.varName();
+			final Expression result = constants.get(name);
+			if (result == null) {
+				throw new SyntaxException(Messages.unknownConstant(name), access.location());
+			}
+			return result;
+		}
+
+		if (expression instanceof ExprUnary unary) {
+			final Expression expr = resolveConstExpression(unary.expression());
+			switch (unary.op()) {
+			case Com -> {
+				if (expr instanceof ExprIntLiteral literal) {
+					return new ExprIntLiteral(~literal.value(), literal.location());
+				}
+			}
+			case Neg -> {
+				if (expr instanceof ExprIntLiteral literal) {
+					return new ExprIntLiteral(-literal.value(), literal.location());
+				}
+			}
+			case NotLog -> {
+				if (expr instanceof ExprBoolLiteral literal) {
+					return new ExprBoolLiteral(!literal.value(), literal.location());
+				}
+			}
+			}
+		}
+
+		if (expression instanceof ExprBinary binary) {
+			final Expression left = resolveConstExpression(binary.left());
+			final Expression right = resolveConstExpression(binary.right());
+			if (left instanceof ExprIntLiteral leftLit
+			    && right instanceof ExprIntLiteral rightLit) {
+				switch (binary.op()) {
+				case Add -> {
+					return new ExprIntLiteral(leftLit.value() + rightLit.value(), binary.location());
+				}
+				case Sub -> {
+					return new ExprIntLiteral(leftLit.value() - rightLit.value(), binary.location());
+				}
+				case Multiply -> {
+					return new ExprIntLiteral(leftLit.value() * rightLit.value(), binary.location());
+				}
+				case Divide -> {
+					return new ExprIntLiteral(leftLit.value() / rightLit.value(), binary.location());
+				}
+				case Mod -> {
+					return new ExprIntLiteral(leftLit.value() % rightLit.value(), binary.location());
+				}
+				case And -> {
+					return new ExprIntLiteral(leftLit.value() & rightLit.value(), binary.location());
+				}
+				case Or -> {
+					return new ExprIntLiteral(leftLit.value() | rightLit.value(), binary.location());
+				}
+				case Xor -> {
+					return new ExprIntLiteral(leftLit.value() ^ rightLit.value(), binary.location());
+				}
+				case Lt -> {
+					return new ExprBoolLiteral(leftLit.value() < rightLit.value(), binary.location());
+				}
+				case LtEq -> {
+					return new ExprBoolLiteral(leftLit.value() <= rightLit.value(), binary.location());
+				}
+				case Equals -> {
+					return new ExprBoolLiteral(leftLit.value() == rightLit.value(), binary.location());
+				}
+				case NotEquals -> {
+					return new ExprBoolLiteral(leftLit.value() != rightLit.value(), binary.location());
+				}
+				case GtEq -> {
+					return new ExprBoolLiteral(leftLit.value() >= rightLit.value(), binary.location());
+				}
+				case Gt -> {
+					return new ExprBoolLiteral(leftLit.value() > rightLit.value(), binary.location());
+				}
+				}
+			}
+			else if (left instanceof ExprBoolLiteral leftLit
+			         && right instanceof ExprBoolLiteral rightLit) {
+				switch (binary.op()) {
+				case And, AndLog -> {
+					return new ExprBoolLiteral(leftLit.value() & rightLit.value(), binary.location());
+				}
+				case Or, OrLog -> {
+					return new ExprBoolLiteral(leftLit.value() | rightLit.value(), binary.location());
+				}
+				case Xor -> {
+					return new ExprBoolLiteral(leftLit.value() ^ rightLit.value(), binary.location());
+				}
+				case Equals -> {
+					return new ExprBoolLiteral(leftLit.value() == rightLit.value(), binary.location());
+				}
+				case NotEquals -> {
+					return new ExprBoolLiteral(leftLit.value() != rightLit.value(), binary.location());
+				}
+				}
+			}
+		}
+
+		throw new SyntaxException(Messages.expressionNotSupportedInConstant(), expression.location());
 	}
 
 	private List<String> getAsmLines() {
@@ -255,12 +380,17 @@ public final class Parser {
 
 	@NotNull
 	private StmtArrayDeclaration getArrayDeclaration(String typeString, String name, Location location) {
-		final int size = consumeIntValue();
-		if (size <= 0) {
-			throw new SyntaxException("Arrays need a size > 0", location);
+		final Expression expression = getExpression();
+		final Expression resolvedExpression = resolveConstExpression(expression);
+		if (resolvedExpression instanceof ExprIntLiteral literal) {
+			final int size = literal.value();
+			if (size > 0) {
+				consume(TokenType.R_BRACKET);
+				return new StmtArrayDeclaration(typeString, name, size, location);
+			}
 		}
-		consume(TokenType.R_BRACKET);
-		return new StmtArrayDeclaration(typeString, name, size, location);
+
+		throw new SyntaxException(Messages.expectedIntegerConstant(), location);
 	}
 
 	@NotNull
@@ -488,6 +618,18 @@ public final class Parser {
 			final List<Expression> args = getCallArgExpressions();
 			return new ExprFuncCall(identifier, args, location);
 		}
+
+		final Expression constantExpression = constants.get(identifier);
+		if (constantExpression != null) {
+			if (constantExpression instanceof ExprBoolLiteral literal) {
+				return new ExprBoolLiteral(literal.value(), location);
+			}
+			if (constantExpression instanceof ExprIntLiteral literal) {
+				return new ExprIntLiteral(literal.value(), location);
+			}
+			throw new IllegalStateException(String.valueOf(constantExpression));
+		}
+
 		final ExprVarAccess varAccess = new ExprVarAccess(identifier, location);
 		if (isConsume(TokenType.L_BRACKET)) {
 			final Expression expression = getExpression();

@@ -23,7 +23,6 @@
 	- pre-calculate constants, e.g. `foo = 4 * 5 + 1;`
 - nice-to-have features
 	- enums, e.g. `enum foo { int_lit, identifier, plus };`
-	- compile-time constants
 	- `final` variables
 	- defer statement
 

@@ -151,4 +151,24 @@ public class Messages {
 	public static String structDoesNotHaveMember(String struct, String member) {
 		return "Type '" + struct + "' does not have member '" + member + "'";
 	}
+
+	@NotNull
+	public static String constantAlreadyDefinedAt(String name, Location location) {
+		return "Constant '" + name + "' already defined at " + location;
+	}
+
+	@NotNull
+	public static String unknownConstant(String name) {
+		return "Unknown constant '" + name + "'";
+	}
+
+	@NotNull
+	public static String expressionNotSupportedInConstant() {
+		return "This expression is not supported for constant definitions";
+	}
+
+	@NotNull
+	public static String expectedIntegerConstant() {
+		return "Expected an integer constant > 0";
+	}
 }

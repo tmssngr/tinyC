@@ -34,3 +34,14 @@ void printStringLength(u8* str, i64 length) asm {
 	"ret"
 }
 ```
+
+## Constants
+
+Constants can be defined globally using this syntax:
+
+```
+const NAME = 10 * 2;
+```
+
+The expression at the right must be fully interpretable at this point.
+You can use other constants, a lot of unary or binary operations (but not all).

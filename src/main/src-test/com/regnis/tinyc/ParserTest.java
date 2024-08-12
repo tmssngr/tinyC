@@ -567,6 +567,51 @@ public class ParserTest {
 				                          }"""));
 	}
 
+	@Test
+	public void testConst() {
+		assertEquals(new Program(List.of(), List.of(),
+		                         List.of(
+				                         Function.createInstance("zero", "i64", List.of(), List.of(
+						                                                 new StmtReturn(new ExprIntLiteral(0, loc(3, 9)),
+						                                                                loc(3, 2)
+						                                                 )
+				                                                 ),
+				                                                 loc(2, 0)
+				                         )
+		                         ),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram("""
+				                          const TEN = 10;
+				                          const ZERO = TEN - 5 * 2;
+				                          i64 zero() {
+				                            return ZERO;
+				                          }"""));
+
+		assertEquals(new Program(List.of(),
+		                         List.of(
+				                         new StmtArrayDeclaration("u8", "a", 0, null, null, 10, loc(1, 0))
+		                         ),
+		                         List.of(
+				                         new Function("foo", "void", null, List.of(),
+				                                      List.of(),
+				                                      List.of(
+						                                      new StmtArrayDeclaration("u8", "b", 0, null, null, 11, loc(3, 2))
+				                                      ),
+				                                      List.of(), loc(2, 0))
+		                         ),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram("""
+				                          const TEN = 10;
+				                          u8 a[TEN];
+				                          void foo() {
+				                            u8 b[TEN + 1];
+				                          }"""));
+	}
+
 	@NotNull
 	private static Program parseProgram(String text) {
 		return Parser.parse(text);

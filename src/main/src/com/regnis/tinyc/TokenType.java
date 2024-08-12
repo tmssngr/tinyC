@@ -16,5 +16,5 @@ public enum TokenType {
 	FOR, WHILE, BREAK, CONTINUE,
 	RETURN,
 	TYPEDEF,
-	INCLUDE, ASM
+	INCLUDE, ASM, CONST
 }

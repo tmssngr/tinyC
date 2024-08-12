@@ -184,6 +184,7 @@ public final class Lexer {
 			case "typedef" -> TokenType.TYPEDEF;
 			case "#include" -> TokenType.INCLUDE;
 			case "asm" -> TokenType.ASM;
+			case "const" -> TokenType.CONST;
 			default -> TokenType.IDENTIFIER;
 		};
 	}
