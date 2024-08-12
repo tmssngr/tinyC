@@ -85,6 +85,11 @@ public class CompilerTest {
 		compileAndRun("14 print-ascii-listing.c");
 	}
 
+	@Test
+	public void testRule110() throws IOException, InterruptedException {
+		compileAndRun("15 rule110.c");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
 	}
