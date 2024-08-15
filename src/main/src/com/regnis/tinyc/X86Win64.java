@@ -443,11 +443,12 @@ public final class X86Win64 {
 		final String conditionRegName = getRegName(branch.conditionReg(), 1);
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
 		if (branch.jumpOnTrue()) {
-			writeIndented("jnz " + branch.label());
+			writeIndented("jnz " + branch.target());
 		}
 		else {
-			writeIndented("jz " + branch.label());
+			writeIndented("jz " + branch.target());
 		}
+		writeComment(branch.nextLabel());
 	}
 
 	private void writeJump(IRJump jump) throws IOException {

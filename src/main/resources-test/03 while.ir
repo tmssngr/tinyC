@@ -38,8 +38,7 @@
 @while_1:
         ; 13:9 bool lit true
         ld r0, 1 (1)
-        branch-false r0, @while_1_break
-        ; while body
+        branch-false r0, @while_1_break (else: @while_1_body)
         ; 14:9 read var pos(%2)
         addrOf r0, [2@function]
         load r1, [r0] (1)
@@ -105,11 +104,9 @@
         ld r0, 0 (8)
         ; 19:14 ==
         cmp r2, (r1 == r0) (i64)
-        branch-false r2, @if_2_else
-        ; then
+        branch-false r2, @if_2_else (else: @if_2_then)
         jmp @while_1_break
         jmp @if_2_end
-        ; else
 @if_2_else:
 @if_2_end:
         jmp @while_1
@@ -156,8 +153,7 @@
         ld r0, 0 (8)
         ; 27:13 <
         cmp r2, (r1 < r0) (i64)
-        branch-false r2, @if_3_else
-        ; then
+        branch-false r2, @if_3_else (else: @if_3_then)
         ; 28:13 int lit 45
         ld r0, 45 (1)
         ; 28:13 var $.1(%1)
@@ -176,7 +172,6 @@
         ; 29:10 assign
         store [r0], r1 (8)
         jmp @if_3_end
-        ; else
 @if_3_else:
 @if_3_end:
         ; 31:12 read var number(%0)
@@ -232,8 +227,7 @@
         ld r0, 0 (1)
         ; 5:11 >
         cmp r2, (r1 > r0) (u8)
-        branch-false r2, @while_4_break
-        ; while body
+        branch-false r2, @while_4_break (else: @while_4_body)
         ; 6:14 read var i(%0)
         addrOf r0, [0@function]
         load r1, [r0] (1)
@@ -261,8 +255,7 @@
 @while_5:
         ; 10:9 bool lit true
         ld r0, 1 (1)
-        branch-false r0, @while_5_break
-        ; while body
+        branch-false r0, @while_5_break (else: @while_5_body)
         ; 11:14 read var i(%0)
         addrOf r0, [0@function]
         load r1, [r0] (1)
@@ -292,11 +285,9 @@
         ld r0, 5 (1)
         ; 13:9 <
         cmp r2, (r1 < r0) (u8)
-        branch-false r2, @if_6_else
-        ; then
+        branch-false r2, @if_6_else (else: @if_6_then)
         jmp @while_5
         jmp @if_6_end
-        ; else
 @if_6_else:
 @if_6_end:
         jmp @while_5_break
@@ -306,8 +297,7 @@
 @while_7:
         ; 19:9 bool lit true
         ld r0, 1 (1)
-        branch-false r0, @while_7_break
-        ; while body
+        branch-false r0, @while_7_break (else: @while_7_body)
         ; return
         jmp @main_ret
         jmp @while_7

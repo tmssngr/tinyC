@@ -68,8 +68,7 @@
 @while_1:
         ; 13:9 bool lit true
         ld r0, 1 (1)
-        branch-false r0, @while_1_break
-        ; while body
+        branch-false r0, @while_1_break (else: @while_1_body)
         ; 14:9 read var pos(%2)
         addrOf r0, [2@function]
         load r1, [r0] (1)
@@ -135,11 +134,9 @@
         ld r0, 0 (8)
         ; 19:14 ==
         cmp r2, (r1 == r0) (i64)
-        branch-false r2, @if_2_else
-        ; then
+        branch-false r2, @if_2_else (else: @if_2_then)
         jmp @while_1_break
         jmp @if_2_end
-        ; else
 @if_2_else:
 @if_2_end:
         jmp @while_1
@@ -186,8 +183,7 @@
         ld r0, 0 (8)
         ; 27:13 <
         cmp r2, (r1 < r0) (i64)
-        branch-false r2, @if_3_else
-        ; then
+        branch-false r2, @if_3_else (else: @if_3_then)
         ; 28:13 int lit 45
         ld r0, 45 (1)
         ; 28:13 var $.1(%1)
@@ -206,7 +202,6 @@
         ; 29:10 assign
         store [r0], r1 (8)
         jmp @if_3_end
-        ; else
 @if_3_else:
 @if_3_end:
         ; 31:12 read var number(%0)
@@ -249,8 +244,7 @@
         ld r1, 0 (1)
         ; 37:14 !=
         cmp r2, (r0 != r1) (u8)
-        branch-false r2, @for_4_break
-        ; for body
+        branch-false r2, @for_4_break (else: @for_4_body)
         ; 38:12 read var length(%1)
         addrOf r0, [1@function]
         load r1, [r0] (8)
@@ -525,7 +519,7 @@
         ; 20:19 logic and
         ; 20:13 bool lit false
         ld r0, 0 (1)
-        branch-false r0, @and_next_5
+        branch-false r0, @and_next_5 (else: @and_2nd_5)
         ; 20:22 bool lit false
         ld r1, 0 (1)
         ld r0, r1
@@ -540,7 +534,7 @@
         ; 21:19 logic and
         ; 21:13 bool lit false
         ld r0, 0 (1)
-        branch-false r0, @and_next_6
+        branch-false r0, @and_next_6 (else: @and_2nd_6)
         ; 21:22 bool lit true
         ld r1, 1 (1)
         ld r0, r1
@@ -555,7 +549,7 @@
         ; 22:18 logic and
         ; 22:13 bool lit true
         ld r0, 1 (1)
-        branch-false r0, @and_next_7
+        branch-false r0, @and_next_7 (else: @and_2nd_7)
         ; 22:21 bool lit false
         ld r1, 0 (1)
         ld r0, r1
@@ -570,7 +564,7 @@
         ; 23:18 logic and
         ; 23:13 bool lit true
         ld r0, 1 (1)
-        branch-false r0, @and_next_8
+        branch-false r0, @and_next_8 (else: @and_2nd_8)
         ; 23:21 bool lit true
         ld r1, 1 (1)
         ld r0, r1
@@ -593,7 +587,7 @@
         ; 25:19 logic or
         ; 25:13 bool lit false
         ld r0, 0 (1)
-        branch-true r0, @or_next_9
+        branch-true r0, @or_next_9 (else: @or_2nd_9)
         ; 25:22 bool lit false
         ld r1, 0 (1)
         ld r0, r1
@@ -608,7 +602,7 @@
         ; 26:19 logic or
         ; 26:13 bool lit false
         ld r0, 0 (1)
-        branch-true r0, @or_next_10
+        branch-true r0, @or_next_10 (else: @or_2nd_10)
         ; 26:22 bool lit true
         ld r1, 1 (1)
         ld r0, r1
@@ -623,7 +617,7 @@
         ; 27:18 logic or
         ; 27:13 bool lit true
         ld r0, 1 (1)
-        branch-true r0, @or_next_11
+        branch-true r0, @or_next_11 (else: @or_2nd_11)
         ; 27:21 bool lit false
         ld r1, 0 (1)
         ld r0, r1
@@ -638,7 +632,7 @@
         ; 28:18 logic or
         ; 28:13 bool lit true
         ld r0, 1 (1)
-        branch-true r0, @or_next_12
+        branch-true r0, @or_next_12 (else: @or_2nd_12)
         ; 28:21 bool lit true
         ld r1, 1 (1)
         ld r0, r1
@@ -712,7 +706,7 @@
         ld r1, 2 (1)
         ; 34:15 ==
         cmp r2, (r0 == r1) (u8)
-        branch-true r2, @or_next_13
+        branch-true r2, @or_next_13 (else: @or_2nd_13)
         ; 34:23 int lit 2
         ld r0, 2 (1)
         ; 34:27 int lit 3
@@ -735,7 +729,7 @@
         ld r1, 2 (1)
         ; 35:15 ==
         cmp r2, (r0 == r1) (u8)
-        branch-false r2, @and_next_14
+        branch-false r2, @and_next_14 (else: @and_2nd_14)
         ; 35:23 int lit 2
         ld r0, 2 (1)
         ; 35:27 int lit 3

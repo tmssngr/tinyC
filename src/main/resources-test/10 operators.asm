@@ -110,7 +110,7 @@ start:
         mov al, 1
         or al, al
         jz @while_1_break
-        ; while body
+        ; @while_1_body
         ; 14:9 read var pos(%2)
         lea rax, [rsp+20]
         mov bl, [rax]
@@ -194,10 +194,9 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @if_2_else
-        ; then
+        ; @if_2_then
         jmp @while_1_break
         jmp @if_2_end
-        ; else
 @if_2_else:
 @if_2_end:
         jmp @while_1
@@ -257,7 +256,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @if_3_else
-        ; then
+        ; @if_3_then
         ; 28:13 int lit 45
         mov al, 45
         ; 28:13 var $.1(%1)
@@ -280,7 +279,6 @@ start:
         ; 29:10 assign
         mov [rax], rbx
         jmp @if_3_end
-        ; else
 @if_3_else:
 @if_3_end:
         ; 31:12 read var number(%0)
@@ -338,7 +336,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @for_4_break
-        ; for body
+        ; @for_4_body
         ; 38:12 read var length(%1)
         lea rax, [rsp+0]
         mov rbx, [rax]
@@ -651,6 +649,7 @@ start:
         mov al, 0
         or al, al
         jz @and_next_5
+        ; @and_2nd_5
         ; 20:22 bool lit false
         mov bl, 0
         mov al, bl
@@ -671,6 +670,7 @@ start:
         mov al, 0
         or al, al
         jz @and_next_6
+        ; @and_2nd_6
         ; 21:22 bool lit true
         mov bl, 1
         mov al, bl
@@ -691,6 +691,7 @@ start:
         mov al, 1
         or al, al
         jz @and_next_7
+        ; @and_2nd_7
         ; 22:21 bool lit false
         mov bl, 0
         mov al, bl
@@ -711,6 +712,7 @@ start:
         mov al, 1
         or al, al
         jz @and_next_8
+        ; @and_2nd_8
         ; 23:21 bool lit true
         mov bl, 1
         mov al, bl
@@ -743,6 +745,7 @@ start:
         mov al, 0
         or al, al
         jnz @or_next_9
+        ; @or_2nd_9
         ; 25:22 bool lit false
         mov bl, 0
         mov al, bl
@@ -763,6 +766,7 @@ start:
         mov al, 0
         or al, al
         jnz @or_next_10
+        ; @or_2nd_10
         ; 26:22 bool lit true
         mov bl, 1
         mov al, bl
@@ -783,6 +787,7 @@ start:
         mov al, 1
         or al, al
         jnz @or_next_11
+        ; @or_2nd_11
         ; 27:21 bool lit false
         mov bl, 0
         mov al, bl
@@ -803,6 +808,7 @@ start:
         mov al, 1
         or al, al
         jnz @or_next_12
+        ; @or_2nd_12
         ; 28:21 bool lit true
         mov bl, 1
         mov al, bl
@@ -906,6 +912,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jnz @or_next_13
+        ; @or_2nd_13
         ; 34:23 int lit 2
         mov al, 2
         ; 34:27 int lit 3
@@ -938,6 +945,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @and_next_14
+        ; @and_2nd_14
         ; 35:23 int lit 2
         mov al, 2
         ; 35:27 int lit 3

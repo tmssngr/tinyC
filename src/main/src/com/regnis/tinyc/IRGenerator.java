@@ -374,10 +374,12 @@ public final class IRGenerator {
 		}
 		case AndLog -> {
 			final int labelIndex = nextLabelIndex();
+			final String secondLabel = "@and_2nd_" + labelIndex;
 			final String nextLabel = "@and_next_" + labelIndex;
 			writeComment("logic and", node.location());
 			final int conditionReg = write(node.left(), variables, true);
-			write(new IRBranch(conditionReg, false, nextLabel));
+			write(new IRBranch(conditionReg, false, nextLabel,
+			                   secondLabel));
 			final int conditionReg2 = write(node.right(), variables, true);
 			if (conditionReg2 != conditionReg) {
 				write(new IRLoadReg(conditionReg, conditionReg2, getTypeSize(node.typeNotNull())));
@@ -388,10 +390,12 @@ public final class IRGenerator {
 		}
 		case OrLog -> {
 			final int labelIndex = nextLabelIndex();
+			final String secondLabel = "@or_2nd_" + labelIndex;
 			final String nextLabel = "@or_next_" + labelIndex;
 			writeComment("logic or", node.location());
 			final int conditionReg = write(node.left(), variables, true);
-			write(new IRBranch(conditionReg, true, nextLabel));
+			write(new IRBranch(conditionReg, true, nextLabel,
+			                   secondLabel));
 			final int conditionReg2 = write(node.right(), variables, true);
 			if (conditionReg2 != conditionReg) {
 				write(new IRLoadReg(conditionReg, conditionReg2, getTypeSize(node.typeNotNull())));
@@ -492,20 +496,20 @@ public final class IRGenerator {
 		final List<Statement> thenStatements = statement.thenStatements();
 		final List<Statement> elseStatements = statement.elseStatements();
 		final int labelIndex = nextLabelIndex();
-		final String elseLabel = "@if_" + labelIndex + "_else";
-		final String nextLabel = "@if_" + labelIndex + "_end";
+		final String labelThen = "@if_" + labelIndex + "_then";
+		final String labelElse = "@if_" + labelIndex + "_else";
+		final String labelEnd = "@if_" + labelIndex + "_end";
 		writeComment("if " + condition.toUserString(), statement.location());
 		final int conditionReg = write(condition, variables, true);
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
-		write(new IRBranch(conditionReg, false, elseLabel));
+		write(new IRBranch(conditionReg, false, labelElse,
+		                   labelThen));
 		freeReg(conditionReg);
-		writeComment("then");
 		writeStatements(thenStatements, variables);
-		write(new IRJump(nextLabel));
-		writeComment("else");
-		writeLabel(elseLabel);
+		write(new IRJump(labelEnd));
+		writeLabel(labelElse);
 		writeStatements(elseStatements, variables);
-		writeLabel(nextLabel);
+		writeLabel(labelEnd);
 	}
 
 	private void writeFor(StmtLoop statement, Variables variables) {
@@ -513,6 +517,7 @@ public final class IRGenerator {
 		final String loopName = iteration.isEmpty() ? "while" : "for";
 		final int labelIndex = nextLabelIndex();
 		final String label = "@" + loopName + "_" + labelIndex;
+		final String bodyLabel = "@" + loopName + "_" + labelIndex + "_body";
 		final String continueLabel = iteration.isEmpty() ? label : "@" + loopName + "_" + labelIndex + "_continue";
 		final String breakLabel = "@" + loopName + "_" + labelIndex + "_break";
 
@@ -521,9 +526,9 @@ public final class IRGenerator {
 		writeLabel(label);
 		final int conditionReg = write(condition, variables, true);
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
-		write(new IRBranch(conditionReg, false, breakLabel));
+		write(new IRBranch(conditionReg, false, breakLabel,
+		                   bodyLabel));
 		freeReg(conditionReg);
-		writeComment(loopName + " body");
 		final List<Statement> body = statement.bodyStatements();
 
 		final BreakContinueLabels prevBreakContinueLabels = this.breakContinueLabels;

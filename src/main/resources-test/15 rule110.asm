@@ -119,7 +119,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @for_1_break
-        ; for body
+        ; @for_1_body
         ; 38:12 read var length(%1)
         lea rax, [rsp+0]
         mov rbx, [rax]
@@ -206,7 +206,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @for_2_break
-        ; for body
+        ; @for_2_body
         ; 12:3 if [...] == 0
         ; 12:13 array board($0)
         ; 12:13 read var i(%1)
@@ -225,7 +225,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @if_3_else
-        ; then
+        ; @if_3_then
         ; 13:14 int lit 32
         mov al, 32
         ; 13:14 var $.2(%2)
@@ -239,7 +239,6 @@ start:
           call @printChar
         add rsp, 8
         jmp @if_3_end
-        ; else
 @if_3_else:
         ; 16:14 int lit 42
         mov al, 42
@@ -308,7 +307,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @for_4_break
-        ; for body
+        ; @for_4_body
         ; 24:14 int lit 0
         mov al, 0
         ; 24:9 array board($0)
@@ -377,7 +376,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @for_5_break
-        ; for body
+        ; @for_5_body
         ; 31:23 array board($0)
         ; 31:23 int lit 0
         mov rax, 0
@@ -428,7 +427,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @for_6_break
-        ; for body
+        ; @for_6_body
         ; 33:16 read var pattern(%2)
         lea rax, [rsp+2]
         mov bl, [rax]

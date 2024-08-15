@@ -119,7 +119,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @for_1_break
-        ; for body
+        ; @for_1_body
         ; 38:12 read var length(%1)
         lea rax, [rsp+0]
         mov rbx, [rax]
@@ -198,7 +198,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @if_2_else
-        ; then
+        ; @if_2_then
         ; 6:7 read var x(%0)
         lea rax, [rsp+24]
         mov bl, [rax]
@@ -219,7 +219,6 @@ start:
         ; 6:5 assign
         mov [rax], bl
         jmp @if_2_end
-        ; else
 @if_2_else:
 @if_2_end:
         ; 8:6 read var x(%0)
@@ -334,7 +333,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @for_3_break
-        ; for body
+        ; @for_3_body
         ; 20:3 if i & 7 == 0
         ; 20:8 read var i(%1)
         lea rax, [rsp+8]
@@ -351,7 +350,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @if_4_else
-        ; then
+        ; @if_4_then
         ; 21:14 int lit 32
         mov al, 32
         ; 21:14 var $.2(%2)
@@ -365,7 +364,6 @@ start:
           call @printChar
         add rsp, 8
         jmp @if_4_end
-        ; else
 @if_4_else:
 @if_4_end:
         ; 23:3 call printNibble
@@ -419,7 +417,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @for_5_break
-        ; for body
+        ; @for_5_body
         ; 28:3 if i & 15 == 0
         ; 28:8 read var i(%4)
         lea rax, [rsp+11]
@@ -436,7 +434,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @if_6_else
-        ; then
+        ; @if_6_then
         ; 29:4 call printHex2
         lea rax, [rsp+11]
         mov al, [rax]
@@ -444,7 +442,6 @@ start:
           call @printHex2
         add rsp, 8
         jmp @if_6_end
-        ; else
 @if_6_else:
 @if_6_end:
         ; 31:3 if i & 7 == 0
@@ -463,7 +460,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @if_7_else
-        ; then
+        ; @if_7_then
         ; 32:14 int lit 32
         mov al, 32
         ; 32:14 var $.5(%5)
@@ -477,7 +474,6 @@ start:
           call @printChar
         add rsp, 8
         jmp @if_7_end
-        ; else
 @if_7_else:
 @if_7_end:
         ; 34:3 call printChar
@@ -502,7 +498,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @if_8_else
-        ; then
+        ; @if_8_then
         ; 36:14 int lit 10
         mov al, 10
         ; 36:14 var $.6(%6)
@@ -516,7 +512,6 @@ start:
           call @printChar
         add rsp, 8
         jmp @if_8_end
-        ; else
 @if_8_else:
 @if_8_end:
 @for_5_continue:

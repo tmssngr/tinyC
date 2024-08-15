@@ -67,7 +67,7 @@ start:
         mov al, 1
         or al, al
         jz @while_1_break
-        ; while body
+        ; @while_1_body
         ; 14:9 read var pos(%2)
         lea rax, [rsp+20]
         mov bl, [rax]
@@ -151,10 +151,9 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @if_2_else
-        ; then
+        ; @if_2_then
         jmp @while_1_break
         jmp @if_2_end
-        ; else
 @if_2_else:
 @if_2_end:
         jmp @while_1
@@ -214,7 +213,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @if_3_else
-        ; then
+        ; @if_3_then
         ; 28:13 int lit 45
         mov al, 45
         ; 28:13 var $.1(%1)
@@ -237,7 +236,6 @@ start:
         ; 29:10 assign
         mov [rax], rbx
         jmp @if_3_end
-        ; else
 @if_3_else:
 @if_3_end:
         ; 31:12 read var number(%0)
@@ -308,7 +306,7 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @while_4_break
-        ; while body
+        ; @while_4_body
         ; 6:14 read var i(%0)
         lea rax, [rsp+0]
         mov bl, [rax]
@@ -342,7 +340,7 @@ start:
         mov al, 1
         or al, al
         jz @while_5_break
-        ; while body
+        ; @while_5_body
         ; 11:14 read var i(%0)
         lea rax, [rsp+0]
         mov bl, [rax]
@@ -380,10 +378,9 @@ start:
         and cl, 0xFF
         or cl, cl
         jz @if_6_else
-        ; then
+        ; @if_6_then
         jmp @while_5
         jmp @if_6_end
-        ; else
 @if_6_else:
 @if_6_end:
         jmp @while_5_break
@@ -395,7 +392,7 @@ start:
         mov al, 1
         or al, al
         jz @while_7_break
-        ; while body
+        ; @while_7_body
         ; return
         jmp @main_ret
         jmp @while_7

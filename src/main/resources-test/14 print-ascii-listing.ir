@@ -70,8 +70,7 @@
         ld r1, 0 (1)
         ; 37:14 !=
         cmp r2, (r0 != r1) (u8)
-        branch-false r2, @for_1_break
-        ; for body
+        branch-false r2, @for_1_break (else: @for_1_body)
         ; 38:12 read var length(%1)
         addrOf r0, [1@function]
         load r1, [r0] (8)
@@ -142,8 +141,7 @@
         ld r0, 9 (1)
         ; 5:8 >
         cmp r2, (r1 > r0) (u8)
-        branch-false r2, @if_2_else
-        ; then
+        branch-false r2, @if_2_else (else: @if_2_then)
         ; 6:7 read var x(%0)
         addrOf r0, [0@argument]
         load r1, [r0] (1)
@@ -164,7 +162,6 @@
         ; 6:5 assign
         store [r0], r1 (1)
         jmp @if_2_end
-        ; else
 @if_2_else:
 @if_2_end:
         ; 8:6 read var x(%0)
@@ -250,8 +247,7 @@
         ld r0, 16 (1)
         ; 19:19 <
         cmp r2, (r1 < r0) (u8)
-        branch-false r2, @for_3_break
-        ; for body
+        branch-false r2, @for_3_break (else: @for_3_body)
         ; 20:3 if i & 7 == 0
         ; 20:8 read var i(%1)
         addrOf r0, [1@function]
@@ -264,8 +260,7 @@
         ld r0, 0 (1)
         ; 20:15 ==
         cmp r2, (r1 == r0) (u8)
-        branch-false r2, @if_4_else
-        ; then
+        branch-false r2, @if_4_else (else: @if_4_then)
         ; 21:14 int lit 32
         ld r0, 32 (1)
         ; 21:14 var $.2(%2)
@@ -275,7 +270,6 @@
         ; 21:4 call printChar
         call @printChar (2)
         jmp @if_4_end
-        ; else
 @if_4_else:
 @if_4_end:
         ; 23:3 call printNibble
@@ -317,8 +311,7 @@
         ld r0, 128 (1)
         ; 27:22 <
         cmp r2, (r1 < r0) (u8)
-        branch-false r2, @for_5_break
-        ; for body
+        branch-false r2, @for_5_break (else: @for_5_body)
         ; 28:3 if i & 15 == 0
         ; 28:8 read var i(%4)
         addrOf r0, [4@function]
@@ -331,12 +324,10 @@
         ld r0, 0 (1)
         ; 28:17 ==
         cmp r2, (r1 == r0) (u8)
-        branch-false r2, @if_6_else
-        ; then
+        branch-false r2, @if_6_else (else: @if_6_then)
         ; 29:4 call printHex2
         call @printHex2 (4)
         jmp @if_6_end
-        ; else
 @if_6_else:
 @if_6_end:
         ; 31:3 if i & 7 == 0
@@ -351,8 +342,7 @@
         ld r0, 0 (1)
         ; 31:15 ==
         cmp r2, (r1 == r0) (u8)
-        branch-false r2, @if_7_else
-        ; then
+        branch-false r2, @if_7_else (else: @if_7_then)
         ; 32:14 int lit 32
         ld r0, 32 (1)
         ; 32:14 var $.5(%5)
@@ -362,7 +352,6 @@
         ; 32:4 call printChar
         call @printChar (5)
         jmp @if_7_end
-        ; else
 @if_7_else:
 @if_7_end:
         ; 34:3 call printChar
@@ -379,8 +368,7 @@
         ld r0, 15 (1)
         ; 35:17 ==
         cmp r2, (r1 == r0) (u8)
-        branch-false r2, @if_8_else
-        ; then
+        branch-false r2, @if_8_else (else: @if_8_then)
         ; 36:14 int lit 10
         ld r0, 10 (1)
         ; 36:14 var $.6(%6)
@@ -390,7 +378,6 @@
         ; 36:4 call printChar
         call @printChar (6)
         jmp @if_8_end
-        ; else
 @if_8_else:
 @if_8_end:
 @for_5_continue:
