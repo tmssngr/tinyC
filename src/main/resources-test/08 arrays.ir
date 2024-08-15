@@ -46,7 +46,7 @@
         ; 14:15 int lit 1
         ld r0, 1 (1)
         ; 14:13 sub
-        sub r1, r0 (1)
+        sub r1, r0 (u8)
         ; 14:3 var pos(%2)
         addrOf r0, [2@function]
         ; 14:7 assign
@@ -57,7 +57,7 @@
         ; 15:28 int lit 10
         ld r0, 10 (8)
         ; 15:26 mod
-        mod r1, r0 (8)
+        mod r1, r0 (i64)
         ; 15:3 var remainder(%3)
         addrOf r0, [3@function]
         ; 15:3 assign
@@ -68,7 +68,7 @@
         ; 16:21 int lit 10
         ld r0, 10 (8)
         ; 16:19 divide
-        div r1, r0 (8)
+        div r1, r0 (i64)
         ; 16:3 var number(%0)
         addrOf r0, [0@argument]
         ; 16:10 assign
@@ -79,7 +79,7 @@
         ; 17:30 int lit 48
         ld r0, 48 (1)
         ; 17:28 add
-        add r1, r0 (1)
+        add r1, r0 (u8)
         ; 17:3 var digit(%4)
         addrOf r0, [4@function]
         ; 17:3 assign
@@ -94,7 +94,7 @@
         cast r0 (i64), r2 (u8)
         mul r0, 1
         addrOf r2, [1@function]
-        add r2, r0 (0)
+        add r2, r0 (u8*)
         ; 18:15 assign
         store [r2], r1 (1)
         ; 19:3 if number == 0
@@ -121,7 +121,7 @@
         cast r0 (i64), r1 (u8)
         mul r0, 1
         addrOf r1, [1@function]
-        add r1, r0 (0)
+        add r1, r0 (u8*)
         ; 23:20 var $.5(%5)
         addrOf r0, [5@function]
         ; 23:20 assign
@@ -132,7 +132,7 @@
         addrOf r1, [2@function]
         load r2, [r1] (1)
         ; 23:37 sub
-        sub r0, r2 (1)
+        sub r0, r2 (u8)
         cast r1 (i64), r0 (u8)
         ; 23:37 var $.6(%6)
         addrOf r0, [6@function]
@@ -231,7 +231,7 @@
         ld r0, 0 (8)
         mul r0, 1
         addrOf r2, [0@global]
-        add r2, r0 (0)
+        add r2, r0 (u8*)
         ; 7:12 assign
         store [r2], r1 (1)
         ; 8:20 array chars($0)
@@ -239,18 +239,18 @@
         ld r0, 0 (8)
         mul r0, 1
         addrOf r1, [0@global]
-        add r1, r0 (0)
+        add r1, r0 (u8*)
         load r0, [r1] (1)
         ; 8:25 int lit 1
         ld r1, 1 (1)
         ; 8:23 add
-        add r0, r1 (1)
+        add r0, r1 (u8)
         ; 8:9 array chars($0)
         ; 8:9 int lit 1
         ld r1, 1 (8)
         mul r1, 1
         addrOf r2, [0@global]
-        add r2, r1 (0)
+        add r2, r1 (u8*)
         ; 8:12 assign
         store [r2], r0 (1)
         ; 9:22 array chars($0)
@@ -258,23 +258,23 @@
         ld r0, 1 (8)
         mul r0, 1
         addrOf r1, [0@global]
-        add r1, r0 (0)
+        add r1, r0 (u8*)
         load r0, [r1] (1)
         ; 9:27 int lit 2
         ld r1, 2 (1)
         ; 9:25 add
-        add r0, r1 (1)
+        add r0, r1 (u8)
         ; 9:10 array chars($0)
         ; 9:9 int lit 1
         ld r1, 1 (1)
         ; 9:11 int lit 1
         ld r2, 1 (1)
         ; 9:10 add
-        add r1, r2 (1)
+        add r1, r2 (u8)
         cast r2 (i64), r1 (u8)
         mul r2, 1
         addrOf r1, [0@global]
-        add r1, r2 (0)
+        add r1, r2 (u8*)
         ; 9:14 assign
         store [r1], r0 (1)
         ; 10:21 array chars($0)
@@ -282,7 +282,7 @@
         ld r0, 2 (8)
         mul r0, 1
         addrOf r1, [0@global]
-        add r1, r0 (0)
+        add r1, r0 (u8*)
         load r0, [r1] (1)
         ; 10:3 var result(%1)
         addrOf r1, [1@function]

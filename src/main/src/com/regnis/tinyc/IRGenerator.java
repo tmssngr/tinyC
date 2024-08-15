@@ -293,7 +293,7 @@ public final class IRGenerator {
 		else {
 			writeAddrOfVar(addrReg, variable);
 		}
-		write(new IRBinary(IRBinary.Op.Add, addrReg, offsetReg));
+		write(new IRBinary(IRBinary.Op.Add, addrReg, offsetReg, Type.POINTER_U8));
 		freeReg(offsetReg);
 
 		return readVar
@@ -313,7 +313,7 @@ public final class IRGenerator {
 		if (offset != 0) {
 			final int offsetReg = getFreeReg();
 			write(new IRLoadInt(offsetReg, offset, 8));
-			write(new IRBinary(IRBinary.Op.Add, addrReg, offsetReg));
+			write(new IRBinary(IRBinary.Op.Add, addrReg, offsetReg, Type.POINTER_U8));
 			freeReg(offsetReg);
 		}
 
@@ -419,9 +419,8 @@ public final class IRGenerator {
 	private int writeBinaryArithmetic(IRBinary.Op op, ExprBinary node, Variables variables) {
 		final int leftReg = write(node.left(), variables, true);
 		final int rightReg = write(node.right(), variables, true);
-		final int size = getTypeSize(node.typeNotNull());
 		writeComment(node.op().name().toLowerCase(Locale.ROOT), node.location());
-		write(new IRBinary(op, leftReg, rightReg, size));
+		write(new IRBinary(op, leftReg, rightReg, node.typeNotNull()));
 		freeReg(rightReg);
 		return leftReg;
 	}

@@ -293,7 +293,8 @@ public final class X86Win64 {
 	private void writeBinary(IRBinary binary) throws IOException {
 		final int targetReg = binary.targetReg();
 		final int sourceReg = binary.sourceReg();
-		final int size = binary.size();
+		final Type type = binary.type();
+		final int size = getTypeSize(type);
 		final String targetRegName = getRegName(targetReg, size);
 		final String sourceRegName = getRegName(sourceReg, size);
 
