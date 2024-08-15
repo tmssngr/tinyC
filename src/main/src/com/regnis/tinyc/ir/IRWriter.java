@@ -34,18 +34,28 @@ public final class IRWriter {
 		if (localVars.size() > 0) {
 			writeln(" Local variables");
 			for (IRLocalVar var : localVars) {
-				writer.write("   ");
-				writer.write(var.isArg() ? "arg " : "var ");
+				writeIndentation();
+				write(var.isArg() ? "arg " : "var ");
 				writeln(var.toString());
 			}
 		}
 
-		for (IRInstruction instruction : function.instructions()) {
+		writeInstructions(function.instructions());
+
+		for (String asmLine : function.asmLines()) {
+			writeIndentation();
+			writeln(asmLine);
+		}
+		writeln();
+	}
+
+	private void writeInstructions(List<IRInstruction> instructions) throws IOException {
+		for (IRInstruction instruction : instructions) {
 			if (instruction instanceof IRLabel label) {
 				writeln(label.label() + ":");
 			}
 			else {
-				writer.write("        ");
+				writeIndentation();
 				if (instruction instanceof IRComment c) {
 					writeln("; " + c.comment());
 				}
@@ -54,12 +64,6 @@ public final class IRWriter {
 				}
 			}
 		}
-
-		for (String asmLine : function.asmLines()) {
-			writer.write("\t");
-			writeln(asmLine);
-		}
-		writeln("");
 	}
 
 	private void writeGlobalVars(List<IRGlobalVar> globalVars) throws IOException {
@@ -69,9 +73,10 @@ public final class IRWriter {
 
 		writeln("Global variables");
 		for (IRGlobalVar var : globalVars) {
-			writeln("  " + var.toString());
+			writeIndentation();
+			writeln(var.toString());
 		}
-		writeln("");
+		writeln();
 	}
 
 	private void writeStringLiterals(List<IRStringLiteral> stringLiterals) throws IOException {
@@ -81,12 +86,25 @@ public final class IRWriter {
 
 		writeln("String literals");
 		for (IRStringLiteral literal : stringLiterals) {
-			writeln("  " + literal.toString());
+			writeIndentation();
+			writeln(literal.toString());
 		}
 	}
 
+	private void writeIndentation() throws IOException {
+		write("\t");
+	}
+
+	private void writeln() throws IOException {
+		writeln("");
+	}
+
 	private void writeln(String text) throws IOException {
-		writer.write(text);
+		write(text);
 		writer.newLine();
+	}
+
+	private void write(String str) throws IOException {
+		writer.write(str);
 	}
 }
