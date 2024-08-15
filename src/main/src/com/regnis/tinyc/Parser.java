@@ -540,6 +540,8 @@ public final class Parser {
 				case STAR -> new ExprBinary(ExprBinary.Op.Multiply, left, right, location);
 				case SLASH -> new ExprBinary(ExprBinary.Op.Divide, left, right, location);
 				case PERCENT -> new ExprBinary(ExprBinary.Op.Mod, left, right, location);
+				case LT_LT -> new ExprBinary(ExprBinary.Op.ShiftLeft, left, right, location);
+				case GT_GT -> new ExprBinary(ExprBinary.Op.ShiftRight, left, right, location);
 
 				case EQUAL -> new ExprBinary(ExprBinary.Op.Assign, left, right, location);
 				case EXCL_EQ -> new ExprBinary(ExprBinary.Op.NotEquals, left, right, location);
@@ -733,8 +735,9 @@ public final class Parser {
 			case AMP -> 6;
 			case EQ_EQ, EXCL_EQ -> 7;
 			case LT, LT_EQ, GT_EQ, GT -> 8;
-			case PLUS, MINUS -> 9;
-			case STAR, SLASH, PERCENT -> 10;
+			case LT_LT, GT_GT -> 9;
+			case PLUS, MINUS -> 10;
+			case STAR, SLASH, PERCENT -> 11;
 			default -> 0;
 		};
 	}

@@ -357,6 +357,12 @@ public final class IRGenerator {
 		case Mod -> {
 			return writeBinaryArithmetic(IRBinary.Op.Mod, node, variables);
 		}
+		case ShiftLeft -> {
+			return writeBinaryArithmetic(IRBinary.Op.ShiftL, node, variables);
+		}
+		case ShiftRight -> {
+			return writeBinaryArithmetic(IRBinary.Op.ShiftR, node, variables);
+		}
 		case And -> {
 			return writeBinaryArithmetic(IRBinary.Op.And, node, variables);
 		}

@@ -10,6 +10,7 @@ public enum TokenType {
 	L_PAREN, R_PAREN,
 	L_BRACE, R_BRACE,
 	L_BRACKET, R_BRACKET,
+	LT_LT, GT_GT,
 	LT, LT_EQ, EQ_EQ, GT_EQ, GT, EXCL_EQ,
 	IDENTIFIER,
 	IF, ELSE,

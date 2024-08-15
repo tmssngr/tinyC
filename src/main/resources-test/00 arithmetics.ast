@@ -59,6 +59,9 @@ void main() {
 	i64 $.5;
 	i64 $.6;
 	i64 $.7;
+	i64 $.8;
+	i64 $.9;
+	i64 $.10;
 
 	foo = (i16)((4 * 3) + (2 * 5));
 	bar = foo * foo;
@@ -74,4 +77,10 @@ void main() {
 	printIntLf($.6);
 	$.7 = (i64)(1000 % 256);
 	printIntLf($.7);
+	$.8 = (i64)(10 >> 1);
+	printIntLf($.8);
+	$.9 = (i64)(9 >> 2);
+	printIntLf($.9);
+	$.10 = (i64)(1 << 2);
+	printIntLf($.10);
 }

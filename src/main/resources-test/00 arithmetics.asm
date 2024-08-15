@@ -288,7 +288,7 @@ start:
         ; void main
 @main:
         ; reserve space for local variables
-        sub rsp, 64
+        sub rsp, 80
         ; 4:15 int lit 4
         mov al, 4
         ; 4:19 int lit 3
@@ -445,9 +445,69 @@ start:
         push rax
           call @printIntLf
         add rsp, 8
+        ; 16:16 int lit 10
+        mov al, 10
+        ; 16:22 int lit 1
+        mov bl, 1
+        ; 16:19 shiftright
+        push rcx
+        mov rcx, rbx
+        shr al, cl
+        pop rcx
+        movzx rbx, al
+        ; 16:19 var $.8(%8)
+        lea rax, [rsp+56]
+        ; 16:19 assign
+        mov [rax], rbx
+        ; 16:5 call printIntLf
+        lea rax, [rsp+56]
+        mov rax, [rax]
+        push rax
+          call @printIntLf
+        add rsp, 8
+        ; 17:16 int lit 9
+        mov al, 9
+        ; 17:21 int lit 2
+        mov bl, 2
+        ; 17:18 shiftright
+        push rcx
+        mov rcx, rbx
+        shr al, cl
+        pop rcx
+        movzx rbx, al
+        ; 17:18 var $.9(%9)
+        lea rax, [rsp+64]
+        ; 17:18 assign
+        mov [rax], rbx
+        ; 17:5 call printIntLf
+        lea rax, [rsp+64]
+        mov rax, [rax]
+        push rax
+          call @printIntLf
+        add rsp, 8
+        ; 18:16 int lit 1
+        mov al, 1
+        ; 18:21 int lit 2
+        mov bl, 2
+        ; 18:18 shiftleft
+        push rcx
+        mov rcx, rbx
+        shl al, cl
+        pop rcx
+        movzx rbx, al
+        ; 18:18 var $.10(%10)
+        lea rax, [rsp+72]
+        ; 18:18 assign
+        mov [rax], rbx
+        ; 18:5 call printIntLf
+        lea rax, [rsp+72]
+        mov rax, [rax]
+        push rax
+          call @printIntLf
+        add rsp, 8
 @main_ret:
         ; release space for local variables
-        add rsp, 64
+        add rsp, 80
         ret
 init:
         sub rsp, 20h

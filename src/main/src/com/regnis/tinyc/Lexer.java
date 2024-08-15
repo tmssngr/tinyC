@@ -97,14 +97,22 @@ public final class Lexer {
 					: TokenType.EQUAL;
 		}
 		if (isConsume('<')) {
-			return isConsume('=')
-					? TokenType.LT_EQ
-					: TokenType.LT;
+			if (isConsume('<')) {
+				return TokenType.LT_LT;
+			}
+			if (isConsume('=')) {
+				return TokenType.LT_EQ;
+			}
+			return TokenType.LT;
 		}
 		if (isConsume('>')) {
-			return isConsume('=')
-					? TokenType.GT_EQ
-					: TokenType.GT;
+			if (isConsume('>')) {
+				return TokenType.GT_GT;
+			}
+			if (isConsume('=')) {
+				return TokenType.GT_EQ;
+			}
+			return TokenType.GT;
 		}
 		if (isConsume('(')) {
 			return TokenType.L_PAREN;

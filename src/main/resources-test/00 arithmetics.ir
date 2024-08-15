@@ -222,6 +222,9 @@
    var 5: $.5
    var 6: $.6
    var 7: $.7
+   var 8: $.8
+   var 9: $.9
+   var 10: $.10
         ; 4:15 int lit 4
         ld r0, 4 (1)
         ; 4:19 int lit 3
@@ -339,5 +342,44 @@
         store [r0], r1 (8)
         ; 14:5 call printIntLf
         call @printIntLf (7)
+        ; 16:16 int lit 10
+        ld r0, 10 (1)
+        ; 16:22 int lit 1
+        ld r1, 1 (1)
+        ; 16:19 shiftright
+        shiftr r0, r1 (u8)
+        cast r1 (i64), r0 (u8)
+        ; 16:19 var $.8(%8)
+        addrOf r0, [8@function]
+        ; 16:19 assign
+        store [r0], r1 (8)
+        ; 16:5 call printIntLf
+        call @printIntLf (8)
+        ; 17:16 int lit 9
+        ld r0, 9 (1)
+        ; 17:21 int lit 2
+        ld r1, 2 (1)
+        ; 17:18 shiftright
+        shiftr r0, r1 (u8)
+        cast r1 (i64), r0 (u8)
+        ; 17:18 var $.9(%9)
+        addrOf r0, [9@function]
+        ; 17:18 assign
+        store [r0], r1 (8)
+        ; 17:5 call printIntLf
+        call @printIntLf (9)
+        ; 18:16 int lit 1
+        ld r0, 1 (1)
+        ; 18:21 int lit 2
+        ld r1, 2 (1)
+        ; 18:18 shiftleft
+        shiftl r0, r1 (u8)
+        cast r1 (i64), r0 (u8)
+        ; 18:18 var $.10(%10)
+        addrOf r0, [10@function]
+        ; 18:18 assign
+        store [r0], r1 (8)
+        ; 18:5 call printIntLf
+        call @printIntLf (10)
 @main_ret:
 

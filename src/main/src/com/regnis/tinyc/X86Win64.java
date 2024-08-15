@@ -304,6 +304,38 @@ public final class X86Win64 {
 		case And -> writeIndented("and " + targetRegName + ", " + sourceRegName);
 		case Or -> writeIndented("or " + targetRegName + ", " + sourceRegName);
 		case Xor -> writeIndented("xor " + targetRegName + ", " + sourceRegName);
+		case ShiftL -> {
+			final boolean pushPop = !getRegName(sourceReg, 1).equals("cl");
+			if (pushPop) {
+				writeIndented("push rcx");
+				writeIndented("mov rcx, " + getRegName(sourceReg, 0));
+			}
+			if (type == Type.U8) {
+				writeIndented("shl " + targetRegName + ", cl");
+			}
+			else {
+				writeIndented("sal " + targetRegName + ", cl");
+			}
+			if (pushPop) {
+				writeIndented("pop rcx");
+			}
+		}
+		case ShiftR -> {
+			final boolean pushPop = !getRegName(sourceReg, 1).equals("cl");
+			if (pushPop) {
+				writeIndented("push rcx");
+				writeIndented("mov rcx, " + getRegName(sourceReg, 0));
+			}
+			if (type == Type.U8) {
+				writeIndented("shr " + targetRegName + ", cl");
+			}
+			else {
+				writeIndented("sar " + targetRegName + ", cl");
+			}
+			if (pushPop) {
+				writeIndented("pop rcx");
+			}
+		}
 		case Mul -> {
 			if (size != 8) {
 				writeIndented("movsx " + getRegName(targetReg) + ", " + getRegName(targetReg, size));

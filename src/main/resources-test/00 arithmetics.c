@@ -12,4 +12,8 @@ void main() {
 
     printIntLf(1000/10);
     printIntLf(1000 % 256);
+
+    printIntLf(10 >> 1);
+    printIntLf(9 >> 2);
+    printIntLf(1 << 2);
 }
