@@ -165,7 +165,7 @@
         ld r1, 0 (1)
         ; 12:16 ==
         cmp r2, (r0 == r1) (u8)
-        branch-false r2, @else_3
+        branch-false r2, @if_3_else
         ; then
         ; 13:14 int lit 32
         ld r0, 32 (1)
@@ -175,9 +175,9 @@
         store [r1], r0 (1)
         ; 13:4 call printChar
         call @printChar (2)
-        jmp @endif_3
+        jmp @if_3_end
         ; else
-@else_3:
+@if_3_else:
         ; 16:14 int lit 42
         ld r0, 42 (1)
         ; 16:14 var $.3(%3)
@@ -186,7 +186,7 @@
         store [r1], r0 (1)
         ; 16:4 call printChar
         call @printChar (3)
-@endif_3:
+@if_3_end:
 @for_2_continue:
         ; 11:36 read var i(%1)
         addrOf r0, [1@function]

@@ -197,7 +197,7 @@ start:
         seta cl
         and cl, 0xFF
         or cl, cl
-        jz @else_2
+        jz @if_2_else
         ; then
         ; 6:7 read var x(%0)
         lea rax, [rsp+24]
@@ -218,10 +218,10 @@ start:
         lea rax, [rsp+24]
         ; 6:5 assign
         mov [rax], bl
-        jmp @endif_2
+        jmp @if_2_end
         ; else
-@else_2:
-@endif_2:
+@if_2_else:
+@if_2_end:
         ; 8:6 read var x(%0)
         lea rax, [rsp+24]
         mov bl, [rax]
@@ -350,7 +350,7 @@ start:
         sete cl
         and cl, 0xFF
         or cl, cl
-        jz @else_4
+        jz @if_4_else
         ; then
         ; 21:14 int lit 32
         mov al, 32
@@ -364,10 +364,10 @@ start:
         push rax
           call @printChar
         add rsp, 8
-        jmp @endif_4
+        jmp @if_4_end
         ; else
-@else_4:
-@endif_4:
+@if_4_else:
+@if_4_end:
         ; 23:3 call printNibble
         lea rax, [rsp+8]
         mov al, [rax]
@@ -435,7 +435,7 @@ start:
         sete cl
         and cl, 0xFF
         or cl, cl
-        jz @else_6
+        jz @if_6_else
         ; then
         ; 29:4 call printHex2
         lea rax, [rsp+11]
@@ -443,10 +443,10 @@ start:
         push rax
           call @printHex2
         add rsp, 8
-        jmp @endif_6
+        jmp @if_6_end
         ; else
-@else_6:
-@endif_6:
+@if_6_else:
+@if_6_end:
         ; 31:3 if i & 7 == 0
         ; 31:8 read var i(%4)
         lea rax, [rsp+11]
@@ -462,7 +462,7 @@ start:
         sete cl
         and cl, 0xFF
         or cl, cl
-        jz @else_7
+        jz @if_7_else
         ; then
         ; 32:14 int lit 32
         mov al, 32
@@ -476,10 +476,10 @@ start:
         push rax
           call @printChar
         add rsp, 8
-        jmp @endif_7
+        jmp @if_7_end
         ; else
-@else_7:
-@endif_7:
+@if_7_else:
+@if_7_end:
         ; 34:3 call printChar
         lea rax, [rsp+11]
         mov al, [rax]
@@ -501,7 +501,7 @@ start:
         sete cl
         and cl, 0xFF
         or cl, cl
-        jz @else_8
+        jz @if_8_else
         ; then
         ; 36:14 int lit 10
         mov al, 10
@@ -515,10 +515,10 @@ start:
         push rax
           call @printChar
         add rsp, 8
-        jmp @endif_8
+        jmp @if_8_end
         ; else
-@else_8:
-@endif_8:
+@if_8_else:
+@if_8_end:
 @for_5_continue:
         ; 27:34 read var i(%4)
         lea rax, [rsp+11]

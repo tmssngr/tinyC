@@ -142,7 +142,7 @@
         ld r0, 9 (1)
         ; 5:8 >
         cmp r2, (r1 > r0) (u8)
-        branch-false r2, @else_2
+        branch-false r2, @if_2_else
         ; then
         ; 6:7 read var x(%0)
         addrOf r0, [0@argument]
@@ -163,10 +163,10 @@
         addrOf r0, [0@argument]
         ; 6:5 assign
         store [r0], r1 (1)
-        jmp @endif_2
+        jmp @if_2_end
         ; else
-@else_2:
-@endif_2:
+@if_2_else:
+@if_2_end:
         ; 8:6 read var x(%0)
         addrOf r0, [0@argument]
         load r1, [r0] (1)
@@ -264,7 +264,7 @@
         ld r0, 0 (1)
         ; 20:15 ==
         cmp r2, (r1 == r0) (u8)
-        branch-false r2, @else_4
+        branch-false r2, @if_4_else
         ; then
         ; 21:14 int lit 32
         ld r0, 32 (1)
@@ -274,10 +274,10 @@
         store [r1], r0 (1)
         ; 21:4 call printChar
         call @printChar (2)
-        jmp @endif_4
+        jmp @if_4_end
         ; else
-@else_4:
-@endif_4:
+@if_4_else:
+@if_4_end:
         ; 23:3 call printNibble
         call @printNibble (1)
 @for_3_continue:
@@ -331,14 +331,14 @@
         ld r0, 0 (1)
         ; 28:17 ==
         cmp r2, (r1 == r0) (u8)
-        branch-false r2, @else_6
+        branch-false r2, @if_6_else
         ; then
         ; 29:4 call printHex2
         call @printHex2 (4)
-        jmp @endif_6
+        jmp @if_6_end
         ; else
-@else_6:
-@endif_6:
+@if_6_else:
+@if_6_end:
         ; 31:3 if i & 7 == 0
         ; 31:8 read var i(%4)
         addrOf r0, [4@function]
@@ -351,7 +351,7 @@
         ld r0, 0 (1)
         ; 31:15 ==
         cmp r2, (r1 == r0) (u8)
-        branch-false r2, @else_7
+        branch-false r2, @if_7_else
         ; then
         ; 32:14 int lit 32
         ld r0, 32 (1)
@@ -361,10 +361,10 @@
         store [r1], r0 (1)
         ; 32:4 call printChar
         call @printChar (5)
-        jmp @endif_7
+        jmp @if_7_end
         ; else
-@else_7:
-@endif_7:
+@if_7_else:
+@if_7_end:
         ; 34:3 call printChar
         call @printChar (4)
         ; 35:3 if i & 15 == 15
@@ -379,7 +379,7 @@
         ld r0, 15 (1)
         ; 35:17 ==
         cmp r2, (r1 == r0) (u8)
-        branch-false r2, @else_8
+        branch-false r2, @if_8_else
         ; then
         ; 36:14 int lit 10
         ld r0, 10 (1)
@@ -389,10 +389,10 @@
         store [r1], r0 (1)
         ; 36:4 call printChar
         call @printChar (6)
-        jmp @endif_8
+        jmp @if_8_end
         ; else
-@else_8:
-@endif_8:
+@if_8_else:
+@if_8_end:
 @for_5_continue:
         ; 27:34 read var i(%4)
         addrOf r0, [4@function]

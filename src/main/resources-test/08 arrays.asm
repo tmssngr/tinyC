@@ -150,13 +150,13 @@ start:
         sete cl
         and cl, 0xFF
         or cl, cl
-        jz @else_2
+        jz @if_2_else
         ; then
         jmp @while_1_break
-        jmp @endif_2
+        jmp @if_2_end
         ; else
-@else_2:
-@endif_2:
+@if_2_else:
+@if_2_end:
         jmp @while_1
 @while_1_break:
         ; 23:28 array buffer(%1)
@@ -213,7 +213,7 @@ start:
         setl cl
         and cl, 0xFF
         or cl, cl
-        jz @else_3
+        jz @if_3_else
         ; then
         ; 28:13 int lit 45
         mov al, 45
@@ -236,10 +236,10 @@ start:
         lea rax, [rsp+40]
         ; 29:10 assign
         mov [rax], rbx
-        jmp @endif_3
+        jmp @if_3_end
         ; else
-@else_3:
-@endif_3:
+@if_3_else:
+@if_3_end:
         ; 31:12 read var number(%0)
         lea rax, [rsp+40]
         mov rbx, [rax]

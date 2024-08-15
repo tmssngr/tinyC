@@ -135,13 +135,13 @@
         ld r0, 0 (8)
         ; 19:14 ==
         cmp r2, (r1 == r0) (i64)
-        branch-false r2, @else_2
+        branch-false r2, @if_2_else
         ; then
         jmp @while_1_break
-        jmp @endif_2
+        jmp @if_2_end
         ; else
-@else_2:
-@endif_2:
+@if_2_else:
+@if_2_end:
         jmp @while_1
 @while_1_break:
         ; 23:28 array buffer(%1)
@@ -186,7 +186,7 @@
         ld r0, 0 (8)
         ; 27:13 <
         cmp r2, (r1 < r0) (i64)
-        branch-false r2, @else_3
+        branch-false r2, @if_3_else
         ; then
         ; 28:13 int lit 45
         ld r0, 45 (1)
@@ -205,10 +205,10 @@
         addrOf r0, [0@argument]
         ; 29:10 assign
         store [r0], r1 (8)
-        jmp @endif_3
+        jmp @if_3_end
         ; else
-@else_3:
-@endif_3:
+@if_3_else:
+@if_3_end:
         ; 31:12 read var number(%0)
         addrOf r0, [0@argument]
         load r1, [r0] (8)

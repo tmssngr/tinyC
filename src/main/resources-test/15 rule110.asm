@@ -224,7 +224,7 @@ start:
         sete cl
         and cl, 0xFF
         or cl, cl
-        jz @else_3
+        jz @if_3_else
         ; then
         ; 13:14 int lit 32
         mov al, 32
@@ -238,9 +238,9 @@ start:
         push rax
           call @printChar
         add rsp, 8
-        jmp @endif_3
+        jmp @if_3_end
         ; else
-@else_3:
+@if_3_else:
         ; 16:14 int lit 42
         mov al, 42
         ; 16:14 var $.3(%3)
@@ -253,7 +253,7 @@ start:
         push rax
           call @printChar
         add rsp, 8
-@endif_3:
+@if_3_end:
 @for_2_continue:
         ; 11:36 read var i(%1)
         lea rax, [rsp+1]

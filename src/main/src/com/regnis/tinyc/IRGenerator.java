@@ -492,8 +492,8 @@ public final class IRGenerator {
 		final List<Statement> thenStatements = statement.thenStatements();
 		final List<Statement> elseStatements = statement.elseStatements();
 		final int labelIndex = nextLabelIndex();
-		final String elseLabel = "@else_" + labelIndex;
-		final String nextLabel = "@endif_" + labelIndex;
+		final String elseLabel = "@if_" + labelIndex + "_else";
+		final String nextLabel = "@if_" + labelIndex + "_end";
 		writeComment("if " + condition.toUserString(), statement.location());
 		final int conditionReg = write(condition, variables, true);
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
