@@ -502,13 +502,21 @@ public final class IRGenerator {
 		writeComment("if " + condition.toUserString(), statement.location());
 		final int conditionReg = write(condition, variables, true);
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
-		write(new IRBranch(conditionReg, false, labelElse,
-		                   labelThen));
-		freeReg(conditionReg);
-		writeStatements(thenStatements, variables);
-		write(new IRJump(labelEnd));
-		writeLabel(labelElse);
-		writeStatements(elseStatements, variables);
+		if (elseStatements.isEmpty()) {
+			write(new IRBranch(conditionReg, false, labelEnd,
+			                   labelThen));
+			freeReg(conditionReg);
+			writeStatements(thenStatements, variables);
+		}
+		else {
+			write(new IRBranch(conditionReg, false, labelElse,
+			                   labelThen));
+			freeReg(conditionReg);
+			writeStatements(thenStatements, variables);
+			write(new IRJump(labelEnd));
+			writeLabel(labelElse);
+			writeStatements(elseStatements, variables);
+		}
 		writeLabel(labelEnd);
 	}
 
