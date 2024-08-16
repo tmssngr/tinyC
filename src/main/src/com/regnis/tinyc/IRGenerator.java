@@ -147,7 +147,6 @@ public final class IRGenerator {
 	private void writeStatement(Statement statement, Variables variables) {
 		Utils.assertTrue(registerAllocator.isNoneUsed());
 		switch (statement) {
-		case StmtVarDeclaration declaration -> writeAssignment(declaration.index(), declaration.scope(), Objects.requireNonNull(declaration.expression()), declaration.location(), variables);
 		case StmtCompound compound -> writeStatements(compound.statements(), variables);
 		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
 		case StmtLoop forStatement -> writeFor(forStatement, variables);
@@ -198,19 +197,6 @@ public final class IRGenerator {
 			writeComment("return");
 		}
 		write(new IRJump(Objects.requireNonNull(functionRetLabel)));
-	}
-
-	private void writeAssignment(int index, VariableScope scope, Expression expression, Location location, Variables variables) {
-		final int expressionReg = write(expression, variables, true);
-		final int varReg = getFreeReg();
-		final VariableDetails variable = variables.get(index, scope);
-		Utils.assertTrue(variable.isScalar());
-		final int typeSize = getTypeSize(variable.type());
-		writeComment("assign " + variable, location);
-		writeAddrOfVar(varReg, variable);
-		write(new IRMemStore(varReg, expressionReg, typeSize));
-		freeReg(expressionReg);
-		freeReg(varReg);
 	}
 
 	private int write(Expression node, Variables variables, boolean readVar) {
