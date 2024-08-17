@@ -13,14 +13,14 @@ public final class TypeChecker {
 
 	private final Map<String, Symbol> globalSymbols = new HashMap<>();
 	private final Map<String, TypeDef> typeDefs = new HashMap<>();
-	private final List<Variable> globalVariables = new ArrayList<>();
+	private final List<Var> globalVars = new ArrayList<>();
 	private final Map<String, StringLiteral> stringLiteralMap = new HashMap<>();
 	private final List<StringLiteral> stringLiterals = new ArrayList<>();
 	private final Type pointerIntType;
 
 	private List<Statement> statements = List.of();
 	@Nullable private Type expectedReturnType;
-	@Nullable private LocalVariables localVariables;
+	@Nullable private LocalVars localVars;
 
 	public TypeChecker(@NotNull Type pointerIntType) {
 		Utils.assertTrue(pointerIntType.isInt());
@@ -33,6 +33,7 @@ public final class TypeChecker {
 		final List<Statement> globalVars = processStatements(program.globalVars());
 		final List<Function> typedFunctions = determineFunctionDeclarationTypes(program.functions());
 		final List<Function> functions = determineStatementTypes(typedFunctions);
+		final List<Variable> globalVariables = toVariables(this.globalVars);
 		return new Program(typeDefs, globalVars, functions, globalVariables, stringLiterals);
 	}
 
@@ -112,7 +113,7 @@ public final class TypeChecker {
 			args.add(new Function.Arg(arg.typeString(), argType, arg.name(), arg.location()));
 			argTypes.add(argType);
 		}
-		globalSymbols.put(name, new Symbol.Func(returnType, argTypes, location));
+		globalSymbols.put(name, new Func(returnType, argTypes, location));
 		return new Function(name, function.typeString(), returnType, args, List.of(), function.statements(), function.asmLines(), location);
 	}
 
@@ -135,10 +136,10 @@ public final class TypeChecker {
 		}
 
 		expectedReturnType = function.returnType();
-		localVariables = new LocalVariables();
+		localVars = new LocalVars();
 		try {
 			for (Function.Arg arg : function.args()) {
-				localVariables.addArg(arg.name(), arg.typeNotNull(), arg.location());
+				localVars.addArg(arg.name(), arg.typeNotNull(), arg.location());
 			}
 
 			final List<Statement> statements = processStatements(function.statements());
@@ -147,10 +148,10 @@ public final class TypeChecker {
 					throw new SyntaxException(Messages.functionMustReturnType(expectedReturnType), function.location());
 				}
 			}
-			return Function.typedInstance(function.name(), function.typeString(), function.returnTypeNotNull(), function.args(), localVariables.getList(), statements, List.of(), function.location());
+			return Function.typedInstance(function.name(), function.typeString(), function.returnTypeNotNull(), function.args(), localVars.toList(), statements, List.of(), function.location());
 		}
 		finally {
-			localVariables = null;
+			localVars = null;
 			expectedReturnType = null;
 		}
 	}
@@ -174,13 +175,13 @@ public final class TypeChecker {
 
 	@NotNull
 	private List<Statement> processStatementsWithLocalScope(@NotNull List<Statement> statements) {
-		final LocalVariables prevLocalVariables = Objects.requireNonNull(this.localVariables);
-		this.localVariables = new LocalVariables(prevLocalVariables);
+		final LocalVars prevLocalVars = Objects.requireNonNull(this.localVars);
+		this.localVars = new LocalVars(prevLocalVars);
 		try {
 			return processStatements(statements);
 		}
 		finally {
-			this.localVariables = prevLocalVariables;
+			this.localVars = prevLocalVars;
 		}
 	}
 
@@ -207,19 +208,19 @@ public final class TypeChecker {
 		final String varName = declaration.varName();
 		final Location location = declaration.location();
 		final Type type = getType(declaration.typeString(), location);
-		final Variable variable = addVariable(varName, type, 0, location);
+		final Var var = addVar(varName, type, 0, location);
 		Expression expression = declaration.expression();
 		if (expression != null) {
 			expression = processExpression(expression);
 			expression = autoCastTo(type, expression, location);
-			addAssignment(variable, expression, location);
+			addAssignment(var, expression, location);
 		}
 	}
 
-	private void addAssignment(Variable variable, Expression expression, Location location) {
+	private void addAssignment(Var var, Expression expression, Location location) {
 		add(new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-		                                variable.type(),
-		                                new ExprVarAccess(variable.name(), variable.index(), variable.scope(), variable.type(), location),
+		                                var.type,
+		                                new ExprVarAccess(var.name, var.index, var.scope, var.type, location),
 		                                expression,
 		                                location)));
 	}
@@ -230,7 +231,7 @@ public final class TypeChecker {
 		final Location location = declaration.location();
 		Type type = getType(declaration.typeString(), location);
 		type = Type.pointer(type);
-		addVariable(varName, type, declaration.size(), location);
+		addVar(varName, type, declaration.size(), location);
 	}
 
 	private void processCompound(StmtCompound compound) {
@@ -341,9 +342,9 @@ public final class TypeChecker {
 			return expression;
 		}
 
-		final Variable variable = addVariable(null, expression.typeNotNull(), 0, expression.location());
-		addAssignment(variable, expression, expression.location());
-		return new ExprVarAccess(variable.name(), variable.index(), variable.scope(), variable.type(), variable.location());
+		final Var var = addVar(null, expression.typeNotNull(), 0, expression.location());
+		addAssignment(var, expression, expression.location());
+		return new ExprVarAccess(var.name, var.index, var.scope, var.type, var.location());
 	}
 
 	@NotNull
@@ -372,12 +373,11 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private ExprVarAccess processVarAccess(ExprVarAccess var) {
-		final String name = var.varName();
-		final Location location = var.location();
-		final Variable variable = getVariable(name, location);
-		final Type type = variable.type();
-		return new ExprVarAccess(name, variable.index(), variable.scope(), type, location);
+	private ExprVarAccess processVarAccess(ExprVarAccess access) {
+		final String name = access.varName();
+		final Location location = access.location();
+		final Var var = getVar(name, location);
+		return new ExprVarAccess(name, var.index, var.scope, var.type, location);
 	}
 
 	@NotNull
@@ -442,8 +442,8 @@ public final class TypeChecker {
 		case AddrOf -> {
 			if (expression instanceof ExprVarAccess access) {
 				final String name = access.varName();
-				final Variable variable = getVariable(name, location);
-				if (variable.isArray()) {
+				final Var var = getVar(name, location);
+				if (var.isArray()) {
 					throw new SyntaxException(Messages.addressOfArray(), location);
 				}
 			}
@@ -486,7 +486,7 @@ public final class TypeChecker {
 	@NotNull
 	private ExprFuncCall processFuncCall(String name, List<Expression> argExpressions, Location location) {
 		final Symbol symbol = globalSymbols.get(name);
-		if (!(symbol instanceof Symbol.Func function)) {
+		if (!(symbol instanceof Func function)) {
 			throw new SyntaxException(Messages.undeclaredFunction(name), location);
 		}
 		if (function.argTypes().size() != argExpressions.size()) {
@@ -605,61 +605,61 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private ExprVarAccess processLValueVar(ExprVarAccess var) {
-		final String name = var.varName();
-		final Location location = var.location();
-		final Variable variable = getVariable(name, location);
-		if (variable.isArray()) {
+	private ExprVarAccess processLValueVar(ExprVarAccess access) {
+		final String name = access.varName();
+		final Location location = access.location();
+		final Var var = getVar(name, location);
+		if (var.isArray()) {
 			throw new SyntaxException(Messages.arraysAreImmutable(), location);
 		}
-		return new ExprVarAccess(name, variable.index(), variable.scope(), variable.type(), location);
+		return new ExprVarAccess(name, var.index, var.scope, var.type, location);
 	}
 
 	private void checkNoSymbolNamed(String name, Location location) {
 		final Symbol existingSymbol = globalSymbols.get(name);
-		if (existingSymbol instanceof Symbol.Func) {
+		if (existingSymbol instanceof Func) {
 			throw new SyntaxException(Messages.functionAlreadDeclaredAt(name, existingSymbol.location()), location);
 		}
-		if (existingSymbol instanceof Variable) {
+		if (existingSymbol instanceof Var) {
 			throw new SyntaxException(Messages.variableAlreadyDeclaredAt(name, existingSymbol.location()), location);
 		}
 		Utils.assertTrue(existingSymbol == null);
 	}
 
 	@NotNull
-	private Variable addVariable(@Nullable String varName, Type type, int arraySize, Location location) {
+	private Var addVar(@Nullable String varName, Type type, int arraySize, Location location) {
 		if (varName != null) {
 			checkNoSymbolNamed(varName, location);
 		}
-		if (localVariables == null) {
+		if (localVars == null) {
 			return addGlobalVariable(varName, type, arraySize, location);
 		}
 
-		return localVariables.add(varName, type, arraySize, location);
+		return localVars.add(varName, type, arraySize, location);
 	}
 
 	@NotNull
-	private Variable addGlobalVariable(@Nullable String varName, Type type, int arraySize, Location location) {
-		varName = getTempVarName(varName, globalVariables);
-		final Variable variable = new Variable(varName, globalVariables.size(), VariableScope.global, type, arraySize, location);
-		globalSymbols.put(varName, variable);
-		globalVariables.add(variable);
-		return variable;
+	private Var addGlobalVariable(@Nullable String varName, Type type, int arraySize, Location location) {
+		varName = getTempVarName(varName, globalVars);
+		final Var var = new Var(varName, globalVars.size(), VariableScope.global, type, arraySize, location);
+		globalSymbols.put(varName, var);
+		globalVars.add(var);
+		return var;
 	}
 
 	@NotNull
-	private Variable getVariable(String name, Location location) {
-		if (localVariables != null) {
-			final Variable localVariable = localVariables.get(name);
-			if (localVariable != null) {
-				return localVariable;
+	private Var getVar(String name, Location location) {
+		if (localVars != null) {
+			final Var localVar = localVars.get(name);
+			if (localVar != null) {
+				return localVar;
 			}
 		}
 		final Symbol symbol = globalSymbols.get(name);
-		if (!(symbol instanceof Variable variable)) {
-			throw new SyntaxException(Messages.undeclaredVariable(name), location);
+		if (symbol instanceof Var var) {
+			return var;
 		}
-		return variable;
+		throw new SyntaxException(Messages.undeclaredVariable(name), location);
 	}
 
 	@NotNull
@@ -691,59 +691,108 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private static String getTempVarName(@Nullable String varName, List<Variable> globalVariables) {
+	private static String getTempVarName(@Nullable String varName, List<Var> globalVars) {
 		if (varName == null) {
-			varName = "$." + globalVariables.size();
+			varName = "$." + globalVars.size();
 		}
 		return varName;
 	}
 
-	private static final class LocalVariables {
+	private static List<Variable> toVariables(List<Var> vars) {
+		final List<Variable> globalVariables = new ArrayList<>();
+		for (Var var : vars) {
+			globalVariables.add(new Variable(var.name, var.index, var.scope, var.type, var.arraySize, var.location));
+		}
+		return globalVariables;
+	}
 
-		private final Map<String, Variable> nameToVariable = new HashMap<>();
-		private final List<Variable> vars;
-		@Nullable private final LocalVariables parent;
+	public interface Symbol {
+		@NotNull
+		Location location();
+	}
 
-		public LocalVariables() {
+	public record Func(@NotNull Type returnType, @NotNull List<Type> argTypes, @NotNull Location location) implements Symbol {
+		public Func(Type returnType, List<Type> argTypes, Location location) {
+			this.returnType = returnType;
+			this.argTypes = List.copyOf(argTypes);
+			this.location = location;
+		}
+	}
+
+	private static final class Var implements Symbol {
+		@NotNull private final String name;
+		private final int index;
+		@NotNull private final VariableScope scope;
+		@NotNull private final Type type;
+		private final int arraySize;
+		@NotNull private final Location location;
+
+		private Var(@NotNull String name, int index, @NotNull VariableScope scope, @NotNull Type type, int arraySize, @NotNull Location location) {
+			this.name = name;
+			this.index = index;
+			this.scope = scope;
+			this.type = type;
+			this.arraySize = arraySize;
+			this.location = location;
+		}
+
+		@Override
+		@NotNull
+		public Location location() {
+			return location;
+		}
+
+		public boolean isArray() {
+			return arraySize > 0;
+		}
+	}
+
+	private static final class LocalVars {
+
+		private final Map<String, Var> nameToVariable = new HashMap<>();
+		private final List<Var> vars;
+		@Nullable private final LocalVars parent;
+
+		public LocalVars() {
 			this.parent = null;
 			vars = new ArrayList<>();
 		}
 
-		public LocalVariables(@NotNull LocalVariables parent) {
+		public LocalVars(@NotNull LocalVars parent) {
 			this.parent = parent;
 			vars = parent.vars;
 		}
 
 		@NotNull
-		public Variable add(@Nullable String varName, Type type, int arraySize, Location location) {
+		public Var add(@Nullable String varName, Type type, int arraySize, Location location) {
 			varName = getTempVarName(varName, vars);
-			return add(new Variable(varName, vars.size(), VariableScope.function, type, arraySize, location));
+			return add(new Var(varName, vars.size(), VariableScope.function, type, arraySize, location));
 		}
 
 		public void addArg(@NotNull String name, @NotNull Type type, @NotNull Location location) {
 			if (nameToVariable.containsKey(name)) {
 				throw new SyntaxException(Messages.duplicateArgumentName(name), location);
 			}
-			add(new Variable(name, vars.size(), VariableScope.argument, type, 0, location));
+			add(new Var(name, vars.size(), VariableScope.argument, type, 0, location));
 		}
 
 		@Nullable
-		public Variable get(String name) {
-			final Variable variable = nameToVariable.get(name);
+		public Var get(String name) {
+			final Var variable = nameToVariable.get(name);
 			if (variable == null && parent != null) {
 				return parent.get(name);
 			}
 			return variable;
 		}
 
-		public List<Variable> getList() {
-			return Collections.unmodifiableList(vars);
+		public List<Variable> toList() {
+			return toVariables(vars);
 		}
 
-		private Variable add(@NotNull Variable variable) {
-			nameToVariable.put(variable.name(), variable);
-			vars.add(variable);
-			return variable;
+		private Var add(@NotNull Var var) {
+			nameToVariable.put(var.name, var);
+			vars.add(var);
+			return var;
 		}
 	}
 }

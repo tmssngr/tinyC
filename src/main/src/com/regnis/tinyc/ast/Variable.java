@@ -7,7 +7,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record Variable(@NotNull String name, int index, @NotNull VariableScope scope, @NotNull Type type, int arraySize, @NotNull Location location) implements Symbol {
+public record Variable(@NotNull String name, int index, @NotNull VariableScope scope, @NotNull Type type, int arraySize, @NotNull Location location) {
 	public boolean isScalar() {
 		return arraySize == 0;
 	}
