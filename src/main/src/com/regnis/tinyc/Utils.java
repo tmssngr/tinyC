@@ -9,8 +9,12 @@ import org.jetbrains.annotations.*;
  */
 public class Utils {
 	public static void assertTrue(boolean value) {
+		assertTrue(value, "");
+	}
+
+	public static void assertTrue(boolean value, String msg) {
 		if (!value) {
-			throw new IllegalStateException();
+			throw new IllegalStateException(msg);
 		}
 	}
 
