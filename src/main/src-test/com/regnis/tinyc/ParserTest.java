@@ -77,7 +77,7 @@ public class ParserTest {
 		             parseStatement("i16 foo = -2;"));
 
 		assertEquals(new StmtVarDeclaration("i16", "foo", new ExprBinary(ExprBinary.Op.Sub,
-		                                                                 new ExprVarAccess("a", 0, null, null, locS(0, 10)),
+		                                                                 new ExprVarAccess("a", locS(0, 10)),
 		                                                                 intLit(2, locS(0, 12)),
 		                                                                 locS(0, 11)),
 		                                    locS(0, 0)),
@@ -204,12 +204,12 @@ public class ParserTest {
 
 		assertEquals(new StmtCompound(List.of(
 				             new StmtIf(new ExprBinary(ExprBinary.Op.Gt,
-				                                       new ExprVarAccess("i", 0, null, null, locS(1, 6)),
+				                                       new ExprVarAccess("i", locS(1, 6)),
 				                                       intLit(0, locS(1, 10)),
 				                                       locS(1, 8)),
 				                        List.of(
 						                        new StmtIf(new ExprBinary(ExprBinary.Op.Gt,
-						                                                  new ExprVarAccess("i", 0, null, null, locS(2, 8)),
+						                                                  new ExprVarAccess("i", locS(2, 8)),
 						                                                  intLit(9, locS(2, 12)),
 						                                                  locS(2, 10)),
 						                                   List.of(
