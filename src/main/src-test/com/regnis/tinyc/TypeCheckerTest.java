@@ -171,36 +171,36 @@ public class TypeCheckerTest {
 				                                                ),
 				                                                List.of(
 						                                                assign("first", 0, VariableScope.function, Type.U8,
-						                                                       new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(2, 13)),
+						                                                       new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), true, loc(2, 13)),
 						                                                                           Type.U8,
 						                                                                           new ExprIntLiteral(0, Type.I64, loc(2, 19))),
 						                                                       loc(2, 2)),
 						                                                new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
 						                                                                            Type.U8,
-						                                                                            new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(3, 2)),
+						                                                                            new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), true, loc(3, 2)),
 						                                                                                                Type.U8,
 						                                                                                                new ExprIntLiteral(0, Type.I64, loc(3, 8))),
-						                                                                            new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(3, 13)),
+						                                                                            new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), true, loc(3, 13)),
 						                                                                                                Type.U8,
 						                                                                                                new ExprIntLiteral(1, Type.I64, loc(3, 19))),
 						                                                                            loc(3, 11))),
 						                                                new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
 						                                                                            Type.U8,
-						                                                                            new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(4, 2)),
+						                                                                            new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), true, loc(4, 2)),
 						                                                                                                Type.U8,
 						                                                                                                new ExprIntLiteral(1, Type.I64, loc(4, 8))),
-						                                                                            new ExprVarAccess("first", 0, VariableScope.function, Type.U8, loc(4, 13)),
+						                                                                            new ExprVarAccess("first", 0, VariableScope.function, Type.U8, false, loc(4, 13)),
 						                                                                            loc(4, 11))),
 						                                                assign("second", 1, VariableScope.function, Type.pointer(Type.U8),
 						                                                       new ExprUnary(ExprUnary.Op.AddrOf,
-						                                                                     new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), loc(5, 16)),
+						                                                                     new ExprArrayAccess(new ExprVarAccess("array", 0, VariableScope.global, Type.pointer(Type.U8), true, loc(5, 16)),
 						                                                                                         Type.U8,
 						                                                                                         new ExprIntLiteral(1, Type.I64, loc(5, 22))),
 						                                                                     Type.pointer(Type.U8),
 						                                                                     loc(5, 15)),
 						                                                       loc(5, 2)),
 						                                                assign("s", 2, VariableScope.function, Type.U8,
-						                                                       new ExprArrayAccess(new ExprVarAccess("second", 1, VariableScope.function, Type.pointer(Type.U8), loc(6, 9)),
+						                                                       new ExprArrayAccess(new ExprVarAccess("second", 1, VariableScope.function, Type.pointer(Type.U8), false, loc(6, 9)),
 						                                                                           Type.U8,
 						                                                                           new ExprIntLiteral(0, Type.I64, loc(6, 16))),
 						                                                       loc(6, 2))
@@ -283,13 +283,13 @@ public class TypeCheckerTest {
 						                                                                          loc(1, 9)),
 						                                                       loc(1, 2)),
 						                                                assign("$.1", 1, VariableScope.function, Type.I64,
-						                                                       ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, loc(2, 8)),
+						                                                       ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, false, loc(2, 8)),
 						                                                                         Type.I64),
 						                                                       loc(2, 8)),
 						                                                new StmtExpr(
 								                                                new ExprFuncCall("prInt", Type.VOID,
 								                                                                 List.of(
-										                                                                 new ExprVarAccess("$.1", 1, VariableScope.function, Type.I64, loc(2, 8))
+										                                                                 new ExprVarAccess("$.1", 1, VariableScope.function, Type.I64, false, loc(2, 8))
 								                                                                 ), loc(2, 2))
 						                                                )
 				                                                ),
@@ -306,12 +306,12 @@ public class TypeCheckerTest {
 						                                                                          loc(6, 9)),
 						                                                       loc(6, 2)),
 						                                                assign("$.1", 1, VariableScope.function, Type.I64,
-						                                                       ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, loc(7, 8)),
+						                                                       ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, false, loc(7, 8)),
 						                                                                         Type.I64),
 						                                                       loc(7, 8)),
 						                                                new StmtExpr(
 								                                                new ExprFuncCall("prInt", Type.VOID, List.of(
-										                                                new ExprVarAccess("$.1", 1, VariableScope.function, Type.I64, loc(7, 8))
+										                                                new ExprVarAccess("$.1", 1, VariableScope.function, Type.I64, false, loc(7, 8))
 								                                                ), loc(7, 2))
 						                                                )
 				                                                ),
@@ -357,7 +357,7 @@ public class TypeCheckerTest {
 						                                                                          loc(1, 9)),
 						                                                       loc(1, 2)),
 						                                                new StmtIf(new ExprBinary(ExprBinary.Op.Gt, Type.BOOL,
-						                                                                          new ExprVarAccess("a", 0, VariableScope.function, Type.U8, loc(2, 6)),
+						                                                                          new ExprVarAccess("a", 0, VariableScope.function, Type.U8, false, loc(2, 6)),
 						                                                                          new ExprIntLiteral(0, loc(2, 10)),
 						                                                                          loc(2, 8)),
 						                                                           List.of(
@@ -365,13 +365,13 @@ public class TypeCheckerTest {
 								                                                                  new ExprIntLiteral(1, Type.U8, loc(3, 11)),
 								                                                                  loc(3, 4)),
 								                                                           assign("$.2", 2, VariableScope.function, Type.I64,
-								                                                                  ExprCast.autocast(new ExprVarAccess("b", 1, VariableScope.function, Type.U8, loc(4, 10)),
+								                                                                  ExprCast.autocast(new ExprVarAccess("b", 1, VariableScope.function, Type.U8, false, loc(4, 10)),
 								                                                                                    Type.I64),
 								                                                                  loc(4, 10)),
 								                                                           new StmtExpr(
 										                                                           new ExprFuncCall("prInt", Type.VOID,
 										                                                                            List.of(
-												                                                                            new ExprVarAccess("$.2", 2, VariableScope.function, Type.I64, loc(4, 10))
+												                                                                            new ExprVarAccess("$.2", 2, VariableScope.function, Type.I64, false, loc(4, 10))
 										                                                                            ), loc(4, 4))
 								                                                           )
 						                                                           ),
@@ -380,13 +380,13 @@ public class TypeCheckerTest {
 								                                                                  new ExprIntLiteral(2, Type.I16, loc(7, 12)),
 								                                                                  loc(7, 4)),
 								                                                           assign("$.4", 4, VariableScope.function, Type.I64,
-								                                                                  ExprCast.autocast(new ExprVarAccess("b", 3, VariableScope.function, Type.I16, loc(8, 10)),
+								                                                                  ExprCast.autocast(new ExprVarAccess("b", 3, VariableScope.function, Type.I16, false, loc(8, 10)),
 								                                                                                    Type.I64),
 								                                                                  loc(8, 10)),
 								                                                           new StmtExpr(
 										                                                           new ExprFuncCall("prInt", Type.VOID,
 										                                                                            List.of(
-												                                                                            new ExprVarAccess("$.4", 4, VariableScope.function, Type.I64, loc(8, 10))
+												                                                                            new ExprVarAccess("$.4", 4, VariableScope.function, Type.I64, false, loc(8, 10))
 										                                                                            ), loc(8, 4))
 								                                                           )
 						                                                           ),
@@ -455,7 +455,7 @@ public class TypeCheckerTest {
 				                                                List.of(
 						                                                new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
 						                                                                            Type.U8,
-						                                                                            new ExprMemberAccess(new ExprArrayAccess(new ExprVarAccess("foos", 0, VariableScope.function, Type.pointer(Type.struct("Foo")), loc(4, 2)),
+						                                                                            new ExprMemberAccess(new ExprArrayAccess(new ExprVarAccess("foos", 0, VariableScope.function, Type.pointer(Type.struct("Foo")), true, loc(4, 2)),
 						                                                                                                                     Type.struct("Foo"),
 						                                                                                                                     new ExprIntLiteral(0, Type.I64, loc(4, 7))),
 						                                                                                                 "x",
@@ -521,7 +521,7 @@ public class TypeCheckerTest {
 	private static Statement assign(String varName, int index, VariableScope scope, Type type, Expression expression, Location location) {
 		return new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
 		                                   type,
-		                                   new ExprVarAccess(varName, index, scope, type, location),
+		                                   new ExprVarAccess(varName, index, scope, type, false, location),
 		                                   expression,
 		                                   location));
 	}

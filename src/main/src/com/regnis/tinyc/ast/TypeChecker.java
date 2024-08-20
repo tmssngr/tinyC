@@ -220,7 +220,7 @@ public final class TypeChecker {
 	private void addAssignment(Var var, Expression expression, Location location) {
 		add(new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
 		                                var.type,
-		                                new ExprVarAccess(var.name, var.index, var.scope, var.type, location),
+		                                new ExprVarAccess(var.name, var.index, var.scope, var.type, var.isArray(), location),
 		                                expression,
 		                                location)));
 	}
@@ -344,7 +344,7 @@ public final class TypeChecker {
 
 		final Var var = addVar(null, expression.typeNotNull(), 0, expression.location());
 		addAssignment(var, expression, expression.location());
-		return new ExprVarAccess(var.name, var.index, var.scope, var.type, var.location());
+		return new ExprVarAccess(var.name, var.index, var.scope, var.type, var.isArray(), var.location());
 	}
 
 	@NotNull
@@ -377,7 +377,8 @@ public final class TypeChecker {
 		final String name = access.varName();
 		final Location location = access.location();
 		final Var var = getVar(name, location);
-		return new ExprVarAccess(name, var.index, var.scope, var.type, location);
+		Utils.assertTrue(Objects.equals(var.name, name));
+		return new ExprVarAccess(name, var.index, var.scope, var.type, var.isArray(), location);
 	}
 
 	@NotNull
@@ -612,7 +613,8 @@ public final class TypeChecker {
 		if (var.isArray()) {
 			throw new SyntaxException(Messages.arraysAreImmutable(), location);
 		}
-		return new ExprVarAccess(name, var.index, var.scope, var.type, location);
+		Utils.assertTrue(Objects.equals(var.name, name));
+		return new ExprVarAccess(name, var.index, var.scope, var.type, false, location);
 	}
 
 	private void checkNoSymbolNamed(String name, Location location) {

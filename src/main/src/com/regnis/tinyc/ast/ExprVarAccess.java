@@ -9,10 +9,10 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record ExprVarAccess(@NotNull String varName, int index, @Nullable VariableScope scope, @Nullable Type type, @NotNull Location location) implements Expression {
+public record ExprVarAccess(@NotNull String varName, int index, @Nullable VariableScope scope, @Nullable Type type, boolean varIsArray, @NotNull Location location) implements Expression {
 
 	public ExprVarAccess(@NotNull String varName, @NotNull Location location) {
-		this(varName, 0, null, null, location);
+		this(varName, 0, null, null, false, location);
 	}
 
 	@NotNull
