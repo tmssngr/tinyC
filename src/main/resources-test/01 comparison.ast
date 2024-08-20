@@ -1,21 +1,12 @@
 void printString(u8* str) {
 	i64 length;
-	u8* $.2;
-	u8* $.3;
 
-	$.2 = str;
-	length = strlen($.2);
-	$.3 = str;
-	printStringLength($.3, length);
+	length = strlen(str);
+	printStringLength(str, length);
 }
 
 void printChar(u8 chr) {
-	u8* $.1;
-	i64 $.2;
-
-	$.1 = &chr;
-	$.2 = 1;
-	printStringLength($.1, $.2);
+	printStringLength(&chr, 1);
 }
 
 void printUint(i64 number) {
@@ -23,8 +14,6 @@ void printUint(i64 number) {
 	u8 pos;
 	i64 remainder;
 	u8 digit;
-	u8* $.5;
-	i64 $.6;
 
 	pos = 20;
 	while (true) {
@@ -37,25 +26,16 @@ void printUint(i64 number) {
 			break;
 		}
 	}
-	$.5 = &buffer[(i64)pos];
-	$.6 = (i64)(20 - pos);
-	printStringLength($.5, $.6);
+	printStringLength(&buffer[(i64)pos], (i64)(20 - pos));
 }
 
 void printIntLf(i64 number) {
-	u8 $.1;
-	i64 $.2;
-	u8 $.3;
-
 	if (number < 0) {
-		$.1 = 45;
-		printChar($.1);
+		printChar(45);
 		number = -number;
 	}
-	$.2 = number;
-	printUint($.2);
-	$.3 = 10;
-	printChar($.3);
+	printUint(number);
+	printChar(10);
 }
 
 i64 strlen(u8* str) {
@@ -72,89 +52,32 @@ void printStringLength(u8* str, i64 length) {
 }
 
 void main() {
-	u8* $.0;
-	i64 $.1;
-	i64 $.2;
-	u8* $.3;
-	i64 $.4;
-	i64 $.5;
-	u8* $.6;
-	i64 $.7;
-	i64 $.8;
-	u8* $.9;
-	i64 $.10;
-	i64 $.11;
-	u8* $.12;
-	i64 $.13;
-	u8* $.14;
-	i64 $.15;
-	u8* $.16;
-	i64 $.17;
-	i64 $.18;
-	u8* $.19;
-	i64 $.20;
-	i64 $.21;
-	u8* $.22;
-	i64 $.23;
-	i64 $.24;
-	u8* $.25;
-	i64 $.26;
-	i64 $.27;
-
-	$.0 = "< (signed)\n";
-	printString($.0);
-	$.1 = (i64)(1 < 2);
-	printIntLf($.1);
-	$.2 = (i64)(2 < 1);
-	printIntLf($.2);
-	$.3 = "< (unsigned)\n";
-	printString($.3);
-	$.4 = (i64)(0 < 128);
-	printIntLf($.4);
-	$.5 = (i64)(128 < 0);
-	printIntLf($.5);
-	$.6 = "<= (signed)\n";
-	printString($.6);
-	$.7 = (i64)(1 <= 2);
-	printIntLf($.7);
-	$.8 = (i64)(2 <= 1);
-	printIntLf($.8);
-	$.9 = "<= (unsigned)\n";
-	printString($.9);
-	$.10 = (i64)(0 <= 128);
-	printIntLf($.10);
-	$.11 = (i64)(128 <= 0);
-	printIntLf($.11);
-	$.12 = "==\n";
-	printString($.12);
-	$.13 = (i64)(1 == 2);
-	printIntLf($.13);
-	$.14 = "!=\n";
-	printString($.14);
-	$.15 = (i64)(1 != 2);
-	printIntLf($.15);
-	$.16 = ">= (signed)\n";
-	printString($.16);
-	$.17 = (i64)(1 >= 2);
-	printIntLf($.17);
-	$.18 = (i64)(2 >= 1);
-	printIntLf($.18);
-	$.19 = ">= (unsigned)\n";
-	printString($.19);
-	$.20 = (i64)(0 >= 128);
-	printIntLf($.20);
-	$.21 = (i64)(128 >= 0);
-	printIntLf($.21);
-	$.22 = "> (signed)\n";
-	printString($.22);
-	$.23 = (i64)(1 > 2);
-	printIntLf($.23);
-	$.24 = (i64)(2 > 1);
-	printIntLf($.24);
-	$.25 = "> (unsigned)\n";
-	printString($.25);
-	$.26 = (i64)(0 > 128);
-	printIntLf($.26);
-	$.27 = (i64)(128 > 0);
-	printIntLf($.27);
+	printString("< (signed)\n");
+	printIntLf((i64)(1 < 2));
+	printIntLf((i64)(2 < 1));
+	printString("< (unsigned)\n");
+	printIntLf((i64)(0 < 128));
+	printIntLf((i64)(128 < 0));
+	printString("<= (signed)\n");
+	printIntLf((i64)(1 <= 2));
+	printIntLf((i64)(2 <= 1));
+	printString("<= (unsigned)\n");
+	printIntLf((i64)(0 <= 128));
+	printIntLf((i64)(128 <= 0));
+	printString("==\n");
+	printIntLf((i64)(1 == 2));
+	printString("!=\n");
+	printIntLf((i64)(1 != 2));
+	printString(">= (signed)\n");
+	printIntLf((i64)(1 >= 2));
+	printIntLf((i64)(2 >= 1));
+	printString(">= (unsigned)\n");
+	printIntLf((i64)(0 >= 128));
+	printIntLf((i64)(128 >= 0));
+	printString("> (signed)\n");
+	printIntLf((i64)(1 > 2));
+	printIntLf((i64)(2 > 1));
+	printString("> (unsigned)\n");
+	printIntLf((i64)(0 > 128));
+	printIntLf((i64)(128 > 0));
 }

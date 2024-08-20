@@ -337,17 +337,6 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private Expression splitIntoTempVarAssignment(Expression expression) {
-		if (expression instanceof ExprVarAccess varAccess && varAccess.scope() == VariableScope.function) {
-			return expression;
-		}
-
-		final Var var = addVar(null, expression.typeNotNull(), 0, expression.location());
-		addAssignment(var, expression, expression.location());
-		return new ExprVarAccess(var.name, var.index, var.scope, var.type, var.isArray(), var.location());
-	}
-
-	@NotNull
 	private ExprStringLiteral processStringLiteral(ExprStringLiteral literal) {
 		final String text = literal.text();
 		StringLiteral stringLiteral = stringLiteralMap.get(text);
@@ -502,7 +491,6 @@ public final class TypeChecker {
 			final Expression argExpr = argExprIt.next();
 			Expression expression = processExpression(argExpr);
 			expression = autoCastTo(expectedType, expression, location);
-			expression = splitIntoTempVarAssignment(expression);
 			expressions.add(expression);
 		}
 		return new ExprFuncCall(name, function.returnType(), expressions, location);

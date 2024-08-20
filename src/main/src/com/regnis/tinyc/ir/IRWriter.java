@@ -16,7 +16,7 @@ public final class IRWriter {
 		this.writer = writer;
 	}
 
-	public void write(IRProgram program) throws IOException {
+	public void write(@NotNull IRProgram program) throws IOException {
 		writeFunctions(program);
 		writeGlobalVars(program.globalVars());
 		writeStringLiterals(program.stringLiterals());

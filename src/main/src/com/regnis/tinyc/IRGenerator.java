@@ -12,22 +12,19 @@ import org.jetbrains.annotations.*;
  */
 public final class IRGenerator {
 
-	private static final int TRUE = 1;
-	private static final int FALSE = 0;
-
 	@NotNull
 	public static IRProgram convert(Program program) {
 		final IRGenerator generator = new IRGenerator();
 		return generator.convertProgram(program);
 	}
 
-	private final TrivialRegisterAllocator registerAllocator = new TrivialRegisterAllocator();
 	private final Map<Type, TypeInfo> types = new HashMap<>();
 
 	private int labelIndex;
-	@SuppressWarnings("unused") private boolean debug;
+
+	private List<IRInstruction> instructions = List.of();
+	private List<IRLocalVar> localVars = List.of();
 	private String functionRetLabel;
-	private List<IRInstruction> instructions;
 	private BreakContinueLabels breakContinueLabels;
 
 	private IRGenerator() {
@@ -37,12 +34,10 @@ public final class IRGenerator {
 	private IRProgram convertProgram(Program program) {
 		initializeTypes(program.typeDefs());
 
-		final Variables variables = new Variables(program.globalVariables());
-
 		final List<IRFunction> functions = new ArrayList<>();
 
 		for (Function function : program.functions()) {
-			functions.add(convertFunction(function, program.globalVars(), variables));
+			functions.add(convertFunction(function, program.globalVars()));
 		}
 
 		final List<IRGlobalVar> globalVars = createGlobalVars(program.globalVariables());
@@ -66,7 +61,7 @@ public final class IRGenerator {
 		return new TypeInfo(offset, memberToOffset);
 	}
 
-	private IRFunction convertFunction(Function function, List<Statement> declarations, Variables variables) {
+	private IRFunction convertFunction(Function function, List<Statement> declarations) {
 		final String name = function.name();
 		final String functionLabel = getFunctionLabel(name);
 		if (function.asmLines().size() > 0) {
@@ -76,39 +71,55 @@ public final class IRGenerator {
 		}
 
 		instructions = new ArrayList<>();
+		localVars = createLocalVars(function);
 		try {
 			functionRetLabel = functionLabel + "_ret";
 			if (name.equals("main")) {
-				writeInit(declarations, variables);
+				writeInit(declarations);
 			}
 
-			final List<IRLocalVar> localVars = new ArrayList<>();
-			for (Variable variable : function.localVars()) {
-				final Type type = variable.type();
-				final int size = variable.isArray()
-						? getTypeSize(Objects.requireNonNull(type.toType())) * variable.arraySize()
-						: getTypeSize(type);
-				localVars.add(new IRLocalVar(variable.name(), variable.index(), variable.scope() == VariableScope.argument, size));
-			}
-			variables = new Variables(function.localVars(), variables);
-
-			writeStatements(function.statements(), variables);
+			writeStatements(function.statements());
 			writeLabel(functionRetLabel);
+
 			return new IRFunction(name, functionLabel, Objects.requireNonNull(function.returnType()), localVars, instructions, List.of());
 		}
 		finally {
+			localVars = List.of();
 			instructions = List.of();
 		}
 	}
 
-	private void writeInit(List<Statement> declarations, Variables variables) {
+	private List<IRLocalVar> createLocalVars(Function function) {
+		final List<IRLocalVar> localVars = new ArrayList<>();
+		for (Variable variable : function.localVars()) {
+			final Type type = variable.type();
+			final int size = variable.isArray()
+					? getTypeSize(Objects.requireNonNull(type.toType())) * variable.arraySize()
+					: getTypeSize(type);
+			localVars.add(new IRLocalVar(variable.name(), variable.index(), variable.scope() == VariableScope.argument, size));
+		}
+		return localVars;
+	}
+
+	private int getTypeSize(Type type) {
+		final TypeInfo typeInfo = types.get(type);
+		if (typeInfo != null) {
+			return typeInfo.size;
+		}
+		if (type.isPointer()) {
+			return 8;
+		}
+		return Type.getSize(type);
+	}
+
+	private void writeInit(List<Statement> declarations) {
 		boolean isFirst = true;
 		for (Statement declaration : declarations) {
 			if (isFirst) {
 				isFirst = false;
 				writeComment("begin initialize global variables");
 			}
-			writeStatement(declaration, variables);
+			writeStatement(declaration);
 		}
 
 		if (!isFirst) {
@@ -126,6 +137,10 @@ public final class IRGenerator {
 		return globalVars;
 	}
 
+	private int getVariableSize(Variable variable) {
+		return getTypeSize(variable.type()) * Math.max(1, variable.arraySize());
+	}
+
 	private List<IRStringLiteral> createStringLiterals(List<StringLiteral> stringLiterals) {
 		final List<IRStringLiteral> irStringLiterals = new ArrayList<>();
 		for (StringLiteral literal : stringLiterals) {
@@ -138,347 +153,40 @@ public final class IRGenerator {
 		return "@" + name;
 	}
 
-	private void writeStatements(List<Statement> statements, Variables variables) {
+	private void writeStatements(List<Statement> statements) {
 		for (Statement statement : statements) {
-			writeStatement(statement, variables);
+			writeStatement(statement);
 		}
 	}
 
-	private void writeStatement(Statement statement, Variables variables) {
-		Utils.assertTrue(registerAllocator.isNoneUsed());
+	private void writeStatement(Statement statement) {
 		switch (statement) {
-		case StmtCompound compound -> writeStatements(compound.statements(), variables);
-		case StmtIf ifStatement -> writeIfElse(ifStatement, variables);
-		case StmtLoop forStatement -> writeFor(forStatement, variables);
+		case StmtCompound compound -> writeStatements(compound.statements());
+		case StmtExpr stmt -> writeExpressionStatement(stmt);
+		case StmtIf ifStatement -> writeIfElse(ifStatement);
+		case StmtLoop forStatement -> writeFor(forStatement);
 		case StmtBreakContinue breakContinue -> writeBreakContinue(breakContinue);
-		case StmtExpr stmt -> write(stmt.expression(), variables, true);
-		case StmtReturn ret -> writeReturn(ret.expression(), variables);
+		case StmtReturn ret -> writeReturn(ret);
 		case null, default -> throw new UnsupportedOperationException(String.valueOf(statement));
 		}
-		Utils.assertTrue(registerAllocator.isNoneUsed());
 	}
 
-	private int writeCall(ExprFuncCall call) {
-		// ensure no register is currently used, so we can pass the arguments in whatever register we need for the calling convention
-		Utils.assertTrue(registerAllocator.isNoneUsed());
-
-		final String name = call.name();
-		final List<Expression> expressions = call.argExpressions();
-		final List<IRCall.Arg> args = new ArrayList<>();
-		for (Expression expression : expressions) {
-			if (expression instanceof ExprVarAccess varAccess) {
-				args.add(new IRCall.Arg(varAccess.index(), expression.typeNotNull()));
-			}
-			else {
-				throw new IllegalStateException();
-			}
-		}
-		final int resultReg;
-		if (call.typeNotNull() == Type.VOID) {
-			resultReg = -1;
-		}
-		else {
-			resultReg = getFreeReg();
-			Utils.assertTrue(resultReg == 0);
-		}
-		writeComment("call " + name, call.location());
-		write(new IRCall(getFunctionLabel(name), args, resultReg));
-		return resultReg;
-	}
-
-	private void writeReturn(@Nullable Expression expression, Variables variables) {
+	private void writeReturn(StmtReturn stmtReturn) {
+		final Expression expression = stmtReturn.expression();
 		if (expression != null) {
 			writeComment("return " + expression.toUserString(), expression.location());
-			final int reg = write(expression, variables, true);
-			write(new IRReturnValue(reg, getTypeSize(expression.typeNotNull())));
-			freeReg(reg);
+			final IRVar var = writeExpression(expression);
+			write(new IRRetValue(var, stmtReturn.location()));
 		}
 		else {
-			writeComment("return");
+			writeComment("return", stmtReturn.location());
 		}
-		write(new IRJump(Objects.requireNonNull(functionRetLabel)));
+		write(new IRJump(functionRetLabel));
 	}
 
-	private int write(Expression node, Variables variables, boolean readVar) {
-		return switch (node) {
-			case ExprIntLiteral literal -> {
-				final int value = literal.value();
-				final int size = getTypeSize(literal.typeNotNull());
-				writeComment("int lit " + value, node.location());
-				final int reg = getFreeReg();
-				write(new IRLoadInt(reg, value, size));
-				yield reg;
-			}
-			case ExprBoolLiteral literal -> {
-				final boolean value = literal.value();
-				final int size = getTypeSize(literal.typeNotNull());
-				writeComment("bool lit " + value, node.location());
-				final int reg = getFreeReg();
-				write(new IRLoadInt(reg, value ? TRUE : FALSE, size));
-				yield reg;
-			}
-			case ExprStringLiteral literal -> {
-				final int i = literal.index();
-				final String stringLiteralName = getStringLiteralName(i);
-				writeComment("string literal " + stringLiteralName, node.location());
-				final int reg = getFreeReg();
-				write(new IRLoadString(reg, i));
-				yield reg;
-			}
-			case ExprVarAccess var -> writeVarAccess(var, variables, readVar);
-			case ExprArrayAccess access -> writeArrayAccess(access, variables, readVar);
-			case ExprMemberAccess access -> writeMemberAccess(access, variables, readVar);
-			case ExprBinary binary -> writeBinary(binary, variables);
-			case ExprUnary unary -> processUnary(unary, variables, readVar);
-			case ExprFuncCall call -> writeCall(call);
-			case ExprCast cast -> {
-				final Expression expression = cast.expression();
-				final int reg = write(expression, variables, true);
-				final int exprSize = getTypeSize(expression.typeNotNull());
-				final int size = getTypeSize(cast.typeNotNull());
-				if (size > exprSize) {
-					final int targetReg = getFreeReg();
-					write(new IRCast(targetReg, cast.typeNotNull(), reg, expression.typeNotNull()));
-					freeReg(reg);
-					yield targetReg;
-				}
-				yield reg;
-			}
-			default -> throw new UnsupportedOperationException("unsupported expression " + node);
-		};
-	}
-
-	private int writeVarAccess(ExprVarAccess access, Variables variables, boolean readVar) {
-		final VariableDetails variable = variables.get(access.index(), access.scope());
-		writeComment((readVar ? "read " : "") + "var " + variable, access.location());
-		Utils.assertTrue(variable.isScalar());
-		final int addrReg = getFreeReg();
-		writeAddrOfVar(addrReg, variable);
-		return readVar
-				? writeRead(addrReg, access.typeNotNull())
-				: addrReg;
-	}
-
-	private int writeArrayAccess(ExprArrayAccess access, Variables variables, boolean readVar) {
-		final ExprVarAccess var = access.varAccess();
-		final VariableDetails variable = variables.get(var.index(), var.scope());
-		final Expression arrayIndex = access.index();
-		final Type type = access.typeNotNull();
-
-		writeComment("array " + variable, access.location());
-		final int offsetReg = write(arrayIndex, variables, true);
-		write(new IRMul(offsetReg, getTypeSize(type)));
-
-		final int addrReg = getFreeReg();
-		if (variable.isScalar()) {
-			final int varReg = getFreeReg();
-			writeAddrOfVar(varReg, variable);
-			write(new IRMemLoad(addrReg, varReg));
-			freeReg(varReg);
-		}
-		else {
-			writeAddrOfVar(addrReg, variable);
-		}
-		write(new IRBinary(IRBinary.Op.Add, addrReg, offsetReg, Type.POINTER_U8));
-		freeReg(offsetReg);
-
-		return readVar
-				? writeRead(addrReg, type)
-				: addrReg;
-	}
-
-	private int writeMemberAccess(ExprMemberAccess access, Variables variables, boolean readVar) {
-		final Expression expression = access.expression();
-		final TypeInfo typeInfo = types.get(expression.typeNotNull());
-		if (typeInfo == null) {
-			throw new IllegalStateException();
-		}
-		final int offset = typeInfo.get(access.member());
-		final int addrReg = write(expression, variables, false);
-		writeComment(expression.typeNotNull() + "." + access.member(), access.location());
-		if (offset != 0) {
-			final int offsetReg = getFreeReg();
-			write(new IRLoadInt(offsetReg, offset, 8));
-			write(new IRBinary(IRBinary.Op.Add, addrReg, offsetReg, Type.POINTER_U8));
-			freeReg(offsetReg);
-		}
-
-		return readVar
-				? writeRead(addrReg, access.typeNotNull())
-				: addrReg;
-	}
-
-	private int writeRead(int addrReg, Type type) {
-		final int valueReg = getFreeReg();
-		final int typeSize = getTypeSize(type);
-		write(new IRMemLoad(valueReg, addrReg, typeSize));
-		freeReg(addrReg);
-		return valueReg;
-	}
-
-	private int writeBinary(ExprBinary node, Variables variables) {
-		switch (node.op()) {
-		case Assign -> {
-			final int expressionReg = write(node.right(), variables, true);
-			final int lValueReg = write(node.left(), variables, false);
-			final int typeSize = getTypeSize(node.typeNotNull());
-			writeComment("assign", node.location());
-			write(new IRMemStore(lValueReg, expressionReg, typeSize));
-			freeReg(expressionReg);
-			freeReg(lValueReg);
-			return -1;
-		}
-		case Add -> {
-			return writeBinaryArithmetic(IRBinary.Op.Add, node, variables);
-		}
-		case Sub -> {
-			return writeBinaryArithmetic(IRBinary.Op.Sub, node, variables);
-		}
-		case Multiply -> {
-			return writeBinaryArithmetic(IRBinary.Op.Mul, node, variables);
-		}
-		case Divide -> {
-			return writeBinaryArithmetic(IRBinary.Op.Div, node, variables);
-		}
-		case Mod -> {
-			return writeBinaryArithmetic(IRBinary.Op.Mod, node, variables);
-		}
-		case ShiftLeft -> {
-			return writeBinaryArithmetic(IRBinary.Op.ShiftL, node, variables);
-		}
-		case ShiftRight -> {
-			return writeBinaryArithmetic(IRBinary.Op.ShiftR, node, variables);
-		}
-		case And -> {
-			return writeBinaryArithmetic(IRBinary.Op.And, node, variables);
-		}
-		case Or -> {
-			return writeBinaryArithmetic(IRBinary.Op.Or, node, variables);
-		}
-		case Xor -> {
-			return writeBinaryArithmetic(IRBinary.Op.Xor, node, variables);
-		}
-		case AndLog -> {
-			final int labelIndex = nextLabelIndex();
-			final String secondLabel = "@and_2nd_" + labelIndex;
-			final String nextLabel = "@and_next_" + labelIndex;
-			writeComment("logic and", node.location());
-			final int conditionReg = write(node.left(), variables, true);
-			write(new IRBranch(conditionReg, false, nextLabel,
-			                   secondLabel));
-			final int conditionReg2 = write(node.right(), variables, true);
-			if (conditionReg2 != conditionReg) {
-				write(new IRLoadReg(conditionReg, conditionReg2, getTypeSize(node.typeNotNull())));
-			}
-			freeReg(conditionReg2);
-			writeLabel(nextLabel);
-			return conditionReg;
-		}
-		case OrLog -> {
-			final int labelIndex = nextLabelIndex();
-			final String secondLabel = "@or_2nd_" + labelIndex;
-			final String nextLabel = "@or_next_" + labelIndex;
-			writeComment("logic or", node.location());
-			final int conditionReg = write(node.left(), variables, true);
-			write(new IRBranch(conditionReg, true, nextLabel,
-			                   secondLabel));
-			final int conditionReg2 = write(node.right(), variables, true);
-			if (conditionReg2 != conditionReg) {
-				write(new IRLoadReg(conditionReg, conditionReg2, getTypeSize(node.typeNotNull())));
-			}
-			freeReg(conditionReg2);
-			writeLabel(nextLabel);
-			return conditionReg;
-		}
-		case Lt -> {
-			return writeBinaryCompare(IRCompare.Op.Lt, node, variables);
-		}
-		case LtEq -> {
-			return writeBinaryCompare(IRCompare.Op.LtEq, node, variables);
-		}
-		case Equals -> {
-			return writeBinaryCompare(IRCompare.Op.Equals, node, variables);
-		}
-		case NotEquals -> {
-			return writeBinaryCompare(IRCompare.Op.NotEquals, node, variables);
-		}
-		case GtEq -> {
-			return writeBinaryCompare(IRCompare.Op.GtEq, node, variables);
-		}
-		case Gt -> {
-			return writeBinaryCompare(IRCompare.Op.Gt, node, variables);
-		}
-		default -> throw new UnsupportedOperationException(String.valueOf(node.op()));
-		}
-	}
-
-	private int writeBinaryArithmetic(IRBinary.Op op, ExprBinary node, Variables variables) {
-		final int leftReg = write(node.left(), variables, true);
-		final int rightReg = write(node.right(), variables, true);
-		writeComment(node.op().name().toLowerCase(Locale.ROOT), node.location());
-		write(new IRBinary(op, leftReg, rightReg, node.typeNotNull()));
-		freeReg(rightReg);
-		return leftReg;
-	}
-
-	private int writeBinaryCompare(IRCompare.Op op, ExprBinary node, Variables variables) {
-		final int leftReg = write(node.left(), variables, true);
-		final int rightReg = write(node.right(), variables, true);
-		final int resultReg = getFreeReg();
-		writeComment(node.op().toString(), node.location());
-		write(new IRCompare(op, resultReg, leftReg, rightReg, node.left().typeNotNull()));
-		freeReg(leftReg);
-		freeReg(rightReg);
-		return resultReg;
-	}
-
-	private int processUnary(ExprUnary unary, Variables variables, boolean readVar) {
-		final Expression expression = unary.expression();
-		final ExprUnary.Op op = unary.op();
-		return switch (op) {
-			case AddrOf -> write(expression, variables, false);
-			case Deref -> {
-				Utils.assertTrue(expression.typeNotNull().isPointer());
-				final int addrReg = write(expression, variables, true);
-				if (!readVar) {
-					yield addrReg;
-				}
-
-				final int typeSize = getTypeSize(unary.typeNotNull());
-				writeComment("deref", unary.location());
-				final int valueReg = getFreeReg();
-				write(new IRMemLoad(valueReg, addrReg, typeSize));
-				freeReg(addrReg);
-				yield valueReg;
-			}
-			case Neg -> {
-				final int reg = write(expression, variables, true);
-				final int typeSize = getTypeSize(unary.typeNotNull());
-				writeComment("neg", unary.location());
-				write(new IRUnary(IRUnary.Op.neg, reg, typeSize));
-				yield reg;
-			}
-			case Com -> {
-				final int reg = write(expression, variables, true);
-				final int typeSize = getTypeSize(unary.typeNotNull());
-				writeComment("com", unary.location());
-				write(new IRUnary(IRUnary.Op.not, reg, typeSize));
-				yield reg;
-			}
-			case NotLog -> {
-				final int reg = write(expression, variables, true);
-				final int typeSize = getTypeSize(unary.typeNotNull());
-				writeComment("not", unary.location());
-				write(new IRUnary(IRUnary.Op.notLog, reg, typeSize));
-				yield reg;
-			}
-			//noinspection UnnecessaryDefault
-			default -> throw new UnsupportedOperationException("unsupported operation " + op);
-		};
-	}
-
-	private void writeIfElse(StmtIf statement, Variables variables) {
+	private void writeIfElse(StmtIf statement) {
 		final Expression condition = statement.condition();
+		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
 		final List<Statement> thenStatements = statement.thenStatements();
 		final List<Statement> elseStatements = statement.elseStatements();
 		final int labelIndex = nextLabelIndex();
@@ -486,61 +194,22 @@ public final class IRGenerator {
 		final String labelElse = "@if_" + labelIndex + "_else";
 		final String labelEnd = "@if_" + labelIndex + "_end";
 		writeComment("if " + condition.toUserString(), statement.location());
-		final int conditionReg = write(condition, variables, true);
-		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
+		final IRVar conditionVar = writeExpression(condition);
 		if (elseStatements.isEmpty()) {
-			write(new IRBranch(conditionReg, false, labelEnd,
+			write(new IRBranch(conditionVar, false, labelEnd,
 			                   labelThen));
-			freeReg(conditionReg);
-			writeStatements(thenStatements, variables);
+			writeStatements(thenStatements);
 		}
 		else {
-			write(new IRBranch(conditionReg, false, labelElse,
+			write(new IRBranch(conditionVar, false, labelElse,
 			                   labelThen));
-			freeReg(conditionReg);
-			writeStatements(thenStatements, variables);
+			writeStatements(thenStatements);
 			write(new IRJump(labelEnd));
+
 			writeLabel(labelElse);
-			writeStatements(elseStatements, variables);
+			writeStatements(elseStatements);
 		}
 		writeLabel(labelEnd);
-	}
-
-	private void writeFor(StmtLoop statement, Variables variables) {
-		final List<Statement> iteration = statement.iteration();
-		final String loopName = iteration.isEmpty() ? "while" : "for";
-		final int labelIndex = nextLabelIndex();
-		final String label = "@" + loopName + "_" + labelIndex;
-		final String bodyLabel = "@" + loopName + "_" + labelIndex + "_body";
-		final String continueLabel = iteration.isEmpty() ? label : "@" + loopName + "_" + labelIndex + "_continue";
-		final String breakLabel = "@" + loopName + "_" + labelIndex + "_break";
-
-		final Expression condition = statement.condition();
-		writeComment(loopName + " " + condition.toUserString(), statement.location());
-		writeLabel(label);
-		final int conditionReg = write(condition, variables, true);
-		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
-		write(new IRBranch(conditionReg, false, breakLabel,
-		                   bodyLabel));
-		freeReg(conditionReg);
-		final List<Statement> body = statement.bodyStatements();
-
-		final BreakContinueLabels prevBreakContinueLabels = this.breakContinueLabels;
-		try {
-			breakContinueLabels = new BreakContinueLabels(breakLabel, continueLabel);
-			writeStatements(body, variables);
-		}
-		finally {
-			breakContinueLabels = prevBreakContinueLabels;
-		}
-
-		if (iteration.size() > 0) {
-			writeLabel(continueLabel);
-			writeStatements(iteration, variables);
-		}
-		write(new IRJump(label));
-
-		writeLabel(breakLabel);
 	}
 
 	private void writeBreakContinue(StmtBreakContinue breakContinue) {
@@ -551,19 +220,303 @@ public final class IRGenerator {
 		write(new IRJump(breakContinue.isBreak() ? breakContinueLabels.breakLabel() : breakContinueLabels.continueLabel()));
 	}
 
-	private int getFreeReg() {
-		final int allocate = registerAllocator.allocate();
-		if (debug) {
-			writeComment("got " + allocate + ", " + registerAllocator);
+	private void writeFor(StmtLoop loop) {
+		final List<Statement> iteration = loop.iteration();
+		final String loopName = iteration.isEmpty() ? "while" : "for";
+		final int labelIndex = nextLabelIndex();
+		final String label = "@" + loopName + "_" + labelIndex;
+		final String bodyLabel = "@" + loopName + "_" + labelIndex + "_body";
+		final String continueLabel = iteration.isEmpty() ? label : "@" + loopName + "_" + labelIndex + "_continue";
+		final String breakLabel = "@" + loopName + "_" + labelIndex + "_break";
+
+		final Expression condition = loop.condition();
+		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
+		final boolean endlessLoop = condition instanceof ExprBoolLiteral literal && literal.value();
+		writeComment(loopName + " " + condition.toUserString(), loop.location());
+		writeLabel(label);
+		if (!endlessLoop) {
+			final IRVar conditionVar = writeExpression(condition);
+			write(new IRBranch(conditionVar, false, breakLabel,
+			                   bodyLabel));
 		}
-		return allocate;
+
+		final BreakContinueLabels prevBreakContinueLabels = this.breakContinueLabels;
+		try {
+			breakContinueLabels = new BreakContinueLabels(breakLabel, continueLabel);
+			writeStatements(loop.bodyStatements());
+		}
+		finally {
+			breakContinueLabels = prevBreakContinueLabels;
+		}
+
+		if (iteration.size() > 0) {
+			writeLabel(continueLabel);
+			writeStatements(iteration);
+		}
+		write(new IRJump(label));
+
+		writeLabel(breakLabel);
 	}
 
-	private void freeReg(int reg) {
-		registerAllocator.free(reg);
-		if (debug) {
-			writeComment("freed " + reg + ", " + registerAllocator);
+	private void writeExpressionStatement(StmtExpr stmt) {
+		final Expression expression = stmt.expression();
+		switch (expression) {
+		case ExprFuncCall call -> writeCall(null, call);
+		case ExprBinary binary -> {
+			Utils.assertTrue(binary.op() == ExprBinary.Op.Assign);
+			writeAssign(binary);
 		}
+		default -> throw new UnsupportedOperationException(String.valueOf(stmt));
+		}
+	}
+
+	private IRVar writeExpression(Expression expression) {
+		return switch (expression) {
+			case ExprVarAccess access -> varAccessToVar(access);
+			case ExprArrayAccess access -> writeArrayAccess(access);
+			case ExprBinary binary -> writeBinary(binary);
+			default -> {
+				final IRVar tmp = createTempVar(expression.typeNotNull());
+				writeExpression(tmp, expression);
+				yield tmp;
+			}
+		};
+	}
+
+	private void writeExpression(IRVar var, Expression expression) {
+		switch (expression) {
+		case ExprIntLiteral literal -> write(new IRLiteral(var, literal.value(), literal.location()));
+		case ExprBoolLiteral literal -> write(new IRLiteral(var, literal.value() ? 1 : 0, literal.location()));
+		case ExprStringLiteral literal -> write(new IRString(var, literal.index(), literal.location()));
+		case ExprVarAccess access -> write(new IRCopy(var, varAccessToVar(access), access.location()));
+		case ExprArrayAccess access -> writeArrayAccess(var, access);
+		case ExprMemberAccess access -> writeMemberAccess(var, access);
+		case ExprBinary binary -> writeBinary(var, binary);
+		case ExprUnary unary -> writeUnary(var, unary);
+		case ExprFuncCall call -> writeCall(var, call);
+		case ExprCast cast -> writeCast(var, cast);
+		default -> throw new UnsupportedOperationException(String.valueOf(expression));
+		}
+	}
+
+	private void writeMemberAccess(IRVar var, ExprMemberAccess access) {
+		final IRVar addr = writeMemberAddress(access);
+		write(new IRMemLoad(var, addr, access.location()));
+	}
+
+	private IRVar writeMemberAddress(ExprMemberAccess access) {
+		final IRVar addr = createTempVar(Type.pointer(access.typeNotNull()));
+		writeMemberAddress(addr, access);
+		return addr;
+	}
+
+	private void writeMemberAddress(IRVar addr, ExprMemberAccess access) {
+		writeComment(access.expression() + "." + access.member(), access.location());
+		writeAddrOf(addr, access.expression(), access.location());
+		final int offset = getMemberOffset(access);
+		if (offset != 0) {
+			final IRVar offsetVar = createTempVar(addr.type());
+			write(new IRLiteral(offsetVar, offset, access.location()));
+			write(new IRBinary(addr, IRBinary.Op.Add, addr, offsetVar, access.location()));
+		}
+	}
+
+	private int getMemberOffset(ExprMemberAccess access) {
+		final TypeInfo typeInfo = types.get(access.expression().typeNotNull());
+		if (typeInfo == null) {
+			throw new IllegalStateException();
+		}
+		return typeInfo.get(access.member());
+	}
+
+	private IRVar writeArrayAccess(ExprArrayAccess access) {
+		final IRVar tmp = createTempVar(access.typeNotNull());
+		writeArrayAccess(tmp, access);
+		return tmp;
+	}
+
+	private void writeCast(IRVar tmp, ExprCast cast) {
+		final IRVar value = writeExpression(cast.expression());
+		write(new IRCast(tmp, value, cast.location()));
+	}
+
+	private IRVar writeBinary(ExprBinary binary) {
+		final ExprBinary.Op op = binary.op();
+		switch (op) {
+		case Assign -> {
+			return writeAssign(binary);
+		}
+		default -> {
+			final IRVar tmp = createTempVar(binary.typeNotNull());
+			writeBinary(tmp, binary);
+			return tmp;
+		}
+		}
+	}
+
+	@NotNull
+	private IRVar writeAssign(ExprBinary binary) {
+		final Expression left = binary.left();
+		final Expression right = binary.right();
+		switch (left) {
+		case ExprVarAccess access -> {
+			final IRVar var = varAccessToVar(access);
+			writeExpression(var, right);
+			return var;
+		}
+		case ExprArrayAccess access -> {
+			final IRVar valueVar = writeExpression(right);
+			final IRVar tmp = arrayAddress(access);
+			write(new IRMemStore(tmp, valueVar, access.location()));
+			return valueVar;
+		}
+		case ExprUnary unary -> {
+			if (unary.op() == ExprUnary.Op.Deref) {
+				final IRVar valueVar = writeExpression(right);
+				final IRVar pointer = writeExpression(unary.expression());
+				write(new IRMemStore(pointer, valueVar, unary.location()));
+				return valueVar;
+			}
+		}
+		case ExprMemberAccess access -> {
+			final IRVar valueVar = writeExpression(right);
+			final IRVar addr = writeMemberAddress(access);
+			write(new IRMemStore(addr, valueVar, access.location()));
+			return valueVar;
+		}
+		default -> {
+		}
+		}
+
+		throw new UnsupportedOperationException(String.valueOf(left));
+	}
+
+	private void writeArrayAccess(IRVar var, ExprArrayAccess access) {
+		final IRVar addr = arrayAddress(access);
+		write(new IRMemLoad(var, addr, access.location()));
+	}
+
+	@NotNull
+	private IRVar arrayAddress(ExprArrayAccess access) {
+		final ExprVarAccess varAccess = access.varAccess();
+		final IRVar indexVar = writeExpression(access.index());
+		final IRVar addr = createTempVar(varAccess.typeNotNull());
+		write(new IRArrayAccess(addr, varAccessToVar(varAccess), indexVar, access.location()));
+		return addr;
+	}
+
+	private void writeBinary(IRVar var, ExprBinary binary) {
+		switch (binary.op()) {
+		case Assign -> {
+			final IRVar binaryVar = writeAssign(binary);
+			write(new IRCopy(var, binaryVar, binary.location()));
+		}
+		case Add -> writeBinary(IRBinary.Op.Add, var, binary);
+		case Sub -> writeBinary(IRBinary.Op.Sub, var, binary);
+		case Multiply -> writeBinary(IRBinary.Op.Mul, var, binary);
+		case Divide -> writeBinary(IRBinary.Op.Div, var, binary);
+		case Mod -> writeBinary(IRBinary.Op.Mod, var, binary);
+
+		case And -> writeBinary(IRBinary.Op.And, var, binary);
+		case Or -> writeBinary(IRBinary.Op.Or, var, binary);
+		case Xor -> writeBinary(IRBinary.Op.Xor, var, binary);
+
+		case ShiftLeft -> writeBinary(IRBinary.Op.ShiftLeft, var, binary);
+		case ShiftRight -> writeBinary(IRBinary.Op.ShiftRight, var, binary);
+
+		case AndLog -> {
+			final int labelIndex = nextLabelIndex();
+			final String secondLabel = "@and_2nd_" + labelIndex;
+			final String nextLabel = "@and_next_" + labelIndex;
+			writeComment("logic and", binary.location());
+			writeExpression(var, binary.left());
+			write(new IRBranch(var, false, nextLabel,
+			                   secondLabel));
+			writeExpression(var, binary.right());
+			writeLabel(nextLabel);
+		}
+
+		case OrLog -> {
+			final int labelIndex = nextLabelIndex();
+			final String secondLabel = "@or_2nd_" + labelIndex;
+			final String nextLabel = "@or_next_" + labelIndex;
+			writeComment("logic or", binary.location());
+			writeExpression(var, binary.left());
+			write(new IRBranch(var, true, nextLabel,
+			                   secondLabel));
+			writeExpression(var, binary.right());
+			writeLabel(nextLabel);
+		}
+
+		case Lt -> writeBinary(IRBinary.Op.Lt, var, binary);
+		case LtEq -> writeBinary(IRBinary.Op.LtEq, var, binary);
+		case Equals -> writeBinary(IRBinary.Op.Equals, var, binary);
+		case NotEquals -> writeBinary(IRBinary.Op.NotEquals, var, binary);
+		case GtEq -> writeBinary(IRBinary.Op.GtEq, var, binary);
+		case Gt -> writeBinary(IRBinary.Op.Gt, var, binary);
+		default -> throw new UnsupportedOperationException(String.valueOf(binary));
+		}
+	}
+
+	private void writeBinary(IRBinary.Op op, IRVar var, ExprBinary binary) {
+		final IRVar left = writeExpression(binary.left());
+		final IRVar right = writeExpression(binary.right());
+		write(new IRBinary(var, op, left, right, binary.location()));
+	}
+
+	private void writeUnary(IRVar var, ExprUnary unary) {
+		switch (unary.op()) {
+		case AddrOf -> writeAddrOf(var, unary.expression(), unary.location());
+		case Deref -> writeDeref(var, unary);
+		case Com -> writeUnary(IRUnary.Op.Not, var, unary);
+		case Neg -> writeUnary(IRUnary.Op.Neg, var, unary);
+		case NotLog -> writeUnary(IRUnary.Op.NotLog, var, unary);
+		default -> throw new UnsupportedOperationException(String.valueOf(unary));
+		}
+	}
+
+	private void writeAddrOf(IRVar var, Expression expression, Location location) {
+		switch (expression) {
+		case ExprVarAccess access -> write(new IRAddrOf(var, varAccessToVar(access), location));
+		case ExprArrayAccess access -> {
+			final IRVar index = writeExpression(access.index());
+			final ExprVarAccess varAccess = access.varAccess();
+			write(new IRAddrOfArray(var, varAccessToVar(varAccess), index, varAccess.varIsArray(), location));
+		}
+		case ExprMemberAccess access -> writeMemberAddress(var, access);
+		default -> throw new UnsupportedOperationException(String.valueOf(expression));
+		}
+	}
+
+	private void writeDeref(IRVar var, ExprUnary unary) {
+		final IRVar pointer = writeExpression(unary.expression());
+		write(new IRMemLoad(var, pointer, unary.location()));
+	}
+
+	private void writeUnary(IRUnary.Op op, IRVar var, ExprUnary unary) {
+		final IRVar value = writeExpression(unary.expression());
+		write(new IRUnary(op, var, value));
+	}
+
+	private void writeCall(@Nullable IRVar var, ExprFuncCall call) {
+		final List<IRVar> args = new ArrayList<>();
+		for (Expression expression : call.argExpressions()) {
+			args.add(writeExpression(expression));
+		}
+		write(new IRCall(var, call.name(), args, call.location()));
+	}
+
+	@NotNull
+	private IRVar varAccessToVar(ExprVarAccess access) {
+		return new IRVar(access.varName(), access.index(), access.scope(), access.typeNotNull());
+	}
+
+	private IRVar createTempVar(@NotNull Type type) {
+		final int index = localVars.size();
+		final String name = "t." + index;
+		final IRVar var = new IRVar(name, index, VariableScope.function, type);
+		localVars.add(new IRLocalVar(name, index, false, getTypeSize(type)));
+		return var;
 	}
 
 	private void writeLabel(String label) {
@@ -579,6 +532,12 @@ public final class IRGenerator {
 	}
 
 	private void write(@NotNull IRInstruction instruction) {
+/*
+		if (!(instruction instanceof IR2Label)) {
+			System.out.print("\t");
+		}
+		System.out.println(instruction);
+*/
 		instructions.add(instruction);
 	}
 
@@ -587,128 +546,12 @@ public final class IRGenerator {
 		return labelIndex;
 	}
 
-	private void writeAddrOfVar(int reg, VariableDetails variable) {
-		write(new IRAddrOfVar(reg, variable.scope(), variable.index()));
-	}
-
-	private int getTypeSize(Type type) {
-		final TypeInfo typeInfo = types.get(type);
-		if (typeInfo != null) {
-			return typeInfo.size;
-		}
-		if (type.isPointer()) {
-			return 8;
-		}
-		return Type.getSize(type);
-	}
-
-	private int getVariableSize(Variable variable) {
-		return getTypeSize(variable.type()) * Math.max(1, variable.arraySize());
-	}
-
 	@NotNull
 	private static String getStringLiteralName(int i) {
 		return "string_" + i;
 	}
 
-	private class Variables {
-		private final Map<Integer, VariableDetails> indexToVar = new HashMap<>();
-		private final Variables parent;
-
-		public Variables(@NotNull List<Variable> globalVariables) {
-			this(globalVariables, null);
-		}
-
-		public Variables(@NotNull List<Variable> variables, @Nullable Variables parent) {
-			this.parent = parent;
-			int offset = 0;
-			for (Variable variable : variables) {
-				Utils.assertTrue(!indexToVar.containsKey(variable.index()));
-				indexToVar.put(variable.index(), new VariableDetails(variable.name(), variable.scope(), variable.index(), offset, variable.isScalar(), variable.type()));
-				offset += getVariableSize(variable);
-			}
-		}
-
-		@NotNull
-		public VariableDetails get(int index, @NotNull VariableScope scope) {
-			if (parent == null) {
-				Utils.assertTrue(scope == VariableScope.global);
-				return indexToVar.get(index);
-			}
-
-			if (scope == VariableScope.function || scope == VariableScope.argument) {
-				return indexToVar.get(index);
-			}
-
-			return parent.get(index, scope);
-		}
-	}
-
 	private record BreakContinueLabels(String breakLabel, String continueLabel) {
-	}
-
-	private record VariableDetails(String name, VariableScope scope, int index, int offset, boolean isScalar, Type type) {
-		@Override
-		public String toString() {
-			final StringBuilder buffer = new StringBuilder();
-			buffer.append(name);
-			buffer.append("(");
-			buffer.append(scope == VariableScope.global ? "$" : "%");
-			buffer.append(index);
-			buffer.append(")");
-			return buffer.toString();
-		}
-	}
-
-	private static class TrivialRegisterAllocator {
-
-		private static final int MAX_REGISTERS = 4;
-
-		private int freeRegs;
-
-		@Override
-		public String toString() {
-			final StringBuilder buffer = new StringBuilder();
-			buffer.append("used: ");
-			int mask = 1;
-			boolean first = true;
-			for (int i = 0; i < MAX_REGISTERS; i++, mask += mask) {
-				if ((freeRegs & mask) != 0) {
-					if (first) {
-						first = false;
-					}
-					else {
-						buffer.append(", ");
-					}
-					buffer.append(i);
-				}
-			}
-			if (first) {
-				buffer.append("none");
-			}
-			return buffer.toString();
-		}
-
-		public int allocate() {
-			int mask = 1;
-			for (int i = 0; i < MAX_REGISTERS; i++, mask += mask) {
-				if ((freeRegs & mask) == 0) {
-					freeRegs |= mask;
-					return i;
-				}
-			}
-			throw new IllegalStateException("no free reg");
-		}
-
-		public void free(int reg) {
-			final int mask = 1 << reg;
-			Utils.assertTrue((freeRegs & mask) != 0);
-			freeRegs ^= mask;
-		}
-
-		public boolean isNoneUsed() {
-			return freeRegs == 0;
-		}
 	}
 
 	private record TypeInfo(int size, Map<String, Integer> memberToOffset) {

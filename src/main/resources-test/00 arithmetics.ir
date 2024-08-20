@@ -1,22 +1,11 @@
 @printChar:
  Local variables
 	arg 0: chr
-	var 1: $.1
-	var 2: $.2
-	; 7:21 var chr(%0)
-	addrOf r0, [0@argument]
-	; 7:20 var $.1(%1)
-	addrOf r1, [1@function]
-	; 7:20 assign
-	store [r1], r0 (8)
-	; 7:26 int lit 1
-	ld r0, 1 (8)
-	; 7:26 var $.2(%2)
-	addrOf r1, [2@function]
-	; 7:26 assign
-	store [r1], r0 (8)
-	; 7:2 call printStringLength
-	call @printStringLength (1, 2)
+	var 1: t.1
+	var 2: t.2
+	addrof t.1(1@function,u8*), chr(0@argument,u8)
+	const t.2(2@function,i64), 1
+	call _, printStringLength [t.1(1@function,u8*), t.2(2@function,i64)]
 @printChar_ret:
 
 @printUint:
@@ -26,167 +15,69 @@
 	var 2: pos
 	var 3: remainder
 	var 4: digit
-	var 5: $.5
-	var 6: $.6
-	; 12:11 int lit 20
-	ld r0, 20 (1)
-	; 12:2 var pos(%2)
-	addrOf r1, [2@function]
-	; 12:2 assign
-	store [r1], r0 (1)
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	const pos(2@function,u8), 20
 	; 13:2 while true
 @while_1:
-	; 13:9 bool lit true
-	ld r0, 1 (1)
-	branch-false r0, @while_1_break (else: @while_1_body)
-	; 14:9 read var pos(%2)
-	addrOf r0, [2@function]
-	load r1, [r0] (1)
-	; 14:15 int lit 1
-	ld r0, 1 (1)
-	; 14:13 sub
-	sub r1, r0 (u8)
-	; 14:3 var pos(%2)
-	addrOf r0, [2@function]
-	; 14:7 assign
-	store [r0], r1 (1)
-	; 15:19 read var number(%0)
-	addrOf r0, [0@argument]
-	load r1, [r0] (8)
-	; 15:28 int lit 10
-	ld r0, 10 (8)
-	; 15:26 mod
-	mod r1, r0 (i64)
-	; 15:3 var remainder(%3)
-	addrOf r0, [3@function]
-	; 15:3 assign
-	store [r0], r1 (8)
-	; 16:12 read var number(%0)
-	addrOf r0, [0@argument]
-	load r1, [r0] (8)
-	; 16:21 int lit 10
-	ld r0, 10 (8)
-	; 16:19 divide
-	div r1, r0 (i64)
-	; 16:3 var number(%0)
-	addrOf r0, [0@argument]
-	; 16:10 assign
-	store [r0], r1 (8)
-	; 17:18 read var remainder(%3)
-	addrOf r0, [3@function]
-	load r1, [r0] (8)
-	; 17:30 int lit 48
-	ld r0, 48 (1)
-	; 17:28 add
-	add r1, r0 (u8)
-	; 17:3 var digit(%4)
-	addrOf r0, [4@function]
-	; 17:3 assign
-	store [r0], r1 (1)
-	; 18:17 read var digit(%4)
-	addrOf r0, [4@function]
-	load r1, [r0] (1)
-	; 18:10 array buffer(%1)
-	; 18:10 read var pos(%2)
-	addrOf r0, [2@function]
-	load r2, [r0] (1)
-	cast r0 (i64), r2 (u8)
-	mul r0, 1
-	addrOf r2, [1@function]
-	add r2, r0 (u8*)
-	; 18:15 assign
-	store [r2], r1 (1)
+	const t.5(5@function,u8), 1
+	sub pos(2@function,u8), pos(2@function,u8), t.5(5@function,u8)
+	const t.6(6@function,i64), 10
+	mod remainder(3@function,i64), number(0@argument,i64), t.6(6@function,i64)
+	const t.7(7@function,i64), 10
+	div number(0@argument,i64), number(0@argument,i64), t.7(7@function,i64)
+	cast t.8(8@function,u8), remainder(3@function,i64)
+	const t.9(9@function,u8), 48
+	add digit(4@function,u8), t.8(8@function,u8), t.9(9@function,u8)
+	cast t.10(10@function,i64), pos(2@function,u8)
+	array t.11(11@function,u8*), buffer(1@function,u8*) + t.10(10@function,i64)
+	store [t.11(11@function,u8*)], digit(4@function,u8)
 	; 19:3 if number == 0
-	; 19:7 read var number(%0)
-	addrOf r0, [0@argument]
-	load r1, [r0] (8)
-	; 19:17 int lit 0
-	ld r0, 0 (8)
-	; 19:14 ==
-	cmp r2, (r1 == r0) (i64)
-	branch-false r2, @if_2_end (else: @if_2_then)
-	jmp @while_1_break
+	const t.13(13@function,i64), 0
+	equals t.12(12@function,bool), number(0@argument,i64), t.13(13@function,i64)
+	branch t.12(12@function,bool), false, @if_2_end
+	jump @while_1_break
 @if_2_end:
-	jmp @while_1
+	jump @while_1
 @while_1_break:
-	; 23:28 array buffer(%1)
-	; 23:28 read var pos(%2)
-	addrOf r0, [2@function]
-	load r1, [r0] (1)
-	cast r0 (i64), r1 (u8)
-	mul r0, 1
-	addrOf r1, [1@function]
-	add r1, r0 (u8*)
-	; 23:20 var $.5(%5)
-	addrOf r0, [5@function]
-	; 23:20 assign
-	store [r0], r1 (8)
-	; 23:34 int lit 20
-	ld r0, 20 (1)
-	; 23:39 read var pos(%2)
-	addrOf r1, [2@function]
-	load r2, [r1] (1)
-	; 23:37 sub
-	sub r0, r2 (u8)
-	cast r1 (i64), r0 (u8)
-	; 23:37 var $.6(%6)
-	addrOf r0, [6@function]
-	; 23:37 assign
-	store [r0], r1 (8)
-	; 23:2 call printStringLength
-	call @printStringLength (5, 6)
+	cast t.15(15@function,i64), pos(2@function,u8)
+	addrof t.14(14@function,u8*), [buffer(1@function,u8*) + t.15(15@function,i64)]
+	const t.18(18@function,u8), 20
+	sub t.17(17@function,u8), t.18(18@function,u8), pos(2@function,u8)
+	cast t.16(16@function,i64), t.17(17@function,u8)
+	call _, printStringLength [t.14(14@function,u8*), t.16(16@function,i64)]
 @printUint_ret:
 
 @printIntLf:
  Local variables
 	arg 0: number
-	var 1: $.1
-	var 2: $.2
-	var 3: $.3
+	var 1: t.1
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
 	; 27:2 if number < 0
-	; 27:6 read var number(%0)
-	addrOf r0, [0@argument]
-	load r1, [r0] (8)
-	; 27:15 int lit 0
-	ld r0, 0 (8)
-	; 27:13 <
-	cmp r2, (r1 < r0) (i64)
-	branch-false r2, @if_3_end (else: @if_3_then)
-	; 28:13 int lit 45
-	ld r0, 45 (1)
-	; 28:13 var $.1(%1)
-	addrOf r1, [1@function]
-	; 28:13 assign
-	store [r1], r0 (1)
-	; 28:3 call printChar
-	call @printChar (1)
-	; 29:13 read var number(%0)
-	addrOf r0, [0@argument]
-	load r1, [r0] (8)
-	; 29:12 neg
-	neg r1 (8)
-	; 29:3 var number(%0)
-	addrOf r0, [0@argument]
-	; 29:10 assign
-	store [r0], r1 (8)
+	const t.2(2@function,i64), 0
+	lt t.1(1@function,bool), number(0@argument,i64), t.2(2@function,i64)
+	branch t.1(1@function,bool), false, @if_3_end
+	const t.3(3@function,u8), 45
+	call _, printChar [t.3(3@function,u8)]
+	neg number(0@argument,i64), number(0@argument,i64)
 @if_3_end:
-	; 31:12 read var number(%0)
-	addrOf r0, [0@argument]
-	load r1, [r0] (8)
-	; 31:12 var $.2(%2)
-	addrOf r0, [2@function]
-	; 31:12 assign
-	store [r0], r1 (8)
-	; 31:2 call printUint
-	call @printUint (2)
-	; 32:12 int lit 10
-	ld r0, 10 (1)
-	; 32:12 var $.3(%3)
-	addrOf r1, [3@function]
-	; 32:12 assign
-	store [r1], r0 (1)
-	; 32:2 call printChar
-	call @printChar (3)
+	call _, printUint [number(0@argument,i64)]
+	const t.4(4@function,u8), 10
+	call _, printChar [t.4(4@function,u8)]
 @printIntLf_ret:
 
 @printStringLength:
@@ -207,170 +98,94 @@
  Local variables
 	var 0: foo
 	var 1: bar
-	var 2: $.2
-	var 3: $.3
-	var 4: bazz
-	var 5: $.5
-	var 6: $.6
-	var 7: $.7
-	var 8: $.8
-	var 9: $.9
-	var 10: $.10
-	; 4:15 int lit 4
-	ld r0, 4 (1)
-	; 4:19 int lit 3
-	ld r1, 3 (1)
-	; 4:17 multiply
-	mul r0, r1 (u8)
-	; 4:23 int lit 2
-	ld r1, 2 (1)
-	; 4:25 int lit 5
-	ld r2, 5 (1)
-	; 4:24 multiply
-	mul r1, r2 (u8)
-	; 4:21 add
-	add r0, r1 (u8)
-	cast r1 (i16), r0 (u8)
-	; 4:5 var foo(%0)
-	addrOf r0, [0@function]
-	; 4:5 assign
-	store [r0], r1 (2)
-	; 5:15 read var foo(%0)
-	addrOf r0, [0@function]
-	load r1, [r0] (2)
-	; 5:21 read var foo(%0)
-	addrOf r0, [0@function]
-	load r2, [r0] (2)
-	; 5:19 multiply
-	mul r1, r2 (i16)
-	; 5:5 var bar(%1)
-	addrOf r0, [1@function]
-	; 5:5 assign
-	store [r0], r1 (2)
-	; 6:11 int lit 1
-	ld r0, 1 (2)
-	; 6:5 var foo(%0)
-	addrOf r1, [0@function]
-	; 6:9 assign
-	store [r1], r0 (2)
-	; 7:16 read var bar(%1)
-	addrOf r0, [1@function]
-	load r1, [r0] (2)
-	; 7:22 read var foo(%0)
-	addrOf r0, [0@function]
-	load r2, [r0] (2)
-	; 7:20 add
-	add r1, r2 (i16)
-	cast r0 (i64), r1 (i16)
-	; 7:20 var $.2(%2)
-	addrOf r1, [2@function]
-	; 7:20 assign
-	store [r1], r0 (8)
-	; 7:5 call printIntLf
-	call @printIntLf (2)
-	; 8:12 int lit 1
-	ld r0, 1 (1)
-	; 8:16 int lit 2
-	ld r1, 2 (1)
-	; 8:14 add
-	add r0, r1 (u8)
-	; 8:22 int lit 3
-	ld r1, 3 (1)
-	; 8:26 int lit 4
-	ld r2, 4 (1)
-	; 8:24 add
-	add r1, r2 (u8)
-	; 8:19 multiply
-	mul r0, r1 (u8)
-	cast r1 (i16), r0 (u8)
-	; 8:5 var foo(%0)
-	addrOf r0, [0@function]
-	; 8:9 assign
-	store [r0], r1 (2)
-	; 9:16 read var foo(%0)
-	addrOf r0, [0@function]
-	load r1, [r0] (2)
-	cast r0 (i64), r1 (i16)
-	; 9:16 var $.3(%3)
-	addrOf r1, [3@function]
-	; 9:16 assign
-	store [r1], r0 (8)
-	; 9:5 call printIntLf
-	call @printIntLf (3)
-	; 11:16 read var bazz(%4)
-	addrOf r0, [4@function]
-	load r1, [r0] (2)
-	cast r0 (i64), r1 (i16)
-	; 11:16 var $.5(%5)
-	addrOf r1, [5@function]
-	; 11:16 assign
-	store [r1], r0 (8)
-	; 11:5 call printIntLf
-	call @printIntLf (5)
-	; 13:16 int lit 1000
-	ld r0, 1000 (2)
-	; 13:21 int lit 10
-	ld r1, 10 (2)
-	; 13:20 divide
-	div r0, r1 (i16)
-	cast r1 (i64), r0 (i16)
-	; 13:20 var $.6(%6)
-	addrOf r0, [6@function]
-	; 13:20 assign
-	store [r0], r1 (8)
-	; 13:5 call printIntLf
-	call @printIntLf (6)
-	; 14:16 int lit 1000
-	ld r0, 1000 (2)
-	; 14:23 int lit 256
-	ld r1, 256 (2)
-	; 14:21 mod
-	mod r0, r1 (i16)
-	cast r1 (i64), r0 (i16)
-	; 14:21 var $.7(%7)
-	addrOf r0, [7@function]
-	; 14:21 assign
-	store [r0], r1 (8)
-	; 14:5 call printIntLf
-	call @printIntLf (7)
-	; 16:16 int lit 10
-	ld r0, 10 (1)
-	; 16:22 int lit 1
-	ld r1, 1 (1)
-	; 16:19 shiftright
-	shiftr r0, r1 (u8)
-	cast r1 (i64), r0 (u8)
-	; 16:19 var $.8(%8)
-	addrOf r0, [8@function]
-	; 16:19 assign
-	store [r0], r1 (8)
-	; 16:5 call printIntLf
-	call @printIntLf (8)
-	; 17:16 int lit 9
-	ld r0, 9 (1)
-	; 17:21 int lit 2
-	ld r1, 2 (1)
-	; 17:18 shiftright
-	shiftr r0, r1 (u8)
-	cast r1 (i64), r0 (u8)
-	; 17:18 var $.9(%9)
-	addrOf r0, [9@function]
-	; 17:18 assign
-	store [r0], r1 (8)
-	; 17:5 call printIntLf
-	call @printIntLf (9)
-	; 18:16 int lit 1
-	ld r0, 1 (1)
-	; 18:21 int lit 2
-	ld r1, 2 (1)
-	; 18:18 shiftleft
-	shiftl r0, r1 (u8)
-	cast r1 (i64), r0 (u8)
-	; 18:18 var $.10(%10)
-	addrOf r0, [10@function]
-	; 18:18 assign
-	store [r0], r1 (8)
-	; 18:5 call printIntLf
-	call @printIntLf (10)
+	var 2: bazz
+	var 3: t.3
+	var 4: t.4
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	var 19: t.19
+	var 20: t.20
+	var 21: t.21
+	var 22: t.22
+	var 23: t.23
+	var 24: t.24
+	var 25: t.25
+	var 26: t.26
+	var 27: t.27
+	var 28: t.28
+	var 29: t.29
+	var 30: t.30
+	var 31: t.31
+	var 32: t.32
+	var 33: t.33
+	var 34: t.34
+	var 35: t.35
+	var 36: t.36
+	var 37: t.37
+	var 38: t.38
+	var 39: t.39
+	var 40: t.40
+	const t.5(5@function,u8), 4
+	const t.6(6@function,u8), 3
+	mul t.4(4@function,u8), t.5(5@function,u8), t.6(6@function,u8)
+	const t.8(8@function,u8), 2
+	const t.9(9@function,u8), 5
+	mul t.7(7@function,u8), t.8(8@function,u8), t.9(9@function,u8)
+	add t.3(3@function,u8), t.4(4@function,u8), t.7(7@function,u8)
+	cast foo(0@function,i16), t.3(3@function,u8)
+	mul bar(1@function,i16), foo(0@function,i16), foo(0@function,i16)
+	const foo(0@function,i16), 1
+	add t.11(11@function,i16), bar(1@function,i16), foo(0@function,i16)
+	cast t.10(10@function,i64), t.11(11@function,i16)
+	call _, printIntLf [t.10(10@function,i64)]
+	const t.14(14@function,u8), 1
+	const t.15(15@function,u8), 2
+	add t.13(13@function,u8), t.14(14@function,u8), t.15(15@function,u8)
+	const t.17(17@function,u8), 3
+	const t.18(18@function,u8), 4
+	add t.16(16@function,u8), t.17(17@function,u8), t.18(18@function,u8)
+	mul t.12(12@function,u8), t.13(13@function,u8), t.16(16@function,u8)
+	cast foo(0@function,i16), t.12(12@function,u8)
+	cast t.19(19@function,i64), foo(0@function,i16)
+	call _, printIntLf [t.19(19@function,i64)]
+	cast t.20(20@function,i64), bazz(2@function,i16)
+	call _, printIntLf [t.20(20@function,i64)]
+	const t.23(23@function,i16), 1000
+	const t.24(24@function,i16), 10
+	div t.22(22@function,i16), t.23(23@function,i16), t.24(24@function,i16)
+	cast t.21(21@function,i64), t.22(22@function,i16)
+	call _, printIntLf [t.21(21@function,i64)]
+	const t.27(27@function,i16), 1000
+	const t.28(28@function,i16), 256
+	mod t.26(26@function,i16), t.27(27@function,i16), t.28(28@function,i16)
+	cast t.25(25@function,i64), t.26(26@function,i16)
+	call _, printIntLf [t.25(25@function,i64)]
+	const t.31(31@function,u8), 10
+	const t.32(32@function,u8), 1
+	shiftright t.30(30@function,u8), t.31(31@function,u8), t.32(32@function,u8)
+	cast t.29(29@function,i64), t.30(30@function,u8)
+	call _, printIntLf [t.29(29@function,i64)]
+	const t.35(35@function,u8), 9
+	const t.36(36@function,u8), 2
+	shiftright t.34(34@function,u8), t.35(35@function,u8), t.36(36@function,u8)
+	cast t.33(33@function,i64), t.34(34@function,u8)
+	call _, printIntLf [t.33(33@function,i64)]
+	const t.39(39@function,u8), 1
+	const t.40(40@function,u8), 2
+	shiftleft t.38(38@function,u8), t.39(39@function,u8), t.40(40@function,u8)
+	cast t.37(37@function,i64), t.38(38@function,u8)
+	call _, printIntLf [t.37(37@function,i64)]
 @main_ret:
 

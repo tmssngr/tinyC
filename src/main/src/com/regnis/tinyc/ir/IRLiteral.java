@@ -7,9 +7,9 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRStringLiteral(int index, @NotNull String name, @NotNull String text) {
+public record IRLiteral(@NotNull IRVar target, int value, @NotNull Location location) implements IRInstruction {
 	@Override
 	public String toString() {
-		return "string lit " + index + " " + Utils.escape(text);
+		return "const " + target + ", " + value;
 	}
 }

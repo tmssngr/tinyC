@@ -1,13 +1,15 @@
 package com.regnis.tinyc.ir;
 
-import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.*;
+
+import org.jetbrains.annotations.*;
 
 /**
  * @author Thomas Singer
  */
-public record IRCast(int targetReg, Type targetType, int sourceReg, Type sourceType) implements IRInstruction {
+public record IRCast(@NotNull IRVar target, @NotNull IRVar source, @NotNull Location location) implements IRInstruction {
 	@Override
 	public String toString() {
-		return "cast r" + targetReg + " (" + targetType + ")" + ", r" + sourceReg + " (" + sourceType + ")";
+		return "cast " + target + ", " + source;
 	}
 }

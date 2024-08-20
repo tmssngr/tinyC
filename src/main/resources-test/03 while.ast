@@ -1,10 +1,5 @@
 void printChar(u8 chr) {
-	u8* $.1;
-	i64 $.2;
-
-	$.1 = &chr;
-	$.2 = 1;
-	printStringLength($.1, $.2);
+	printStringLength(&chr, 1);
 }
 
 void printUint(i64 number) {
@@ -12,8 +7,6 @@ void printUint(i64 number) {
 	u8 pos;
 	i64 remainder;
 	u8 digit;
-	u8* $.5;
-	i64 $.6;
 
 	pos = 20;
 	while (true) {
@@ -26,25 +19,16 @@ void printUint(i64 number) {
 			break;
 		}
 	}
-	$.5 = &buffer[(i64)pos];
-	$.6 = (i64)(20 - pos);
-	printStringLength($.5, $.6);
+	printStringLength(&buffer[(i64)pos], (i64)(20 - pos));
 }
 
 void printIntLf(i64 number) {
-	u8 $.1;
-	i64 $.2;
-	u8 $.3;
-
 	if (number < 0) {
-		$.1 = 45;
-		printChar($.1);
+		printChar(45);
 		number = -number;
 	}
-	$.2 = number;
-	printUint($.2);
-	$.3 = 10;
-	printChar($.3);
+	printUint(number);
+	printChar(10);
 }
 
 void printStringLength(u8* str, i64 length) {
@@ -52,18 +36,14 @@ void printStringLength(u8* str, i64 length) {
 
 void main() {
 	u8 i;
-	i64 $.1;
-	i64 $.2;
 
 	i = 5;
 	while (i > 0) {
-		$.1 = (i64)i;
-		printIntLf($.1);
+		printIntLf((i64)i);
 		i = i - 1;
 	}
 	while (true) {
-		$.2 = (i64)i;
-		printIntLf($.2);
+		printIntLf((i64)i);
 		i = i + 1;
 		if (i < 5) {
 			continue;

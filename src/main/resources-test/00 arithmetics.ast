@@ -1,10 +1,5 @@
 void printChar(u8 chr) {
-	u8* $.1;
-	i64 $.2;
-
-	$.1 = &chr;
-	$.2 = 1;
-	printStringLength($.1, $.2);
+	printStringLength(&chr, 1);
 }
 
 void printUint(i64 number) {
@@ -12,8 +7,6 @@ void printUint(i64 number) {
 	u8 pos;
 	i64 remainder;
 	u8 digit;
-	u8* $.5;
-	i64 $.6;
 
 	pos = 20;
 	while (true) {
@@ -26,25 +19,16 @@ void printUint(i64 number) {
 			break;
 		}
 	}
-	$.5 = &buffer[(i64)pos];
-	$.6 = (i64)(20 - pos);
-	printStringLength($.5, $.6);
+	printStringLength(&buffer[(i64)pos], (i64)(20 - pos));
 }
 
 void printIntLf(i64 number) {
-	u8 $.1;
-	i64 $.2;
-	u8 $.3;
-
 	if (number < 0) {
-		$.1 = 45;
-		printChar($.1);
+		printChar(45);
 		number = -number;
 	}
-	$.2 = number;
-	printUint($.2);
-	$.3 = 10;
-	printChar($.3);
+	printUint(number);
+	printChar(10);
 }
 
 void printStringLength(u8* str, i64 length) {
@@ -53,34 +37,18 @@ void printStringLength(u8* str, i64 length) {
 void main() {
 	i16 foo;
 	i16 bar;
-	i64 $.2;
-	i64 $.3;
 	i16 bazz;
-	i64 $.5;
-	i64 $.6;
-	i64 $.7;
-	i64 $.8;
-	i64 $.9;
-	i64 $.10;
 
 	foo = (i16)((4 * 3) + (2 * 5));
 	bar = foo * foo;
 	foo = 1;
-	$.2 = (i64)(bar + foo);
-	printIntLf($.2);
+	printIntLf((i64)(bar + foo));
 	foo = (i16)((1 + 2) * (3 + 4));
-	$.3 = (i64)foo;
-	printIntLf($.3);
-	$.5 = (i64)bazz;
-	printIntLf($.5);
-	$.6 = (i64)(1000 / 10);
-	printIntLf($.6);
-	$.7 = (i64)(1000 % 256);
-	printIntLf($.7);
-	$.8 = (i64)(10 >> 1);
-	printIntLf($.8);
-	$.9 = (i64)(9 >> 2);
-	printIntLf($.9);
-	$.10 = (i64)(1 << 2);
-	printIntLf($.10);
+	printIntLf((i64)foo);
+	printIntLf((i64)bazz);
+	printIntLf((i64)(1000 / 10));
+	printIntLf((i64)(1000 % 256));
+	printIntLf((i64)(10 >> 1));
+	printIntLf((i64)(9 >> 2));
+	printIntLf((i64)(1 << 2));
 }

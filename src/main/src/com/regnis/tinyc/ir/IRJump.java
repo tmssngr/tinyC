@@ -1,11 +1,13 @@
 package com.regnis.tinyc.ir;
 
+import org.jetbrains.annotations.*;
+
 /**
  * @author Thomas Singer
  */
-public record IRJump(String target) implements IRInstruction {
+public record IRJump(@NotNull String label) implements IRInstruction {
 	@Override
 	public String toString() {
-		return "jmp " + target;
+		return "jump " + label;
 	}
 }

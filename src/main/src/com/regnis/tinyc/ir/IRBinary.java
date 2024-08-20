@@ -1,21 +1,22 @@
 package com.regnis.tinyc.ir;
 
-import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.*;
 
-import java.util.*;
+import org.jetbrains.annotations.*;
 
 /**
  * @author Thomas Singer
  */
-public record IRBinary(Op op, int targetReg, int sourceReg, Type type) implements IRInstruction {
+public record IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar left, @NotNull IRVar right, @NotNull Location location) implements IRInstruction {
 	@Override
 	public String toString() {
-		return op.toString().toLowerCase(Locale.ROOT) + " r" + targetReg + ", r" + sourceReg + " (" + type + ")";
+		return op.toString().toLowerCase() + " " + target + ", " + left + ", " + right;
 	}
 
 	public enum Op {
-		Sub, Mul, Div, Mod,
+		Add, Sub, Mul, Div, Mod,
+		ShiftLeft, ShiftRight,
 		And, Or, Xor,
-		ShiftL, ShiftR, Add
+		Lt, LtEq, Equals, NotEquals, GtEq, Gt
 	}
 }

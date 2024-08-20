@@ -1,12 +1,7 @@
 u8 i;
 
 void printChar(u8 chr) {
-	u8* $.1;
-	i64 $.2;
-
-	$.1 = &chr;
-	$.2 = 1;
-	printStringLength($.1, $.2);
+	printStringLength(&chr, 1);
 }
 
 void printUint(i64 number) {
@@ -14,8 +9,6 @@ void printUint(i64 number) {
 	u8 pos;
 	i64 remainder;
 	u8 digit;
-	u8* $.5;
-	i64 $.6;
 
 	pos = 20;
 	while (true) {
@@ -28,43 +21,23 @@ void printUint(i64 number) {
 			break;
 		}
 	}
-	$.5 = &buffer[(i64)pos];
-	$.6 = (i64)(20 - pos);
-	printStringLength($.5, $.6);
+	printStringLength(&buffer[(i64)pos], (i64)(20 - pos));
 }
 
 void printIntLf(i64 number) {
-	u8 $.1;
-	i64 $.2;
-	u8 $.3;
-
 	if (number < 0) {
-		$.1 = 45;
-		printChar($.1);
+		printChar(45);
 		number = -number;
 	}
-	$.2 = number;
-	printUint($.2);
-	$.3 = 10;
-	printChar($.3);
+	printUint(number);
+	printChar(10);
 }
 
 void printStringLength(u8* str, i64 length) {
 }
 
 void main() {
-	u8 $.0;
-	u8 $.1;
-	u8 $.2;
-	u8 $.3;
-	u8 $.4;
-
-	$.0 = next();
-	$.1 = next();
-	$.2 = next();
-	$.3 = next();
-	$.4 = next();
-	doPrint($.0, $.1, $.2, $.3, $.4);
+	doPrint(next(), next(), next(), next(), next());
 }
 
 u8 next() {
@@ -73,20 +46,9 @@ u8 next() {
 }
 
 void doPrint(u8 a, u8 b, u8 c, u8 d, u8 e) {
-	i64 $.5;
-	i64 $.6;
-	i64 $.7;
-	i64 $.8;
-	i64 $.9;
-
-	$.5 = (i64)a;
-	printIntLf($.5);
-	$.6 = (i64)b;
-	printIntLf($.6);
-	$.7 = (i64)c;
-	printIntLf($.7);
-	$.8 = (i64)d;
-	printIntLf($.8);
-	$.9 = (i64)e;
-	printIntLf($.9);
+	printIntLf((i64)a);
+	printIntLf((i64)b);
+	printIntLf((i64)c);
+	printIntLf((i64)d);
+	printIntLf((i64)e);
 }

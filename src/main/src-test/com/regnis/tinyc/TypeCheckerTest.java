@@ -273,8 +273,7 @@ public class TypeCheckerTest {
 		                         List.of(
 				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
 				                                                List.of(
-						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(1, 2)),
-						                                                new Variable("$.1", 1, VariableScope.function, Type.I64, 0, loc(2, 8))
+						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(1, 2))
 				                                                ),
 				                                                List.of(
 						                                                assign("a", 0, VariableScope.function, Type.U8,
@@ -282,22 +281,18 @@ public class TypeCheckerTest {
 						                                                                          Type.U8,
 						                                                                          loc(1, 9)),
 						                                                       loc(1, 2)),
-						                                                assign("$.1", 1, VariableScope.function, Type.I64,
-						                                                       ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, false, loc(2, 8)),
-						                                                                         Type.I64),
-						                                                       loc(2, 8)),
 						                                                new StmtExpr(
 								                                                new ExprFuncCall("prInt", Type.VOID,
 								                                                                 List.of(
-										                                                                 new ExprVarAccess("$.1", 1, VariableScope.function, Type.I64, false, loc(2, 8))
+										                                                                 ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, false, loc(2, 8)),
+										                                                                                   Type.I64)
 								                                                                 ), loc(2, 2))
 						                                                )
 				                                                ),
 				                                                List.of(), loc(0, 0)),
 				                         Function.typedInstance("foo", "void", Type.VOID, List.of(),
 				                                                List.of(
-						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(6, 2)),
-						                                                new Variable("$.1", 1, VariableScope.function, Type.I64, 0, loc(7, 8))
+						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(6, 2))
 				                                                ),
 				                                                List.of(
 						                                                assign("a", 0, VariableScope.function, Type.U8,
@@ -305,13 +300,10 @@ public class TypeCheckerTest {
 						                                                                          Type.U8,
 						                                                                          loc(6, 9)),
 						                                                       loc(6, 2)),
-						                                                assign("$.1", 1, VariableScope.function, Type.I64,
-						                                                       ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, false, loc(7, 8)),
-						                                                                         Type.I64),
-						                                                       loc(7, 8)),
 						                                                new StmtExpr(
 								                                                new ExprFuncCall("prInt", Type.VOID, List.of(
-										                                                new ExprVarAccess("$.1", 1, VariableScope.function, Type.I64, false, loc(7, 8))
+										                                                ExprCast.autocast(new ExprVarAccess("a", 0, VariableScope.function, Type.U8, false, loc(7, 8)),
+										                                                                  Type.I64)
 								                                                ), loc(7, 2))
 						                                                )
 				                                                ),
@@ -346,9 +338,7 @@ public class TypeCheckerTest {
 				                                                List.of(
 						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(1, 2)),
 						                                                new Variable("b", 1, VariableScope.function, Type.U8, 0, loc(3, 4)),
-						                                                new Variable("$.2", 2, VariableScope.function, Type.I64, 0, loc(4, 10)),
-						                                                new Variable("b", 3, VariableScope.function, Type.I16, 0, loc(7, 4)),
-						                                                new Variable("$.4", 4, VariableScope.function, Type.I64, 0, loc(8, 10))
+						                                                new Variable("b", 2, VariableScope.function, Type.I16, 0, loc(7, 4))
 				                                                ),
 				                                                List.of(
 						                                                assign("a", 0, VariableScope.function, Type.U8,
@@ -364,29 +354,23 @@ public class TypeCheckerTest {
 								                                                           assign("b", 1, VariableScope.function, Type.U8,
 								                                                                  new ExprIntLiteral(1, Type.U8, loc(3, 11)),
 								                                                                  loc(3, 4)),
-								                                                           assign("$.2", 2, VariableScope.function, Type.I64,
-								                                                                  ExprCast.autocast(new ExprVarAccess("b", 1, VariableScope.function, Type.U8, false, loc(4, 10)),
-								                                                                                    Type.I64),
-								                                                                  loc(4, 10)),
 								                                                           new StmtExpr(
 										                                                           new ExprFuncCall("prInt", Type.VOID,
 										                                                                            List.of(
-												                                                                            new ExprVarAccess("$.2", 2, VariableScope.function, Type.I64, false, loc(4, 10))
+												                                                                            ExprCast.autocast(new ExprVarAccess("b", 1, VariableScope.function, Type.U8, false, loc(4, 10)),
+												                                                                                              Type.I64)
 										                                                                            ), loc(4, 4))
 								                                                           )
 						                                                           ),
 						                                                           List.of(
-								                                                           assign("b", 3, VariableScope.function, Type.I16,
+								                                                           assign("b", 2, VariableScope.function, Type.I16,
 								                                                                  new ExprIntLiteral(2, Type.I16, loc(7, 12)),
 								                                                                  loc(7, 4)),
-								                                                           assign("$.4", 4, VariableScope.function, Type.I64,
-								                                                                  ExprCast.autocast(new ExprVarAccess("b", 3, VariableScope.function, Type.I16, false, loc(8, 10)),
-								                                                                                    Type.I64),
-								                                                                  loc(8, 10)),
 								                                                           new StmtExpr(
 										                                                           new ExprFuncCall("prInt", Type.VOID,
 										                                                                            List.of(
-												                                                                            new ExprVarAccess("$.4", 4, VariableScope.function, Type.I64, false, loc(8, 10))
+												                                                                            ExprCast.autocast(new ExprVarAccess("b", 2, VariableScope.function, Type.I16, false, loc(8, 10)),
+												                                                                                              Type.I64)
 										                                                                            ), loc(8, 4))
 								                                                           )
 						                                                           ),

@@ -28,60 +28,42 @@ public class IRGeneratorTest {
 				              continue;
 				            }""");
 		assertEquals(new IRProgram(List.of(
-				             new IRFunction("get", "@get", Type.U8, List.of(), List.of(
-									 new IRComment("2:10 return 0"),
-									 new IRComment("2:10 int lit 0"),
-									 new IRLoadInt(0, 0, 1),
-									 new IRReturnValue(0, 1),
-									 new IRJump("@get_ret"),
-									 new IRLabel("@get_ret")
+				             new IRFunction("get", "@get", Type.U8, List.of(
+						             new IRLocalVar("t.0", 0, false, 1)
+				             ), List.of(
+						             new IRComment("2:10 return 0"),
+						             new IRLiteral(tmp(0, Type.U8), 0, loc(1, 9)),
+						             new IRRetValue(tmp(0, Type.U8), loc(1, 2)),
+						             new IRJump("@get_ret"),
+						             new IRLabel("@get_ret")
 				             ), List.of()),
 				             new IRFunction("foo", "@foo", Type.VOID, List.of(
-									 new IRLocalVar("chr", 0, false, 1)
+						             new IRLocalVar("chr", 0, false, 1),
+						             new IRLocalVar("t.1", 1, false, 1),
+						             new IRLocalVar("t.2", 2, false, 1),
+						             new IRLocalVar("t.3", 3, false, 1),
+						             new IRLocalVar("t.4", 4, false, 1)
 				             ), List.of(
-									 new IRComment("5:3 while true"),
-									 new IRLabel("@while_1"),
-									 new IRComment("5:10 bool lit true"),
-									 new IRLoadInt(0, 1, 1),
-									 new IRBranch(0, false, "@while_1_break",
-									              "@while_1_body"),
-
-									 new IRComment("6:14 call get"),
-									 new IRCall("@get", List.of(), 0),
-									 new IRComment("6:5 var chr(%0)"),
-									 new IRAddrOfVar(1, VariableScope.function, 0),
-									 new IRComment("6:5 assign"),
-									 new IRMemStore(1, 0, 1),
-
-									 new IRComment("7:5 if chr > 97"),
-									 new IRComment("7:9 read var chr(%0)"),
-									 new IRAddrOfVar(0, VariableScope.function, 0),
-									 new IRMemLoad(1, 0, 1),
-									 new IRComment("7:15 int lit 97"),
-									 new IRLoadInt(0, 97, 1),
-									 new IRComment("7:13 >"),
-									 new IRCompare(IRCompare.Op.Gt, 2, 1, 0, Type.U8),
-									 new IRBranch(2, false, "@if_2_end",
-									              "@if_2_then"),
-									 new IRJump("@while_1"),
-
-									 new IRLabel("@if_2_end"),
-									 new IRComment("10:5 if chr == 10"),
-									 new IRComment("10:9 read var chr(%0)"),
-									 new IRAddrOfVar(0, VariableScope.function, 0),
-									 new IRMemLoad(1, 0, 1),
-									 new IRComment("10:16 int lit 10"),
-									 new IRLoadInt(0, 10, 1),
-									 new IRComment("10:13 =="),
-									 new IRCompare(IRCompare.Op.Equals, 2, 1, 0, Type.U8),
-									 new IRBranch(2, false, "@if_3_end",
-									              "@if_3_then"),
-									 new IRJump("@while_1_break"),
-
-									 new IRLabel("@if_3_end"),
-									 new IRJump("@while_1"),
-									 new IRLabel("@while_1_break"),
-									 new IRLabel("@foo_ret")
+						             new IRComment("5:3 while true"),
+						             new IRLabel("@while_1"),
+						             new IRCall(var("chr", 0, Type.U8), "get", List.of(), loc(5, 13)),
+						             new IRComment("7:5 if chr > 97"),
+						             new IRLiteral(tmp(2, Type.U8), 97, loc(6, 14)),
+						             new IRBinary(tmp(1, Type.BOOL), IRBinary.Op.Gt, var("chr", 0, Type.U8), tmp(2, Type.U8), loc(6, 12)),
+						             new IRBranch(tmp(1, Type.BOOL), false, "@if_2_end",
+						                          "@if_2_then"),
+						             new IRJump("@while_1"),
+						             new IRLabel("@if_2_end"),
+						             new IRComment("10:5 if chr == 10"),
+						             new IRLiteral(tmp(4, Type.U8), 10, loc(9, 15)),
+						             new IRBinary(tmp(3, Type.BOOL), IRBinary.Op.Equals, var("chr", 0, Type.U8), tmp(4, Type.U8), loc(9, 12)),
+						             new IRBranch(tmp(3, Type.BOOL), false, "@if_3_end",
+						                          "@if_3_then"),
+						             new IRJump("@while_1_break"),
+						             new IRLabel("@if_3_end"),
+						             new IRJump("@while_1"),
+						             new IRLabel("@while_1_break"),
+						             new IRLabel("@foo_ret")
 				             ), List.of())
 		             ), List.of(), List.of()),
 		             convert("""
@@ -139,5 +121,15 @@ public class IRGeneratorTest {
 		final TypeChecker checker = new TypeChecker(Type.I64);
 		final Program program = checker.check(rawProgram);
 		return IRGenerator.convert(program);
+	}
+
+	@NotNull
+	private static IRVar tmp(int index, Type type) {
+		return var("t." + index, index, type);
+	}
+
+	@NotNull
+	private static IRVar var(String name, int index, Type type) {
+		return new IRVar(name, index, VariableScope.function, type);
 	}
 }

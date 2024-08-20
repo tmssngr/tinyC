@@ -9,17 +9,13 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRUnary(@NotNull Op op, @NotNull IRVar target, @NotNull IRVar source) implements IRInstruction {
-	public IRUnary {
+public record IRCopy(@NotNull IRVar target, @NotNull IRVar source, @NotNull Location location) implements IRInstruction {
+	public IRCopy {
 		Utils.assertTrue(Objects.equals(target.type(), source.type()));
 	}
 
 	@Override
 	public String toString() {
-		return op.toString().toLowerCase() + " " + target + ", " + source;
-	}
-
-	public enum Op {
-		Not, Neg, NotLog
+		return "copy " + target + ", " + source;
 	}
 }

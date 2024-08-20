@@ -1,7 +1,13 @@
 package com.regnis.tinyc.ir;
 
+import org.jetbrains.annotations.*;
+
 /**
  * @author Thomas Singer
  */
-public record IRLabel(String label) implements IRInstruction {
+public record IRLabel(@NotNull String label) implements IRInstruction {
+	@Override
+	public String toString() {
+		return label + ":";
+	}
 }

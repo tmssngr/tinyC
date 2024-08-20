@@ -23,72 +23,54 @@ start:
         ; void printString
 @printString:
         ; reserve space for local variables
-        sub rsp, 32
-        ; 2:22 read var str(%0)
-        lea rax, [rsp+40]
+        sub rsp, 16
+        ; call length(1@function,i64), strlen, [str(0@argument,u8*)]
+        lea rax, [rsp+24]
         mov rbx, [rax]
-        ; 2:22 var $.2(%2)
-        lea rax, [rsp+8]
-        ; 2:22 assign
-        mov [rax], rbx
-        ; 2:15 call strlen
-        lea rax, [rsp+8]
-        mov rax, [rax]
-        push rax
+        push rbx
           call @strlen
         add rsp, 8
-        ; 2:2 var length(%1)
         lea rbx, [rsp+0]
-        ; 2:2 assign
         mov [rbx], rax
-        ; 3:20 read var str(%0)
-        lea rax, [rsp+40]
+        ; call _, printStringLength [str(0@argument,u8*), length(1@function,i64)]
+        lea rax, [rsp+24]
         mov rbx, [rax]
-        ; 3:20 var $.3(%3)
-        lea rax, [rsp+16]
-        ; 3:20 assign
-        mov [rax], rbx
-        ; 3:2 call printStringLength
-        lea rax, [rsp+16]
-        mov rax, [rax]
-        push rax
+        push rbx
         lea rax, [rsp+8]
-        mov rax, [rax]
-        push rax
+        mov rbx, [rax]
+        push rbx
         sub rsp, 8
           call @printStringLength
         add rsp, 24
+        ; @printString_ret:
 @printString_ret:
         ; release space for local variables
-        add rsp, 32
+        add rsp, 16
         ret
 
         ; void printChar
 @printChar:
         ; reserve space for local variables
         sub rsp, 16
-        ; 7:21 var chr(%0)
+        ; addrof t.1(1@function,u8*), chr(0@argument,u8)
         lea rax, [rsp+24]
-        ; 7:20 var $.1(%1)
         lea rbx, [rsp+0]
-        ; 7:20 assign
         mov [rbx], rax
-        ; 7:26 int lit 1
+        ; const t.2(2@function,i64), 1
         mov rax, 1
-        ; 7:26 var $.2(%2)
         lea rbx, [rsp+8]
-        ; 7:26 assign
         mov [rbx], rax
-        ; 7:2 call printStringLength
+        ; call _, printStringLength [t.1(1@function,u8*), t.2(2@function,i64)]
         lea rax, [rsp+0]
-        mov rax, [rax]
-        push rax
+        mov rbx, [rax]
+        push rbx
         lea rax, [rsp+16]
-        mov rax, [rax]
-        push rax
+        mov rbx, [rax]
+        push rbx
         sub rsp, 8
           call @printStringLength
         add rsp, 24
+        ; @printChar_ret:
 @printChar_ret:
         ; release space for local variables
         add rsp, 16
@@ -97,63 +79,90 @@ start:
         ; i64 strlen
 @strlen:
         ; reserve space for local variables
-        sub rsp, 16
-        ; 36:15 int lit 0
+        sub rsp, 48
+        ; const length(1@function,i64), 0
         mov rax, 0
-        ; 36:2 var length(%1)
         lea rbx, [rsp+0]
-        ; 36:2 assign
         mov [rbx], rax
         ; 37:2 for *str != 0
+        ; @for_1:
 @for_1:
-        ; 37:10 read var str(%0)
-        lea rax, [rsp+24]
+        ; load t.3(3@function,u8), [str(0@argument,u8*)]
+        lea rax, [rsp+56]
         mov rbx, [rax]
-        ; 37:9 deref
         mov al, [rbx]
-        ; 37:17 int lit 0
-        mov bl, 0
-        ; 37:14 !=
-        cmp al, bl
-        setne cl
-        and cl, 0xFF
-        or cl, cl
+        lea rbx, [rsp+9]
+        mov [rbx], al
+        ; const t.4(4@function,u8), 0
+        mov al, 0
+        lea rbx, [rsp+10]
+        mov [rbx], al
+        ; notequals t.2(2@function,bool), t.3(3@function,u8), t.4(4@function,u8)
+        lea rax, [rsp+9]
+        mov bl, [rax]
+        lea rax, [rsp+10]
+        mov cl, [rax]
+        cmp bl, cl
+        setne bl
+        lea rax, [rsp+8]
+        mov [rax], bl
+        ; branch t.2(2@function,bool), false, @for_1_break
+        lea rax, [rsp+8]
+        mov bl, [rax]
+        or bl, bl
         jz @for_1_break
         ; @for_1_body
-        ; 38:12 read var length(%1)
+        ; const t.5(5@function,i64), 1
+        mov rax, 1
+        lea rbx, [rsp+16]
+        mov [rbx], rax
+        ; add length(1@function,i64), length(1@function,i64), t.5(5@function,i64)
         lea rax, [rsp+0]
         mov rbx, [rax]
-        ; 38:21 int lit 1
-        mov rax, 1
-        ; 38:19 add
-        add rbx, rax
-        ; 38:3 var length(%1)
+        lea rax, [rsp+16]
+        mov rcx, [rax]
+        add rbx, rcx
         lea rax, [rsp+0]
-        ; 38:10 assign
         mov [rax], rbx
+        ; @for_1_continue:
 @for_1_continue:
-        ; 37:26 read var str(%0)
+        ; cast t.7(7@function,i64), str(0@argument,u8*)
+        lea rax, [rsp+56]
+        mov rbx, [rax]
+        lea rax, [rsp+32]
+        mov [rax], rbx
+        ; const t.8(8@function,i64), 1
+        mov rax, 1
+        lea rbx, [rsp+40]
+        mov [rbx], rax
+        ; add t.6(6@function,u8*), t.7(7@function,i64), t.8(8@function,i64)
+        lea rax, [rsp+32]
+        mov rbx, [rax]
+        lea rax, [rsp+40]
+        mov rcx, [rax]
+        add rbx, rcx
+        lea rax, [rsp+24]
+        mov [rax], rbx
+        ; cast str(0@argument,u8*), t.6(6@function,u8*)
         lea rax, [rsp+24]
         mov rbx, [rax]
-        ; 37:32 int lit 1
-        mov rax, 1
-        ; 37:30 add
-        add rbx, rax
-        ; 37:20 var str(%0)
-        lea rax, [rsp+24]
-        ; 37:24 assign
+        lea rax, [rsp+56]
         mov [rax], rbx
+        ; jump @for_1
         jmp @for_1
+        ; @for_1_break:
 @for_1_break:
         ; 40:9 return length
-        ; 40:9 read var length(%1)
+        ; ret length(1@function,i64)
         lea rax, [rsp+0]
         mov rbx, [rax]
         mov rax, rbx
+        ; jump @strlen_ret
         jmp @strlen_ret
+        ; @strlen_ret:
 @strlen_ret:
         ; release space for local variables
-        add rsp, 16
+        add rsp, 48
         ret
 
         ; void printStringLength
@@ -174,349 +183,536 @@ start:
         ; void printBoard
 @printBoard:
         ; reserve space for local variables
-        sub rsp, 16
-        ; 10:12 int lit 124
+        sub rsp, 48
+        ; const t.1(1@function,u8), 124
         mov al, 124
-        ; 10:12 var $.0(%0)
-        lea rbx, [rsp+0]
-        ; 10:12 assign
-        mov [rbx], al
-        ; 10:2 call printChar
-        lea rax, [rsp+0]
-        mov al, [rax]
-        push rax
-          call @printChar
-        add rsp, 8
-        ; 11:14 int lit 0
-        mov al, 0
-        ; 11:7 var i(%1)
         lea rbx, [rsp+1]
-        ; 11:7 assign
         mov [rbx], al
-        ; 11:2 for i < 30
-@for_2:
-        ; 11:17 read var i(%1)
+        ; call _, printChar [t.1(1@function,u8)]
         lea rax, [rsp+1]
         mov bl, [rax]
-        ; 11:21 int lit 30
+        push rbx
+          call @printChar
+        add rsp, 8
+        ; const i(0@function,u8), 0
+        mov al, 0
+        lea rbx, [rsp+0]
+        mov [rbx], al
+        ; 11:2 for i < 30
+        ; @for_2:
+@for_2:
+        ; const t.3(3@function,u8), 30
         mov al, 30
-        ; 11:19 <
-        cmp bl, al
-        setb cl
-        and cl, 0xFF
-        or cl, cl
+        lea rbx, [rsp+3]
+        mov [rbx], al
+        ; lt t.2(2@function,bool), i(0@function,u8), t.3(3@function,u8)
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        lea rax, [rsp+3]
+        mov cl, [rax]
+        cmp bl, cl
+        setb bl
+        lea rax, [rsp+2]
+        mov [rax], bl
+        ; branch t.2(2@function,bool), false, @for_2_break
+        lea rax, [rsp+2]
+        mov bl, [rax]
+        or bl, bl
         jz @for_2_break
         ; @for_2_body
         ; 12:3 if [...] == 0
-        ; 12:13 array board($0)
-        ; 12:13 read var i(%1)
-        lea rax, [rsp+1]
+        ; cast t.6(6@function,i64), i(0@function,u8)
+        lea rax, [rsp+0]
         mov bl, [rax]
-        movzx rax, bl
-        imul rax, 1
-        lea rbx, [var0]
-        add rbx, rax
+        movzx rbx, bl
+        lea rax, [rsp+8]
+        mov [rax], rbx
+        ; array t.7(7@function,u8*), board(0@global,u8*) + t.6(6@function,i64)
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        lea rax, [var_0]
+        add rax, rbx
+        lea rbx, [rsp+16]
+        mov [rbx], rax
+        ; load t.5(5@function,u8), [t.7(7@function,u8*)]
+        lea rax, [rsp+16]
+        mov rbx, [rax]
         mov al, [rbx]
-        ; 12:19 int lit 0
-        mov bl, 0
-        ; 12:16 ==
-        cmp al, bl
-        sete cl
-        and cl, 0xFF
-        or cl, cl
+        lea rbx, [rsp+5]
+        mov [rbx], al
+        ; const t.8(8@function,u8), 0
+        mov al, 0
+        lea rbx, [rsp+24]
+        mov [rbx], al
+        ; equals t.4(4@function,bool), t.5(5@function,u8), t.8(8@function,u8)
+        lea rax, [rsp+5]
+        mov bl, [rax]
+        lea rax, [rsp+24]
+        mov cl, [rax]
+        cmp bl, cl
+        sete bl
+        lea rax, [rsp+4]
+        mov [rax], bl
+        ; branch t.4(4@function,bool), false, @if_3_else
+        lea rax, [rsp+4]
+        mov bl, [rax]
+        or bl, bl
         jz @if_3_else
         ; @if_3_then
-        ; 13:14 int lit 32
+        ; const t.9(9@function,u8), 32
         mov al, 32
-        ; 13:14 var $.2(%2)
-        lea rbx, [rsp+2]
-        ; 13:14 assign
+        lea rbx, [rsp+25]
         mov [rbx], al
-        ; 13:4 call printChar
-        lea rax, [rsp+2]
-        mov al, [rax]
-        push rax
-          call @printChar
-        add rsp, 8
-        jmp @if_3_end
-@if_3_else:
-        ; 16:14 int lit 42
-        mov al, 42
-        ; 16:14 var $.3(%3)
-        lea rbx, [rsp+3]
-        ; 16:14 assign
-        mov [rbx], al
-        ; 16:4 call printChar
-        lea rax, [rsp+3]
-        mov al, [rax]
-        push rax
-          call @printChar
-        add rsp, 8
-@if_3_end:
-@for_2_continue:
-        ; 11:36 read var i(%1)
-        lea rax, [rsp+1]
+        ; call _, printChar [t.9(9@function,u8)]
+        lea rax, [rsp+25]
         mov bl, [rax]
-        ; 11:40 int lit 1
+        push rbx
+          call @printChar
+        add rsp, 8
+        ; jump @if_3_end
+        jmp @if_3_end
+        ; @if_3_else:
+@if_3_else:
+        ; const t.10(10@function,u8), 42
+        mov al, 42
+        lea rbx, [rsp+26]
+        mov [rbx], al
+        ; call _, printChar [t.10(10@function,u8)]
+        lea rax, [rsp+26]
+        mov bl, [rax]
+        push rbx
+          call @printChar
+        add rsp, 8
+        ; @if_3_end:
+@if_3_end:
+        ; @for_2_continue:
+@for_2_continue:
+        ; const t.11(11@function,u8), 1
         mov al, 1
-        ; 11:38 add
-        add bl, al
-        ; 11:32 var i(%1)
-        lea rax, [rsp+1]
-        ; 11:34 assign
+        lea rbx, [rsp+27]
+        mov [rbx], al
+        ; add i(0@function,u8), i(0@function,u8), t.11(11@function,u8)
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        lea rax, [rsp+27]
+        mov cl, [rax]
+        add bl, cl
+        lea rax, [rsp+0]
         mov [rax], bl
+        ; jump @for_2
         jmp @for_2
+        ; @for_2_break:
 @for_2_break:
-        ; 19:14 string literal string_0
+        ; const t.12(12@function,u8*), [string-0]
         lea rax, [string_0]
-        ; 19:14 var $.4(%4)
-        lea rbx, [rsp+8]
-        ; 19:14 assign
+        lea rbx, [rsp+32]
         mov [rbx], rax
-        ; 19:2 call printString
-        lea rax, [rsp+8]
-        mov rax, [rax]
-        push rax
+        ; call _, printString [t.12(12@function,u8*)]
+        lea rax, [rsp+32]
+        mov rbx, [rax]
+        push rbx
           call @printString
         add rsp, 8
+        ; @printBoard_ret:
 @printBoard_ret:
         ; release space for local variables
-        add rsp, 16
+        add rsp, 48
         ret
 
         ; void main
 @main:
         ; reserve space for local variables
-        sub rsp, 16
-        ; 23:14 int lit 0
+        sub rsp, 176
+        ; const i(0@function,u8), 0
         mov al, 0
-        ; 23:7 var i(%0)
         lea rbx, [rsp+0]
-        ; 23:7 assign
         mov [rbx], al
         ; 23:2 for i < 30
+        ; @for_4:
 @for_4:
-        ; 23:17 read var i(%0)
+        ; const t.5(5@function,u8), 30
+        mov al, 30
+        lea rbx, [rsp+5]
+        mov [rbx], al
+        ; lt t.4(4@function,bool), i(0@function,u8), t.5(5@function,u8)
         lea rax, [rsp+0]
         mov bl, [rax]
-        ; 23:21 int lit 30
-        mov al, 30
-        ; 23:19 <
-        cmp bl, al
-        setb cl
-        and cl, 0xFF
-        or cl, cl
+        lea rax, [rsp+5]
+        mov cl, [rax]
+        cmp bl, cl
+        setb bl
+        lea rax, [rsp+4]
+        mov [rax], bl
+        ; branch t.4(4@function,bool), false, @for_4_break
+        lea rax, [rsp+4]
+        mov bl, [rax]
+        or bl, bl
         jz @for_4_break
         ; @for_4_body
-        ; 24:14 int lit 0
+        ; const t.6(6@function,u8), 0
         mov al, 0
-        ; 24:9 array board($0)
-        ; 24:9 read var i(%0)
-        lea rbx, [rsp+0]
-        mov cl, [rbx]
-        movzx rbx, cl
-        imul rbx, 1
-        lea rcx, [var0]
-        add rcx, rbx
-        ; 24:12 assign
-        mov [rcx], al
-@for_4_continue:
-        ; 23:36 read var i(%0)
+        lea rbx, [rsp+6]
+        mov [rbx], al
+        ; cast t.7(7@function,i64), i(0@function,u8)
         lea rax, [rsp+0]
         mov bl, [rax]
-        ; 23:40 int lit 1
+        movzx rbx, bl
+        lea rax, [rsp+8]
+        mov [rax], rbx
+        ; array t.8(8@function,u8*), board(0@global,u8*) + t.7(7@function,i64)
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        lea rax, [var_0]
+        add rax, rbx
+        lea rbx, [rsp+16]
+        mov [rbx], rax
+        ; store [t.8(8@function,u8*)], t.6(6@function,u8)
+        lea rax, [rsp+16]
+        mov rbx, [rax]
+        lea rax, [rsp+6]
+        mov cl, [rax]
+        mov [rbx], cl
+        ; @for_4_continue:
+@for_4_continue:
+        ; const t.9(9@function,u8), 1
         mov al, 1
-        ; 23:38 add
-        add bl, al
-        ; 23:32 var i(%0)
-        lea rax, [rsp+0]
-        ; 23:34 assign
-        mov [rax], bl
-        jmp @for_4
-@for_4_break:
-        ; 26:25 int lit 1
-        mov al, 1
-        ; 26:18 array board($0)
-        ; 26:8 int lit 30
-        mov bl, 30
-        ; 26:20 int lit 1
-        mov cl, 1
-        ; 26:18 sub
-        sub bl, cl
-        movzx rcx, bl
-        imul rcx, 1
-        lea rbx, [var0]
-        add rbx, rcx
-        ; 26:23 assign
+        lea rbx, [rsp+24]
         mov [rbx], al
-        ; 28:2 call printBoard
+        ; add i(0@function,u8), i(0@function,u8), t.9(9@function,u8)
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        lea rax, [rsp+24]
+        mov cl, [rax]
+        add bl, cl
+        lea rax, [rsp+0]
+        mov [rax], bl
+        ; jump @for_4
+        jmp @for_4
+        ; @for_4_break:
+@for_4_break:
+        ; const t.10(10@function,u8), 1
+        mov al, 1
+        lea rbx, [rsp+25]
+        mov [rbx], al
+        ; const t.13(13@function,u8), 30
+        mov al, 30
+        lea rbx, [rsp+41]
+        mov [rbx], al
+        ; const t.14(14@function,u8), 1
+        mov al, 1
+        lea rbx, [rsp+42]
+        mov [rbx], al
+        ; sub t.12(12@function,u8), t.13(13@function,u8), t.14(14@function,u8)
+        lea rax, [rsp+41]
+        mov bl, [rax]
+        lea rax, [rsp+42]
+        mov cl, [rax]
+        sub bl, cl
+        lea rax, [rsp+40]
+        mov [rax], bl
+        ; cast t.11(11@function,i64), t.12(12@function,u8)
+        lea rax, [rsp+40]
+        mov bl, [rax]
+        movzx rbx, bl
+        lea rax, [rsp+32]
+        mov [rax], rbx
+        ; array t.15(15@function,u8*), board(0@global,u8*) + t.11(11@function,i64)
+        lea rax, [rsp+32]
+        mov rbx, [rax]
+        lea rax, [var_0]
+        add rax, rbx
+        lea rbx, [rsp+48]
+        mov [rbx], rax
+        ; store [t.15(15@function,u8*)], t.10(10@function,u8)
+        lea rax, [rsp+48]
+        mov rbx, [rax]
+        lea rax, [rsp+25]
+        mov cl, [rax]
+        mov [rbx], cl
+        ; call _, printBoard []
         sub rsp, 8
           call @printBoard
         add rsp, 8
-        ; 30:14 int lit 0
+        ; const i(1@function,u8), 0
         mov al, 0
-        ; 30:7 var i(%1)
         lea rbx, [rsp+1]
-        ; 30:7 assign
         mov [rbx], al
         ; 30:2 for i < 30 - 2
+        ; @for_5:
 @for_5:
-        ; 30:17 read var i(%1)
+        ; const t.18(18@function,u8), 30
+        mov al, 30
+        lea rbx, [rsp+58]
+        mov [rbx], al
+        ; const t.19(19@function,u8), 2
+        mov al, 2
+        lea rbx, [rsp+59]
+        mov [rbx], al
+        ; sub t.17(17@function,u8), t.18(18@function,u8), t.19(19@function,u8)
+        lea rax, [rsp+58]
+        mov bl, [rax]
+        lea rax, [rsp+59]
+        mov cl, [rax]
+        sub bl, cl
+        lea rax, [rsp+57]
+        mov [rax], bl
+        ; lt t.16(16@function,bool), i(1@function,u8), t.17(17@function,u8)
         lea rax, [rsp+1]
         mov bl, [rax]
-        ; 30:21 int lit 30
-        mov al, 30
-        ; 30:33 int lit 2
-        mov cl, 2
-        ; 30:31 sub
-        sub al, cl
-        ; 30:19 <
-        cmp bl, al
-        setb cl
-        and cl, 0xFF
-        or cl, cl
+        lea rax, [rsp+57]
+        mov cl, [rax]
+        cmp bl, cl
+        setb bl
+        lea rax, [rsp+56]
+        mov [rax], bl
+        ; branch t.16(16@function,bool), false, @for_5_break
+        lea rax, [rsp+56]
+        mov bl, [rax]
+        or bl, bl
         jz @for_5_break
         ; @for_5_body
-        ; 31:23 array board($0)
-        ; 31:23 int lit 0
+        ; const t.22(22@function,i64), 0
         mov rax, 0
-        imul rax, 1
-        lea rbx, [var0]
-        add rbx, rax
+        lea rbx, [rsp+64]
+        mov [rbx], rax
+        ; array t.23(23@function,u8*), board(0@global,u8*) + t.22(22@function,i64)
+        lea rax, [rsp+64]
+        mov rbx, [rax]
+        lea rax, [var_0]
+        add rax, rbx
+        lea rbx, [rsp+72]
+        mov [rbx], rax
+        ; load t.21(21@function,u8), [t.23(23@function,u8*)]
+        lea rax, [rsp+72]
+        mov rbx, [rax]
         mov al, [rbx]
-        ; 31:29 int lit 1
-        mov bl, 1
-        ; 31:26 shiftleft
-        push rcx
-        mov rcx, rbx
-        shl al, cl
-        pop rcx
-        ; 31:40 array board($0)
-        ; 31:40 int lit 1
-        mov rbx, 1
-        imul rbx, 1
-        lea rcx, [var0]
-        add rcx, rbx
-        mov bl, [rcx]
-        ; 31:32 or
-        or al, bl
-        ; 31:3 var pattern(%2)
-        lea rbx, [rsp+2]
-        ; 31:3 assign
+        lea rbx, [rsp+61]
         mov [rbx], al
-        ; 32:15 int lit 1
+        ; const t.24(24@function,u8), 1
         mov al, 1
-        ; 32:8 var j(%3)
+        lea rbx, [rsp+80]
+        mov [rbx], al
+        ; shiftleft t.20(20@function,u8), t.21(21@function,u8), t.24(24@function,u8)
+        lea rax, [rsp+61]
+        mov bl, [rax]
+        lea rax, [rsp+80]
+        mov cl, [rax]
+        shl bl, cl
+        lea rax, [rsp+60]
+        mov [rax], bl
+        ; const t.26(26@function,i64), 1
+        mov rax, 1
+        lea rbx, [rsp+88]
+        mov [rbx], rax
+        ; array t.27(27@function,u8*), board(0@global,u8*) + t.26(26@function,i64)
+        lea rax, [rsp+88]
+        mov rbx, [rax]
+        lea rax, [var_0]
+        add rax, rbx
+        lea rbx, [rsp+96]
+        mov [rbx], rax
+        ; load t.25(25@function,u8), [t.27(27@function,u8*)]
+        lea rax, [rsp+96]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+81]
+        mov [rbx], al
+        ; or pattern(2@function,u8), t.20(20@function,u8), t.25(25@function,u8)
+        lea rax, [rsp+60]
+        mov bl, [rax]
+        lea rax, [rsp+81]
+        mov cl, [rax]
+        or bl, cl
+        lea rax, [rsp+2]
+        mov [rax], bl
+        ; const j(3@function,u8), 1
+        mov al, 1
         lea rbx, [rsp+3]
-        ; 32:8 assign
         mov [rbx], al
         ; 32:3 for j < 30 - 1
+        ; @for_6:
 @for_6:
-        ; 32:18 read var j(%3)
+        ; const t.30(30@function,u8), 30
+        mov al, 30
+        lea rbx, [rsp+106]
+        mov [rbx], al
+        ; const t.31(31@function,u8), 1
+        mov al, 1
+        lea rbx, [rsp+107]
+        mov [rbx], al
+        ; sub t.29(29@function,u8), t.30(30@function,u8), t.31(31@function,u8)
+        lea rax, [rsp+106]
+        mov bl, [rax]
+        lea rax, [rsp+107]
+        mov cl, [rax]
+        sub bl, cl
+        lea rax, [rsp+105]
+        mov [rax], bl
+        ; lt t.28(28@function,bool), j(3@function,u8), t.29(29@function,u8)
         lea rax, [rsp+3]
         mov bl, [rax]
-        ; 32:22 int lit 30
-        mov al, 30
-        ; 32:34 int lit 1
-        mov cl, 1
-        ; 32:32 sub
-        sub al, cl
-        ; 32:20 <
-        cmp bl, al
-        setb cl
-        and cl, 0xFF
-        or cl, cl
+        lea rax, [rsp+105]
+        mov cl, [rax]
+        cmp bl, cl
+        setb bl
+        lea rax, [rsp+104]
+        mov [rax], bl
+        ; branch t.28(28@function,bool), false, @for_6_break
+        lea rax, [rsp+104]
+        mov bl, [rax]
+        or bl, bl
         jz @for_6_break
         ; @for_6_body
-        ; 33:16 read var pattern(%2)
+        ; const t.34(34@function,u8), 1
+        mov al, 1
+        lea rbx, [rsp+110]
+        mov [rbx], al
+        ; shiftleft t.33(33@function,u8), pattern(2@function,u8), t.34(34@function,u8)
         lea rax, [rsp+2]
         mov bl, [rax]
-        ; 33:27 int lit 1
-        mov al, 1
-        ; 33:24 shiftleft
-        push rcx
-        mov rcx, rax
-        shl bl, cl
-        pop rcx
-        ; 33:32 int lit 7
-        mov al, 7
-        ; 33:30 and
-        and bl, al
-        ; 33:45 array board($0)
-        ; 33:43 read var j(%3)
-        lea rax, [rsp+3]
+        lea rax, [rsp+110]
         mov cl, [rax]
-        ; 33:47 int lit 1
-        mov al, 1
-        ; 33:45 add
-        add cl, al
-        movzx rax, cl
-        imul rax, 1
-        lea rcx, [var0]
-        add rcx, rax
-        mov al, [rcx]
-        ; 33:35 or
-        or bl, al
-        ; 33:4 var pattern(%2)
-        lea rax, [rsp+2]
-        ; 33:12 assign
+        shl bl, cl
+        lea rax, [rsp+109]
         mov [rax], bl
-        ; 34:16 int lit 110
-        mov al, 110
-        ; 34:23 read var pattern(%2)
-        lea rbx, [rsp+2]
-        mov cl, [rbx]
-        ; 34:20 shiftright
-        shr al, cl
-        ; 34:34 int lit 1
-        mov bl, 1
-        ; 34:32 and
-        and al, bl
-        ; 34:10 array board($0)
-        ; 34:10 read var j(%3)
-        lea rbx, [rsp+3]
-        mov cl, [rbx]
-        movzx rbx, cl
-        imul rbx, 1
-        lea rcx, [var0]
-        add rcx, rbx
-        ; 34:13 assign
-        mov [rcx], al
-@for_6_continue:
-        ; 32:41 read var j(%3)
+        ; const t.35(35@function,u8), 7
+        mov al, 7
+        lea rbx, [rsp+111]
+        mov [rbx], al
+        ; and t.32(32@function,u8), t.33(33@function,u8), t.35(35@function,u8)
+        lea rax, [rsp+109]
+        mov bl, [rax]
+        lea rax, [rsp+111]
+        mov cl, [rax]
+        and bl, cl
+        lea rax, [rsp+108]
+        mov [rax], bl
+        ; const t.39(39@function,u8), 1
+        mov al, 1
+        lea rbx, [rsp+129]
+        mov [rbx], al
+        ; add t.38(38@function,u8), j(3@function,u8), t.39(39@function,u8)
         lea rax, [rsp+3]
         mov bl, [rax]
-        ; 32:45 int lit 1
-        mov al, 1
-        ; 32:43 add
-        add bl, al
-        ; 32:37 var j(%3)
-        lea rax, [rsp+3]
-        ; 32:39 assign
+        lea rax, [rsp+129]
+        mov cl, [rax]
+        add bl, cl
+        lea rax, [rsp+128]
         mov [rax], bl
+        ; cast t.37(37@function,i64), t.38(38@function,u8)
+        lea rax, [rsp+128]
+        mov bl, [rax]
+        movzx rbx, bl
+        lea rax, [rsp+120]
+        mov [rax], rbx
+        ; array t.40(40@function,u8*), board(0@global,u8*) + t.37(37@function,i64)
+        lea rax, [rsp+120]
+        mov rbx, [rax]
+        lea rax, [var_0]
+        add rax, rbx
+        lea rbx, [rsp+136]
+        mov [rbx], rax
+        ; load t.36(36@function,u8), [t.40(40@function,u8*)]
+        lea rax, [rsp+136]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+112]
+        mov [rbx], al
+        ; or pattern(2@function,u8), t.32(32@function,u8), t.36(36@function,u8)
+        lea rax, [rsp+108]
+        mov bl, [rax]
+        lea rax, [rsp+112]
+        mov cl, [rax]
+        or bl, cl
+        lea rax, [rsp+2]
+        mov [rax], bl
+        ; const t.43(43@function,u8), 110
+        mov al, 110
+        lea rbx, [rsp+146]
+        mov [rbx], al
+        ; shiftright t.42(42@function,u8), t.43(43@function,u8), pattern(2@function,u8)
+        lea rax, [rsp+146]
+        mov bl, [rax]
+        lea rax, [rsp+2]
+        mov cl, [rax]
+        shr bl, cl
+        lea rax, [rsp+145]
+        mov [rax], bl
+        ; const t.44(44@function,u8), 1
+        mov al, 1
+        lea rbx, [rsp+147]
+        mov [rbx], al
+        ; and t.41(41@function,u8), t.42(42@function,u8), t.44(44@function,u8)
+        lea rax, [rsp+145]
+        mov bl, [rax]
+        lea rax, [rsp+147]
+        mov cl, [rax]
+        and bl, cl
+        lea rax, [rsp+144]
+        mov [rax], bl
+        ; cast t.45(45@function,i64), j(3@function,u8)
+        lea rax, [rsp+3]
+        mov bl, [rax]
+        movzx rbx, bl
+        lea rax, [rsp+152]
+        mov [rax], rbx
+        ; array t.46(46@function,u8*), board(0@global,u8*) + t.45(45@function,i64)
+        lea rax, [rsp+152]
+        mov rbx, [rax]
+        lea rax, [var_0]
+        add rax, rbx
+        lea rbx, [rsp+160]
+        mov [rbx], rax
+        ; store [t.46(46@function,u8*)], t.41(41@function,u8)
+        lea rax, [rsp+160]
+        mov rbx, [rax]
+        lea rax, [rsp+144]
+        mov cl, [rax]
+        mov [rbx], cl
+        ; @for_6_continue:
+@for_6_continue:
+        ; const t.47(47@function,u8), 1
+        mov al, 1
+        lea rbx, [rsp+168]
+        mov [rbx], al
+        ; add j(3@function,u8), j(3@function,u8), t.47(47@function,u8)
+        lea rax, [rsp+3]
+        mov bl, [rax]
+        lea rax, [rsp+168]
+        mov cl, [rax]
+        add bl, cl
+        lea rax, [rsp+3]
+        mov [rax], bl
+        ; jump @for_6
         jmp @for_6
+        ; @for_6_break:
 @for_6_break:
-        ; 36:3 call printBoard
+        ; call _, printBoard []
         sub rsp, 8
           call @printBoard
         add rsp, 8
+        ; @for_5_continue:
 @for_5_continue:
-        ; 30:40 read var i(%1)
+        ; const t.48(48@function,u8), 1
+        mov al, 1
+        lea rbx, [rsp+169]
+        mov [rbx], al
+        ; add i(1@function,u8), i(1@function,u8), t.48(48@function,u8)
         lea rax, [rsp+1]
         mov bl, [rax]
-        ; 30:44 int lit 1
-        mov al, 1
-        ; 30:42 add
-        add bl, al
-        ; 30:36 var i(%1)
+        lea rax, [rsp+169]
+        mov cl, [rax]
+        add bl, cl
         lea rax, [rsp+1]
-        ; 30:38 assign
         mov [rax], bl
+        ; jump @for_5
         jmp @for_5
+        ; @for_5_break:
 @for_5_break:
+        ; @main_ret:
 @main_ret:
         ; release space for local variables
-        add rsp, 16
+        add rsp, 176
         ret
 init:
         sub rsp, 20h
@@ -545,7 +741,7 @@ section '.data' data readable writeable
         hStdOut rb 8
         hStdErr rb 8
         ; variable 0: board (240)
-        var0 rb 240
+        var_0 rb 240
 
 section '.data' data readable
         string_0 db '|', 0x0a, 0x00

@@ -1,36 +1,20 @@
 package com.regnis.tinyc.ir;
 
-import com.regnis.tinyc.ast.Type;
+import com.regnis.tinyc.*;
 
 import java.util.List;
+
+import org.jetbrains.annotations.*;
 
 /**
  * @author Thomas Singer
  */
-public record IRCall(String label, List<Arg> args, int resultReg) implements IRInstruction {
+public record IRCall(@Nullable IRVar target, @NotNull String name, @NotNull List<IRVar> args, @NotNull Location location) implements IRInstruction {
 	@Override
 	public String toString() {
-		final StringBuilder buffer = new StringBuilder();
-		buffer.append("call ");
-		if (resultReg >= 0) {
-			buffer.append("r");
-			buffer.append(resultReg);
-			buffer.append(", ");
+		if (target == null) {
+			return "call _, " + name + " " + args;
 		}
-		buffer.append(label);
-		buffer.append(" (");
-		boolean appendComma = false;
-		for (Arg arg : args) {
-			if (appendComma) {
-				buffer.append(", ");
-			}
-			appendComma = true;
-			buffer.append(arg.localVarIndex);
-		}
-		buffer.append(")");
-		return buffer.toString();
-	}
-
-	public record Arg(int localVarIndex, Type type) {
+		return "call " + target + ", " + name + ", " + args;
 	}
 }

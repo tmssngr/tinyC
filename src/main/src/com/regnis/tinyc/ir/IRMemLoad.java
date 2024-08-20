@@ -1,15 +1,21 @@
 package com.regnis.tinyc.ir;
 
+import com.regnis.tinyc.*;
+
+import java.util.*;
+
+import org.jetbrains.annotations.*;
+
 /**
  * @author Thomas Singer
  */
-public record IRMemLoad(int valueReg, int addrReg, int size) implements IRInstruction {
-	public IRMemLoad(int valueReg, int addrReg) {
-		this(valueReg, addrReg, 0);
+public record IRMemLoad(@NotNull IRVar target, @NotNull IRVar addr, @NotNull Location location) implements IRInstruction {
+	public IRMemLoad {
+		Utils.assertTrue(Objects.equals(target.type(), addr.type().toType()));
 	}
 
 	@Override
 	public String toString() {
-		return "load r" + valueReg + ", [r" + addrReg + "] (" + size + ")";
+		return "load " + target + ", [" + addr + "]";
 	}
 }
