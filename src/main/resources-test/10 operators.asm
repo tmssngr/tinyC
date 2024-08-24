@@ -42,7 +42,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printString_ret:
 @printString_ret:
         ; release space for local variables
         add rsp, 16
@@ -70,7 +69,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printChar_ret:
 @printChar_ret:
         ; release space for local variables
         add rsp, 16
@@ -85,7 +83,6 @@ start:
         lea rbx, [rsp+20]
         mov [rbx], al
         ; 13:2 while true
-        ; @while_1:
 @while_1:
         ; const t.5(5@function,u8), 1
         mov al, 1
@@ -187,11 +184,9 @@ start:
         ; @if_2_then
         ; jump @while_1_break
         jmp @while_1_break
-        ; @if_2_end:
 @if_2_end:
         ; jump @while_1
         jmp @while_1
-        ; @while_1_break:
 @while_1_break:
         ; cast t.15(15@function,i64), pos(2@function,u8)
         lea rax, [rsp+20]
@@ -234,7 +229,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printUint_ret:
 @printUint_ret:
         ; release space for local variables
         add rsp, 128
@@ -280,7 +274,6 @@ start:
         neg rbx
         lea rax, [rsp+40]
         mov [rax], rbx
-        ; @if_3_end:
 @if_3_end:
         ; call _, printUint [number(0@argument,i64)]
         lea rax, [rsp+40]
@@ -298,7 +291,6 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-        ; @printIntLf_ret:
 @printIntLf_ret:
         ; release space for local variables
         add rsp, 32
@@ -313,7 +305,6 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], rax
         ; 37:2 for *str != 0
-        ; @for_4:
 @for_4:
         ; load t.3(3@function,u8), [str(0@argument,u8*)]
         lea rax, [rsp+56]
@@ -352,7 +343,6 @@ start:
         add rbx, rcx
         lea rax, [rsp+0]
         mov [rax], rbx
-        ; @for_4_continue:
 @for_4_continue:
         ; cast t.7(7@function,i64), str(0@argument,u8*)
         lea rax, [rsp+56]
@@ -378,7 +368,6 @@ start:
         mov [rax], rbx
         ; jump @for_4
         jmp @for_4
-        ; @for_4_break:
 @for_4_break:
         ; 40:9 return length
         ; ret length(1@function,i64)
@@ -387,7 +376,6 @@ start:
         mov rax, rbx
         ; jump @strlen_ret
         jmp @strlen_ret
-        ; @strlen_ret:
 @strlen_ret:
         ; release space for local variables
         add rsp, 48
@@ -803,7 +791,6 @@ start:
         mov al, 0
         lea rbx, [rsp+232]
         mov [rbx], al
-        ; @and_next_5:
 @and_next_5:
         ; cast t.52(52@function,i64), t.53(53@function,bool)
         lea rax, [rsp+232]
@@ -832,7 +819,6 @@ start:
         mov al, 1
         lea rbx, [rsp+248]
         mov [rbx], al
-        ; @and_next_6:
 @and_next_6:
         ; cast t.54(54@function,i64), t.55(55@function,bool)
         lea rax, [rsp+248]
@@ -861,7 +847,6 @@ start:
         mov al, 0
         lea rbx, [rsp+264]
         mov [rbx], al
-        ; @and_next_7:
 @and_next_7:
         ; cast t.56(56@function,i64), t.57(57@function,bool)
         lea rax, [rsp+264]
@@ -890,7 +875,6 @@ start:
         mov al, 1
         lea rbx, [rsp+280]
         mov [rbx], al
-        ; @and_next_8:
 @and_next_8:
         ; cast t.58(58@function,i64), t.59(59@function,bool)
         lea rax, [rsp+280]
@@ -929,7 +913,6 @@ start:
         mov al, 0
         lea rbx, [rsp+304]
         mov [rbx], al
-        ; @or_next_9:
 @or_next_9:
         ; cast t.61(61@function,i64), t.62(62@function,bool)
         lea rax, [rsp+304]
@@ -958,7 +941,6 @@ start:
         mov al, 1
         lea rbx, [rsp+320]
         mov [rbx], al
-        ; @or_next_10:
 @or_next_10:
         ; cast t.63(63@function,i64), t.64(64@function,bool)
         lea rax, [rsp+320]
@@ -987,7 +969,6 @@ start:
         mov al, 0
         lea rbx, [rsp+336]
         mov [rbx], al
-        ; @or_next_11:
 @or_next_11:
         ; cast t.65(65@function,i64), t.66(66@function,bool)
         lea rax, [rsp+336]
@@ -1016,7 +997,6 @@ start:
         mov al, 1
         lea rbx, [rsp+352]
         mov [rbx], al
-        ; @or_next_12:
 @or_next_12:
         ; cast t.67(67@function,i64), t.68(68@function,bool)
         lea rax, [rsp+352]
@@ -1177,7 +1157,6 @@ start:
         setb bl
         lea rax, [rsp+432]
         mov [rax], bl
-        ; @or_next_13:
 @or_next_13:
         ; cast t.83(83@function,i64), t.84(84@function,bool)
         lea rax, [rsp+432]
@@ -1232,7 +1211,6 @@ start:
         setb bl
         lea rax, [rsp+448]
         mov [rax], bl
-        ; @and_next_14:
 @and_next_14:
         ; cast t.89(89@function,i64), t.90(90@function,bool)
         lea rax, [rsp+448]
@@ -1290,7 +1268,6 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; @main_ret:
 @main_ret:
         ; release space for local variables
         add rsp, 496

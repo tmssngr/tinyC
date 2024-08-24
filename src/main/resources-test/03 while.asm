@@ -42,7 +42,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printChar_ret:
 @printChar_ret:
         ; release space for local variables
         add rsp, 16
@@ -57,7 +56,6 @@ start:
         lea rbx, [rsp+20]
         mov [rbx], al
         ; 13:2 while true
-        ; @while_1:
 @while_1:
         ; const t.5(5@function,u8), 1
         mov al, 1
@@ -159,11 +157,9 @@ start:
         ; @if_2_then
         ; jump @while_1_break
         jmp @while_1_break
-        ; @if_2_end:
 @if_2_end:
         ; jump @while_1
         jmp @while_1
-        ; @while_1_break:
 @while_1_break:
         ; cast t.15(15@function,i64), pos(2@function,u8)
         lea rax, [rsp+20]
@@ -206,7 +202,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printUint_ret:
 @printUint_ret:
         ; release space for local variables
         add rsp, 128
@@ -252,7 +247,6 @@ start:
         neg rbx
         lea rax, [rsp+40]
         mov [rax], rbx
-        ; @if_3_end:
 @if_3_end:
         ; call _, printUint [number(0@argument,i64)]
         lea rax, [rsp+40]
@@ -270,7 +264,6 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-        ; @printIntLf_ret:
 @printIntLf_ret:
         ; release space for local variables
         add rsp, 32
@@ -300,7 +293,6 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 5:2 while i > 0
-        ; @while_4:
 @while_4:
         ; const t.2(2@function,u8), 0
         mov al, 0
@@ -347,10 +339,8 @@ start:
         mov [rax], bl
         ; jump @while_4
         jmp @while_4
-        ; @while_4_break:
 @while_4_break:
         ; 10:2 while true
-        ; @while_5:
 @while_5:
         ; cast t.5(5@function,i64), i(0@function,u8)
         lea rax, [rsp+0]
@@ -398,25 +388,20 @@ start:
         ; @if_6_then
         ; jump @while_5
         jmp @while_5
-        ; @if_6_end:
 @if_6_end:
         ; jump @while_5_break
         jmp @while_5_break
         ; jump @while_5
         jmp @while_5
-        ; @while_5_break:
 @while_5_break:
         ; 19:2 while true
-        ; @while_7:
 @while_7:
         ; 20:3 return
         ; jump @main_ret
         jmp @main_ret
         ; jump @while_7
         jmp @while_7
-        ; @while_7_break:
 @while_7_break:
-        ; @main_ret:
 @main_ret:
         ; release space for local variables
         add rsp, 48

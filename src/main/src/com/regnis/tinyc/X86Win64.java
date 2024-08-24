@@ -217,7 +217,8 @@ public final class X86Win64 {
 	}
 
 	private void writeInstruction(IRInstruction instruction) throws IOException {
-		if (!(instruction instanceof IRComment)) {
+		if (!(instruction instanceof IRComment)
+		    && !(instruction instanceof IRLabel)) {
 			writeComment(String.valueOf(instruction));
 		}
 		Utils.assertTrue(allocator.isNoneUsed());

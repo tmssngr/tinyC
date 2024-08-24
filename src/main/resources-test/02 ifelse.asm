@@ -42,7 +42,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printChar_ret:
 @printChar_ret:
         ; release space for local variables
         add rsp, 16
@@ -57,7 +56,6 @@ start:
         lea rbx, [rsp+20]
         mov [rbx], al
         ; 13:2 while true
-        ; @while_1:
 @while_1:
         ; const t.5(5@function,u8), 1
         mov al, 1
@@ -159,11 +157,9 @@ start:
         ; @if_2_then
         ; jump @while_1_break
         jmp @while_1_break
-        ; @if_2_end:
 @if_2_end:
         ; jump @while_1
         jmp @while_1
-        ; @while_1_break:
 @while_1_break:
         ; cast t.15(15@function,i64), pos(2@function,u8)
         lea rax, [rsp+20]
@@ -206,7 +202,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printUint_ret:
 @printUint_ret:
         ; release space for local variables
         add rsp, 128
@@ -252,7 +247,6 @@ start:
         neg rbx
         lea rax, [rsp+40]
         mov [rax], rbx
-        ; @if_3_end:
 @if_3_end:
         ; call _, printUint [number(0@argument,i64)]
         lea rax, [rsp+40]
@@ -270,7 +264,6 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-        ; @printIntLf_ret:
 @printIntLf_ret:
         ; release space for local variables
         add rsp, 32
@@ -333,7 +326,6 @@ start:
         add rsp, 8
         ; jump @if_4_end
         jmp @if_4_end
-        ; @if_4_else:
 @if_4_else:
         ; cast t.4(4@function,i64), b(1@function,u8)
         lea rax, [rsp+1]
@@ -347,9 +339,7 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; @if_4_end:
 @if_4_end:
-        ; @main_ret:
 @main_ret:
         ; release space for local variables
         add rsp, 32

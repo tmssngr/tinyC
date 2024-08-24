@@ -42,7 +42,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printChar_ret:
 @printChar_ret:
         ; release space for local variables
         add rsp, 16
@@ -57,7 +56,6 @@ start:
         lea rbx, [rsp+20]
         mov [rbx], al
         ; 13:2 while true
-        ; @while_1:
 @while_1:
         ; const t.5(5@function,u8), 1
         mov al, 1
@@ -159,11 +157,9 @@ start:
         ; @if_2_then
         ; jump @while_1_break
         jmp @while_1_break
-        ; @if_2_end:
 @if_2_end:
         ; jump @while_1
         jmp @while_1
-        ; @while_1_break:
 @while_1_break:
         ; cast t.15(15@function,i64), pos(2@function,u8)
         lea rax, [rsp+20]
@@ -206,7 +202,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printUint_ret:
 @printUint_ret:
         ; release space for local variables
         add rsp, 128
@@ -252,7 +247,6 @@ start:
         neg rbx
         lea rax, [rsp+40]
         mov [rax], rbx
-        ; @if_3_end:
 @if_3_end:
         ; call _, printUint [number(0@argument,i64)]
         lea rax, [rsp+40]
@@ -270,7 +264,6 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-        ; @printIntLf_ret:
 @printIntLf_ret:
         ; release space for local variables
         add rsp, 32
@@ -300,7 +293,6 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 4:3 for i != 2
-        ; @for_4:
 @for_4:
         ; const t.3(3@function,u8), 2
         mov al, 2
@@ -333,7 +325,6 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; @for_4_continue:
 @for_4_continue:
         ; const t.5(5@function,u8), 1
         mov al, 1
@@ -349,7 +340,6 @@ start:
         mov [rax], bl
         ; jump @for_4
         jmp @for_4
-        ; @for_4_break:
 @for_4_break:
         ; const v(1@function,i16), 260
         mov ax, 260
@@ -372,7 +362,6 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; @main_ret:
 @main_ret:
         ; release space for local variables
         add rsp, 48

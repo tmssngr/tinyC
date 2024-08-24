@@ -42,7 +42,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printString_ret:
 @printString_ret:
         ; release space for local variables
         add rsp, 16
@@ -70,7 +69,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printChar_ret:
 @printChar_ret:
         ; release space for local variables
         add rsp, 16
@@ -85,7 +83,6 @@ start:
         lea rbx, [rsp+20]
         mov [rbx], al
         ; 13:2 while true
-        ; @while_1:
 @while_1:
         ; const t.5(5@function,u8), 1
         mov al, 1
@@ -187,11 +184,9 @@ start:
         ; @if_2_then
         ; jump @while_1_break
         jmp @while_1_break
-        ; @if_2_end:
 @if_2_end:
         ; jump @while_1
         jmp @while_1
-        ; @while_1_break:
 @while_1_break:
         ; cast t.15(15@function,i64), pos(2@function,u8)
         lea rax, [rsp+20]
@@ -234,7 +229,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printUint_ret:
 @printUint_ret:
         ; release space for local variables
         add rsp, 128
@@ -280,7 +274,6 @@ start:
         neg rbx
         lea rax, [rsp+40]
         mov [rax], rbx
-        ; @if_3_end:
 @if_3_end:
         ; call _, printUint [number(0@argument,i64)]
         lea rax, [rsp+40]
@@ -298,7 +291,6 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-        ; @printIntLf_ret:
 @printIntLf_ret:
         ; release space for local variables
         add rsp, 32
@@ -313,7 +305,6 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], rax
         ; 37:2 for *str != 0
-        ; @for_4:
 @for_4:
         ; load t.3(3@function,u8), [str(0@argument,u8*)]
         lea rax, [rsp+56]
@@ -352,7 +343,6 @@ start:
         add rbx, rcx
         lea rax, [rsp+0]
         mov [rax], rbx
-        ; @for_4_continue:
 @for_4_continue:
         ; cast t.7(7@function,i64), str(0@argument,u8*)
         lea rax, [rsp+56]
@@ -378,7 +368,6 @@ start:
         mov [rax], rbx
         ; jump @for_4
         jmp @for_4
-        ; @for_4_break:
 @for_4_break:
         ; 40:9 return length
         ; ret length(1@function,i64)
@@ -387,7 +376,6 @@ start:
         mov rax, rbx
         ; jump @strlen_ret
         jmp @strlen_ret
-        ; @strlen_ret:
 @strlen_ret:
         ; release space for local variables
         add rsp, 48
@@ -1034,7 +1022,6 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; @main_ret:
 @main_ret:
         ; release space for local variables
         add rsp, 368

@@ -42,7 +42,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printString_ret:
 @printString_ret:
         ; release space for local variables
         add rsp, 16
@@ -70,7 +69,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; @printChar_ret:
 @printChar_ret:
         ; release space for local variables
         add rsp, 16
@@ -85,7 +83,6 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], rax
         ; 37:2 for *str != 0
-        ; @for_1:
 @for_1:
         ; load t.3(3@function,u8), [str(0@argument,u8*)]
         lea rax, [rsp+56]
@@ -124,7 +121,6 @@ start:
         add rbx, rcx
         lea rax, [rsp+0]
         mov [rax], rbx
-        ; @for_1_continue:
 @for_1_continue:
         ; cast t.7(7@function,i64), str(0@argument,u8*)
         lea rax, [rsp+56]
@@ -150,7 +146,6 @@ start:
         mov [rax], rbx
         ; jump @for_1
         jmp @for_1
-        ; @for_1_break:
 @for_1_break:
         ; 40:9 return length
         ; ret length(1@function,i64)
@@ -159,7 +154,6 @@ start:
         mov rax, rbx
         ; jump @strlen_ret
         jmp @strlen_ret
-        ; @strlen_ret:
 @strlen_ret:
         ; release space for local variables
         add rsp, 48
@@ -252,7 +246,6 @@ start:
         add bl, cl
         lea rax, [rsp+24]
         mov [rax], bl
-        ; @if_2_end:
 @if_2_end:
         ; const t.9(9@function,u8), 48
         mov al, 48
@@ -272,7 +265,6 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-        ; @printNibble_ret:
 @printNibble_ret:
         ; release space for local variables
         add rsp, 16
@@ -310,7 +302,6 @@ start:
         push rbx
           call @printNibble
         add rsp, 8
-        ; @printHex2_ret:
 @printHex2_ret:
         ; release space for local variables
         add rsp, 16
@@ -335,7 +326,6 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 19:2 for i < 16
-        ; @for_3:
 @for_3:
         ; const t.4(4@function,u8), 16
         mov al, 16
@@ -398,7 +388,6 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-        ; @if_4_end:
 @if_4_end:
         ; call _, printNibble [i(0@function,u8)]
         lea rax, [rsp+0]
@@ -406,7 +395,6 @@ start:
         push rbx
           call @printNibble
         add rsp, 8
-        ; @for_3_continue:
 @for_3_continue:
         ; const t.10(10@function,u8), 1
         mov al, 1
@@ -422,7 +410,6 @@ start:
         mov [rax], bl
         ; jump @for_3
         jmp @for_3
-        ; @for_3_break:
 @for_3_break:
         ; const t.11(11@function,u8), 10
         mov al, 10
@@ -439,7 +426,6 @@ start:
         lea rbx, [rsp+1]
         mov [rbx], al
         ; 27:2 for i < 128
-        ; @for_5:
 @for_5:
         ; const t.13(13@function,u8), 128
         mov al, 128
@@ -498,7 +484,6 @@ start:
         push rbx
           call @printHex2
         add rsp, 8
-        ; @if_6_end:
 @if_6_end:
         ; 31:3 if i & 7 == 0
         ; const t.20(20@function,u8), 7
@@ -542,7 +527,6 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-        ; @if_7_end:
 @if_7_end:
         ; call _, printChar [i(1@function,u8)]
         lea rax, [rsp+1]
@@ -592,9 +576,7 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-        ; @if_8_end:
 @if_8_end:
-        ; @for_5_continue:
 @for_5_continue:
         ; const t.28(28@function,u8), 1
         mov al, 1
@@ -610,9 +592,7 @@ start:
         mov [rax], bl
         ; jump @for_5
         jmp @for_5
-        ; @for_5_break:
 @for_5_break:
-        ; @main_ret:
 @main_ret:
         ; release space for local variables
         add rsp, 48
