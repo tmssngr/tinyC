@@ -19,6 +19,11 @@ public class Utils {
 	}
 
 	@Nullable
+	public static <E> E getSingle(List<E> list) {
+		return list.size() == 1 ? list.getFirst() : null;
+	}
+
+	@Nullable
 	public static <E> E getLastOrNull(List<E> list) {
 		if (list.isEmpty()) {
 			return null;
