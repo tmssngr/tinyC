@@ -123,6 +123,7 @@ start:
         or bl, bl
         jz @for_1_break
         ; @for_1_body
+@for_1_body:
         ; const t.5(5@function,i64), 1
         mov rax, 1
         lea rbx, [rsp+16]
@@ -166,8 +167,6 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         mov rax, rbx
-        ; jump @strlen_ret
-        jmp @strlen_ret
 @strlen_ret:
         ; release space for local variables
         add rsp, 48
@@ -240,6 +239,7 @@ start:
         or bl, bl
         jz @for_2_break
         ; @for_2_body
+@for_2_body:
         ; 12:3 if [...] == 0
         ; cast t.6(6@function,i64), i(0@function,u8)
         lea rax, [rsp+0]
@@ -279,6 +279,7 @@ start:
         or bl, bl
         jz @if_3_else
         ; @if_3_then
+@if_3_then:
         ; const t.9(9@function,u8), 32
         mov al, 32
         lea rbx, [rsp+25]
@@ -406,6 +407,7 @@ start:
         or bl, bl
         jz @for_4_break
         ; @for_4_body
+@for_4_body:
         ; const t.6(6@function,u8), 0
         mov al, 0
         lea rbx, [rsp+6]
@@ -501,6 +503,7 @@ start:
         or bl, bl
         jz @for_5_break
         ; @for_5_body
+@for_5_body:
         ; const t.18(18@function,i64), 0
         mov rax, 0
         lea rbx, [rsp+64]
@@ -580,6 +583,7 @@ start:
         or bl, bl
         jz @for_6_break
         ; @for_6_body
+@for_6_body:
         ; const t.28(28@function,u8), 1
         mov al, 1
         lea rbx, [rsp+108]

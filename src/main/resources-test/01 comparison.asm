@@ -206,6 +206,7 @@ start:
         or bl, bl
         jz @if_2_end
         ; @if_2_then
+@if_2_then:
         ; jump @while_1_break
         jmp @while_1_break
 @if_2_end:
@@ -287,6 +288,7 @@ start:
         or bl, bl
         jz @if_3_end
         ; @if_3_then
+@if_3_then:
         ; const t.3(3@function,u8), 45
         mov al, 45
         lea rbx, [rsp+16]
@@ -369,6 +371,7 @@ start:
         or bl, bl
         jz @for_4_break
         ; @for_4_body
+@for_4_body:
         ; const t.5(5@function,i64), 1
         mov rax, 1
         lea rbx, [rsp+16]
@@ -412,8 +415,6 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         mov rax, rbx
-        ; jump @strlen_ret
-        jmp @strlen_ret
 @strlen_ret:
         ; release space for local variables
         add rsp, 48

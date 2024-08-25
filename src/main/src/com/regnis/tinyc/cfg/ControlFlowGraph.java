@@ -68,4 +68,27 @@ public final class ControlFlowGraph {
 	public void foreach(@NotNull Consumer<BasicBlock> consumer) {
 		blocks.forEach(consumer);
 	}
+
+	public IRFunction flatten() {
+		final List<IRInstruction> instructions = new ArrayList<>();
+		for (BasicBlock block : blocks) {
+			if (block.name.startsWith("@")) {
+				instructions.add(new IRLabel(block.name));
+			}
+			instructions.addAll(block.instructions);
+		}
+
+		new Peephole2Optimization<>(instructions) {
+			@Override
+			protected void handle(IRInstruction item1, IRInstruction item2) {
+				if (item1 instanceof IRJump jump
+				    && item2 instanceof IRLabel label
+				    && jump.label().equals(label.label())) {
+					remove();
+				}
+			}
+		}.process();
+
+		return function.derive(instructions);
+	}
 }
