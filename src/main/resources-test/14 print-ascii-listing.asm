@@ -123,6 +123,7 @@ start:
         or bl, bl
         jz @for_1_break
         ; @for_1_body
+@for_1_body:
         ; const t.5(5@function,i64), 1
         mov rax, 1
         lea rbx, [rsp+16]
@@ -166,8 +167,6 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         mov rax, rbx
-        ; jump @strlen_ret
-        jmp @strlen_ret
 @strlen_ret:
         ; release space for local variables
         add rsp, 48
@@ -230,6 +229,7 @@ start:
         or bl, bl
         jz @if_2_end
         ; @if_2_then
+@if_2_then:
         ; const t.4(4@function,u8), 7
         mov al, 7
         lea rbx, [rsp+3]
@@ -370,6 +370,7 @@ start:
         or bl, bl
         jz @for_3_break
         ; @for_3_body
+@for_3_body:
         ; 20:3 if i & 7 == 0
         ; const t.7(7@function,u8), 7
         mov al, 7
@@ -402,6 +403,7 @@ start:
         or bl, bl
         jz @if_4_end
         ; @if_4_then
+@if_4_then:
         ; const t.9(9@function,u8), 32
         mov al, 32
         lea rbx, [rsp+22]
@@ -470,6 +472,7 @@ start:
         or bl, bl
         jz @for_5_break
         ; @for_5_body
+@for_5_body:
         ; 28:3 if i & 15 == 0
         ; const t.16(16@function,u8), 15
         mov al, 15
@@ -502,6 +505,7 @@ start:
         or bl, bl
         jz @if_6_end
         ; @if_6_then
+@if_6_then:
         ; call _, printHex2 [i(1@function,u8)]
         lea rax, [rsp+1]
         mov bl, [rax]
@@ -541,6 +545,7 @@ start:
         or bl, bl
         jz @if_7_end
         ; @if_7_then
+@if_7_then:
         ; const t.22(22@function,u8), 32
         mov al, 32
         lea rbx, [rsp+35]
@@ -590,6 +595,7 @@ start:
         or bl, bl
         jz @if_8_end
         ; @if_8_then
+@if_8_then:
         ; const t.27(27@function,u8), 10
         mov al, 10
         lea rbx, [rsp+40]

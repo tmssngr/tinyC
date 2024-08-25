@@ -46,8 +46,6 @@ start:
         mov [rax], bl
         ; jump @while_1
         jmp @while_1
-@while_1_break:
-@main_ret:
         ; release space for local variables
         add rsp, 16
         ret
