@@ -7,7 +7,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record Variable(@NotNull String name, int index, @NotNull VariableScope scope, @NotNull Type type, int arraySize, @NotNull Location location) {
+public record Variable(@NotNull String name, int index, @NotNull VariableScope scope, @NotNull Type type, int arraySize, boolean canBeRegister, @NotNull Location location) {
 	public boolean isArray() {
 		return arraySize > 0;
 	}
