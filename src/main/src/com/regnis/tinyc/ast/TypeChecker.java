@@ -436,6 +436,7 @@ public final class TypeChecker {
 				if (var.isArray()) {
 					throw new SyntaxException(Messages.addressOfArray(), location);
 				}
+				var.setUsesAddrOf();
 			}
 			else if (!(expression instanceof ExprArrayAccess)
 			         && !(expression instanceof ExprMemberAccess)) {
@@ -691,7 +692,7 @@ public final class TypeChecker {
 	private static List<Variable> toVariables(List<Var> vars) {
 		final List<Variable> globalVariables = new ArrayList<>();
 		for (Var var : vars) {
-			globalVariables.add(new Variable(var.name, var.index, var.scope, var.type, var.arraySize, var.location));
+			globalVariables.add(new Variable(var.name, var.index, var.scope, var.type, var.arraySize, var.canBeRegister, var.location));
 		}
 		return globalVariables;
 	}
@@ -717,6 +718,8 @@ public final class TypeChecker {
 		private final int arraySize;
 		@NotNull private final Location location;
 
+		private boolean canBeRegister;
+
 		private Var(@NotNull String name, int index, @NotNull VariableScope scope, @NotNull Type type, int arraySize, @NotNull Location location) {
 			this.name = name;
 			this.index = index;
@@ -724,6 +727,7 @@ public final class TypeChecker {
 			this.type = type;
 			this.arraySize = arraySize;
 			this.location = location;
+			canBeRegister = arraySize == 0;
 		}
 
 		@Override
@@ -734,6 +738,10 @@ public final class TypeChecker {
 
 		public boolean isArray() {
 			return arraySize > 0;
+		}
+
+		public void setUsesAddrOf() {
+			canBeRegister = false;
 		}
 	}
 

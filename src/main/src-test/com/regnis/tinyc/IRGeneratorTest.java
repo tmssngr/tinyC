@@ -130,6 +130,6 @@ public class IRGeneratorTest {
 
 	@NotNull
 	private static IRVar var(String name, int index, Type type) {
-		return new IRVar(name, index, VariableScope.function, type);
+		return new IRVar(name, index, VariableScope.function, type, true);
 	}
 }

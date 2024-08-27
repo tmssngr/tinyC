@@ -192,9 +192,9 @@ public class TypeCheckerTest {
 		                         List.of(
 				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
 				                                                List.of(
-						                                                new Variable("first", 0, VariableScope.function, Type.U8, 0, loc(2, 2)),
-						                                                new Variable("second", 1, VariableScope.function, Type.pointer(Type.U8), 0, loc(5, 2)),
-						                                                new Variable("s", 2, VariableScope.function, Type.U8, 0, loc(6, 2))
+						                                                new Variable("first", 0, VariableScope.function, Type.U8, 0, true, loc(2, 2)),
+						                                                new Variable("second", 1, VariableScope.function, Type.pointer(Type.U8), 0, true, loc(5, 2)),
+						                                                new Variable("s", 2, VariableScope.function, Type.U8, 0, true, loc(6, 2))
 				                                                ),
 				                                                List.of(
 						                                                assign("first", 0, VariableScope.function, Type.U8,
@@ -235,7 +235,7 @@ public class TypeCheckerTest {
 				                                                List.of(), loc(1, 0))
 		                         ),
 		                         List.of(
-				                         new Variable("array", 0, VariableScope.global, Type.pointer(Type.U8), 2, loc(0, 0))
+				                         new Variable("array", 0, VariableScope.global, Type.pointer(Type.U8), 2, false, loc(0, 0))
 		                         ),
 		                         List.of()
 		             ),
@@ -276,7 +276,7 @@ public class TypeCheckerTest {
 		                         List.of(
 				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
 				                                                List.of(
-						                                                new Variable("x", 0, VariableScope.function, Type.U8, 0, loc(2, 4))
+						                                                new Variable("x", 0, VariableScope.function, Type.U8, 0, true, loc(2, 4))
 				                                                ),
 				                                                List.of(
 						                                                assign("x", 0, VariableScope.function, Type.U8,
@@ -300,7 +300,7 @@ public class TypeCheckerTest {
 		                         List.of(
 				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
 				                                                List.of(
-						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(1, 2))
+						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, true, loc(1, 2))
 				                                                ),
 				                                                List.of(
 						                                                assign("a", 0, VariableScope.function, Type.U8,
@@ -319,7 +319,7 @@ public class TypeCheckerTest {
 				                                                List.of(), loc(0, 0)),
 				                         Function.typedInstance("foo", "void", Type.VOID, List.of(),
 				                                                List.of(
-						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(6, 2))
+						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, true, loc(6, 2))
 				                                                ),
 				                                                List.of(
 						                                                assign("a", 0, VariableScope.function, Type.U8,
@@ -339,7 +339,7 @@ public class TypeCheckerTest {
 						                                                new Function.Arg("i64", Type.I64, "x", loc(10, 11))
 				                                                ),
 				                                                List.of(
-						                                                new Variable("x", 0, VariableScope.argument, Type.I64, 0, loc(10, 11))
+						                                                new Variable("x", 0, VariableScope.argument, Type.I64, 0, true, loc(10, 11))
 				                                                ),
 				                                                List.of(), List.of(), loc(10, 0))
 		                         ),
@@ -363,9 +363,9 @@ public class TypeCheckerTest {
 		                         List.of(
 				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
 				                                                List.of(
-						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, loc(1, 2)),
-						                                                new Variable("b", 1, VariableScope.function, Type.U8, 0, loc(3, 4)),
-						                                                new Variable("b", 2, VariableScope.function, Type.I16, 0, loc(7, 4))
+						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, true, loc(1, 2)),
+						                                                new Variable("b", 1, VariableScope.function, Type.U8, 0, true, loc(3, 4)),
+						                                                new Variable("b", 2, VariableScope.function, Type.I16, 0, true, loc(7, 4))
 				                                                ),
 				                                                List.of(
 						                                                assign("a", 0, VariableScope.function, Type.U8,
@@ -408,7 +408,7 @@ public class TypeCheckerTest {
 						                                                new Function.Arg("i64", Type.I64, "x", loc(12, 11))
 				                                                ),
 				                                                List.of(
-						                                                new Variable("x", 0, VariableScope.argument, Type.I64, 0, loc(12, 11))
+						                                                new Variable("x", 0, VariableScope.argument, Type.I64, 0, true, loc(12, 11))
 				                                                ),
 				                                                List.of(), List.of(), loc(12, 0))
 		                         ),
@@ -461,7 +461,7 @@ public class TypeCheckerTest {
 		                         List.of(
 				                         Function.typedInstance("bla", "void", Type.VOID, List.of(),
 				                                                List.of(
-						                                                new Variable("foos", 0, VariableScope.function, Type.pointer(Type.struct("Foo")), 10, loc(3, 2))
+						                                                new Variable("foos", 0, VariableScope.function, Type.pointer(Type.struct("Foo")), 10, false, loc(3, 2))
 				                                                ),
 				                                                List.of(
 						                                                new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
