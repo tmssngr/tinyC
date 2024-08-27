@@ -1,6 +1,7 @@
 package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.io.*;
@@ -34,7 +35,7 @@ public class Compiler {
 	}
 
 	@NotNull
-	private static Path compile(@NotNull Path inputFile) throws IOException, InterruptedException {
+	public static Path compile(@NotNull Path inputFile) throws IOException, InterruptedException {
 		final Program parsedProgram = Parser.parse(inputFile, Set.of("X86_64"));
 
 		final TypeChecker checker = new TypeChecker(Type.I64);
@@ -45,10 +46,12 @@ public class Compiler {
 		final Path astFile = useExtension(inputFile, ".ast");
 		final Path astSimpleFile = useExtension(inputFile, ".asts");
 		final Path irFile = useExtension(inputFile, ".ir");
+		final Path cfgFile = useExtension(inputFile, ".cfg");
 		final Path asmFile = useExtension(inputFile, ".asm");
 		final Path exeFile = useExtension(inputFile, ".exe");
 		Files.deleteIfExists(astFile);
 		Files.deleteIfExists(irFile);
+		Files.deleteIfExists(cfgFile);
 		Files.deleteIfExists(asmFile);
 		Files.deleteIfExists(exeFile);
 
@@ -60,6 +63,16 @@ public class Compiler {
 
 		final IRProgram irProgram = IRGenerator.convert(program);
 		write(irProgram, irFile);
+
+		try (final BufferedWriter writer = Files.newBufferedWriter(cfgFile)) {
+			final IRWriter irWriter = new IRWriter(writer);
+			for (IRFunction function : irProgram.functions()) {
+				if (function.asmLines().isEmpty()) {
+					final ControlFlowGraph cfg = CfgGenerator.create(function);
+					irWriter.write(cfg);
+				}
+			}
+		}
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);
