@@ -302,54 +302,66 @@ start:
         lea rbx, [var_2]
         mov [rbx], rax
         ; end initialize global variables
-        ; cast t.1(1@function,i64), ptrToSpace(2@global,i16*)
+        ; cast t.0(0@function,i64), next(1@global,i16)
+        lea rax, [var_1]
+        mov bx, [rax]
+        movzx rbx, bx
+        lea rax, [rsp+0]
+        mov [rax], rbx
+        ; call _, printIntLf [t.0(0@function,i64)]
+        lea rax, [rsp+0]
+        mov rbx, [rax]
+        push rbx
+          call @printIntLf
+        add rsp, 8
+        ; cast t.2(2@function,i64), ptrToSpace(2@global,i16*)
         lea rax, [var_2]
         mov rbx, [rax]
-        lea rax, [rsp+8]
+        lea rax, [rsp+16]
         mov [rax], rbx
-        ; const t.3(3@function,i64), 1
+        ; const t.4(4@function,i64), 1
         mov rax, 1
-        lea rbx, [rsp+24]
-        mov [rbx], rax
-        ; const t.4(4@function,i64), 2
-        mov rax, 2
         lea rbx, [rsp+32]
         mov [rbx], rax
-        ; mul t.2(2@function,i64), t.3(3@function,i64), t.4(4@function,i64)
-        lea rax, [rsp+24]
-        mov rbx, [rax]
+        ; const t.5(5@function,i64), 2
+        mov rax, 2
+        lea rbx, [rsp+40]
+        mov [rbx], rax
+        ; mul t.3(3@function,i64), t.4(4@function,i64), t.5(5@function,i64)
         lea rax, [rsp+32]
+        mov rbx, [rax]
+        lea rax, [rsp+40]
         mov rcx, [rax]
         imul  rbx, rcx
-        lea rax, [rsp+16]
+        lea rax, [rsp+24]
         mov [rax], rbx
-        ; add t.0(0@function,i16*), t.1(1@function,i64), t.2(2@function,i64)
-        lea rax, [rsp+8]
-        mov rbx, [rax]
+        ; add t.1(1@function,i16*), t.2(2@function,i64), t.3(3@function,i64)
         lea rax, [rsp+16]
+        mov rbx, [rax]
+        lea rax, [rsp+24]
         mov rcx, [rax]
         add rbx, rcx
-        lea rax, [rsp+0]
+        lea rax, [rsp+8]
         mov [rax], rbx
-        ; cast ptrToSpace(2@global,i16*), t.0(0@function,i16*)
-        lea rax, [rsp+0]
+        ; cast ptrToSpace(2@global,i16*), t.1(1@function,i16*)
+        lea rax, [rsp+8]
         mov rbx, [rax]
         lea rax, [var_2]
         mov [rax], rbx
-        ; load t.6(6@function,i16), [ptrToSpace(2@global,i16*)]
+        ; load t.7(7@function,i16), [ptrToSpace(2@global,i16*)]
         lea rax, [var_2]
         mov rbx, [rax]
         mov ax, [rbx]
-        lea rbx, [rsp+48]
+        lea rbx, [rsp+56]
         mov [rbx], ax
-        ; cast t.5(5@function,i64), t.6(6@function,i16)
-        lea rax, [rsp+48]
+        ; cast t.6(6@function,i64), t.7(7@function,i16)
+        lea rax, [rsp+56]
         mov bx, [rax]
         movzx rbx, bx
-        lea rax, [rsp+40]
+        lea rax, [rsp+48]
         mov [rax], rbx
-        ; call _, printIntLf [t.5(5@function,i64)]
-        lea rax, [rsp+40]
+        ; call _, printIntLf [t.6(6@function,i64)]
+        lea rax, [rsp+48]
         mov rbx, [rax]
         push rbx
           call @printIntLf
