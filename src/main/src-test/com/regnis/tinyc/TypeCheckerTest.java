@@ -107,7 +107,7 @@ public class TypeCheckerTest {
 		testStatement("");
 		testStatement("u8* prev = ptr1 + 1;");
 		testStatement("u8* prev = ptr1 - 2;");
-		testStatement("u8 cmp = ptr1 == ptr2;");
+		testStatement("bool cmp = ptr1 == ptr2;");
 		testIllegalStatement(Messages.operationNotSupportedForTypes(ExprBinary.Op.Sub, Type.pointer(Type.U8), Type.pointer(Type.U8)), 16,
 		                     "u8  diff = ptr1 - ptr2;");
 		testIllegalStatement(Messages.operationNotSupportedForTypes(ExprBinary.Op.Sub, Type.U8, Type.pointer(Type.U8)), 13,

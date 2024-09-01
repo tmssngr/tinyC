@@ -115,8 +115,8 @@
 	const t.4(4@function,i64), 1
 	const t.5(5@function,i64), 2
 	mul t.3(3@function,i64), t.4(4@function,i64), t.5(5@function,i64)
-	add t.1(1@function,i16*), t.2(2@function,i64), t.3(3@function,i64)
-	cast ptrToSpace(2@global,i16*), t.1(1@function,i16*)
+	add t.1(1@function,i64), t.2(2@function,i64), t.3(3@function,i64)
+	cast ptrToSpace(2@global,i16*), t.1(1@function,i64)
 	load t.7(7@function,i16), [ptrToSpace(2@global,i16*)]
 	cast t.6(6@function,i64), t.7(7@function,i16)
 	call _, printIntLf [t.6(6@function,i64)]

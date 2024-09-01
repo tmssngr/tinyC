@@ -131,7 +131,7 @@ start:
         mov rax, 1
         lea rbx, [rsp+40]
         mov [rbx], rax
-        ; add t.6(6@function,u8*), t.7(7@function,i64), t.8(8@function,i64)
+        ; add t.6(6@function,i64), t.7(7@function,i64), t.8(8@function,i64)
         lea rax, [rsp+32]
         mov rbx, [rax]
         lea rax, [rsp+40]
@@ -139,7 +139,7 @@ start:
         add rbx, rcx
         lea rax, [rsp+24]
         mov [rax], rbx
-        ; cast str(0@argument,u8*), t.6(6@function,u8*)
+        ; cast str(0@argument,u8*), t.6(6@function,i64)
         lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+56]

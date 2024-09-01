@@ -39,8 +39,8 @@
 @for_1_continue:
 	cast t.7(7@function,i64), str(0@argument,u8*)
 	const t.8(8@function,i64), 1
-	add t.6(6@function,u8*), t.7(7@function,i64), t.8(8@function,i64)
-	cast str(0@argument,u8*), t.6(6@function,u8*)
+	add t.6(6@function,i64), t.7(7@function,i64), t.8(8@function,i64)
+	cast str(0@argument,u8*), t.6(6@function,i64)
 	jump @for_1
 @for_1_break:
 	; 40:9 return length

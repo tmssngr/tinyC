@@ -335,7 +335,7 @@ start:
         imul  rbx, rcx
         lea rax, [rsp+24]
         mov [rax], rbx
-        ; add t.1(1@function,i16*), t.2(2@function,i64), t.3(3@function,i64)
+        ; add t.1(1@function,i64), t.2(2@function,i64), t.3(3@function,i64)
         lea rax, [rsp+16]
         mov rbx, [rax]
         lea rax, [rsp+24]
@@ -343,7 +343,7 @@ start:
         add rbx, rcx
         lea rax, [rsp+8]
         mov [rax], rbx
-        ; cast ptrToSpace(2@global,i16*), t.1(1@function,i16*)
+        ; cast ptrToSpace(2@global,i16*), t.1(1@function,i64)
         lea rax, [rsp+8]
         mov rbx, [rax]
         lea rax, [var_2]

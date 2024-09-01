@@ -506,7 +506,7 @@ public final class TypeChecker {
 			if (op == ExprBinary.Op.Equals
 			    || op == ExprBinary.Op.NotEquals) {
 				if (leftType.isPointer() && rightType.isPointer()) {
-					return new ExprBinary(op, Type.U8, left, right, location);
+					return new ExprBinary(op, Type.BOOL, left, right, location);
 				}
 			}
 			else if (op == ExprBinary.Op.Add
@@ -522,7 +522,7 @@ public final class TypeChecker {
 						                                  rightLocation),
 						                       rightLocation);
 					}
-					return ExprCast.autocast(new ExprBinary(op, leftType, left, right, location),
+					return ExprCast.autocast(new ExprBinary(op, pointerIntType, left, right, location),
 					                         leftType);
 				}
 			}

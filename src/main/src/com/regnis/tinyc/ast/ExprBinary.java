@@ -10,6 +10,21 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record ExprBinary(@NotNull Op op, @Nullable Type type, @NotNull Expression left, @NotNull Expression right, @NotNull Location location) implements Expression {
+	public ExprBinary {
+		if (type != null) {
+			final Type leftType = left.typeNotNull();
+			final Type rightType = right.typeNotNull();
+			if (op.kind == OpKind.Relational) {
+				Utils.assertTrue(Objects.equals(leftType, rightType), leftType + " vs. " + rightType);
+				Utils.assertTrue(Objects.equals(type, Type.BOOL), String.valueOf(type));
+			}
+			else {
+				Utils.assertTrue(Objects.equals(type, leftType), type + " vs. " + leftType);
+				Utils.assertTrue(Objects.equals(type, rightType), type + " vs. " + rightType);
+			}
+		}
+	}
+
 	public ExprBinary(@NotNull Op op, @NotNull Expression left, @NotNull Expression right, @NotNull Location location) {
 		this(op, null, left, right, location);
 	}
