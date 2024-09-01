@@ -45,6 +45,7 @@ public record Type(@NotNull String name, @Nullable Type toType, boolean isInt) {
 	public static Type getDefaultType(@NotNull String type) {
 		return switch (type) {
 			case "void" -> VOID;
+			case "bool" -> BOOL;
 			case "u8" -> U8;
 			case "i16" -> I16;
 			case "i32" -> I32;
