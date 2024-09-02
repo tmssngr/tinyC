@@ -202,6 +202,15 @@ public class ParserTest {
 				                              print(2);
 				                            }"""));
 
+		assertEquals(new StmtIf(new ExprVarAccess("value", locS(0, 4)),
+		                        List.of(),
+		                        List.of(),
+		                        locS(0, 0)),
+		             parseStatement("""
+				                   if (value) {
+				                   }
+				                   """));
+
 		assertEquals(new StmtCompound(List.of(
 				             new StmtIf(new ExprBinary(ExprBinary.Op.Gt,
 				                                       new ExprVarAccess("i", locS(1, 6)),

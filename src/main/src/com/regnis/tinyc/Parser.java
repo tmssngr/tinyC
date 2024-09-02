@@ -421,7 +421,9 @@ public final class Parser {
 	private StmtIf handleIf() {
 		final Location location = getLocation();
 		consume(TokenType.IF);
-		final Expression condition = getExpressionInParenthesis();
+		consume(TokenType.L_PAREN);
+		final Expression condition = getExpression();
+		consume(TokenType.R_PAREN);
 		final List<Statement> thenStatements = getStatements();
 		List<Statement> elseStatements = List.of();
 		if (isConsume(TokenType.ELSE)) {
@@ -477,7 +479,9 @@ public final class Parser {
 	private Statement handleWhile() {
 		final Location location = getLocation();
 		consume(TokenType.WHILE);
-		final Expression condition = getExpressionInParenthesis();
+		consume(TokenType.L_PAREN);
+		final Expression condition = getExpression();
+		consume(TokenType.R_PAREN);
 		final List<Statement> bodyStatements = getStatements();
 		return new StmtLoop(condition, bodyStatements, List.of(), location);
 	}
