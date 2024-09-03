@@ -28,6 +28,11 @@ public class Messages {
 	}
 
 	@NotNull
+	public static String needExplicitCast(Type type1, Type type2) {
+		return "Need explicit cast from " + type1 + " to " + type2;
+	}
+
+	@NotNull
 	public static String functionAlreadDeclaredAt(String name, Location location) {
 		return "Function '" + name + "' has already been declared at " + location;
 	}

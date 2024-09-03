@@ -295,7 +295,7 @@ public final class TypeChecker {
 		final int expectedSize = getTypeSize(type);
 		final int actualSize = getTypeSize(expressionType);
 		if (actualSize >= expectedSize) {
-			throw new SyntaxException(Messages.cantCastFromTo(expressionType, type), location);
+			throw new SyntaxException(Messages.needExplicitCast(expressionType, type), location);
 		}
 
 		if (expression instanceof ExprIntLiteral literal) {

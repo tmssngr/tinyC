@@ -17,7 +17,7 @@ public class TypeCheckerTest {
 	@Test
 	public void testAutoCast() {
 		testStatement("sint16 = uint8;");
-		testIllegalStatement(Messages.cantCastFromTo(Type.I16, Type.U8), 6,
+		testIllegalStatement(Messages.needExplicitCast(Type.I16, Type.U8), 6,
 		                     "uint8 = sint16;");
 	}
 
