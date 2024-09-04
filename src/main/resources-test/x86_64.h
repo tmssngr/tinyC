@@ -69,6 +69,16 @@ void printStringLength(u8* str, i64 length) asm {
 i16 getChar() asm {
 	"sub    rsp, 28h" // 8h to compensate for return address, 20h for calling _getch
 	"  call [_getch]"
+	"  test al, al"
+	"  js   .1"
+	"  jnz  .2"
+	"  dec  al"
+	".1:"
+	"  mov  rbx, rax"
+	"  shl  rbx, 8"
+	"  call [_getch]"
+	"  or   rax, rbx"
+	".2:"
 	"add    rsp, 28h"
 	"ret"
 }
