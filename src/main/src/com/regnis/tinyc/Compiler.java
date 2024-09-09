@@ -99,8 +99,7 @@ public class Compiler {
 		processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
 		processBuilder.environment().put("INCLUDE",
 		                                 fasmDir.resolve("INCLUDE").toString());
-		final Process process = processBuilder.start();
-		final int result = process.waitFor();
+		final int result = execute(processBuilder);
 		if (result == 0) {
 			return true;
 		}
@@ -118,13 +117,20 @@ public class Compiler {
 			processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
 		}
 		processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
-		final Process process = processBuilder.start();
-		final int result = process.waitFor();
+		final int result = execute(processBuilder);
 		if (result == 0) {
 			System.out.println("OK");
 			return;
 		}
 
 		System.err.println("Error " + result);
+	}
+
+	private static int execute(ProcessBuilder processBuilder) throws IOException, InterruptedException {
+		final long start = System.currentTimeMillis();
+		final Process process = processBuilder.start();
+		final long stop = System.currentTimeMillis();
+		System.out.println(processBuilder.command().getFirst() + ": " + (stop - start) + "ms");
+		return process.waitFor();
 	}
 }
