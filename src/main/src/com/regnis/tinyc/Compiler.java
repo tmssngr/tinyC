@@ -46,6 +46,7 @@ public class Compiler {
 		final Path astFile = useExtension(inputFile, ".ast");
 		final Path astSimpleFile = useExtension(inputFile, ".asts");
 		final Path irFile = useExtension(inputFile, ".ir");
+		final Path irRegFile = useExtension(inputFile, ".irr");
 		final Path cfgFile = useExtension(inputFile, ".cfg");
 		final Path asmFile = useExtension(inputFile, ".asm");
 		final Path exeFile = useExtension(inputFile, ".exe");
@@ -69,8 +70,9 @@ public class Compiler {
 			final IRWriter irWriter = new IRWriter(writer);
 			for (IRFunction function : irProgram.functions()) {
 				if (function.asmLines().isEmpty()) {
-					final ControlFlowGraph cfg = CfgGenerator.create(function);
+					ControlFlowGraph cfg = CfgGenerator.create(function);
 					irWriter.write(cfg);
+					cfg = LinearScanRegisterAllocation.process(cfg);
 					final IRFunction optimizedFunction = cfg.flatten();
 					functions.add(optimizedFunction);
 				}
@@ -81,6 +83,7 @@ public class Compiler {
 		}
 
 		irProgram = irProgram.derive(functions);
+		write(irProgram, irRegFile);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);

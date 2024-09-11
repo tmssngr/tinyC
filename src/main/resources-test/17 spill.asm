@@ -235,99 +235,97 @@ start:
         ret
 
         ; void main
-        ;   rsp+0: var pos
-        ;   rsp+8: var x
-        ;   rsp+16: var t.2
-        ;   rsp+24: var t.3
-        ;   rsp+32: var t.4
-        ;   rsp+33: var t.5
-        ;   rsp+40: var t.6
-        ;   rsp+48: var t.7
-        ;   rsp+56: var t.8
-        ;   rsp+64: var t.9
-        ;   rsp+72: var t.10
-        ;   rsp+80: var t.11
-        ;   rsp+88: var t.12
-        ;   rsp+96: var t.13
-        ;   rsp+104: var t.14
-        ;   rsp+112: var t.15
-        ;   rsp+120: var t.16
-        ;   rsp+128: var t.17
-        ;   rsp+136: var t.18
+        ;   rsp+0: var a
+        ;   rsp+2: var b
+        ;   rsp+4: var c
+        ;   rsp+6: var d
+        ;   rsp+8: var t.4
+        ;   rsp+16: var t.5
+        ;   rsp+24: var t.6
+        ;   rsp+32: var t.7
+        ;   rsp+40: var t.8
+        ;   rsp+48: var t.9
+        ;   rsp+56: var t.10
+        ;   rsp+64: var t.11
 @main:
         ; reserve space for local variables
-        sub rsp, 144
-        ; const r.0(0@register,u8), 1
-        mov cl, 1
-        ; 9:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=9:2].x
-        ; addrof r.1(1@register,u8*), pos(0@function,Pos)
-        lea rax, [rsp+0]
-        mov rdx, rax
-        ; store [r.1(1@register,u8*)], r.0(0@register,u8)
-        mov [rdx], cl
-        ; 10:14 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:10].x
-        ; addrof r.0(0@register,u8*), pos(0@function,Pos)
-        lea rax, [rsp+0]
-        mov rcx, rax
-        ; load r.0(0@register,u8), [r.0(0@register,u8*)]
-        mov cl, [rcx]
-        ; const r.1(1@register,u8), 1
-        mov dl, 1
-        ; add r.0(0@register,u8), r.0(0@register,u8), r.1(1@register,u8)
-        add cl, dl
-        ; 10:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:2].y
-        ; addrof r.1(1@register,u8*), pos(0@function,Pos)
-        lea rax, [rsp+0]
-        mov rdx, rax
-        ; const r.2(2@register,u8*), 1
-        mov r9, 1
-        ; add r.1(1@register,u8*), r.1(1@register,u8*), r.2(2@register,u8*)
-        add rdx, r9
-        ; store [r.1(1@register,u8*)], r.0(0@register,u8)
-        mov [rdx], cl
-        ; 11:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=11:13].x
-        ; addrof r.0(0@register,u8*), pos(0@function,Pos)
-        lea rax, [rsp+0]
-        mov rcx, rax
-        ; load r.0(0@register,u8), [r.0(0@register,u8*)]
-        mov cl, [rcx]
-        ; cast r.0(0@register,i64), r.0(0@register,u8)
-        movzx rcx, cl
+        sub rsp, 80
+        ; const r.0(0@register,i16), 0
+        mov cx, 0
+        ; const r.1(1@register,i16), 1
+        mov dx, 1
+        ; const r.2(2@register,i16), 2
+        mov r9w, 2
+        ; const r.3(3@register,i16), 3
+        mov r10w, 3
+        ; Spill c
+        ; copy c(2@function,i16), r.2(2@register,i16)
+        lea rbx, [rsp+4]
+        mov [rbx], r9w
+        ; add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        mov r9w, cx
+        add r9w, dx
+        ; cast r.2(2@register,i64), r.2(2@register,i16)
+        movzx r9, r9w
+        ; copy a(0@function,i16), r.0(0@register,i16)
+        lea rbx, [rsp+0]
+        mov [rbx], cx
+        ; copy b(1@function,i16), r.1(1@register,i16)
+        lea rbx, [rsp+2]
+        mov [rbx], dx
+        ; copy d(3@function,i16), r.3(3@register,i16)
+        lea rbx, [rsp+6]
+        mov [rbx], r10w
+        ; call _, printIntLf [r.2(2@register,i64)]
+        push r9
+          call @printIntLf
+        add rsp, 8
+        ; copy r.0(0@register,i16), c(2@function,i16)
+        lea rbx, [rsp+4]
+        mov cx, [rbx]
+        ; copy r.1(1@register,i16), d(3@function,i16)
+        lea rbx, [rsp+6]
+        mov dx, [rbx]
+        ; add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        mov r9w, cx
+        add r9w, dx
+        ; cast r.2(2@register,i64), r.2(2@register,i16)
+        movzx r9, r9w
+        ; call _, printIntLf [r.2(2@register,i64)]
+        push r9
+          call @printIntLf
+        add rsp, 8
+        ; copy r.0(0@register,i16), d(3@function,i16)
+        lea rbx, [rsp+6]
+        mov cx, [rbx]
+        ; copy r.1(1@register,i16), c(2@function,i16)
+        lea rbx, [rsp+4]
+        mov dx, [rbx]
+        ; add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        add cx, dx
+        ; cast r.0(0@register,i64), r.0(0@register,i16)
+        movzx rcx, cx
         ; call _, printIntLf [r.0(0@register,i64)]
         push rcx
           call @printIntLf
         add rsp, 8
-        ; 12:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=12:13].y
-        ; addrof r.0(0@register,u8*), pos(0@function,Pos)
-        lea rax, [rsp+0]
-        mov rcx, rax
-        ; const r.1(1@register,u8*), 1
-        mov rdx, 1
-        ; add r.0(0@register,u8*), r.0(0@register,u8*), r.1(1@register,u8*)
-        add rcx, rdx
-        ; load r.0(0@register,u8), [r.0(0@register,u8*)]
-        mov cl, [rcx]
-        ; cast r.0(0@register,i64), r.0(0@register,u8)
-        movzx rcx, cl
-        ; call _, printIntLf [r.0(0@register,i64)]
-        push rcx
-          call @printIntLf
-        add rsp, 8
-        ; 13:15 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=13:11].x
-        ; addrof r.0(0@register,u8*), pos(0@function,Pos)
-        lea rax, [rsp+0]
-        mov rcx, rax
-        ; load r.0(0@register,u8), [r.0(0@register,u8*)]
-        mov cl, [rcx]
-        ; cast r.0(0@register,i64), r.0(0@register,u8)
-        movzx rcx, cl
+        ; copy r.0(0@register,i16), b(1@function,i16)
+        lea rbx, [rsp+2]
+        mov cx, [rbx]
+        ; copy r.1(1@register,i16), a(0@function,i16)
+        lea rbx, [rsp+0]
+        mov dx, [rbx]
+        ; add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        add cx, dx
+        ; cast r.0(0@register,i64), r.0(0@register,i16)
+        movzx rcx, cx
         ; call _, printIntLf [r.0(0@register,i64)]
         push rcx
           call @printIntLf
         add rsp, 8
 @main_ret:
         ; release space for local variables
-        add rsp, 144
+        add rsp, 80
         ret
 init:
         sub rsp, 20h
