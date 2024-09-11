@@ -84,7 +84,7 @@ public class Compiler {
 			}
 		}
 
-		irProgram = irProgram.derive(functions);
+		irProgram = CleanupLocalUnusedVariables.process(irProgram.derive(functions));
 		write(irProgram, irRegFile);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {

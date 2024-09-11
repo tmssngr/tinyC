@@ -1,7 +1,6 @@
 @printString:
  Local variables
 	arg 0: str
-	var 1: length
 	; 6 pc
 	call r.0(0@register,i64), strlen, [str(0@argument,u8*)]
 	call _, printStringLength [str(0@argument,u8*), r.0(0@register,i64)]
@@ -10,8 +9,6 @@
 @printChar:
  Local variables
 	arg 0: chr
-	var 1: t.1
-	var 2: t.2
 	; 4 pc
 	addrof r.0(0@register,u8*), chr(0@argument,u8)
 	const r.1(1@register,i64), 1
@@ -23,22 +20,6 @@
 	arg 0: number
 	var 1: buffer
 	var 2: pos
-	var 3: remainder
-	var 4: digit
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
 	; 36 pc
 	const r.0(0@register,u8), 20
 	; 13:2 while true
@@ -82,13 +63,6 @@
  Local variables
 	arg 0: str
 	var 1: length
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
 	; 31 pc
 	const r.0(0@register,i64), 0
 	; 37:2 for *str != 0
@@ -171,28 +145,6 @@
 @initRandom_ret:
 
 @random:
- Local variables
-	var 0: r
-	var 1: b
-	var 2: c
-	var 3: d
-	var 4: e
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
-	var 19: t.19
-	var 20: t.20
 	; 19 pc
 	copy r.0(0@register,i32), __random__(0@global,i32)
 	const r.1(1@register,i32), 524287
@@ -225,9 +177,6 @@
  Local variables
 	arg 0: row
 	arg 1: column
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
 	; 9 pc
 	; 15:21 return row * 40 + column
 	const r.0(0@register,i16), 40
@@ -242,10 +191,6 @@
  Local variables
 	arg 0: row
 	arg 1: column
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
 	; 10 pc
 	; 19:15 return [...]
 	call r.0(0@register,i16), rowColumnToCell, [row(0@argument,i16), column(1@argument,i16)]
@@ -258,10 +203,6 @@
 @isBomb:
  Local variables
 	arg 0: cell
-	var 1: t.1
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
 	; 6 pc
 	; 23:27 return cell & 1 != 0
 	const r.0(0@register,u8), 1
@@ -275,10 +216,6 @@
 @isOpen:
  Local variables
 	arg 0: cell
-	var 1: t.1
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
 	; 6 pc
 	; 27:27 return cell & 2 != 0
 	const r.0(0@register,u8), 2
@@ -292,10 +229,6 @@
 @isFlag:
  Local variables
 	arg 0: cell
-	var 1: t.1
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
 	; 6 pc
 	; 31:27 return cell & 4 != 0
 	const r.0(0@register,u8), 4
@@ -311,10 +244,6 @@
 	arg 0: row
 	arg 1: column
 	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
 	; 41 pc
 	; 36:21 return row > 0 && row < 20 && column > 0 && column < 40
 	; 36:21 logic and
@@ -356,9 +285,6 @@
 	arg 0: row
 	arg 1: column
 	arg 2: cell
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
 	; 12 pc
 	call r.0(0@register,i16), rowColumnToCell, [row(0@argument,i16), column(1@argument,i16)]
 	cast r.0(0@register,i64), r.0(0@register,i16)
@@ -376,16 +302,6 @@
 	var 4: r
 	var 5: dc
 	var 6: c
-	var 7: cell
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
 	; 77 pc
 	const r.0(0@register,u8), 0
 	const r.1(1@register,i16), -1
@@ -455,14 +371,6 @@
 	arg 1: column
 	arg 2: rowCursor
 	arg 3: columnCursor
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
 	; 30 pc
 	; 61:2 if rowCursor == row
 	copy r.0(0@register,i16), rowCursor(2@argument,i16)
@@ -507,12 +415,6 @@
 	arg 2: column
 	var 3: chr
 	var 4: count
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
 	; 47 pc
 	const r.0(0@register,u8), 46
 	; 74:2 if isOpen([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=74:13]])
@@ -564,20 +466,6 @@
 	arg 1: columnCursor
 	var 2: row
 	var 3: column
-	var 4: spacer
-	var 5: cell
-	var 6: spacer
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
 	; 64 pc
 	const r.0(0@register,i16), 0
 	const r.1(1@register,i16), 0
@@ -630,10 +518,6 @@
 @printSpaces:
  Local variables
 	arg 0: i
-	var 1: t.1
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
 	; 14 pc
 @for_20:
 	const r.0(0@register,i16), 0
@@ -656,12 +540,6 @@
  Local variables
 	arg 0: value
 	var 1: count
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
 	; 40 pc
 	const r.0(0@register,u8), 0
 	; 118:2 if value < 0
@@ -705,27 +583,8 @@
 	var 0: count
 	var 1: r
 	var 2: c
-	var 3: cell
-	var 4: leftDigits
-	var 5: bombDigits
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
-	var 19: t.19
-	var 20: t.20
-	var 21: t.21
-	var 22: t.22
-	var 23: t.23
+	var 3: leftDigits
+	var 4: bombDigits
 	; 81 pc
 	const r.0(0@register,i16), 0
 	const r.1(1@register,i16), 0
@@ -776,13 +635,13 @@
 @for_24_break:
 	call r.0(0@register,u8), getDigitCount, [count(0@function,i16)]
 	const r.1(1@register,i16), 40
-	copy leftDigits(4@function,u8), r.0(0@register,u8)
+	copy leftDigits(3@function,u8), r.0(0@register,u8)
 	call r.0(0@register,u8), getDigitCount, [r.1(1@register,i16)]
 	const r.1(1@register,u8*), [string-1]
-	copy bombDigits(5@function,u8), r.0(0@register,u8)
+	copy bombDigits(4@function,u8), r.0(0@register,u8)
 	call _, printString [r.1(1@register,u8*)]
-	copy r.0(0@register,u8), bombDigits(5@function,u8)
-	copy r.1(1@register,u8), leftDigits(4@function,u8)
+	copy r.0(0@register,u8), bombDigits(4@function,u8)
+	copy r.1(1@register,u8), leftDigits(3@function,u8)
 	sub r.0(0@register,u8), r.0(0@register,u8), r.1(1@register,u8)
 	cast r.0(0@register,i16), r.0(0@register,u8)
 	call _, printSpaces [r.0(0@register,i16)]
@@ -799,9 +658,6 @@
 @abs:
  Local variables
 	arg 0: a
-	var 1: t.1
-	var 2: t.2
-	var 3: t.3
 	; 15 pc
 	; 154:2 if a < 0
 	const r.0(0@register,i16), 0
@@ -824,13 +680,6 @@
  Local variables
 	var 0: r
 	var 1: c
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
 	; 37 pc
 	const r.0(0@register,i16), 0
 	; 161:2 for r < 20
@@ -875,23 +724,7 @@
 	var 2: bombs
 	var 3: row
 	var 4: column
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
-	var 19: t.19
-	var 20: t.20
-	var 21: t.21
+	var 5: t.13
 	; 62 pc
 	const r.0(0@register,i16), 40
 	; 169:2 for bombs > 0
@@ -920,7 +753,7 @@
 	call r.0(0@register,i16), abs, [r.3(3@register,i16)]
 	const r.1(1@register,i16), 1
 	gt r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	copy t.13(13@function,bool), r.0(0@register,bool)
+	copy t.13(5@function,bool), r.0(0@register,bool)
 	branch r.0(0@register,bool), true, @or_next_32
 @or_2nd_32:
 	copy r.0(0@register,i16), column(4@function,i16)
@@ -929,9 +762,9 @@
 	call r.0(0@register,i16), abs, [r.2(2@register,i16)]
 	const r.1(1@register,i16), 1
 	gt r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	copy t.13(13@function,bool), r.0(0@register,bool)
+	copy t.13(5@function,bool), r.0(0@register,bool)
 @or_next_32:
-	copy r.0(0@register,bool), t.13(13@function,bool)
+	copy r.0(0@register,bool), t.13(5@function,bool)
 	branch r.0(0@register,bool), false, @if_31_end
 @if_31_then:
 	const r.0(0@register,u8), 1
@@ -955,23 +788,7 @@
 	var 4: dc
 	var 5: c
 	var 6: cell
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
-	var 19: t.19
-	var 20: t.20
-	var 21: t.21
-	var 22: t.22
-	var 23: t.23
+	var 7: t.14
 	; 111 pc
 	; 180:2 if getBombCountAround([ExprVarAccess[varName=row, index=0, scope=argument, type=i16, varIsArray=false, location=180:25], ExprVarAccess[varName=column, index=1, scope=argument, type=i16, varIsArray=false, location=180:30]]) != 0
 	call r.0(0@register,u8), getBombCountAround, [row(0@argument,i16), column(1@argument,i16)]
@@ -1008,15 +825,15 @@
 	const r.0(0@register,i16), 0
 	copy r.1(1@register,i16), dr(2@function,i16)
 	equals r.0(0@register,bool), r.1(1@register,i16), r.0(0@register,i16)
-	copy t.14(14@function,bool), r.0(0@register,bool)
+	copy t.14(7@function,bool), r.0(0@register,bool)
 	branch r.0(0@register,bool), false, @and_next_37
 @and_2nd_37:
 	const r.0(0@register,i16), 0
 	copy r.1(1@register,i16), dc(4@function,i16)
 	equals r.0(0@register,bool), r.1(1@register,i16), r.0(0@register,i16)
-	copy t.14(14@function,bool), r.0(0@register,bool)
+	copy t.14(7@function,bool), r.0(0@register,bool)
 @and_next_37:
-	copy r.0(0@register,bool), t.14(14@function,bool)
+	copy r.0(0@register,bool), t.14(7@function,bool)
 	branch r.0(0@register,bool), false, @if_36_end
 @if_36_then:
 	jump @for_35_continue
@@ -1069,59 +886,6 @@
 	var 3: chr
 	var 4: cell
 	var 5: cell
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
-	var 19: t.19
-	var 20: t.20
-	var 21: t.21
-	var 22: t.22
-	var 23: t.23
-	var 24: t.24
-	var 25: t.25
-	var 26: t.26
-	var 27: t.27
-	var 28: t.28
-	var 29: t.29
-	var 30: t.30
-	var 31: t.31
-	var 32: t.32
-	var 33: t.33
-	var 34: t.34
-	var 35: t.35
-	var 36: t.36
-	var 37: t.37
-	var 38: t.38
-	var 39: t.39
-	var 40: t.40
-	var 41: t.41
-	var 42: t.42
-	var 43: t.43
-	var 44: t.44
-	var 45: t.45
-	var 46: t.46
-	var 47: t.47
-	var 48: t.48
-	var 49: t.49
-	var 50: t.50
-	var 51: t.51
-	var 52: t.52
-	var 53: t.53
-	var 54: t.54
-	var 55: t.55
-	var 56: t.56
-	var 57: t.57
-	var 58: t.58
 	; 197 pc
 	; begin initialize global variables
 	const r.0(0@register,i32), 0
