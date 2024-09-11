@@ -21,14 +21,10 @@ start:
           call [ExitProcess]
 
         ; void printChar
-        ;   rsp+24: arg chr
-        ;   rsp+0: var t.1
-        ;   rsp+8: var t.2
+        ;   rsp+8: arg chr
 @printChar:
-        ; reserve space for local variables
-        sub rsp, 16
         ; addrof r.0(0@register,u8*), chr(0@argument,u8)
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov rcx, rax
         ; const r.1(1@register,i64), 1
         mov rdx, 1
@@ -38,33 +34,15 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; void printUint
-        ;   rsp+136: arg number
+        ;   rsp+40: arg number
         ;   rsp+0: var buffer
         ;   rsp+20: var pos
-        ;   rsp+24: var remainder
-        ;   rsp+32: var digit
-        ;   rsp+33: var t.5
-        ;   rsp+40: var t.6
-        ;   rsp+48: var t.7
-        ;   rsp+56: var t.8
-        ;   rsp+57: var t.9
-        ;   rsp+64: var t.10
-        ;   rsp+72: var t.11
-        ;   rsp+80: var t.12
-        ;   rsp+88: var t.13
-        ;   rsp+96: var t.14
-        ;   rsp+104: var t.15
-        ;   rsp+112: var t.16
-        ;   rsp+120: var t.17
-        ;   rsp+121: var t.18
 @printUint:
         ; reserve space for local variables
-        sub rsp, 128
+        sub rsp, 32
         ; const r.0(0@register,u8), 20
         mov cl, 20
         ; 13:2 while true
@@ -84,7 +62,7 @@ start:
         ; const r.1(1@register,i64), 10
         mov rdx, 10
         ; copy r.2(2@register,i64), number(0@argument,i64)
-        lea rbx, [rsp+136]
+        lea rbx, [rsp+40]
         mov r9, [rbx]
         ; mod r.1(1@register,i64), r.2(2@register,i64), r.1(1@register,i64)
         mov rax, r9
@@ -123,7 +101,7 @@ start:
         lea rbx, [rsp+20]
         mov [rbx], cl
         ; copy number(0@argument,i64), r.2(2@register,i64)
-        lea rbx, [rsp+136]
+        lea rbx, [rsp+40]
         mov [rbx], r9
         ; branch r.1(1@register,bool), false, @while_1
         or dl, dl
@@ -151,23 +129,17 @@ start:
           call @printStringLength
         add rsp, 24
         ; release space for local variables
-        add rsp, 128
+        add rsp, 32
         ret
 
         ; void printIntLf
-        ;   rsp+40: arg number
-        ;   rsp+0: var t.1
-        ;   rsp+8: var t.2
-        ;   rsp+16: var t.3
-        ;   rsp+17: var t.4
+        ;   rsp+8: arg number
 @printIntLf:
-        ; reserve space for local variables
-        sub rsp, 32
         ; 27:2 if number < 0
         ; const r.0(0@register,i64), 0
         mov rcx, 0
         ; copy r.1(1@register,i64), number(0@argument,i64)
-        lea rbx, [rsp+40]
+        lea rbx, [rsp+8]
         mov rdx, [rbx]
         ; lt r.0(0@register,bool), r.1(1@register,i64), r.0(0@register,i64)
         cmp rdx, rcx
@@ -182,16 +154,16 @@ start:
           call @printChar
         add rsp, 8
         ; copy r.0(0@register,i64), number(0@argument,i64)
-        lea rbx, [rsp+40]
+        lea rbx, [rsp+8]
         mov rcx, [rbx]
         ; neg r.0(0@register,i64), r.0(0@register,i64)
         neg rcx
         ; copy number(0@argument,i64), r.0(0@register,i64)
-        lea rbx, [rsp+40]
+        lea rbx, [rsp+8]
         mov [rbx], rcx
 @if_3_end:
         ; call _, printUint [number(0@argument,i64)]
-        lea rax, [rsp+40]
+        lea rax, [rsp+8]
         mov rax, [rax]
         push rax
           call @printUint
@@ -202,8 +174,6 @@ start:
         push rcx
           call @printChar
         add rsp, 8
-        ; release space for local variables
-        add rsp, 32
         ret
 
         ; void printStringLength
@@ -223,20 +193,10 @@ start:
 
         ; void main
         ;   rsp+0: var a
-        ;   rsp+8: var b
-        ;   rsp+16: var c
-        ;   rsp+24: var d
-        ;   rsp+32: var t.4
-        ;   rsp+40: var t.5
-        ;   rsp+42: var t.6
-        ;   rsp+48: var t.7
-        ;   rsp+56: var t.8
-        ;   rsp+58: var t.9
-        ;   rsp+60: var t.10
-        ;   rsp+64: var t.11
+        ;   rsp+2: var c
 @main:
         ; reserve space for local variables
-        sub rsp, 80
+        sub rsp, 16
         ; begin initialize global variables
         ; end initialize global variables
         ; const r.0(0@register,i16), 10
@@ -261,15 +221,15 @@ start:
         sub cx, dx
         ; cast r.1(1@register,i64), r.0(0@register,i16)
         movzx rdx, cx
-        ; copy c(2@function,i16), r.0(0@register,i16)
-        lea rbx, [rsp+16]
+        ; copy c(1@function,i16), r.0(0@register,i16)
+        lea rbx, [rsp+2]
         mov [rbx], cx
         ; call _, printIntLf [r.1(1@register,i64)]
         push rdx
           call @printIntLf
         add rsp, 8
-        ; addrof r.0(0@register,i16*), c(2@function,i16)
-        lea rax, [rsp+16]
+        ; addrof r.0(0@register,i16*), c(1@function,i16)
+        lea rax, [rsp+2]
         mov rcx, rax
         ; load r.1(1@register,i16), [r.0(0@register,i16*)]
         mov dx, [rcx]
@@ -279,8 +239,8 @@ start:
         sub dx, r9w
         ; store [r.0(0@register,i16*)], r.1(1@register,i16)
         mov [rcx], dx
-        ; copy r.0(0@register,i16), c(2@function,i16)
-        lea rbx, [rsp+16]
+        ; copy r.0(0@register,i16), c(1@function,i16)
+        lea rbx, [rsp+2]
         mov cx, [rbx]
         ; cast r.0(0@register,i64), r.0(0@register,i16)
         movzx rcx, cx
@@ -289,7 +249,7 @@ start:
           call @printIntLf
         add rsp, 8
         ; release space for local variables
-        add rsp, 80
+        add rsp, 16
         ret
 init:
         sub rsp, 20h
