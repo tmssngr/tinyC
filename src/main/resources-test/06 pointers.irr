@@ -1,8 +1,6 @@
 @printChar:
  Local variables
 	arg 0: chr
-	var 1: t.1
-	var 2: t.2
 	; 4 pc
 	addrof r0(u8* t.1), chr(0@argument,u8)
 	const r1(i64 t.2), 1
@@ -13,24 +11,6 @@
 	arg 0: number
 	var 1: buffer
 	var 2: pos
-	var 3: remainder
-	var 4: digit
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
-	var 19: t.19
-	var 20: t.20
 	; 38 pc
 	const r0(u8 pos), 20
 	; 13:2 while true
@@ -72,10 +52,6 @@
 @printIntLf:
  Local variables
 	arg 0: number
-	var 1: t.1
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
 	; 17 pc
 	; 27:2 if number < 0
 	const r0(i64 t.2), 0
@@ -109,17 +85,7 @@
 @main:
  Local variables
 	var 0: a
-	var 1: b
-	var 2: c
-	var 3: d
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
+	var 1: c
 	; 29 pc
 	; begin initialize global variables
 	; end initialize global variables
@@ -132,14 +98,14 @@
 	const r1(i16 t.6), 1
 	sub r0(i16 c), r0(i16 t.5), r1(i16 t.6)
 	cast r1(i64 t.7), r0(i16 c)
-	copy c(2@function,i16), r0(i16 c)
+	copy c(1@function,i16), r0(i16 c)
 	call _, printIntLf [r1(i64 t.7)]
-	addrof r0(i16* d), c(2@function,i16)
+	addrof r0(i16* d), c(1@function,i16)
 	load r1(i16 t.9), [r0(i16* d)]
 	const r2(i16 t.10), 1
 	sub r1(i16 t.8), r1(i16 t.9), r2(i16 t.10)
 	store [r0(i16* d)], r1(i16 t.8)
-	copy r0(i16 c), c(2@function,i16)
+	copy r0(i16 c), c(1@function,i16)
 	cast r0(i64 t.11), r0(i16 c)
 	call _, printIntLf [r0(i64 t.11)]
 

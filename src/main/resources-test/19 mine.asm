@@ -21,39 +21,30 @@ start:
           call [ExitProcess]
 
         ; void printString
-        ;   rsp+24: arg str
-        ;   rsp+0: var length
+        ;   rsp+8: arg str
 @printString:
-        ; reserve space for local variables
-        sub rsp, 16
         ; call r0(i64 length), strlen, [str(0@argument,u8*)]
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov rax, [rax]
         push rax
           call @strlen
         add rsp, 8
         mov rcx, rax
         ; call _, printStringLength [str(0@argument,u8*), r0(i64 length)]
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov rax, [rax]
         push rax
         push rcx
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; void printChar
-        ;   rsp+24: arg chr
-        ;   rsp+0: var t.1
-        ;   rsp+8: var t.2
+        ;   rsp+8: arg chr
 @printChar:
-        ; reserve space for local variables
-        sub rsp, 16
         ; addrof r0(u8* t.1), chr(0@argument,u8)
-        lea rcx, [rsp+24]
+        lea rcx, [rsp+8]
         ; const r1(i64 t.2), 1
         mov rdx, 1
         ; call _, printStringLength [r0(u8* t.1), r1(i64 t.2)]
@@ -62,35 +53,15 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; void printUint
-        ;   rsp+152: arg number
+        ;   rsp+40: arg number
         ;   rsp+0: var buffer
         ;   rsp+20: var pos
-        ;   rsp+24: var remainder
-        ;   rsp+32: var digit
-        ;   rsp+33: var t.5
-        ;   rsp+40: var t.6
-        ;   rsp+48: var t.7
-        ;   rsp+56: var t.8
-        ;   rsp+57: var t.9
-        ;   rsp+64: var t.10
-        ;   rsp+72: var t.11
-        ;   rsp+80: var t.12
-        ;   rsp+88: var t.13
-        ;   rsp+96: var t.14
-        ;   rsp+104: var t.15
-        ;   rsp+112: var t.16
-        ;   rsp+120: var t.17
-        ;   rsp+128: var t.18
-        ;   rsp+136: var t.19
-        ;   rsp+137: var t.20
 @printUint:
         ; reserve space for local variables
-        sub rsp, 144
+        sub rsp, 32
         ; const r0(u8 pos), 20
         mov cl, 20
         ; 13:2 while true
@@ -110,7 +81,7 @@ start:
         ; const r1(i64 t.6), 10
         mov rdx, 10
         ; copy r2(i64 number), number(0@argument,i64)
-        lea rax, [rsp+152]
+        lea rax, [rsp+40]
         mov r9, [rax]
         ; mod r1(i64 remainder), r2(i64 number), r1(i64 t.6)
         mov rax, r9
@@ -152,7 +123,7 @@ start:
         cmp r9, rcx
         sete cl
         ; copy number(0@argument,i64), r2(i64 number)
-        lea rax, [rsp+152]
+        lea rax, [rsp+40]
         mov [rax], r9
         ; branch r0(bool t.13), false, @while_1
         or cl, cl
@@ -184,22 +155,15 @@ start:
           call @printStringLength
         add rsp, 24
         ; release space for local variables
-        add rsp, 144
+        add rsp, 32
         ret
 
         ; i64 strlen
-        ;   rsp+56: arg str
+        ;   rsp+24: arg str
         ;   rsp+0: var length
-        ;   rsp+8: var t.2
-        ;   rsp+9: var t.3
-        ;   rsp+10: var t.4
-        ;   rsp+16: var t.5
-        ;   rsp+24: var t.6
-        ;   rsp+32: var t.7
-        ;   rsp+40: var t.8
 @strlen:
         ; reserve space for local variables
-        sub rsp, 48
+        sub rsp, 16
         ; const r0(i64 length), 0
         mov rcx, 0
         ; 37:2 for *str != 0
@@ -208,7 +172,7 @@ start:
         mov [rax], rcx
 @for_3:
         ; copy r0(u8* str), str(0@argument,u8*)
-        lea rax, [rsp+56]
+        lea rax, [rsp+24]
         mov rcx, [rax]
         ; load r1(u8 t.3), [r0(u8* str)]
         mov dl, [rcx]
@@ -233,7 +197,7 @@ start:
         lea rax, [rsp+0]
         mov [rax], rcx
         ; copy r0(u8* str), str(0@argument,u8*)
-        lea rax, [rsp+56]
+        lea rax, [rsp+24]
         mov rcx, [rax]
         ; cast r0(i64 t.7), r0(u8* str)
         ; const r1(i64 t.8), 1
@@ -242,7 +206,7 @@ start:
         add rcx, rdx
         ; cast r0(u8* str), r0(i64 t.6)
         ; copy str(0@argument,u8*), r0(u8* str)
-        lea rax, [rsp+56]
+        lea rax, [rsp+24]
         mov [rax], rcx
         jmp @for_3
 @for_3_break:
@@ -253,7 +217,7 @@ start:
         ; ret r0(i64 length)
         mov rax, rcx
         ; release space for local variables
-        add rsp, 48
+        add rsp, 16
         ret
 
         ; void printStringLength
@@ -317,30 +281,7 @@ start:
         ret
 
         ; i32 random
-        ;   rsp+0: var r
-        ;   rsp+4: var b
-        ;   rsp+8: var c
-        ;   rsp+12: var d
-        ;   rsp+16: var e
-        ;   rsp+20: var t.5
-        ;   rsp+24: var t.6
-        ;   rsp+28: var t.7
-        ;   rsp+32: var t.8
-        ;   rsp+36: var t.9
-        ;   rsp+40: var t.10
-        ;   rsp+44: var t.11
-        ;   rsp+48: var t.12
-        ;   rsp+52: var t.13
-        ;   rsp+56: var t.14
-        ;   rsp+60: var t.15
-        ;   rsp+64: var t.16
-        ;   rsp+68: var t.17
-        ;   rsp+72: var t.18
-        ;   rsp+76: var t.19
-        ;   rsp+80: var t.20
 @random:
-        ; reserve space for local variables
-        sub rsp, 96
         ; copy r0(i32 __random__), __random__(0@global,i32)
         lea rax, [var_0]
         mov ecx, [rax]
@@ -420,24 +361,17 @@ start:
         mov [rax], ecx
         ; ret r0(i32 __random__)
         mov rax, rcx
-        ; release space for local variables
-        add rsp, 96
         ret
 
         ; i16 rowColumnToCell
-        ;   rsp+40: arg row
-        ;   rsp+32: arg column
-        ;   rsp+0: var t.2
-        ;   rsp+2: var t.3
-        ;   rsp+4: var t.4
+        ;   rsp+24: arg row
+        ;   rsp+16: arg column
 @rowColumnToCell:
-        ; reserve space for local variables
-        sub rsp, 16
         ; 15:21 return row * 40 + column
         ; const r0(i16 t.4), 40
         mov cx, 40
         ; copy r1(i16 row), row(0@argument,i16)
-        lea rax, [rsp+40]
+        lea rax, [rsp+24]
         mov dx, [rax]
         ; mul r0(i16 t.3), r1(i16 row), r0(i16 t.4)
         movsx rdx, dx
@@ -446,33 +380,24 @@ start:
         imul rax, rcx
         mov rcx, rax
         ; copy r1(i16 column), column(1@argument,i16)
-        lea rax, [rsp+32]
+        lea rax, [rsp+16]
         mov dx, [rax]
         ; add r0(i16 t.2), r0(i16 t.3), r1(i16 column)
         add cx, dx
         ; ret r0(i16 t.2)
         mov rax, rcx
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; u8 getCell
-        ;   rsp+72: arg row
-        ;   rsp+64: arg column
-        ;   rsp+0: var t.2
-        ;   rsp+8: var t.3
-        ;   rsp+16: var t.4
-        ;   rsp+24: var t.5
-        ;   rsp+32: var t.6
+        ;   rsp+24: arg row
+        ;   rsp+16: arg column
 @getCell:
-        ; reserve space for local variables
-        sub rsp, 48
         ; 19:15 return [...]
         ; call r0(i16 t.5), rowColumnToCell, [row(0@argument,i16), column(1@argument,i16)]
-        lea rax, [rsp+72]
+        lea rax, [rsp+24]
         mov ax, [rax]
         push rax
-        lea rax, [rsp+72]
+        lea rax, [rsp+24]
         mov ax, [rax]
         push rax
         sub rsp, 8
@@ -492,24 +417,16 @@ start:
         mov cl, [rcx]
         ; ret r0(u8 t.2)
         mov rax, rcx
-        ; release space for local variables
-        add rsp, 48
         ret
 
         ; bool isBomb
-        ;   rsp+24: arg cell
-        ;   rsp+0: var t.1
-        ;   rsp+1: var t.2
-        ;   rsp+2: var t.3
-        ;   rsp+3: var t.4
+        ;   rsp+8: arg cell
 @isBomb:
-        ; reserve space for local variables
-        sub rsp, 16
         ; 23:27 return cell & 1 != 0
         ; const r0(u8 t.3), 1
         mov cl, 1
         ; copy r1(u8 cell), cell(0@argument,u8)
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov dl, [rax]
         ; and r0(u8 t.2), r1(u8 cell), r0(u8 t.3)
         mov al, dl
@@ -522,24 +439,16 @@ start:
         setne cl
         ; ret r0(bool t.1)
         mov rax, rcx
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; bool isOpen
-        ;   rsp+24: arg cell
-        ;   rsp+0: var t.1
-        ;   rsp+1: var t.2
-        ;   rsp+2: var t.3
-        ;   rsp+3: var t.4
+        ;   rsp+8: arg cell
 @isOpen:
-        ; reserve space for local variables
-        sub rsp, 16
         ; 27:27 return cell & 2 != 0
         ; const r0(u8 t.3), 2
         mov cl, 2
         ; copy r1(u8 cell), cell(0@argument,u8)
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov dl, [rax]
         ; and r0(u8 t.2), r1(u8 cell), r0(u8 t.3)
         mov al, dl
@@ -552,24 +461,16 @@ start:
         setne cl
         ; ret r0(bool t.1)
         mov rax, rcx
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; bool isFlag
-        ;   rsp+24: arg cell
-        ;   rsp+0: var t.1
-        ;   rsp+1: var t.2
-        ;   rsp+2: var t.3
-        ;   rsp+3: var t.4
+        ;   rsp+8: arg cell
 @isFlag:
-        ; reserve space for local variables
-        sub rsp, 16
         ; 31:27 return cell & 4 != 0
         ; const r0(u8 t.3), 4
         mov cl, 4
         ; copy r1(u8 cell), cell(0@argument,u8)
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov dl, [rax]
         ; and r0(u8 t.2), r1(u8 cell), r0(u8 t.3)
         mov al, dl
@@ -582,18 +483,12 @@ start:
         setne cl
         ; ret r0(bool t.1)
         mov rax, rcx
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; bool checkCellBounds
         ;   rsp+40: arg row
         ;   rsp+32: arg column
         ;   rsp+0: var t.2
-        ;   rsp+2: var t.3
-        ;   rsp+4: var t.4
-        ;   rsp+6: var t.5
-        ;   rsp+8: var t.6
 @checkCellBounds:
         ; reserve space for local variables
         sub rsp, 16
@@ -673,21 +568,15 @@ start:
         ret
 
         ; void setCell
-        ;   rsp+56: arg row
-        ;   rsp+48: arg column
-        ;   rsp+40: arg cell
-        ;   rsp+0: var t.3
-        ;   rsp+8: var t.4
-        ;   rsp+16: var t.5
-        ;   rsp+24: var t.6
+        ;   rsp+24: arg row
+        ;   rsp+16: arg column
+        ;   rsp+8: arg cell
 @setCell:
-        ; reserve space for local variables
-        sub rsp, 32
         ; call r0(i16 t.5), rowColumnToCell, [row(0@argument,i16), column(1@argument,i16)]
-        lea rax, [rsp+56]
+        lea rax, [rsp+24]
         mov ax, [rax]
         push rax
-        lea rax, [rsp+56]
+        lea rax, [rsp+24]
         mov ax, [rax]
         push rax
         sub rsp, 8
@@ -704,35 +593,23 @@ start:
         add rax, rcx
         mov rcx, rax
         ; copy r1(u8 cell), cell(2@argument,u8)
-        lea rax, [rsp+40]
+        lea rax, [rsp+8]
         mov dl, [rax]
         ; store [r0(u8* t.3)], r1(u8 cell)
         mov [rcx], dl
-        ; release space for local variables
-        add rsp, 32
         ret
 
         ; u8 getBombCountAround
-        ;   rsp+56: arg row
-        ;   rsp+48: arg column
+        ;   rsp+40: arg row
+        ;   rsp+32: arg column
         ;   rsp+0: var count
         ;   rsp+2: var dr
         ;   rsp+4: var r
         ;   rsp+6: var dc
         ;   rsp+8: var c
-        ;   rsp+10: var cell
-        ;   rsp+11: var t.8
-        ;   rsp+12: var t.9
-        ;   rsp+14: var t.10
-        ;   rsp+16: var t.11
-        ;   rsp+18: var t.12
-        ;   rsp+19: var t.13
-        ;   rsp+20: var t.14
-        ;   rsp+22: var t.15
-        ;   rsp+24: var t.16
 @getBombCountAround:
         ; reserve space for local variables
-        sub rsp, 32
+        sub rsp, 16
         ; const r0(u8 count), 0
         mov cl, 0
         ; const r1(i16 dr), -1
@@ -757,7 +634,7 @@ start:
         or cl, cl
         jz @for_7_break
         ; copy r0(i16 row), row(0@argument,i16)
-        lea rax, [rsp+56]
+        lea rax, [rsp+40]
         mov cx, [rax]
         ; copy r1(i16 dr), dr(3@function,i16)
         lea rax, [rsp+2]
@@ -787,7 +664,7 @@ start:
         or cl, cl
         jz @for_7_continue
         ; copy r0(i16 column), column(1@argument,i16)
-        lea rax, [rsp+48]
+        lea rax, [rsp+32]
         mov cx, [rax]
         ; copy r1(i16 dc), dc(5@function,i16)
         lea rax, [rsp+6]
@@ -879,31 +756,21 @@ start:
         ; ret r0(u8 count)
         mov rax, rcx
         ; release space for local variables
-        add rsp, 32
+        add rsp, 16
         ret
 
         ; u8 getSpacer
-        ;   rsp+56: arg row
-        ;   rsp+48: arg column
-        ;   rsp+40: arg rowCursor
-        ;   rsp+32: arg columnCursor
-        ;   rsp+0: var t.4
-        ;   rsp+1: var t.5
-        ;   rsp+2: var t.6
-        ;   rsp+3: var t.7
-        ;   rsp+4: var t.8
-        ;   rsp+6: var t.9
-        ;   rsp+8: var t.10
-        ;   rsp+9: var t.11
+        ;   rsp+40: arg row
+        ;   rsp+32: arg column
+        ;   rsp+24: arg rowCursor
+        ;   rsp+16: arg columnCursor
 @getSpacer:
-        ; reserve space for local variables
-        sub rsp, 16
         ; 61:2 if rowCursor == row
         ; copy r0(i16 rowCursor), rowCursor(2@argument,i16)
-        lea rax, [rsp+40]
+        lea rax, [rsp+24]
         mov cx, [rax]
         ; copy r1(i16 row), row(0@argument,i16)
-        lea rax, [rsp+56]
+        lea rax, [rsp+40]
         mov dx, [rax]
         ; equals r0(bool t.4), r0(i16 rowCursor), r1(i16 row)
         cmp cx, dx
@@ -913,10 +780,10 @@ start:
         jz @if_11_end
         ; 62:3 if columnCursor == column
         ; copy r0(i16 columnCursor), columnCursor(3@argument,i16)
-        lea rax, [rsp+32]
+        lea rax, [rsp+16]
         mov cx, [rax]
         ; copy r1(i16 column), column(1@argument,i16)
-        lea rax, [rsp+48]
+        lea rax, [rsp+32]
         mov dx, [rax]
         ; equals r2(bool t.5), r0(i16 columnCursor), r1(i16 column)
         cmp cx, dx
@@ -935,14 +802,14 @@ start:
         ; const r0(i16 t.9), 1
         mov cx, 1
         ; copy r1(i16 column), column(1@argument,i16)
-        lea rax, [rsp+48]
+        lea rax, [rsp+32]
         mov dx, [rax]
         ; sub r0(i16 t.8), r1(i16 column), r0(i16 t.9)
         mov ax, dx
         sub ax, cx
         mov cx, ax
         ; copy r1(i16 columnCursor), columnCursor(3@argument,i16)
-        lea rax, [rsp+32]
+        lea rax, [rsp+16]
         mov dx, [rax]
         ; equals r0(bool t.7), r1(i16 columnCursor), r0(i16 t.8)
         cmp dx, cx
@@ -963,8 +830,6 @@ start:
         ; ret r0(u8 t.11)
         mov rax, rcx
 @getSpacer_ret:
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; void printCell
@@ -973,12 +838,6 @@ start:
         ;   rsp+24: arg column
         ;   rsp+0: var chr
         ;   rsp+1: var count
-        ;   rsp+2: var t.5
-        ;   rsp+3: var t.6
-        ;   rsp+4: var t.7
-        ;   rsp+5: var t.8
-        ;   rsp+6: var t.9
-        ;   rsp+7: var t.10
 @printCell:
         ; reserve space for local variables
         sub rsp, 16
@@ -1088,27 +947,13 @@ start:
         ret
 
         ; void printField
-        ;   rsp+72: arg rowCursor
-        ;   rsp+64: arg columnCursor
+        ;   rsp+40: arg rowCursor
+        ;   rsp+32: arg columnCursor
         ;   rsp+0: var row
         ;   rsp+2: var column
-        ;   rsp+4: var spacer
-        ;   rsp+5: var cell
-        ;   rsp+6: var spacer
-        ;   rsp+8: var t.7
-        ;   rsp+10: var t.8
-        ;   rsp+12: var t.9
-        ;   rsp+14: var t.10
-        ;   rsp+16: var t.11
-        ;   rsp+17: var t.12
-        ;   rsp+18: var t.13
-        ;   rsp+20: var t.14
-        ;   rsp+22: var t.15
-        ;   rsp+24: var t.16
-        ;   rsp+32: var t.17
 @printField:
         ; reserve space for local variables
-        sub rsp, 48
+        sub rsp, 16
         ; const r0(i16 t.7), 0
         mov cx, 0
         ; const r1(i16 t.8), 0
@@ -1168,10 +1013,10 @@ start:
         lea rax, [rsp+10]
         mov ax, [rax]
         push rax
-        lea rax, [rsp+88]
+        lea rax, [rsp+56]
         mov ax, [rax]
         push rax
-        lea rax, [rsp+88]
+        lea rax, [rsp+56]
         mov ax, [rax]
         push rax
         sub rsp, 8
@@ -1224,10 +1069,10 @@ start:
         mov ax, [rax]
         push rax
         push rcx
-        lea rax, [rsp+88]
+        lea rax, [rsp+56]
         mov ax, [rax]
         push rax
-        lea rax, [rsp+88]
+        lea rax, [rsp+56]
         mov ax, [rax]
         push rax
         sub rsp, 8
@@ -1259,23 +1104,17 @@ start:
         jmp @for_18
 @printField_ret:
         ; release space for local variables
-        add rsp, 48
+        add rsp, 16
         ret
 
         ; void printSpaces
-        ;   rsp+24: arg i
-        ;   rsp+0: var t.1
-        ;   rsp+2: var t.2
-        ;   rsp+4: var t.3
-        ;   rsp+6: var t.4
+        ;   rsp+8: arg i
 @printSpaces:
-        ; reserve space for local variables
-        sub rsp, 16
 @for_20:
         ; const r0(i16 t.2), 0
         mov cx, 0
         ; copy r1(i16 i), i(0@argument,i16)
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov dx, [rax]
         ; gt r0(bool t.1), r1(i16 i), r0(i16 t.2)
         cmp dx, cx
@@ -1292,30 +1131,22 @@ start:
         ; const r0(i16 t.4), 1
         mov cx, 1
         ; copy r1(i16 i), i(0@argument,i16)
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov dx, [rax]
         ; sub r0(i16 i), r1(i16 i), r0(i16 t.4)
         mov ax, dx
         sub ax, cx
         mov cx, ax
         ; copy i(0@argument,i16), r0(i16 i)
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov [rax], cx
         jmp @for_20
 @printSpaces_ret:
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; u8 getDigitCount
         ;   rsp+24: arg value
         ;   rsp+0: var count
-        ;   rsp+1: var t.2
-        ;   rsp+2: var t.3
-        ;   rsp+4: var t.4
-        ;   rsp+6: var t.5
-        ;   rsp+8: var t.6
-        ;   rsp+10: var t.7
 @getDigitCount:
         ; reserve space for local variables
         sub rsp, 16
@@ -1399,30 +1230,11 @@ start:
         ;   rsp+0: var count
         ;   rsp+2: var r
         ;   rsp+4: var c
-        ;   rsp+6: var cell
-        ;   rsp+7: var leftDigits
-        ;   rsp+8: var bombDigits
-        ;   rsp+9: var t.6
-        ;   rsp+10: var t.7
-        ;   rsp+12: var t.8
-        ;   rsp+14: var t.9
-        ;   rsp+16: var t.10
-        ;   rsp+17: var t.11
-        ;   rsp+18: var t.12
-        ;   rsp+19: var t.13
-        ;   rsp+20: var t.14
-        ;   rsp+22: var t.15
-        ;   rsp+24: var t.16
-        ;   rsp+26: var t.17
-        ;   rsp+32: var t.18
-        ;   rsp+40: var t.19
-        ;   rsp+42: var t.20
-        ;   rsp+48: var t.21
-        ;   rsp+56: var t.22
-        ;   rsp+58: var t.23
+        ;   rsp+6: var leftDigits
+        ;   rsp+7: var bombDigits
 @printLeft:
         ; reserve space for local variables
-        sub rsp, 64
+        sub rsp, 16
         ; const r0(i16 count), 0
         mov cx, 0
         ; const r1(i16 r), 0
@@ -1538,8 +1350,8 @@ start:
         mov cl, al
         ; const r1(i16 t.17), 40
         mov dx, 40
-        ; copy leftDigits(4@function,u8), r0(u8 leftDigits)
-        lea rax, [rsp+7]
+        ; copy leftDigits(3@function,u8), r0(u8 leftDigits)
+        lea rax, [rsp+6]
         mov [rax], cl
         ; call r0(u8 bombDigits), getDigitCount, [r1(i16 t.17)]
         push rdx
@@ -1548,18 +1360,18 @@ start:
         mov cl, al
         ; const r1(u8* t.18), [string-1]
         lea rdx, [string_1]
-        ; copy bombDigits(5@function,u8), r0(u8 bombDigits)
-        lea rax, [rsp+8]
+        ; copy bombDigits(4@function,u8), r0(u8 bombDigits)
+        lea rax, [rsp+7]
         mov [rax], cl
         ; call _, printString [r1(u8* t.18)]
         push rdx
           call @printString
         add rsp, 8
-        ; copy r0(u8 bombDigits), bombDigits(5@function,u8)
-        lea rax, [rsp+8]
-        mov cl, [rax]
-        ; copy r1(u8 leftDigits), leftDigits(4@function,u8)
+        ; copy r0(u8 bombDigits), bombDigits(4@function,u8)
         lea rax, [rsp+7]
+        mov cl, [rax]
+        ; copy r1(u8 leftDigits), leftDigits(3@function,u8)
+        lea rax, [rsp+6]
         mov dl, [rax]
         ; sub r0(u8 t.20), r0(u8 bombDigits), r1(u8 leftDigits)
         sub cl, dl
@@ -1590,22 +1402,17 @@ start:
         ; ret r0(bool t.22)
         mov rax, rcx
         ; release space for local variables
-        add rsp, 64
+        add rsp, 16
         ret
 
         ; i16 abs
-        ;   rsp+24: arg a
-        ;   rsp+0: var t.1
-        ;   rsp+2: var t.2
-        ;   rsp+4: var t.3
+        ;   rsp+8: arg a
 @abs:
-        ; reserve space for local variables
-        sub rsp, 16
         ; 154:2 if a < 0
         ; const r0(i16 t.2), 0
         mov cx, 0
         ; copy r1(i16 a), a(0@argument,i16)
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov dx, [rax]
         ; lt r0(bool t.1), r1(i16 a), r0(i16 t.2)
         cmp dx, cx
@@ -1615,7 +1422,7 @@ start:
         jz @if_27_end
         ; 155:10 return -a
         ; copy r0(i16 a), a(0@argument,i16)
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov cx, [rax]
         ; neg r0(i16 t.3), r0(i16 a)
         neg rcx
@@ -1625,28 +1432,19 @@ start:
 @if_27_end:
         ; 157:9 return a
         ; copy r0(i16 a), a(0@argument,i16)
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov cx, [rax]
         ; ret r0(i16 a)
         mov rax, rcx
 @abs_ret:
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; void clearField
         ;   rsp+0: var r
         ;   rsp+2: var c
-        ;   rsp+4: var t.2
-        ;   rsp+6: var t.3
-        ;   rsp+8: var t.4
-        ;   rsp+10: var t.5
-        ;   rsp+12: var t.6
-        ;   rsp+14: var t.7
-        ;   rsp+16: var t.8
 @clearField:
         ; reserve space for local variables
-        sub rsp, 32
+        sub rsp, 16
         ; const r0(i16 r), 0
         mov cx, 0
         ; 161:2 for r < 20
@@ -1724,35 +1522,19 @@ start:
         jmp @for_28
 @clearField_ret:
         ; release space for local variables
-        add rsp, 32
+        add rsp, 16
         ret
 
         ; void initField
-        ;   rsp+88: arg curr_r
-        ;   rsp+80: arg curr_c
+        ;   rsp+40: arg curr_r
+        ;   rsp+32: arg curr_c
         ;   rsp+0: var bombs
         ;   rsp+2: var row
         ;   rsp+4: var column
-        ;   rsp+6: var t.5
-        ;   rsp+8: var t.6
-        ;   rsp+12: var t.7
-        ;   rsp+16: var t.8
-        ;   rsp+20: var t.9
-        ;   rsp+24: var t.10
-        ;   rsp+28: var t.11
-        ;   rsp+32: var t.12
-        ;   rsp+36: var t.13
-        ;   rsp+38: var t.14
-        ;   rsp+40: var t.15
-        ;   rsp+42: var t.16
-        ;   rsp+44: var t.17
-        ;   rsp+46: var t.18
-        ;   rsp+48: var t.19
-        ;   rsp+50: var t.20
-        ;   rsp+52: var t.21
+        ;   rsp+6: var t.13
 @initField:
         ; reserve space for local variables
-        sub rsp, 64
+        sub rsp, 16
         ; const r0(i16 bombs), 40
         mov cx, 40
         ; 169:2 for bombs > 0
@@ -1812,7 +1594,7 @@ start:
         lea rax, [rsp+2]
         mov dx, [rax]
         ; copy r2(i16 curr_r), curr_r(0@argument,i16)
-        lea rax, [rsp+88]
+        lea rax, [rsp+40]
         mov r9w, [rax]
         ; sub r3(i16 t.15), r1(i16 row), r2(i16 curr_r)
         mov r10w, dx
@@ -1830,8 +1612,8 @@ start:
         ; gt r0(bool t.13), r0(i16 t.14), r1(i16 t.16)
         cmp cx, dx
         setg cl
-        ; copy t.13(13@function,bool), r0(bool t.13)
-        lea rax, [rsp+36]
+        ; copy t.13(5@function,bool), r0(bool t.13)
+        lea rax, [rsp+6]
         mov [rax], cl
         ; branch r0(bool t.13), true, @or_next_32
         or cl, cl
@@ -1840,7 +1622,7 @@ start:
         lea rax, [rsp+4]
         mov cx, [rax]
         ; copy r1(i16 curr_c), curr_c(1@argument,i16)
-        lea rax, [rsp+80]
+        lea rax, [rsp+32]
         mov dx, [rax]
         ; sub r2(i16 t.18), r0(i16 column), r1(i16 curr_c)
         mov r9w, cx
@@ -1855,12 +1637,12 @@ start:
         ; gt r0(bool t.13), r0(i16 t.17), r1(i16 t.19)
         cmp cx, dx
         setg cl
-        ; copy t.13(13@function,bool), r0(bool t.13)
-        lea rax, [rsp+36]
+        ; copy t.13(5@function,bool), r0(bool t.13)
+        lea rax, [rsp+6]
         mov [rax], cl
 @or_next_32:
-        ; copy r0(bool t.13), t.13(13@function,bool)
-        lea rax, [rsp+36]
+        ; copy r0(bool t.13), t.13(5@function,bool)
+        lea rax, [rsp+6]
         mov cl, [rax]
         ; branch r0(bool t.13), false, @for_30_continue
         or cl, cl
@@ -1893,43 +1675,27 @@ start:
         jmp @for_30
 @initField_ret:
         ; release space for local variables
-        add rsp, 64
+        add rsp, 16
         ret
 
         ; void maybeRevealAround
-        ;   rsp+72: arg row
-        ;   rsp+64: arg column
+        ;   rsp+40: arg row
+        ;   rsp+32: arg column
         ;   rsp+0: var dr
         ;   rsp+2: var r
         ;   rsp+4: var dc
         ;   rsp+6: var c
         ;   rsp+8: var cell
-        ;   rsp+9: var t.7
-        ;   rsp+10: var t.8
-        ;   rsp+11: var t.9
-        ;   rsp+12: var t.10
-        ;   rsp+14: var t.11
-        ;   rsp+16: var t.12
-        ;   rsp+18: var t.13
-        ;   rsp+20: var t.14
-        ;   rsp+22: var t.15
-        ;   rsp+24: var t.16
-        ;   rsp+26: var t.17
-        ;   rsp+27: var t.18
-        ;   rsp+28: var t.19
-        ;   rsp+29: var t.20
-        ;   rsp+30: var t.21
-        ;   rsp+32: var t.22
-        ;   rsp+34: var t.23
+        ;   rsp+9: var t.14
 @maybeRevealAround:
         ; reserve space for local variables
-        sub rsp, 48
+        sub rsp, 16
         ; 180:2 if getBombCountAround([ExprVarAccess[varName=row, index=0, scope=argument, type=i16, varIsArray=false, location=180:25], ExprVarAccess[varName=column, index=1, scope=argument, type=i16, varIsArray=false, location=180:30]]) != 0
         ; call r0(u8 t.8), getBombCountAround, [row(0@argument,i16), column(1@argument,i16)]
-        lea rax, [rsp+72]
+        lea rax, [rsp+40]
         mov ax, [rax]
         push rax
-        lea rax, [rsp+72]
+        lea rax, [rsp+40]
         mov ax, [rax]
         push rax
         sub rsp, 8
@@ -1965,7 +1731,7 @@ start:
         or cl, cl
         jz @maybeRevealAround_ret
         ; copy r0(i16 row), row(0@argument,i16)
-        lea rax, [rsp+72]
+        lea rax, [rsp+40]
         mov cx, [rax]
         ; copy r1(i16 dr), dr(2@function,i16)
         lea rax, [rsp+0]
@@ -2004,8 +1770,8 @@ start:
         ; equals r0(bool t.14), r1(i16 dr), r0(i16 t.15)
         cmp dx, cx
         sete cl
-        ; copy t.14(14@function,bool), r0(bool t.14)
-        lea rax, [rsp+20]
+        ; copy t.14(7@function,bool), r0(bool t.14)
+        lea rax, [rsp+9]
         mov [rax], cl
         ; branch r0(bool t.14), false, @and_next_37
         or cl, cl
@@ -2018,12 +1784,12 @@ start:
         ; equals r0(bool t.14), r1(i16 dc), r0(i16 t.16)
         cmp dx, cx
         sete cl
-        ; copy t.14(14@function,bool), r0(bool t.14)
-        lea rax, [rsp+20]
+        ; copy t.14(7@function,bool), r0(bool t.14)
+        lea rax, [rsp+9]
         mov [rax], cl
 @and_next_37:
-        ; copy r0(bool t.14), t.14(14@function,bool)
-        lea rax, [rsp+20]
+        ; copy r0(bool t.14), t.14(7@function,bool)
+        lea rax, [rsp+9]
         mov cl, [rax]
         ; branch r0(bool t.14), false, @if_36_end
         or cl, cl
@@ -2031,7 +1797,7 @@ start:
         jmp @for_35_continue
 @if_36_end:
         ; copy r0(i16 column), column(1@argument,i16)
-        lea rax, [rsp+64]
+        lea rax, [rsp+32]
         mov cx, [rax]
         ; copy r1(i16 dc), dc(4@function,i16)
         lea rax, [rsp+4]
@@ -2144,7 +1910,7 @@ start:
         jmp @for_34
 @maybeRevealAround_ret:
         ; release space for local variables
-        add rsp, 48
+        add rsp, 16
         ret
 
         ; void main
@@ -2154,62 +1920,9 @@ start:
         ;   rsp+6: var chr
         ;   rsp+8: var cell
         ;   rsp+9: var cell
-        ;   rsp+12: var t.6
-        ;   rsp+16: var t.7
-        ;   rsp+17: var t.8
-        ;   rsp+18: var t.9
-        ;   rsp+19: var t.10
-        ;   rsp+24: var t.11
-        ;   rsp+32: var t.12
-        ;   rsp+34: var t.13
-        ;   rsp+36: var t.14
-        ;   rsp+38: var t.15
-        ;   rsp+40: var t.16
-        ;   rsp+42: var t.17
-        ;   rsp+44: var t.18
-        ;   rsp+46: var t.19
-        ;   rsp+48: var t.20
-        ;   rsp+50: var t.21
-        ;   rsp+52: var t.22
-        ;   rsp+54: var t.23
-        ;   rsp+56: var t.24
-        ;   rsp+58: var t.25
-        ;   rsp+60: var t.26
-        ;   rsp+62: var t.27
-        ;   rsp+64: var t.28
-        ;   rsp+66: var t.29
-        ;   rsp+68: var t.30
-        ;   rsp+70: var t.31
-        ;   rsp+72: var t.32
-        ;   rsp+74: var t.33
-        ;   rsp+76: var t.34
-        ;   rsp+78: var t.35
-        ;   rsp+80: var t.36
-        ;   rsp+82: var t.37
-        ;   rsp+84: var t.38
-        ;   rsp+86: var t.39
-        ;   rsp+88: var t.40
-        ;   rsp+90: var t.41
-        ;   rsp+92: var t.42
-        ;   rsp+94: var t.43
-        ;   rsp+96: var t.44
-        ;   rsp+98: var t.45
-        ;   rsp+100: var t.46
-        ;   rsp+102: var t.47
-        ;   rsp+103: var t.48
-        ;   rsp+104: var t.49
-        ;   rsp+105: var t.50
-        ;   rsp+106: var t.51
-        ;   rsp+108: var t.52
-        ;   rsp+110: var t.53
-        ;   rsp+111: var t.54
-        ;   rsp+112: var t.55
-        ;   rsp+113: var t.56
-        ;   rsp+114: var t.57
-        ;   rsp+120: var t.58
 @main:
         ; reserve space for local variables
-        sub rsp, 128
+        sub rsp, 16
         ; begin initialize global variables
         ; const r0(i32 __random__), 0
         mov ecx, 0
@@ -2687,7 +2400,7 @@ start:
         jmp @while_40
 @main_ret:
         ; release space for local variables
-        add rsp, 128
+        add rsp, 16
         ret
 init:
         sub rsp, 20h

@@ -1,7 +1,6 @@
 @printString:
  Local variables
 	arg 0: str
-	var 1: length
 	; 6 pc
 	call r0(i64 length), strlen, [str(0@argument,u8*)]
 	call _, printStringLength [str(0@argument,u8*), r0(i64 length)]
@@ -9,8 +8,6 @@
 @printChar:
  Local variables
 	arg 0: chr
-	var 1: t.1
-	var 2: t.2
 	; 4 pc
 	addrof r0(u8* t.1), chr(0@argument,u8)
 	const r1(i64 t.2), 1
@@ -20,13 +17,6 @@
  Local variables
 	arg 0: str
 	var 1: length
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
 	; 31 pc
 	const r0(i64 length), 0
 	; 37:2 for *str != 0
@@ -70,19 +60,6 @@
 @printBoard:
  Local variables
 	var 0: i
-	var 1: t.1
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
 	; 33 pc
 	const r0(u8 t.1), 124
 	call _, printChar [r0(u8 t.1)]
@@ -126,51 +103,6 @@
 	var 1: i
 	var 2: pattern
 	var 3: j
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
-	var 19: t.19
-	var 20: t.20
-	var 21: t.21
-	var 22: t.22
-	var 23: t.23
-	var 24: t.24
-	var 25: t.25
-	var 26: t.26
-	var 27: t.27
-	var 28: t.28
-	var 29: t.29
-	var 30: t.30
-	var 31: t.31
-	var 32: t.32
-	var 33: t.33
-	var 34: t.34
-	var 35: t.35
-	var 36: t.36
-	var 37: t.37
-	var 38: t.38
-	var 39: t.39
-	var 40: t.40
-	var 41: t.41
-	var 42: t.42
-	var 43: t.43
-	var 44: t.44
-	var 45: t.45
-	var 46: t.46
-	var 47: t.47
-	var 48: t.48
 	; 107 pc
 	; begin initialize global variables
 	; end initialize global variables
