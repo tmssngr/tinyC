@@ -92,15 +92,15 @@ start:
         ; copy r.0(0@register,u8*), str(0@argument,u8*)
         lea rbx, [rsp+56]
         mov rcx, [rbx]
-        ; load r.1(1@register,u8), [r.0(0@register,u8*)]
-        mov dl, [rcx]
-        ; const r.2(2@register,u8), 0
-        mov r9b, 0
-        ; notequals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
-        cmp dl, r9b
-        setne dl
-        ; branch r.1(1@register,bool), false, @for_1_break
-        or dl, dl
+        ; load r.0(0@register,u8), [r.0(0@register,u8*)]
+        mov cl, [rcx]
+        ; const r.1(1@register,u8), 0
+        mov dl, 0
+        ; notequals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
+        setne cl
+        ; branch r.0(0@register,bool), false, @for_1_break
+        or cl, cl
         jz @for_1_break
         ; @for_1_body
 @for_1_body:
@@ -180,14 +180,14 @@ start:
         ; 5:2 if x > 9
         ; const r.1(1@register,u8), 9
         mov dl, 9
-        ; gt r.1(1@register,bool), r.0(0@register,u8), r.1(1@register,u8)
-        cmp cl, dl
-        seta dl
         ; copy x(0@argument,u8), r.0(0@register,u8)
         lea rbx, [rsp+24]
         mov [rbx], cl
-        ; branch r.1(1@register,bool), false, @if_2_end
-        or dl, dl
+        ; gt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
+        seta cl
+        ; branch r.0(0@register,bool), false, @if_2_end
+        or cl, cl
         jz @if_2_end
         ; @if_2_then
 @if_2_then:
@@ -324,10 +324,10 @@ start:
         mov al, dl
         and al, cl
         mov cl, al
-        ; const r.2(2@register,u8), 0
-        mov r9b, 0
-        ; equals r.0(0@register,bool), r.0(0@register,u8), r.2(2@register,u8)
-        cmp cl, r9b
+        ; const r.1(1@register,u8), 0
+        mov dl, 0
+        ; equals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
         sete cl
         ; branch r.0(0@register,bool), false, @if_4_end
         or cl, cl
@@ -399,10 +399,10 @@ start:
         mov al, dl
         and al, cl
         mov cl, al
-        ; const r.2(2@register,u8), 0
-        mov r9b, 0
-        ; equals r.0(0@register,bool), r.0(0@register,u8), r.2(2@register,u8)
-        cmp cl, r9b
+        ; const r.1(1@register,u8), 0
+        mov dl, 0
+        ; equals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
         sete cl
         ; branch r.0(0@register,bool), false, @if_6_end
         or cl, cl
@@ -426,10 +426,10 @@ start:
         mov al, dl
         and al, cl
         mov cl, al
-        ; const r.2(2@register,u8), 0
-        mov r9b, 0
-        ; equals r.0(0@register,bool), r.0(0@register,u8), r.2(2@register,u8)
-        cmp cl, r9b
+        ; const r.1(1@register,u8), 0
+        mov dl, 0
+        ; equals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
         sete cl
         ; branch r.0(0@register,bool), false, @if_7_end
         or cl, cl
@@ -459,10 +459,10 @@ start:
         mov al, dl
         and al, cl
         mov cl, al
-        ; const r.2(2@register,u8), 15
-        mov r9b, 15
-        ; equals r.0(0@register,bool), r.0(0@register,u8), r.2(2@register,u8)
-        cmp cl, r9b
+        ; const r.1(1@register,u8), 15
+        mov dl, 15
+        ; equals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
         sete cl
         ; branch r.0(0@register,bool), false, @if_8_end
         or cl, cl

@@ -55,15 +55,15 @@
 	cast r.1(1@register,u8), r.1(1@register,i64)
 	const r.3(3@register,u8), 48
 	add r.1(1@register,u8), r.1(1@register,u8), r.3(3@register,u8)
-	cast r.3(3@register,i64), r.0(0@register,u8)
-	array r.3(3@register,u8*), buffer(1@function,u8*) + r.3(3@register,i64)
-	store [r.3(3@register,u8*)], r.1(1@register,u8)
-	; 19:3 if number == 0
-	const r.1(1@register,i64), 0
-	equals r.1(1@register,bool), r.2(2@register,i64), r.1(1@register,i64)
 	copy pos(2@function,u8), r.0(0@register,u8)
+	cast r.0(0@register,i64), r.0(0@register,u8)
+	array r.0(0@register,u8*), buffer(1@function,u8*) + r.0(0@register,i64)
+	store [r.0(0@register,u8*)], r.1(1@register,u8)
+	; 19:3 if number == 0
+	const r.0(0@register,i64), 0
 	copy number(0@argument,i64), r.2(2@register,i64)
-	branch r.1(1@register,bool), false, @if_2_end
+	equals r.0(0@register,bool), r.2(2@register,i64), r.0(0@register,i64)
+	branch r.0(0@register,bool), false, @if_2_end
 @if_2_then:
 	jump @while_1_break
 @if_2_end:
@@ -120,10 +120,10 @@
 	copy length(1@function,i64), r.0(0@register,i64)
 @for_4:
 	copy r.0(0@register,u8*), str(0@argument,u8*)
-	load r.1(1@register,u8), [r.0(0@register,u8*)]
-	const r.2(2@register,u8), 0
-	notequals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
-	branch r.1(1@register,bool), false, @for_4_break
+	load r.0(0@register,u8), [r.0(0@register,u8*)]
+	const r.1(1@register,u8), 0
+	notequals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	branch r.0(0@register,bool), false, @for_4_break
 @for_4_body:
 	const r.0(0@register,i64), 1
 	copy r.1(1@register,i64), length(1@function,i64)
@@ -220,109 +220,109 @@
 	call _, printString [r.0(0@register,u8*)]
 	const r.0(0@register,i16), 1
 	const r.1(1@register,i16), 2
-	lt r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,bool)
 	copy a(0@function,i16), r.0(0@register,i16)
 	copy b(1@function,i16), r.1(1@register,i16)
-	call _, printIntLf [r.2(2@register,i64)]
+	lt r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	copy r.0(0@register,i16), b(1@function,i16)
 	copy r.1(1@register,i16), a(0@function,i16)
-	lt r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	lt r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	const r.0(0@register,u8*), [string-1]
 	call _, printString [r.0(0@register,u8*)]
 	const r.0(0@register,u8), 0
 	const r.1(1@register,u8), 128
-	lt r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
-	cast r.2(2@register,i64), r.2(2@register,bool)
 	copy c(2@function,u8), r.0(0@register,u8)
 	copy d(3@function,u8), r.1(1@register,u8)
-	call _, printIntLf [r.2(2@register,i64)]
+	lt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	copy r.0(0@register,u8), d(3@function,u8)
 	copy r.1(1@register,u8), c(2@function,u8)
-	lt r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	lt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	const r.0(0@register,u8*), [string-2]
 	call _, printString [r.0(0@register,u8*)]
 	copy r.0(0@register,i16), a(0@function,i16)
 	copy r.1(1@register,i16), b(1@function,i16)
-	lteq r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	lteq r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	copy r.0(0@register,i16), b(1@function,i16)
 	copy r.1(1@register,i16), a(0@function,i16)
-	lteq r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	lteq r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	const r.0(0@register,u8*), [string-3]
 	call _, printString [r.0(0@register,u8*)]
 	copy r.0(0@register,u8), c(2@function,u8)
 	copy r.1(1@register,u8), d(3@function,u8)
-	lteq r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	lteq r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	copy r.0(0@register,u8), d(3@function,u8)
 	copy r.1(1@register,u8), c(2@function,u8)
-	lteq r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	lteq r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	const r.0(0@register,u8*), [string-4]
 	call _, printString [r.0(0@register,u8*)]
 	copy r.0(0@register,i16), a(0@function,i16)
 	copy r.1(1@register,i16), b(1@function,i16)
-	equals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	equals r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	copy r.0(0@register,i16), b(1@function,i16)
 	copy r.1(1@register,i16), a(0@function,i16)
-	equals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	equals r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	const r.0(0@register,u8*), [string-5]
 	call _, printString [r.0(0@register,u8*)]
 	copy r.0(0@register,i16), a(0@function,i16)
 	copy r.1(1@register,i16), b(1@function,i16)
-	notequals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	notequals r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	copy r.0(0@register,i16), b(1@function,i16)
 	copy r.1(1@register,i16), a(0@function,i16)
-	notequals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	notequals r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	const r.0(0@register,u8*), [string-6]
 	call _, printString [r.0(0@register,u8*)]
 	copy r.0(0@register,i16), a(0@function,i16)
 	copy r.1(1@register,i16), b(1@function,i16)
-	gteq r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	gteq r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	copy r.0(0@register,i16), b(1@function,i16)
 	copy r.1(1@register,i16), a(0@function,i16)
-	gteq r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	gteq r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	const r.0(0@register,u8*), [string-7]
 	call _, printString [r.0(0@register,u8*)]
 	copy r.0(0@register,u8), c(2@function,u8)
 	copy r.1(1@register,u8), d(3@function,u8)
-	gteq r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	gteq r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	copy r.0(0@register,u8), d(3@function,u8)
 	copy r.1(1@register,u8), c(2@function,u8)
-	gteq r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	gteq r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	const r.0(0@register,u8*), [string-8]
 	call _, printString [r.0(0@register,u8*)]
 	copy r.0(0@register,i16), a(0@function,i16)
 	copy r.1(1@register,i16), b(1@function,i16)
-	gt r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	gt r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	copy r.0(0@register,i16), b(1@function,i16)
 	copy r.1(1@register,i16), a(0@function,i16)
 	gt r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
@@ -332,9 +332,9 @@
 	call _, printString [r.0(0@register,u8*)]
 	copy r.0(0@register,u8), c(2@function,u8)
 	copy r.1(1@register,u8), d(3@function,u8)
-	gt r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
-	cast r.2(2@register,i64), r.2(2@register,bool)
-	call _, printIntLf [r.2(2@register,i64)]
+	gt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.0(0@register,i64), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i64)]
 	copy r.0(0@register,u8), d(3@function,u8)
 	copy r.1(1@register,u8), c(2@function,u8)
 	gt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)

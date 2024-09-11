@@ -133,27 +133,27 @@ start:
         mov r10b, 48
         ; add r.1(1@register,u8), r.1(1@register,u8), r.3(3@register,u8)
         add dl, r10b
-        ; cast r.3(3@register,i64), r.0(0@register,u8)
-        movzx r10, cl
-        ; array r.3(3@register,u8*), buffer(1@function,u8*) + r.3(3@register,i64)
-        lea rax, [rsp+0]
-        add r10, rax
-        ; store [r.3(3@register,u8*)], r.1(1@register,u8)
-        mov [r10], dl
-        ; 19:3 if number == 0
-        ; const r.1(1@register,i64), 0
-        mov rdx, 0
-        ; equals r.1(1@register,bool), r.2(2@register,i64), r.1(1@register,i64)
-        cmp r9, rdx
-        sete dl
         ; copy pos(2@function,u8), r.0(0@register,u8)
         lea rbx, [rsp+20]
         mov [rbx], cl
+        ; cast r.0(0@register,i64), r.0(0@register,u8)
+        movzx rcx, cl
+        ; array r.0(0@register,u8*), buffer(1@function,u8*) + r.0(0@register,i64)
+        lea rax, [rsp+0]
+        add rcx, rax
+        ; store [r.0(0@register,u8*)], r.1(1@register,u8)
+        mov [rcx], dl
+        ; 19:3 if number == 0
+        ; const r.0(0@register,i64), 0
+        mov rcx, 0
         ; copy number(0@argument,i64), r.2(2@register,i64)
         lea rbx, [rsp+136]
         mov [rbx], r9
-        ; branch r.1(1@register,bool), false, @if_2_end
-        or dl, dl
+        ; equals r.0(0@register,bool), r.2(2@register,i64), r.0(0@register,i64)
+        cmp r9, rcx
+        sete cl
+        ; branch r.0(0@register,bool), false, @if_2_end
+        or cl, cl
         jz @if_2_end
         ; @if_2_then
 @if_2_then:
@@ -268,15 +268,15 @@ start:
         ; copy r.0(0@register,u8*), str(0@argument,u8*)
         lea rbx, [rsp+56]
         mov rcx, [rbx]
-        ; load r.1(1@register,u8), [r.0(0@register,u8*)]
-        mov dl, [rcx]
-        ; const r.2(2@register,u8), 0
-        mov r9b, 0
-        ; notequals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
-        cmp dl, r9b
-        setne dl
-        ; branch r.1(1@register,bool), false, @for_4_break
-        or dl, dl
+        ; load r.0(0@register,u8), [r.0(0@register,u8*)]
+        mov cl, [rcx]
+        ; const r.1(1@register,u8), 0
+        mov dl, 0
+        ; notequals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
+        setne cl
+        ; branch r.0(0@register,bool), false, @for_4_break
+        or cl, cl
         jz @for_4_break
         ; @for_4_body
 @for_4_body:
@@ -404,19 +404,19 @@ start:
         mov cx, 1
         ; const r.1(1@register,i16), 2
         mov dx, 2
-        ; lt r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-        cmp cx, dx
-        setl r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
         ; copy a(0@function,i16), r.0(0@register,i16)
         lea rbx, [rsp+0]
         mov [rbx], cx
         ; copy b(1@function,i16), r.1(1@register,i16)
         lea rbx, [rsp+2]
         mov [rbx], dx
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        ; lt r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        cmp cx, dx
+        setl cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; copy r.0(0@register,i16), b(1@function,i16)
@@ -425,13 +425,13 @@ start:
         ; copy r.1(1@register,i16), a(0@function,i16)
         lea rbx, [rsp+0]
         mov dx, [rbx]
-        ; lt r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        ; lt r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
         cmp cx, dx
-        setl r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setl cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; const r.0(0@register,u8*), [string-1]
@@ -444,19 +444,19 @@ start:
         mov cl, 0
         ; const r.1(1@register,u8), 128
         mov dl, 128
-        ; lt r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
-        cmp cl, dl
-        setb r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
         ; copy c(2@function,u8), r.0(0@register,u8)
         lea rbx, [rsp+4]
         mov [rbx], cl
         ; copy d(3@function,u8), r.1(1@register,u8)
         lea rbx, [rsp+5]
         mov [rbx], dl
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        ; lt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
+        setb cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; copy r.0(0@register,u8), d(3@function,u8)
@@ -465,13 +465,13 @@ start:
         ; copy r.1(1@register,u8), c(2@function,u8)
         lea rbx, [rsp+4]
         mov dl, [rbx]
-        ; lt r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        ; lt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
         cmp cl, dl
-        setb r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setb cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; const r.0(0@register,u8*), [string-2]
@@ -486,13 +486,13 @@ start:
         ; copy r.1(1@register,i16), b(1@function,i16)
         lea rbx, [rsp+2]
         mov dx, [rbx]
-        ; lteq r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        ; lteq r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
         cmp cx, dx
-        setle r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setle cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; copy r.0(0@register,i16), b(1@function,i16)
@@ -501,13 +501,13 @@ start:
         ; copy r.1(1@register,i16), a(0@function,i16)
         lea rbx, [rsp+0]
         mov dx, [rbx]
-        ; lteq r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        ; lteq r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
         cmp cx, dx
-        setle r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setle cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; const r.0(0@register,u8*), [string-3]
@@ -522,13 +522,13 @@ start:
         ; copy r.1(1@register,u8), d(3@function,u8)
         lea rbx, [rsp+5]
         mov dl, [rbx]
-        ; lteq r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        ; lteq r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
         cmp cl, dl
-        setbe r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setbe cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; copy r.0(0@register,u8), d(3@function,u8)
@@ -537,13 +537,13 @@ start:
         ; copy r.1(1@register,u8), c(2@function,u8)
         lea rbx, [rsp+4]
         mov dl, [rbx]
-        ; lteq r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        ; lteq r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
         cmp cl, dl
-        setbe r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setbe cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; const r.0(0@register,u8*), [string-4]
@@ -558,13 +558,13 @@ start:
         ; copy r.1(1@register,i16), b(1@function,i16)
         lea rbx, [rsp+2]
         mov dx, [rbx]
-        ; equals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        ; equals r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
         cmp cx, dx
-        sete r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        sete cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; copy r.0(0@register,i16), b(1@function,i16)
@@ -573,13 +573,13 @@ start:
         ; copy r.1(1@register,i16), a(0@function,i16)
         lea rbx, [rsp+0]
         mov dx, [rbx]
-        ; equals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        ; equals r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
         cmp cx, dx
-        sete r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        sete cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; const r.0(0@register,u8*), [string-5]
@@ -594,13 +594,13 @@ start:
         ; copy r.1(1@register,i16), b(1@function,i16)
         lea rbx, [rsp+2]
         mov dx, [rbx]
-        ; notequals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        ; notequals r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
         cmp cx, dx
-        setne r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setne cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; copy r.0(0@register,i16), b(1@function,i16)
@@ -609,13 +609,13 @@ start:
         ; copy r.1(1@register,i16), a(0@function,i16)
         lea rbx, [rsp+0]
         mov dx, [rbx]
-        ; notequals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        ; notequals r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
         cmp cx, dx
-        setne r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setne cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; const r.0(0@register,u8*), [string-6]
@@ -630,13 +630,13 @@ start:
         ; copy r.1(1@register,i16), b(1@function,i16)
         lea rbx, [rsp+2]
         mov dx, [rbx]
-        ; gteq r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        ; gteq r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
         cmp cx, dx
-        setge r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setge cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; copy r.0(0@register,i16), b(1@function,i16)
@@ -645,13 +645,13 @@ start:
         ; copy r.1(1@register,i16), a(0@function,i16)
         lea rbx, [rsp+0]
         mov dx, [rbx]
-        ; gteq r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        ; gteq r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
         cmp cx, dx
-        setge r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setge cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; const r.0(0@register,u8*), [string-7]
@@ -666,13 +666,13 @@ start:
         ; copy r.1(1@register,u8), d(3@function,u8)
         lea rbx, [rsp+5]
         mov dl, [rbx]
-        ; gteq r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        ; gteq r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
         cmp cl, dl
-        setae r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setae cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; copy r.0(0@register,u8), d(3@function,u8)
@@ -681,13 +681,13 @@ start:
         ; copy r.1(1@register,u8), c(2@function,u8)
         lea rbx, [rsp+4]
         mov dl, [rbx]
-        ; gteq r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        ; gteq r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
         cmp cl, dl
-        setae r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setae cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; const r.0(0@register,u8*), [string-8]
@@ -702,13 +702,13 @@ start:
         ; copy r.1(1@register,i16), b(1@function,i16)
         lea rbx, [rsp+2]
         mov dx, [rbx]
-        ; gt r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        ; gt r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
         cmp cx, dx
-        setg r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        setg cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; copy r.0(0@register,i16), b(1@function,i16)
@@ -738,13 +738,13 @@ start:
         ; copy r.1(1@register,u8), d(3@function,u8)
         lea rbx, [rsp+5]
         mov dl, [rbx]
-        ; gt r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        ; gt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
         cmp cl, dl
-        seta r9b
-        ; cast r.2(2@register,i64), r.2(2@register,bool)
-        movzx r9, r9b
-        ; call _, printIntLf [r.2(2@register,i64)]
-        push r9
+        seta cl
+        ; cast r.0(0@register,i64), r.0(0@register,bool)
+        movzx rcx, cl
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
           call @printIntLf
         add rsp, 8
         ; copy r.0(0@register,u8), d(3@function,u8)

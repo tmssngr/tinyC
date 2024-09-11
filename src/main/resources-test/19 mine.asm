@@ -133,27 +133,27 @@ start:
         mov r10b, 48
         ; add r.1(1@register,u8), r.1(1@register,u8), r.3(3@register,u8)
         add dl, r10b
-        ; cast r.3(3@register,i64), r.0(0@register,u8)
-        movzx r10, cl
-        ; array r.3(3@register,u8*), buffer(1@function,u8*) + r.3(3@register,i64)
-        lea rax, [rsp+0]
-        add r10, rax
-        ; store [r.3(3@register,u8*)], r.1(1@register,u8)
-        mov [r10], dl
-        ; 19:3 if number == 0
-        ; const r.1(1@register,i64), 0
-        mov rdx, 0
-        ; equals r.1(1@register,bool), r.2(2@register,i64), r.1(1@register,i64)
-        cmp r9, rdx
-        sete dl
         ; copy pos(2@function,u8), r.0(0@register,u8)
         lea rbx, [rsp+20]
         mov [rbx], cl
+        ; cast r.0(0@register,i64), r.0(0@register,u8)
+        movzx rcx, cl
+        ; array r.0(0@register,u8*), buffer(1@function,u8*) + r.0(0@register,i64)
+        lea rax, [rsp+0]
+        add rcx, rax
+        ; store [r.0(0@register,u8*)], r.1(1@register,u8)
+        mov [rcx], dl
+        ; 19:3 if number == 0
+        ; const r.0(0@register,i64), 0
+        mov rcx, 0
         ; copy number(0@argument,i64), r.2(2@register,i64)
         lea rbx, [rsp+136]
         mov [rbx], r9
-        ; branch r.1(1@register,bool), false, @if_2_end
-        or dl, dl
+        ; equals r.0(0@register,bool), r.2(2@register,i64), r.0(0@register,i64)
+        cmp r9, rcx
+        sete cl
+        ; branch r.0(0@register,bool), false, @if_2_end
+        or cl, cl
         jz @if_2_end
         ; @if_2_then
 @if_2_then:
@@ -213,15 +213,15 @@ start:
         ; copy r.0(0@register,u8*), str(0@argument,u8*)
         lea rbx, [rsp+56]
         mov rcx, [rbx]
-        ; load r.1(1@register,u8), [r.0(0@register,u8*)]
-        mov dl, [rcx]
-        ; const r.2(2@register,u8), 0
-        mov r9b, 0
-        ; notequals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
-        cmp dl, r9b
-        setne dl
-        ; branch r.1(1@register,bool), false, @for_3_break
-        or dl, dl
+        ; load r.0(0@register,u8), [r.0(0@register,u8*)]
+        mov cl, [rcx]
+        ; const r.1(1@register,u8), 0
+        mov dl, 0
+        ; notequals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
+        setne cl
+        ; branch r.0(0@register,bool), false, @for_3_break
+        or cl, cl
         jz @for_3_break
         ; @for_3_body
 @for_3_body:
@@ -773,18 +773,17 @@ start:
         ; copy r.1(1@register,i16), dr(3@function,i16)
         lea rbx, [rsp+2]
         mov dx, [rbx]
-        ; add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
-        mov r9w, cx
-        add r9w, dx
-        ; const r.3(3@register,i16), -1
-        mov r10w, -1
+        ; add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        add cx, dx
+        ; const r.1(1@register,i16), -1
+        mov dx, -1
         ; 47:3 for dc <= 1
-        ; copy r(4@function,i16), r.2(2@register,i16)
+        ; copy r(4@function,i16), r.0(0@register,i16)
         lea rbx, [rsp+4]
-        mov [rbx], r9w
-        ; copy dc(5@function,i16), r.3(3@register,i16)
+        mov [rbx], cx
+        ; copy dc(5@function,i16), r.1(1@register,i16)
         lea rbx, [rsp+6]
-        mov [rbx], r10w
+        mov [rbx], dx
 @for_8:
         ; const r.0(0@register,i16), 1
         mov cx, 1
@@ -805,18 +804,17 @@ start:
         ; copy r.1(1@register,i16), dc(5@function,i16)
         lea rbx, [rsp+6]
         mov dx, [rbx]
-        ; add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
-        mov r9w, cx
-        add r9w, dx
+        ; add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        add cx, dx
         ; 49:4 if checkCellBounds([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=49:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=49:27]])
-        ; copy c(6@function,i16), r.2(2@register,i16)
+        ; copy c(6@function,i16), r.0(0@register,i16)
         lea rbx, [rsp+8]
-        mov [rbx], r9w
-        ; call r.0(0@register,bool), checkCellBounds, [r(4@function,i16), r.2(2@register,i16)]
+        mov [rbx], cx
+        ; call r.0(0@register,bool), checkCellBounds, [r(4@function,i16), r.0(0@register,i16)]
         lea rax, [rsp+4]
         mov ax, [rax]
         push rax
-        push r9
+        push rcx
         sub rsp, 8
           call @checkCellBounds
         add rsp, 24
@@ -943,11 +941,11 @@ start:
         ; copy r.1(1@register,i16), column(1@argument,i16)
         lea rbx, [rsp+48]
         mov dx, [rbx]
-        ; equals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        ; equals r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
         cmp cx, dx
-        sete r9b
-        ; branch r.2(2@register,bool), false, @if_12_end
-        or r9b, r9b
+        sete cl
+        ; branch r.0(0@register,bool), false, @if_12_end
+        or cl, cl
         jz @if_12_end
         ; @if_12_then
 @if_12_then:
@@ -1067,14 +1065,14 @@ start:
         ; 80:4 if count > 0
         ; const r.1(1@register,u8), 0
         mov dl, 0
-        ; gt r.1(1@register,bool), r.0(0@register,u8), r.1(1@register,u8)
-        cmp cl, dl
-        seta dl
         ; copy count(4@function,u8), r.0(0@register,u8)
         lea rbx, [rsp+1]
         mov [rbx], cl
-        ; branch r.1(1@register,bool), false, @if_16_else
-        or dl, dl
+        ; gt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
+        seta cl
+        ; branch r.0(0@register,bool), false, @if_16_else
+        or cl, cl
         jz @if_16_else
         ; @if_16_then
 @if_16_then:
@@ -1437,17 +1435,17 @@ start:
         ; 126:3 if value == 0
         ; const r.2(2@register,i16), 0
         mov r9w, 0
-        ; equals r.2(2@register,bool), r.1(1@register,i16), r.2(2@register,i16)
-        cmp dx, r9w
-        sete r9b
-        ; copy count(1@function,u8), r.0(0@register,u8)
-        lea rbx, [rsp+0]
-        mov [rbx], cl
         ; copy value(0@argument,i16), r.1(1@register,i16)
         lea rbx, [rsp+24]
         mov [rbx], dx
-        ; branch r.2(2@register,bool), false, @if_23_end
-        or r9b, r9b
+        ; equals r.1(1@register,bool), r.1(1@register,i16), r.2(2@register,i16)
+        cmp dx, r9w
+        sete dl
+        ; copy count(1@function,u8), r.0(0@register,u8)
+        lea rbx, [rsp+0]
+        mov [rbx], cl
+        ; branch r.1(1@register,bool), false, @if_23_end
+        or dl, dl
         jz @if_23_end
         ; @if_23_then
 @if_23_then:
@@ -1655,10 +1653,10 @@ start:
         ; copy r.0(0@register,i16), count(0@function,i16)
         lea rbx, [rsp+0]
         mov cx, [rbx]
-        ; cast r.1(1@register,i64), r.0(0@register,i16)
-        movzx rdx, cx
-        ; call _, printUint [r.1(1@register,i64)]
-        push rdx
+        ; cast r.0(0@register,i64), r.0(0@register,i16)
+        movzx rcx, cx
+        ; call _, printUint [r.0(0@register,i64)]
+        push rcx
           call @printUint
         add rsp, 8
         ; 150:15 return count == 0
@@ -1912,14 +1910,13 @@ start:
         ; copy r.2(2@register,i16), curr_r(0@argument,i16)
         lea rbx, [rsp+88]
         mov r9w, [rbx]
-        ; sub r.3(3@register,i16), r.1(1@register,i16), r.2(2@register,i16)
-        mov r10w, dx
-        sub r10w, r9w
+        ; sub r.1(1@register,i16), r.1(1@register,i16), r.2(2@register,i16)
+        sub dx, r9w
         ; copy column(4@function,i16), r.0(0@register,i16)
         lea rbx, [rsp+4]
         mov [rbx], cx
-        ; call r.0(0@register,i16), abs, [r.3(3@register,i16)]
-        push r10
+        ; call r.0(0@register,i16), abs, [r.1(1@register,i16)]
+        push rdx
           call @abs
         add rsp, 8
         mov cx, ax
@@ -1942,11 +1939,10 @@ start:
         ; copy r.1(1@register,i16), curr_c(1@argument,i16)
         lea rbx, [rsp+80]
         mov dx, [rbx]
-        ; sub r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
-        mov r9w, cx
-        sub r9w, dx
-        ; call r.0(0@register,i16), abs, [r.2(2@register,i16)]
-        push r9
+        ; sub r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        sub cx, dx
+        ; call r.0(0@register,i16), abs, [r.0(0@register,i16)]
+        push rcx
           call @abs
         add rsp, 8
         mov cx, ax
@@ -2080,18 +2076,17 @@ start:
         ; copy r.1(1@register,i16), dr(2@function,i16)
         lea rbx, [rsp+0]
         mov dx, [rbx]
-        ; add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
-        mov r9w, cx
-        add r9w, dx
-        ; const r.3(3@register,i16), -1
-        mov r10w, -1
+        ; add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        add cx, dx
+        ; const r.1(1@register,i16), -1
+        mov dx, -1
         ; 186:3 for dc <= 1
-        ; copy r(3@function,i16), r.2(2@register,i16)
+        ; copy r(3@function,i16), r.0(0@register,i16)
         lea rbx, [rsp+2]
-        mov [rbx], r9w
-        ; copy dc(4@function,i16), r.3(3@register,i16)
+        mov [rbx], cx
+        ; copy dc(4@function,i16), r.1(1@register,i16)
         lea rbx, [rsp+4]
-        mov [rbx], r10w
+        mov [rbx], dx
 @for_35:
         ; const r.0(0@register,i16), 1
         mov cx, 1
@@ -2153,18 +2148,17 @@ start:
         ; copy r.1(1@register,i16), dc(4@function,i16)
         lea rbx, [rsp+4]
         mov dx, [rbx]
-        ; add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
-        mov r9w, cx
-        add r9w, dx
+        ; add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        add cx, dx
         ; 192:4 if !checkCellBounds([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=192:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=192:28]])
-        ; copy c(5@function,i16), r.2(2@register,i16)
+        ; copy c(5@function,i16), r.0(0@register,i16)
         lea rbx, [rsp+6]
-        mov [rbx], r9w
-        ; call r.0(0@register,bool), checkCellBounds, [r(3@function,i16), r.2(2@register,i16)]
+        mov [rbx], cx
+        ; call r.0(0@register,bool), checkCellBounds, [r(3@function,i16), r.0(0@register,i16)]
         lea rax, [rsp+2]
         mov ax, [rax]
         push rax
-        push r9
+        push rcx
         sub rsp, 8
           call @checkCellBounds
         add rsp, 24
@@ -2389,11 +2383,11 @@ start:
         ; copy r.0(0@register,bool), needsInitialize(0@function,bool)
         lea rbx, [rsp+0]
         mov cl, [rbx]
-        ; notlog r.1(1@register,bool), r.0(0@register,bool)
+        ; notlog r.0(0@register,bool), r.0(0@register,bool)
         or cl, cl
-        sete dl
-        ; branch r.1(1@register,bool), false, @if_41_end
-        or dl, dl
+        sete cl
+        ; branch r.0(0@register,bool), false, @if_41_end
+        or cl, cl
         jz @if_41_end
         ; @if_41_then
 @if_41_then:
@@ -2426,14 +2420,14 @@ start:
         ; 223:3 if chr == 27
         ; const r.1(1@register,i16), 27
         mov dx, 27
-        ; equals r.1(1@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-        cmp cx, dx
-        sete dl
         ; copy chr(3@function,i16), r.0(0@register,i16)
         lea rbx, [rsp+6]
         mov [rbx], cx
-        ; branch r.1(1@register,bool), false, @if_43_end
-        or dl, dl
+        ; equals r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+        cmp cx, dx
+        sete cl
+        ; branch r.0(0@register,bool), false, @if_43_end
+        or cl, cl
         jz @if_43_end
         ; @if_43_then
 @if_43_then:
@@ -2665,11 +2659,11 @@ start:
         ; copy r.0(0@register,bool), needsInitialize(0@function,bool)
         lea rbx, [rsp+0]
         mov cl, [rbx]
-        ; notlog r.1(1@register,bool), r.0(0@register,bool)
+        ; notlog r.0(0@register,bool), r.0(0@register,bool)
         or cl, cl
-        sete dl
-        ; branch r.1(1@register,bool), false, @if_50_end
-        or dl, dl
+        sete cl
+        ; branch r.0(0@register,bool), false, @if_50_end
+        or cl, cl
         jz @if_50_end
         ; @if_50_then
 @if_50_then:

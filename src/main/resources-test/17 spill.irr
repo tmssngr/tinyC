@@ -46,15 +46,15 @@
 	cast r.1(1@register,u8), r.1(1@register,i64)
 	const r.3(3@register,u8), 48
 	add r.1(1@register,u8), r.1(1@register,u8), r.3(3@register,u8)
-	cast r.3(3@register,i64), r.0(0@register,u8)
-	array r.3(3@register,u8*), buffer(1@function,u8*) + r.3(3@register,i64)
-	store [r.3(3@register,u8*)], r.1(1@register,u8)
-	; 19:3 if number == 0
-	const r.1(1@register,i64), 0
-	equals r.1(1@register,bool), r.2(2@register,i64), r.1(1@register,i64)
 	copy pos(2@function,u8), r.0(0@register,u8)
+	cast r.0(0@register,i64), r.0(0@register,u8)
+	array r.0(0@register,u8*), buffer(1@function,u8*) + r.0(0@register,i64)
+	store [r.0(0@register,u8*)], r.1(1@register,u8)
+	; 19:3 if number == 0
+	const r.0(0@register,i64), 0
 	copy number(0@argument,i64), r.2(2@register,i64)
-	branch r.1(1@register,bool), false, @if_2_end
+	equals r.0(0@register,bool), r.2(2@register,i64), r.0(0@register,i64)
+	branch r.0(0@register,bool), false, @if_2_end
 @if_2_then:
 	jump @while_1_break
 @if_2_end:
@@ -131,17 +131,17 @@
 	const r.3(3@register,i16), 3
 	; Spill c
 	copy c(2@function,i16), r.2(2@register,i16)
-	add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,i16)
 	copy a(0@function,i16), r.0(0@register,i16)
 	copy b(1@function,i16), r.1(1@register,i16)
+	add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,i16)
 	copy d(3@function,i16), r.3(3@register,i16)
-	call _, printIntLf [r.2(2@register,i64)]
+	call _, printIntLf [r.0(0@register,i64)]
 	copy r.0(0@register,i16), c(2@function,i16)
 	copy r.1(1@register,i16), d(3@function,i16)
-	add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
-	cast r.2(2@register,i64), r.2(2@register,i16)
-	call _, printIntLf [r.2(2@register,i64)]
+	add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,i16)
+	call _, printIntLf [r.0(0@register,i64)]
 	copy r.0(0@register,i16), d(3@function,i16)
 	copy r.1(1@register,i16), c(2@function,i16)
 	add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)

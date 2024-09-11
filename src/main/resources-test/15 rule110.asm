@@ -92,15 +92,15 @@ start:
         ; copy r.0(0@register,u8*), str(0@argument,u8*)
         lea rbx, [rsp+56]
         mov rcx, [rbx]
-        ; load r.1(1@register,u8), [r.0(0@register,u8*)]
-        mov dl, [rcx]
-        ; const r.2(2@register,u8), 0
-        mov r9b, 0
-        ; notequals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
-        cmp dl, r9b
-        setne dl
-        ; branch r.1(1@register,bool), false, @for_1_break
-        or dl, dl
+        ; load r.0(0@register,u8), [r.0(0@register,u8*)]
+        mov cl, [rcx]
+        ; const r.1(1@register,u8), 0
+        mov dl, 0
+        ; notequals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
+        setne cl
+        ; branch r.0(0@register,bool), false, @for_1_break
+        or cl, cl
         jz @for_1_break
         ; @for_1_body
 @for_1_body:
@@ -205,20 +205,20 @@ start:
         ; copy r.0(0@register,u8), i(0@function,u8)
         lea rbx, [rsp+0]
         mov cl, [rbx]
-        ; cast r.1(1@register,i64), r.0(0@register,u8)
-        movzx rdx, cl
-        ; array r.1(1@register,u8*), board(0@global,u8*) + r.1(1@register,i64)
+        ; cast r.0(0@register,i64), r.0(0@register,u8)
+        movzx rcx, cl
+        ; array r.0(0@register,u8*), board(0@global,u8*) + r.0(0@register,i64)
         lea rax, [var_0]
-        add rdx, rax
-        ; load r.1(1@register,u8), [r.1(1@register,u8*)]
-        mov dl, [rdx]
-        ; const r.2(2@register,u8), 0
-        mov r9b, 0
-        ; equals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
-        cmp dl, r9b
-        sete dl
-        ; branch r.1(1@register,bool), false, @if_3_else
-        or dl, dl
+        add rcx, rax
+        ; load r.0(0@register,u8), [r.0(0@register,u8*)]
+        mov cl, [rcx]
+        ; const r.1(1@register,u8), 0
+        mov dl, 0
+        ; equals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
+        sete cl
+        ; branch r.0(0@register,bool), false, @if_3_else
+        or cl, cl
         jz @if_3_else
         ; @if_3_then
 @if_3_then:
@@ -339,13 +339,13 @@ start:
         ; copy r.1(1@register,u8), i(0@function,u8)
         lea rbx, [rsp+0]
         mov dl, [rbx]
-        ; cast r.2(2@register,i64), r.1(1@register,u8)
-        movzx r9, dl
-        ; array r.2(2@register,u8*), board(0@global,u8*) + r.2(2@register,i64)
+        ; cast r.1(1@register,i64), r.1(1@register,u8)
+        movzx rdx, dl
+        ; array r.1(1@register,u8*), board(0@global,u8*) + r.1(1@register,i64)
         lea rax, [var_0]
-        add r9, rax
-        ; store [r.2(2@register,u8*)], r.0(0@register,u8)
-        mov [r9], cl
+        add rdx, rax
+        ; store [r.1(1@register,u8*)], r.0(0@register,u8)
+        mov [rdx], cl
 @for_4_continue:
         ; const r.0(0@register,u8), 1
         mov cl, 1
@@ -476,26 +476,24 @@ start:
         or cl, dl
         ; const r.1(1@register,u8), 110
         mov dl, 110
-        ; shiftright r.1(1@register,u8), r.1(1@register,u8), r.0(0@register,u8)
-        mov rbx, rcx
-        mov al, dl
-        shr al, cl
-        mov dl, al
-        mov rcx, rbx
-        ; const r.3(3@register,u8), 1
-        mov r10b, 1
-        ; and r.1(1@register,u8), r.1(1@register,u8), r.3(3@register,u8)
-        and dl, r10b
-        ; cast r.3(3@register,i64), r.2(2@register,u8)
-        movzx r10, r9b
-        ; array r.3(3@register,u8*), board(0@global,u8*) + r.3(3@register,i64)
-        lea rax, [var_0]
-        add r10, rax
-        ; store [r.3(3@register,u8*)], r.1(1@register,u8)
-        mov [r10], dl
         ; copy pattern(2@function,u8), r.0(0@register,u8)
         lea rbx, [rsp+2]
         mov [rbx], cl
+        ; shiftright r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
+        mov al, dl
+        shr al, cl
+        mov cl, al
+        ; const r.1(1@register,u8), 1
+        mov dl, 1
+        ; and r.0(0@register,u8), r.0(0@register,u8), r.1(1@register,u8)
+        and cl, dl
+        ; cast r.1(1@register,i64), r.2(2@register,u8)
+        movzx rdx, r9b
+        ; array r.1(1@register,u8*), board(0@global,u8*) + r.1(1@register,i64)
+        lea rax, [var_0]
+        add rdx, rax
+        ; store [r.1(1@register,u8*)], r.0(0@register,u8)
+        mov [rdx], cl
 @for_6_continue:
         ; const r.0(0@register,u8), 1
         mov cl, 1

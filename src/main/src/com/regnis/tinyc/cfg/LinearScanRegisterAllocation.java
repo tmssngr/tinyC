@@ -28,6 +28,8 @@ public final class LinearScanRegisterAllocation {
 	private final Register[] registers;
 	private final BasicBlock block;
 
+	private Map<IRInstruction, Set<LiveVar>> shouldBeFreed;
+
 	public LinearScanRegisterAllocation(BasicBlock block) {
 		this.block = block;
 		final int maxRegisters = 4;
@@ -38,10 +40,48 @@ public final class LinearScanRegisterAllocation {
 	}
 
 	public BasicBlock process() {
+		shouldBeFreed = determineShouldBeFreed(block.instructions);
+
 		for (IRInstruction instruction : block.instructions) {
 			process(instruction);
 		}
 		return new BasicBlock(block.name, instructions, block.predecessors, block.successors);
+	}
+
+	private Map<IRInstruction, Set<LiveVar>> determineShouldBeFreed(List<IRInstruction> instructions) {
+		final Map<IRInstruction, Set<LiveVar>> map = new HashMap<>();
+		// we start with an empty set because at the end of each basic block all modified registers
+		// will be stored back to their memory variables
+		final Set<LiveVar> liveVars = new HashSet<>();
+		for (final ListIterator<IRInstruction> it = instructions.listIterator(instructions.size()); it.hasPrevious(); ) {
+			final IRInstruction instruction = it.previous();
+
+			final Set<LiveVar> uses = new HashSet<>();
+			final Set<LiveVar> defines = new HashSet<>();
+			DetectVarLiveness.detectLiveness(instruction, uses, defines);
+
+			if (instruction instanceof IRCall) {
+				// before a call all register-cached variables will be stored back/freed
+				liveVars.clear();
+			}
+			else {
+				liveVars.removeAll(defines);
+			}
+
+			final Set<LiveVar> toBeFreed = new HashSet<>(uses);
+			toBeFreed.removeAll(liveVars);
+			map.put(instruction, toBeFreed);
+
+			liveVars.addAll(uses);
+		}
+		return map;
+	}
+
+	private void logInstructionsAndToBeFreed() {
+		for (IRInstruction instruction : block.instructions) {
+			System.out.println(instruction);
+			System.out.println("  free " + shouldBeFreed.get(instruction));
+		}
 	}
 
 	private void process(IRInstruction instruction) {
@@ -468,21 +508,22 @@ public final class LinearScanRegisterAllocation {
 	}
 
 	private void freeLastUsed(IRInstruction instruction) {
-		final Set<LiveVar> lastUsed = block.getLastUsed(instruction);
-		if (lastUsed.isEmpty()) {
+		final Set<LiveVar> shouldBeFreed = this.shouldBeFreed.get(instruction);
+		if (shouldBeFreed.isEmpty()) {
 			return;
 		}
 
-		for (LiveVar var : lastUsed) {
-			for (int i = 0; i < registers.length; i++) {
-				final Register register = registers[i];
-				if (register.var != null && LiveVar.equals(var, register.var)) {
-					if (var.scope() == VariableScope.global && register.usedForWrite) {
+		for (int i = 0; i < registers.length; i++) {
+			final Register register = registers[i];
+			if (register.var != null && contains(register.var, shouldBeFreed)) {
+				if (register.usedForWrite) {
+					final boolean shouldSave = isGlobalOrLiveAfter(register.var, instruction);
+					if (shouldSave) {
 						add(new IRCopy(register.var, IRVar.createRegisterVar(i, register.var.type()), Location.DUMMY));
 					}
-					register.free();
-					break;
 				}
+				register.free();
+				register.var = null;
 			}
 		}
 	}

@@ -35,10 +35,10 @@
 	copy length(1@function,i64), r.0(0@register,i64)
 @for_1:
 	copy r.0(0@register,u8*), str(0@argument,u8*)
-	load r.1(1@register,u8), [r.0(0@register,u8*)]
-	const r.2(2@register,u8), 0
-	notequals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
-	branch r.1(1@register,bool), false, @for_1_break
+	load r.0(0@register,u8), [r.0(0@register,u8*)]
+	const r.1(1@register,u8), 0
+	notequals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	branch r.0(0@register,bool), false, @for_1_break
 @for_1_body:
 	const r.0(0@register,i64), 1
 	copy r.1(1@register,i64), length(1@function,i64)
@@ -86,9 +86,9 @@
 	and r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
 	; 5:2 if x > 9
 	const r.1(1@register,u8), 9
-	gt r.1(1@register,bool), r.0(0@register,u8), r.1(1@register,u8)
 	copy x(0@argument,u8), r.0(0@register,u8)
-	branch r.1(1@register,bool), false, @if_2_end
+	gt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	branch r.0(0@register,bool), false, @if_2_end
 @if_2_then:
 	const r.0(0@register,u8), 7
 	copy r.1(1@register,u8), x(0@argument,u8)
@@ -163,8 +163,8 @@
 	const r.0(0@register,u8), 7
 	copy r.1(1@register,u8), i(0@function,u8)
 	and r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
-	const r.2(2@register,u8), 0
-	equals r.0(0@register,bool), r.0(0@register,u8), r.2(2@register,u8)
+	const r.1(1@register,u8), 0
+	equals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
 	branch r.0(0@register,bool), false, @if_4_end
 @if_4_then:
 	const r.0(0@register,u8), 32
@@ -193,8 +193,8 @@
 	const r.0(0@register,u8), 15
 	copy r.1(1@register,u8), i(1@function,u8)
 	and r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
-	const r.2(2@register,u8), 0
-	equals r.0(0@register,bool), r.0(0@register,u8), r.2(2@register,u8)
+	const r.1(1@register,u8), 0
+	equals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
 	branch r.0(0@register,bool), false, @if_6_end
 @if_6_then:
 	call _, printHex2 [i(1@function,u8)]
@@ -203,8 +203,8 @@
 	const r.0(0@register,u8), 7
 	copy r.1(1@register,u8), i(1@function,u8)
 	and r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
-	const r.2(2@register,u8), 0
-	equals r.0(0@register,bool), r.0(0@register,u8), r.2(2@register,u8)
+	const r.1(1@register,u8), 0
+	equals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
 	branch r.0(0@register,bool), false, @if_7_end
 @if_7_then:
 	const r.0(0@register,u8), 32
@@ -215,8 +215,8 @@
 	const r.0(0@register,u8), 15
 	copy r.1(1@register,u8), i(1@function,u8)
 	and r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
-	const r.2(2@register,u8), 15
-	equals r.0(0@register,bool), r.0(0@register,u8), r.2(2@register,u8)
+	const r.1(1@register,u8), 15
+	equals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
 	branch r.0(0@register,bool), false, @if_8_end
 @if_8_then:
 	const r.0(0@register,u8), 10

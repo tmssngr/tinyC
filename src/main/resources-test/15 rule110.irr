@@ -35,10 +35,10 @@
 	copy length(1@function,i64), r.0(0@register,i64)
 @for_1:
 	copy r.0(0@register,u8*), str(0@argument,u8*)
-	load r.1(1@register,u8), [r.0(0@register,u8*)]
-	const r.2(2@register,u8), 0
-	notequals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
-	branch r.1(1@register,bool), false, @for_1_break
+	load r.0(0@register,u8), [r.0(0@register,u8*)]
+	const r.1(1@register,u8), 0
+	notequals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	branch r.0(0@register,bool), false, @for_1_break
 @for_1_body:
 	const r.0(0@register,i64), 1
 	copy r.1(1@register,i64), length(1@function,i64)
@@ -101,12 +101,12 @@
 @for_2_body:
 	; 12:3 if [...] == 0
 	copy r.0(0@register,u8), i(0@function,u8)
-	cast r.1(1@register,i64), r.0(0@register,u8)
-	array r.1(1@register,u8*), board(0@global,u8*) + r.1(1@register,i64)
-	load r.1(1@register,u8), [r.1(1@register,u8*)]
-	const r.2(2@register,u8), 0
-	equals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
-	branch r.1(1@register,bool), false, @if_3_else
+	cast r.0(0@register,i64), r.0(0@register,u8)
+	array r.0(0@register,u8*), board(0@global,u8*) + r.0(0@register,i64)
+	load r.0(0@register,u8), [r.0(0@register,u8*)]
+	const r.1(1@register,u8), 0
+	equals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	branch r.0(0@register,bool), false, @if_3_else
 @if_3_then:
 	const r.0(0@register,u8), 32
 	call _, printChar [r.0(0@register,u8)]
@@ -185,9 +185,9 @@
 @for_4_body:
 	const r.0(0@register,u8), 0
 	copy r.1(1@register,u8), i(0@function,u8)
-	cast r.2(2@register,i64), r.1(1@register,u8)
-	array r.2(2@register,u8*), board(0@global,u8*) + r.2(2@register,i64)
-	store [r.2(2@register,u8*)], r.0(0@register,u8)
+	cast r.1(1@register,i64), r.1(1@register,u8)
+	array r.1(1@register,u8*), board(0@global,u8*) + r.1(1@register,i64)
+	store [r.1(1@register,u8*)], r.0(0@register,u8)
 @for_4_continue:
 	const r.0(0@register,u8), 1
 	copy r.1(1@register,u8), i(0@function,u8)
@@ -242,13 +242,13 @@
 	load r.1(1@register,u8), [r.1(1@register,u8*)]
 	or r.0(0@register,u8), r.0(0@register,u8), r.1(1@register,u8)
 	const r.1(1@register,u8), 110
-	shiftright r.1(1@register,u8), r.1(1@register,u8), r.0(0@register,u8)
-	const r.3(3@register,u8), 1
-	and r.1(1@register,u8), r.1(1@register,u8), r.3(3@register,u8)
-	cast r.3(3@register,i64), r.2(2@register,u8)
-	array r.3(3@register,u8*), board(0@global,u8*) + r.3(3@register,i64)
-	store [r.3(3@register,u8*)], r.1(1@register,u8)
 	copy pattern(2@function,u8), r.0(0@register,u8)
+	shiftright r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
+	const r.1(1@register,u8), 1
+	and r.0(0@register,u8), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.1(1@register,i64), r.2(2@register,u8)
+	array r.1(1@register,u8*), board(0@global,u8*) + r.1(1@register,i64)
+	store [r.1(1@register,u8*)], r.0(0@register,u8)
 @for_6_continue:
 	const r.0(0@register,u8), 1
 	copy r.1(1@register,u8), j(3@function,u8)

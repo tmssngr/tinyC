@@ -133,27 +133,27 @@ start:
         mov r10b, 48
         ; add r.1(1@register,u8), r.1(1@register,u8), r.3(3@register,u8)
         add dl, r10b
-        ; cast r.3(3@register,i64), r.0(0@register,u8)
-        movzx r10, cl
-        ; array r.3(3@register,u8*), buffer(1@function,u8*) + r.3(3@register,i64)
-        lea rax, [rsp+0]
-        add r10, rax
-        ; store [r.3(3@register,u8*)], r.1(1@register,u8)
-        mov [r10], dl
-        ; 19:3 if number == 0
-        ; const r.1(1@register,i64), 0
-        mov rdx, 0
-        ; equals r.1(1@register,bool), r.2(2@register,i64), r.1(1@register,i64)
-        cmp r9, rdx
-        sete dl
         ; copy pos(2@function,u8), r.0(0@register,u8)
         lea rbx, [rsp+20]
         mov [rbx], cl
+        ; cast r.0(0@register,i64), r.0(0@register,u8)
+        movzx rcx, cl
+        ; array r.0(0@register,u8*), buffer(1@function,u8*) + r.0(0@register,i64)
+        lea rax, [rsp+0]
+        add rcx, rax
+        ; store [r.0(0@register,u8*)], r.1(1@register,u8)
+        mov [rcx], dl
+        ; 19:3 if number == 0
+        ; const r.0(0@register,i64), 0
+        mov rcx, 0
         ; copy number(0@argument,i64), r.2(2@register,i64)
         lea rbx, [rsp+136]
         mov [rbx], r9
-        ; branch r.1(1@register,bool), false, @if_2_end
-        or dl, dl
+        ; equals r.0(0@register,bool), r.2(2@register,i64), r.0(0@register,i64)
+        cmp r9, rcx
+        sete cl
+        ; branch r.0(0@register,bool), false, @if_2_end
+        or cl, cl
         jz @if_2_end
         ; @if_2_then
 @if_2_then:
@@ -268,15 +268,15 @@ start:
         ; copy r.0(0@register,u8*), str(0@argument,u8*)
         lea rbx, [rsp+56]
         mov rcx, [rbx]
-        ; load r.1(1@register,u8), [r.0(0@register,u8*)]
-        mov dl, [rcx]
-        ; const r.2(2@register,u8), 0
-        mov r9b, 0
-        ; notequals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
-        cmp dl, r9b
-        setne dl
-        ; branch r.1(1@register,bool), false, @for_4_break
-        or dl, dl
+        ; load r.0(0@register,u8), [r.0(0@register,u8*)]
+        mov cl, [rcx]
+        ; const r.1(1@register,u8), 0
+        mov dl, 0
+        ; notequals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
+        setne cl
+        ; branch r.0(0@register,bool), false, @for_4_break
+        or cl, cl
         jz @for_4_break
         ; @for_4_body
 @for_4_body:
@@ -415,15 +415,15 @@ start:
         ; copy r.0(0@register,u8*), ptr(1@function,u8*)
         lea rbx, [rsp+8]
         mov rcx, [rbx]
-        ; load r.1(1@register,u8), [r.0(0@register,u8*)]
-        mov dl, [rcx]
-        ; const r.2(2@register,u8), 0
-        mov r9b, 0
-        ; notequals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
-        cmp dl, r9b
-        setne dl
-        ; branch r.1(1@register,bool), false, @for_5_break
-        or dl, dl
+        ; load r.0(0@register,u8), [r.0(0@register,u8*)]
+        mov cl, [rcx]
+        ; const r.1(1@register,u8), 0
+        mov dl, 0
+        ; notequals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+        cmp cl, dl
+        setne cl
+        ; branch r.0(0@register,bool), false, @for_5_break
+        or cl, cl
         jz @for_5_break
         ; @for_5_body
 @for_5_body:

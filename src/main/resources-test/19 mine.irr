@@ -55,15 +55,15 @@
 	cast r.1(1@register,u8), r.1(1@register,i64)
 	const r.3(3@register,u8), 48
 	add r.1(1@register,u8), r.1(1@register,u8), r.3(3@register,u8)
-	cast r.3(3@register,i64), r.0(0@register,u8)
-	array r.3(3@register,u8*), buffer(1@function,u8*) + r.3(3@register,i64)
-	store [r.3(3@register,u8*)], r.1(1@register,u8)
-	; 19:3 if number == 0
-	const r.1(1@register,i64), 0
-	equals r.1(1@register,bool), r.2(2@register,i64), r.1(1@register,i64)
 	copy pos(2@function,u8), r.0(0@register,u8)
+	cast r.0(0@register,i64), r.0(0@register,u8)
+	array r.0(0@register,u8*), buffer(1@function,u8*) + r.0(0@register,i64)
+	store [r.0(0@register,u8*)], r.1(1@register,u8)
+	; 19:3 if number == 0
+	const r.0(0@register,i64), 0
 	copy number(0@argument,i64), r.2(2@register,i64)
-	branch r.1(1@register,bool), false, @if_2_end
+	equals r.0(0@register,bool), r.2(2@register,i64), r.0(0@register,i64)
+	branch r.0(0@register,bool), false, @if_2_end
 @if_2_then:
 	jump @while_1_break
 @if_2_end:
@@ -95,10 +95,10 @@
 	copy length(1@function,i64), r.0(0@register,i64)
 @for_3:
 	copy r.0(0@register,u8*), str(0@argument,u8*)
-	load r.1(1@register,u8), [r.0(0@register,u8*)]
-	const r.2(2@register,u8), 0
-	notequals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
-	branch r.1(1@register,bool), false, @for_3_break
+	load r.0(0@register,u8), [r.0(0@register,u8*)]
+	const r.1(1@register,u8), 0
+	notequals r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	branch r.0(0@register,bool), false, @for_3_break
 @for_3_body:
 	const r.0(0@register,i64), 1
 	copy r.1(1@register,i64), length(1@function,i64)
@@ -400,11 +400,11 @@
 @for_7_body:
 	copy r.0(0@register,i16), row(0@argument,i16)
 	copy r.1(1@register,i16), dr(3@function,i16)
-	add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
-	const r.3(3@register,i16), -1
+	add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+	const r.1(1@register,i16), -1
 	; 47:3 for dc <= 1
-	copy r(4@function,i16), r.2(2@register,i16)
-	copy dc(5@function,i16), r.3(3@register,i16)
+	copy r(4@function,i16), r.0(0@register,i16)
+	copy dc(5@function,i16), r.1(1@register,i16)
 @for_8:
 	const r.0(0@register,i16), 1
 	copy r.1(1@register,i16), dc(5@function,i16)
@@ -413,10 +413,10 @@
 @for_8_body:
 	copy r.0(0@register,i16), column(1@argument,i16)
 	copy r.1(1@register,i16), dc(5@function,i16)
-	add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+	add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
 	; 49:4 if checkCellBounds([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=49:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=49:27]])
-	copy c(6@function,i16), r.2(2@register,i16)
-	call r.0(0@register,bool), checkCellBounds, [r(4@function,i16), r.2(2@register,i16)]
+	copy c(6@function,i16), r.0(0@register,i16)
+	call r.0(0@register,bool), checkCellBounds, [r(4@function,i16), r.0(0@register,i16)]
 	branch r.0(0@register,bool), false, @if_9_end
 @if_9_then:
 	call r.0(0@register,u8), getCell, [r(4@function,i16), c(6@function,i16)]
@@ -473,8 +473,8 @@
 	; 62:3 if columnCursor == column
 	copy r.0(0@register,i16), columnCursor(3@argument,i16)
 	copy r.1(1@register,i16), column(1@argument,i16)
-	equals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
-	branch r.2(2@register,bool), false, @if_12_end
+	equals r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	branch r.0(0@register,bool), false, @if_12_end
 @if_12_then:
 	; 63:11 return 91
 	const r.0(0@register,u8), 91
@@ -531,9 +531,9 @@
 	call r.0(0@register,u8), getBombCountAround, [row(1@argument,i16), column(2@argument,i16)]
 	; 80:4 if count > 0
 	const r.1(1@register,u8), 0
-	gt r.1(1@register,bool), r.0(0@register,u8), r.1(1@register,u8)
 	copy count(4@function,u8), r.0(0@register,u8)
-	branch r.1(1@register,bool), false, @if_16_else
+	gt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	branch r.0(0@register,bool), false, @if_16_else
 @if_16_then:
 	const r.0(0@register,u8), 48
 	copy r.1(1@register,u8), count(4@function,u8)
@@ -686,10 +686,10 @@
 	div r.1(1@register,i16), r.2(2@register,i16), r.1(1@register,i16)
 	; 126:3 if value == 0
 	const r.2(2@register,i16), 0
-	equals r.2(2@register,bool), r.1(1@register,i16), r.2(2@register,i16)
-	copy count(1@function,u8), r.0(0@register,u8)
 	copy value(0@argument,i16), r.1(1@register,i16)
-	branch r.2(2@register,bool), false, @if_23_end
+	equals r.1(1@register,bool), r.1(1@register,i16), r.2(2@register,i16)
+	copy count(1@function,u8), r.0(0@register,u8)
+	branch r.1(1@register,bool), false, @if_23_end
 @if_23_then:
 	jump @while_22_break
 @if_23_end:
@@ -787,8 +787,8 @@
 	cast r.0(0@register,i16), r.0(0@register,u8)
 	call _, printSpaces [r.0(0@register,i16)]
 	copy r.0(0@register,i16), count(0@function,i16)
-	cast r.1(1@register,i64), r.0(0@register,i16)
-	call _, printUint [r.1(1@register,i64)]
+	cast r.0(0@register,i64), r.0(0@register,i16)
+	call _, printUint [r.0(0@register,i64)]
 	; 150:15 return count == 0
 	const r.0(0@register,i16), 0
 	copy r.1(1@register,i16), count(0@function,i16)
@@ -915,9 +915,9 @@
 	; 173:4 logic or
 	copy r.1(1@register,i16), row(3@function,i16)
 	copy r.2(2@register,i16), curr_r(0@argument,i16)
-	sub r.3(3@register,i16), r.1(1@register,i16), r.2(2@register,i16)
+	sub r.1(1@register,i16), r.1(1@register,i16), r.2(2@register,i16)
 	copy column(4@function,i16), r.0(0@register,i16)
-	call r.0(0@register,i16), abs, [r.3(3@register,i16)]
+	call r.0(0@register,i16), abs, [r.1(1@register,i16)]
 	const r.1(1@register,i16), 1
 	gt r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
 	copy t.13(13@function,bool), r.0(0@register,bool)
@@ -925,8 +925,8 @@
 @or_2nd_32:
 	copy r.0(0@register,i16), column(4@function,i16)
 	copy r.1(1@register,i16), curr_c(1@argument,i16)
-	sub r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
-	call r.0(0@register,i16), abs, [r.2(2@register,i16)]
+	sub r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+	call r.0(0@register,i16), abs, [r.0(0@register,i16)]
 	const r.1(1@register,i16), 1
 	gt r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
 	copy t.13(13@function,bool), r.0(0@register,bool)
@@ -992,11 +992,11 @@
 @for_34_body:
 	copy r.0(0@register,i16), row(0@argument,i16)
 	copy r.1(1@register,i16), dr(2@function,i16)
-	add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
-	const r.3(3@register,i16), -1
+	add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+	const r.1(1@register,i16), -1
 	; 186:3 for dc <= 1
-	copy r(3@function,i16), r.2(2@register,i16)
-	copy dc(4@function,i16), r.3(3@register,i16)
+	copy r(3@function,i16), r.0(0@register,i16)
+	copy dc(4@function,i16), r.1(1@register,i16)
 @for_35:
 	const r.0(0@register,i16), 1
 	copy r.1(1@register,i16), dc(4@function,i16)
@@ -1023,10 +1023,10 @@
 @if_36_end:
 	copy r.0(0@register,i16), column(1@argument,i16)
 	copy r.1(1@register,i16), dc(4@function,i16)
-	add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+	add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
 	; 192:4 if !checkCellBounds([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=192:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=192:28]])
-	copy c(5@function,i16), r.2(2@register,i16)
-	call r.0(0@register,bool), checkCellBounds, [r(3@function,i16), r.2(2@register,i16)]
+	copy c(5@function,i16), r.0(0@register,i16)
+	call r.0(0@register,bool), checkCellBounds, [r(3@function,i16), r.0(0@register,i16)]
 	notlog r.0(0@register,bool), r.0(0@register,bool)
 	branch r.0(0@register,bool), false, @if_38_end
 @if_38_then:
@@ -1143,8 +1143,8 @@
 	call _, printField [curr_r(2@function,i16), curr_c(1@function,i16)]
 	; 215:3 if !needsInitialize
 	copy r.0(0@register,bool), needsInitialize(0@function,bool)
-	notlog r.1(1@register,bool), r.0(0@register,bool)
-	branch r.1(1@register,bool), false, @if_41_end
+	notlog r.0(0@register,bool), r.0(0@register,bool)
+	branch r.0(0@register,bool), false, @if_41_end
 @if_41_then:
 	; 216:4 if printLeft([])
 	call r.0(0@register,bool), printLeft, []
@@ -1158,9 +1158,9 @@
 	call r.0(0@register,i16), getChar, []
 	; 223:3 if chr == 27
 	const r.1(1@register,i16), 27
-	equals r.1(1@register,bool), r.0(0@register,i16), r.1(1@register,i16)
 	copy chr(3@function,i16), r.0(0@register,i16)
-	branch r.1(1@register,bool), false, @if_43_end
+	equals r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	branch r.0(0@register,bool), false, @if_43_end
 @if_43_then:
 	jump @while_40_break
 @if_43_end:
@@ -1248,8 +1248,8 @@
 @if_49_then:
 	; 249:4 if !needsInitialize
 	copy r.0(0@register,bool), needsInitialize(0@function,bool)
-	notlog r.1(1@register,bool), r.0(0@register,bool)
-	branch r.1(1@register,bool), false, @if_50_end
+	notlog r.0(0@register,bool), r.0(0@register,bool)
+	branch r.0(0@register,bool), false, @if_50_end
 @if_50_then:
 	call r.0(0@register,u8), getCell, [curr_r(2@function,i16), curr_c(1@function,i16)]
 	; 251:5 if !isOpen([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=251:17]])

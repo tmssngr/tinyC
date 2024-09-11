@@ -46,15 +46,15 @@
 	cast r.1(1@register,u8), r.1(1@register,i64)
 	const r.3(3@register,u8), 48
 	add r.1(1@register,u8), r.1(1@register,u8), r.3(3@register,u8)
-	cast r.3(3@register,i64), r.0(0@register,u8)
-	array r.3(3@register,u8*), buffer(1@function,u8*) + r.3(3@register,i64)
-	store [r.3(3@register,u8*)], r.1(1@register,u8)
-	; 19:3 if number == 0
-	const r.1(1@register,i64), 0
-	equals r.1(1@register,bool), r.2(2@register,i64), r.1(1@register,i64)
 	copy pos(2@function,u8), r.0(0@register,u8)
+	cast r.0(0@register,i64), r.0(0@register,u8)
+	array r.0(0@register,u8*), buffer(1@function,u8*) + r.0(0@register,i64)
+	store [r.0(0@register,u8*)], r.1(1@register,u8)
+	; 19:3 if number == 0
+	const r.0(0@register,i64), 0
 	copy number(0@argument,i64), r.2(2@register,i64)
-	branch r.1(1@register,bool), false, @if_2_end
+	equals r.0(0@register,bool), r.2(2@register,i64), r.0(0@register,i64)
+	branch r.0(0@register,bool), false, @if_2_end
 @if_2_then:
 	jump @while_1_break
 @if_2_end:
@@ -132,8 +132,8 @@
 	branch r.0(0@register,bool), false, @while_4_break
 @while_4_body:
 	copy r.0(0@register,u8), i(0@function,u8)
-	cast r.1(1@register,i64), r.0(0@register,u8)
-	call _, printIntLf [r.1(1@register,i64)]
+	cast r.0(0@register,i64), r.0(0@register,u8)
+	call _, printIntLf [r.0(0@register,i64)]
 	const r.0(0@register,u8), 1
 	copy r.1(1@register,u8), i(0@function,u8)
 	sub r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
@@ -142,16 +142,16 @@
 @while_4_break:
 @while_5:
 	copy r.0(0@register,u8), i(0@function,u8)
-	cast r.1(1@register,i64), r.0(0@register,u8)
-	call _, printIntLf [r.1(1@register,i64)]
+	cast r.0(0@register,i64), r.0(0@register,u8)
+	call _, printIntLf [r.0(0@register,i64)]
 	const r.0(0@register,u8), 1
 	copy r.1(1@register,u8), i(0@function,u8)
 	add r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
 	; 13:3 if i < 5
 	const r.1(1@register,u8), 5
-	lt r.1(1@register,bool), r.0(0@register,u8), r.1(1@register,u8)
 	copy i(0@function,u8), r.0(0@register,u8)
-	branch r.1(1@register,bool), false, @if_6_end
+	lt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	branch r.0(0@register,bool), false, @if_6_end
 @if_6_then:
 	jump @while_5
 @if_6_end:
