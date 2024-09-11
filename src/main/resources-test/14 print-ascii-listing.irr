@@ -1,7 +1,6 @@
 @printString:
  Local variables
 	arg 0: str
-	var 1: length
 	; 6 pc
 	call r.0(0@register,i64), strlen, [str(0@argument,u8*)]
 	call _, printStringLength [str(0@argument,u8*), r.0(0@register,i64)]
@@ -10,8 +9,6 @@
 @printChar:
  Local variables
 	arg 0: chr
-	var 1: t.1
-	var 2: t.2
 	; 4 pc
 	addrof r.0(0@register,u8*), chr(0@argument,u8)
 	const r.1(1@register,i64), 1
@@ -22,13 +19,6 @@
  Local variables
 	arg 0: str
 	var 1: length
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
 	; 31 pc
 	const r.0(0@register,i64), 0
 	; 37:2 for *str != 0
@@ -75,11 +65,6 @@
 @printNibble:
  Local variables
 	arg 0: x
-	var 1: t.1
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
 	; 21 pc
 	const r.0(0@register,u8), 15
 	copy r.1(1@register,u8), x(0@argument,u8)
@@ -104,8 +89,6 @@
 @printHex2:
  Local variables
 	arg 0: x
-	var 1: t.1
-	var 2: t.2
 	; 8 pc
 	const r.0(0@register,u8), 4
 	copy r.1(1@register,u8), x(0@argument,u8)
@@ -118,33 +101,6 @@
  Local variables
 	var 0: i
 	var 1: i
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
-	var 19: t.19
-	var 20: t.20
-	var 21: t.21
-	var 22: t.22
-	var 23: t.23
-	var 24: t.24
-	var 25: t.25
-	var 26: t.26
-	var 27: t.27
-	var 28: t.28
 	; 71 pc
 	; begin initialize global variables
 	; end initialize global variables
