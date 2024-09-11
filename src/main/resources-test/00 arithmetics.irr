@@ -1,8 +1,6 @@
 @printChar:
  Local variables
 	arg 0: chr
-	var 1: t.1
-	var 2: t.2
 	; 4 pc
 	addrof r0(u8* t.1), chr(0@argument,u8)
 	const r1(i64 t.2), 1
@@ -13,22 +11,6 @@
 	arg 0: number
 	var 1: buffer
 	var 2: pos
-	var 3: remainder
-	var 4: digit
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
 	; 34 pc
 	const r0(u8 pos), 20
 	; 13:2 while true
@@ -65,10 +47,6 @@
 @printIntLf:
  Local variables
 	arg 0: number
-	var 1: t.1
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
 	; 17 pc
 	; 27:2 if number < 0
 	const r0(i64 t.2), 0
@@ -101,28 +79,9 @@
 
 @main:
  Local variables
-	var 0: foo
-	var 1: bar
-	var 2: bazz
-	var 3: a
-	var 4: b
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
-	var 19: t.19
-	var 20: t.20
-	var 21: t.21
+	var 0: bazz
+	var 1: a
+	var 2: b
 	; 40 pc
 	; begin initialize global variables
 	; end initialize global variables
@@ -137,17 +96,17 @@
 	cast r0(i16 foo), r0(u8 t.8)
 	cast r0(i64 t.9), r0(i16 foo)
 	call _, printIntLf [r0(i64 t.9)]
-	copy r0(i16 bazz), bazz(2@function,i16)
+	copy r0(i16 bazz), bazz(0@function,i16)
 	cast r0(i64 t.10), r0(i16 bazz)
 	call _, printIntLf [r0(i64 t.10)]
 	const r0(i16 a), 1000
 	const r1(i16 b), 10
 	div r1(i16 t.12), r0(i16 a), r1(i16 b)
 	cast r1(i64 t.11), r1(i16 t.12)
-	copy a(3@function,i16), r0(i16 a)
+	copy a(1@function,i16), r0(i16 a)
 	call _, printIntLf [r1(i64 t.11)]
 	const r0(i16 t.15), 255
-	copy r1(i16 a), a(3@function,i16)
+	copy r1(i16 a), a(1@function,i16)
 	and r0(i16 t.14), r1(i16 a), r0(i16 t.15)
 	cast r0(i64 t.13), r0(i16 t.14)
 	call _, printIntLf [r0(i64 t.13)]
@@ -160,10 +119,10 @@
 	const r1(i16 b), 2
 	shiftright r0(i16 t.19), r0(i16 a), r1(i16 b)
 	cast r0(i64 t.18), r0(i16 t.19)
-	copy b(4@function,i16), r1(i16 b)
+	copy b(2@function,i16), r1(i16 b)
 	call _, printIntLf [r0(i64 t.18)]
 	const r0(i16 a), 1
-	copy r1(i16 b), b(4@function,i16)
+	copy r1(i16 b), b(2@function,i16)
 	shiftleft r0(i16 t.21), r0(i16 a), r1(i16 b)
 	cast r0(i64 t.20), r0(i16 t.21)
 	call _, printIntLf [r0(i64 t.20)]

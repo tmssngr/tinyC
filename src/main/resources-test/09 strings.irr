@@ -1,7 +1,6 @@
 @printString:
  Local variables
 	arg 0: str
-	var 1: length
 	; 6 pc
 	call r0(i64 length), strlen, [str(0@argument,u8*)]
 	call _, printStringLength [str(0@argument,u8*), r0(i64 length)]
@@ -9,8 +8,6 @@
 @printChar:
  Local variables
 	arg 0: chr
-	var 1: t.1
-	var 2: t.2
 	; 4 pc
 	addrof r0(u8* t.1), chr(0@argument,u8)
 	const r1(i64 t.2), 1
@@ -21,22 +18,6 @@
 	arg 0: number
 	var 1: buffer
 	var 2: pos
-	var 3: remainder
-	var 4: digit
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
 	; 34 pc
 	const r0(u8 pos), 20
 	; 13:2 while true
@@ -73,10 +54,6 @@
 @printIntLf:
  Local variables
 	arg 0: number
-	var 1: t.1
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
 	; 17 pc
 	; 27:2 if number < 0
 	const r0(i64 t.2), 0
@@ -97,13 +74,6 @@
  Local variables
 	arg 0: str
 	var 1: length
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
 	; 31 pc
 	const r0(i64 length), 0
 	; 37:2 for *str != 0
@@ -145,11 +115,6 @@
 	ret
 
 @main:
- Local variables
-	var 0: second
-	var 1: chr
-	var 2: t.2
-	var 3: t.3
 	; 18 pc
 	; begin initialize global variables
 	const r0(u8* text), [string-0]
@@ -170,14 +135,6 @@
  Local variables
 	var 0: length
 	var 1: ptr
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
 	; 39 pc
 	const r0(i16 length), 0
 	copy r1(u8* text), text(0@global,u8*)
