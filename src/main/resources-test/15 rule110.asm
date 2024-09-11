@@ -21,6 +21,8 @@ start:
           call [ExitProcess]
 
         ; void printString
+        ;   rsp+24: arg str
+        ;   rsp+0: var length
 @printString:
         ; reserve space for local variables
         sub rsp, 16
@@ -48,6 +50,9 @@ start:
         ret
 
         ; void printChar
+        ;   rsp+24: arg chr
+        ;   rsp+0: var t.1
+        ;   rsp+8: var t.2
 @printChar:
         ; reserve space for local variables
         sub rsp, 16
@@ -75,6 +80,15 @@ start:
         ret
 
         ; i64 strlen
+        ;   rsp+56: arg str
+        ;   rsp+0: var length
+        ;   rsp+8: var t.2
+        ;   rsp+9: var t.3
+        ;   rsp+10: var t.4
+        ;   rsp+16: var t.5
+        ;   rsp+24: var t.6
+        ;   rsp+32: var t.7
+        ;   rsp+40: var t.8
 @strlen:
         ; reserve space for local variables
         sub rsp, 48
@@ -175,6 +189,19 @@ start:
         ret
 
         ; void printBoard
+        ;   rsp+0: var i
+        ;   rsp+1: var t.1
+        ;   rsp+2: var t.2
+        ;   rsp+3: var t.3
+        ;   rsp+4: var t.4
+        ;   rsp+5: var t.5
+        ;   rsp+8: var t.6
+        ;   rsp+16: var t.7
+        ;   rsp+24: var t.8
+        ;   rsp+25: var t.9
+        ;   rsp+26: var t.10
+        ;   rsp+27: var t.11
+        ;   rsp+32: var t.12
 @printBoard:
         ; reserve space for local variables
         sub rsp, 48
@@ -308,6 +335,55 @@ start:
         ret
 
         ; void main
+        ;   rsp+0: var i
+        ;   rsp+1: var i
+        ;   rsp+2: var pattern
+        ;   rsp+3: var j
+        ;   rsp+4: var t.4
+        ;   rsp+5: var t.5
+        ;   rsp+6: var t.6
+        ;   rsp+8: var t.7
+        ;   rsp+16: var t.8
+        ;   rsp+24: var t.9
+        ;   rsp+25: var t.10
+        ;   rsp+32: var t.11
+        ;   rsp+40: var t.12
+        ;   rsp+41: var t.13
+        ;   rsp+42: var t.14
+        ;   rsp+48: var t.15
+        ;   rsp+56: var t.16
+        ;   rsp+57: var t.17
+        ;   rsp+58: var t.18
+        ;   rsp+59: var t.19
+        ;   rsp+60: var t.20
+        ;   rsp+61: var t.21
+        ;   rsp+64: var t.22
+        ;   rsp+72: var t.23
+        ;   rsp+80: var t.24
+        ;   rsp+81: var t.25
+        ;   rsp+88: var t.26
+        ;   rsp+96: var t.27
+        ;   rsp+104: var t.28
+        ;   rsp+105: var t.29
+        ;   rsp+106: var t.30
+        ;   rsp+107: var t.31
+        ;   rsp+108: var t.32
+        ;   rsp+109: var t.33
+        ;   rsp+110: var t.34
+        ;   rsp+111: var t.35
+        ;   rsp+112: var t.36
+        ;   rsp+120: var t.37
+        ;   rsp+128: var t.38
+        ;   rsp+129: var t.39
+        ;   rsp+136: var t.40
+        ;   rsp+144: var t.41
+        ;   rsp+145: var t.42
+        ;   rsp+146: var t.43
+        ;   rsp+147: var t.44
+        ;   rsp+152: var t.45
+        ;   rsp+160: var t.46
+        ;   rsp+168: var t.47
+        ;   rsp+169: var t.48
 @main:
         ; reserve space for local variables
         sub rsp, 176

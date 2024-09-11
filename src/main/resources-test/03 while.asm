@@ -21,6 +21,9 @@ start:
           call [ExitProcess]
 
         ; void printChar
+        ;   rsp+24: arg chr
+        ;   rsp+0: var t.1
+        ;   rsp+8: var t.2
 @printChar:
         ; reserve space for local variables
         sub rsp, 16
@@ -48,6 +51,25 @@ start:
         ret
 
         ; void printUint
+        ;   rsp+136: arg number
+        ;   rsp+0: var buffer
+        ;   rsp+20: var pos
+        ;   rsp+24: var remainder
+        ;   rsp+32: var digit
+        ;   rsp+33: var t.5
+        ;   rsp+40: var t.6
+        ;   rsp+48: var t.7
+        ;   rsp+56: var t.8
+        ;   rsp+57: var t.9
+        ;   rsp+64: var t.10
+        ;   rsp+72: var t.11
+        ;   rsp+80: var t.12
+        ;   rsp+88: var t.13
+        ;   rsp+96: var t.14
+        ;   rsp+104: var t.15
+        ;   rsp+112: var t.16
+        ;   rsp+120: var t.17
+        ;   rsp+121: var t.18
 @printUint:
         ; reserve space for local variables
         sub rsp, 128
@@ -208,6 +230,11 @@ start:
         ret
 
         ; void printIntLf
+        ;   rsp+40: arg number
+        ;   rsp+0: var t.1
+        ;   rsp+8: var t.2
+        ;   rsp+16: var t.3
+        ;   rsp+17: var t.4
 @printIntLf:
         ; reserve space for local variables
         sub rsp, 32
@@ -285,6 +312,15 @@ start:
         ret
 
         ; void main
+        ;   rsp+0: var i
+        ;   rsp+1: var t.1
+        ;   rsp+2: var t.2
+        ;   rsp+8: var t.3
+        ;   rsp+16: var t.4
+        ;   rsp+24: var t.5
+        ;   rsp+32: var t.6
+        ;   rsp+33: var t.7
+        ;   rsp+34: var t.8
 @main:
         ; reserve space for local variables
         sub rsp, 48

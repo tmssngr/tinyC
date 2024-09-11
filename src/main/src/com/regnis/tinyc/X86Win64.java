@@ -138,11 +138,12 @@ public final class X86Win64 {
 
 	private void writeFunction(IRFunction function) throws IOException {
 		writeComment(function.toString());
-		writeLabel(function.label());
 
 		final List<String> asmLines = function.asmLines();
 		if (asmLines.isEmpty()) {
 			final int size = prepareLocalVarsOffsets(function.localVars());
+			writeVarOffsets(function.localVars());
+			writeLabel(function.label());
 			writeFunctionProlog(size);
 
 			writeInstructions(function.instructions());
@@ -152,6 +153,7 @@ public final class X86Win64 {
 			return;
 		}
 
+		writeLabel(function.label());
 		for (String line : asmLines) {
 			writeLines(line, line.contains(":") ? "" : INDENTATION);
 		}
@@ -192,7 +194,19 @@ public final class X86Win64 {
 			localVarOffsets[i] = argOffset;
 			i++;
 		}
+
 		return localVarSize;
+	}
+
+	private void writeVarOffsets(List<IRLocalVar> localVars) throws IOException {
+		for (IRLocalVar var : localVars) {
+			if (var.isArg()) {
+				writeComment("  rsp+" + localVarOffsets[var.index()] + ": arg " + var.name());
+			}
+			else {
+				writeComment("  rsp+" + localVarOffsets[var.index()] + ": var " + var.name());
+			}
+		}
 	}
 
 	private void writeFunctionProlog(int size) throws IOException {
