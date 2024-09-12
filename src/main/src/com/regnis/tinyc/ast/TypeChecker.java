@@ -240,14 +240,14 @@ public final class TypeChecker {
 	}
 
 	private void processIf(StmtIf ifStmt) {
-		final Expression condition = checkBooleanCondition(ifStmt.condition(), ifStmt.location());
+		final Expression condition = checkBooleanCondition(ifStmt.condition());
 		final List<Statement> thenStatements = processStatementsWithLocalScope(ifStmt.thenStatements());
 		final List<Statement> elseStatements = processStatementsWithLocalScope(ifStmt.elseStatements());
 		add(new StmtIf(condition, thenStatements, elseStatements, ifStmt.location()));
 	}
 
 	private void processFor(StmtLoop forStmt) {
-		final Expression condition = checkBooleanCondition(forStmt.condition(), forStmt.location());
+		final Expression condition = checkBooleanCondition(forStmt.condition());
 
 		final List<Statement> iteration = processStatements(forStmt.iteration());
 
@@ -256,10 +256,10 @@ public final class TypeChecker {
 	}
 
 	@NotNull
-	private Expression checkBooleanCondition(Expression expression, Location location) {
+	private Expression checkBooleanCondition(Expression expression) {
 		final Expression condition = processExpression(expression);
 		if (condition.typeNotNull() != Type.BOOL) {
-			throw new SyntaxException(Messages.expectedBoolExpression(), location);
+			throw new SyntaxException(Messages.expectedBoolExpression(), expression.location());
 		}
 		return condition;
 	}
@@ -451,7 +451,7 @@ public final class TypeChecker {
 		}
 		case Neg -> {
 			if (!type.isInt()) {
-				throw new SyntaxException(Messages.expectedIntegerType(type), location);
+				throw new SyntaxException(Messages.expectedIntegerExpression(), expression.location());
 			}
 			if (type == Type.U8) {
 				type = Type.I16;
@@ -460,7 +460,7 @@ public final class TypeChecker {
 		}
 		case Com -> {
 			if (!type.isInt()) {
-				throw new SyntaxException(Messages.expectedIntegerType(type), location);
+				throw new SyntaxException(Messages.expectedIntegerExpression(), location);
 			}
 		}
 		case NotLog -> {

@@ -8,10 +8,6 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public class Messages {
-	public static String unexpectedToken(TokenType token) {
-		return "Unexpected token " + token;
-	}
-
 	@NotNull
 	public static String expectedLValue() {
 		return "Expected expression to be an l-value";
@@ -103,8 +99,8 @@ public class Messages {
 	}
 
 	@NotNull
-	public static String expectedIntegerType(Type type) {
-		return "Expected integer type, but got " + type;
+	public static String expectedIntegerExpression() {
+		return "Expected integer expression";
 	}
 
 	@NotNull
@@ -175,5 +171,10 @@ public class Messages {
 	@NotNull
 	public static String expectedIntegerConstant() {
 		return "Expected an integer constant > 0";
+	}
+
+	@NotNull
+	public static String expectedStatement() {
+		return "Expected statement";
 	}
 }

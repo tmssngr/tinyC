@@ -207,9 +207,9 @@ public class ParserTest {
 		                        List.of(),
 		                        locS(0, 0)),
 		             parseStatement("""
-				                   if (value) {
-				                   }
-				                   """));
+				                            if (value) {
+				                            }
+				                            """));
 
 		assertEquals(new StmtCompound(List.of(
 				             new StmtIf(new ExprBinary(ExprBinary.Op.Gt,
@@ -487,6 +487,11 @@ public class ParserTest {
 		                                                           locS(0, 21))),
 		                        locS(0, 10)),
 		             parseStatement("buffer[i] = buffer[i + 1];"));
+
+		testIllegal(Messages.expectedIntegerConstant(), loc(1, 9),
+		            """
+				            const a = 0;
+				            u8 array[a];""");
 	}
 
 	@Test
@@ -619,6 +624,47 @@ public class ParserTest {
 				                          void foo() {
 				                            u8 b[TEN + 1];
 				                          }"""));
+
+		testIllegal(Messages.unknownConstant("BAR"), loc(0, 12),
+		            "const FOO = BAR + 1;");
+
+		testIllegal(Messages.constantAlreadyDefinedAt("FOO", loc(0, 12)), loc(1, 6),
+		            """
+				            const FOO = 1;
+				            const FOO = 2;""");
+
+		testIllegal(Messages.expressionNotSupportedInConstant(), loc(0, 12),
+		            "const FOO = max(1, 2);");
+	}
+
+	@Test
+	public void testFailures() {
+		testIllegal(Messages.expectedRootElement(), loc(0, 0),
+		            "&");
+
+		testIllegal(Messages.expectedStatement(), loc(1, 4),
+		            """
+				                void main() {
+				                    10
+				                }""");
+
+		// different check:
+		testIllegal(Messages.expectedStatement(), loc(1, 4),
+		            """
+				                void main() {
+				                    ,
+				                }""");
+	}
+
+	private static void testIllegal(String expectedMessage, Location expectedLocation, String input) {
+		try {
+			parseProgram(input);
+			Assert.fail();
+		}
+		catch (SyntaxException ex) {
+			Assert.assertEquals(expectedMessage, ex.getMessage());
+			Assert.assertEquals(expectedLocation, ex.location);
+		}
 	}
 
 	@NotNull

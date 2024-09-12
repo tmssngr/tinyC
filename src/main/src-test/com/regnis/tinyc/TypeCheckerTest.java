@@ -15,6 +15,16 @@ import static com.regnis.tinyc.ParserTest.*;
 public class TypeCheckerTest {
 
 	@Test
+	public void testNeg() {
+		testIllegal(Messages.expectedIntegerExpression(), 2, 10,
+		            """
+				            void main() {
+				              bool a = true;
+				              u8 b = -a;
+				            }""");
+	}
+
+	@Test
 	public void testAutoCast() {
 		testStatement("sint16 = uint8;");
 		testIllegalStatement(Messages.needExplicitCast(Type.I16, Type.U8), 6,
@@ -150,12 +160,29 @@ public class TypeCheckerTest {
 	}
 
 	@Test
+	public void testIf() {
+		testIllegal(Messages.expectedBoolExpression(), 1, 6,
+		            """
+				            void main() {
+				              if (1) {
+				              }
+				            }""");
+	}
+
+	@Test
 	public void testWhile() {
 		testIllegal(Messages.expectedExpression(), 1, 8,
 		            """
 				            void foo() {
 				              while() {
 				              };
+				            }""");
+
+		testIllegal(Messages.expectedBoolExpression(), 1, 9,
+		            """
+				            void main() {
+				              while (1) {
+				              }
 				            }""");
 	}
 
@@ -460,6 +487,13 @@ public class TypeCheckerTest {
 				                         Foo foos[10];
 				                         foos[0].x = 1;
 				                       }"""));
+
+		testIllegal(Messages.expectedStruct("u8"), 2, 11,
+		            """
+				            void main() {
+				              u8 i = 0;
+				              u8 b = i.a;
+				            }""");
 	}
 
 	private void testIllegalStatement(String expectedMessage, int column, String illegalOperation) {

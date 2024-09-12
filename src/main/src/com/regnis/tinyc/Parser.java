@@ -54,7 +54,7 @@ public final class Parser {
 
 	public void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
 		while (token != TokenType.EOF) {
-			final Location location = getLocation();
+			Location location = getLocation();
 			if (token == TokenType.IDENTIFIER) {
 				final String type = consumeIdentifier();
 				final String typeString = getTypeString(type);
@@ -118,12 +118,13 @@ public final class Parser {
 				continue;
 			}
 			else if (isConsume(TokenType.INCLUDE)) {
-				expectType(TokenType.STRING);
+				expectType(TokenType.STRING, null);
 				final String fileName = consumeText();
 				includeHandler.parse(fileName, location, typeDefs, globalVars, functions);
 				continue;
 			}
 			else if (isConsume(TokenType.CONST)) {
+				location = getLocation();
 				final String name = consumeIdentifier();
 				final Expression prevExpr = constants.get(name);
 				if (prevExpr != null) {
@@ -256,7 +257,7 @@ public final class Parser {
 		consume(TokenType.L_BRACE);
 		final List<String> lines = new ArrayList<>();
 		do {
-			expectType(TokenType.STRING);
+			expectType(TokenType.STRING, null);
 			final String s = consumeText();
 			lines.add(s);
 		}
@@ -267,7 +268,7 @@ public final class Parser {
 	private List<Statement> getStatements() {
 		final Statement statement = getStatement();
 		if (statement == null) {
-			throw new SyntaxException(Messages.unexpectedToken(token), getLocation());
+			throw new SyntaxException(Messages.expectedStatement(), getLocation());
 		}
 		return statement instanceof StmtCompound c
 				? c.statements()
@@ -311,7 +312,7 @@ public final class Parser {
 						yield statement;
 					}
 				}
-				throw new SyntaxException("Unexpected expression", location);
+				throw new SyntaxException(Messages.expectedStatement(), location);
 			}
 		};
 	}
@@ -390,7 +391,7 @@ public final class Parser {
 			}
 		}
 
-		throw new SyntaxException(Messages.expectedIntegerConstant(), location);
+		throw new SyntaxException(Messages.expectedIntegerConstant(), expression.location());
 	}
 
 	@NotNull
@@ -413,7 +414,7 @@ public final class Parser {
 
 			statements.add(statement);
 		}
-		consume(TokenType.R_BRACE);
+		consume(TokenType.R_BRACE, Messages.expectedStatement());
 		return new StmtCompound(statements);
 	}
 
@@ -675,7 +676,7 @@ public final class Parser {
 
 	@NotNull
 	private String consumeIdentifier() {
-		expectType(TokenType.IDENTIFIER);
+		expectType(TokenType.IDENTIFIER, null);
 		return consumeText();
 	}
 
@@ -686,9 +687,12 @@ public final class Parser {
 		return text;
 	}
 
-	private void expectType(@NotNull TokenType type) {
+	private void expectType(@NotNull TokenType type, @Nullable String message) {
 		if (token != type) {
-			throw new SyntaxException("Expected " + type + " but got " + token, getLocation());
+			if (message == null) {
+				message = "Expected " + type + " but got " + token;
+			}
+			throw new SyntaxException(message, getLocation());
 		}
 	}
 
@@ -715,8 +719,13 @@ public final class Parser {
 		return true;
 	}
 
+	private void consume(@NotNull TokenType type, @NotNull String errorMessage) {
+		expectType(type, errorMessage);
+		consume();
+	}
+
 	private void consume(@NotNull TokenType type) {
-		expectType(type);
+		expectType(type, null);
 		consume();
 	}
 
