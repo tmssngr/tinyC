@@ -204,7 +204,7 @@ public final class ProgramWriter {
 		case ExprBoolLiteral literal -> write(String.valueOf(literal.value()));
 		case ExprStringLiteral literal -> write(Utils.escape(literal.text()));
 		case ExprBinary binary -> writeBinary(binary);
-		case ExprVarAccess access -> writeVarAccess(access.varName(), null);
+		case ExprVarAccess access -> write(access.varName());
 		case ExprArrayAccess access -> writeArrayAccess(access);
 		case ExprMemberAccess access -> writeMemberAccess(access);
 		case ExprCast cast -> writeCast(cast);
@@ -236,17 +236,8 @@ public final class ProgramWriter {
 		writeExpressionMaybeInParentesis(unary.expression());
 	}
 
-	private void writeVarAccess(String name, @Nullable Expression arrayIndex) throws IOException {
-		write(name);
-		if (arrayIndex != null) {
-			write("[");
-			writeExpression(arrayIndex);
-			write("]");
-		}
-	}
-
 	private void writeArrayAccess(ExprArrayAccess access) throws IOException {
-		writeVarAccess(access.varAccess().varName(), null);
+		write(access.varAccess().varName());
 		write("[");
 		writeExpression(access.index());
 		write("]");
