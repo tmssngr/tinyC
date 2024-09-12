@@ -19,22 +19,11 @@ public class Utils {
 	}
 
 	@Nullable
-	public static <E> E getSingle(List<E> list) {
-		return list.size() == 1 ? list.getFirst() : null;
-	}
-
-	@Nullable
 	public static <E> E getLastOrNull(List<E> list) {
 		if (list.isEmpty()) {
 			return null;
 		}
 		return list.getLast();
-	}
-
-	public static String toHex(long value, int digits) {
-		final StringBuilder buffer = new StringBuilder();
-		toHex(value, digits, buffer);
-		return buffer.toString();
 	}
 
 	public static void toHex(long value, int digits, StringBuilder buffer) {
