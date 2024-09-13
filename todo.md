@@ -25,6 +25,7 @@
 	- enums, e.g. `enum foo { int_lit, identifier, plus };`
 	- `final` variables
 	- defer statement
+	- Gleam-like module support (naming scope): https://tour.gleam.run/basics/modules/
 
 # Calling a function
 
