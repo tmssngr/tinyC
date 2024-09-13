@@ -318,11 +318,9 @@ start:
         ;   rsp+24: var t.3
         ;   rsp+32: var t.4
         ;   rsp+40: var t.5
-        ;   rsp+48: var t.6
-        ;   rsp+56: var t.7
 @main:
         ; reserve space for local variables
-        sub rsp, 64
+        sub rsp, 48
         ; begin initialize global variables
         ; const space(0@global,i16), 32
         mov ax, 32
@@ -354,22 +352,10 @@ start:
         mov rbx, [rax]
         lea rax, [rsp+16]
         mov [rax], rbx
-        ; const t.4(4@function,i64), 1
-        mov rax, 1
-        lea rbx, [rsp+32]
-        mov [rbx], rax
-        ; const t.5(5@function,i64), 2
+        ; const t.3(3@function,i64), 2
         mov rax, 2
-        lea rbx, [rsp+40]
+        lea rbx, [rsp+24]
         mov [rbx], rax
-        ; mul t.3(3@function,i64), t.4(4@function,i64), t.5(5@function,i64)
-        lea rax, [rsp+32]
-        mov rbx, [rax]
-        lea rax, [rsp+40]
-        mov rcx, [rax]
-        imul  rbx, rcx
-        lea rax, [rsp+24]
-        mov [rax], rbx
         ; add t.1(1@function,i64), t.2(2@function,i64), t.3(3@function,i64)
         lea rax, [rsp+16]
         mov rbx, [rax]
@@ -383,27 +369,27 @@ start:
         mov rbx, [rax]
         lea rax, [var_2]
         mov [rax], rbx
-        ; load t.7(7@function,i16), [ptrToSpace(2@global,i16*)]
+        ; load t.5(5@function,i16), [ptrToSpace(2@global,i16*)]
         lea rax, [var_2]
         mov rbx, [rax]
         mov ax, [rbx]
-        lea rbx, [rsp+56]
+        lea rbx, [rsp+40]
         mov [rbx], ax
-        ; cast t.6(6@function,i64), t.7(7@function,i16)
-        lea rax, [rsp+56]
+        ; cast t.4(4@function,i64), t.5(5@function,i16)
+        lea rax, [rsp+40]
         mov bx, [rax]
         movzx rbx, bx
-        lea rax, [rsp+48]
+        lea rax, [rsp+32]
         mov [rax], rbx
-        ; call _, printIntLf [t.6(6@function,i64)]
-        lea rax, [rsp+48]
+        ; call _, printIntLf [t.4(4@function,i64)]
+        lea rax, [rsp+32]
         mov rbx, [rax]
         push rbx
           call @printIntLf
         add rsp, 8
 @main_ret:
         ; release space for local variables
-        add rsp, 64
+        add rsp, 48
         ret
 init:
         sub rsp, 20h

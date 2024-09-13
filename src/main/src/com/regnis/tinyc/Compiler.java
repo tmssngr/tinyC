@@ -40,9 +40,10 @@ public class Compiler {
 		final TypeChecker checker = new TypeChecker(Type.I64);
 		final Program typedProgram = checker.check(parsedProgram);
 
-		final Program program = UnusedFunctionRemover.removeUnusedFunctions(typedProgram);
+		Program program = UnusedFunctionRemover.removeUnusedFunctions(typedProgram);
 
 		final Path astFile = useExtension(inputFile, ".ast");
+		final Path astSimpleFile = useExtension(inputFile, ".asts");
 		final Path irFile = useExtension(inputFile, ".ir");
 		final Path asmFile = useExtension(inputFile, ".asm");
 		final Path exeFile = useExtension(inputFile, ".exe");
@@ -52,6 +53,10 @@ public class Compiler {
 		Files.deleteIfExists(exeFile);
 
 		write(program, astFile);
+
+		program = ArithmeticSimplifier.simplify(program);
+
+		write(program, astSimpleFile);
 
 		final IRProgram irProgram = IRGenerator.convert(program);
 		write(irProgram, irFile);

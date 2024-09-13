@@ -195,10 +195,6 @@ start:
         ;   rsp+2: var t.3
         ;   rsp+3: var t.4
         ;   rsp+4: var t.5
-        ;   rsp+5: var t.6
-        ;   rsp+6: var t.7
-        ;   rsp+7: var t.8
-        ;   rsp+8: var t.9
 @printNibble:
         ; reserve space for local variables
         sub rsp, 16
@@ -234,34 +230,10 @@ start:
         or bl, bl
         jz @if_2_end
         ; @if_2_then
-        ; const t.6(6@function,u8), 65
-        mov al, 65
-        lea rbx, [rsp+5]
+        ; const t.4(4@function,u8), 7
+        mov al, 7
+        lea rbx, [rsp+3]
         mov [rbx], al
-        ; const t.7(7@function,u8), 57
-        mov al, 57
-        lea rbx, [rsp+6]
-        mov [rbx], al
-        ; sub t.5(5@function,u8), t.6(6@function,u8), t.7(7@function,u8)
-        lea rax, [rsp+5]
-        mov bl, [rax]
-        lea rax, [rsp+6]
-        mov cl, [rax]
-        sub bl, cl
-        lea rax, [rsp+4]
-        mov [rax], bl
-        ; const t.8(8@function,u8), 1
-        mov al, 1
-        lea rbx, [rsp+7]
-        mov [rbx], al
-        ; sub t.4(4@function,u8), t.5(5@function,u8), t.8(8@function,u8)
-        lea rax, [rsp+4]
-        mov bl, [rax]
-        lea rax, [rsp+7]
-        mov cl, [rax]
-        sub bl, cl
-        lea rax, [rsp+3]
-        mov [rax], bl
         ; add x(0@argument,u8), x(0@argument,u8), t.4(4@function,u8)
         lea rax, [rsp+24]
         mov bl, [rax]
@@ -271,14 +243,14 @@ start:
         lea rax, [rsp+24]
         mov [rax], bl
 @if_2_end:
-        ; const t.9(9@function,u8), 48
+        ; const t.5(5@function,u8), 48
         mov al, 48
-        lea rbx, [rsp+8]
+        lea rbx, [rsp+4]
         mov [rbx], al
-        ; add x(0@argument,u8), x(0@argument,u8), t.9(9@function,u8)
+        ; add x(0@argument,u8), x(0@argument,u8), t.5(5@function,u8)
         lea rax, [rsp+24]
         mov bl, [rax]
-        lea rax, [rsp+8]
+        lea rax, [rsp+4]
         mov cl, [rax]
         add bl, cl
         lea rax, [rsp+24]

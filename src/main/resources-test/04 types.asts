@@ -1,0 +1,47 @@
+void printChar(u8 chr) {
+	printStringLength(&chr, 1);
+}
+
+void printUint(i64 number) {
+	u8* buffer[20];
+	u8 pos;
+	i64 remainder;
+	u8 digit;
+
+	pos = 20;
+	while (true) {
+		pos = pos - 1;
+		remainder = number % 10;
+		number = number / 10;
+		digit = ((u8)remainder) + 48;
+		buffer[(i64)pos] = digit;
+		if (number == 0) {
+			break;
+		}
+	}
+	printStringLength(&buffer[(i64)pos], (i64)(20 - pos));
+}
+
+void printIntLf(i64 number) {
+	if (number < 0) {
+		printChar(45);
+		number = -number;
+	}
+	printUint(number);
+	printChar(10);
+}
+
+void printStringLength(u8* str, i64 length) {
+}
+
+void main() {
+	u8 i;
+	i16 v;
+
+	i = 250;
+	for (; i != 2; i = i + 1) {
+		printIntLf((i64)i);
+	}
+	v = 260;
+	printIntLf((i64)((u8)v));
+}

@@ -504,11 +504,10 @@ start:
         ;   rsp+464: var t.66
         ;   rsp+472: var t.67
         ;   rsp+480: var t.68
-        ;   rsp+482: var t.69
-        ;   rsp+488: var t.70
-        ;   rsp+496: var t.71
-        ;   rsp+504: var t.72
-        ;   rsp+512: var t.73
+        ;   rsp+488: var t.69
+        ;   rsp+496: var t.70
+        ;   rsp+504: var t.71
+        ;   rsp+512: var t.72
 @main:
         ; reserve space for local variables
         sub rsp, 528
@@ -1240,16 +1239,10 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; const t.69(69@function,i16), 1
-        mov ax, 1
-        lea rbx, [rsp+482]
+        ; const t.68(68@function,i16), -1
+        mov ax, -1
+        lea rbx, [rsp+480]
         mov [rbx], ax
-        ; neg t.68(68@function,i16), t.69(69@function,i16)
-        lea rax, [rsp+482]
-        mov bx, [rax]
-        neg rbx
-        lea rax, [rsp+480]
-        mov [rax], bx
         ; cast t.67(67@function,i64), t.68(68@function,i16)
         lea rax, [rsp+480]
         mov bx, [rax]
@@ -1262,37 +1255,37 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; neg t.71(71@function,i16), b(1@function,i16)
+        ; neg t.70(70@function,i16), b(1@function,i16)
         lea rax, [rsp+2]
         mov bx, [rax]
         neg rbx
         lea rax, [rsp+496]
         mov [rax], bx
-        ; cast t.70(70@function,i64), t.71(71@function,i16)
+        ; cast t.69(69@function,i64), t.70(70@function,i16)
         lea rax, [rsp+496]
         mov bx, [rax]
         movzx rbx, bx
         lea rax, [rsp+488]
         mov [rax], rbx
-        ; call _, printIntLf [t.70(70@function,i64)]
+        ; call _, printIntLf [t.69(69@function,i64)]
         lea rax, [rsp+488]
         mov rbx, [rax]
         push rbx
           call @printIntLf
         add rsp, 8
-        ; not t.73(73@function,u8), b1(8@function,u8)
+        ; not t.72(72@function,u8), b1(8@function,u8)
         lea rax, [rsp+12]
         mov bl, [rax]
         not rbx
         lea rax, [rsp+512]
         mov [rax], bl
-        ; cast t.72(72@function,i64), t.73(73@function,u8)
+        ; cast t.71(71@function,i64), t.72(72@function,u8)
         lea rax, [rsp+512]
         mov bl, [rax]
         movzx rbx, bl
         lea rax, [rsp+504]
         mov [rax], rbx
-        ; call _, printIntLf [t.72(72@function,i64)]
+        ; call _, printIntLf [t.71(71@function,i64)]
         lea rax, [rsp+504]
         mov rbx, [rax]
         push rbx
