@@ -75,6 +75,16 @@
         <option name="SMART_TABS" value="true" />
       </indentOptions>
       <arrangement>
+        <groups>
+          <group>
+            <type>GETTERS_AND_SETTERS</type>
+            <order>KEEP</order>
+          </group>
+          <group>
+            <type>DEPENDENT_METHODS</type>
+            <order>DEPTH_FIRST</order>
+          </group>
+        </groups>
         <rules>
           <section>
             <rule>
@@ -135,17 +145,6 @@
                 <AND>
                   <METHOD>true</METHOD>
                   <PROTECTED>true</PROTECTED>
-                  <STATIC>true</STATIC>
-                </AND>
-              </match>
-            </rule>
-          </section>
-          <section>
-            <rule>
-              <match>
-                <AND>
-                  <METHOD>true</METHOD>
-                  <PACKAGE_PRIVATE>true</PACKAGE_PRIVATE>
                   <STATIC>true</STATIC>
                 </AND>
               </match>
@@ -216,6 +215,17 @@
                   <METHOD>true</METHOD>
                   <PRIVATE>true</PRIVATE>
                   <STATIC>false</STATIC>
+                </AND>
+              </match>
+            </rule>
+          </section>
+          <section>
+            <rule>
+              <match>
+                <AND>
+                  <METHOD>true</METHOD>
+                  <PACKAGE_PRIVATE>true</PACKAGE_PRIVATE>
+                  <STATIC>true</STATIC>
                 </AND>
               </match>
             </rule>
