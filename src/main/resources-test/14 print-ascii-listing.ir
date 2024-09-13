@@ -73,26 +73,18 @@
 	var 3: t.3
 	var 4: t.4
 	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	; 60 pc
+	; 42 pc
 	const t.1(1@function,u8), 15
 	and x(0@argument,u8), x(0@argument,u8), t.1(1@function,u8)
 	; 5:2 if x > 9
 	const t.3(3@function,u8), 9
 	gt t.2(2@function,bool), x(0@argument,u8), t.3(3@function,u8)
 	branch t.2(2@function,bool), false, @if_2_end
-	const t.6(6@function,u8), 65
-	const t.7(7@function,u8), 57
-	sub t.5(5@function,u8), t.6(6@function,u8), t.7(7@function,u8)
-	const t.8(8@function,u8), 1
-	sub t.4(4@function,u8), t.5(5@function,u8), t.8(8@function,u8)
+	const t.4(4@function,u8), 7
 	add x(0@argument,u8), x(0@argument,u8), t.4(4@function,u8)
 @if_2_end:
-	const t.9(9@function,u8), 48
-	add x(0@argument,u8), x(0@argument,u8), t.9(9@function,u8)
+	const t.5(5@function,u8), 48
+	add x(0@argument,u8), x(0@argument,u8), t.5(5@function,u8)
 	call _, printChar [x(0@argument,u8)]
 @printNibble_ret:
 

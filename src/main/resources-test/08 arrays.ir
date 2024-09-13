@@ -121,9 +121,7 @@
 	var 19: t.19
 	var 20: t.20
 	var 21: t.21
-	var 22: t.22
-	var 23: t.23
-	; 120 pc
+	; 111 pc
 	const chr(0@function,u8), 32
 	const t.2(2@function,i64), 0
 	array t.3(3@function,u8*), chars(0@global,u8*) + t.2(2@function,i64)
@@ -141,17 +139,15 @@
 	load t.12(12@function,u8), [t.14(14@function,u8*)]
 	const t.15(15@function,u8), 2
 	add t.11(11@function,u8), t.12(12@function,u8), t.15(15@function,u8)
-	const t.18(18@function,u8), 1
-	const t.19(19@function,u8), 1
-	add t.17(17@function,u8), t.18(18@function,u8), t.19(19@function,u8)
+	const t.17(17@function,u8), 2
 	cast t.16(16@function,i64), t.17(17@function,u8)
-	array t.20(20@function,u8*), chars(0@global,u8*) + t.16(16@function,i64)
-	store [t.20(20@function,u8*)], t.11(11@function,u8)
-	const t.21(21@function,i64), 2
-	array t.22(22@function,u8*), chars(0@global,u8*) + t.21(21@function,i64)
-	load result(1@function,u8), [t.22(22@function,u8*)]
-	cast t.23(23@function,i64), result(1@function,u8)
-	call _, printIntLf [t.23(23@function,i64)]
+	array t.18(18@function,u8*), chars(0@global,u8*) + t.16(16@function,i64)
+	store [t.18(18@function,u8*)], t.11(11@function,u8)
+	const t.19(19@function,i64), 2
+	array t.20(20@function,u8*), chars(0@global,u8*) + t.19(19@function,i64)
+	load result(1@function,u8), [t.20(20@function,u8*)]
+	cast t.21(21@function,i64), result(1@function,u8)
+	call _, printIntLf [t.21(21@function,i64)]
 @main_ret:
 
 Global variables
