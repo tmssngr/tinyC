@@ -10,10 +10,17 @@ void main() {
     i16 bazz;
     printIntLf(bazz);
 
-    printIntLf(1000/10);
-    printIntLf(1000 % 256);
+    i16 a = 1000;
+    i16 b = 10;
+    printIntLf(a / b);
+    printIntLf(a % 256);
 
-    printIntLf(10 >> 1);
-    printIntLf(9 >> 2);
-    printIntLf(1 << 2);
+    a = 10;
+    b = 1;
+    printIntLf(a >> b);
+    a = 9;
+    b = 2;
+    printIntLf(a >> b);
+    a = 1;
+    printIntLf(a << b);
 }

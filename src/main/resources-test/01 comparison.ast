@@ -52,32 +52,43 @@ void printStringLength(u8* str, i64 length) {
 }
 
 void main() {
+	i16 a;
+	i16 b;
+	u8 c;
+	u8 d;
+
 	printString("< (signed)\n");
-	printIntLf((i64)(1 < 2));
-	printIntLf((i64)(2 < 1));
+	a = 1;
+	b = 2;
+	printIntLf((i64)(a < b));
+	printIntLf((i64)(b < a));
 	printString("< (unsigned)\n");
-	printIntLf((i64)(0 < 128));
-	printIntLf((i64)(128 < 0));
+	c = 0;
+	d = 128;
+	printIntLf((i64)(c < d));
+	printIntLf((i64)(d < c));
 	printString("<= (signed)\n");
-	printIntLf((i64)(1 <= 2));
-	printIntLf((i64)(2 <= 1));
+	printIntLf((i64)(a <= b));
+	printIntLf((i64)(b <= a));
 	printString("<= (unsigned)\n");
-	printIntLf((i64)(0 <= 128));
-	printIntLf((i64)(128 <= 0));
+	printIntLf((i64)(c <= d));
+	printIntLf((i64)(d <= c));
 	printString("==\n");
-	printIntLf((i64)(1 == 2));
+	printIntLf((i64)(a == b));
+	printIntLf((i64)(b == a));
 	printString("!=\n");
-	printIntLf((i64)(1 != 2));
+	printIntLf((i64)(a != b));
+	printIntLf((i64)(b != a));
 	printString(">= (signed)\n");
-	printIntLf((i64)(1 >= 2));
-	printIntLf((i64)(2 >= 1));
+	printIntLf((i64)(a >= b));
+	printIntLf((i64)(b >= a));
 	printString(">= (unsigned)\n");
-	printIntLf((i64)(0 >= 128));
-	printIntLf((i64)(128 >= 0));
+	printIntLf((i64)(c >= d));
+	printIntLf((i64)(d >= c));
 	printString("> (signed)\n");
-	printIntLf((i64)(1 > 2));
-	printIntLf((i64)(2 > 1));
+	printIntLf((i64)(a > b));
+	printIntLf((i64)(b > a));
 	printString("> (unsigned)\n");
-	printIntLf((i64)(0 > 128));
-	printIntLf((i64)(128 > 0));
+	printIntLf((i64)(c > d));
+	printIntLf((i64)(d > c));
 }

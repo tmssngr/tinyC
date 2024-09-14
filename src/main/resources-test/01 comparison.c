@@ -2,40 +2,46 @@
 
 void main() {
 	printString("< (signed)\n");
-	printIntLf(1 < 2);
-	printIntLf(2 < 1);
+	i16 a = 1;
+	i16 b = 2;
+	printIntLf(a < b);
+	printIntLf(b < a);
 
 	printString("< (unsigned)\n");
-	printIntLf(0 < 0x80);
-	printIntLf(0x80 < 0);
+	u8 c = 0;
+	u8 d = 0x80;
+	printIntLf(c < d);
+	printIntLf(d < c);
 
 	printString("<= (signed)\n");
-	printIntLf(1 <= 2);
-	printIntLf(2 <= 1);
+	printIntLf(a <= b);
+	printIntLf(b <= a);
 
 	printString("<= (unsigned)\n");
-	printIntLf(0 <= 0x80);
-	printIntLf(0x80 <= 0);
+	printIntLf(c <= d);
+	printIntLf(d <= c);
 
 	printString("==\n");
-	printIntLf(1 == 2);
+	printIntLf(a == b);
+	printIntLf(b == a);
 
 	printString("!=\n");
-	printIntLf(1 != 2);
+	printIntLf(a != b);
+	printIntLf(b != a);
 
 	printString(">= (signed)\n");
-	printIntLf(1 >= 2);
-	printIntLf(2 >= 1);
+	printIntLf(a >= b);
+	printIntLf(b >= a);
 
 	printString(">= (unsigned)\n");
-	printIntLf(0 >= 0x80);
-	printIntLf(0x80 >= 0);
+	printIntLf(c >= d);
+	printIntLf(d >= c);
 
 	printString("> (signed)\n");
-	printIntLf(1 > 2);
-	printIntLf(2 > 1);
+	printIntLf(a > b);
+	printIntLf(b > a);
 
 	printString("> (unsigned)\n");
-	printIntLf(0 > 0x80);
-	printIntLf(0x80 > 0);
+	printIntLf(c > d);
+	printIntLf(d > c);
 }
