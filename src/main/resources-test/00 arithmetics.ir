@@ -99,8 +99,8 @@
 	var 0: foo
 	var 1: bar
 	var 2: bazz
-	var 3: t.3
-	var 4: t.4
+	var 3: a
+	var 4: b
 	var 5: t.5
 	var 6: t.6
 	var 7: t.7
@@ -130,62 +130,53 @@
 	var 31: t.31
 	var 32: t.32
 	var 33: t.33
-	var 34: t.34
-	var 35: t.35
-	var 36: t.36
-	var 37: t.37
-	var 38: t.38
-	var 39: t.39
-	var 40: t.40
-	const t.5(5@function,u8), 4
-	const t.6(6@function,u8), 3
-	mul t.4(4@function,u8), t.5(5@function,u8), t.6(6@function,u8)
-	const t.8(8@function,u8), 2
-	const t.9(9@function,u8), 5
-	mul t.7(7@function,u8), t.8(8@function,u8), t.9(9@function,u8)
-	add t.3(3@function,u8), t.4(4@function,u8), t.7(7@function,u8)
-	cast foo(0@function,i16), t.3(3@function,u8)
+	const t.7(7@function,u8), 4
+	const t.8(8@function,u8), 3
+	mul t.6(6@function,u8), t.7(7@function,u8), t.8(8@function,u8)
+	const t.10(10@function,u8), 2
+	const t.11(11@function,u8), 5
+	mul t.9(9@function,u8), t.10(10@function,u8), t.11(11@function,u8)
+	add t.5(5@function,u8), t.6(6@function,u8), t.9(9@function,u8)
+	cast foo(0@function,i16), t.5(5@function,u8)
 	mul bar(1@function,i16), foo(0@function,i16), foo(0@function,i16)
 	const foo(0@function,i16), 1
-	add t.11(11@function,i16), bar(1@function,i16), foo(0@function,i16)
-	cast t.10(10@function,i64), t.11(11@function,i16)
-	call _, printIntLf [t.10(10@function,i64)]
-	const t.14(14@function,u8), 1
-	const t.15(15@function,u8), 2
-	add t.13(13@function,u8), t.14(14@function,u8), t.15(15@function,u8)
-	const t.17(17@function,u8), 3
-	const t.18(18@function,u8), 4
-	add t.16(16@function,u8), t.17(17@function,u8), t.18(18@function,u8)
-	mul t.12(12@function,u8), t.13(13@function,u8), t.16(16@function,u8)
-	cast foo(0@function,i16), t.12(12@function,u8)
-	cast t.19(19@function,i64), foo(0@function,i16)
-	call _, printIntLf [t.19(19@function,i64)]
-	cast t.20(20@function,i64), bazz(2@function,i16)
-	call _, printIntLf [t.20(20@function,i64)]
-	const t.23(23@function,i16), 1000
-	const t.24(24@function,i16), 10
-	div t.22(22@function,i16), t.23(23@function,i16), t.24(24@function,i16)
-	cast t.21(21@function,i64), t.22(22@function,i16)
+	add t.13(13@function,i16), bar(1@function,i16), foo(0@function,i16)
+	cast t.12(12@function,i64), t.13(13@function,i16)
+	call _, printIntLf [t.12(12@function,i64)]
+	const t.16(16@function,u8), 1
+	const t.17(17@function,u8), 2
+	add t.15(15@function,u8), t.16(16@function,u8), t.17(17@function,u8)
+	const t.19(19@function,u8), 3
+	const t.20(20@function,u8), 4
+	add t.18(18@function,u8), t.19(19@function,u8), t.20(20@function,u8)
+	mul t.14(14@function,u8), t.15(15@function,u8), t.18(18@function,u8)
+	cast foo(0@function,i16), t.14(14@function,u8)
+	cast t.21(21@function,i64), foo(0@function,i16)
 	call _, printIntLf [t.21(21@function,i64)]
-	const t.27(27@function,i16), 1000
-	const t.28(28@function,i16), 256
-	mod t.26(26@function,i16), t.27(27@function,i16), t.28(28@function,i16)
+	cast t.22(22@function,i64), bazz(2@function,i16)
+	call _, printIntLf [t.22(22@function,i64)]
+	const a(3@function,i16), 1000
+	const b(4@function,i16), 10
+	div t.24(24@function,i16), a(3@function,i16), b(4@function,i16)
+	cast t.23(23@function,i64), t.24(24@function,i16)
+	call _, printIntLf [t.23(23@function,i64)]
+	const t.27(27@function,i16), 256
+	mod t.26(26@function,i16), a(3@function,i16), t.27(27@function,i16)
 	cast t.25(25@function,i64), t.26(26@function,i16)
 	call _, printIntLf [t.25(25@function,i64)]
-	const t.31(31@function,u8), 10
-	const t.32(32@function,u8), 1
-	shiftright t.30(30@function,u8), t.31(31@function,u8), t.32(32@function,u8)
-	cast t.29(29@function,i64), t.30(30@function,u8)
-	call _, printIntLf [t.29(29@function,i64)]
-	const t.35(35@function,u8), 9
-	const t.36(36@function,u8), 2
-	shiftright t.34(34@function,u8), t.35(35@function,u8), t.36(36@function,u8)
-	cast t.33(33@function,i64), t.34(34@function,u8)
-	call _, printIntLf [t.33(33@function,i64)]
-	const t.39(39@function,u8), 1
-	const t.40(40@function,u8), 2
-	shiftleft t.38(38@function,u8), t.39(39@function,u8), t.40(40@function,u8)
-	cast t.37(37@function,i64), t.38(38@function,u8)
-	call _, printIntLf [t.37(37@function,i64)]
+	const a(3@function,i16), 10
+	const b(4@function,i16), 1
+	shiftright t.29(29@function,i16), a(3@function,i16), b(4@function,i16)
+	cast t.28(28@function,i64), t.29(29@function,i16)
+	call _, printIntLf [t.28(28@function,i64)]
+	const a(3@function,i16), 9
+	const b(4@function,i16), 2
+	shiftright t.31(31@function,i16), a(3@function,i16), b(4@function,i16)
+	cast t.30(30@function,i64), t.31(31@function,i16)
+	call _, printIntLf [t.30(30@function,i64)]
+	const a(3@function,i16), 1
+	shiftleft t.33(33@function,i16), a(3@function,i16), b(4@function,i16)
+	cast t.32(32@function,i64), t.33(33@function,i16)
+	call _, printIntLf [t.32(32@function,i64)]
 @main_ret:
 
