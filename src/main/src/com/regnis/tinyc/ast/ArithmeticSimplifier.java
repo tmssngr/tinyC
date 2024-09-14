@@ -101,34 +101,44 @@ public class ArithmeticSimplifier {
 		final Type type = binary.typeNotNull();
 		final Location location = binary.location();
 
-		if (left instanceof ExprIntLiteral leftLit
-		    && right instanceof ExprIntLiteral rightLit) {
-			final int leftValue = leftLit.value();
-			final int rightValue = rightLit.value();
-			return switch (binary.op()) {
-				case Add -> new ExprIntLiteral(leftValue + rightValue, type, location);
-				case Sub -> new ExprIntLiteral(leftValue - rightValue, type, location);
-				case Multiply -> new ExprIntLiteral(leftValue * rightValue, type, location);
-				case Divide -> new ExprIntLiteral(leftValue / rightValue, type, location);
-				case Mod -> new ExprIntLiteral(leftValue % rightValue, type, location);
-				case And -> new ExprIntLiteral(leftValue & rightValue, type, location);
-				case Or -> new ExprIntLiteral(leftValue | rightValue, type, location);
-				case Xor -> new ExprIntLiteral(leftValue ^ rightValue, type, location);
-				case Lt -> new ExprBoolLiteral(leftValue < rightValue, location);
-				case LtEq -> new ExprBoolLiteral(leftValue <= rightValue, location);
-				case Equals -> new ExprBoolLiteral(leftValue == rightValue, location);
-				case NotEquals -> new ExprBoolLiteral(leftValue != rightValue, location);
-				case GtEq -> new ExprBoolLiteral(leftValue >= rightValue, location);
-				case Gt -> new ExprBoolLiteral(leftValue > rightValue, location);
-				default -> throw new UnsupportedOperationException();
-			};
+		final ExprBinary.Op op = binary.op();
+		if (left instanceof ExprIntLiteral leftLit) {
+			if (right instanceof ExprIntLiteral rightLit) {
+				final int leftValue = leftLit.value();
+				final int rightValue = rightLit.value();
+				return switch (op) {
+					case Add -> new ExprIntLiteral(leftValue + rightValue, type, location);
+					case Sub -> new ExprIntLiteral(leftValue - rightValue, type, location);
+					case Multiply -> new ExprIntLiteral(leftValue * rightValue, type, location);
+					case Divide -> new ExprIntLiteral(leftValue / rightValue, type, location);
+					case Mod -> new ExprIntLiteral(leftValue % rightValue, type, location);
+					case ShiftLeft -> new ExprIntLiteral(leftValue << rightValue, type, location);
+					case ShiftRight -> new ExprIntLiteral(leftValue >> rightValue, type, location);
+					case And -> new ExprIntLiteral(leftValue & rightValue, type, location);
+					case Or -> new ExprIntLiteral(leftValue | rightValue, type, location);
+					case Xor -> new ExprIntLiteral(leftValue ^ rightValue, type, location);
+					case Lt -> new ExprBoolLiteral(leftValue < rightValue, location);
+					case LtEq -> new ExprBoolLiteral(leftValue <= rightValue, location);
+					case Equals -> new ExprBoolLiteral(leftValue == rightValue, location);
+					case NotEquals -> new ExprBoolLiteral(leftValue != rightValue, location);
+					case GtEq -> new ExprBoolLiteral(leftValue >= rightValue, location);
+					case Gt -> new ExprBoolLiteral(leftValue > rightValue, location);
+					default -> throw new UnsupportedOperationException();
+				};
+			}
+			else {
+				return binary(op, right, leftLit, type, location, true);
+			}
+		}
+		else if (right instanceof ExprIntLiteral literal) {
+			return binary(op, left, literal, type, location, false);
 		}
 
 		if (left instanceof ExprBoolLiteral leftLit
 		    && right instanceof ExprBoolLiteral rightLit) {
 			final boolean leftValue = leftLit.value();
 			final boolean rightValue = rightLit.value();
-			return switch (binary.op()) {
+			return switch (op) {
 				case AndLog -> new ExprBoolLiteral(leftValue && rightValue, location);
 				case OrLog -> new ExprBoolLiteral(leftValue || rightValue, location);
 				case Equals -> new ExprBoolLiteral(leftValue == rightValue, location);
@@ -137,7 +147,91 @@ public class ArithmeticSimplifier {
 			};
 		}
 
-		return new ExprBinary(binary.op(), type, left, right, location);
+		return new ExprBinary(op, type, left, right, location);
+	}
+
+	private static Expression binary(ExprBinary.Op op, Expression expr, ExprIntLiteral literal, Type type, Location location, boolean swapped) {
+		final int value = literal.value();
+		switch (op) {
+		case Add, Or, Xor -> {
+			if (value == 0) {
+				return expr;
+			}
+		}
+		case Multiply -> {
+			if (value == 0) {
+				return new ExprIntLiteral(0, type, location);
+			}
+			if (value == 1) {
+				return expr;
+			}
+			if (value == -1) {
+				return new ExprUnary(ExprUnary.Op.Neg, expr, type, location);
+			}
+			final int shiftFactor = getFactorOf2(value);
+			if (shiftFactor > 0) {
+				return new ExprBinary(ExprBinary.Op.ShiftLeft, type, expr, new ExprIntLiteral(shiftFactor, type, literal.location()), location);
+			}
+		}
+		case And -> {
+			if (value == 0) {
+				return new ExprIntLiteral(0, type, location);
+			}
+		}
+		}
+
+		if (swapped) {
+			final ExprBinary.Op commutative = op.getCommutative();
+			if (commutative != null) {
+				return new ExprBinary(commutative, type, expr, literal, location);
+			}
+			return new ExprBinary(op, type, literal, expr, location);
+		}
+
+		switch (op) {
+		case Sub, ShiftLeft, ShiftRight -> {
+			if (value == 0) {
+				return expr;
+			}
+		}
+		case Divide -> {
+			if (value == 0) {
+				throw new SyntaxException("Can't divide by zero", location);
+			}
+			if (value == 1) {
+				return expr;
+			}
+			final int shiftFactor = getFactorOf2(value);
+			if (shiftFactor > 0) {
+				return new ExprBinary(ExprBinary.Op.ShiftRight, type, expr, new ExprIntLiteral(shiftFactor, type, literal.location()), location);
+			}
+		}
+		case Mod -> {
+			if (value == 0) {
+				throw new SyntaxException("Can't divide by zero", location);
+			}
+
+			final int shiftFactor = getFactorOf2(value);
+			if (shiftFactor > 0) {
+				final int mask = (1 << shiftFactor) - 1;
+				return new ExprBinary(ExprBinary.Op.And, type, expr, new ExprIntLiteral(mask, type, literal.location()), location);
+			}
+		}
+		}
+		return new ExprBinary(op, type, expr, literal, location);
+	}
+
+	private static int getFactorOf2(int value) {
+		if (value < 2) {
+			return -1;
+		}
+
+		int result = 0;
+		while ((value & 1) == 0) {
+			value >>= 1;
+			result++;
+		}
+		return value == 1 ? result : -1;
 	}
 
 	private static Expression simplify(ExprFuncCall call) {

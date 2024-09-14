@@ -51,7 +51,7 @@ void main() {
 	a = 1000;
 	b = 10;
 	printIntLf((i64)(a / b));
-	printIntLf((i64)(a % 256));
+	printIntLf((i64)(a & 255));
 	a = 10;
 	b = 1;
 	printIntLf((i64)(a >> b));

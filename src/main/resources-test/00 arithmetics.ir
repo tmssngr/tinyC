@@ -140,8 +140,8 @@
 	div t.12(12@function,i16), a(3@function,i16), b(4@function,i16)
 	cast t.11(11@function,i64), t.12(12@function,i16)
 	call _, printIntLf [t.11(11@function,i64)]
-	const t.15(15@function,i16), 256
-	mod t.14(14@function,i16), a(3@function,i16), t.15(15@function,i16)
+	const t.15(15@function,i16), 255
+	and t.14(14@function,i16), a(3@function,i16), t.15(15@function,i16)
 	cast t.13(13@function,i64), t.14(14@function,i16)
 	call _, printIntLf [t.13(13@function,i64)]
 	const a(3@function,i16), 10

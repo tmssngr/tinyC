@@ -94,8 +94,8 @@
 	var 1: t.1
 	var 2: t.2
 	; 15 pc
-	const t.2(2@function,u8), 16
-	div t.1(1@function,u8), x(0@argument,u8), t.2(2@function,u8)
+	const t.2(2@function,u8), 4
+	shiftright t.1(1@function,u8), x(0@argument,u8), t.2(2@function,u8)
 	call _, printNibble [t.1(1@function,u8)]
 	call _, printNibble [x(0@argument,u8)]
 @printHex2_ret:

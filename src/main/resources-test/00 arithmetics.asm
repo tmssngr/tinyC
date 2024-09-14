@@ -447,22 +447,18 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; const t.15(15@function,i16), 256
-        mov ax, 256
+        ; const t.15(15@function,i16), 255
+        mov ax, 255
         lea rbx, [rsp+74]
         mov [rbx], ax
-        ; mod t.14(14@function,i16), a(3@function,i16), t.15(15@function,i16)
+        ; and t.14(14@function,i16), a(3@function,i16), t.15(15@function,i16)
         lea rax, [rsp+6]
         mov bx, [rax]
         lea rax, [rsp+74]
         mov cx, [rax]
-        movsx rax, bx
-        movsx rcx, cx
-        cqo
-        idiv rcx
-        mov rbx, rdx
-        lea rdx, [rsp+72]
-        mov [rdx], bx
+        and bx, cx
+        lea rax, [rsp+72]
+        mov [rax], bx
         ; cast t.13(13@function,i64), t.14(14@function,i16)
         lea rax, [rsp+72]
         mov bx, [rax]

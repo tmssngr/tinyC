@@ -64,5 +64,23 @@ public record ExprBinary(@NotNull Op op, @Nullable Type type, @NotNull Expressio
 		public String toString() {
 			return s;
 		}
+
+		@Nullable
+		public Op getCommutative() {
+			return switch (this) {
+				case Add -> Add;
+				case Multiply -> Multiply;
+				case And -> And;
+				case Or -> Or;
+				case Xor -> Xor;
+				case Lt -> GtEq;
+				case LtEq -> Gt;
+				case Equals -> Equals;
+				case NotEquals -> NotEquals;
+				case GtEq -> Lt;
+				case Gt -> LtEq;
+				default -> null;
+			};
+		}
 	}
 }

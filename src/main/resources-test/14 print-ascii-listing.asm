@@ -273,22 +273,18 @@ start:
 @printHex2:
         ; reserve space for local variables
         sub rsp, 16
-        ; const t.2(2@function,u8), 16
-        mov al, 16
+        ; const t.2(2@function,u8), 4
+        mov al, 4
         lea rbx, [rsp+1]
         mov [rbx], al
-        ; div t.1(1@function,u8), x(0@argument,u8), t.2(2@function,u8)
+        ; shiftright t.1(1@function,u8), x(0@argument,u8), t.2(2@function,u8)
         lea rax, [rsp+24]
         mov bl, [rax]
         lea rax, [rsp+1]
         mov cl, [rax]
-        movzx rax, bl
-        movzx rcx, cl
-        cqo
-        idiv rcx
-        mov rbx, rax
-        lea rdx, [rsp+0]
-        mov [rdx], bl
+        shr bl, cl
+        lea rax, [rsp+0]
+        mov [rax], bl
         ; call _, printNibble [t.1(1@function,u8)]
         lea rax, [rsp+0]
         mov bl, [rax]
