@@ -3,6 +3,7 @@
 	arg 0: chr
 	var 1: t.1
 	var 2: t.2
+	; 12 pc
 	addrof t.1(1@function,u8*), chr(0@argument,u8)
 	const t.2(2@function,i64), 1
 	call _, printStringLength [t.1(1@function,u8*), t.2(2@function,i64)]
@@ -29,6 +30,7 @@
 	var 16: t.16
 	var 17: t.17
 	var 18: t.18
+	; 102 pc
 	const pos(2@function,u8), 20
 	; 13:2 while true
 @while_1:
@@ -67,6 +69,7 @@
 	var 2: t.2
 	var 3: t.3
 	var 4: t.4
+	; 30 pc
 	; 27:2 if number < 0
 	const t.2(2@function,i64), 0
 	lt t.1(1@function,bool), number(0@argument,i64), t.2(2@function,i64)
@@ -101,6 +104,7 @@
 	var 2: t.2
 	var 3: t.3
 	var 4: t.4
+	; 28 pc
 	; begin initialize global variables
 	const i(0@global,u8), 0
 	; end initialize global variables
@@ -115,6 +119,7 @@
 @next:
  Local variables
 	var 0: t.0
+	; 13 pc
 	const t.0(0@function,u8), 1
 	add i(0@global,u8), i(0@global,u8), t.0(0@function,u8)
 	; 11:9 return i
@@ -134,6 +139,7 @@
 	var 7: t.7
 	var 8: t.8
 	var 9: t.9
+	; 40 pc
 	cast t.5(5@function,i64), a(0@argument,u8)
 	call _, printIntLf [t.5(5@function,i64)]
 	cast t.6(6@function,i64), b(1@argument,u8)

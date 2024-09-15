@@ -50,6 +50,15 @@ public final class IRWriter {
 	}
 
 	private void writeInstructions(List<IRInstruction> instructions) throws IOException {
+		if (instructions.isEmpty()) {
+			return;
+		}
+
+		final int instructionTime = getInstructionTime(instructions);
+		writeIndentation();
+		// processor cycles
+		writeln("; " + instructionTime + " pc");
+
 		for (IRInstruction instruction : instructions) {
 			if (instruction instanceof IRLabel label) {
 				writeln(label.label() + ":");
@@ -64,6 +73,95 @@ public final class IRWriter {
 				}
 			}
 		}
+	}
+
+	private int getInstructionTime(List<IRInstruction> instructions) {
+		int sum = 0;
+		for (IRInstruction instruction : instructions) {
+			switch (instruction) {
+			case IRLabel ignored -> {}
+			case IRComment ignored -> {}
+			case IRAddrOf i -> {
+				sum += getInstructionTime(i.source());
+				sum += getInstructionTime(i.target());
+				sum++;
+			}
+			case IRAddrOfArray i -> {
+				sum += getInstructionTime(i.index());
+				sum += getInstructionTime(i.addr());
+				sum++;
+			}
+			case IRArrayAccess i -> {
+				sum += getInstructionTime(i.index());
+				sum += getInstructionTime(i.addr());
+				sum++;
+			}
+			case IRBinary i -> {
+				sum += getInstructionTime(i.left());
+				sum += getInstructionTime(i.right());
+				sum++;
+				sum += getInstructionTime(i.target());
+			}
+			case IRBranch i -> {
+				sum += getInstructionTime(i.conditionVar());
+				sum++;
+			}
+			case IRCall i -> {
+				for (IRVar arg : i.args()) {
+					sum += getInstructionTime(arg);
+				}
+				sum++;
+				if (i.target() != null) {
+					sum += getInstructionTime(i.target());
+				}
+			}
+			case IRCast i -> {
+				sum += getInstructionTime(i.source());
+				sum++;
+				sum += getInstructionTime(i.target());
+			}
+			case IRCopy i -> {
+				sum += getInstructionTime(i.source());
+				sum++;
+				sum += getInstructionTime(i.target());
+			}
+			case IRJump i -> {
+				sum++;
+			}
+			case IRLiteral i -> {
+				sum += getInstructionTime(i.target());
+			}
+			case IRMemLoad i -> {
+				sum += getInstructionTime(i.addr());
+				sum += getInstructionTime(i.target());
+				sum += 2;
+			}
+			case IRMemStore i -> {
+				sum += getInstructionTime(i.addr());
+				sum += getInstructionTime(i.value());
+				sum += 2;
+			}
+			case IRRetValue i -> {
+				sum += getInstructionTime(i.var());
+				sum++;
+			}
+			case IRString i -> {
+				sum++;
+				sum += getInstructionTime(i.target());
+			}
+			case IRUnary i -> {
+				sum += getInstructionTime(i.source());
+				sum++;
+				sum += getInstructionTime(i.target());
+			}
+			default -> throw new UnsupportedOperationException(String.valueOf(instruction));
+			}
+		}
+		return sum;
+	}
+
+	private int getInstructionTime(IRVar var) {
+		return 2;
 	}
 
 	private void writeGlobalVars(List<IRGlobalVar> globalVars) throws IOException {
