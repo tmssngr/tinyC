@@ -17,7 +17,6 @@ public final class X86Win64 {
 	private static final String INDENTATION = "        ";
 
 	private final BufferedWriter writer;
-	private final TrivialRegisterAllocator allocator = new TrivialRegisterAllocator();
 
 	@SuppressWarnings("unused") private boolean debug;
 	private int[] localVarOffsets = new int[0];
@@ -235,7 +234,7 @@ public final class X86Win64 {
 		    && !(instruction instanceof IRLabel)) {
 			writeComment(String.valueOf(instruction));
 		}
-		Utils.assertTrue(allocator.isNoneUsed());
+
 		switch (instruction) {
 		case IRLabel label -> writeLabel(label.label());
 		case IRComment comment -> writeComment(comment.comment());
@@ -256,7 +255,6 @@ public final class X86Win64 {
 		case IRRetValue retValue -> writeRetValue(retValue);
 		default -> throw new UnsupportedOperationException(instruction.getClass() + " " + instruction);
 		}
-		Utils.assertTrue(allocator.isNoneUsed(), instruction + ": not all regs freed");
 	}
 
 	private void writeAddrOf(IRAddrOf addrOf) throws IOException {
@@ -818,56 +816,5 @@ public final class X86Win64 {
 
 	private static String getStringLiteralName(int index) {
 		return "string_" + index;
-	}
-
-	private static class TrivialRegisterAllocator {
-
-		private static final int MAX_REGISTERS = 4;
-
-		private int freeRegs;
-
-		@Override
-		public String toString() {
-			final StringBuilder buffer = new StringBuilder();
-			buffer.append("used: ");
-			int mask = 1;
-			boolean first = true;
-			for (int i = 0; i < MAX_REGISTERS; i++, mask += mask) {
-				if ((freeRegs & mask) != 0) {
-					if (first) {
-						first = false;
-					}
-					else {
-						buffer.append(", ");
-					}
-					buffer.append(i);
-				}
-			}
-			if (first) {
-				buffer.append("none");
-			}
-			return buffer.toString();
-		}
-
-		public int allocate() {
-			int mask = 1;
-			for (int i = 0; i < MAX_REGISTERS; i++, mask += mask) {
-				if ((freeRegs & mask) == 0) {
-					freeRegs |= mask;
-					return i;
-				}
-			}
-			throw new IllegalStateException("no free reg");
-		}
-
-		public void free(int reg) {
-			final int mask = 1 << reg;
-			Utils.assertTrue((freeRegs & mask) != 0);
-			freeRegs ^= mask;
-		}
-
-		public boolean isNoneUsed() {
-			return freeRegs == 0;
-		}
 	}
 }
