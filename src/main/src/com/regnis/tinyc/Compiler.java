@@ -35,7 +35,7 @@ public class Compiler {
 
 	@NotNull
 	private static Path compile(@NotNull Path inputFile) throws IOException, InterruptedException {
-		final Program parsedProgram = Parser.parse(inputFile);
+		final Program parsedProgram = Parser.parse(inputFile, Set.of());
 
 		final TypeChecker checker = new TypeChecker(Type.I64);
 		final Program typedProgram = checker.check(parsedProgram);

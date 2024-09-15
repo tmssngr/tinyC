@@ -530,7 +530,7 @@ public class TypeCheckerTest {
 
 	@NotNull
 	private Program checkType(String input) {
-		final Program program = Parser.parse(input);
+		final Program program = Parser.parse(input, Set.of());
 		final TypeChecker checker = new TypeChecker(Type.I64);
 		return checker.check(program);
 	}
