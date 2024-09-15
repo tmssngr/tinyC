@@ -2,6 +2,7 @@
  Local variables
 	arg 0: str
 	var 1: length
+	; 10 pc
 	call length(1@function,i64), strlen, [str(0@argument,u8*)]
 	call _, printStringLength [str(0@argument,u8*), length(1@function,i64)]
 @printString_ret:
@@ -11,6 +12,7 @@
 	arg 0: chr
 	var 1: t.1
 	var 2: t.2
+	; 12 pc
 	addrof t.1(1@function,u8*), chr(0@argument,u8)
 	const t.2(2@function,i64), 1
 	call _, printStringLength [t.1(1@function,u8*), t.2(2@function,i64)]
@@ -27,6 +29,7 @@
 	var 6: t.6
 	var 7: t.7
 	var 8: t.8
+	; 53 pc
 	const length(1@function,i64), 0
 	; 37:2 for *str != 0
 @for_1:
@@ -77,6 +80,7 @@
 	var 10: t.10
 	var 11: t.11
 	var 12: t.12
+	; 74 pc
 	const t.1(1@function,u8), 124
 	call _, printChar [t.1(1@function,u8)]
 	const i(0@function,u8), 0
@@ -159,6 +163,7 @@
 	var 46: t.46
 	var 47: t.47
 	var 48: t.48
+	; 265 pc
 	const i(0@function,u8), 0
 	; 23:2 for i < 30
 @for_4:

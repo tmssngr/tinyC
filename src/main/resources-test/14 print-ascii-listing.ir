@@ -2,6 +2,7 @@
  Local variables
 	arg 0: str
 	var 1: length
+	; 10 pc
 	call length(1@function,i64), strlen, [str(0@argument,u8*)]
 	call _, printStringLength [str(0@argument,u8*), length(1@function,i64)]
 @printString_ret:
@@ -11,6 +12,7 @@
 	arg 0: chr
 	var 1: t.1
 	var 2: t.2
+	; 12 pc
 	addrof t.1(1@function,u8*), chr(0@argument,u8)
 	const t.2(2@function,i64), 1
 	call _, printStringLength [t.1(1@function,u8*), t.2(2@function,i64)]
@@ -27,6 +29,7 @@
 	var 6: t.6
 	var 7: t.7
 	var 8: t.8
+	; 53 pc
 	const length(1@function,i64), 0
 	; 37:2 for *str != 0
 @for_1:
@@ -74,6 +77,7 @@
 	var 7: t.7
 	var 8: t.8
 	var 9: t.9
+	; 60 pc
 	const t.1(1@function,u8), 15
 	and x(0@argument,u8), x(0@argument,u8), t.1(1@function,u8)
 	; 5:2 if x > 9
@@ -97,6 +101,7 @@
 	arg 0: x
 	var 1: t.1
 	var 2: t.2
+	; 15 pc
 	const t.2(2@function,u8), 16
 	div t.1(1@function,u8), x(0@argument,u8), t.2(2@function,u8)
 	call _, printNibble [t.1(1@function,u8)]
@@ -134,6 +139,7 @@
 	var 26: t.26
 	var 27: t.27
 	var 28: t.28
+	; 167 pc
 	const t.2(2@function,u8*), [string-0]
 	call _, printString [t.2(2@function,u8*)]
 	const i(0@function,u8), 0

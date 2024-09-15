@@ -3,6 +3,7 @@
 	arg 0: chr
 	var 1: t.1
 	var 2: t.2
+	; 12 pc
 	addrof t.1(1@function,u8*), chr(0@argument,u8)
 	const t.2(2@function,i64), 1
 	call _, printStringLength [t.1(1@function,u8*), t.2(2@function,i64)]
@@ -29,6 +30,7 @@
 	var 16: t.16
 	var 17: t.17
 	var 18: t.18
+	; 102 pc
 	const pos(2@function,u8), 20
 	; 13:2 while true
 @while_1:
@@ -67,6 +69,7 @@
 	var 2: t.2
 	var 3: t.3
 	var 4: t.4
+	; 30 pc
 	; 27:2 if number < 0
 	const t.2(2@function,i64), 0
 	lt t.1(1@function,bool), number(0@argument,i64), t.2(2@function,i64)
@@ -104,6 +107,7 @@
 	var 5: t.5
 	var 6: t.6
 	var 7: t.7
+	; 47 pc
 	const i(0@function,u8), 250
 	; 4:3 for i != 2
 @for_4:
