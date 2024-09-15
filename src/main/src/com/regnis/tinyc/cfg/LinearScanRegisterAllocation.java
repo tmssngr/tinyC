@@ -14,10 +14,10 @@ import org.jetbrains.annotations.*;
  */
 public final class LinearScanRegisterAllocation {
 
-	public static ControlFlowGraph process(ControlFlowGraph cfg) {
+	public static ControlFlowGraph process(ControlFlowGraph cfg, int maxRegisters) {
 		final List<BasicBlock> blocks = new ArrayList<>();
 		for (BasicBlock block : cfg.blocks()) {
-			final LinearScanRegisterAllocation allocation = new LinearScanRegisterAllocation(block);
+			final LinearScanRegisterAllocation allocation = new LinearScanRegisterAllocation(block, maxRegisters);
 			final BasicBlock newBlock = allocation.process();
 			blocks.add(newBlock);
 		}
@@ -30,9 +30,8 @@ public final class LinearScanRegisterAllocation {
 
 	private Map<IRInstruction, Set<LiveVar>> shouldBeFreed;
 
-	public LinearScanRegisterAllocation(BasicBlock block) {
+	public LinearScanRegisterAllocation(BasicBlock block, int maxRegisters) {
 		this.block = block;
-		final int maxRegisters = 4;
 		registers = new Register[maxRegisters];
 		for (int i = 0; i < registers.length; i++) {
 			registers[i] = new Register(i);

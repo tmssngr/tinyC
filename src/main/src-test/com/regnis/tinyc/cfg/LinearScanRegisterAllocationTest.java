@@ -110,7 +110,7 @@ public class LinearScanRegisterAllocationTest {
 	private static List<IRInstruction> allocate(List<IRInstruction> instructions) {
 		final BasicBlock block = new BasicBlock("name", instructions, List.of(), List.of());
 		DetectVarLiveness.processBlock(block, Set.of());
-		final LinearScanRegisterAllocation allocation = new LinearScanRegisterAllocation(block);
+		final LinearScanRegisterAllocation allocation = new LinearScanRegisterAllocation(block, 4);
 		return allocation.process().instructions;
 	}
 }
