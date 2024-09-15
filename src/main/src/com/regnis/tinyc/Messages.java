@@ -177,4 +177,14 @@ public class Messages {
 	public static String expectedStatement() {
 		return "Expected statement";
 	}
+
+	@NotNull
+	public static String endWithoutIfdef() {
+		return "#end without belonging #ifdef";
+	}
+
+	@NotNull
+	public static String unclosedIfdef() {
+		return "unclosed #ifdef";
+	}
 }

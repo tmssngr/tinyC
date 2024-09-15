@@ -15,7 +15,7 @@ import org.jetbrains.annotations.*;
  */
 public final class Parser {
 
-	public static Program parse(String input) {
+	public static Program parse(String input, Set<String> defines) {
 		return parse(new IncludeHandler() {
 			@Override
 			public void parse(@NotNull String fileName, @NotNull Location location, @NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
@@ -24,15 +24,15 @@ public final class Parser {
 
 			@Override
 			public void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
-				final Parser parser = new Parser(new Lexer(input), this);
+				final Parser parser = new Parser(new Lexer(input), this, defines);
 				parser.parse(typeDefs, globalVars, functions);
 			}
 		});
 	}
 
-	public static Program parse(Path inputFile) throws IOException {
+	public static Program parse(Path inputFile, Set<String> defines) throws IOException {
 		try {
-			return parse(new FileIncludeHandler(inputFile, null));
+			return parse(new FileIncludeHandler(inputFile, null, defines));
 		}
 		catch (UncheckedIOException e) {
 			throw e.getCause();
@@ -42,12 +42,15 @@ public final class Parser {
 	private final Map<String, Expression> constants = new HashMap<>();
 	private final Lexer lexer;
 	private final IncludeHandler includeHandler;
+	private final Set<String> defines;
 
+	private int openIfDefCount;
 	private TokenType token;
 
-	private Parser(@NotNull Lexer lexer, @NotNull IncludeHandler includeHandler) {
+	private Parser(@NotNull Lexer lexer, @NotNull IncludeHandler includeHandler, @NotNull Set<String> defines) {
 		this.lexer = lexer;
 		this.includeHandler = includeHandler;
+		this.defines = defines;
 
 		consume();
 	}
@@ -137,8 +140,39 @@ public final class Parser {
 				constants.put(name, resolvedExpression);
 				continue;
 			}
+			else if (isConsume(TokenType.IFDEF)) {
+				final String name = consumeIdentifier();
+				if (defines.contains(name)) {
+					openIfDefCount++;
+					continue;
+				}
+
+				while (true) {
+					if (token == TokenType.EOF) {
+						throw new SyntaxException(Messages.unclosedIfdef(), location);
+					}
+					if (token == TokenType.END) {
+						break;
+					}
+					consume();
+				}
+				consume(TokenType.END);
+				continue;
+			}
+			else if (isConsume(TokenType.END)) {
+				if (openIfDefCount == 0) {
+					throw new SyntaxException(Messages.endWithoutIfdef(), location);
+				}
+
+				openIfDefCount--;
+				continue;
+			}
 
 			throw new SyntaxException(Messages.expectedRootElement(), location);
+		}
+
+		if (openIfDefCount > 0) {
+			throw new SyntaxException(Messages.unclosedIfdef(), getLocation());
 		}
 	}
 
@@ -732,7 +766,6 @@ public final class Parser {
 	private void consume() {
 		do {
 			token = lexer.next();
-//			System.out.println(token);
 		}
 		while (token == TokenType.WHITESPACE || token == TokenType.COMMENT);
 	}
@@ -773,10 +806,12 @@ public final class Parser {
 	private static final class FileIncludeHandler implements IncludeHandler {
 		private final Path file;
 		private final FileIncludeHandler parent;
+		private final Set<String> defines;
 
-		public FileIncludeHandler(@NotNull Path file, @Nullable FileIncludeHandler parent) {
+		public FileIncludeHandler(@NotNull Path file, @Nullable FileIncludeHandler parent, @NotNull Set<String> defines) {
 			this.file = file;
 			this.parent = parent;
+			this.defines = defines;
 		}
 
 		@Override
@@ -786,7 +821,7 @@ public final class Parser {
 				throw new SyntaxException("File '" + fileName + "' is included recursively", location);
 			}
 
-			final FileIncludeHandler handler = new FileIncludeHandler(includeFile, this);
+			final FileIncludeHandler handler = new FileIncludeHandler(includeFile, this, defines);
 			handler.parse(typeDefs, globalVars, functions);
 		}
 
@@ -799,7 +834,7 @@ public final class Parser {
 					catch (IOException ex) {
 						throw new UncheckedIOException(ex);
 					}
-				}), this).parse(typeDefs, globalVars, functions);
+				}), this, defines).parse(typeDefs, globalVars, functions);
 			}
 			catch (IOException e) {
 				throw new UncheckedIOException(e);

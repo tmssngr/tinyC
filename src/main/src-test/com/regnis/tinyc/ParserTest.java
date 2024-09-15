@@ -656,9 +656,68 @@ public class ParserTest {
 				                }""");
 	}
 
+	@Test
+	public void testIfDef() {
+		final String input = """
+				#ifdef X86_64
+				void print(i64 a) {
+				}
+				#end
+				#ifdef Z8
+				void print(i16 a) {
+				}
+				#end
+				""";
+		assertEquals(new Program(List.of(),
+		                         List.of(),
+		                         List.of(
+				                         new Function("print", "void", null, List.of(new Function.Arg("i64", "a", loc(1, 11))),
+				                                      List.of(),
+				                                      List.of(),
+				                                      List.of(), loc(1, 0))
+		                         ),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram(input, Set.of("X86_64")));
+		assertEquals(new Program(List.of(),
+		                         List.of(),
+		                         List.of(
+				                         new Function("print", "void", null, List.of(new Function.Arg("i16", "a", loc(5, 11))),
+				                                      List.of(),
+				                                      List.of(),
+				                                      List.of(), loc(5, 0))
+		                         ),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram(input, Set.of("Z8")));
+
+		testIllegal(Messages.unclosedIfdef(), loc(0, 0),
+		            """
+				                #ifdef X86_64
+				                void main() {
+				                }""");
+		testIllegal(Messages.unclosedIfdef(), loc(2, 1),
+				                """
+				                #ifdef X86_64
+				                void main() {
+				                }""", Set.of("X86_64"));
+		testIllegal(Messages.endWithoutIfdef(), loc(2, 0),
+		            """
+				                void main() {
+				                }
+				                #end
+				                """);
+	}
+
 	private static void testIllegal(String expectedMessage, Location expectedLocation, String input) {
+		testIllegal(expectedMessage, expectedLocation, input, Set.of());
+	}
+
+	private static void testIllegal(String expectedMessage, Location expectedLocation, String input, Set<String> defines) {
 		try {
-			parseProgram(input);
+			parseProgram(input, defines);
 			Assert.fail();
 		}
 		catch (SyntaxException ex) {
@@ -669,7 +728,12 @@ public class ParserTest {
 
 	@NotNull
 	private static Program parseProgram(String text) {
-		return Parser.parse(text);
+		return parseProgram(text, Set.of());
+	}
+
+	@NotNull
+	private static Program parseProgram(String text, Set<String> defines) {
+		return Parser.parse(text, defines);
 	}
 
 	@NotNull
