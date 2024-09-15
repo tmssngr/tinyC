@@ -1,4 +1,4 @@
-#include "x86_64.h"
+#include "io.h"
 
 typedef Pos (u8 x, u8 y);
 

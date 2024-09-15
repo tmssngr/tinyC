@@ -1,4 +1,4 @@
-#include "x86_64.h"
+#include "io.h"
 
 void printNibble(u8 x) {
 	x = x & 0xf;

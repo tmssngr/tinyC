@@ -1,4 +1,4 @@
-#include "x86_64.h"
+#include "io.h"
 
 void main() {
 	u8 i = 5;

@@ -1,4 +1,4 @@
-#include "x86_64.h"
+#include "io.h"
 
 void main() {
 	i16 a = 10;
