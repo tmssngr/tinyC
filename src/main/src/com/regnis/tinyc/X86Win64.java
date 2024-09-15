@@ -12,22 +12,19 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public final class X86Win64 {
+public final class X86Win64 extends AsmOut {
 
-	private static final String INDENTATION = "        ";
 	private static final int TMP_REG = 0;
 
-	private final BufferedWriter writer;
-
-	@SuppressWarnings("unused") private boolean debug;
 	private int[] localVarOffsets = new int[0];
 	private int rspOffset;
 
 	public X86Win64(@NotNull BufferedWriter writer) {
-		this.writer = writer;
+		super(writer);
 	}
 
-	public void write(IRProgram program) throws IOException {
+	@Override
+	public void write(@NotNull IRProgram program) throws IOException {
 		writePreample();
 
 		boolean addEmptyLine = false;
@@ -163,9 +160,7 @@ public final class X86Win64 {
 		writeComment(function.toString());
 
 		writeLabel(function.label());
-		for (String line : function.asmLines()) {
-			writeLines(line, line.contains(":") ? "" : INDENTATION);
-		}
+		writeAsm(function.asmLines());
 	}
 
 	private int prepareLocalVarsOffsets(List<IRVarDef> localVars) {
@@ -603,45 +598,6 @@ public final class X86Win64 {
 
 	private void writeJump(IRJump jump) throws IOException {
 		writeIndented("jmp " + jump.label());
-	}
-
-	private void writeLabel(String label) throws IOException {
-		write(label + ":");
-		writeNL();
-	}
-
-	private void writeComment(String s) throws IOException {
-		writeIndented("; " + s);
-	}
-
-	private void writeIndented(String text) throws IOException {
-		writeLines(text, INDENTATION);
-	}
-
-	private void writeLines(String text) throws IOException {
-		writeLines(text, null);
-	}
-
-	private void writeLines(String text, @Nullable String leading) throws IOException {
-		final String[] lines = text.split("\\r?\\n");
-		for (String line : lines) {
-			if (leading != null && line.length() > 0) {
-				write(leading);
-			}
-			write(line);
-			writeNL();
-		}
-	}
-
-	private void writeNL() throws IOException {
-		write(System.lineSeparator());
-	}
-
-	private void write(String text) throws IOException {
-		writer.write(text);
-		if (debug) {
-			System.out.print(text);
-		}
 	}
 
 	private static int alignTo16(int offset) {
