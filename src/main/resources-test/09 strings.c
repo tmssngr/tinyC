@@ -1,4 +1,4 @@
-#include "x86_64.h"
+#include "io.h"
 
 u8* text = "hello world\n";
 

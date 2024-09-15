@@ -1,4 +1,4 @@
-#include "x86_64.h"
+#include "io.h"
 
 void main() {
     i16 foo = 4 * 3 + 2*5;
