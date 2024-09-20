@@ -120,6 +120,8 @@
 	var 7: t.7
 	var 8: t.8
 	; 36 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r.0(0@register,u8), 5
 	; 5:2 while i > 0
 	copy i(0@function,u8), r.0(0@register,u8)

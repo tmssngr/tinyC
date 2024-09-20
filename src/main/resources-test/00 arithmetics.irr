@@ -133,6 +133,8 @@
 	var 20: t.20
 	var 21: t.21
 	; 40 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r.0(0@register,u8), 22
 	cast r.0(0@register,i16), r.0(0@register,u8)
 	mul r.0(0@register,i16), r.0(0@register,i16), r.0(0@register,i16)
