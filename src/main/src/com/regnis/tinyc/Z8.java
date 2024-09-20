@@ -36,7 +36,11 @@ public final class Z8 extends AsmOut {
 	}
 
 	private void writePreample() throws IOException {
-		writeIndented(".org %C000");
+		writeIndented("""
+				              .const SPH = %FE
+				              .const SPL = %FF
+
+				              .org %C000""");
 		writeNL();
 		writeIndented("""
 				              srp %20

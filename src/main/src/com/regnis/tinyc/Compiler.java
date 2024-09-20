@@ -36,14 +36,14 @@ public class Compiler {
 
 	@NotNull
 	public static Path compile(@NotNull Path inputFile) throws IOException, InterruptedException {
+		compile(inputFile, "z8/", Platform.Z8);
+
 		final Path exeFile = useExtension(inputFile, "", ".exe");
 		Files.deleteIfExists(exeFile);
 		final Path asmFile = compile(inputFile, "", Platform.X86Win64);
 		if (!launchFasm(asmFile)) {
 			throw new IOException("Failed to compile");
 		}
-
-		compile(inputFile, "z8/", Platform.Z8);
 
 		return exeFile;
 	}
