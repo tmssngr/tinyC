@@ -130,6 +130,8 @@
 	var 17: t.17
 	var 18: t.18
 	; 39 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r.0(0@register,u8), 1
 	; 9:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=9:2].x
 	addrof r.1(1@register,u8*), pos(0@function,Pos)

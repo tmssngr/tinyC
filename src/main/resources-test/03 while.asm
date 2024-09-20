@@ -247,6 +247,8 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 48
+        ; begin initialize global variables
+        ; end initialize global variables
         ; const r.0(0@register,u8), 5
         mov cl, 5
         ; 5:2 while i > 0
