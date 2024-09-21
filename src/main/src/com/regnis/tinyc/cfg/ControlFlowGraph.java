@@ -4,7 +4,6 @@ import com.regnis.tinyc.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
-import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -65,10 +64,6 @@ public final class ControlFlowGraph {
 		return blocks.getLast();
 	}
 
-	public void foreach(@NotNull Consumer<BasicBlock> consumer) {
-		blocks.forEach(consumer);
-	}
-
 	public IRFunction flatten() {
 		final List<IRInstruction> instructions = new ArrayList<>();
 		for (BasicBlock block : blocks) {
@@ -90,5 +85,9 @@ public final class ControlFlowGraph {
 		}.process();
 
 		return function.derive(instructions);
+	}
+
+	public ControlFlowGraph derive(List<BasicBlock> blocks) {
+		return new ControlFlowGraph(function, blocks);
 	}
 }

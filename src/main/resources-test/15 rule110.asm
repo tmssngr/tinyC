@@ -26,21 +26,18 @@ start:
 @printString:
         ; reserve space for local variables
         sub rsp, 16
-        ; call length(1@function,i64), strlen, [str(0@argument,u8*)]
+        ; call r.0(0@register,i64), strlen, [str(0@argument,u8*)]
         lea rax, [rsp+24]
-        mov rbx, [rax]
-        push rbx
+        mov rax, [rax]
+        push rax
           call @strlen
         add rsp, 8
-        lea rbx, [rsp+0]
-        mov [rbx], rax
-        ; call _, printStringLength [str(0@argument,u8*), length(1@function,i64)]
+        mov rcx, rax
+        ; call _, printStringLength [str(0@argument,u8*), r.0(0@register,i64)]
         lea rax, [rsp+24]
-        mov rbx, [rax]
-        push rbx
-        lea rax, [rsp+8]
-        mov rbx, [rax]
-        push rbx
+        mov rax, [rax]
+        push rax
+        push rcx
         sub rsp, 8
           call @printStringLength
         add rsp, 24
@@ -56,21 +53,14 @@ start:
 @printChar:
         ; reserve space for local variables
         sub rsp, 16
-        ; addrof t.1(1@function,u8*), chr(0@argument,u8)
+        ; addrof r.0(0@register,u8*), chr(0@argument,u8)
         lea rax, [rsp+24]
-        lea rbx, [rsp+0]
-        mov [rbx], rax
-        ; const t.2(2@function,i64), 1
-        mov rax, 1
-        lea rbx, [rsp+8]
-        mov [rbx], rax
-        ; call _, printStringLength [t.1(1@function,u8*), t.2(2@function,i64)]
-        lea rax, [rsp+0]
-        mov rbx, [rax]
-        push rbx
-        lea rax, [rsp+16]
-        mov rbx, [rax]
-        push rbx
+        mov rcx, rax
+        ; const r.1(1@register,i64), 1
+        mov rdx, 1
+        ; call _, printStringLength [r.0(0@register,u8*), r.1(1@register,i64)]
+        push rcx
+        push rdx
         sub rsp, 8
           call @printStringLength
         add rsp, 24
@@ -92,81 +82,62 @@ start:
 @strlen:
         ; reserve space for local variables
         sub rsp, 48
-        ; const length(1@function,i64), 0
-        mov rax, 0
-        lea rbx, [rsp+0]
-        mov [rbx], rax
+        ; const r.0(0@register,i64), 0
+        mov rcx, 0
         ; 37:2 for *str != 0
+        ; copy length(1@function,i64), r.0(0@register,i64)
+        lea rbx, [rsp+0]
+        mov [rbx], rcx
 @for_1:
-        ; load t.3(3@function,u8), [str(0@argument,u8*)]
-        lea rax, [rsp+56]
-        mov rbx, [rax]
-        mov al, [rbx]
-        lea rbx, [rsp+9]
-        mov [rbx], al
-        ; const t.4(4@function,u8), 0
-        mov al, 0
-        lea rbx, [rsp+10]
-        mov [rbx], al
-        ; notequals t.2(2@function,bool), t.3(3@function,u8), t.4(4@function,u8)
-        lea rax, [rsp+9]
-        mov bl, [rax]
-        lea rax, [rsp+10]
-        mov cl, [rax]
-        cmp bl, cl
-        setne bl
-        lea rax, [rsp+8]
-        mov [rax], bl
-        ; branch t.2(2@function,bool), false, @for_1_break
-        lea rax, [rsp+8]
-        mov bl, [rax]
-        or bl, bl
+        ; copy r.0(0@register,u8*), str(0@argument,u8*)
+        lea rbx, [rsp+56]
+        mov rcx, [rbx]
+        ; load r.1(1@register,u8), [r.0(0@register,u8*)]
+        mov dl, [rcx]
+        ; const r.2(2@register,u8), 0
+        mov r9b, 0
+        ; notequals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
+        cmp dl, r9b
+        setne dl
+        ; branch r.1(1@register,bool), false, @for_1_break
+        or dl, dl
         jz @for_1_break
         ; @for_1_body
 @for_1_body:
-        ; const t.5(5@function,i64), 1
-        mov rax, 1
-        lea rbx, [rsp+16]
-        mov [rbx], rax
-        ; add length(1@function,i64), length(1@function,i64), t.5(5@function,i64)
-        lea rax, [rsp+0]
-        mov rbx, [rax]
-        lea rax, [rsp+16]
-        mov rcx, [rax]
-        add rbx, rcx
-        lea rax, [rsp+0]
-        mov [rax], rbx
+        ; const r.0(0@register,i64), 1
+        mov rcx, 1
+        ; copy r.1(1@register,i64), length(1@function,i64)
+        lea rbx, [rsp+0]
+        mov rdx, [rbx]
+        ; add r.0(0@register,i64), r.1(1@register,i64), r.0(0@register,i64)
+        mov rax, rdx
+        add rax, rcx
+        mov rcx, rax
+        ; copy length(1@function,i64), r.0(0@register,i64)
+        lea rbx, [rsp+0]
+        mov [rbx], rcx
 @for_1_continue:
-        ; cast t.7(7@function,i64), str(0@argument,u8*)
-        lea rax, [rsp+56]
-        mov rbx, [rax]
-        lea rax, [rsp+32]
-        mov [rax], rbx
-        ; const t.8(8@function,i64), 1
-        mov rax, 1
-        lea rbx, [rsp+40]
-        mov [rbx], rax
-        ; add t.6(6@function,i64), t.7(7@function,i64), t.8(8@function,i64)
-        lea rax, [rsp+32]
-        mov rbx, [rax]
-        lea rax, [rsp+40]
-        mov rcx, [rax]
-        add rbx, rcx
-        lea rax, [rsp+24]
-        mov [rax], rbx
-        ; cast str(0@argument,u8*), t.6(6@function,i64)
-        lea rax, [rsp+24]
-        mov rbx, [rax]
-        lea rax, [rsp+56]
-        mov [rax], rbx
+        ; copy r.0(0@register,u8*), str(0@argument,u8*)
+        lea rbx, [rsp+56]
+        mov rcx, [rbx]
+        ; cast r.0(0@register,i64), r.0(0@register,u8*)
+        ; const r.1(1@register,i64), 1
+        mov rdx, 1
+        ; add r.0(0@register,i64), r.0(0@register,i64), r.1(1@register,i64)
+        add rcx, rdx
+        ; cast r.0(0@register,u8*), r.0(0@register,i64)
+        ; copy str(0@argument,u8*), r.0(0@register,u8*)
+        lea rbx, [rsp+56]
+        mov [rbx], rcx
         ; jump @for_1
         jmp @for_1
 @for_1_break:
         ; 40:9 return length
-        ; ret length(1@function,i64)
-        lea rax, [rsp+0]
-        mov rbx, [rax]
-        mov rax, rbx
+        ; copy r.0(0@register,i64), length(1@function,i64)
+        lea rbx, [rsp+0]
+        mov rcx, [rbx]
+        ; ret r.0(0@register,i64)
+        mov rax, rcx
 @strlen_ret:
         ; release space for local variables
         add rsp, 48
@@ -204,130 +175,89 @@ start:
 @printBoard:
         ; reserve space for local variables
         sub rsp, 48
-        ; const t.1(1@function,u8), 124
-        mov al, 124
-        lea rbx, [rsp+1]
-        mov [rbx], al
-        ; call _, printChar [t.1(1@function,u8)]
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        push rbx
+        ; const r.0(0@register,u8), 124
+        mov cl, 124
+        ; call _, printChar [r.0(0@register,u8)]
+        push rcx
           call @printChar
         add rsp, 8
-        ; const i(0@function,u8), 0
-        mov al, 0
-        lea rbx, [rsp+0]
-        mov [rbx], al
+        ; const r.0(0@register,u8), 0
+        mov cl, 0
         ; 11:2 for i < 30
+        ; copy i(0@function,u8), r.0(0@register,u8)
+        lea rbx, [rsp+0]
+        mov [rbx], cl
 @for_2:
-        ; const t.3(3@function,u8), 30
-        mov al, 30
-        lea rbx, [rsp+3]
-        mov [rbx], al
-        ; lt t.2(2@function,bool), i(0@function,u8), t.3(3@function,u8)
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+3]
-        mov cl, [rax]
-        cmp bl, cl
-        setb bl
-        lea rax, [rsp+2]
-        mov [rax], bl
-        ; branch t.2(2@function,bool), false, @for_2_break
-        lea rax, [rsp+2]
-        mov bl, [rax]
-        or bl, bl
+        ; const r.0(0@register,u8), 30
+        mov cl, 30
+        ; copy r.1(1@register,u8), i(0@function,u8)
+        lea rbx, [rsp+0]
+        mov dl, [rbx]
+        ; lt r.0(0@register,bool), r.1(1@register,u8), r.0(0@register,u8)
+        cmp dl, cl
+        setb cl
+        ; branch r.0(0@register,bool), false, @for_2_break
+        or cl, cl
         jz @for_2_break
         ; @for_2_body
 @for_2_body:
         ; 12:3 if [...] == 0
-        ; cast t.6(6@function,i64), i(0@function,u8)
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        movzx rbx, bl
-        lea rax, [rsp+8]
-        mov [rax], rbx
-        ; array t.7(7@function,u8*), board(0@global,u8*) + t.6(6@function,i64)
-        lea rax, [rsp+8]
-        mov rbx, [rax]
+        ; copy r.0(0@register,u8), i(0@function,u8)
+        lea rbx, [rsp+0]
+        mov cl, [rbx]
+        ; cast r.1(1@register,i64), r.0(0@register,u8)
+        movzx rdx, cl
+        ; array r.1(1@register,u8*), board(0@global,u8*) + r.1(1@register,i64)
         lea rax, [var_0]
-        add rax, rbx
-        lea rbx, [rsp+16]
-        mov [rbx], rax
-        ; load t.5(5@function,u8), [t.7(7@function,u8*)]
-        lea rax, [rsp+16]
-        mov rbx, [rax]
-        mov al, [rbx]
-        lea rbx, [rsp+5]
-        mov [rbx], al
-        ; const t.8(8@function,u8), 0
-        mov al, 0
-        lea rbx, [rsp+24]
-        mov [rbx], al
-        ; equals t.4(4@function,bool), t.5(5@function,u8), t.8(8@function,u8)
-        lea rax, [rsp+5]
-        mov bl, [rax]
-        lea rax, [rsp+24]
-        mov cl, [rax]
-        cmp bl, cl
-        sete bl
-        lea rax, [rsp+4]
-        mov [rax], bl
-        ; branch t.4(4@function,bool), false, @if_3_else
-        lea rax, [rsp+4]
-        mov bl, [rax]
-        or bl, bl
+        add rdx, rax
+        ; load r.1(1@register,u8), [r.1(1@register,u8*)]
+        mov dl, [rdx]
+        ; const r.2(2@register,u8), 0
+        mov r9b, 0
+        ; equals r.1(1@register,bool), r.1(1@register,u8), r.2(2@register,u8)
+        cmp dl, r9b
+        sete dl
+        ; branch r.1(1@register,bool), false, @if_3_else
+        or dl, dl
         jz @if_3_else
         ; @if_3_then
 @if_3_then:
-        ; const t.9(9@function,u8), 32
-        mov al, 32
-        lea rbx, [rsp+25]
-        mov [rbx], al
-        ; call _, printChar [t.9(9@function,u8)]
-        lea rax, [rsp+25]
-        mov bl, [rax]
-        push rbx
+        ; const r.0(0@register,u8), 32
+        mov cl, 32
+        ; call _, printChar [r.0(0@register,u8)]
+        push rcx
           call @printChar
         add rsp, 8
         ; jump @if_3_end
         jmp @if_3_end
 @if_3_else:
-        ; const t.10(10@function,u8), 42
-        mov al, 42
-        lea rbx, [rsp+26]
-        mov [rbx], al
-        ; call _, printChar [t.10(10@function,u8)]
-        lea rax, [rsp+26]
-        mov bl, [rax]
-        push rbx
+        ; const r.0(0@register,u8), 42
+        mov cl, 42
+        ; call _, printChar [r.0(0@register,u8)]
+        push rcx
           call @printChar
         add rsp, 8
 @if_3_end:
 @for_2_continue:
-        ; const t.11(11@function,u8), 1
-        mov al, 1
-        lea rbx, [rsp+27]
-        mov [rbx], al
-        ; add i(0@function,u8), i(0@function,u8), t.11(11@function,u8)
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+27]
-        mov cl, [rax]
-        add bl, cl
-        lea rax, [rsp+0]
-        mov [rax], bl
+        ; const r.0(0@register,u8), 1
+        mov cl, 1
+        ; copy r.1(1@register,u8), i(0@function,u8)
+        lea rbx, [rsp+0]
+        mov dl, [rbx]
+        ; add r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
+        mov al, dl
+        add al, cl
+        mov cl, al
+        ; copy i(0@function,u8), r.0(0@register,u8)
+        lea rbx, [rsp+0]
+        mov [rbx], cl
         ; jump @for_2
         jmp @for_2
 @for_2_break:
-        ; const t.12(12@function,u8*), [string-0]
-        lea rax, [string_0]
-        lea rbx, [rsp+32]
-        mov [rbx], rax
-        ; call _, printString [t.12(12@function,u8*)]
-        lea rax, [rsp+32]
-        mov rbx, [rax]
-        push rbx
+        ; const r.0(0@register,u8*), [string-0]
+        lea rcx, [string_0]
+        ; call _, printString [r.0(0@register,u8*)]
+        push rcx
           call @printString
         add rsp, 8
 @printBoard_ret:
@@ -382,327 +312,201 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 176
-        ; const i(0@function,u8), 0
-        mov al, 0
-        lea rbx, [rsp+0]
-        mov [rbx], al
+        ; const r.0(0@register,u8), 0
+        mov cl, 0
         ; 23:2 for i < 30
+        ; copy i(0@function,u8), r.0(0@register,u8)
+        lea rbx, [rsp+0]
+        mov [rbx], cl
 @for_4:
-        ; const t.5(5@function,u8), 30
-        mov al, 30
-        lea rbx, [rsp+5]
-        mov [rbx], al
-        ; lt t.4(4@function,bool), i(0@function,u8), t.5(5@function,u8)
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+5]
-        mov cl, [rax]
-        cmp bl, cl
-        setb bl
-        lea rax, [rsp+4]
-        mov [rax], bl
-        ; branch t.4(4@function,bool), false, @for_4_break
-        lea rax, [rsp+4]
-        mov bl, [rax]
-        or bl, bl
+        ; const r.0(0@register,u8), 30
+        mov cl, 30
+        ; copy r.1(1@register,u8), i(0@function,u8)
+        lea rbx, [rsp+0]
+        mov dl, [rbx]
+        ; lt r.0(0@register,bool), r.1(1@register,u8), r.0(0@register,u8)
+        cmp dl, cl
+        setb cl
+        ; branch r.0(0@register,bool), false, @for_4_break
+        or cl, cl
         jz @for_4_break
         ; @for_4_body
 @for_4_body:
-        ; const t.6(6@function,u8), 0
-        mov al, 0
-        lea rbx, [rsp+6]
-        mov [rbx], al
-        ; cast t.7(7@function,i64), i(0@function,u8)
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        movzx rbx, bl
-        lea rax, [rsp+8]
-        mov [rax], rbx
-        ; array t.8(8@function,u8*), board(0@global,u8*) + t.7(7@function,i64)
-        lea rax, [rsp+8]
-        mov rbx, [rax]
+        ; const r.0(0@register,u8), 0
+        mov cl, 0
+        ; copy r.1(1@register,u8), i(0@function,u8)
+        lea rbx, [rsp+0]
+        mov dl, [rbx]
+        ; cast r.2(2@register,i64), r.1(1@register,u8)
+        movzx r9, dl
+        ; array r.2(2@register,u8*), board(0@global,u8*) + r.2(2@register,i64)
         lea rax, [var_0]
-        add rax, rbx
-        lea rbx, [rsp+16]
-        mov [rbx], rax
-        ; store [t.8(8@function,u8*)], t.6(6@function,u8)
-        lea rax, [rsp+16]
-        mov rbx, [rax]
-        lea rax, [rsp+6]
-        mov cl, [rax]
-        mov [rbx], cl
+        add r9, rax
+        ; store [r.2(2@register,u8*)], r.0(0@register,u8)
+        mov [r9], cl
 @for_4_continue:
-        ; const t.9(9@function,u8), 1
-        mov al, 1
-        lea rbx, [rsp+24]
-        mov [rbx], al
-        ; add i(0@function,u8), i(0@function,u8), t.9(9@function,u8)
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+24]
-        mov cl, [rax]
-        add bl, cl
-        lea rax, [rsp+0]
-        mov [rax], bl
+        ; const r.0(0@register,u8), 1
+        mov cl, 1
+        ; copy r.1(1@register,u8), i(0@function,u8)
+        lea rbx, [rsp+0]
+        mov dl, [rbx]
+        ; add r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
+        mov al, dl
+        add al, cl
+        mov cl, al
+        ; copy i(0@function,u8), r.0(0@register,u8)
+        lea rbx, [rsp+0]
+        mov [rbx], cl
         ; jump @for_4
         jmp @for_4
 @for_4_break:
-        ; const t.10(10@function,u8), 1
-        mov al, 1
-        lea rbx, [rsp+25]
-        mov [rbx], al
-        ; const t.12(12@function,u8), 29
-        mov al, 29
-        lea rbx, [rsp+40]
-        mov [rbx], al
-        ; cast t.11(11@function,i64), t.12(12@function,u8)
-        lea rax, [rsp+40]
-        mov bl, [rax]
-        movzx rbx, bl
-        lea rax, [rsp+32]
-        mov [rax], rbx
-        ; array t.13(13@function,u8*), board(0@global,u8*) + t.11(11@function,i64)
-        lea rax, [rsp+32]
-        mov rbx, [rax]
+        ; const r.0(0@register,u8), 1
+        mov cl, 1
+        ; const r.1(1@register,u8), 29
+        mov dl, 29
+        ; cast r.1(1@register,i64), r.1(1@register,u8)
+        movzx rdx, dl
+        ; array r.1(1@register,u8*), board(0@global,u8*) + r.1(1@register,i64)
         lea rax, [var_0]
-        add rax, rbx
-        lea rbx, [rsp+48]
-        mov [rbx], rax
-        ; store [t.13(13@function,u8*)], t.10(10@function,u8)
-        lea rax, [rsp+48]
-        mov rbx, [rax]
-        lea rax, [rsp+25]
-        mov cl, [rax]
-        mov [rbx], cl
+        add rdx, rax
+        ; store [r.1(1@register,u8*)], r.0(0@register,u8)
+        mov [rdx], cl
         ; call _, printBoard []
         sub rsp, 8
           call @printBoard
         add rsp, 8
-        ; const i(1@function,u8), 0
-        mov al, 0
-        lea rbx, [rsp+1]
-        mov [rbx], al
+        ; const r.0(0@register,u8), 0
+        mov cl, 0
         ; 30:2 for i < 28
+        ; copy i(1@function,u8), r.0(0@register,u8)
+        lea rbx, [rsp+1]
+        mov [rbx], cl
 @for_5:
-        ; const t.15(15@function,u8), 28
-        mov al, 28
-        lea rbx, [rsp+57]
-        mov [rbx], al
-        ; lt t.14(14@function,bool), i(1@function,u8), t.15(15@function,u8)
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        lea rax, [rsp+57]
-        mov cl, [rax]
-        cmp bl, cl
-        setb bl
-        lea rax, [rsp+56]
-        mov [rax], bl
-        ; branch t.14(14@function,bool), false, @for_5_break
-        lea rax, [rsp+56]
-        mov bl, [rax]
-        or bl, bl
+        ; const r.0(0@register,u8), 28
+        mov cl, 28
+        ; copy r.1(1@register,u8), i(1@function,u8)
+        lea rbx, [rsp+1]
+        mov dl, [rbx]
+        ; lt r.0(0@register,bool), r.1(1@register,u8), r.0(0@register,u8)
+        cmp dl, cl
+        setb cl
+        ; branch r.0(0@register,bool), false, @for_5_break
+        or cl, cl
         jz @for_5_break
         ; @for_5_body
 @for_5_body:
-        ; const t.18(18@function,i64), 0
-        mov rax, 0
-        lea rbx, [rsp+64]
-        mov [rbx], rax
-        ; array t.19(19@function,u8*), board(0@global,u8*) + t.18(18@function,i64)
-        lea rax, [rsp+64]
-        mov rbx, [rax]
+        ; const r.0(0@register,i64), 0
+        mov rcx, 0
+        ; array r.0(0@register,u8*), board(0@global,u8*) + r.0(0@register,i64)
         lea rax, [var_0]
-        add rax, rbx
-        lea rbx, [rsp+72]
-        mov [rbx], rax
-        ; load t.17(17@function,u8), [t.19(19@function,u8*)]
-        lea rax, [rsp+72]
-        mov rbx, [rax]
-        mov al, [rbx]
-        lea rbx, [rsp+59]
-        mov [rbx], al
-        ; const t.20(20@function,u8), 1
-        mov al, 1
-        lea rbx, [rsp+80]
-        mov [rbx], al
-        ; shiftleft t.16(16@function,u8), t.17(17@function,u8), t.20(20@function,u8)
-        lea rax, [rsp+59]
-        mov bl, [rax]
-        lea rax, [rsp+80]
-        mov cl, [rax]
-        shl bl, cl
-        lea rax, [rsp+58]
-        mov [rax], bl
-        ; const t.22(22@function,i64), 1
-        mov rax, 1
-        lea rbx, [rsp+88]
-        mov [rbx], rax
-        ; array t.23(23@function,u8*), board(0@global,u8*) + t.22(22@function,i64)
-        lea rax, [rsp+88]
-        mov rbx, [rax]
+        add rcx, rax
+        ; load r.0(0@register,u8), [r.0(0@register,u8*)]
+        mov cl, [rcx]
+        ; const r.1(1@register,u8), 1
+        mov dl, 1
+        ; shiftleft r.0(0@register,u8), r.0(0@register,u8), r.1(1@register,u8)
+        mov al, cl
+        mov cl, dl
+        shl al, cl
+        mov cl, al
+        ; const r.1(1@register,i64), 1
+        mov rdx, 1
+        ; array r.1(1@register,u8*), board(0@global,u8*) + r.1(1@register,i64)
         lea rax, [var_0]
-        add rax, rbx
-        lea rbx, [rsp+96]
-        mov [rbx], rax
-        ; load t.21(21@function,u8), [t.23(23@function,u8*)]
-        lea rax, [rsp+96]
-        mov rbx, [rax]
-        mov al, [rbx]
-        lea rbx, [rsp+81]
-        mov [rbx], al
-        ; or pattern(2@function,u8), t.16(16@function,u8), t.21(21@function,u8)
-        lea rax, [rsp+58]
-        mov bl, [rax]
-        lea rax, [rsp+81]
-        mov cl, [rax]
-        or bl, cl
-        lea rax, [rsp+2]
-        mov [rax], bl
-        ; const j(3@function,u8), 1
-        mov al, 1
-        lea rbx, [rsp+3]
-        mov [rbx], al
+        add rdx, rax
+        ; load r.1(1@register,u8), [r.1(1@register,u8*)]
+        mov dl, [rdx]
+        ; or r.0(0@register,u8), r.0(0@register,u8), r.1(1@register,u8)
+        or cl, dl
+        ; const r.1(1@register,u8), 1
+        mov dl, 1
         ; 32:3 for j < 29
+        ; copy pattern(2@function,u8), r.0(0@register,u8)
+        lea rbx, [rsp+2]
+        mov [rbx], cl
+        ; copy j(3@function,u8), r.1(1@register,u8)
+        lea rbx, [rsp+3]
+        mov [rbx], dl
 @for_6:
-        ; const t.25(25@function,u8), 29
-        mov al, 29
-        lea rbx, [rsp+105]
-        mov [rbx], al
-        ; lt t.24(24@function,bool), j(3@function,u8), t.25(25@function,u8)
-        lea rax, [rsp+3]
-        mov bl, [rax]
-        lea rax, [rsp+105]
-        mov cl, [rax]
-        cmp bl, cl
-        setb bl
-        lea rax, [rsp+104]
-        mov [rax], bl
-        ; branch t.24(24@function,bool), false, @for_6_break
-        lea rax, [rsp+104]
-        mov bl, [rax]
-        or bl, bl
+        ; const r.0(0@register,u8), 29
+        mov cl, 29
+        ; copy r.1(1@register,u8), j(3@function,u8)
+        lea rbx, [rsp+3]
+        mov dl, [rbx]
+        ; lt r.0(0@register,bool), r.1(1@register,u8), r.0(0@register,u8)
+        cmp dl, cl
+        setb cl
+        ; branch r.0(0@register,bool), false, @for_6_break
+        or cl, cl
         jz @for_6_break
         ; @for_6_body
 @for_6_body:
-        ; const t.28(28@function,u8), 1
-        mov al, 1
-        lea rbx, [rsp+108]
-        mov [rbx], al
-        ; shiftleft t.27(27@function,u8), pattern(2@function,u8), t.28(28@function,u8)
-        lea rax, [rsp+2]
-        mov bl, [rax]
-        lea rax, [rsp+108]
-        mov cl, [rax]
-        shl bl, cl
-        lea rax, [rsp+107]
-        mov [rax], bl
-        ; const t.29(29@function,u8), 7
-        mov al, 7
-        lea rbx, [rsp+109]
-        mov [rbx], al
-        ; and t.26(26@function,u8), t.27(27@function,u8), t.29(29@function,u8)
-        lea rax, [rsp+107]
-        mov bl, [rax]
-        lea rax, [rsp+109]
-        mov cl, [rax]
-        and bl, cl
-        lea rax, [rsp+106]
-        mov [rax], bl
-        ; const t.33(33@function,u8), 1
-        mov al, 1
-        lea rbx, [rsp+121]
-        mov [rbx], al
-        ; add t.32(32@function,u8), j(3@function,u8), t.33(33@function,u8)
-        lea rax, [rsp+3]
-        mov bl, [rax]
-        lea rax, [rsp+121]
-        mov cl, [rax]
-        add bl, cl
-        lea rax, [rsp+120]
-        mov [rax], bl
-        ; cast t.31(31@function,i64), t.32(32@function,u8)
-        lea rax, [rsp+120]
-        mov bl, [rax]
-        movzx rbx, bl
-        lea rax, [rsp+112]
-        mov [rax], rbx
-        ; array t.34(34@function,u8*), board(0@global,u8*) + t.31(31@function,i64)
-        lea rax, [rsp+112]
-        mov rbx, [rax]
+        ; const r.0(0@register,u8), 1
+        mov cl, 1
+        ; copy r.1(1@register,u8), pattern(2@function,u8)
+        lea rbx, [rsp+2]
+        mov dl, [rbx]
+        ; shiftleft r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
+        mov al, dl
+        shl al, cl
+        mov cl, al
+        ; const r.1(1@register,u8), 7
+        mov dl, 7
+        ; and r.0(0@register,u8), r.0(0@register,u8), r.1(1@register,u8)
+        and cl, dl
+        ; const r.1(1@register,u8), 1
+        mov dl, 1
+        ; copy r.2(2@register,u8), j(3@function,u8)
+        lea rbx, [rsp+3]
+        mov r9b, [rbx]
+        ; add r.1(1@register,u8), r.2(2@register,u8), r.1(1@register,u8)
+        mov al, r9b
+        add al, dl
+        mov dl, al
+        ; cast r.1(1@register,i64), r.1(1@register,u8)
+        movzx rdx, dl
+        ; array r.1(1@register,u8*), board(0@global,u8*) + r.1(1@register,i64)
         lea rax, [var_0]
-        add rax, rbx
-        lea rbx, [rsp+128]
-        mov [rbx], rax
-        ; load t.30(30@function,u8), [t.34(34@function,u8*)]
-        lea rax, [rsp+128]
-        mov rbx, [rax]
-        mov al, [rbx]
-        lea rbx, [rsp+110]
-        mov [rbx], al
-        ; or pattern(2@function,u8), t.26(26@function,u8), t.30(30@function,u8)
-        lea rax, [rsp+106]
-        mov bl, [rax]
-        lea rax, [rsp+110]
-        mov cl, [rax]
-        or bl, cl
-        lea rax, [rsp+2]
-        mov [rax], bl
-        ; const t.37(37@function,u8), 110
-        mov al, 110
-        lea rbx, [rsp+138]
-        mov [rbx], al
-        ; shiftright t.36(36@function,u8), t.37(37@function,u8), pattern(2@function,u8)
-        lea rax, [rsp+138]
-        mov bl, [rax]
-        lea rax, [rsp+2]
-        mov cl, [rax]
-        shr bl, cl
-        lea rax, [rsp+137]
-        mov [rax], bl
-        ; const t.38(38@function,u8), 1
-        mov al, 1
-        lea rbx, [rsp+139]
-        mov [rbx], al
-        ; and t.35(35@function,u8), t.36(36@function,u8), t.38(38@function,u8)
-        lea rax, [rsp+137]
-        mov bl, [rax]
-        lea rax, [rsp+139]
-        mov cl, [rax]
-        and bl, cl
-        lea rax, [rsp+136]
-        mov [rax], bl
-        ; cast t.39(39@function,i64), j(3@function,u8)
-        lea rax, [rsp+3]
-        mov bl, [rax]
-        movzx rbx, bl
-        lea rax, [rsp+144]
-        mov [rax], rbx
-        ; array t.40(40@function,u8*), board(0@global,u8*) + t.39(39@function,i64)
-        lea rax, [rsp+144]
-        mov rbx, [rax]
+        add rdx, rax
+        ; load r.1(1@register,u8), [r.1(1@register,u8*)]
+        mov dl, [rdx]
+        ; or r.0(0@register,u8), r.0(0@register,u8), r.1(1@register,u8)
+        or cl, dl
+        ; const r.1(1@register,u8), 110
+        mov dl, 110
+        ; shiftright r.1(1@register,u8), r.1(1@register,u8), r.0(0@register,u8)
+        mov rbx, rcx
+        mov al, dl
+        shr al, cl
+        mov dl, al
+        mov rcx, rbx
+        ; const r.3(3@register,u8), 1
+        mov r10b, 1
+        ; and r.1(1@register,u8), r.1(1@register,u8), r.3(3@register,u8)
+        and dl, r10b
+        ; cast r.3(3@register,i64), r.2(2@register,u8)
+        movzx r10, r9b
+        ; array r.3(3@register,u8*), board(0@global,u8*) + r.3(3@register,i64)
         lea rax, [var_0]
-        add rax, rbx
-        lea rbx, [rsp+152]
-        mov [rbx], rax
-        ; store [t.40(40@function,u8*)], t.35(35@function,u8)
-        lea rax, [rsp+152]
-        mov rbx, [rax]
-        lea rax, [rsp+136]
-        mov cl, [rax]
+        add r10, rax
+        ; store [r.3(3@register,u8*)], r.1(1@register,u8)
+        mov [r10], dl
+        ; copy pattern(2@function,u8), r.0(0@register,u8)
+        lea rbx, [rsp+2]
         mov [rbx], cl
 @for_6_continue:
-        ; const t.41(41@function,u8), 1
-        mov al, 1
-        lea rbx, [rsp+160]
-        mov [rbx], al
-        ; add j(3@function,u8), j(3@function,u8), t.41(41@function,u8)
-        lea rax, [rsp+3]
-        mov bl, [rax]
-        lea rax, [rsp+160]
-        mov cl, [rax]
-        add bl, cl
-        lea rax, [rsp+3]
-        mov [rax], bl
+        ; const r.0(0@register,u8), 1
+        mov cl, 1
+        ; copy r.1(1@register,u8), j(3@function,u8)
+        lea rbx, [rsp+3]
+        mov dl, [rbx]
+        ; add r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
+        mov al, dl
+        add al, cl
+        mov cl, al
+        ; copy j(3@function,u8), r.0(0@register,u8)
+        lea rbx, [rsp+3]
+        mov [rbx], cl
         ; jump @for_6
         jmp @for_6
 @for_6_break:
@@ -711,18 +515,18 @@ start:
           call @printBoard
         add rsp, 8
 @for_5_continue:
-        ; const t.42(42@function,u8), 1
-        mov al, 1
-        lea rbx, [rsp+161]
-        mov [rbx], al
-        ; add i(1@function,u8), i(1@function,u8), t.42(42@function,u8)
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        lea rax, [rsp+161]
-        mov cl, [rax]
-        add bl, cl
-        lea rax, [rsp+1]
-        mov [rax], bl
+        ; const r.0(0@register,u8), 1
+        mov cl, 1
+        ; copy r.1(1@register,u8), i(1@function,u8)
+        lea rbx, [rsp+1]
+        mov dl, [rbx]
+        ; add r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
+        mov al, dl
+        add al, cl
+        mov cl, al
+        ; copy i(1@function,u8), r.0(0@register,u8)
+        lea rbx, [rsp+1]
+        mov [rbx], cl
         ; jump @for_5
         jmp @for_5
 @for_5_break:

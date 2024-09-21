@@ -1,0 +1,154 @@
+@printChar:
+ Local variables
+	arg 0: chr
+	var 1: t.1
+	var 2: t.2
+	; 4 pc
+	addrof r.0(0@register,u8*), chr(0@argument,u8)
+	const r.1(1@register,i64), 1
+	call _, printStringLength [r.0(0@register,u8*), r.1(1@register,i64)]
+@printChar_ret:
+
+@printUint:
+ Local variables
+	arg 0: number
+	var 1: buffer
+	var 2: pos
+	var 3: remainder
+	var 4: digit
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	; 36 pc
+	const r.0(0@register,u8), 20
+	; 13:2 while true
+	copy pos(2@function,u8), r.0(0@register,u8)
+@while_1:
+	const r.0(0@register,u8), 1
+	copy r.1(1@register,u8), pos(2@function,u8)
+	sub r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
+	const r.1(1@register,i64), 10
+	copy r.2(2@register,i64), number(0@argument,i64)
+	mod r.1(1@register,i64), r.2(2@register,i64), r.1(1@register,i64)
+	const r.3(3@register,i64), 10
+	div r.2(2@register,i64), r.2(2@register,i64), r.3(3@register,i64)
+	cast r.1(1@register,u8), r.1(1@register,i64)
+	const r.3(3@register,u8), 48
+	add r.1(1@register,u8), r.1(1@register,u8), r.3(3@register,u8)
+	cast r.3(3@register,i64), r.0(0@register,u8)
+	array r.3(3@register,u8*), buffer(1@function,u8*) + r.3(3@register,i64)
+	store [r.3(3@register,u8*)], r.1(1@register,u8)
+	; 19:3 if number == 0
+	const r.1(1@register,i64), 0
+	equals r.1(1@register,bool), r.2(2@register,i64), r.1(1@register,i64)
+	copy pos(2@function,u8), r.0(0@register,u8)
+	copy number(0@argument,i64), r.2(2@register,i64)
+	branch r.1(1@register,bool), false, @if_2_end
+@if_2_then:
+	jump @while_1_break
+@if_2_end:
+	jump @while_1
+@while_1_break:
+	copy r.0(0@register,u8), pos(2@function,u8)
+	cast r.1(1@register,i64), r.0(0@register,u8)
+	addrof r.1(1@register,u8*), [buffer(1@function,u8*) + r.1(1@register,i64)]
+	const r.2(2@register,u8), 20
+	sub r.0(0@register,u8), r.2(2@register,u8), r.0(0@register,u8)
+	cast r.0(0@register,i64), r.0(0@register,u8)
+	call _, printStringLength [r.1(1@register,u8*), r.0(0@register,i64)]
+@printUint_ret:
+
+@printIntLf:
+ Local variables
+	arg 0: number
+	var 1: t.1
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	; 17 pc
+	; 27:2 if number < 0
+	const r.0(0@register,i64), 0
+	copy r.1(1@register,i64), number(0@argument,i64)
+	lt r.0(0@register,bool), r.1(1@register,i64), r.0(0@register,i64)
+	branch r.0(0@register,bool), false, @if_3_end
+@if_3_then:
+	const r.0(0@register,u8), 45
+	call _, printChar [r.0(0@register,u8)]
+	copy r.0(0@register,i64), number(0@argument,i64)
+	neg r.0(0@register,i64), r.0(0@register,i64)
+	copy number(0@argument,i64), r.0(0@register,i64)
+@if_3_end:
+	call _, printUint [number(0@argument,i64)]
+	const r.0(0@register,u8), 10
+	call _, printChar [r.0(0@register,u8)]
+@printIntLf_ret:
+
+@printStringLength:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
+@main:
+ Local variables
+	var 0: a
+	var 1: b
+	var 2: c
+	var 3: d
+	var 4: t.4
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	; 42 pc
+	const r.0(0@register,i16), 0
+	const r.1(1@register,i16), 1
+	const r.2(2@register,i16), 2
+	const r.3(3@register,i16), 3
+	; Spill c
+	copy c(2@function,i16), r.2(2@register,i16)
+	add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i64), r.2(2@register,i16)
+	copy a(0@function,i16), r.0(0@register,i16)
+	copy b(1@function,i16), r.1(1@register,i16)
+	copy d(3@function,i16), r.3(3@register,i16)
+	call _, printIntLf [r.2(2@register,i64)]
+	copy r.0(0@register,i16), c(2@function,i16)
+	copy r.1(1@register,i16), d(3@function,i16)
+	add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i64), r.2(2@register,i16)
+	call _, printIntLf [r.2(2@register,i64)]
+	copy r.0(0@register,i16), d(3@function,i16)
+	copy r.1(1@register,i16), c(2@function,i16)
+	add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,i16)
+	call _, printIntLf [r.0(0@register,i64)]
+	copy r.0(0@register,i16), b(1@function,i16)
+	copy r.1(1@register,i16), a(0@function,i16)
+	add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i64), r.0(0@register,i16)
+	call _, printIntLf [r.0(0@register,i64)]
+@main_ret:
+

@@ -1,5 +1,7 @@
 package com.regnis.tinyc.cfg;
 
+import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
@@ -36,41 +38,7 @@ public final class DetectVarLiveness {
 		return changed;
 	}
 
-	private static boolean detect(ControlFlowGraph cfg) {
-		final Set<String> processed = new HashSet<>();
-
-		boolean changed = false;
-
-		final List<String> pending = new ArrayList<>();
-		pending.add(cfg.getLast().name);
-
-		while (!pending.isEmpty()) {
-			final String name = pending.removeFirst();
-			if (!processed.add(name)) {
-				continue;
-			}
-
-			final BasicBlock block = cfg.get(name);
-			final Set<LiveVar> live = getLiveInFromAllNext(block, cfg);
-			if (processBlock(block, live)) {
-				changed = true;
-			}
-
-			pending.addAll(block.predecessors);
-		}
-		return changed;
-	}
-
-	private static Set<LiveVar> getLiveInFromAllNext(BasicBlock block, ControlFlowGraph cfg) {
-		final Set<LiveVar> liveIn = new HashSet<>();
-		for (String next : block.successors) {
-			final BasicBlock nextBlock = cfg.get(next);
-			liveIn.addAll(nextBlock.getLiveBefore());
-		}
-		return liveIn;
-	}
-
-	private static void detectLiveness(IRInstruction instruction, Set<LiveVar> uses, Set<LiveVar> defines) {
+	public static void detectLiveness(IRInstruction instruction, Set<LiveVar> uses, Set<LiveVar> defines) {
 		switch (instruction) {
 		case IRAddrOf addrOf -> {
 			defined(addrOf.target(), defines);
@@ -135,11 +103,47 @@ public final class DetectVarLiveness {
 		}
 	}
 
+	private static boolean detect(ControlFlowGraph cfg) {
+		final Set<String> processed = new HashSet<>();
+
+		boolean changed = false;
+
+		final List<String> pending = new ArrayList<>();
+		pending.add(cfg.getLast().name);
+
+		while (!pending.isEmpty()) {
+			final String name = pending.removeFirst();
+			if (!processed.add(name)) {
+				continue;
+			}
+
+			final BasicBlock block = cfg.get(name);
+			final Set<LiveVar> live = getLiveInFromAllNext(block, cfg);
+			if (processBlock(block, live)) {
+				changed = true;
+			}
+
+			pending.addAll(block.predecessors);
+		}
+		return changed;
+	}
+
+	private static Set<LiveVar> getLiveInFromAllNext(BasicBlock block, ControlFlowGraph cfg) {
+		final Set<LiveVar> liveIn = new HashSet<>();
+		for (String next : block.successors) {
+			final BasicBlock nextBlock = cfg.get(next);
+			liveIn.addAll(nextBlock.getLiveBefore());
+		}
+		return liveIn;
+	}
+
 	private static void uses(IRVar var, Set<LiveVar> uses) {
+		Utils.assertTrue(var.scope() != VariableScope.register);
 		uses.add(new LiveVar(var.scope(), var.index(), var.name()));
 	}
 
 	private static void defined(IRVar var, Set<LiveVar> defines) {
+		Utils.assertTrue(var.scope() != VariableScope.register);
 		defines.add(new LiveVar(var.scope(), var.index(), var.name()));
 	}
 }
