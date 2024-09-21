@@ -223,20 +223,95 @@ start:
 
         ; void main
         ;   rsp+0: var a
-        ;   rsp+8: var t.1
+        ;   rsp+2: var b
+        ;   rsp+4: var c
+        ;   rsp+6: var d
+        ;   rsp+8: var t.4
+        ;   rsp+16: var t.5
+        ;   rsp+24: var t.6
+        ;   rsp+32: var t.7
+        ;   rsp+40: var t.8
+        ;   rsp+48: var t.9
+        ;   rsp+56: var t.10
+        ;   rsp+64: var t.11
 @main:
         ; reserve space for local variables
-        sub rsp, 16
-        ; const r.0(0@register,u8), 10
-        mov cl, 10
-        ; cast r.0(0@register,i64), r.0(0@register,u8)
-        movzx rcx, cl
+        sub rsp, 80
+        ; const r.0(0@register,i16), 0
+        mov cx, 0
+        ; const r.1(1@register,i16), 1
+        mov dx, 1
+        ; const r.2(2@register,i16), 2
+        mov r9w, 2
+        ; const r.3(3@register,i16), 3
+        mov r10w, 3
+        ; Spill c
+        ; copy c(2@function,i16), r.2(2@register,i16)
+        lea rbx, [rsp+4]
+        mov [rbx], r9w
+        ; add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        mov r9w, cx
+        add r9w, dx
+        ; cast r.2(2@register,i64), r.2(2@register,i16)
+        movzx r9, r9w
+        ; copy a(0@function,i16), r.0(0@register,i16)
+        lea rbx, [rsp+0]
+        mov [rbx], cx
+        ; copy b(1@function,i16), r.1(1@register,i16)
+        lea rbx, [rsp+2]
+        mov [rbx], dx
+        ; copy d(3@function,i16), r.3(3@register,i16)
+        lea rbx, [rsp+6]
+        mov [rbx], r10w
+        ; call _, printIntLf [r.2(2@register,i64)]
+        push r9
+          call @printIntLf
+        add rsp, 8
+        ; copy r.0(0@register,i16), c(2@function,i16)
+        lea rbx, [rsp+4]
+        mov cx, [rbx]
+        ; copy r.1(1@register,i16), d(3@function,i16)
+        lea rbx, [rsp+6]
+        mov dx, [rbx]
+        ; add r.2(2@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        mov r9w, cx
+        add r9w, dx
+        ; cast r.2(2@register,i64), r.2(2@register,i16)
+        movzx r9, r9w
+        ; call _, printIntLf [r.2(2@register,i64)]
+        push r9
+          call @printIntLf
+        add rsp, 8
+        ; copy r.0(0@register,i16), d(3@function,i16)
+        lea rbx, [rsp+6]
+        mov cx, [rbx]
+        ; copy r.1(1@register,i16), c(2@function,i16)
+        lea rbx, [rsp+4]
+        mov dx, [rbx]
+        ; add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        add cx, dx
+        ; cast r.0(0@register,i64), r.0(0@register,i16)
+        movzx rcx, cx
+        ; call _, printIntLf [r.0(0@register,i64)]
+        push rcx
+          call @printIntLf
+        add rsp, 8
+        ; copy r.0(0@register,i16), b(1@function,i16)
+        lea rbx, [rsp+2]
+        mov cx, [rbx]
+        ; copy r.1(1@register,i16), a(0@function,i16)
+        lea rbx, [rsp+0]
+        mov dx, [rbx]
+        ; add r.0(0@register,i16), r.0(0@register,i16), r.1(1@register,i16)
+        add cx, dx
+        ; cast r.0(0@register,i64), r.0(0@register,i16)
+        movzx rcx, cx
         ; call _, printIntLf [r.0(0@register,i64)]
         push rcx
           call @printIntLf
         add rsp, 8
         ; release space for local variables
-        add rsp, 16
+        add rsp, 80
         ret
 init:
         sub rsp, 20h
