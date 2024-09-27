@@ -4,6 +4,7 @@ import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -19,6 +20,10 @@ public class CfgGenerator {
 		final ControlFlowGraph cfg = new ControlFlowGraph(function, blocks);
 		DetectVarLiveness.process(cfg);
 		return cfg;
+	}
+
+	public static void visitInPostOrder(@NotNull String first, @NotNull List<BasicBlock> blocks, @NotNull Consumer<BasicBlock> consumer) {
+		visitInPostOrder(first, createNameToBlock(blocks), consumer);
 	}
 
 	@NotNull
@@ -45,6 +50,18 @@ public class CfgGenerator {
 			addBlock(List.of());
 		}
 
+		final List<BasicBlock> blocks = removeUnusedBlocks();
+		return linearizeInPostOrderTraversal(blocks);
+	}
+
+	private List<BasicBlock> linearizeInPostOrderTraversal(List<BasicBlock> initialBlocks) {
+		final List<BasicBlock> blocks = new ArrayList<>();
+		visitInPostOrder(initialBlocks.getFirst().name, createNameToBlock(initialBlocks), blocks::add);
+		return blocks;
+	}
+
+	@NotNull
+	private List<BasicBlock> removeUnusedBlocks() {
 		final Map<String, List<String>> blockPredecessors = new HashMap<>();
 		final Set<String> used = new HashSet<>();
 		visitBlocksInExecutionOrder(used, blockPredecessors);
@@ -60,11 +77,7 @@ public class CfgGenerator {
 	}
 
 	private void visitBlocksInExecutionOrder(Set<String> used, Map<String, List<String>> blockPredecessors) {
-		final Map<String, BasicBlock> nameToBlock = new HashMap<>();
-		for (BasicBlock block : blocks) {
-			final BasicBlock prev = nameToBlock.put(block.name, block);
-			Utils.assertTrue(prev == null);
-		}
+		final Map<String, BasicBlock> nameToBlock = createNameToBlock(blocks);
 
 		final BasicBlock first = blocks.getFirst();
 		blockPredecessors.put(first.name, List.of());
@@ -133,5 +146,80 @@ public class CfgGenerator {
 			}
 		}
 		blockInstructions.clear();
+	}
+
+	private static void visitInPostOrder(@NotNull String first, @NotNull Map<String, BasicBlock> nameToBlock, @NotNull Consumer<BasicBlock> consumer) {
+		final Set<String> visited = new HashSet<>();
+		final Set<String> pending = new LinkedHashSet<>();
+		pending.add(first);
+		while (true) {
+			boolean changed = false;
+			for (String name : new ArrayList<>(pending)) {
+				final BasicBlock block = nameToBlock.get(name);
+				if (getUnvisitedCount(block.predecessors, visited) == 0) {
+					pending.remove(name);
+					visited.add(name);
+					consumer.accept(block);
+					if (addSuccessors(block, visited, pending)) {
+						changed = true;
+					}
+				}
+				else if (addSuccessors(block, visited, pending)) {
+					changed = true;
+				}
+			}
+
+			if (changed) {
+				continue;
+			}
+
+			if (pending.isEmpty()) {
+				break;
+			}
+
+			BasicBlock preferredBlock = null;
+			for (String name : pending) {
+				final BasicBlock block = nameToBlock.get(name);
+				final int count = block.predecessors.size();
+				if (preferredBlock == null || count > preferredBlock.predecessors.size()) {
+					preferredBlock = block;
+				}
+			}
+
+			pending.remove(preferredBlock.name);
+			visited.add(preferredBlock.name);
+			consumer.accept(preferredBlock);
+		}
+	}
+
+	private static boolean addSuccessors(BasicBlock block, Set<String> visited, Set<String> pending) {
+		boolean changed = false;
+		for (String successor : block.successors) {
+			if (!visited.contains(successor)
+			    && pending.add(successor)) {
+				changed = true;
+			}
+		}
+		return changed;
+	}
+
+	private static int getUnvisitedCount(List<String> strings, Set<String> visited) {
+		int count = 0;
+		for (String string : strings) {
+			if (!visited.contains(string)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	@NotNull
+	private static Map<String, BasicBlock> createNameToBlock(List<BasicBlock> blocks) {
+		final Map<String, BasicBlock> nameToBlock = new HashMap<>();
+		for (BasicBlock block : blocks) {
+			final BasicBlock prev = nameToBlock.put(block.name, block);
+			Utils.assertTrue(prev == null);
+		}
+		return nameToBlock;
 	}
 }

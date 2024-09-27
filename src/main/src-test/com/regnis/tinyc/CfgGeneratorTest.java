@@ -30,4 +30,50 @@ public class CfgGeneratorTest {
 				), List.of("start"), List.of())
 		), blocks);
 	}
+
+	@Test
+	public void testPostOrderIterationA() {
+		final List<BasicBlock> blocks = List.of(
+				new BasicBlock("break",
+				               BasicBlock.TEST_DUMMY_INSTRUCTIONS,
+				               List.of("loop"),
+				               List.of()),
+				new BasicBlock("loop",
+				               BasicBlock.TEST_DUMMY_INSTRUCTIONS,
+				               List.of("start", "loop"),
+				               List.of("loop", "break")),
+				new BasicBlock("start",
+				               BasicBlock.TEST_DUMMY_INSTRUCTIONS,
+				               List.of(),
+				               List.of("loop"))
+		);
+		final List<String> order = new ArrayList<>();
+		CfgGenerator.visitInPostOrder("start", blocks, block -> order.add(block.name));
+		Assert.assertEquals(List.of("start", "loop", "break"), order);
+	}
+
+	@Test
+	public void testPostOrderIterationB() {
+		final List<BasicBlock> blocks = List.of(
+				new BasicBlock("start",
+				               BasicBlock.TEST_DUMMY_INSTRUCTIONS,
+				               List.of(),
+				               List.of("loop")),
+				new BasicBlock("loop",
+				               BasicBlock.TEST_DUMMY_INSTRUCTIONS,
+				               List.of("start", "body"),
+				               List.of("body", "break")),
+				new BasicBlock("body",
+				               BasicBlock.TEST_DUMMY_INSTRUCTIONS,
+				               List.of("loop"),
+				               List.of("loop")),
+				new BasicBlock("break",
+				               List.of(),
+				               List.of("loop"),
+				               List.of())
+		);
+		final List<String> order = new ArrayList<>();
+		CfgGenerator.visitInPostOrder("start", blocks, block -> order.add(block.name));
+		Assert.assertEquals(List.of("start", "loop", "body", "break"), order);
+	}
 }

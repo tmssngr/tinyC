@@ -11,6 +11,9 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public final class BasicBlock {
+
+	public static final List<IRInstruction> TEST_DUMMY_INSTRUCTIONS = List.of();
+
 	public final String name;
 	public final List<IRInstruction> instructions;
 	public final List<String> predecessors;
@@ -33,14 +36,16 @@ public final class BasicBlock {
 			}
 		}
 
-		if (successors.size() == 1) {
-			Utils.assertTrue(instructions.getLast() instanceof IRJump);
-		}
-		else if (successors.size() == 2) {
-			Utils.assertTrue(instructions.getLast() instanceof IRBranch);
-		}
-		else {
-			Utils.assertTrue(successors.isEmpty());
+		if (instructions != TEST_DUMMY_INSTRUCTIONS) {
+			if (successors.size() == 1) {
+				Utils.assertTrue(instructions.getLast() instanceof IRJump);
+			}
+			else if (successors.size() == 2) {
+				Utils.assertTrue(instructions.getLast() instanceof IRBranch);
+			}
+			else {
+				Utils.assertTrue(successors.isEmpty());
+			}
 		}
 		this.name = name;
 		this.instructions = List.copyOf(instructions);
