@@ -4,7 +4,6 @@ import com.regnis.tinyc.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
-import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -63,9 +62,5 @@ public final class ControlFlowGraph {
 	@NotNull
 	public BasicBlock getLast() {
 		return blocks.getLast();
-	}
-
-	public void foreach(@NotNull Consumer<BasicBlock> consumer) {
-		blocks.forEach(consumer);
 	}
 }
