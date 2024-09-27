@@ -81,7 +81,7 @@ public class CfgGeneratorTest {
 		final List<String> order = new ArrayList<>();
 		CfgGenerator.visitInPostOrder(start, blocks, block -> {
 			final String name = block.name;
-			if (block.successors.isEmpty()) {
+			if (block.successors().isEmpty()) {
 				order.add(name);
 			}
 			else {

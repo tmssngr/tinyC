@@ -21,7 +21,7 @@ public final class ControlFlowGraph {
 		this.function = function;
 		this.blocks = blocks;
 
-		Utils.assertTrue(blocks.getFirst().predecessors.isEmpty());
+		Utils.assertTrue(blocks.getFirst().predecessors().isEmpty());
 		// if the method does not return, the last block has one successor
 //		Utils.assertTrue(blocks.getLast().successors.isEmpty());
 
@@ -31,12 +31,12 @@ public final class ControlFlowGraph {
 		}
 
 		for (BasicBlock block : blocks) {
-			for (String predecessor : block.predecessors) {
+			for (String predecessor : block.predecessors()) {
 				if (!nameToBlock.containsKey(predecessor)) {
 					new Throwable(block.name + " missing predecessor: " + predecessor).printStackTrace();
 				}
 			}
-			for (String successor : block.successors) {
+			for (String successor : block.successors()) {
 				if (!nameToBlock.containsKey(successor)) {
 					new Throwable(block.name + " missing successor: " + successor).printStackTrace();
 				}

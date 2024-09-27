@@ -15,9 +15,9 @@ public final class BasicBlock {
 	public static final List<IRInstruction> TEST_DUMMY_INSTRUCTIONS = List.of();
 
 	public final String name;
-	public final List<IRInstruction> instructions;
-	public final List<String> predecessors;
-	public final List<String> successors;
+	private final List<IRInstruction> instructions;
+	private final List<String> predecessors;
+	private final List<String> successors;
 	private final Map<IRInstruction, Liveness> instructionToLiveness = new HashMap<>();
 
 	private Liveness live = new Liveness(Set.of(), Set.of(), Set.of());
@@ -48,9 +48,9 @@ public final class BasicBlock {
 			}
 		}
 		this.name = name;
-		this.instructions = List.copyOf(instructions);
-		this.predecessors = List.copyOf(predecessors);
-		this.successors = List.copyOf(successors);
+		this.instructions = new ArrayList<>(instructions);
+		this.predecessors = new ArrayList<>(predecessors);
+		this.successors = new ArrayList<>(successors);
 	}
 
 	@Override
@@ -73,6 +73,18 @@ public final class BasicBlock {
 	@Override
 	public int hashCode() {
 		return Objects.hash(name, instructions, predecessors, successors, instructionToLiveness, live);
+	}
+
+	public List<IRInstruction> instructions() {
+		return Collections.unmodifiableList(instructions);
+	}
+
+	public List<String> predecessors() {
+		return Collections.unmodifiableList(predecessors);
+	}
+
+	public List<String> successors() {
+		return Collections.unmodifiableList(successors);
 	}
 
 	@NotNull

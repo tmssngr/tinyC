@@ -40,15 +40,15 @@ public final class IRWriter {
 
 		writeIndentation();
 		write("; predecessors=");
-		writeln(block.predecessors.toString());
+		writeln(block.predecessors().toString());
 
 		write(block.getLiveBefore());
 
-		writeInstructions(block.instructions, block);
+		writeInstructions(block.instructions(), block);
 
 		writeIndentation();
 		write("; successors=");
-		writeln(block.successors.toString());
+		writeln(block.successors().toString());
 	}
 
 	private void write(Set<LiveVar> live) throws IOException {

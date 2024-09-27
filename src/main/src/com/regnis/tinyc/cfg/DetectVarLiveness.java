@@ -21,7 +21,7 @@ public final class DetectVarLiveness {
 		final Set<LiveVar> liveAfter = new HashSet<>(live);
 		boolean changed = liveAfter.addAll(block.getLiveAfter());
 
-		final List<IRInstruction> instructions = new ArrayList<>(block.instructions);
+		final List<IRInstruction> instructions = new ArrayList<>(block.instructions());
 		Collections.reverse(instructions);
 		for (IRInstruction instruction : instructions) {
 			final Set<LiveVar> uses = new HashSet<>();
@@ -56,14 +56,14 @@ public final class DetectVarLiveness {
 				changed = true;
 			}
 
-			pending.addAll(block.predecessors);
+			pending.addAll(block.predecessors());
 		}
 		return changed;
 	}
 
 	private static Set<LiveVar> getLiveInFromAllNext(BasicBlock block, ControlFlowGraph cfg) {
 		final Set<LiveVar> liveIn = new HashSet<>();
-		for (String next : block.successors) {
+		for (String next : block.successors()) {
 			final BasicBlock nextBlock = cfg.get(next);
 			liveIn.addAll(nextBlock.getLiveBefore());
 		}

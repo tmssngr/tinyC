@@ -57,7 +57,7 @@ public class CfgGenerator {
 	private List<BasicBlock> linearizeInPostOrderTraversal(List<BasicBlock> initialBlocks) {
 		final List<BasicBlock> blocks = new ArrayList<>();
 		visitInPostOrder(initialBlocks.getFirst().name, createNameToBlock(initialBlocks), block -> {
-			if (block.successors.isEmpty()) {
+			if (block.successors().isEmpty()) {
 				blocks.add(block);
 			}
 			else {
@@ -77,7 +77,7 @@ public class CfgGenerator {
 		for (BasicBlock block : this.blocks) {
 			if (used.contains(block.name)) {
 				final List<String> predecessors = blockPredecessors.get(block.name);
-				blocks.add(new BasicBlock(block.name, block.instructions, List.copyOf(predecessors), block.successors));
+				blocks.add(new BasicBlock(block.name, block.instructions(), List.copyOf(predecessors), block.successors()));
 			}
 		}
 		return blocks;
@@ -95,7 +95,7 @@ public class CfgGenerator {
 		while (!pending.isEmpty()) {
 			final BasicBlock block = pending.removeLast();
 			final String name = block.name;
-			for (String successor : block.successors) {
+			for (String successor : block.successors()) {
 				final List<String> predecessors = blockPredecessors.computeIfAbsent(successor, unused -> new LinkedList<>());
 				Utils.assertTrue(!predecessors.contains(name));
 				predecessors.add(name);
@@ -168,7 +168,7 @@ public class CfgGenerator {
 
 		visited.add(name);
 		final BasicBlock block = nameToBlock.get(name);
-		for (String successor : block.successors) {
+		for (String successor : block.successors()) {
 			visitInPostOrder(successor, nameToBlock, visited, consumer);
 		}
 		System.out.println("> " + name);
