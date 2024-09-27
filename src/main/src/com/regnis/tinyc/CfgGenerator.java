@@ -156,10 +156,12 @@ public class CfgGenerator {
 	}
 
 	private static void visitInPostOrder(@NotNull String first, @NotNull Map<String, BasicBlock> nameToBlock, @NotNull Consumer<BasicBlock> consumer) {
-		visitInPostOrder(first, nameToBlock, new HashSet<>(), consumer);
+		visitInPostOrder(first, nameToBlock, new ArrayList<>(), consumer);
+		System.out.println();
 	}
 
-	private static void visitInPostOrder(@NotNull String name, @NotNull Map<String, BasicBlock> nameToBlock, Set<String> visited, @NotNull Consumer<BasicBlock> consumer) {
+	private static void visitInPostOrder(@NotNull String name, @NotNull Map<String, BasicBlock> nameToBlock, List<String> visited, @NotNull Consumer<BasicBlock> consumer) {
+		System.out.println(visited + " " + name);
 		if (visited.contains(name)) {
 			return;
 		}
@@ -169,72 +171,8 @@ public class CfgGenerator {
 		for (String successor : block.successors) {
 			visitInPostOrder(successor, nameToBlock, visited, consumer);
 		}
+		System.out.println("> " + name);
 		consumer.accept(block);
-	}
-
-	private static void visitInPostOrder2(@NotNull String first, @NotNull Map<String, BasicBlock> nameToBlock, @NotNull Consumer<BasicBlock> consumer) {
-		final Set<String> visited = new HashSet<>();
-		final Set<String> pending = new LinkedHashSet<>();
-		pending.add(first);
-		while (true) {
-			boolean changed = false;
-			for (String name : new ArrayList<>(pending)) {
-				final BasicBlock block = nameToBlock.get(name);
-				if (getUnvisitedCount(block.predecessors, visited) == 0) {
-					pending.remove(name);
-					visited.add(name);
-					consumer.accept(block);
-					if (addSuccessors(block, visited, pending)) {
-						changed = true;
-					}
-				}
-				else if (addSuccessors(block, visited, pending)) {
-					changed = true;
-				}
-			}
-
-			if (changed) {
-				continue;
-			}
-
-			if (pending.isEmpty()) {
-				break;
-			}
-
-			BasicBlock preferredBlock = null;
-			for (String name : pending) {
-				final BasicBlock block = nameToBlock.get(name);
-				final int count = block.predecessors.size();
-				if (preferredBlock == null || count > preferredBlock.predecessors.size()) {
-					preferredBlock = block;
-				}
-			}
-
-			pending.remove(preferredBlock.name);
-			visited.add(preferredBlock.name);
-			consumer.accept(preferredBlock);
-		}
-	}
-
-	private static boolean addSuccessors(BasicBlock block, Set<String> visited, Set<String> pending) {
-		boolean changed = false;
-		for (String successor : block.successors) {
-			if (!visited.contains(successor)
-			    && pending.add(successor)) {
-				changed = true;
-			}
-		}
-		return changed;
-	}
-
-	private static int getUnvisitedCount(List<String> strings, Set<String> visited) {
-		int count = 0;
-		for (String string : strings) {
-			if (!visited.contains(string)) {
-				count++;
-			}
-		}
-		return count;
 	}
 
 	@NotNull
