@@ -93,8 +93,16 @@ public final class BasicBlock {
 		this.predecessors.addAll(predecessors);
 	}
 
+	public void replacePredecessor(String from, String to) {
+		replace(from, to, predecessors);
+	}
+
 	public List<String> successors() {
 		return Collections.unmodifiableList(successors);
+	}
+
+	public void replaceSuccessor(String from, String to) {
+		replace(from, to, successors);
 	}
 
 	@NotNull
@@ -161,6 +169,12 @@ public final class BasicBlock {
 
 	private void printLiveness(Set<LiveVar> liveVars) {
 		System.out.println("; " + liveVars);
+	}
+
+	private static void replace(String from, String to, List<String> list) {
+		final int index = list.indexOf(from);
+		Utils.assertTrue(index >= 0);
+		list.set(index, to);
 	}
 
 	public record Liveness(@NotNull Set<LiveVar> liveBefore, @NotNull Set<LiveVar> liveAfter, @NotNull Set<LiveVar> others) {

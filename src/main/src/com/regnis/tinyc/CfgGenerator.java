@@ -48,7 +48,40 @@ public class CfgGenerator {
 		buildBlocks(instructions);
 		setPredecessors();
 
+		eliminateCriticalEdges();
+
 		return linearizeInPostOrderTraversal();
+	}
+
+	private void eliminateCriticalEdges() {
+		final List<BasicBlock> candidates = new ArrayList<>();
+		visitPreOrder(block -> {
+			if (block.successors().size() > 1) {
+				candidates.add(block);
+			}
+		}, null);
+
+		for (BasicBlock block : candidates) {
+			final List<String> successors = block.successors();
+			for (String successor : successors) {
+				final BasicBlock successorBlock = getBlock(successor);
+				final List<String> successorPredecessors = successorBlock.predecessors();
+				final boolean isCriticalEdge = successorPredecessors.size() > 1;
+				if (!isCriticalEdge) {
+					continue;
+				}
+
+				eliminateCriticalEdge(block.name, successor);
+			}
+		}
+	}
+
+	private void eliminateCriticalEdge(String from, String to) {
+		final String name = "no_critical_edge_" + nameToBlock.size();
+		final BasicBlock newBlock = new BasicBlock(name, List.of(new IRJump(to)), List.of(), List.of(to));
+		Utils.assertTrue(nameToBlock.put(name, newBlock) == null);
+		getBlock(from).replaceSuccessor(to, name);
+		getBlock(to).replacePredecessor(from, name);
 	}
 
 	@NotNull
