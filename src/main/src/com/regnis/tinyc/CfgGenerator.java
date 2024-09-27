@@ -32,16 +32,31 @@ public class CfgGenerator {
 		return generator.createBlocks(instructions);
 	}
 
-	private final List<BasicBlock> blocks = new ArrayList<>();
+	private final Map<String, BasicBlock> nameToBlock = new HashMap<>();
 	private final List<IRInstruction> blockInstructions = new ArrayList<>();
+	private final String name;
 
+	@Nullable private BasicBlock firstBlock;
 	@Nullable private String blockName;
 
 	private CfgGenerator(@NotNull String name) {
+		this.name = name;
 		blockName = name;
 	}
 
 	private List<BasicBlock> createBlocks(List<IRInstruction> instructions) {
+		buildBlocks(instructions);
+		setPredecessors();
+
+		return linearizeInPostOrderTraversal();
+	}
+
+	@NotNull
+	private BasicBlock getBlock(String name) {
+		return Objects.requireNonNull(nameToBlock.get(name));
+	}
+
+	private void buildBlocks(List<IRInstruction> instructions) {
 		for (IRInstruction instruction : instructions) {
 			process(instruction);
 		}
@@ -49,14 +64,11 @@ public class CfgGenerator {
 		if (blockName != null) {
 			addBlock(List.of());
 		}
-
-		final List<BasicBlock> blocks = removeUnusedBlocks();
-		return linearizeInPostOrderTraversal(blocks);
 	}
 
-	private List<BasicBlock> linearizeInPostOrderTraversal(List<BasicBlock> initialBlocks) {
+	private List<BasicBlock> linearizeInPostOrderTraversal() {
 		final List<BasicBlock> blocks = new ArrayList<>();
-		visitInPostOrder(initialBlocks.getFirst().name, createNameToBlock(initialBlocks), block -> {
+		visitInPostOrder(name, nameToBlock, block -> {
 			if (block.successors().isEmpty()) {
 				blocks.add(block);
 			}
@@ -67,42 +79,39 @@ public class CfgGenerator {
 		return blocks;
 	}
 
-	@NotNull
-	private List<BasicBlock> removeUnusedBlocks() {
+	private void setPredecessors() {
 		final Map<String, List<String>> blockPredecessors = new HashMap<>();
-		final Set<String> used = new HashSet<>();
-		visitBlocksInExecutionOrder(used, blockPredecessors);
+		blockPredecessors.put(this.name, List.of());
+		visitPreOrder(null, (name, successor) -> {
+			final List<String> predecessors = blockPredecessors.computeIfAbsent(successor, unused -> new LinkedList<>());
+			Utils.assertTrue(!predecessors.contains(name));
+			predecessors.add(name);
+		});
 
-		final List<BasicBlock> blocks = new ArrayList<>();
-		for (BasicBlock block : this.blocks) {
-			if (used.contains(block.name)) {
-				final List<String> predecessors = blockPredecessors.get(block.name);
-				blocks.add(new BasicBlock(block.name, block.instructions(), List.copyOf(predecessors), block.successors()));
-			}
-		}
-		return blocks;
+		visitPreOrder(block -> {
+			final List<String> predecessors = Objects.requireNonNull(blockPredecessors.get(block.name));
+			block.setPredecessors(predecessors);
+		}, null);
 	}
 
-	private void visitBlocksInExecutionOrder(Set<String> used, Map<String, List<String>> blockPredecessors) {
-		final Map<String, BasicBlock> nameToBlock = createNameToBlock(blocks);
+	private void visitPreOrder(@Nullable Consumer<BasicBlock> consumer, @Nullable BiConsumer<String, String> biConsumer) {
+		visitPreOrder(name, new HashSet<>(), consumer, biConsumer);
+	}
 
-		final BasicBlock first = blocks.getFirst();
-		blockPredecessors.put(first.name, List.of());
-		used.add(first.name);
+	private void visitPreOrder(String name, Set<String> visited, @Nullable Consumer<BasicBlock> consumer, @Nullable BiConsumer<String, String> biConsumer) {
+		if (!visited.add(name)) {
+			return;
+		}
 
-		final List<BasicBlock> pending = new ArrayList<>();
-		pending.add(first);
-		while (!pending.isEmpty()) {
-			final BasicBlock block = pending.removeLast();
-			final String name = block.name;
-			for (String successor : block.successors()) {
-				final List<String> predecessors = blockPredecessors.computeIfAbsent(successor, unused -> new LinkedList<>());
-				Utils.assertTrue(!predecessors.contains(name));
-				predecessors.add(name);
-				if (used.add(successor)) {
-					pending.add(nameToBlock.get(successor));
-				}
+		final BasicBlock block = getBlock(name);
+		if (consumer != null) {
+			consumer.accept(block);
+		}
+		for (String successor : block.successors()) {
+			if (biConsumer != null) {
+				biConsumer.accept(name, successor);
 			}
+			visitPreOrder(successor, visited, consumer, biConsumer);
 		}
 	}
 
@@ -136,7 +145,13 @@ public class CfgGenerator {
 	}
 
 	private void addBlock(List<String> successors) {
-		blocks.add(new BasicBlock(Objects.requireNonNull(blockName), blockInstructions, List.of(), successors));
+		final String name = Objects.requireNonNull(blockName);
+		final BasicBlock block = new BasicBlock(name, blockInstructions, List.of(), successors);
+		final BasicBlock prev = nameToBlock.put(name, block);
+		Utils.assertTrue(prev == null, "duplicate definition of block " + name);
+		if (firstBlock == null) {
+			firstBlock = block;
+		}
 		blockInstructions.clear();
 	}
 
@@ -157,11 +172,9 @@ public class CfgGenerator {
 
 	private static void visitInPostOrder(@NotNull String first, @NotNull Map<String, BasicBlock> nameToBlock, @NotNull Consumer<BasicBlock> consumer) {
 		visitInPostOrder(first, nameToBlock, new ArrayList<>(), consumer);
-		System.out.println();
 	}
 
 	private static void visitInPostOrder(@NotNull String name, @NotNull Map<String, BasicBlock> nameToBlock, List<String> visited, @NotNull Consumer<BasicBlock> consumer) {
-		System.out.println(visited + " " + name);
 		if (visited.contains(name)) {
 			return;
 		}
@@ -171,7 +184,6 @@ public class CfgGenerator {
 		for (String successor : block.successors()) {
 			visitInPostOrder(successor, nameToBlock, visited, consumer);
 		}
-		System.out.println("> " + name);
 		consumer.accept(block);
 	}
 
