@@ -56,7 +56,14 @@ public class CfgGenerator {
 
 	private List<BasicBlock> linearizeInPostOrderTraversal(List<BasicBlock> initialBlocks) {
 		final List<BasicBlock> blocks = new ArrayList<>();
-		visitInPostOrder(initialBlocks.getFirst().name, createNameToBlock(initialBlocks), blocks::add);
+		visitInPostOrder(initialBlocks.getFirst().name, createNameToBlock(initialBlocks), block -> {
+			if (block.successors.isEmpty()) {
+				blocks.add(block);
+			}
+			else {
+				blocks.addFirst(block);
+			}
+		});
 		return blocks;
 	}
 
@@ -149,6 +156,23 @@ public class CfgGenerator {
 	}
 
 	private static void visitInPostOrder(@NotNull String first, @NotNull Map<String, BasicBlock> nameToBlock, @NotNull Consumer<BasicBlock> consumer) {
+		visitInPostOrder(first, nameToBlock, new HashSet<>(), consumer);
+	}
+
+	private static void visitInPostOrder(@NotNull String name, @NotNull Map<String, BasicBlock> nameToBlock, Set<String> visited, @NotNull Consumer<BasicBlock> consumer) {
+		if (visited.contains(name)) {
+			return;
+		}
+
+		visited.add(name);
+		final BasicBlock block = nameToBlock.get(name);
+		for (String successor : block.successors) {
+			visitInPostOrder(successor, nameToBlock, visited, consumer);
+		}
+		consumer.accept(block);
+	}
+
+	private static void visitInPostOrder2(@NotNull String first, @NotNull Map<String, BasicBlock> nameToBlock, @NotNull Consumer<BasicBlock> consumer) {
 		final Set<String> visited = new HashSet<>();
 		final Set<String> pending = new LinkedHashSet<>();
 		pending.add(first);

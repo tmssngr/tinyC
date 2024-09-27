@@ -6,6 +6,7 @@ import com.regnis.tinyc.ir.*;
 
 import java.util.*;
 
+import org.jetbrains.annotations.*;
 import org.junit.*;
 
 /**
@@ -47,8 +48,7 @@ public class CfgGeneratorTest {
 				               List.of(),
 				               List.of("loop"))
 		);
-		final List<String> order = new ArrayList<>();
-		CfgGenerator.visitInPostOrder("start", blocks, block -> order.add(block.name));
+		final List<String> order = visitInPostOrder("start", blocks);
 		Assert.assertEquals(List.of("start", "loop", "break"), order);
 	}
 
@@ -72,8 +72,22 @@ public class CfgGeneratorTest {
 				               List.of("loop"),
 				               List.of())
 		);
-		final List<String> order = new ArrayList<>();
-		CfgGenerator.visitInPostOrder("start", blocks, block -> order.add(block.name));
+		final List<String> order = visitInPostOrder("start", blocks);
 		Assert.assertEquals(List.of("start", "loop", "body", "break"), order);
+	}
+
+	@NotNull
+	private static List<String> visitInPostOrder(String start, List<BasicBlock> blocks) {
+		final List<String> order = new ArrayList<>();
+		CfgGenerator.visitInPostOrder(start, blocks, block -> {
+			final String name = block.name;
+			if (block.successors.isEmpty()) {
+				order.add(name);
+			}
+			else {
+				order.addFirst(name);
+			}
+		});
+		return order;
 	}
 }
