@@ -112,6 +112,12 @@ public class CompilerTest {
 		compileAndRun("18 prng.c");
 	}
 
+	@Test
+	public void testMine() throws IOException, InterruptedException {
+		final Path inputFile = absolutePath("19 mine.c");
+		Compiler.compile(inputFile);
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(absolutePath(fileName));
 	}
