@@ -232,7 +232,8 @@ public final class X86Win64 {
 
 	private void writeInstruction(IRInstruction instruction) throws IOException {
 		if (!(instruction instanceof IRComment)
-		    && !(instruction instanceof IRLabel)) {
+		    && !(instruction instanceof IRLabel)
+		    && !(instruction instanceof IRJump)) {
 			writeComment(String.valueOf(instruction));
 		}
 		Utils.assertTrue(allocator.isNoneUsed());
@@ -513,7 +514,6 @@ public final class X86Win64 {
 		else {
 			writeIndented("jz " + branch.target());
 		}
-		writeComment(branch.nextLabel());
 	}
 
 	private void writeCall(IRCall call) throws IOException {

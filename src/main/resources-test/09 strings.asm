@@ -205,11 +205,8 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_2_end
-        ; @if_2_then
-        ; jump @while_1_break
         jmp @while_1_break
 @if_2_end:
-        ; jump @while_1
         jmp @while_1
 @while_1_break:
         ; cast t.15(15@function,i64), pos(2@function,u8)
@@ -286,7 +283,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_3_end
-        ; @if_3_then
         ; const t.3(3@function,u8), 45
         mov al, 45
         lea rbx, [rsp+16]
@@ -368,7 +364,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_4_break
-        ; @for_4_body
         ; const t.5(5@function,i64), 1
         mov rax, 1
         lea rbx, [rsp+16]
@@ -404,7 +399,6 @@ start:
         mov rbx, [rax]
         lea rax, [rsp+56]
         mov [rax], rbx
-        ; jump @for_4
         jmp @for_4
 @for_4_break:
         ; 40:9 return length
@@ -412,7 +406,6 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         mov rax, rbx
-        ; jump @strlen_ret
         jmp @strlen_ret
 @strlen_ret:
         ; release space for local variables
@@ -548,7 +541,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_5_break
-        ; @for_5_body
         ; const t.5(5@function,i16), 1
         mov ax, 1
         lea rbx, [rsp+20]
@@ -584,7 +576,6 @@ start:
         mov rbx, [rax]
         lea rax, [rsp+8]
         mov [rax], rbx
-        ; jump @for_5
         jmp @for_5
 @for_5_break:
         ; cast t.9(9@function,i64), length(0@function,i16)

@@ -122,7 +122,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_1_break
-        ; @for_1_body
         ; const t.5(5@function,i64), 1
         mov rax, 1
         lea rbx, [rsp+16]
@@ -158,7 +157,6 @@ start:
         mov rbx, [rax]
         lea rax, [rsp+56]
         mov [rax], rbx
-        ; jump @for_1
         jmp @for_1
 @for_1_break:
         ; 40:9 return length
@@ -166,7 +164,6 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         mov rax, rbx
-        ; jump @strlen_ret
         jmp @strlen_ret
 @strlen_ret:
         ; release space for local variables
@@ -239,7 +236,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_2_break
-        ; @for_2_body
         ; 12:3 if [...] == 0
         ; cast t.6(6@function,i64), i(0@function,u8)
         lea rax, [rsp+0]
@@ -278,7 +274,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_3_else
-        ; @if_3_then
         ; const t.9(9@function,u8), 32
         mov al, 32
         lea rbx, [rsp+25]
@@ -289,7 +284,6 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-        ; jump @if_3_end
         jmp @if_3_end
 @if_3_else:
         ; const t.10(10@function,u8), 42
@@ -316,7 +310,6 @@ start:
         add bl, cl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; jump @for_2
         jmp @for_2
 @for_2_break:
         ; const t.12(12@function,u8*), [string-0]
@@ -405,7 +398,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_4_break
-        ; @for_4_body
         ; const t.6(6@function,u8), 0
         mov al, 0
         lea rbx, [rsp+6]
@@ -442,7 +434,6 @@ start:
         add bl, cl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; jump @for_4
         jmp @for_4
 @for_4_break:
         ; const t.10(10@function,u8), 1
@@ -500,7 +491,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_5_break
-        ; @for_5_body
         ; const t.18(18@function,i64), 0
         mov rax, 0
         lea rbx, [rsp+64]
@@ -579,7 +569,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_6_break
-        ; @for_6_body
         ; const t.28(28@function,u8), 1
         mov al, 1
         lea rbx, [rsp+108]
@@ -699,7 +688,6 @@ start:
         add bl, cl
         lea rax, [rsp+3]
         mov [rax], bl
-        ; jump @for_6
         jmp @for_6
 @for_6_break:
         ; call _, printBoard []
@@ -719,7 +707,6 @@ start:
         add bl, cl
         lea rax, [rsp+1]
         mov [rax], bl
-        ; jump @for_5
         jmp @for_5
 @for_5_break:
 @main_ret:

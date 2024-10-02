@@ -205,11 +205,8 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_2_end
-        ; @if_2_then
-        ; jump @while_1_break
         jmp @while_1_break
 @if_2_end:
-        ; jump @while_1
         jmp @while_1
 @while_1_break:
         ; cast t.15(15@function,i64), pos(2@function,u8)
@@ -286,7 +283,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_3_end
-        ; @if_3_then
         ; const t.3(3@function,u8), 45
         mov al, 45
         lea rbx, [rsp+16]
@@ -368,7 +364,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_4_break
-        ; @for_4_body
         ; const t.5(5@function,i64), 1
         mov rax, 1
         lea rbx, [rsp+16]
@@ -404,7 +399,6 @@ start:
         mov rbx, [rax]
         lea rax, [rsp+56]
         mov [rax], rbx
-        ; jump @for_4
         jmp @for_4
 @for_4_break:
         ; 40:9 return length
@@ -412,7 +406,6 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         mov rax, rbx
-        ; jump @strlen_ret
         jmp @strlen_ret
 @strlen_ret:
         ; release space for local variables
@@ -826,7 +819,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @and_next_5
-        ; @and_2nd_5
         ; copy t.38(38@function,bool), f(5@function,bool)
         lea rax, [rsp+9]
         mov bl, [rax]
@@ -856,7 +848,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @and_next_6
-        ; @and_2nd_6
         ; copy t.40(40@function,bool), t(4@function,bool)
         lea rax, [rsp+8]
         mov bl, [rax]
@@ -886,7 +877,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @and_next_7
-        ; @and_2nd_7
         ; copy t.42(42@function,bool), f(5@function,bool)
         lea rax, [rsp+9]
         mov bl, [rax]
@@ -916,7 +906,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @and_next_8
-        ; @and_2nd_8
         ; copy t.44(44@function,bool), t(4@function,bool)
         lea rax, [rsp+8]
         mov bl, [rax]
@@ -956,7 +945,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @or_next_9
-        ; @or_2nd_9
         ; copy t.47(47@function,bool), f(5@function,bool)
         lea rax, [rsp+9]
         mov bl, [rax]
@@ -986,7 +974,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @or_next_10
-        ; @or_2nd_10
         ; copy t.49(49@function,bool), t(4@function,bool)
         lea rax, [rsp+8]
         mov bl, [rax]
@@ -1016,7 +1003,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @or_next_11
-        ; @or_2nd_11
         ; copy t.51(51@function,bool), f(5@function,bool)
         lea rax, [rsp+9]
         mov bl, [rax]
@@ -1046,7 +1032,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @or_next_12
-        ; @or_2nd_12
         ; copy t.53(53@function,bool), t(4@function,bool)
         lea rax, [rsp+8]
         mov bl, [rax]
@@ -1178,7 +1163,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @or_next_13
-        ; @or_2nd_13
         ; lt t.64(64@function,bool), c(2@function,i16), d(3@function,i16)
         lea rax, [rsp+4]
         mov bx, [rax]
@@ -1216,7 +1200,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @and_next_14
-        ; @and_2nd_14
         ; lt t.66(66@function,bool), c(2@function,i16), d(3@function,i16)
         lea rax, [rsp+4]
         mov bx, [rax]

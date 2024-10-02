@@ -122,7 +122,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_1_break
-        ; @for_1_body
         ; const t.5(5@function,i64), 1
         mov rax, 1
         lea rbx, [rsp+16]
@@ -158,7 +157,6 @@ start:
         mov rbx, [rax]
         lea rax, [rsp+56]
         mov [rax], rbx
-        ; jump @for_1
         jmp @for_1
 @for_1_break:
         ; 40:9 return length
@@ -166,7 +164,6 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         mov rax, rbx
-        ; jump @strlen_ret
         jmp @strlen_ret
 @strlen_ret:
         ; release space for local variables
@@ -229,7 +226,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_2_end
-        ; @if_2_then
         ; const t.4(4@function,u8), 7
         mov al, 7
         lea rbx, [rsp+3]
@@ -369,7 +365,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_3_break
-        ; @for_3_body
         ; 20:3 if i & 7 == 0
         ; const t.7(7@function,u8), 7
         mov al, 7
@@ -401,7 +396,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_4_end
-        ; @if_4_then
         ; const t.9(9@function,u8), 32
         mov al, 32
         lea rbx, [rsp+22]
@@ -432,7 +426,6 @@ start:
         add bl, cl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; jump @for_3
         jmp @for_3
 @for_3_break:
         ; const t.11(11@function,u8), 10
@@ -469,7 +462,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_5_break
-        ; @for_5_body
         ; 28:3 if i & 15 == 0
         ; const t.16(16@function,u8), 15
         mov al, 15
@@ -501,7 +493,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_6_end
-        ; @if_6_then
         ; call _, printHex2 [i(1@function,u8)]
         lea rax, [rsp+1]
         mov bl, [rax]
@@ -540,7 +531,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_7_end
-        ; @if_7_then
         ; const t.22(22@function,u8), 32
         mov al, 32
         lea rbx, [rsp+35]
@@ -589,7 +579,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_8_end
-        ; @if_8_then
         ; const t.27(27@function,u8), 10
         mov al, 10
         lea rbx, [rsp+40]
@@ -614,7 +603,6 @@ start:
         add bl, cl
         lea rax, [rsp+1]
         mov [rax], bl
-        ; jump @for_5
         jmp @for_5
 @for_5_break:
 @main_ret:

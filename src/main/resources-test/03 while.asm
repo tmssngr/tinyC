@@ -176,11 +176,8 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_2_end
-        ; @if_2_then
-        ; jump @while_1_break
         jmp @while_1_break
 @if_2_end:
-        ; jump @while_1
         jmp @while_1
 @while_1_break:
         ; cast t.15(15@function,i64), pos(2@function,u8)
@@ -257,7 +254,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_3_end
-        ; @if_3_then
         ; const t.3(3@function,u8), 45
         mov al, 45
         lea rbx, [rsp+16]
@@ -348,7 +344,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @while_4_break
-        ; @while_4_body
         ; cast t.3(3@function,i64), i(0@function,u8)
         lea rax, [rsp+0]
         mov bl, [rax]
@@ -373,7 +368,6 @@ start:
         sub bl, cl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; jump @while_4
         jmp @while_4
 @while_4_break:
         ; 10:2 while true
@@ -421,21 +415,15 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_6_end
-        ; @if_6_then
-        ; jump @while_5
         jmp @while_5
 @if_6_end:
-        ; jump @while_5_break
         jmp @while_5_break
-        ; jump @while_5
         jmp @while_5
 @while_5_break:
         ; 19:2 while true
 @while_7:
         ; 20:3 return
-        ; jump @main_ret
         jmp @main_ret
-        ; jump @while_7
         jmp @while_7
 @while_7_break:
 @main_ret:

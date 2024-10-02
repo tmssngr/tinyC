@@ -176,11 +176,8 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_2_end
-        ; @if_2_then
-        ; jump @while_1_break
         jmp @while_1_break
 @if_2_end:
-        ; jump @while_1
         jmp @while_1
 @while_1_break:
         ; cast t.15(15@function,i64), pos(2@function,u8)
@@ -257,7 +254,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_3_end
-        ; @if_3_then
         ; const t.3(3@function,u8), 45
         mov al, 45
         lea rbx, [rsp+16]
@@ -343,7 +339,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_4_else
-        ; @if_4_then
         ; cast t.3(3@function,i64), a(0@function,u8)
         lea rax, [rsp+0]
         mov bl, [rax]
@@ -356,7 +351,6 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; jump @if_4_end
         jmp @if_4_end
 @if_4_else:
         ; cast t.4(4@function,i64), b(1@function,u8)
