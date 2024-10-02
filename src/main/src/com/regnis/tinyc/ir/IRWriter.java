@@ -1,5 +1,7 @@
 package com.regnis.tinyc.ir;
 
+import com.regnis.tinyc.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -8,12 +10,10 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public final class IRWriter {
-
-	private final BufferedWriter writer;
+public final class IRWriter extends TextWriter {
 
 	public IRWriter(@NotNull BufferedWriter writer) {
-		this.writer = writer;
+		super(writer);
 	}
 
 	public void write(@NotNull IRProgram program) throws IOException {
@@ -187,22 +187,5 @@ public final class IRWriter {
 			writeIndentation();
 			writeln(literal.toString());
 		}
-	}
-
-	private void writeIndentation() throws IOException {
-		write("\t");
-	}
-
-	private void writeln() throws IOException {
-		writeln("");
-	}
-
-	private void writeln(String text) throws IOException {
-		write(text);
-		writer.newLine();
-	}
-
-	private void write(String str) throws IOException {
-		writer.write(str);
 	}
 }
