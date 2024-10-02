@@ -1,0 +1,160 @@
+@printStringLength:
+ Local variables
+	arg 0: str
+	arg 1: length
+	var 2: chr
+	var 3: t.3
+	var 4: t.4
+	var 5: t.5
+	; 31 pc
+	; 13:2 while length > 0
+@while_1:
+	const t.4(4@function,u8), 0
+	gt t.3(3@function,bool), length(1@argument,u8), t.4(4@function,u8)
+	branch t.3(3@function,bool), false, @while_1_break
+	load chr(2@function,u8), [str(0@argument,u8*)]
+	call _, printChar [chr(2@function,u8)]
+	const t.5(5@function,u8), 1
+	sub length(1@argument,u8), length(1@argument,u8), t.5(5@function,u8)
+	jump @while_1
+@while_1_break:
+@printStringLength_ret:
+
+@printUint:
+ Local variables
+	arg 0: number
+	var 1: buffer
+	var 2: pos
+	var 3: remainder
+	var 4: digit
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	var 19: t.19
+	var 20: t.20
+	; 122 pc
+	const pos(2@function,u8), 20
+	; 24:2 while true
+@while_2:
+	const t.5(5@function,u8), 1
+	sub pos(2@function,u8), pos(2@function,u8), t.5(5@function,u8)
+	const t.7(7@function,i16), 10
+	mod t.6(6@function,i16), number(0@argument,i16), t.7(7@function,i16)
+	cast remainder(3@function,i64), t.6(6@function,i16)
+	const t.8(8@function,i16), 10
+	div number(0@argument,i16), number(0@argument,i16), t.8(8@function,i16)
+	cast t.9(9@function,u8), remainder(3@function,i64)
+	const t.10(10@function,u8), 48
+	add digit(4@function,u8), t.9(9@function,u8), t.10(10@function,u8)
+	cast t.12(12@function,i16), pos(2@function,u8)
+	cast t.13(13@function,u8*), t.12(12@function,i16)
+	addrof t.11(11@function,u8*), [buffer(1@function,u8*)]
+	add t.11(11@function,u8*), t.11(11@function,u8*), t.13(13@function,u8*)
+	store [t.11(11@function,u8*)], digit(4@function,u8)
+	; 30:3 if number == 0
+	const t.15(15@function,i16), 0
+	equals t.14(14@function,bool), number(0@argument,i16), t.15(15@function,i16)
+	branch t.14(14@function,bool), false, @if_3_end
+	jump @while_2_break
+@if_3_end:
+	jump @while_2
+@while_2_break:
+	cast t.17(17@function,i16), pos(2@function,u8)
+	cast t.18(18@function,u8*), t.17(17@function,i16)
+	addrof t.16(16@function,u8*), [buffer(1@function,u8*)]
+	add t.16(16@function,u8*), t.16(16@function,u8*), t.18(18@function,u8*)
+	const t.20(20@function,u8), 20
+	sub t.19(19@function,u8), t.20(20@function,u8), pos(2@function,u8)
+	call _, printStringLength [t.16(16@function,u8*), t.19(19@function,u8)]
+@printUint_ret:
+
+@printIntLf:
+ Local variables
+	arg 0: number
+	var 1: t.1
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	; 30 pc
+	; 38:2 if number < 0
+	const t.2(2@function,i16), 0
+	lt t.1(1@function,bool), number(0@argument,i16), t.2(2@function,i16)
+	branch t.1(1@function,bool), false, @if_4_end
+	const t.3(3@function,u8), 45
+	call _, printChar [t.3(3@function,u8)]
+	neg number(0@argument,i16), number(0@argument,i16)
+@if_4_end:
+	call _, printUint [number(0@argument,i16)]
+	const t.4(4@function,u8), 10
+	call _, printChar [t.4(4@function,u8)]
+@printIntLf_ret:
+
+@printChar:
+	ld   r0, SPH
+	ld   r1, SPL
+	add  r1, 3
+	adc  r0, 0
+	ldc  r1, @rr0
+	ld   %15, r1
+	jp   %0818
+
+@main:
+ Local variables
+	var 0: i
+	var 1: t.1
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	; 66 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const i(0@function,u8), 5
+	; 5:2 while i > 0
+@while_5:
+	const t.2(2@function,u8), 0
+	gt t.1(1@function,bool), i(0@function,u8), t.2(2@function,u8)
+	branch t.1(1@function,bool), false, @while_5_break
+	cast t.3(3@function,i16), i(0@function,u8)
+	call _, printIntLf [t.3(3@function,i16)]
+	const t.4(4@function,u8), 1
+	sub i(0@function,u8), i(0@function,u8), t.4(4@function,u8)
+	jump @while_5
+@while_5_break:
+	; 10:2 while true
+@while_6:
+	cast t.5(5@function,i16), i(0@function,u8)
+	call _, printIntLf [t.5(5@function,i16)]
+	const t.6(6@function,u8), 1
+	add i(0@function,u8), i(0@function,u8), t.6(6@function,u8)
+	; 13:3 if i < 5
+	const t.8(8@function,u8), 5
+	lt t.7(7@function,bool), i(0@function,u8), t.8(8@function,u8)
+	branch t.7(7@function,bool), false, @if_7_end
+	jump @while_6
+@if_7_end:
+	jump @while_6_break
+	jump @while_6
+@while_6_break:
+	; 19:2 while true
+@while_8:
+	; 20:3 return
+	jump @main_ret
+	jump @while_8
+@while_8_break:
+@main_ret:
+
