@@ -1,0 +1,250 @@
+@printString:
+ Local variables
+	arg 0: str
+	var 1: chr
+	; 15 pc
+@while_1:
+	copy r.0(0@register,u8*), str(0@argument,u8*)
+	load r.1(1@register,u8), [r.0(0@register,u8*)]
+	; 4:3 if chr == 0
+	const r.2(2@register,u8), 0
+	equals r.2(2@register,bool), r.1(1@register,u8), r.2(2@register,u8)
+	copy chr(1@function,u8), r.1(1@register,u8)
+	branch r.2(2@register,bool), false, @if_2_end
+	jump @printString_ret
+@if_2_end:
+	call _, printChar [chr(1@function,u8)]
+	jump @while_1
+@printString_ret:
+
+@printStringLength:
+ Local variables
+	arg 0: str
+	arg 1: length
+	; 19 pc
+@while_3:
+	const r.0(0@register,u8), 0
+	copy r.1(1@register,u8), length(1@argument,u8)
+	gt r.0(0@register,bool), r.1(1@register,u8), r.0(0@register,u8)
+	branch r.0(0@register,bool), false, @printStringLength_ret
+	copy r.0(0@register,u8*), str(0@argument,u8*)
+	load r.1(1@register,u8), [r.0(0@register,u8*)]
+	call _, printChar [r.1(1@register,u8)]
+	const r.0(0@register,u8), 1
+	copy r.1(1@register,u8), length(1@argument,u8)
+	sub r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
+	copy length(1@argument,u8), r.0(0@register,u8)
+	jump @while_3
+@printStringLength_ret:
+
+@printUint:
+ Local variables
+	arg 0: number
+	var 1: buffer
+	var 2: pos
+	; 34 pc
+	const r.0(0@register,u8), 20
+	; 24:2 while true
+	copy pos(2@function,u8), r.0(0@register,u8)
+@while_4:
+	const r.0(0@register,u8), 1
+	copy r.1(1@register,u8), pos(2@function,u8)
+	sub r.0(0@register,u8), r.1(1@register,u8), r.0(0@register,u8)
+	const r.1(1@register,i16), 10
+	copy r.2(2@register,i16), number(0@argument,i16)
+	mod r.1(1@register,i16), r.2(2@register,i16), r.1(1@register,i16)
+	cast r.1(1@register,i64), r.1(1@register,i16)
+	const r.3(3@register,i16), 10
+	div r.2(2@register,i16), r.2(2@register,i16), r.3(3@register,i16)
+	cast r.1(1@register,u8), r.1(1@register,i64)
+	const r.3(3@register,u8), 48
+	add r.1(1@register,u8), r.1(1@register,u8), r.3(3@register,u8)
+	cast r.3(3@register,i16), r.0(0@register,u8)
+	array r.3(3@register,u8*), buffer(1@function,u8*) + r.3(3@register,i16)
+	store [r.3(3@register,u8*)], r.1(1@register,u8)
+	; 30:3 if number == 0
+	const r.1(1@register,i16), 0
+	equals r.1(1@register,bool), r.2(2@register,i16), r.1(1@register,i16)
+	copy pos(2@function,u8), r.0(0@register,u8)
+	copy number(0@argument,i16), r.2(2@register,i16)
+	branch r.1(1@register,bool), false, @while_4
+	copy r.0(0@register,u8), pos(2@function,u8)
+	cast r.1(1@register,i16), r.0(0@register,u8)
+	addrof r.1(1@register,u8*), [buffer(1@function,u8*) + r.1(1@register,i16)]
+	const r.2(2@register,u8), 20
+	sub r.0(0@register,u8), r.2(2@register,u8), r.0(0@register,u8)
+	call _, printStringLength [r.1(1@register,u8*), r.0(0@register,u8)]
+
+@printIntLf:
+ Local variables
+	arg 0: number
+	; 17 pc
+	; 38:2 if number < 0
+	const r.0(0@register,i16), 0
+	copy r.1(1@register,i16), number(0@argument,i16)
+	lt r.0(0@register,bool), r.1(1@register,i16), r.0(0@register,i16)
+	branch r.0(0@register,bool), false, @if_6_end
+	const r.0(0@register,u8), 45
+	call _, printChar [r.0(0@register,u8)]
+	copy r.0(0@register,i16), number(0@argument,i16)
+	neg r.0(0@register,i16), r.0(0@register,i16)
+	copy number(0@argument,i16), r.0(0@register,i16)
+@if_6_end:
+	call _, printUint [number(0@argument,i16)]
+	const r.0(0@register,u8), 10
+	call _, printChar [r.0(0@register,u8)]
+
+@printChar:
+	ld   r0, SPH
+	ld   r1, SPL
+	add  r1, 3
+	adc  r0, 0
+	ldc  r1, @rr0
+	ld   %15, r1
+	jp   %0818
+
+@main:
+ Local variables
+	var 0: a
+	var 1: b
+	var 2: c
+	var 3: d
+	; 200 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const r.0(0@register,u8*), [string-0]
+	call _, printString [r.0(0@register,u8*)]
+	const r.0(0@register,i16), 1
+	const r.1(1@register,i16), 2
+	lt r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	copy a(0@function,i16), r.0(0@register,i16)
+	copy b(1@function,i16), r.1(1@register,i16)
+	call _, printIntLf [r.2(2@register,i16)]
+	copy r.0(0@register,i16), b(1@function,i16)
+	copy r.1(1@register,i16), a(0@function,i16)
+	lt r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	const r.0(0@register,u8*), [string-1]
+	call _, printString [r.0(0@register,u8*)]
+	const r.0(0@register,u8), 0
+	const r.1(1@register,u8), 128
+	lt r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	copy c(2@function,u8), r.0(0@register,u8)
+	copy d(3@function,u8), r.1(1@register,u8)
+	call _, printIntLf [r.2(2@register,i16)]
+	copy r.0(0@register,u8), d(3@function,u8)
+	copy r.1(1@register,u8), c(2@function,u8)
+	lt r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	const r.0(0@register,u8*), [string-2]
+	call _, printString [r.0(0@register,u8*)]
+	copy r.0(0@register,i16), a(0@function,i16)
+	copy r.1(1@register,i16), b(1@function,i16)
+	lteq r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	copy r.0(0@register,i16), b(1@function,i16)
+	copy r.1(1@register,i16), a(0@function,i16)
+	lteq r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	const r.0(0@register,u8*), [string-3]
+	call _, printString [r.0(0@register,u8*)]
+	copy r.0(0@register,u8), c(2@function,u8)
+	copy r.1(1@register,u8), d(3@function,u8)
+	lteq r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	copy r.0(0@register,u8), d(3@function,u8)
+	copy r.1(1@register,u8), c(2@function,u8)
+	lteq r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	const r.0(0@register,u8*), [string-4]
+	call _, printString [r.0(0@register,u8*)]
+	copy r.0(0@register,i16), a(0@function,i16)
+	copy r.1(1@register,i16), b(1@function,i16)
+	equals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	copy r.0(0@register,i16), b(1@function,i16)
+	copy r.1(1@register,i16), a(0@function,i16)
+	equals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	const r.0(0@register,u8*), [string-5]
+	call _, printString [r.0(0@register,u8*)]
+	copy r.0(0@register,i16), a(0@function,i16)
+	copy r.1(1@register,i16), b(1@function,i16)
+	notequals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	copy r.0(0@register,i16), b(1@function,i16)
+	copy r.1(1@register,i16), a(0@function,i16)
+	notequals r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	const r.0(0@register,u8*), [string-6]
+	call _, printString [r.0(0@register,u8*)]
+	copy r.0(0@register,i16), a(0@function,i16)
+	copy r.1(1@register,i16), b(1@function,i16)
+	gteq r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	copy r.0(0@register,i16), b(1@function,i16)
+	copy r.1(1@register,i16), a(0@function,i16)
+	gteq r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	const r.0(0@register,u8*), [string-7]
+	call _, printString [r.0(0@register,u8*)]
+	copy r.0(0@register,u8), c(2@function,u8)
+	copy r.1(1@register,u8), d(3@function,u8)
+	gteq r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	copy r.0(0@register,u8), d(3@function,u8)
+	copy r.1(1@register,u8), c(2@function,u8)
+	gteq r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	const r.0(0@register,u8*), [string-8]
+	call _, printString [r.0(0@register,u8*)]
+	copy r.0(0@register,i16), a(0@function,i16)
+	copy r.1(1@register,i16), b(1@function,i16)
+	gt r.2(2@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	copy r.0(0@register,i16), b(1@function,i16)
+	copy r.1(1@register,i16), a(0@function,i16)
+	gt r.0(0@register,bool), r.0(0@register,i16), r.1(1@register,i16)
+	cast r.0(0@register,i16), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i16)]
+	const r.0(0@register,u8*), [string-9]
+	call _, printString [r.0(0@register,u8*)]
+	copy r.0(0@register,u8), c(2@function,u8)
+	copy r.1(1@register,u8), d(3@function,u8)
+	gt r.2(2@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.2(2@register,i16), r.2(2@register,bool)
+	call _, printIntLf [r.2(2@register,i16)]
+	copy r.0(0@register,u8), d(3@function,u8)
+	copy r.1(1@register,u8), c(2@function,u8)
+	gt r.0(0@register,bool), r.0(0@register,u8), r.1(1@register,u8)
+	cast r.0(0@register,i16), r.0(0@register,bool)
+	call _, printIntLf [r.0(0@register,i16)]
+
+String literals
+	string lit 0 "< (signed)\n\0"
+	string lit 1 "< (unsigned)\n\0"
+	string lit 2 "<= (signed)\n\0"
+	string lit 3 "<= (unsigned)\n\0"
+	string lit 4 "==\n\0"
+	string lit 5 "!=\n\0"
+	string lit 6 ">= (signed)\n\0"
+	string lit 7 ">= (unsigned)\n\0"
+	string lit 8 "> (signed)\n\0"
+	string lit 9 "> (unsigned)\n\0"
