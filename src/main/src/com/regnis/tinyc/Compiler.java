@@ -58,8 +58,23 @@ public class Compiler {
 
 		write(program, astSimpleFile);
 
-		final IRProgram irProgram = IRGenerator.convert(program);
+		IRProgram irProgram = IRGenerator.convert(program);
 		write(irProgram, irFile);
+
+		final List<IRFunction> functions = new ArrayList<>();
+		for (IRFunction function : irProgram.functions()) {
+			if (function.asmLines().isEmpty()) {
+				final List<IRInstruction> instructions = IROptimizer.optimize(function.instructions());
+
+				final IRFunction optimizedFunction = function.derive(instructions);
+				functions.add(optimizedFunction);
+			}
+			else {
+				functions.add(function);
+			}
+		}
+
+		irProgram = irProgram.derive(functions);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);

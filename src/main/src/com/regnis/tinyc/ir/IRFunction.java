@@ -15,4 +15,10 @@ public record IRFunction(@NotNull String name, @NotNull String label, @NotNull T
 	public String toString() {
 		return returnType + " " + name;
 	}
+
+	@NotNull
+	public IRFunction derive(List<IRInstruction> instructions) {
+		return new IRFunction(name(), label(), returnType(), localVars(),
+		                      instructions, List.of());
+	}
 }

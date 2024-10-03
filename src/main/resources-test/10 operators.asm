@@ -44,7 +44,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-@printString_ret:
         ; release space for local variables
         add rsp, 16
         ret
@@ -74,7 +73,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-@printChar_ret:
         ; release space for local variables
         add rsp, 16
         ret
@@ -212,15 +210,11 @@ start:
         sete bl
         lea rax, [rsp+88]
         mov [rax], bl
-        ; branch t.13(13@function,bool), false, @if_2_end
+        ; branch t.13(13@function,bool), false, @while_1
         lea rax, [rsp+88]
         mov bl, [rax]
         or bl, bl
-        jz @if_2_end
-        jmp @while_1_break
-@if_2_end:
-        jmp @while_1
-@while_1_break:
+        jz @while_1
         ; cast t.16(16@function,i64), pos(2@function,u8)
         lea rax, [rsp+20]
         mov bl, [rax]
@@ -272,7 +266,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-@printUint_ret:
         ; release space for local variables
         add rsp, 144
         ret
@@ -338,7 +331,6 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-@printIntLf_ret:
         ; release space for local variables
         add rsp, 32
         ret
@@ -398,7 +390,6 @@ start:
         add rbx, rcx
         lea rax, [rsp+0]
         mov [rax], rbx
-@for_4_continue:
         ; cast t.7(7@function,i64), str(0@argument,u8*)
         lea rax, [rsp+56]
         mov rbx, [rax]
@@ -428,8 +419,6 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         mov rax, rbx
-        jmp @strlen_ret
-@strlen_ret:
         ; release space for local variables
         add rsp, 48
         ret
@@ -1296,7 +1285,6 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-@main_ret:
         ; release space for local variables
         add rsp, 528
         ret

@@ -10,4 +10,8 @@ import org.jetbrains.annotations.*;
 public record IRProgram(@NotNull List<IRFunction> functions,
                         @NotNull List<IRGlobalVar> globalVars,
                         @NotNull List<IRStringLiteral> stringLiterals) {
+
+	public IRProgram derive(List<IRFunction> functions) {
+		return new IRProgram(functions, globalVars, stringLiterals);
+	}
 }
