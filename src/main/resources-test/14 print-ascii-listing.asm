@@ -44,7 +44,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-@printString_ret:
         ; release space for local variables
         add rsp, 16
         ret
@@ -74,7 +73,6 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-@printChar_ret:
         ; release space for local variables
         add rsp, 16
         ret
@@ -134,7 +132,6 @@ start:
         add rbx, rcx
         lea rax, [rsp+0]
         mov [rax], rbx
-@for_1_continue:
         ; cast t.7(7@function,i64), str(0@argument,u8*)
         lea rax, [rsp+56]
         mov rbx, [rax]
@@ -164,8 +161,6 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         mov rax, rbx
-        jmp @strlen_ret
-@strlen_ret:
         ; release space for local variables
         add rsp, 48
         ret
@@ -257,7 +252,6 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-@printNibble_ret:
         ; release space for local variables
         add rsp, 16
         ret
@@ -293,7 +287,6 @@ start:
         push rbx
           call @printNibble
         add rsp, 8
-@printHex2_ret:
         ; release space for local variables
         add rsp, 16
         ret
@@ -413,7 +406,6 @@ start:
         push rbx
           call @printNibble
         add rsp, 8
-@for_3_continue:
         ; const t.10(10@function,u8), 1
         mov al, 1
         lea rbx, [rsp+23]
@@ -457,11 +449,11 @@ start:
         setb bl
         lea rax, [rsp+25]
         mov [rax], bl
-        ; branch t.12(12@function,bool), false, @for_5_break
+        ; branch t.12(12@function,bool), false, @main_ret
         lea rax, [rsp+25]
         mov bl, [rax]
         or bl, bl
-        jz @for_5_break
+        jz @main_ret
         ; 28:3 if i & 15 == 0
         ; const t.16(16@function,u8), 15
         mov al, 15
@@ -574,11 +566,11 @@ start:
         sete bl
         lea rax, [rsp+36]
         mov [rax], bl
-        ; branch t.23(23@function,bool), false, @if_8_end
+        ; branch t.23(23@function,bool), false, @for_5_continue
         lea rax, [rsp+36]
         mov bl, [rax]
         or bl, bl
-        jz @if_8_end
+        jz @for_5_continue
         ; const t.27(27@function,u8), 10
         mov al, 10
         lea rbx, [rsp+40]
@@ -589,7 +581,6 @@ start:
         push rbx
           call @printChar
         add rsp, 8
-@if_8_end:
 @for_5_continue:
         ; const t.28(28@function,u8), 1
         mov al, 1
@@ -604,7 +595,6 @@ start:
         lea rax, [rsp+1]
         mov [rax], bl
         jmp @for_5
-@for_5_break:
 @main_ret:
         ; release space for local variables
         add rsp, 48
