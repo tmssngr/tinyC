@@ -128,6 +128,8 @@
 	var 20: t.20
 	var 21: t.21
 	; 145 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const t.5(5@function,u8), 22
 	cast foo(0@function,i16), t.5(5@function,u8)
 	mul bar(1@function,i16), foo(0@function,i16), foo(0@function,i16)

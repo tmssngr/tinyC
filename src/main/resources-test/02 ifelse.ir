@@ -111,6 +111,8 @@
 	var 3: t.3
 	var 4: t.4
 	; 31 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const a(0@function,u8), 1
 	const b(1@function,u8), 2
 	; 6:2 if a > b

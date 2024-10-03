@@ -137,6 +137,8 @@
 	var 26: t.26
 	var 27: t.27
 	; 35 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0(u8 chr), 32
 	const r1(i64 t.3), 0
 	cast r1(u8* t.4), r1(i64 t.3)

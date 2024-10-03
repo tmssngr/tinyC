@@ -1,0 +1,214 @@
+@printChar:
+ Local variables
+	arg 0: chr
+	var 1: t.1
+	var 2: t.2
+	; 4 pc
+	addrof r0(u8* t.1), chr(0@argument,u8)
+	const r1(i64 t.2), 1
+	call _, printStringLength [r0(u8* t.1), r1(i64 t.2)]
+
+@printUint:
+ Local variables
+	arg 0: number
+	var 1: buffer
+	var 2: pos
+	var 3: remainder
+	var 4: digit
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	var 19: t.19
+	var 20: t.20
+	; 38 pc
+	const r0(u8 pos), 20
+	; 13:2 while true
+	copy pos(2@function,u8), r0(u8 pos)
+@while_1:
+	const r0(u8 t.5), 1
+	copy r1(u8 pos), pos(2@function,u8)
+	sub r0(u8 pos), r1(u8 pos), r0(u8 t.5)
+	const r1(i64 t.6), 10
+	copy r2(i64 number), number(0@argument,i64)
+	mod r1(i64 remainder), r2(i64 number), r1(i64 t.6)
+	const r3(i64 t.7), 10
+	div r2(i64 number), r2(i64 number), r3(i64 t.7)
+	cast r1(u8 t.8), r1(i64 remainder)
+	const r3(u8 t.9), 48
+	add r1(u8 digit), r1(u8 t.8), r3(u8 t.9)
+	cast r3(i64 t.11), r0(u8 pos)
+	cast r3(u8* t.12), r3(i64 t.11)
+	; Spill pos
+	copy pos(2@function,u8), r0(u8 pos)
+	addrof r0(u8* t.10), [buffer(1@function,u8*)]
+	add r0(u8* t.10), r0(u8* t.10), r3(u8* t.12)
+	store [r0(u8* t.10)], r1(u8 digit)
+	; 19:3 if number == 0
+	const r0(i64 t.14), 0
+	equals r0(bool t.13), r2(i64 number), r0(i64 t.14)
+	copy number(0@argument,i64), r2(i64 number)
+	branch r0(bool t.13), false, @while_1
+	copy r0(u8 pos), pos(2@function,u8)
+	cast r1(i64 t.16), r0(u8 pos)
+	cast r1(u8* t.17), r1(i64 t.16)
+	addrof r2(u8* t.15), [buffer(1@function,u8*)]
+	add r1(u8* t.15), r2(u8* t.15), r1(u8* t.17)
+	const r2(u8 t.20), 20
+	sub r0(u8 t.19), r2(u8 t.20), r0(u8 pos)
+	cast r0(i64 t.18), r0(u8 t.19)
+	call _, printStringLength [r1(u8* t.15), r0(i64 t.18)]
+
+@printIntLf:
+ Local variables
+	arg 0: number
+	var 1: t.1
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	; 17 pc
+	; 27:2 if number < 0
+	const r0(i64 t.2), 0
+	copy r1(i64 number), number(0@argument,i64)
+	lt r0(bool t.1), r1(i64 number), r0(i64 t.2)
+	branch r0(bool t.1), false, @if_3_end
+	const r0(u8 t.3), 45
+	call _, printChar [r0(u8 t.3)]
+	copy r0(i64 number), number(0@argument,i64)
+	neg r0(i64 number), r0(i64 number)
+	copy number(0@argument,i64), r0(i64 number)
+@if_3_end:
+	call _, printUint [number(0@argument,i64)]
+	const r0(u8 t.4), 10
+	call _, printChar [r0(u8 t.4)]
+
+@printStringLength:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
+@initRandom:
+ Local variables
+	arg 0: salt
+	; 7 pc
+	copy r0(i32 salt), salt(0@argument,i32)
+	copy r0(i32 __random__), r0(i32 salt)
+	copy __random__(0@global,i32), r0(i32 __random__)
+
+@random:
+ Local variables
+	var 0: r
+	var 1: b
+	var 2: c
+	var 3: d
+	var 4: e
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	var 19: t.19
+	var 20: t.20
+	; 20 pc
+	copy r0(i32 __random__), __random__(0@global,i32)
+	copy r0(i32 r), r0(i32 __random__)
+	const r1(i32 t.6), 524287
+	and r1(i32 t.5), r0(i32 r), r1(i32 t.6)
+	const r2(i32 t.7), 48271
+	mul r1(i32 b), r1(i32 t.5), r2(i32 t.7)
+	const r2(i32 t.9), 15
+	shiftright r0(i32 t.8), r0(i32 r), r2(i32 t.9)
+	const r2(i32 t.10), 48271
+	mul r0(i32 c), r0(i32 t.8), r2(i32 t.10)
+	const r2(i32 t.12), 65535
+	and r2(i32 t.11), r0(i32 c), r2(i32 t.12)
+	const r3(i32 t.13), 15
+	shiftleft r2(i32 d), r2(i32 t.11), r3(i32 t.13)
+	const r3(i32 t.16), 16
+	shiftright r0(i32 t.15), r0(i32 c), r3(i32 t.16)
+	add r0(i32 t.14), r0(i32 t.15), r1(i32 b)
+	add r0(i32 e), r0(i32 t.14), r2(i32 d)
+	const r1(i32 t.18), 2147483647
+	and r1(i32 t.17), r0(i32 e), r1(i32 t.18)
+	const r2(i32 t.20), 31
+	shiftright r0(i32 t.19), r0(i32 e), r2(i32 t.20)
+	add r0(i32 __random__), r1(i32 t.17), r0(i32 t.19)
+	; 127:9 return __random__
+	copy __random__(0@global,i32), r0(i32 __random__)
+	ret r0(i32 __random__)
+
+@randomU8:
+ Local variables
+	var 0: t.0
+	var 1: t.1
+	; 3 pc
+	; 131:10 return (u8)
+	call r0(i32 t.1), random, []
+	cast r0(u8 t.0), r0(i32 t.1)
+	ret r0(u8 t.0)
+
+@main:
+ Local variables
+	var 0: i
+	var 1: r
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	var 5: t.5
+	var 6: t.6
+	; 23 pc
+	; begin initialize global variables
+	const r0(i32 __random__), 0
+	; end initialize global variables
+	const r1(i32 t.2), 7439742
+	copy __random__(0@global,i32), r0(i32 __random__)
+	call _, initRandom [r1(i32 t.2)]
+	const r0(u8 i), 0
+	; 5:2 for i < 50
+	copy i(0@function,u8), r0(u8 i)
+@for_4:
+	const r0(u8 t.4), 50
+	copy r1(u8 i), i(0@function,u8)
+	lt r0(bool t.3), r1(u8 i), r0(u8 t.4)
+	branch r0(bool t.3), false, @main_ret
+	call r0(u8 r), randomU8, []
+	cast r0(i64 t.5), r0(u8 r)
+	call _, printIntLf [r0(i64 t.5)]
+	const r0(u8 t.6), 1
+	copy r1(u8 i), i(0@function,u8)
+	add r0(u8 i), r1(u8 i), r0(u8 t.6)
+	copy i(0@function,u8), r0(u8 i)
+	jump @for_4
+@main_ret:
+
+Global variables
+	0: __random__ (4)
+

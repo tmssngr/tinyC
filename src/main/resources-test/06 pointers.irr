@@ -121,6 +121,8 @@
 	var 10: t.10
 	var 11: t.11
 	; 29 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0(i16 a), 10
 	cast r1(i64 t.4), r0(i16 a)
 	copy a(0@function,i16), r0(i16 a)

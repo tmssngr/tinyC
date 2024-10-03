@@ -117,6 +117,8 @@
 	var 6: t.6
 	var 7: t.7
 	; 24 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0(u8 i), 250
 	; 4:3 for i != 2
 	copy i(0@function,u8), r0(u8 i)

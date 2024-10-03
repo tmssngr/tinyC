@@ -118,6 +118,8 @@
 	var 10: t.10
 	var 11: t.11
 	; 72 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const a(0@function,i16), 10
 	cast t.4(4@function,i64), a(0@function,i16)
 	call _, printIntLf [t.4(4@function,i64)]

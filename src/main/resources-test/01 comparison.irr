@@ -208,6 +208,8 @@
 	var 52: t.52
 	var 53: t.53
 	; 200 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0(u8* t.4), [string-0]
 	call _, printString [r0(u8* t.4)]
 	const r0(i16 a), 1

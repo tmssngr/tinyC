@@ -274,6 +274,8 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 48
+        ; begin initialize global variables
+        ; end initialize global variables
         ; const r0(u8* t.2), [string-0]
         lea rcx, [string_0]
         ; call _, printString [r0(u8* t.2)]
