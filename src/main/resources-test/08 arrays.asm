@@ -247,6 +247,8 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 160
+        ; begin initialize global variables
+        ; end initialize global variables
         ; const r.0(0@register,u8), 32
         mov cl, 32
         ; const r.1(1@register,i64), 0

@@ -124,6 +124,8 @@
 	var 20: t.20
 	var 21: t.21
 	; 23 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r.0(0@register,u8), 32
 	const r.1(1@register,i64), 0
 	array r.1(1@register,u8*), chars(0@global,u8*) + r.1(1@register,i64)
