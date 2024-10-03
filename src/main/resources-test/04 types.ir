@@ -114,6 +114,8 @@
 	var 6: t.6
 	var 7: t.7
 	; 47 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const i(0@function,u8), 250
 	; 4:3 for i != 2
 @for_4:

@@ -111,6 +111,8 @@
 	var 0: a
 	var 1: t.1
 	; 2 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0(u8 a), 10
 	cast r0(i64 t.1), r0(u8 a)
 	call _, printIntLf [r0(i64 t.1)]

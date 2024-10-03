@@ -118,6 +118,8 @@
 	var 10: t.10
 	var 11: t.11
 	; 68 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const a(0@function,i16), 0
 	const b(1@function,i16), 1
 	const c(2@function,i16), 2

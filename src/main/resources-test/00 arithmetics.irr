@@ -131,6 +131,8 @@
 	var 20: t.20
 	var 21: t.21
 	; 40 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0(u8 t.5), 22
 	cast r0(i16 foo), r0(u8 t.5)
 	mul r0(i16 bar), r0(i16 foo), r0(i16 foo)

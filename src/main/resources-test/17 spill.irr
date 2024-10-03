@@ -121,6 +121,8 @@
 	var 10: t.10
 	var 11: t.11
 	; 42 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0(i16 a), 0
 	const r1(i16 b), 1
 	const r2(i16 c), 2

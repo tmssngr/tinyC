@@ -1,0 +1,209 @@
+@printChar:
+ Local variables
+	arg 0: chr
+	var 1: t.1
+	var 2: t.2
+	; 12 pc
+	addrof t.1(1@function,u8*), chr(0@argument,u8)
+	const t.2(2@function,i64), 1
+	call _, printStringLength [t.1(1@function,u8*), t.2(2@function,i64)]
+@printChar_ret:
+
+@printUint:
+ Local variables
+	arg 0: number
+	var 1: buffer
+	var 2: pos
+	var 3: remainder
+	var 4: digit
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	var 19: t.19
+	var 20: t.20
+	; 122 pc
+	const pos(2@function,u8), 20
+	; 13:2 while true
+@while_1:
+	const t.5(5@function,u8), 1
+	sub pos(2@function,u8), pos(2@function,u8), t.5(5@function,u8)
+	const t.6(6@function,i64), 10
+	mod remainder(3@function,i64), number(0@argument,i64), t.6(6@function,i64)
+	const t.7(7@function,i64), 10
+	div number(0@argument,i64), number(0@argument,i64), t.7(7@function,i64)
+	cast t.8(8@function,u8), remainder(3@function,i64)
+	const t.9(9@function,u8), 48
+	add digit(4@function,u8), t.8(8@function,u8), t.9(9@function,u8)
+	cast t.11(11@function,i64), pos(2@function,u8)
+	cast t.12(12@function,u8*), t.11(11@function,i64)
+	addrof t.10(10@function,u8*), [buffer(1@function,u8*)]
+	add t.10(10@function,u8*), t.10(10@function,u8*), t.12(12@function,u8*)
+	store [t.10(10@function,u8*)], digit(4@function,u8)
+	; 19:3 if number == 0
+	const t.14(14@function,i64), 0
+	equals t.13(13@function,bool), number(0@argument,i64), t.14(14@function,i64)
+	branch t.13(13@function,bool), false, @if_2_end
+	jump @while_1_break
+@if_2_end:
+	jump @while_1
+@while_1_break:
+	cast t.16(16@function,i64), pos(2@function,u8)
+	cast t.17(17@function,u8*), t.16(16@function,i64)
+	addrof t.15(15@function,u8*), [buffer(1@function,u8*)]
+	add t.15(15@function,u8*), t.15(15@function,u8*), t.17(17@function,u8*)
+	const t.20(20@function,u8), 20
+	sub t.19(19@function,u8), t.20(20@function,u8), pos(2@function,u8)
+	cast t.18(18@function,i64), t.19(19@function,u8)
+	call _, printStringLength [t.15(15@function,u8*), t.18(18@function,i64)]
+@printUint_ret:
+
+@printIntLf:
+ Local variables
+	arg 0: number
+	var 1: t.1
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	; 30 pc
+	; 27:2 if number < 0
+	const t.2(2@function,i64), 0
+	lt t.1(1@function,bool), number(0@argument,i64), t.2(2@function,i64)
+	branch t.1(1@function,bool), false, @if_3_end
+	const t.3(3@function,u8), 45
+	call _, printChar [t.3(3@function,u8)]
+	neg number(0@argument,i64), number(0@argument,i64)
+@if_3_end:
+	call _, printUint [number(0@argument,i64)]
+	const t.4(4@function,u8), 10
+	call _, printChar [t.4(4@function,u8)]
+@printIntLf_ret:
+
+@printStringLength:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
+@initRandom:
+ Local variables
+	arg 0: salt
+	; 5 pc
+	copy __random__(0@global,i32), salt(0@argument,i32)
+@initRandom_ret:
+
+@random:
+ Local variables
+	var 0: r
+	var 1: b
+	var 2: c
+	var 3: d
+	var 4: e
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	var 19: t.19
+	var 20: t.20
+	; 111 pc
+	copy r(0@function,i32), __random__(0@global,i32)
+	const t.6(6@function,i32), 524287
+	and t.5(5@function,i32), r(0@function,i32), t.6(6@function,i32)
+	const t.7(7@function,i32), 48271
+	mul b(1@function,i32), t.5(5@function,i32), t.7(7@function,i32)
+	const t.9(9@function,i32), 15
+	shiftright t.8(8@function,i32), r(0@function,i32), t.9(9@function,i32)
+	const t.10(10@function,i32), 48271
+	mul c(2@function,i32), t.8(8@function,i32), t.10(10@function,i32)
+	const t.12(12@function,i32), 65535
+	and t.11(11@function,i32), c(2@function,i32), t.12(12@function,i32)
+	const t.13(13@function,i32), 15
+	shiftleft d(3@function,i32), t.11(11@function,i32), t.13(13@function,i32)
+	const t.16(16@function,i32), 16
+	shiftright t.15(15@function,i32), c(2@function,i32), t.16(16@function,i32)
+	add t.14(14@function,i32), t.15(15@function,i32), b(1@function,i32)
+	add e(4@function,i32), t.14(14@function,i32), d(3@function,i32)
+	const t.18(18@function,i32), 2147483647
+	and t.17(17@function,i32), e(4@function,i32), t.18(18@function,i32)
+	const t.20(20@function,i32), 31
+	shiftright t.19(19@function,i32), e(4@function,i32), t.20(20@function,i32)
+	add __random__(0@global,i32), t.17(17@function,i32), t.19(19@function,i32)
+	; 127:9 return __random__
+	ret __random__(0@global,i32)
+	jump @random_ret
+@random_ret:
+
+@randomU8:
+ Local variables
+	var 0: t.0
+	var 1: t.1
+	; 12 pc
+	; 131:10 return (u8)
+	call t.1(1@function,i32), random, []
+	cast t.0(0@function,u8), t.1(1@function,i32)
+	ret t.0(0@function,u8)
+	jump @randomU8_ret
+@randomU8_ret:
+
+@main:
+ Local variables
+	var 0: i
+	var 1: r
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	var 5: t.5
+	var 6: t.6
+	; 42 pc
+	; begin initialize global variables
+	const __random__(0@global,i32), 0
+	; end initialize global variables
+	const t.2(2@function,i32), 7439742
+	call _, initRandom [t.2(2@function,i32)]
+	const i(0@function,u8), 0
+	; 5:2 for i < 50
+@for_4:
+	const t.4(4@function,u8), 50
+	lt t.3(3@function,bool), i(0@function,u8), t.4(4@function,u8)
+	branch t.3(3@function,bool), false, @for_4_break
+	call r(1@function,u8), randomU8, []
+	cast t.5(5@function,i64), r(1@function,u8)
+	call _, printIntLf [t.5(5@function,i64)]
+@for_4_continue:
+	const t.6(6@function,u8), 1
+	add i(0@function,u8), i(0@function,u8), t.6(6@function,u8)
+	jump @for_4
+@for_4_break:
+@main_ret:
+
+Global variables
+	0: __random__ (4)
+

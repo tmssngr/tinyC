@@ -138,6 +138,8 @@
 	var 27: t.27
 	var 28: t.28
 	; 71 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0(u8* t.2), [string-0]
 	call _, printString [r0(u8* t.2)]
 	const r0(u8 i), 0

@@ -134,6 +134,8 @@
 	var 26: t.26
 	var 27: t.27
 	; 171 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const chr(0@function,u8), 32
 	const t.3(3@function,i64), 0
 	cast t.4(4@function,u8*), t.3(3@function,i64)

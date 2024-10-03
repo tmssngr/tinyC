@@ -107,6 +107,11 @@ public class CompilerTest {
 		compileAndRun("17 spill.c");
 	}
 
+	@Test
+	public void testPrng() throws IOException, InterruptedException {
+		compileAndRun("18 prng.c");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(absolutePath(fileName));
 	}
