@@ -1,3 +1,4 @@
+i32 __random__;
 u8* chars[256];
 
 void printChar(u8 chr) {

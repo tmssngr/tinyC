@@ -243,6 +243,8 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 144
+        ; begin initialize global variables
+        ; end initialize global variables
         ; const r.0(0@register,u8), 1
         mov cl, 1
         ; 9:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=9:2].x

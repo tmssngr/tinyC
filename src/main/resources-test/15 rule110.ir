@@ -158,6 +158,8 @@
 	var 41: t.41
 	var 42: t.42
 	; 238 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const i(0@function,u8), 0
 	; 23:2 for i < 30
 @for_4:

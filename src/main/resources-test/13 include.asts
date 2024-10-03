@@ -1,3 +1,5 @@
+i32 __random__;
+
 void printChar(u8 chr) {
 	printStringLength(&chr, 1);
 }

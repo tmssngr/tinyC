@@ -201,6 +201,8 @@
 	var 52: t.52
 	var 53: t.53
 	; 200 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r.0(0@register,u8*), [string-0]
 	call _, printString [r.0(0@register,u8*)]
 	const r.0(0@register,i16), 1

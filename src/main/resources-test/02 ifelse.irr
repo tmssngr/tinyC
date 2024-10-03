@@ -107,6 +107,8 @@
 	var 3: t.3
 	var 4: t.4
 	; 19 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r.0(0@register,u8), 1
 	const r.1(1@register,u8), 2
 	; 6:2 if a > b
