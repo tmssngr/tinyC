@@ -83,6 +83,7 @@ public class Compiler {
 						final String name = function.name();
 						ControlFlowGraph cfg = CfgGenerator.create(name, function.instructions());
 						DetectVarLiveness.process(cfg);
+						determineBasicBlockChains(cfg);
 						irWriter.write(cfg);
 						dotWriter.writeCfg(cfg);
 						cfg = LinearScanRegisterAllocation.process(cfg, maxRegisters);
@@ -112,6 +113,17 @@ public class Compiler {
 			throw new IOException("Failed to compile");
 		}
 		return exeFile;
+	}
+
+	private static void determineBasicBlockChains(ControlFlowGraph cfg) {
+		if (!"getBombCountAround".equals(cfg.name())) {
+			return;
+		}
+
+		final List<CfgToChainConverter.Chain> chains = CfgToChainConverter.convert(cfg);
+		for (CfgToChainConverter.Chain chain : chains) {
+			System.out.println(chain.loopLevelFrom() + "-" + chain.loopLevelTo() + ": " + chain.basicBlocks());
+		}
 	}
 
 	@NotNull
