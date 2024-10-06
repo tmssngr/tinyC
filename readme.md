@@ -188,21 +188,165 @@ Of course, this would be very inefficient, e.g. `const t2, 0` from the above exa
   while the next instruction `lt t1, number, t2` would already need it again, hence loading from memory.
 
 ### Linear Register Allocation
-There are multiple numbers of register allocation algorithms.
 The Linear Register Allocation is easy to understand, fast (linear) and though produces good results.
-The idea of the Linear Register Allocation is to "cache" values in registers.
-It treats each basic block separately, with no used register between different basic blocks.
-To implement this in the intermediate representation, we extend the variable scope enum by a new `register` value.
-If a variable is needed, it is loaded into a register:
-```
-  copy r.0, number
-```
-With the help of the previously performed Variable Liveness Analysis, we know whether a written variable is used at all, and can ignore any instructions (except for call return values) which would produce an unused variable.
-We also know when a variable is used the last time.
-Then we can free the variable's register.
-It then could be reused for storing a different variable, even the result of an instruction.
+The idea of the Linear Register Allocation is to "cache" values in registers when they are needed.
 
-At the end of a basic block (before the `jump` or `branch`) we store all modified registers back into their stack positions.
+For implementing it, we need to extend the *variable* represenation by a new `register` scope.
+
+If a variable `number` is needed in a register `r.0`, it is loaded into a register (`number` means the stack location for the variable of this name):
+```
+  mov r.0, number
+```
+
+#### Example
+
+That best could be explained with an example:
+```
+mov x, 0            ; 1
+mov y, 1            ; 2
+a = foo(x, y)       ; 3
+b = bar(y, x)       ; 4
+bazz(a, b)          ; 5
+```
+
+For our example we assume following calling convention:
+- the first four call arguments are passed in registers `r.1`, `r.2`, `r.3` and `r.4`
+- more arguments are passed on the stack
+- a function return value is stored in register `r.0`
+- the registers `r.0` to `r.4` are considered volatile; a called function might clobber them
+- but we have three additional non-volatile registers `r.5`, `r.6` and `r.7` (which we refer to in the below examples as `rnv.1`, `rnv.2` and `rnv.3`) that a function needs to save before using them (and restore later), so from the callee's perspective they remain unmodified
+
+We start with the last line 5.
+It needs (*uses*) variables `a` and `b` in registers `r.1` and `r.2` because they are the first and second call argument:
+```
+...
+b = bar(y, x)       ; 4
+...
+; a = r.1, b = r.2
+bazz(a, b)          ; 5
+```
+Now we are looking at line 4 and compare it with the expected registers for line 5.
+Line 4 writes variable `b` which according to the calling convention is returned in register `r.0`;
+Hence we need to move it from register `r.0` to register `r.2` where it is expected for line 5.
+```
+...
+b = bar(y, x)       ; 4
+...
+; a = r.1, b = r.0
+mov r.2, r.0
+; a = r.1, b = r.2
+bazz(a, b)          ; 5
+```
+The variable `a` is expected in register `r.1`, but because this is a volatile register this might be clobbered by the call in line 4.
+Hence we need to store it in a non-volatile register, let's use the first one `rnv.1`.
+```
+...
+b = bar(y, x)       ; 4
+; a = rnv.1, b = r.0
+mov r.1, rnv.1
+; a = r.1, b = r.0
+mov r.2, r.0
+; a = r.1, b = r.2
+bazz(a, b)          ; 5
+```
+Now we can look at where we expect the used variables for line 4.
+Variable `a` is written in line 3, so it is stored in `r.0`, but it is expected in the non-volatile register `rnv.1`, so a move is required, freeing `rnv.1`.
+```
+...
+a = foo(x, y)       ; 3
+...
+; a = r.0, y = r.1, x = r.2
+mov rnv.1, r.0
+; a = rnv.1, y = r.1, x = r.2
+b = bar(y, x)       ; 4
+...
+```
+As the call to `foo` might clobber the registers `r.1` and `r.2` where the variables `y` and `x` are stored, we have to store them in non-volatile registers instead.
+```
+...
+a = foo(x, y)       ; 3
+; a = r.0, y = rnv.1, x = rnv.2
+mov r.2, rnv.2
+; a = r.0, y = rnv.1, x = r.2
+mov r.1, rnv.1
+; a = r.0, y = r.1, x = r.2
+mov rnv.1, r.0
+; a = rnv.1, y = r.1, x = r.2
+b = bar(y, x)       ; 4
+...
+```
+Now let's look at the arguments for the call to `foo` in line 3.
+The first argument (`x`) is expected in register `r.1`, but the next instruction expects it in register `rnv.2`.
+This requires to store variable `x` in the two registers `r.1` and `rnv.2` which is easily done with a move from one to another.
+We have the choice for where the variable `x` being stored *before* line 3 - either in `r.1` or in `rnv.2`.
+We prefer the volatile register `r.1`:
+```
+...
+; y = r.2/rnv.1, x = r.1
+mov rnv.2, r.1
+; y = r.2/rnv.1, x = r.1/rnv.2
+a = foo(x, y)       ; 3
+; a = r.0, y = rnv.1, x = rnv.2
+...
+```
+Similar we proceed with variable `y`:
+```
+...
+; y = r.2, x = r.1
+mov rnv.1, r.2
+; y = r.2/rnv.1, x = r.1
+mov rnv.2, r.1
+; y = r.2/rnv.1, x = r.1/rnv.2
+a = foo(x, y)       ; 3
+; a = r.0, y = rnv.1, x = rnv.2
+...
+```
+Now the lines 2 and 1 are very easy, so here is the full list of instructions:
+```
+mov r.1, 0          ; 1
+; x = r.1
+mov r.2, 1          ; 2
+; y = r.2, x = r.1
+mov rnv.1, r.2
+mov rnv.2, r.1
+a = foo(x, y)       ; 3
+; a = r.0, y = rnv.1, x = rnv.2
+mov r.2, rnv.2
+; a = r.0, y = rnv.1, x = r.2
+mov r.1, rnv.1
+; a = r.0, y = r.1, x = r.2
+mov rnv.1, r.0
+; a = rnv.1, y = r.1, x = r.2
+b = bar(y, x)       ; 4
+; a = rnv.1, b = r.0
+mov r.1, rnv.1
+; a = r.1, b = r.0
+mov r.2, r.0
+; a = r.1, b = r.2
+bazz(a, b)          ; 5
+```
+If this would be the full code of a function `qux` (not just one basic block), we would have to push the used non-volatile registers and pop them before the return:
+```
+qux:
+	push rnv.1
+	push rnv.2
+	mov r.1, 0
+	mov r.2, 1
+	mov rnv.1, r.2
+	mov rnv.2, r.1
+	call foo
+	mov r.2, rnv.2
+	mov r.1, rnv.1
+	mov rnv.1, r.0
+	call bar
+	mov r.1, rnv.1
+	mov r.2, r.0
+	call bazz
+	pop rnv.2
+	pop rnv.1
+	ret
+```
+
 
 #### Variables addressed with pointers
 
@@ -210,9 +354,6 @@ In a previous step we have remembered all variables for which the address is req
 Those might be read or written indirectly through their address.
 To prevent their cached register values from their memory values, we only keep them in registers until a memory address is read or written.
 
-#### Calls
-
-Before a call, we also store all modified registers back into their memory positions (and forget all unmodified register-cached variables), so the called function can use all the registers.
 
 ## Convert to ASM
 The IR can be converted to different assembler outputs.
