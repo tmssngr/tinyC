@@ -9,13 +9,22 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRMemStore(@NotNull IRVar addr, @NotNull IRVar value, @NotNull Location location) implements IRInstruction {
+public record IRMemStore(@Nullable IRVar addr, @NotNull IRVar value, @NotNull Location location) implements IRInstruction {
+
+	public static IRMemStore push(@NotNull IRVar var) {
+		return new IRMemStore(null, var, Location.DUMMY);
+	}
+
 	public IRMemStore {
-		Utils.assertTrue(Objects.equals(value.type(), addr.type().toType()));
+		if (addr != null) {
+			Utils.assertTrue(Objects.equals(value.type(), addr.type().toType()));
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "store [" + addr + "], " + value;
+		return addr != null
+				? "store [" + addr + "], " + value
+				: "push " + value;
 	}
 }

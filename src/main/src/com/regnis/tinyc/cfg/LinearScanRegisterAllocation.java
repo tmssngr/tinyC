@@ -15,7 +15,7 @@ import org.jetbrains.annotations.*;
 public final class LinearScanRegisterAllocation {
 
 	public static ControlFlowGraph process(ControlFlowGraph cfg, int maxRegisters) {
-		LinearScanRegisterAllocation2.process(cfg, new RegisterAllocationStrategy(maxRegisters, 0, 4, 1));
+		LinearScanRegisterAllocation2.process(cfg, new RegisterAllocationStrategy());
 
 		final Map<String, BasicBlock> blocks = new HashMap<>();
 		for (BasicBlock block : cfg.blocks()) {

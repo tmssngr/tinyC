@@ -42,7 +42,7 @@ public class LinearScanRegisterAllocation2Test {
 		final IRVar reg2 = reg(2, Type.I64);
 		final IRVar regNV1 = reg(3, Type.I64);
 		final IRVar regNV2 = reg(4, Type.I64);
-		final List<BasicBlock> blocks = LinearScanRegisterAllocation2.process(cfg, new RegisterAllocationStrategy(3, 2, 2, 1));
+		final List<BasicBlock> blocks = LinearScanRegisterAllocation2.process(cfg, new RegisterAllocationStrategy());
 		Assert.assertEquals(1, blocks.size());
 		Assert.assertEquals(List.of(
 				                    new IRLiteral(x, 0, Location.DUMMY),
