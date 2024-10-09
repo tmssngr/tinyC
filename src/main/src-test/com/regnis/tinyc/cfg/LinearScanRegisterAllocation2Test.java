@@ -18,8 +18,8 @@ public class LinearScanRegisterAllocation2Test {
 	public void testExample() {
 		final IRVar x = var("x", 0, Type.I16);
 		final IRVar y = var("y", 1, Type.I16);
-		final IRVar a = var("a", 2, Type.I32);
-		final IRVar b = var("b", 3, Type.I64);
+		final IRVar a = var("a", 2, Type.I16);
+		final IRVar b = var("b", 3, Type.I16);
 		final ControlFlowGraph cfg = CfgGenerator.create("test", List.of(
 				new IRLiteral(x, 0, Location.DUMMY),
 				new IRLiteral(y, 1, Location.DUMMY),

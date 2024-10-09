@@ -40,27 +40,26 @@ public final class LinearScanRegisterAllocation2 {
 
 	private RegisterAllocationStrategy.AllLiveVarRegisterState  processReverse(String name, RegisterAllocationStrategy.AllLiveVarRegisterState  state) {
 		final BasicBlock block = cfg.get(name);
+		final List<IRInstruction> instructions = new ArrayList<>();
 		for (IRInstruction instruction : block.instructions().reversed()) {
-			state = processReverse(instruction, state);
+			state = processReverse(instruction, state, instructions::add);
 		}
 		return state;
 	}
 
 	@NotNull
-	private RegisterAllocationStrategy.AllLiveVarRegisterState  processReverse(@NotNull IRInstruction instruction, @NotNull RegisterAllocationStrategy.AllLiveVarRegisterState  state) {
+	private RegisterAllocationStrategy.AllLiveVarRegisterState  processReverse(@NotNull IRInstruction instruction,
+	                                                                           @NotNull RegisterAllocationStrategy.AllLiveVarRegisterState  state,
+	                                                                           @NotNull Consumer<IRInstruction> consumer) {
 		if (instruction instanceof IRJump
 		    || instruction instanceof IRComment) {
+			consumer.accept(instruction);
 			return state;
 		}
 
 		if (instruction instanceof IRCall call) {
 			final IRVar target = call.target();
-			state = strategy.prevState(state, target, call.args(), new Consumer<IRInstruction>() {
-				@Override
-				public void accept(IRInstruction instruction) {
-
-				}
-			});
+			state = strategy.prevState(state, target, call.args(), consumer);
 		}
 		else {
 			final Set<LiveVar> uses = new HashSet<>();
