@@ -20,6 +20,9 @@ public final class RegisterAllocationStrategy {
 	static final int CALL_ARG_0 = 1;
 	static final int CALL_ARG_1 = 2;
 	static final int FIRST_NON_VOLATILE_REGISTER = 4;
+	static final int NON_VOLATILE_REGISTER0 = FIRST_NON_VOLATILE_REGISTER;
+	static final int NON_VOLATILE_REGISTER1 = NON_VOLATILE_REGISTER0 + 1;
+	static final int LAST_NON_VOLATILE_REGISTER = NON_VOLATILE_REGISTER1;
 
 	@NotNull
 	public AllLiveVarRegisterState prevState(@NotNull AllLiveVarRegisterState prevState, @Nullable IRVar target, @NotNull List<IRVar> args, @NotNull Consumer<IRInstruction> consumer) {
@@ -63,8 +66,16 @@ public final class RegisterAllocationStrategy {
 		for (int i = 0; i < args.size(); i++, argReg++) {
 			final IRVar arg = args.get(i);
 			if (i < 4) {
-//				final LiveVarRegisterState state = get(arg, liveVars);
-				liveVars.add(new LiveVarRegisterState(arg.name(), arg.index(), arg.scope(), arg.type(), List.of(argReg)));
+				final LiveVarRegisterState state = get(arg, liveVars);
+				if (state != null) {
+					liveVars.remove(state);
+					final List<Integer> registers = new ArrayList<>(state.registers);
+					registers.add(argReg);
+					liveVars.add(new LiveVarRegisterState(arg.name(), arg.index(), arg.scope(), arg.type(), List.copyOf(registers)));
+				}
+				else {
+					liveVars.add(new LiveVarRegisterState(arg.name(), arg.index(), arg.scope(), arg.type(), List.of(argReg)));
+				}
 			}
 			else {
 				consumer.accept(IRMemStore.push(arg));
@@ -74,7 +85,21 @@ public final class RegisterAllocationStrategy {
 	}
 
 	private int getFreeNonVolatileRegister(List<LiveVarRegisterState> vars) {
-		return FIRST_NON_VOLATILE_REGISTER;
+		final Set<Integer> usedNonVolatileRegisters = new HashSet<>();
+		for (LiveVarRegisterState var : vars) {
+			for (Integer register : var.registers) {
+				if (!isVolatile(register)) {
+					usedNonVolatileRegisters.add(register);
+				}
+			}
+		}
+
+		for (int register = FIRST_NON_VOLATILE_REGISTER; register <= LAST_NON_VOLATILE_REGISTER; register++) {
+			if (!usedNonVolatileRegisters.contains(register)) {
+				return register;
+			}
+		}
+		return -1;
 	}
 
 	private boolean isVolatile(int register) {

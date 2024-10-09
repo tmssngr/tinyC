@@ -9,7 +9,7 @@ import java.util.*;
 import org.jetbrains.annotations.*;
 import org.junit.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Thomas Singer
@@ -50,8 +50,41 @@ public class RegisterAllocationStrategyTest {
 				new IRCopy(reg("b", RegisterAllocationStrategy.CALL_RETURN_REG),
 				           reg("b", RegisterAllocationStrategy.CALL_ARG_1),
 				           Location.DUMMY),
-				new IRCopy(reg("a", RegisterAllocationStrategy.FIRST_NON_VOLATILE_REGISTER),
+				new IRCopy(reg("a", RegisterAllocationStrategy.NON_VOLATILE_REGISTER0),
 				           reg("a", RegisterAllocationStrategy.CALL_ARG_0),
+				           Location.DUMMY)
+		), instructions);
+		instructions.clear();
+
+		// a = foo(x, y)
+		state = strategy.prevState(state,
+		                           var("a", 2),
+		                           List.of(
+				                           var("x", 0),
+				                           var("y", 1)
+		                           ), instructions::add);
+		assertEquals(new RegisterAllocationStrategy.AllLiveVarRegisterState(List.of(
+				new RegisterAllocationStrategy.LiveVarRegisterState("x", 0, VariableScope.function, Type.I16,
+				                                                    List.of(
+						                                                    RegisterAllocationStrategy.NON_VOLATILE_REGISTER1,
+						                                                    RegisterAllocationStrategy.CALL_ARG_0
+				                                                    )),
+				new RegisterAllocationStrategy.LiveVarRegisterState("y", 1, VariableScope.function, Type.I16,
+				                                                    List.of(
+						                                                    RegisterAllocationStrategy.NON_VOLATILE_REGISTER0,
+						                                                    RegisterAllocationStrategy.CALL_ARG_1
+				                                                    ))
+		)), state);
+		// in reverse order
+		assertEquals(List.of(
+				new IRCopy(reg("a", RegisterAllocationStrategy.CALL_RETURN_REG),
+				           reg("a", RegisterAllocationStrategy.NON_VOLATILE_REGISTER0),
+				           Location.DUMMY),
+				new IRCopy(reg("y", RegisterAllocationStrategy.NON_VOLATILE_REGISTER0),
+				           reg("y", RegisterAllocationStrategy.CALL_ARG_0),
+				           Location.DUMMY),
+				new IRCopy(reg("x", RegisterAllocationStrategy.NON_VOLATILE_REGISTER1),
+				           reg("x", RegisterAllocationStrategy.CALL_ARG_1),
 				           Location.DUMMY)
 		), instructions);
 	}
