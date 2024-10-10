@@ -40,34 +40,39 @@ public final class LinearScanRegisterAllocation2 {
 	private void processReverse(String name) {
 		final BasicBlock block = cfg.get(name);
 
-		final NewBasicBlock newBlock = getNewBasicBlock(name);
-		newBlock.liveOut = strategy.getState();
+		final var liveOutState = strategy.getState();
 
 		final List<IRInstruction> instructions = new ArrayList<>();
 		for (IRInstruction instruction : block.instructions().reversed()) {
-			processReverse(instruction, instructions::add);
+			processReverse(instruction, instructions::addFirst);
 		}
 
-		newBlock.instructions = instructions.reversed();
+		final NewBasicBlock newBlock = getNewBasicBlock(name);
+		newBlock.liveOut = liveOutState;
+		newBlock.instructions = instructions;
 		newBlock.liveIn = strategy.getState();
 	}
 
 	private void processReverse(@NotNull IRInstruction instruction,
 	                            @NotNull Consumer<IRInstruction> consumer) {
-		if (instruction instanceof IRJump
-		    || instruction instanceof IRComment) {
-			consumer.accept(instruction);
-			return;
+		switch (instruction) {
+		case IRCall call -> {
+			final IRVar target = strategy.afterCall(call.target(), consumer);
+			consumer.accept(new IRCall(target, call.name(), strategy.callArgs(call.args()), call.location()));
+			strategy.prepareCallArgs(call.args(), consumer);
 		}
-
-		if (instruction instanceof IRCall call) {
-			final IRVar target = call.target();
-			strategy.prevState(target, call.args(), consumer);
+		case IRComment ignored -> consumer.accept(instruction);
+		case IRJump ignored -> consumer.accept(instruction);
+		case IRLiteral literal -> {
+			final IRVar target = strategy.target(literal.target(), consumer);
+			consumer.accept(new IRLiteral(target, literal.value(), literal.location()));
 		}
-		else {
+		default -> {
 			final Set<LiveVar> uses = new HashSet<>();
 			final Set<LiveVar> defines = new HashSet<>();
 			DetectVarLiveness.detectLiveness(instruction, uses, defines);
+			throw new UnsupportedOperationException(instruction.toString());
+		}
 		}
 	}
 

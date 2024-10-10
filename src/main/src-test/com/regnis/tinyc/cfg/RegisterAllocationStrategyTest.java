@@ -5,6 +5,7 @@ import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 import org.junit.*;
@@ -20,12 +21,13 @@ public class RegisterAllocationStrategyTest {
 	public void testCall() {
 		final var strategy = new RegisterAllocationStrategy();
 		final List<IRInstruction> instructions = new ArrayList<>();
+		final Consumer<IRInstruction> consumer = instructions::addFirst;
 		// bazz(a, b)
-		strategy.prevState(null,
-		                               List.of(
-				                               var("a", 2),
-				                               var("b", 3)
-		                               ), instructions::add);
+		strategy.afterCall(null, consumer);
+		strategy.prepareCallArgs(List.of(
+				var("a", 2),
+				var("b", 3)
+		), consumer);
 		assertEquals(new RegisterAllocationStrategy.AllLiveVarRegisterState(List.of(
 				new RegisterAllocationStrategy.LiveVarRegisterState("a", 2, VariableScope.function, Type.I16, List.of(RegisterAllocationStrategy.CALL_ARG_0)),
 				new RegisterAllocationStrategy.LiveVarRegisterState("b", 3, VariableScope.function, Type.I16, List.of(RegisterAllocationStrategy.CALL_ARG_1))
@@ -33,33 +35,28 @@ public class RegisterAllocationStrategyTest {
 		assertEquals(List.of(), instructions);
 
 		// b = bar(y, x)
-		strategy.prevState(var("b", 3),
-		                           List.of(
-				                           var("y", 1),
-				                           var("x", 0)
-		                           ), instructions::add);
+		strategy.afterCall(var("b", 3), consumer);
+		strategy.prepareCallArgs(List.of(
+				var("y", 1),
+				var("x", 0)
+		), consumer);
 		assertEquals(new RegisterAllocationStrategy.AllLiveVarRegisterState(List.of(
 				new RegisterAllocationStrategy.LiveVarRegisterState("a", 2, VariableScope.function, Type.I16, List.of(RegisterAllocationStrategy.FIRST_NON_VOLATILE_REGISTER)),
 				new RegisterAllocationStrategy.LiveVarRegisterState("y", 1, VariableScope.function, Type.I16, List.of(RegisterAllocationStrategy.CALL_ARG_0)),
 				new RegisterAllocationStrategy.LiveVarRegisterState("x", 0, VariableScope.function, Type.I16, List.of(RegisterAllocationStrategy.CALL_ARG_1))
 		)), strategy.getState());
-		// in reverse order
 		assertEquals(List.of(
-				new IRCopy(reg("b", RegisterAllocationStrategy.CALL_RETURN_REG),
-				           reg("b", RegisterAllocationStrategy.CALL_ARG_1),
-				           Location.DUMMY),
-				new IRCopy(reg("a", RegisterAllocationStrategy.NON_VOLATILE_REGISTER0),
-				           reg("a", RegisterAllocationStrategy.CALL_ARG_0),
-				           Location.DUMMY)
+				move("a", RegisterAllocationStrategy.CALL_ARG_0, RegisterAllocationStrategy.NON_VOLATILE_REGISTER0),
+				move("b", RegisterAllocationStrategy.CALL_ARG_1, RegisterAllocationStrategy.CALL_RETURN_REG)
 		), instructions);
 		instructions.clear();
 
 		// a = foo(x, y)
-		strategy.prevState(var("a", 2),
-		                           List.of(
-				                           var("x", 0),
-				                           var("y", 1)
-		                           ), instructions::add);
+		strategy.afterCall(var("a", 2), consumer);
+		strategy.prepareCallArgs(List.of(
+				var("x", 0),
+				var("y", 1)
+		), consumer);
 		assertEquals(new RegisterAllocationStrategy.AllLiveVarRegisterState(List.of(
 				new RegisterAllocationStrategy.LiveVarRegisterState("x", 0, VariableScope.function, Type.I16,
 				                                                    List.of(
@@ -72,18 +69,18 @@ public class RegisterAllocationStrategyTest {
 						                                                    RegisterAllocationStrategy.CALL_ARG_1
 				                                                    ))
 		)), strategy.getState());
-		// in reverse order
 		assertEquals(List.of(
-				new IRCopy(reg("a", RegisterAllocationStrategy.CALL_RETURN_REG),
-				           reg("a", RegisterAllocationStrategy.NON_VOLATILE_REGISTER0),
-				           Location.DUMMY),
-				new IRCopy(reg("y", RegisterAllocationStrategy.NON_VOLATILE_REGISTER0),
-				           reg("y", RegisterAllocationStrategy.CALL_ARG_0),
-				           Location.DUMMY),
-				new IRCopy(reg("x", RegisterAllocationStrategy.NON_VOLATILE_REGISTER1),
-				           reg("x", RegisterAllocationStrategy.CALL_ARG_1),
-				           Location.DUMMY)
+				move("x", RegisterAllocationStrategy.CALL_ARG_1, RegisterAllocationStrategy.NON_VOLATILE_REGISTER1),
+				move("y", RegisterAllocationStrategy.CALL_ARG_0, RegisterAllocationStrategy.NON_VOLATILE_REGISTER0),
+				move("a", RegisterAllocationStrategy.NON_VOLATILE_REGISTER0, RegisterAllocationStrategy.CALL_RETURN_REG)
 		), instructions);
+	}
+
+	@NotNull
+	private static IRCopy move(String name, int from, int to) {
+		return new IRCopy(reg(name, to),
+		                  reg(name, from),
+		                  Location.DUMMY);
 	}
 
 	@NotNull

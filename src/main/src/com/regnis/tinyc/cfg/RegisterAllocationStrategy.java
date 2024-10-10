@@ -19,7 +19,8 @@ public final class RegisterAllocationStrategy {
 	static final int CALL_RETURN_REG = 0;
 	static final int CALL_ARG_0 = 1;
 	static final int CALL_ARG_1 = 2;
-	static final int FIRST_NON_VOLATILE_REGISTER = 4;
+	private static final int MAX_ARGS_IN_REGISTERS = 2;
+	static final int FIRST_NON_VOLATILE_REGISTER = 3;
 	static final int NON_VOLATILE_REGISTER0 = FIRST_NON_VOLATILE_REGISTER;
 	static final int NON_VOLATILE_REGISTER1 = NON_VOLATILE_REGISTER0 + 1;
 	static final int LAST_NON_VOLATILE_REGISTER = NON_VOLATILE_REGISTER1;
@@ -38,19 +39,52 @@ public final class RegisterAllocationStrategy {
 		liveVars.addAll(state.vars);
 	}
 
-	public void prevState(@Nullable IRVar target, @NotNull List<IRVar> args, @NotNull Consumer<IRInstruction> consumer) {
+	@Nullable
+	public IRVar afterCall(@Nullable IRVar target, @NotNull Consumer<IRInstruction> consumer) {
 		if (target != null) {
-			final LiveVarRegisterState state = get(target, liveVars);
-			if (state != null) {
-				liveVars.remove(state);
-				Utils.assertTrue(state.registers.size() == 1); // just this case is covered for now
-				final int register = state.registers.getFirst();
-				if (register != CALL_RETURN_REG) {
-					move(target.name(), CALL_RETURN_REG, register, target.type(), consumer);
-				}
-			}
+			target = prepareCallTarget(target, consumer);
 		}
 
+		freeVolatileRegisters(consumer);
+		return target;
+	}
+
+	@NotNull
+	public List<IRVar> callArgs(@NotNull List<IRVar> args) {
+		final List<IRVar> newArgs = new ArrayList<>();
+		int argReg = CALL_ARG_0;
+		for (int i = 0; i < args.size(); i++, argReg++) {
+			final IRVar arg = args.get(i);
+			newArgs.add(i < MAX_ARGS_IN_REGISTERS
+					            ? new IRVar(arg.name(), argReg, VariableScope.register, arg.type(), arg.canBeRegister())
+					            : arg);
+		}
+		return newArgs;
+	}
+
+	public void prepareCallArgs(@NotNull List<IRVar> args, @NotNull Consumer<IRInstruction> consumer) {
+		int argReg = CALL_ARG_0;
+		for (int i = 0; i < args.size(); i++, argReg++) {
+			final IRVar arg = args.get(i);
+			if (i < MAX_ARGS_IN_REGISTERS) {
+				final LiveVarRegisterState state = get(arg, liveVars);
+				if (state != null) {
+					liveVars.remove(state);
+					final List<Integer> registers = new ArrayList<>(state.registers);
+					registers.add(argReg);
+					liveVars.add(new LiveVarRegisterState(arg.name(), arg.index(), arg.scope(), arg.type(), List.copyOf(registers)));
+				}
+				else {
+					liveVars.add(new LiveVarRegisterState(arg.name(), arg.index(), arg.scope(), arg.type(), List.of(argReg)));
+				}
+			}
+			else {
+				consumer.accept(IRMemStore.push(arg));
+			}
+		}
+	}
+
+	public void freeVolatileRegisters(@NotNull Consumer<IRInstruction> consumer) {
 		for (int i = 0; i < liveVars.size(); i++) {
 			final LiveVarRegisterState var = liveVars.get(i);
 			final List<Integer> registers = new ArrayList<>(var.registers);
@@ -72,26 +106,46 @@ public final class RegisterAllocationStrategy {
 			}
 			liveVars.set(i, var.derive(registers));
 		}
+	}
 
-		int argReg = 1;
-		for (int i = 0; i < args.size(); i++, argReg++) {
-			final IRVar arg = args.get(i);
-			if (i < 4) {
-				final LiveVarRegisterState state = get(arg, liveVars);
-				if (state != null) {
-					liveVars.remove(state);
-					final List<Integer> registers = new ArrayList<>(state.registers);
-					registers.add(argReg);
-					liveVars.add(new LiveVarRegisterState(arg.name(), arg.index(), arg.scope(), arg.type(), List.copyOf(registers)));
-				}
-				else {
-					liveVars.add(new LiveVarRegisterState(arg.name(), arg.index(), arg.scope(), arg.type(), List.of(argReg)));
+	@NotNull
+	public IRVar target(IRVar target, Consumer<IRInstruction> consumer) {
+		final LiveVarRegisterState state = get(target, liveVars);
+		Objects.requireNonNull(state);
+		liveVars.remove(state);
+		int preferredRegister = -1;
+		for (int register : state.registers) {
+			if (preferredRegister < 0) {
+				preferredRegister = register;
+				if (isVolatile(register)) {
+					break;
 				}
 			}
-			else {
-				consumer.accept(IRMemStore.push(arg));
+			else if (isVolatile(register)) {
+				preferredRegister = register;
+				break;
 			}
 		}
+		Utils.assertTrue(preferredRegister >= 0);
+		for (int register : state.registers) {
+			if (register != preferredRegister) {
+				move(state.name, preferredRegister, register, state.type, consumer);
+			}
+		}
+		return new IRVar(state.name, preferredRegister, VariableScope.register, state.type, true);
+	}
+
+	@NotNull
+	private IRVar prepareCallTarget(@NotNull IRVar target, @NotNull Consumer<IRInstruction> consumer) {
+		final LiveVarRegisterState state = get(target, liveVars);
+		Objects.requireNonNull(state);
+		liveVars.remove(state);
+		Utils.assertTrue(state.registers.size() == 1); // just this case is covered for now
+		final int register = state.registers.getFirst();
+		if (register != CALL_RETURN_REG) {
+			move(target.name(), CALL_RETURN_REG, register, target.type(), consumer);
+		}
+		return new IRVar(target.name(), CALL_RETURN_REG, VariableScope.register, target.type(), target.canBeRegister());
 	}
 
 	private int getFreeNonVolatileRegister(List<LiveVarRegisterState> vars) {
@@ -129,8 +183,8 @@ public final class RegisterAllocationStrategy {
 	}
 
 	private static void move(String name, int from, int to, Type type, @NotNull Consumer<IRInstruction> consumer) {
-		consumer.accept(new IRCopy(new IRVar(name, from, VariableScope.register, type, true),
-		                           new IRVar(name, to, VariableScope.register, type, true),
+		consumer.accept(new IRCopy(new IRVar(name, to, VariableScope.register, type, true),
+		                           new IRVar(name, from, VariableScope.register, type, true),
 		                           Location.DUMMY));
 	}
 
