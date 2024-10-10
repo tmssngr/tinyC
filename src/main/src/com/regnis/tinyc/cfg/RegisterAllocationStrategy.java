@@ -24,10 +24,21 @@ public final class RegisterAllocationStrategy {
 	static final int NON_VOLATILE_REGISTER1 = NON_VOLATILE_REGISTER0 + 1;
 	static final int LAST_NON_VOLATILE_REGISTER = NON_VOLATILE_REGISTER1;
 
-	@NotNull
-	public AllLiveVarRegisterState prevState(@NotNull AllLiveVarRegisterState prevState, @Nullable IRVar target, @NotNull List<IRVar> args, @NotNull Consumer<IRInstruction> consumer) {
-		final List<LiveVarRegisterState> liveVars = new ArrayList<>(prevState.vars);
+	private final List<LiveVarRegisterState> liveVars = new ArrayList<>();
 
+	public RegisterAllocationStrategy() {
+	}
+
+	public AllLiveVarRegisterState getState() {
+		return new AllLiveVarRegisterState(liveVars);
+	}
+
+	public void setState(@NotNull AllLiveVarRegisterState state) {
+		liveVars.clear();
+		liveVars.addAll(state.vars);
+	}
+
+	public void prevState(@Nullable IRVar target, @NotNull List<IRVar> args, @NotNull Consumer<IRInstruction> consumer) {
 		if (target != null) {
 			final LiveVarRegisterState state = get(target, liveVars);
 			if (state != null) {
@@ -81,7 +92,6 @@ public final class RegisterAllocationStrategy {
 				consumer.accept(IRMemStore.push(arg));
 			}
 		}
-		return new AllLiveVarRegisterState(liveVars);
 	}
 
 	private int getFreeNonVolatileRegister(List<LiveVarRegisterState> vars) {

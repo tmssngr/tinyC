@@ -1,6 +1,5 @@
 package com.regnis.tinyc.cfg;
 
-import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
@@ -19,10 +18,10 @@ public final class LinearScanRegisterAllocation2 {
 		for (CfgToChainConverter.Chain chain : chains) {
 			allocation.process(chain.basicBlocks());
 		}
-		// todo
-		return cfg.blocks();
+		return allocation.getFinalBlocks();
 	}
 
+	private final Map<String, NewBasicBlock> newBasicBlockMap = new HashMap<>();
 	private final ControlFlowGraph cfg;
 	private final RegisterAllocationStrategy strategy;
 
@@ -32,41 +31,66 @@ public final class LinearScanRegisterAllocation2 {
 	}
 
 	private void process(@NotNull List<String> blocks) {
-		RegisterAllocationStrategy.AllLiveVarRegisterState  state = RegisterAllocationStrategy.EMPTY_STATE;
+		strategy.setState(RegisterAllocationStrategy.EMPTY_STATE);
 		for (String name : blocks.reversed()) {
-			state = processReverse(name, state);
+			processReverse(name);
 		}
 	}
 
-	private RegisterAllocationStrategy.AllLiveVarRegisterState  processReverse(String name, RegisterAllocationStrategy.AllLiveVarRegisterState  state) {
+	private void processReverse(String name) {
 		final BasicBlock block = cfg.get(name);
+
+		final NewBasicBlock newBlock = getNewBasicBlock(name);
+		newBlock.liveOut = strategy.getState();
+
 		final List<IRInstruction> instructions = new ArrayList<>();
 		for (IRInstruction instruction : block.instructions().reversed()) {
-			state = processReverse(instruction, state, instructions::add);
+			processReverse(instruction, instructions::add);
 		}
-		return state;
+
+		newBlock.instructions = instructions.reversed();
+		newBlock.liveIn = strategy.getState();
 	}
 
-	@NotNull
-	private RegisterAllocationStrategy.AllLiveVarRegisterState  processReverse(@NotNull IRInstruction instruction,
-	                                                                           @NotNull RegisterAllocationStrategy.AllLiveVarRegisterState  state,
-	                                                                           @NotNull Consumer<IRInstruction> consumer) {
+	private void processReverse(@NotNull IRInstruction instruction,
+	                            @NotNull Consumer<IRInstruction> consumer) {
 		if (instruction instanceof IRJump
 		    || instruction instanceof IRComment) {
 			consumer.accept(instruction);
-			return state;
+			return;
 		}
 
 		if (instruction instanceof IRCall call) {
 			final IRVar target = call.target();
-			state = strategy.prevState(state, target, call.args(), consumer);
+			strategy.prevState(target, call.args(), consumer);
 		}
 		else {
 			final Set<LiveVar> uses = new HashSet<>();
 			final Set<LiveVar> defines = new HashSet<>();
 			DetectVarLiveness.detectLiveness(instruction, uses, defines);
 		}
-		return state;
 	}
 
+	private NewBasicBlock getNewBasicBlock(String name) {
+		return newBasicBlockMap.computeIfAbsent(name, unused -> new NewBasicBlock());
+	}
+
+	private List<BasicBlock> getFinalBlocks() {
+		final Map<String, BasicBlock> blocks = new HashMap<>();
+		for (Map.Entry<String, NewBasicBlock> entry : this.newBasicBlockMap.entrySet()) {
+			final String name = entry.getKey();
+			final BasicBlock block = cfg.get(name);
+			final NewBasicBlock newBlock = entry.getValue();
+			blocks.put(name, new BasicBlock(name, newBlock.instructions, block.predecessors(), block.successors()));
+		}
+
+		final ControlFlowGraph graph = new ControlFlowGraph(cfg.name(), blocks);
+		return graph.blocks();
+	}
+
+	private static final class NewBasicBlock {
+		public List<IRInstruction> instructions = List.of();
+		public RegisterAllocationStrategy.AllLiveVarRegisterState liveIn;
+		public RegisterAllocationStrategy.AllLiveVarRegisterState liveOut;
+	}
 }

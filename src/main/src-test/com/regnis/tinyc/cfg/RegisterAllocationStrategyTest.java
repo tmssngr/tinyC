@@ -21,8 +21,7 @@ public class RegisterAllocationStrategyTest {
 		final var strategy = new RegisterAllocationStrategy();
 		final List<IRInstruction> instructions = new ArrayList<>();
 		// bazz(a, b)
-		var state = strategy.prevState(RegisterAllocationStrategy.EMPTY_STATE,
-		                               null,
+		strategy.prevState(null,
 		                               List.of(
 				                               var("a", 2),
 				                               var("b", 3)
@@ -30,12 +29,11 @@ public class RegisterAllocationStrategyTest {
 		assertEquals(new RegisterAllocationStrategy.AllLiveVarRegisterState(List.of(
 				new RegisterAllocationStrategy.LiveVarRegisterState("a", 2, VariableScope.function, Type.I16, List.of(RegisterAllocationStrategy.CALL_ARG_0)),
 				new RegisterAllocationStrategy.LiveVarRegisterState("b", 3, VariableScope.function, Type.I16, List.of(RegisterAllocationStrategy.CALL_ARG_1))
-		)), state);
+		)), strategy.getState());
 		assertEquals(List.of(), instructions);
 
 		// b = bar(y, x)
-		state = strategy.prevState(state,
-		                           var("b", 3),
+		strategy.prevState(var("b", 3),
 		                           List.of(
 				                           var("y", 1),
 				                           var("x", 0)
@@ -44,7 +42,7 @@ public class RegisterAllocationStrategyTest {
 				new RegisterAllocationStrategy.LiveVarRegisterState("a", 2, VariableScope.function, Type.I16, List.of(RegisterAllocationStrategy.FIRST_NON_VOLATILE_REGISTER)),
 				new RegisterAllocationStrategy.LiveVarRegisterState("y", 1, VariableScope.function, Type.I16, List.of(RegisterAllocationStrategy.CALL_ARG_0)),
 				new RegisterAllocationStrategy.LiveVarRegisterState("x", 0, VariableScope.function, Type.I16, List.of(RegisterAllocationStrategy.CALL_ARG_1))
-		)), state);
+		)), strategy.getState());
 		// in reverse order
 		assertEquals(List.of(
 				new IRCopy(reg("b", RegisterAllocationStrategy.CALL_RETURN_REG),
@@ -57,8 +55,7 @@ public class RegisterAllocationStrategyTest {
 		instructions.clear();
 
 		// a = foo(x, y)
-		state = strategy.prevState(state,
-		                           var("a", 2),
+		strategy.prevState(var("a", 2),
 		                           List.of(
 				                           var("x", 0),
 				                           var("y", 1)
@@ -74,7 +71,7 @@ public class RegisterAllocationStrategyTest {
 						                                                    RegisterAllocationStrategy.NON_VOLATILE_REGISTER0,
 						                                                    RegisterAllocationStrategy.CALL_ARG_1
 				                                                    ))
-		)), state);
+		)), strategy.getState());
 		// in reverse order
 		assertEquals(List.of(
 				new IRCopy(reg("a", RegisterAllocationStrategy.CALL_RETURN_REG),
