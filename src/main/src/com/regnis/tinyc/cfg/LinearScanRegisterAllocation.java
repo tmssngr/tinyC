@@ -38,7 +38,7 @@ public final class LinearScanRegisterAllocation {
 	}
 
 	public BasicBlock process() {
-		final RegisterAllocationStrategy strategy = new RegisterAllocationStrategy(4, 2, 4);
+		final RegisterAllocationStrategy strategy = new RegisterAllocationStrategy(4, 0, 2);
 		final List<RegisterAllocationStrategy.LiveVarRegisterState> vars = new ArrayList<>();
 		for (IRVar var : block.getLiveAfter()) {
 			vars.add(new RegisterAllocationStrategy.LiveVarRegisterState(var, List.of()));

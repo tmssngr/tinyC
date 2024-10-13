@@ -341,7 +341,8 @@ public final class RegisterAllocationStrategy {
 
 	private static IRVar reg(int register, @NotNull IRVar var) {
 		Utils.assertTrue(register >= 0);
-		return new IRVar(var.name(), register, VariableScope.register, var.type(), var.canBeRegister());
+		return IRVar.createRegisterVar(register, var.type());
+//		return new IRVar(var.name(), register, VariableScope.register, var.type(), var.canBeRegister());
 	}
 
 	public record AllLiveVarRegisterState(@NotNull List<LiveVarRegisterState> vars) {

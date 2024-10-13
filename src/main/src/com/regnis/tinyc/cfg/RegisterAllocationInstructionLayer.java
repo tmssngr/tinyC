@@ -30,17 +30,36 @@ public final class RegisterAllocationInstructionLayer {
 
 	public void process(@NotNull IRInstruction instruction) {
 		final List<IRInstruction> beforeInstructions = new ArrayList<>();
-		final Consumer<IRInstruction> beforeConsumer = beforeInstructions::add;
+		final Consumer<IRInstruction> preConsumer = beforeInstructions::add;
 
 		instruction = switch (instruction) {
 			case IRAddrOf addrOf -> {
 				final IRVar source = addrOf.source();
 				Utils.assertTrue(source.scope() != VariableScope.register);
 				IRVar target = addrOf.target();
-				target = strategy.callTarget(target, consumer);
+				target = strategy.target(target, consumer);
 				yield new IRAddrOf(target, source, addrOf.location());
 			}
-			case IRBinary binary -> processBinary(binary, beforeConsumer);
+			case IRAddrOfArray addrOf -> {
+				IRVar addr = addrOf.addr();
+				addr = strategy.target(addr, consumer);
+				IRVar index = addrOf.index();
+				index = strategy.source(index, List.of(), preConsumer);
+				yield new IRAddrOfArray(addr, addrOf.array(), index, addrOf.varIsArray(), addrOf.location());
+			}
+			case IRArrayAccess access -> {
+				IRVar addr = access.addr();
+				addr = strategy.target(addr, consumer);
+				IRVar index = access.index();
+				index = strategy.source(index, List.of(), preConsumer);
+				yield new IRArrayAccess(addr, access.array(), index, access.location());
+			}
+			case IRBinary binary -> {
+				final IRVar target = strategy.target(binary.target(), consumer);
+				final IRVar left = strategy.source(binary.left(), List.of(), preConsumer);
+				final IRVar right = strategy.source(binary.right(), List.of(), preConsumer);
+				yield new IRBinary(target, binary.op(), left, right, binary.location());
+			}
 			case IRBranch branch -> {
 				final IRVar conditionVar = strategy.source(branch.conditionVar(), List.of(), consumer);
 				yield new IRBranch(conditionVar, branch.jumpOnTrue(), branch.target(), branch.nextLabel());
@@ -52,8 +71,15 @@ public final class RegisterAllocationInstructionLayer {
 				}
 
 				strategy.freeVolatileRegisters(consumer);
-				final List<IRVar> args = strategy.prepareCallArgs(call.args(), beforeConsumer);
+				final List<IRVar> args = strategy.prepareCallArgs(call.args(), preConsumer);
 				yield new IRCall(target, call.name(), args, call.location());
+			}
+			case IRCast cast -> {
+				IRVar target = cast.target();
+				target = strategy.target(target, consumer);
+				IRVar source = cast.source();
+				source = strategy.source(source, List.of(), preConsumer);
+				yield new IRCast(target, source, cast.location());
 			}
 			case IRComment ignored -> instruction;
 			case IRJump ignored -> instruction;
@@ -62,24 +88,24 @@ public final class RegisterAllocationInstructionLayer {
 				yield new IRLiteral(target, literal.value(), literal.location());
 			}
 			case IRMemStore store -> {
-				final IRVar addr = strategy.source(store.addr(), List.of(), beforeConsumer);
-				final IRVar value = strategy.source(store.value(), List.of(), beforeConsumer);
+				final IRVar addr = strategy.source(store.addr(), List.of(), preConsumer);
+				final IRVar value = strategy.source(store.value(), List.of(), preConsumer);
 				yield new IRMemStore(addr, value, store.location());
 			}
+			case IRUnary unary -> {
+				IRVar target = unary.target();
+				target = strategy.target(target, consumer);
+				IRVar source = unary.source();
+				source = strategy.source(source, List.of(), preConsumer);
+				yield new IRUnary(unary.op(), target, source);
+			}
 			default -> {
-				beforeConsumer.accept(new IRComment("; not yet implemented"));
+				preConsumer.accept(new IRComment("; not yet implemented"));
 				yield instruction;
 //			throw new UnsupportedOperationException(instruction.toString());
 			}
 		};
 		consumer.accept(instruction);
 		beforeInstructions.forEach(consumer);
-	}
-
-	private IRBinary processBinary(IRBinary binary, Consumer<IRInstruction> beforeConsumer) {
-		final IRVar target = strategy.target(binary.target(), consumer);
-		final IRVar left = strategy.source(binary.left(), List.of(), beforeConsumer);
-		final IRVar right = strategy.source(binary.right(), List.of(), beforeConsumer);
-		return new IRBinary(target, binary.op(), left, right, binary.location());
 	}
 }
