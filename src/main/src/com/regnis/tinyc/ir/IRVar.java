@@ -15,6 +15,9 @@ public record IRVar(@NotNull String name, int index, @NotNull VariableScope scop
 
 	@Override
 	public String toString() {
+		if (scope == VariableScope.register) {
+			return "r." + index + "(" + name + ", " + type + ")";
+		}
 		return name + "(" + index + "@" + scope + "," + type + ")";
 	}
 
