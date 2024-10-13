@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.cfg.*;
 
 import java.io.*;
 import java.util.*;
@@ -22,6 +23,54 @@ public final class IRWriter extends TextWriter {
 		writeStringLiterals(program.stringLiterals());
 	}
 
+	public void write(ControlFlowGraph cfg) throws IOException {
+		write("; CFG for function ");
+		writeln(cfg.name());
+		for (BasicBlock block : cfg.blocks()) {
+			writeBlock(block);
+			writeln();
+		}
+		writeln();
+	}
+
+	private void writeBlock(BasicBlock block) throws IOException {
+		write("; block ");
+		writeln(block.name);
+
+		writeIndentation();
+		write("; predecessors=");
+		writeln(block.predecessors().toString());
+
+		write(block.getLiveBefore());
+
+		writeInstructions(block.instructions(), block);
+
+		writeIndentation();
+		write("; successors=");
+		writeln(block.successors().toString());
+	}
+
+	private void write(Set<IRVar> live) throws IOException {
+//		write("; live: ");
+		if (!live.isEmpty()) {
+			writeIndentation();
+			writeIndentation();
+			write(String.valueOf(live.size()));
+			write(": ");
+			final List<IRVar> vars = new ArrayList<>(live);
+			vars.sort(Comparator.comparing(IRVar::name));
+			boolean addComma = false;
+			for (IRVar var : vars) {
+				if (addComma) {
+					write(", ");
+				}
+				write(var.name());
+				addComma = true;
+			}
+			writeln();
+		}
+	}
+
 	private void writeFunctions(IRProgram program) throws IOException {
 		for (IRFunction function : program.functions()) {
 			writeFunction(function);
@@ -40,7 +89,7 @@ public final class IRWriter extends TextWriter {
 			}
 		}
 
-		writeInstructions(function.instructions());
+		writeInstructions(function.instructions(), null);
 
 		for (String asmLine : function.asmLines()) {
 			writeIndentation();
@@ -49,7 +98,7 @@ public final class IRWriter extends TextWriter {
 		writeln();
 	}
 
-	private void writeInstructions(List<IRInstruction> instructions) throws IOException {
+	private void writeInstructions(List<IRInstruction> instructions, @Nullable BasicBlock block) throws IOException {
 		if (instructions.isEmpty()) {
 			return;
 		}
@@ -70,6 +119,14 @@ public final class IRWriter extends TextWriter {
 				}
 				else {
 					writeln(instruction.toString());
+					if (block != null) {
+						try {
+							write(block.getLiveAfter(instruction));
+						}
+						catch (NullPointerException e) {
+							writeln("##########################");
+						}
+					}
 				}
 			}
 		}

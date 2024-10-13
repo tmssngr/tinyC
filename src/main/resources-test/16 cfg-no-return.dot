@@ -1,0 +1,11 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_main {
+		BasicBlock_0_main [label="main",shape=box];
+		BasicBlock_0_main -> BasicBlock_0_while_1 [label="(i)"];
+		BasicBlock_0_while_1 [label="while_1",shape=box];
+		BasicBlock_0_while_1 -> BasicBlock_0_no_critical_edge_4 [label="(i)"];
+		BasicBlock_0_no_critical_edge_4 [label="no_critical_edge_4",shape=box];
+		BasicBlock_0_no_critical_edge_4 -> BasicBlock_0_while_1 [label="(i)"];
+	}
+}

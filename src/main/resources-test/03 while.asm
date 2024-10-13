@@ -354,11 +354,11 @@ start:
         seta bl
         lea rax, [rsp+1]
         mov [rax], bl
-        ; branch t.1(1@function,bool), false, @while_4_break
+        ; branch t.1(1@function,bool), false, @while_5
         lea rax, [rsp+1]
         mov bl, [rax]
         or bl, bl
-        jz @while_4_break
+        jz @while_5
         ; cast t.3(3@function,i64), i(0@function,u8)
         lea rax, [rsp+0]
         mov bl, [rax]
@@ -384,8 +384,6 @@ start:
         lea rax, [rsp+0]
         mov [rax], bl
         jmp @while_4
-@while_4_break:
-        ; 10:2 while true
 @while_5:
         ; cast t.5(5@function,i64), i(0@function,u8)
         lea rax, [rsp+0]
@@ -425,19 +423,12 @@ start:
         setb bl
         lea rax, [rsp+33]
         mov [rax], bl
-        ; branch t.7(7@function,bool), false, @while_5_break
+        ; branch t.7(7@function,bool), false, @main_ret
         lea rax, [rsp+33]
         mov bl, [rax]
         or bl, bl
-        jz @while_5_break
+        jz @main_ret
         jmp @while_5
-        jmp @while_5
-@while_5_break:
-        ; 19:2 while true
-@while_7:
-        ; 20:3 return
-        jmp @main_ret
-        jmp @while_7
 @main_ret:
         ; release space for local variables
         add rsp, 48

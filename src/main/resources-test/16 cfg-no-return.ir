@@ -1,0 +1,14 @@
+@main:
+ Local variables
+	var 0: i
+	var 1: t.1
+	; 12 pc
+	const i(0@function,u8), 0
+	; 3:2 while true
+@while_1:
+	const t.1(1@function,u8), 1
+	add i(0@function,u8), i(0@function,u8), t.1(1@function,u8)
+	jump @while_1
+@while_1_break:
+@main_ret:
+
