@@ -3,7 +3,6 @@ package com.regnis.tinyc.cfg;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
-import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -43,44 +42,13 @@ public final class LinearScanRegisterAllocation2 {
 		final var liveOutState = strategy.getState();
 
 		final List<IRInstruction> instructions = new ArrayList<>();
-		for (IRInstruction instruction : block.instructions().reversed()) {
-			processReverse(instruction, instructions::addFirst);
-		}
+		final RegisterAllocationInstructionLayer instructionLayer = new RegisterAllocationInstructionLayer(strategy, instructions::addFirst);
+		instructionLayer.process(block);
 
 		final NewBasicBlock newBlock = getNewBasicBlock(name);
 		newBlock.liveOut = liveOutState;
 		newBlock.instructions = instructions;
 		newBlock.liveIn = strategy.getState();
-	}
-
-	private void processReverse(@NotNull IRInstruction instruction,
-	                            @NotNull Consumer<IRInstruction> consumer) {
-		switch (instruction) {
-		case IRCall call -> {
-			IRVar target = call.target();
-			if (target != null) {
-				target = strategy.callTarget(target, consumer);
-			}
-
-			strategy.freeVolatileRegisters(consumer);
-			final List<IRInstruction> instructions = new ArrayList<>();
-			final List<IRVar> args = strategy.prepareCallArgs(call.args(), instructions::addFirst);
-			consumer.accept(new IRCall(target, call.name(), args, call.location()));
-			instructions.forEach(consumer);
-		}
-		case IRComment ignored -> consumer.accept(instruction);
-		case IRJump ignored -> consumer.accept(instruction);
-		case IRLiteral literal -> {
-			final IRVar target = strategy.target(literal.target(), consumer);
-			consumer.accept(new IRLiteral(target, literal.value(), literal.location()));
-		}
-		default -> {
-			final Set<LiveVar> uses = new HashSet<>();
-			final Set<LiveVar> defines = new HashSet<>();
-			DetectVarLiveness.detectLiveness(instruction, uses, defines);
-			throw new UnsupportedOperationException(instruction.toString());
-		}
-		}
 	}
 
 	private NewBasicBlock getNewBasicBlock(String name) {

@@ -121,19 +121,24 @@ public final class RegisterAllocationStrategy {
 			}
 		}
 		else {
-			IRVar registerVar = null;
-			int varInRegister = 0;
-			for (int register : state.registers) {
-				if (registerVar == null) {
-					registerVar = reg(register, state.var());
-					varInRegister = register;
-				}
-				else {
-					movRegFromVar(register, registerVar, consumer);
-				}
-			}
-			movRegFromVar(varInRegister, state.var(), consumer);
+			memToReg(state, consumer);
 		}
+	}
+
+	public void freeAllRegisters(@NotNull Consumer<IRInstruction> consumer) {
+		final List<LiveVarRegisterState> newStates = new ArrayList<>(liveVars.size());
+		for (LiveVarRegisterState state : liveVars) {
+			if (state.registers.isEmpty()) {
+				newStates.add(state);
+				continue;
+			}
+
+			newStates.add(state.derive(List.of()));
+			memToReg(state, consumer);
+		}
+
+		liveVars.clear();
+		liveVars.addAll(newStates);
 	}
 
 	@NotNull
@@ -182,6 +187,50 @@ public final class RegisterAllocationStrategy {
 			}
 		}
 		return new IRVar(target.name(), CALL_RETURN_REG, VariableScope.register, target.type(), target.canBeRegister());
+	}
+
+	@NotNull
+	public IRVar source(IRVar source, List<IRVar> ignore, Consumer<IRInstruction> consumer) {
+		final LiveVarRegisterState state = get(source);
+		if (state != null) {
+			if (state.registers.isEmpty()) {
+				liveVars.remove(state);
+			}
+			else {
+				if (state.registers.size() == 1) {
+					return reg(state.registers.getFirst(), source);
+				}
+				throw new UnsupportedOperationException();
+			}
+		}
+
+		// todo ignore 'ignore' vars
+		final int register = getFreeRegister();
+		if (register >= 0) {
+			// is not last use?
+			if (state != null) {
+				movVarFromReg(source, register, consumer);
+			}
+			liveVars.add(new LiveVarRegisterState(source, List.of(register)));
+			return reg(register, source);
+		}
+
+		throw new UnsupportedOperationException();
+	}
+
+	private void memToReg(LiveVarRegisterState state, @NotNull Consumer<IRInstruction> consumer) {
+		IRVar registerVar = null;
+		int varInRegister = 0;
+		for (int register : state.registers) {
+			if (registerVar == null) {
+				registerVar = reg(register, state.var());
+				varInRegister = register;
+			}
+			else {
+				movRegFromVar(register, registerVar, consumer);
+			}
+		}
+		movRegFromVar(varInRegister, state.var(), consumer);
 	}
 
 	@NotNull
@@ -302,6 +351,11 @@ public final class RegisterAllocationStrategy {
 		@NotNull
 		public LiveVarRegisterState derive(List<Integer> registers) {
 			return new LiveVarRegisterState(var, List.copyOf(registers));
+		}
+
+		@Override
+		public String toString() {
+			return var.name() + ": " + registers;
 		}
 	}
 }

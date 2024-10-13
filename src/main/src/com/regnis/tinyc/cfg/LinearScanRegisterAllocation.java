@@ -5,6 +5,7 @@ import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.*;
@@ -15,8 +16,6 @@ import org.jetbrains.annotations.*;
 public final class LinearScanRegisterAllocation {
 
 	public static ControlFlowGraph process(ControlFlowGraph cfg, int maxRegisters) {
-		LinearScanRegisterAllocation2.process(cfg, new RegisterAllocationStrategy(4, 2, 8));
-
 		final Map<String, BasicBlock> blocks = new HashMap<>();
 		for (BasicBlock block : cfg.blocks()) {
 			final LinearScanRegisterAllocation allocation = new LinearScanRegisterAllocation(block, maxRegisters);
@@ -39,9 +38,19 @@ public final class LinearScanRegisterAllocation {
 	}
 
 	public BasicBlock process() {
-		for (IRInstruction instruction : block.instructions()) {
-			process(instruction);
+		final RegisterAllocationStrategy strategy = new RegisterAllocationStrategy(4, 2, 4);
+		final List<RegisterAllocationStrategy.LiveVarRegisterState> vars = new ArrayList<>();
+		for (IRVar var : block.getLiveAfter()) {
+			vars.add(new RegisterAllocationStrategy.LiveVarRegisterState(var, List.of()));
 		}
+		strategy.setState(new RegisterAllocationStrategy.AllLiveVarRegisterState(vars));
+
+		final List<IRInstruction> instructions = new ArrayList<>();
+		final Consumer<IRInstruction> consumer = instructions::addFirst;
+		final RegisterAllocationInstructionLayer instructionLayer = new RegisterAllocationInstructionLayer(strategy, consumer);
+		instructionLayer.process(block);
+		strategy.freeAllRegisters(consumer);
+
 		return new BasicBlock(block.name, instructions, block.predecessors(), block.successors());
 	}
 
