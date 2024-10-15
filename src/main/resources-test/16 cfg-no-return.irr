@@ -1,0 +1,15 @@
+@main:
+ Local variables
+	var 0: i
+	var 1: t.1
+	; 11 pc
+	const r0(u8 i), 0
+	; 3:2 while true
+	copy i(0@function,u8), r0(u8 i)
+@while_1:
+	const r0(u8 t.1), 1
+	copy r1(u8 i), i(0@function,u8)
+	add r0(u8 i), r1(u8 i), r0(u8 t.1)
+	copy i(0@function,u8), r0(u8 i)
+	jump @while_1
+

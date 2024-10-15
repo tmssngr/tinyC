@@ -543,6 +543,7 @@ public final class IRGenerator {
 		final boolean cantBeRegister = switch (scope) {
 			case global -> globalVarsCantBeRegister.contains(index);
 			case argument, function -> localVarsCantBeRegister.contains(index);
+			default -> throw new IllegalStateException();
 		};
 		return new IRVar(access.varName(), index, scope, access.typeNotNull(), !cantBeRegister);
 	}

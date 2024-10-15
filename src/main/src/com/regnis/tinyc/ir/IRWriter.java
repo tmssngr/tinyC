@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.cfg.*;
 
 import java.io.*;
@@ -212,7 +213,7 @@ public final class IRWriter extends TextWriter {
 	}
 
 	private int getInstructionTime(IRVar var) {
-		return 2;
+		return var.scope() != VariableScope.register ? 2 : 0;
 	}
 
 	private void writeGlobalVars(List<IRGlobalVar> globalVars) throws IOException {

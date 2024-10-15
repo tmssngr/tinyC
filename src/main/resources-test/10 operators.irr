@@ -1,0 +1,474 @@
+@printString:
+ Local variables
+	arg 0: str
+	var 1: length
+	; 6 pc
+	call r0(i64 length), strlen, [str(0@argument,u8*)]
+	call _, printStringLength [str(0@argument,u8*), r0(i64 length)]
+
+@printChar:
+ Local variables
+	arg 0: chr
+	var 1: t.1
+	var 2: t.2
+	; 4 pc
+	addrof r0(u8* t.1), chr(0@argument,u8)
+	const r1(i64 t.2), 1
+	call _, printStringLength [r0(u8* t.1), r1(i64 t.2)]
+
+@printUint:
+ Local variables
+	arg 0: number
+	var 1: buffer
+	var 2: pos
+	var 3: remainder
+	var 4: digit
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	var 19: t.19
+	var 20: t.20
+	; 38 pc
+	const r0(u8 pos), 20
+	; 13:2 while true
+	copy pos(2@function,u8), r0(u8 pos)
+@while_1:
+	const r0(u8 t.5), 1
+	copy r1(u8 pos), pos(2@function,u8)
+	sub r0(u8 pos), r1(u8 pos), r0(u8 t.5)
+	const r1(i64 t.6), 10
+	copy r2(i64 number), number(0@argument,i64)
+	mod r1(i64 remainder), r2(i64 number), r1(i64 t.6)
+	const r3(i64 t.7), 10
+	div r2(i64 number), r2(i64 number), r3(i64 t.7)
+	cast r1(u8 t.8), r1(i64 remainder)
+	const r3(u8 t.9), 48
+	add r1(u8 digit), r1(u8 t.8), r3(u8 t.9)
+	cast r3(i64 t.11), r0(u8 pos)
+	cast r3(u8* t.12), r3(i64 t.11)
+	; Spill pos
+	copy pos(2@function,u8), r0(u8 pos)
+	addrof r0(u8* t.10), [buffer(1@function,u8*)]
+	add r0(u8* t.10), r0(u8* t.10), r3(u8* t.12)
+	store [r0(u8* t.10)], r1(u8 digit)
+	; 19:3 if number == 0
+	const r0(i64 t.14), 0
+	equals r0(bool t.13), r2(i64 number), r0(i64 t.14)
+	copy number(0@argument,i64), r2(i64 number)
+	branch r0(bool t.13), false, @while_1
+	copy r0(u8 pos), pos(2@function,u8)
+	cast r1(i64 t.16), r0(u8 pos)
+	cast r1(u8* t.17), r1(i64 t.16)
+	addrof r2(u8* t.15), [buffer(1@function,u8*)]
+	add r1(u8* t.15), r2(u8* t.15), r1(u8* t.17)
+	const r2(u8 t.20), 20
+	sub r0(u8 t.19), r2(u8 t.20), r0(u8 pos)
+	cast r0(i64 t.18), r0(u8 t.19)
+	call _, printStringLength [r1(u8* t.15), r0(i64 t.18)]
+
+@printIntLf:
+ Local variables
+	arg 0: number
+	var 1: t.1
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	; 17 pc
+	; 27:2 if number < 0
+	const r0(i64 t.2), 0
+	copy r1(i64 number), number(0@argument,i64)
+	lt r0(bool t.1), r1(i64 number), r0(i64 t.2)
+	branch r0(bool t.1), false, @if_3_end
+	const r0(u8 t.3), 45
+	call _, printChar [r0(u8 t.3)]
+	copy r0(i64 number), number(0@argument,i64)
+	neg r0(i64 number), r0(i64 number)
+	copy number(0@argument,i64), r0(i64 number)
+@if_3_end:
+	call _, printUint [number(0@argument,i64)]
+	const r0(u8 t.4), 10
+	call _, printChar [r0(u8 t.4)]
+
+@strlen:
+ Local variables
+	arg 0: str
+	var 1: length
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	; 31 pc
+	const r0(i64 length), 0
+	; 37:2 for *str != 0
+	copy length(1@function,i64), r0(i64 length)
+@for_4:
+	copy r0(u8* str), str(0@argument,u8*)
+	load r1(u8 t.3), [r0(u8* str)]
+	const r2(u8 t.4), 0
+	notequals r1(bool t.2), r1(u8 t.3), r2(u8 t.4)
+	branch r1(bool t.2), false, @for_4_break
+	const r0(i64 t.5), 1
+	copy r1(i64 length), length(1@function,i64)
+	add r0(i64 length), r1(i64 length), r0(i64 t.5)
+	copy length(1@function,i64), r0(i64 length)
+	copy r0(u8* str), str(0@argument,u8*)
+	cast r0(i64 t.7), r0(u8* str)
+	const r1(i64 t.8), 1
+	add r0(i64 t.6), r0(i64 t.7), r1(i64 t.8)
+	cast r0(u8* str), r0(i64 t.6)
+	copy str(0@argument,u8*), r0(u8* str)
+	jump @for_4
+@for_4_break:
+	; 40:9 return length
+	copy r0(i64 length), length(1@function,i64)
+	ret r0(i64 length)
+
+@printStringLength:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
+@main:
+ Local variables
+	var 0: a
+	var 1: b
+	var 2: c
+	var 3: d
+	var 4: t
+	var 5: f
+	var 6: b10
+	var 7: b6
+	var 8: b1
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	var 19: t.19
+	var 20: t.20
+	var 21: t.21
+	var 22: t.22
+	var 23: t.23
+	var 24: t.24
+	var 25: t.25
+	var 26: t.26
+	var 27: t.27
+	var 28: t.28
+	var 29: t.29
+	var 30: t.30
+	var 31: t.31
+	var 32: t.32
+	var 33: t.33
+	var 34: t.34
+	var 35: t.35
+	var 36: t.36
+	var 37: t.37
+	var 38: t.38
+	var 39: t.39
+	var 40: t.40
+	var 41: t.41
+	var 42: t.42
+	var 43: t.43
+	var 44: t.44
+	var 45: t.45
+	var 46: t.46
+	var 47: t.47
+	var 48: t.48
+	var 49: t.49
+	var 50: t.50
+	var 51: t.51
+	var 52: t.52
+	var 53: t.53
+	var 54: t.54
+	var 55: t.55
+	var 56: t.56
+	var 57: t.57
+	var 58: t.58
+	var 59: t.59
+	var 60: t.60
+	var 61: t.61
+	var 62: t.62
+	var 63: t.63
+	var 64: t.64
+	var 65: t.65
+	var 66: t.66
+	var 67: t.67
+	var 68: t.68
+	var 69: t.69
+	var 70: t.70
+	var 71: t.71
+	var 72: t.72
+	; 370 pc
+	const r0(u8* t.9), [string-0]
+	call _, printString [r0(u8* t.9)]
+	const r0(i16 a), 0
+	const r1(i16 b), 1
+	const r2(i16 c), 2
+	const r3(i16 d), 3
+	; Spill a
+	copy a(0@function,i16), r0(i16 a)
+	const r0(bool t), 1
+	; Spill t
+	copy t(4@function,bool), r0(bool t)
+	const r0(bool f), 0
+	; Spill f
+	copy f(5@function,bool), r0(bool f)
+	; Spill b
+	copy b(1@function,i16), r1(i16 b)
+	copy r0(i16 a), a(0@function,i16)
+	and r1(i16 t.11), r0(i16 a), r0(i16 a)
+	cast r1(i64 t.10), r1(i16 t.11)
+	copy c(2@function,i16), r2(i16 c)
+	copy d(3@function,i16), r3(i16 d)
+	call _, printIntLf [r1(i64 t.10)]
+	copy r0(i16 a), a(0@function,i16)
+	copy r1(i16 b), b(1@function,i16)
+	and r2(i16 t.13), r0(i16 a), r1(i16 b)
+	cast r2(i64 t.12), r2(i16 t.13)
+	call _, printIntLf [r2(i64 t.12)]
+	copy r0(i16 b), b(1@function,i16)
+	copy r1(i16 a), a(0@function,i16)
+	and r2(i16 t.15), r0(i16 b), r1(i16 a)
+	cast r2(i64 t.14), r2(i16 t.15)
+	call _, printIntLf [r2(i64 t.14)]
+	copy r0(i16 b), b(1@function,i16)
+	and r1(i16 t.17), r0(i16 b), r0(i16 b)
+	cast r1(i64 t.16), r1(i16 t.17)
+	call _, printIntLf [r1(i64 t.16)]
+	const r0(u8* t.18), [string-1]
+	call _, printString [r0(u8* t.18)]
+	copy r0(i16 a), a(0@function,i16)
+	or r1(i16 t.20), r0(i16 a), r0(i16 a)
+	cast r1(i64 t.19), r1(i16 t.20)
+	call _, printIntLf [r1(i64 t.19)]
+	copy r0(i16 a), a(0@function,i16)
+	copy r1(i16 b), b(1@function,i16)
+	or r2(i16 t.22), r0(i16 a), r1(i16 b)
+	cast r2(i64 t.21), r2(i16 t.22)
+	call _, printIntLf [r2(i64 t.21)]
+	copy r0(i16 b), b(1@function,i16)
+	copy r1(i16 a), a(0@function,i16)
+	or r2(i16 t.24), r0(i16 b), r1(i16 a)
+	cast r2(i64 t.23), r2(i16 t.24)
+	call _, printIntLf [r2(i64 t.23)]
+	copy r0(i16 b), b(1@function,i16)
+	or r1(i16 t.26), r0(i16 b), r0(i16 b)
+	cast r1(i64 t.25), r1(i16 t.26)
+	call _, printIntLf [r1(i64 t.25)]
+	const r0(u8* t.27), [string-2]
+	call _, printString [r0(u8* t.27)]
+	copy r0(i16 a), a(0@function,i16)
+	xor r1(i16 t.29), r0(i16 a), r0(i16 a)
+	cast r1(i64 t.28), r1(i16 t.29)
+	call _, printIntLf [r1(i64 t.28)]
+	copy r0(i16 a), a(0@function,i16)
+	copy r1(i16 c), c(2@function,i16)
+	xor r2(i16 t.31), r0(i16 a), r1(i16 c)
+	cast r2(i64 t.30), r2(i16 t.31)
+	call _, printIntLf [r2(i64 t.30)]
+	copy r0(i16 b), b(1@function,i16)
+	copy r1(i16 a), a(0@function,i16)
+	xor r1(i16 t.33), r0(i16 b), r1(i16 a)
+	cast r1(i64 t.32), r1(i16 t.33)
+	call _, printIntLf [r1(i64 t.32)]
+	copy r0(i16 b), b(1@function,i16)
+	copy r1(i16 c), c(2@function,i16)
+	xor r2(i16 t.35), r0(i16 b), r1(i16 c)
+	cast r2(i64 t.34), r2(i16 t.35)
+	call _, printIntLf [r2(i64 t.34)]
+	const r0(u8* t.36), [string-3]
+	call _, printString [r0(u8* t.36)]
+	; 26:15 logic and
+	copy r0(bool f), f(5@function,bool)
+	copy r1(bool t.38), r0(bool f)
+	copy t.38(38@function,bool), r1(bool t.38)
+	branch r1(bool t.38), false, @and_next_5
+	copy r0(bool f), f(5@function,bool)
+	copy r1(bool t.38), r0(bool f)
+	copy t.38(38@function,bool), r1(bool t.38)
+@and_next_5:
+	copy r0(bool t.38), t.38(38@function,bool)
+	cast r0(i64 t.37), r0(bool t.38)
+	call _, printIntLf [r0(i64 t.37)]
+	; 27:15 logic and
+	copy r0(bool f), f(5@function,bool)
+	copy r1(bool t.40), r0(bool f)
+	copy t.40(40@function,bool), r1(bool t.40)
+	branch r1(bool t.40), false, @and_next_6
+	copy r0(bool t), t(4@function,bool)
+	copy r1(bool t.40), r0(bool t)
+	copy t.40(40@function,bool), r1(bool t.40)
+@and_next_6:
+	copy r0(bool t.40), t.40(40@function,bool)
+	cast r0(i64 t.39), r0(bool t.40)
+	call _, printIntLf [r0(i64 t.39)]
+	; 28:15 logic and
+	copy r0(bool t), t(4@function,bool)
+	copy r1(bool t.42), r0(bool t)
+	copy t.42(42@function,bool), r1(bool t.42)
+	branch r1(bool t.42), false, @and_next_7
+	copy r0(bool f), f(5@function,bool)
+	copy r1(bool t.42), r0(bool f)
+	copy t.42(42@function,bool), r1(bool t.42)
+@and_next_7:
+	copy r0(bool t.42), t.42(42@function,bool)
+	cast r0(i64 t.41), r0(bool t.42)
+	call _, printIntLf [r0(i64 t.41)]
+	; 29:15 logic and
+	copy r0(bool t), t(4@function,bool)
+	copy r1(bool t.44), r0(bool t)
+	copy t.44(44@function,bool), r1(bool t.44)
+	branch r1(bool t.44), false, @and_next_8
+	copy r0(bool t), t(4@function,bool)
+	copy r1(bool t.44), r0(bool t)
+	copy t.44(44@function,bool), r1(bool t.44)
+@and_next_8:
+	copy r0(bool t.44), t.44(44@function,bool)
+	cast r0(i64 t.43), r0(bool t.44)
+	call _, printIntLf [r0(i64 t.43)]
+	const r0(u8* t.45), [string-4]
+	call _, printString [r0(u8* t.45)]
+	; 31:15 logic or
+	copy r0(bool f), f(5@function,bool)
+	copy r1(bool t.47), r0(bool f)
+	copy t.47(47@function,bool), r1(bool t.47)
+	branch r1(bool t.47), true, @or_next_9
+	copy r0(bool f), f(5@function,bool)
+	copy r1(bool t.47), r0(bool f)
+	copy t.47(47@function,bool), r1(bool t.47)
+@or_next_9:
+	copy r0(bool t.47), t.47(47@function,bool)
+	cast r0(i64 t.46), r0(bool t.47)
+	call _, printIntLf [r0(i64 t.46)]
+	; 32:15 logic or
+	copy r0(bool f), f(5@function,bool)
+	copy r1(bool t.49), r0(bool f)
+	copy t.49(49@function,bool), r1(bool t.49)
+	branch r1(bool t.49), true, @or_next_10
+	copy r0(bool t), t(4@function,bool)
+	copy r1(bool t.49), r0(bool t)
+	copy t.49(49@function,bool), r1(bool t.49)
+@or_next_10:
+	copy r0(bool t.49), t.49(49@function,bool)
+	cast r0(i64 t.48), r0(bool t.49)
+	call _, printIntLf [r0(i64 t.48)]
+	; 33:15 logic or
+	copy r0(bool t), t(4@function,bool)
+	copy r1(bool t.51), r0(bool t)
+	copy t.51(51@function,bool), r1(bool t.51)
+	branch r1(bool t.51), true, @or_next_11
+	copy r0(bool f), f(5@function,bool)
+	copy r1(bool t.51), r0(bool f)
+	copy t.51(51@function,bool), r1(bool t.51)
+@or_next_11:
+	copy r0(bool t.51), t.51(51@function,bool)
+	cast r0(i64 t.50), r0(bool t.51)
+	call _, printIntLf [r0(i64 t.50)]
+	; 34:15 logic or
+	copy r0(bool t), t(4@function,bool)
+	copy r1(bool t.53), r0(bool t)
+	copy t.53(53@function,bool), r1(bool t.53)
+	branch r1(bool t.53), true, @or_next_12
+	copy r0(bool t), t(4@function,bool)
+	copy r1(bool t.53), r0(bool t)
+	copy t.53(53@function,bool), r1(bool t.53)
+@or_next_12:
+	copy r0(bool t.53), t.53(53@function,bool)
+	cast r0(i64 t.52), r0(bool t.53)
+	call _, printIntLf [r0(i64 t.52)]
+	const r0(u8* t.54), [string-5]
+	call _, printString [r0(u8* t.54)]
+	copy r0(bool f), f(5@function,bool)
+	notlog r0(bool t.56), r0(bool f)
+	cast r0(i64 t.55), r0(bool t.56)
+	call _, printIntLf [r0(i64 t.55)]
+	copy r0(bool t), t(4@function,bool)
+	notlog r0(bool t.58), r0(bool t)
+	cast r0(i64 t.57), r0(bool t.58)
+	call _, printIntLf [r0(i64 t.57)]
+	const r0(u8* t.59), [string-6]
+	call _, printString [r0(u8* t.59)]
+	const r0(u8 b10), 10
+	const r1(u8 b6), 6
+	const r2(u8 b1), 1
+	and r0(u8 t.62), r0(u8 b10), r1(u8 b6)
+	or r0(u8 t.61), r0(u8 t.62), r2(u8 b1)
+	cast r0(i64 t.60), r0(u8 t.61)
+	copy b1(8@function,u8), r2(u8 b1)
+	call _, printIntLf [r0(i64 t.60)]
+	; 43:20 logic or
+	copy r0(i16 b), b(1@function,i16)
+	copy r1(i16 c), c(2@function,i16)
+	equals r2(bool t.64), r0(i16 b), r1(i16 c)
+	copy t.64(64@function,bool), r2(bool t.64)
+	branch r2(bool t.64), true, @or_next_13
+	copy r0(i16 c), c(2@function,i16)
+	copy r1(i16 d), d(3@function,i16)
+	lt r2(bool t.64), r0(i16 c), r1(i16 d)
+	copy t.64(64@function,bool), r2(bool t.64)
+@or_next_13:
+	copy r0(bool t.64), t.64(64@function,bool)
+	cast r0(i64 t.63), r0(bool t.64)
+	call _, printIntLf [r0(i64 t.63)]
+	; 44:20 logic and
+	copy r0(i16 b), b(1@function,i16)
+	copy r1(i16 c), c(2@function,i16)
+	equals r2(bool t.66), r0(i16 b), r1(i16 c)
+	copy t.66(66@function,bool), r2(bool t.66)
+	branch r2(bool t.66), false, @and_next_14
+	copy r0(i16 c), c(2@function,i16)
+	copy r1(i16 d), d(3@function,i16)
+	lt r0(bool t.66), r0(i16 c), r1(i16 d)
+	copy t.66(66@function,bool), r0(bool t.66)
+@and_next_14:
+	copy r0(bool t.66), t.66(66@function,bool)
+	cast r0(i64 t.65), r0(bool t.66)
+	call _, printIntLf [r0(i64 t.65)]
+	const r0(i16 t.68), -1
+	cast r0(i64 t.67), r0(i16 t.68)
+	call _, printIntLf [r0(i64 t.67)]
+	copy r0(i16 b), b(1@function,i16)
+	neg r0(i16 t.70), r0(i16 b)
+	cast r0(i64 t.69), r0(i16 t.70)
+	call _, printIntLf [r0(i64 t.69)]
+	copy r0(u8 b1), b1(8@function,u8)
+	not r0(u8 t.72), r0(u8 b1)
+	cast r0(i64 t.71), r0(u8 t.72)
+	call _, printIntLf [r0(i64 t.71)]
+
+String literals
+	string lit 0 "Bit-&:\n\0"
+	string lit 1 "\nBit-|:\n\0"
+	string lit 2 "\nBit-^:\n\0"
+	string lit 3 "\nLogic-&&:\n\0"
+	string lit 4 "\nLogic-||:\n\0"
+	string lit 5 "\nLogic-!:\n\0"
+	string lit 6 "\nmisc:\n\0"
