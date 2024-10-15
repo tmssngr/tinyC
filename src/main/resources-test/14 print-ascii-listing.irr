@@ -1,0 +1,216 @@
+@printString:
+ Local variables
+	arg 0: str
+	var 1: length
+	; 6 pc
+	call r0(i64 length), strlen, [str(0@argument,u8*)]
+	call _, printStringLength [str(0@argument,u8*), r0(i64 length)]
+
+@printChar:
+ Local variables
+	arg 0: chr
+	var 1: t.1
+	var 2: t.2
+	; 4 pc
+	addrof r0(u8* t.1), chr(0@argument,u8)
+	const r1(i64 t.2), 1
+	call _, printStringLength [r0(u8* t.1), r1(i64 t.2)]
+
+@strlen:
+ Local variables
+	arg 0: str
+	var 1: length
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	; 31 pc
+	const r0(i64 length), 0
+	; 37:2 for *str != 0
+	copy length(1@function,i64), r0(i64 length)
+@for_1:
+	copy r0(u8* str), str(0@argument,u8*)
+	load r1(u8 t.3), [r0(u8* str)]
+	const r2(u8 t.4), 0
+	notequals r1(bool t.2), r1(u8 t.3), r2(u8 t.4)
+	branch r1(bool t.2), false, @for_1_break
+	const r0(i64 t.5), 1
+	copy r1(i64 length), length(1@function,i64)
+	add r0(i64 length), r1(i64 length), r0(i64 t.5)
+	copy length(1@function,i64), r0(i64 length)
+	copy r0(u8* str), str(0@argument,u8*)
+	cast r0(i64 t.7), r0(u8* str)
+	const r1(i64 t.8), 1
+	add r0(i64 t.6), r0(i64 t.7), r1(i64 t.8)
+	cast r0(u8* str), r0(i64 t.6)
+	copy str(0@argument,u8*), r0(u8* str)
+	jump @for_1
+@for_1_break:
+	; 40:9 return length
+	copy r0(i64 length), length(1@function,i64)
+	ret r0(i64 length)
+
+@printStringLength:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
+@printNibble:
+ Local variables
+	arg 0: x
+	var 1: t.1
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	var 5: t.5
+	; 21 pc
+	const r0(u8 t.1), 15
+	copy r1(u8 x), x(0@argument,u8)
+	and r0(u8 x), r1(u8 x), r0(u8 t.1)
+	; 5:2 if x > 9
+	const r1(u8 t.3), 9
+	gt r1(bool t.2), r0(u8 x), r1(u8 t.3)
+	copy x(0@argument,u8), r0(u8 x)
+	branch r1(bool t.2), false, @if_2_end
+	const r0(u8 t.4), 7
+	copy r1(u8 x), x(0@argument,u8)
+	add r0(u8 x), r1(u8 x), r0(u8 t.4)
+	copy x(0@argument,u8), r0(u8 x)
+@if_2_end:
+	const r0(u8 t.5), 48
+	copy r1(u8 x), x(0@argument,u8)
+	add r0(u8 x), r1(u8 x), r0(u8 t.5)
+	call _, printChar [r0(u8 x)]
+
+@printHex2:
+ Local variables
+	arg 0: x
+	var 1: t.1
+	var 2: t.2
+	; 8 pc
+	const r0(u8 t.2), 4
+	copy r1(u8 x), x(0@argument,u8)
+	shiftright r0(u8 t.1), r1(u8 x), r0(u8 t.2)
+	call _, printNibble [r0(u8 t.1)]
+	call _, printNibble [x(0@argument,u8)]
+
+@main:
+ Local variables
+	var 0: i
+	var 1: i
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	var 19: t.19
+	var 20: t.20
+	var 21: t.21
+	var 22: t.22
+	var 23: t.23
+	var 24: t.24
+	var 25: t.25
+	var 26: t.26
+	var 27: t.27
+	var 28: t.28
+	; 71 pc
+	const r0(u8* t.2), [string-0]
+	call _, printString [r0(u8* t.2)]
+	const r0(u8 i), 0
+	; 19:2 for i < 16
+	copy i(0@function,u8), r0(u8 i)
+@for_3:
+	const r0(u8 t.4), 16
+	copy r1(u8 i), i(0@function,u8)
+	lt r0(bool t.3), r1(u8 i), r0(u8 t.4)
+	branch r0(bool t.3), false, @for_3_break
+	; 20:3 if i & 7 == 0
+	const r0(u8 t.7), 7
+	copy r1(u8 i), i(0@function,u8)
+	and r0(u8 t.6), r1(u8 i), r0(u8 t.7)
+	const r2(u8 t.8), 0
+	equals r0(bool t.5), r0(u8 t.6), r2(u8 t.8)
+	branch r0(bool t.5), false, @if_4_end
+	const r0(u8 t.9), 32
+	call _, printChar [r0(u8 t.9)]
+@if_4_end:
+	call _, printNibble [i(0@function,u8)]
+	const r0(u8 t.10), 1
+	copy r1(u8 i), i(0@function,u8)
+	add r0(u8 i), r1(u8 i), r0(u8 t.10)
+	copy i(0@function,u8), r0(u8 i)
+	jump @for_3
+@for_3_break:
+	const r0(u8 t.11), 10
+	call _, printChar [r0(u8 t.11)]
+	const r0(u8 i), 32
+	; 27:2 for i < 128
+	copy i(1@function,u8), r0(u8 i)
+@for_5:
+	const r0(u8 t.13), 128
+	copy r1(u8 i), i(1@function,u8)
+	lt r0(bool t.12), r1(u8 i), r0(u8 t.13)
+	branch r0(bool t.12), false, @main_ret
+	; 28:3 if i & 15 == 0
+	const r0(u8 t.16), 15
+	copy r1(u8 i), i(1@function,u8)
+	and r0(u8 t.15), r1(u8 i), r0(u8 t.16)
+	const r2(u8 t.17), 0
+	equals r0(bool t.14), r0(u8 t.15), r2(u8 t.17)
+	branch r0(bool t.14), false, @if_6_end
+	call _, printHex2 [i(1@function,u8)]
+@if_6_end:
+	; 31:3 if i & 7 == 0
+	const r0(u8 t.20), 7
+	copy r1(u8 i), i(1@function,u8)
+	and r0(u8 t.19), r1(u8 i), r0(u8 t.20)
+	const r2(u8 t.21), 0
+	equals r0(bool t.18), r0(u8 t.19), r2(u8 t.21)
+	branch r0(bool t.18), false, @if_7_end
+	const r0(u8 t.22), 32
+	call _, printChar [r0(u8 t.22)]
+@if_7_end:
+	call _, printChar [i(1@function,u8)]
+	; 35:3 if i & 15 == 15
+	const r0(u8 t.25), 15
+	copy r1(u8 i), i(1@function,u8)
+	and r0(u8 t.24), r1(u8 i), r0(u8 t.25)
+	const r2(u8 t.26), 15
+	equals r0(bool t.23), r0(u8 t.24), r2(u8 t.26)
+	branch r0(bool t.23), false, @for_5_continue
+	const r0(u8 t.27), 10
+	call _, printChar [r0(u8 t.27)]
+@for_5_continue:
+	const r0(u8 t.28), 1
+	copy r1(u8 i), i(1@function,u8)
+	add r0(u8 i), r1(u8 i), r0(u8 t.28)
+	copy i(1@function,u8), r0(u8 i)
+	jump @for_5
+@main_ret:
+
+String literals
+	string lit 0 " x\0"

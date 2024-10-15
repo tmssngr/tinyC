@@ -221,153 +221,96 @@ start:
         ret
 
         ; void main
-        ;   rsp+0: var foo
-        ;   rsp+2: var bar
-        ;   rsp+4: var bazz
-        ;   rsp+6: var a
-        ;   rsp+8: var b
-        ;   rsp+10: var t.5
-        ;   rsp+16: var t.6
-        ;   rsp+24: var t.7
-        ;   rsp+26: var t.8
-        ;   rsp+32: var t.9
-        ;   rsp+40: var t.10
-        ;   rsp+48: var t.11
-        ;   rsp+56: var t.12
-        ;   rsp+64: var t.13
-        ;   rsp+72: var t.14
-        ;   rsp+74: var t.15
-        ;   rsp+80: var t.16
-        ;   rsp+88: var t.17
-        ;   rsp+96: var t.18
-        ;   rsp+104: var t.19
-        ;   rsp+112: var t.20
-        ;   rsp+120: var t.21
+        ;   rsp+0: var a
+        ;   rsp+2: var b
+        ;   rsp+4: var c
+        ;   rsp+6: var d
+        ;   rsp+8: var t.4
+        ;   rsp+16: var t.5
+        ;   rsp+24: var t.6
+        ;   rsp+32: var t.7
+        ;   rsp+40: var t.8
+        ;   rsp+48: var t.9
+        ;   rsp+56: var t.10
+        ;   rsp+64: var t.11
 @main:
         ; reserve space for local variables
-        sub rsp, 128
-        ; const r0(u8 t.5), 22
-        mov cl, 22
-        ; cast r0(i16 foo), r0(u8 t.5)
-        movzx cx, cl
-        ; mul r0(i16 bar), r0(i16 foo), r0(i16 foo)
-        movsx rcx, cx
-        movsx rcx, cx
-        imul  rcx, rcx
-        ; const r1(i16 foo), 1
+        sub rsp, 80
+        ; const r0(i16 a), 0
+        mov cx, 0
+        ; const r1(i16 b), 1
         mov dx, 1
-        ; add r0(i16 t.7), r0(i16 bar), r1(i16 foo)
-        add cx, dx
-        ; cast r0(i64 t.6), r0(i16 t.7)
-        movzx rcx, cx
-        ; call _, printIntLf [r0(i64 t.6)]
-        push rcx
+        ; const r2(i16 c), 2
+        mov r9w, 2
+        ; const r3(i16 d), 3
+        mov r10w, 3
+        ; Spill c
+        ; copy c(2@function,i16), r2(i16 c)
+        lea rax, [rsp+4]
+        mov [rax], r9w
+        ; add r2(i16 t.5), r0(i16 a), r1(i16 b)
+        mov r9w, cx
+        add r9w, dx
+        ; cast r2(i64 t.4), r2(i16 t.5)
+        movzx r9, r9w
+        ; copy a(0@function,i16), r0(i16 a)
+        lea rax, [rsp+0]
+        mov [rax], cx
+        ; copy b(1@function,i16), r1(i16 b)
+        lea rax, [rsp+2]
+        mov [rax], dx
+        ; copy d(3@function,i16), r3(i16 d)
+        lea rax, [rsp+6]
+        mov [rax], r10w
+        ; call _, printIntLf [r2(i64 t.4)]
+        push r9
           call @printIntLf
         add rsp, 8
-        ; const r0(u8 t.8), 21
-        mov cl, 21
-        ; cast r0(i16 foo), r0(u8 t.8)
-        movzx cx, cl
-        ; cast r0(i64 t.9), r0(i16 foo)
-        movzx rcx, cx
-        ; call _, printIntLf [r0(i64 t.9)]
-        push rcx
-          call @printIntLf
-        add rsp, 8
-        ; copy r0(i16 bazz), bazz(2@function,i16)
+        ; copy r0(i16 c), c(2@function,i16)
         lea rax, [rsp+4]
         mov cx, [rax]
-        ; cast r0(i64 t.10), r0(i16 bazz)
+        ; copy r1(i16 d), d(3@function,i16)
+        lea rax, [rsp+6]
+        mov dx, [rax]
+        ; add r2(i16 t.7), r0(i16 c), r1(i16 d)
+        mov r9w, cx
+        add r9w, dx
+        ; cast r2(i64 t.6), r2(i16 t.7)
+        movzx r9, r9w
+        ; call _, printIntLf [r2(i64 t.6)]
+        push r9
+          call @printIntLf
+        add rsp, 8
+        ; copy r0(i16 d), d(3@function,i16)
+        lea rax, [rsp+6]
+        mov cx, [rax]
+        ; copy r1(i16 c), c(2@function,i16)
+        lea rax, [rsp+4]
+        mov dx, [rax]
+        ; add r0(i16 t.9), r0(i16 d), r1(i16 c)
+        add cx, dx
+        ; cast r0(i64 t.8), r0(i16 t.9)
+        movzx rcx, cx
+        ; call _, printIntLf [r0(i64 t.8)]
+        push rcx
+          call @printIntLf
+        add rsp, 8
+        ; copy r0(i16 b), b(1@function,i16)
+        lea rax, [rsp+2]
+        mov cx, [rax]
+        ; copy r1(i16 a), a(0@function,i16)
+        lea rax, [rsp+0]
+        mov dx, [rax]
+        ; add r0(i16 t.11), r0(i16 b), r1(i16 a)
+        add cx, dx
+        ; cast r0(i64 t.10), r0(i16 t.11)
         movzx rcx, cx
         ; call _, printIntLf [r0(i64 t.10)]
         push rcx
           call @printIntLf
         add rsp, 8
-        ; const r0(i16 a), 1000
-        mov cx, 1000
-        ; const r1(i16 b), 10
-        mov dx, 10
-        ; div r1(i16 t.12), r0(i16 a), r1(i16 b)
-        movsx rax, cx
-        movsx rbx, dx
-        cqo
-        idiv rbx
-        mov rdx, rax
-        ; cast r1(i64 t.11), r1(i16 t.12)
-        movzx rdx, dx
-        ; copy a(3@function,i16), r0(i16 a)
-        lea rax, [rsp+6]
-        mov [rax], cx
-        ; call _, printIntLf [r1(i64 t.11)]
-        push rdx
-          call @printIntLf
-        add rsp, 8
-        ; const r0(i16 t.15), 255
-        mov cx, 255
-        ; copy r1(i16 a), a(3@function,i16)
-        lea rax, [rsp+6]
-        mov dx, [rax]
-        ; and r0(i16 t.14), r1(i16 a), r0(i16 t.15)
-        mov ax, dx
-        and ax, cx
-        mov cx, ax
-        ; cast r0(i64 t.13), r0(i16 t.14)
-        movzx rcx, cx
-        ; call _, printIntLf [r0(i64 t.13)]
-        push rcx
-          call @printIntLf
-        add rsp, 8
-        ; const r0(i16 a), 10
-        mov cx, 10
-        ; const r1(i16 b), 1
-        mov dx, 1
-        ; shiftright r0(i16 t.17), r0(i16 a), r1(i16 b)
-        mov ax, cx
-        mov cx, dx
-        sar ax, cl
-        mov cx, ax
-        ; cast r0(i64 t.16), r0(i16 t.17)
-        movzx rcx, cx
-        ; call _, printIntLf [r0(i64 t.16)]
-        push rcx
-          call @printIntLf
-        add rsp, 8
-        ; const r0(i16 a), 9
-        mov cx, 9
-        ; const r1(i16 b), 2
-        mov dx, 2
-        ; shiftright r0(i16 t.19), r0(i16 a), r1(i16 b)
-        mov ax, cx
-        mov cx, dx
-        sar ax, cl
-        mov cx, ax
-        ; cast r0(i64 t.18), r0(i16 t.19)
-        movzx rcx, cx
-        ; copy b(4@function,i16), r1(i16 b)
-        lea rax, [rsp+8]
-        mov [rax], dx
-        ; call _, printIntLf [r0(i64 t.18)]
-        push rcx
-          call @printIntLf
-        add rsp, 8
-        ; const r0(i16 a), 1
-        mov cx, 1
-        ; copy r1(i16 b), b(4@function,i16)
-        lea rax, [rsp+8]
-        mov dx, [rax]
-        ; shiftleft r0(i16 t.21), r0(i16 a), r1(i16 b)
-        mov ax, cx
-        mov cx, dx
-        sal ax, cl
-        mov cx, ax
-        ; cast r0(i64 t.20), r0(i16 t.21)
-        movzx rcx, cx
-        ; call _, printIntLf [r0(i64 t.20)]
-        push rcx
-          call @printIntLf
-        add rsp, 8
         ; release space for local variables
-        add rsp, 128
+        add rsp, 80
         ret
 init:
         sub rsp, 20h
