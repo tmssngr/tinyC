@@ -1,0 +1,276 @@
+@printString:
+ Local variables
+	arg 0: str
+	var 1: length
+	; 6 pc
+	call r0(i64 length), strlen, [str(0@argument,u8*)]
+	call _, printStringLength [str(0@argument,u8*), r0(i64 length)]
+
+@printChar:
+ Local variables
+	arg 0: chr
+	var 1: t.1
+	var 2: t.2
+	; 4 pc
+	addrof r0(u8* t.1), chr(0@argument,u8)
+	const r1(i64 t.2), 1
+	call _, printStringLength [r0(u8* t.1), r1(i64 t.2)]
+
+@strlen:
+ Local variables
+	arg 0: str
+	var 1: length
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	; 31 pc
+	const r0(i64 length), 0
+	; 37:2 for *str != 0
+	copy length(1@function,i64), r0(i64 length)
+@for_1:
+	copy r0(u8* str), str(0@argument,u8*)
+	load r1(u8 t.3), [r0(u8* str)]
+	const r2(u8 t.4), 0
+	notequals r1(bool t.2), r1(u8 t.3), r2(u8 t.4)
+	branch r1(bool t.2), false, @for_1_break
+	const r0(i64 t.5), 1
+	copy r1(i64 length), length(1@function,i64)
+	add r0(i64 length), r1(i64 length), r0(i64 t.5)
+	copy length(1@function,i64), r0(i64 length)
+	copy r0(u8* str), str(0@argument,u8*)
+	cast r0(i64 t.7), r0(u8* str)
+	const r1(i64 t.8), 1
+	add r0(i64 t.6), r0(i64 t.7), r1(i64 t.8)
+	cast r0(u8* str), r0(i64 t.6)
+	copy str(0@argument,u8*), r0(u8* str)
+	jump @for_1
+@for_1_break:
+	; 40:9 return length
+	copy r0(i64 length), length(1@function,i64)
+	ret r0(i64 length)
+
+@printStringLength:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
+@printBoard:
+ Local variables
+	var 0: i
+	var 1: t.1
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	; 33 pc
+	const r0(u8 t.1), 124
+	call _, printChar [r0(u8 t.1)]
+	const r0(u8 i), 0
+	; 11:2 for i < 30
+	copy i(0@function,u8), r0(u8 i)
+@for_2:
+	const r0(u8 t.3), 30
+	copy r1(u8 i), i(0@function,u8)
+	lt r0(bool t.2), r1(u8 i), r0(u8 t.3)
+	branch r0(bool t.2), false, @for_2_break
+	; 12:3 if [...] == 0
+	copy r0(u8 i), i(0@function,u8)
+	cast r1(i64 t.7), r0(u8 i)
+	cast r1(u8* t.8), r1(i64 t.7)
+	addrof r2(u8* t.6), [board(0@global,u8*)]
+	add r1(u8* t.6), r2(u8* t.6), r1(u8* t.8)
+	load r1(u8 t.5), [r1(u8* t.6)]
+	const r2(u8 t.9), 0
+	equals r1(bool t.4), r1(u8 t.5), r2(u8 t.9)
+	branch r1(bool t.4), false, @if_3_else
+	const r0(u8 t.10), 32
+	call _, printChar [r0(u8 t.10)]
+	jump @for_2_continue
+@if_3_else:
+	const r0(u8 t.11), 42
+	call _, printChar [r0(u8 t.11)]
+@for_2_continue:
+	const r0(u8 t.12), 1
+	copy r1(u8 i), i(0@function,u8)
+	add r0(u8 i), r1(u8 i), r0(u8 t.12)
+	copy i(0@function,u8), r0(u8 i)
+	jump @for_2
+@for_2_break:
+	const r0(u8* t.13), [string-0]
+	call _, printString [r0(u8* t.13)]
+
+@main:
+ Local variables
+	var 0: i
+	var 1: i
+	var 2: pattern
+	var 3: j
+	var 4: t.4
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	var 19: t.19
+	var 20: t.20
+	var 21: t.21
+	var 22: t.22
+	var 23: t.23
+	var 24: t.24
+	var 25: t.25
+	var 26: t.26
+	var 27: t.27
+	var 28: t.28
+	var 29: t.29
+	var 30: t.30
+	var 31: t.31
+	var 32: t.32
+	var 33: t.33
+	var 34: t.34
+	var 35: t.35
+	var 36: t.36
+	var 37: t.37
+	var 38: t.38
+	var 39: t.39
+	var 40: t.40
+	var 41: t.41
+	var 42: t.42
+	var 43: t.43
+	var 44: t.44
+	var 45: t.45
+	var 46: t.46
+	var 47: t.47
+	var 48: t.48
+	; 107 pc
+	const r0(u8 i), 0
+	; 23:2 for i < 30
+	copy i(0@function,u8), r0(u8 i)
+@for_4:
+	const r0(u8 t.5), 30
+	copy r1(u8 i), i(0@function,u8)
+	lt r0(bool t.4), r1(u8 i), r0(u8 t.5)
+	branch r0(bool t.4), false, @for_4_break
+	const r0(u8 t.6), 0
+	copy r1(u8 i), i(0@function,u8)
+	cast r2(i64 t.8), r1(u8 i)
+	cast r2(u8* t.9), r2(i64 t.8)
+	addrof r3(u8* t.7), [board(0@global,u8*)]
+	add r2(u8* t.7), r3(u8* t.7), r2(u8* t.9)
+	store [r2(u8* t.7)], r0(u8 t.6)
+	const r0(u8 t.10), 1
+	copy r1(u8 i), i(0@function,u8)
+	add r0(u8 i), r1(u8 i), r0(u8 t.10)
+	copy i(0@function,u8), r0(u8 i)
+	jump @for_4
+@for_4_break:
+	const r0(u8 t.11), 1
+	const r1(u8 t.14), 29
+	cast r1(i64 t.13), r1(u8 t.14)
+	cast r1(u8* t.15), r1(i64 t.13)
+	addrof r2(u8* t.12), [board(0@global,u8*)]
+	add r1(u8* t.12), r2(u8* t.12), r1(u8* t.15)
+	store [r1(u8* t.12)], r0(u8 t.11)
+	call _, printBoard []
+	const r0(u8 i), 0
+	; 30:2 for i < 28
+	copy i(1@function,u8), r0(u8 i)
+@for_5:
+	const r0(u8 t.17), 28
+	copy r1(u8 i), i(1@function,u8)
+	lt r0(bool t.16), r1(u8 i), r0(u8 t.17)
+	branch r0(bool t.16), false, @main_ret
+	const r0(i64 t.21), 0
+	cast r0(u8* t.22), r0(i64 t.21)
+	addrof r1(u8* t.20), [board(0@global,u8*)]
+	add r0(u8* t.20), r1(u8* t.20), r0(u8* t.22)
+	load r0(u8 t.19), [r0(u8* t.20)]
+	const r1(u8 t.23), 1
+	shiftleft r0(u8 t.18), r0(u8 t.19), r1(u8 t.23)
+	const r1(i64 t.26), 1
+	cast r1(u8* t.27), r1(i64 t.26)
+	addrof r2(u8* t.25), [board(0@global,u8*)]
+	add r1(u8* t.25), r2(u8* t.25), r1(u8* t.27)
+	load r1(u8 t.24), [r1(u8* t.25)]
+	or r0(u8 pattern), r0(u8 t.18), r1(u8 t.24)
+	const r1(u8 j), 1
+	; 32:3 for j < 29
+	copy pattern(2@function,u8), r0(u8 pattern)
+	copy j(3@function,u8), r1(u8 j)
+@for_6:
+	const r0(u8 t.29), 29
+	copy r1(u8 j), j(3@function,u8)
+	lt r0(bool t.28), r1(u8 j), r0(u8 t.29)
+	branch r0(bool t.28), false, @for_6_break
+	const r0(u8 t.32), 1
+	copy r1(u8 pattern), pattern(2@function,u8)
+	shiftleft r0(u8 t.31), r1(u8 pattern), r0(u8 t.32)
+	const r1(u8 t.33), 7
+	and r0(u8 t.30), r0(u8 t.31), r1(u8 t.33)
+	const r1(u8 t.38), 1
+	copy r2(u8 j), j(3@function,u8)
+	add r1(u8 t.37), r2(u8 j), r1(u8 t.38)
+	cast r1(i64 t.36), r1(u8 t.37)
+	cast r1(u8* t.39), r1(i64 t.36)
+	addrof r3(u8* t.35), [board(0@global,u8*)]
+	add r1(u8* t.35), r3(u8* t.35), r1(u8* t.39)
+	load r1(u8 t.34), [r1(u8* t.35)]
+	or r0(u8 pattern), r0(u8 t.30), r1(u8 t.34)
+	const r1(u8 t.42), 110
+	shiftright r1(u8 t.41), r1(u8 t.42), r0(u8 pattern)
+	const r3(u8 t.43), 1
+	and r1(u8 t.40), r1(u8 t.41), r3(u8 t.43)
+	cast r3(i64 t.45), r2(u8 j)
+	cast r3(u8* t.46), r3(i64 t.45)
+	addrof r2(u8* t.44), [board(0@global,u8*)]
+	add r2(u8* t.44), r2(u8* t.44), r3(u8* t.46)
+	store [r2(u8* t.44)], r1(u8 t.40)
+	copy pattern(2@function,u8), r0(u8 pattern)
+	const r0(u8 t.47), 1
+	copy r1(u8 j), j(3@function,u8)
+	add r0(u8 j), r1(u8 j), r0(u8 t.47)
+	copy j(3@function,u8), r0(u8 j)
+	jump @for_6
+@for_6_break:
+	call _, printBoard []
+	const r0(u8 t.48), 1
+	copy r1(u8 i), i(1@function,u8)
+	add r0(u8 i), r1(u8 i), r0(u8 t.48)
+	copy i(1@function,u8), r0(u8 i)
+	jump @for_5
+@main_ret:
+
+Global variables
+	0: board (240)
+
+String literals
+	string lit 0 "|\n\0"
