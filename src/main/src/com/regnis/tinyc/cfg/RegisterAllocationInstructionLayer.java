@@ -32,7 +32,13 @@ public final class RegisterAllocationInstructionLayer {
 		final List<IRInstruction> beforeInstructions = new ArrayList<>();
 		final Consumer<IRInstruction> preConsumer = beforeInstructions::add;
 
-		instruction = switch (instruction) {
+		final IRInstruction replacedInstruction = process(instruction, preConsumer);
+		consumer.accept(replacedInstruction);
+		beforeInstructions.forEach(consumer);
+	}
+
+	private IRInstruction process(@NotNull IRInstruction instruction, Consumer<IRInstruction> preConsumer) {
+		return switch (instruction) {
 			case IRAddrOf addrOf -> {
 				final IRVar source = addrOf.source();
 				Utils.assertTrue(source.scope() != VariableScope.register);
@@ -105,7 +111,5 @@ public final class RegisterAllocationInstructionLayer {
 //			throw new UnsupportedOperationException(instruction.toString());
 			}
 		};
-		consumer.accept(instruction);
-		beforeInstructions.forEach(consumer);
 	}
 }

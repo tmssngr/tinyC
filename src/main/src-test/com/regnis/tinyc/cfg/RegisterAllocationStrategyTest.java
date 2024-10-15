@@ -18,6 +18,40 @@ import static org.junit.Assert.assertEquals;
  */
 public class RegisterAllocationStrategyTest {
 
+	static void assertEqualsVarStateAndInstructions(List<LiveVarRegisterState> expectedVarStates, RegisterAllocationStrategy strategy, List<IRInstruction> expectedInstructions, List<IRInstruction> instructions) {
+		assertEquals(new AllLiveVarRegisterState(expectedVarStates), strategy.getState());
+		assertEquals(expectedInstructions, instructions);
+	}
+
+	@NotNull
+	static IRCopy movRegFromReg(String name, int to, int from) {
+		return movVarFromReg(reg(name, to), from);
+	}
+
+	@NotNull
+	static IRCopy movVarFromReg(IRVar to, int from) {
+		return new IRCopy(to,
+		                  reg(to.name(), from),
+		                  Location.DUMMY);
+	}
+
+	@NotNull
+	static IRCopy movRegFromVar(int to, IRVar from) {
+		return new IRCopy(reg(from.name(), to),
+		                  from,
+		                  Location.DUMMY);
+	}
+
+	@NotNull
+	static IRVar var(String name, int index) {
+		return new IRVar(name, index, VariableScope.function, Type.I16, true);
+	}
+
+	@NotNull
+	static IRVar reg(String name, int index) {
+		return new IRVar(name, index, VariableScope.register, Type.I16, true);
+	}
+
 	@Test
 	public void testFreeRegister() {
 		final var strategy = new RegisterAllocationStrategy(2, 0, 2);
@@ -350,7 +384,7 @@ public class RegisterAllocationStrategyTest {
 				                                    new LiveVarRegisterState(var("b", 1), List.of(CALL_ARG_1))
 		                                    ), strategy,
 		                                    List.of(
-													movRegFromReg("a", nonVolatile0, CALL_ARG_0)
+				                                    movRegFromReg("a", nonVolatile0, CALL_ARG_0)
 		                                    ), instructions);
 	}
 
@@ -459,39 +493,5 @@ public class RegisterAllocationStrategyTest {
 				                                    movRegFromReg("y", CALL_ARG_0, nonVolatile0),
 				                                    movRegFromReg("a", nonVolatile0, CALL_RETURN_REG)
 		                                    ), instructions);
-	}
-
-	private static void assertEqualsVarStateAndInstructions(List<LiveVarRegisterState> expectedVarStates, RegisterAllocationStrategy strategy, List<IRInstruction> expectedInstructions, List<IRInstruction> instructions) {
-		assertEquals(new AllLiveVarRegisterState(expectedVarStates), strategy.getState());
-		assertEquals(expectedInstructions, instructions);
-	}
-
-	@NotNull
-	private static IRCopy movRegFromReg(String name, int to, int from) {
-		return movVarFromReg(reg(name, to), from);
-	}
-
-	@NotNull
-	private static IRCopy movVarFromReg(IRVar to, int from) {
-		return new IRCopy(to,
-		                  reg(to.name(), from),
-		                  Location.DUMMY);
-	}
-
-	@NotNull
-	private static IRCopy movRegFromVar(int to, IRVar from) {
-		return new IRCopy(reg(from.name(), to),
-		                  from,
-		                  Location.DUMMY);
-	}
-
-	@NotNull
-	private static IRVar var(String name, int index) {
-		return new IRVar(name, index, VariableScope.function, Type.I16, true);
-	}
-
-	@NotNull
-	private static IRVar reg(String name, int index) {
-		return new IRVar(name, index, VariableScope.register, Type.I16, true);
 	}
 }
