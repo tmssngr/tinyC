@@ -31,7 +31,7 @@ public class Compiler {
 
 	public static void compileAndRun(@NotNull Path inputFile, @Nullable Path outputFile) throws IOException, InterruptedException {
 		final Path exeFile = compile(inputFile);
-		launchExe(exeFile, outputFile);
+//		launchExe(exeFile, outputFile);
 	}
 
 	@NotNull

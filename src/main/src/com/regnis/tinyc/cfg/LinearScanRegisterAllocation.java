@@ -5,6 +5,7 @@ import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.*;
@@ -37,9 +38,19 @@ public final class LinearScanRegisterAllocation {
 	}
 
 	public BasicBlock process() {
-		for (IRInstruction instruction : block.instructions()) {
-			process(instruction);
+		final RegisterAllocationStrategy strategy = new RegisterAllocationStrategy(4, 0, 2);
+		final List<RegisterAllocationStrategy.LiveVarRegisterState> vars = new ArrayList<>();
+		for (IRVar var : block.getLiveAfter()) {
+			vars.add(new RegisterAllocationStrategy.LiveVarRegisterState(var, List.of()));
 		}
+		strategy.setState(new RegisterAllocationStrategy.AllLiveVarRegisterState(vars));
+
+		final List<IRInstruction> instructions = new ArrayList<>();
+		final Consumer<IRInstruction> consumer = instructions::addFirst;
+		final RegisterAllocationInstructionLayer instructionLayer = new RegisterAllocationInstructionLayer(strategy, consumer);
+		instructionLayer.process(block);
+		strategy.freeAllRegisters(consumer);
+
 		return new BasicBlock(block.name, instructions, block.predecessors(), block.successors());
 	}
 
