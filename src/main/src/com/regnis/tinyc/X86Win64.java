@@ -700,7 +700,7 @@ public final class X86Win64 {
 
 	private static int getRegisterVarRegisterIndex(IRVar var) {
 		Utils.assertTrue(var.scope() == VariableScope.register);
-		return var.index() + 2;
+		return var.index();
 	}
 
 	private static String getRegName(int reg) {

@@ -33,7 +33,7 @@ public record IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar lef
 		And(false), Or(false), Xor(false),
 		Lt(true), LtEq(true), Equals(true), NotEquals(true), GtEq(true), Gt(true);
 
-		private final boolean relational;
+		public final boolean relational;
 
 		Op(boolean relational) {
 			this.relational = relational;
