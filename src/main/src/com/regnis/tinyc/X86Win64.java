@@ -395,20 +395,17 @@ public final class X86Win64 {
 			// https://www.felixcloutier.com/x86/idiv
 			// (rdx rax) / %reg -> rax
 			// (rdx rax) % %reg -> rdx
-			final int leftReg = getRegisterVarRegisterIndex(binary.left());
-			final String leftRegName = getRegName(leftReg);
-			final int rightReg = getRegisterVarRegisterIndex(binary.right());
-			final String rightRegName = getRegName(rightReg);
 			final int targetReg = getRegisterVarRegisterIndex(binary.target());
+			final int leftReg = getRegisterVarRegisterIndex(binary.left());
+			final int rightReg = getRegisterVarRegisterIndex(binary.right());
+			Utils.assertTrue(targetReg == 0);
+			Utils.assertTrue(leftReg == 0);
+			final String leftRegName = getRegName(leftReg);
+			final String rightRegName = getRegName(rightReg);
 			final String targetRegName = getRegName(targetReg);
 
-			final int rdx = 3;
+			final int rdx = 2;
 			Utils.assertTrue("rdx".equals(getRegName(rdx)));
-			final boolean pushPopRdx = targetReg != rdx;
-			if (pushPopRdx) {
-				writeIndented("push rdx");
-			}
-
 			if (size == 8) {
 				writeIndented("mov rax, " + leftRegName);
 				writeIndented("mov rbx, " + rightRegName);
@@ -419,11 +416,7 @@ public final class X86Win64 {
 			}
 			writeIndented("cqo"); // rdx := signbit(rax)
 			writeIndented("idiv rbx");
-			if (pushPopRdx) {
-				writeIndented("mov " + targetRegName + ", " + (binary.op() == IRBinary.Op.Mod ? "rdx" : "rax"));
-				writeIndented("pop rdx");
-			}
-			else if (binary.op() == IRBinary.Op.Div) {
+			if (binary.op() == IRBinary.Op.Div) {
 				writeIndented("mov " + targetRegName + ", rax");
 			}
 		}

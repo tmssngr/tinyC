@@ -93,8 +93,11 @@ public final class RegisterAllocationInstructionLayer {
 			if (op == IRBinary.Op.Div || op == IRBinary.Op.Mod) {
 				// (rdx rax) / %reg -> rax
 				// (rdx rax) % %reg -> rdx
-				target = strategy.target(target, consumer);
-				final IRVar left = strategy.source(binary.left(), null, preConsumer, consumer);
+				final int RAX = 0;
+				final int RDX = 2;
+				strategy.freeRegister(RDX, null, register -> register != RAX, consumer);
+				target = strategy.target(target, RAX, register -> register != RDX, consumer);
+				final IRVar left = strategy.sourceForModificationInReg(binary.left(), RAX);
 				final IRVar right = strategy.source(binary.right(), left, preConsumer, consumer);
 				consumer.accept(new IRBinary(target, op, left, right, binary.location()));
 			}
