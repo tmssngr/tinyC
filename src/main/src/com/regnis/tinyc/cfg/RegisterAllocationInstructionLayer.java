@@ -23,7 +23,17 @@ public final class RegisterAllocationInstructionLayer {
 	}
 
 	public void process(BasicBlock block) {
+		boolean addLiveComment = false;
 		for (IRInstruction instruction : block.instructions().reversed()) {
+			// these need to be the last block instructions
+			if (!(instruction instanceof IRJump)
+			    && !(instruction instanceof IRBranch)) {
+				addLiveComment = true;
+			}
+			if (addLiveComment) {
+				consumer.accept(new IRComment("live: " + strategy.getState().vars()));
+			}
+
 			process(instruction);
 		}
 	}
@@ -43,11 +53,19 @@ public final class RegisterAllocationInstructionLayer {
 			final IRVar source = addrOf.source();
 			Utils.assertTrue(source.scope() != VariableScope.register);
 			IRVar target = addrOf.target();
+			if (!strategy.isLiveAfter(target)) {
+				return;
+			}
+
 			target = strategy.target(target, consumer);
 			consumer.accept(new IRAddrOf(target, source, addrOf.location()));
 		}
 		case IRAddrOfArray addrOf -> {
 			IRVar addr = addrOf.addr();
+			if (!strategy.isLiveAfter(addr)) {
+				return;
+			}
+
 			addr = strategy.target(addr, consumer);
 			IRVar index = addrOf.index();
 			index = strategy.source(index, null, preConsumer, consumer);
@@ -55,6 +73,10 @@ public final class RegisterAllocationInstructionLayer {
 		}
 		case IRArrayAccess access -> {
 			IRVar addr = access.addr();
+			if (!strategy.isLiveAfter(addr)) {
+				return;
+			}
+
 			addr = strategy.target(addr, consumer);
 			IRVar index = access.index();
 			index = strategy.source(index, null, preConsumer, consumer);
@@ -66,18 +88,30 @@ public final class RegisterAllocationInstructionLayer {
 				return;
 			}
 
-			target = strategy.target(target, consumer);
-			if (binary.op().relational) {
+			final IRBinary.Op op = binary.op();
+			// x86-specific
+			if (op == IRBinary.Op.Div || op == IRBinary.Op.Mod) {
+				// (rdx rax) / %reg -> rax
+				// (rdx rax) % %reg -> rdx
+				target = strategy.target(target, consumer);
 				final IRVar left = strategy.source(binary.left(), null, preConsumer, consumer);
 				final IRVar right = strategy.source(binary.right(), left, preConsumer, consumer);
-				consumer.accept(new IRBinary(target, binary.op(), left, right, binary.location()));
+				consumer.accept(new IRBinary(target, op, left, right, binary.location()));
 			}
 			else {
-				// add, sub, ... reuse first operand for target
-				final IRVar left = strategy.sourceForModificationInReg(binary.left(), target.index());
-				Utils.assertTrue(target.index() == left.index());
-				final IRVar right = strategy.source(binary.right(), left, preConsumer, consumer);
-				consumer.accept(new IRBinary(target, binary.op(), left, right, binary.location()));
+				target = strategy.target(target, consumer);
+				if (op.relational) {
+					final IRVar left = strategy.source(binary.left(), null, preConsumer, consumer);
+					final IRVar right = strategy.source(binary.right(), left, preConsumer, consumer);
+					consumer.accept(new IRBinary(target, op, left, right, binary.location()));
+				}
+				else {
+					// add, sub, ... reuse first operand for target
+					final IRVar left = strategy.sourceForModificationInReg(binary.left(), target.index());
+					Utils.assertTrue(target.index() == left.index());
+					final IRVar right = strategy.source(binary.right(), left, preConsumer, consumer);
+					consumer.accept(new IRBinary(target, op, left, right, binary.location()));
+				}
 			}
 		}
 		case IRBranch branch -> {
@@ -96,33 +130,81 @@ public final class RegisterAllocationInstructionLayer {
 		}
 		case IRCast cast -> {
 			IRVar target = cast.target();
+			if (!strategy.isLiveAfter(target)) {
+				return;
+			}
+
 			target = strategy.target(target, consumer);
 			IRVar source = cast.source();
 			source = strategy.source(source, null, preConsumer, consumer);
 			consumer.accept(new IRCast(target, source, cast.location()));
 		}
 		case IRComment ignored -> consumer.accept(instruction);
+		case IRCopy copy -> {
+			IRVar target = copy.target();
+			if (!strategy.isLiveAfter(target)) {
+				return;
+			}
+
+			target = strategy.target(target, consumer);
+			IRVar source = copy.source();
+			source = strategy.source(source, null, preConsumer, consumer);
+			consumer.accept(new IRCopy(target, source, copy.location()));
+		}
 		case IRJump ignored -> consumer.accept(instruction);
 		case IRLiteral literal -> {
-			final IRVar target = strategy.target(literal.target(), consumer);
+			IRVar target = literal.target();
+			if (!strategy.isLiveAfter(target)) {
+				return;
+			}
+
+			target = strategy.target(target, consumer);
 			consumer.accept(new IRLiteral(target, literal.value(), literal.location()));
+		}
+		case IRMemLoad load -> {
+			IRVar target = load.target();
+			if (!strategy.isLiveAfter(target)) {
+				return;
+			}
+
+			target = strategy.target(target, consumer);
+			IRVar addr = load.addr();
+			addr = strategy.source(addr, null, preConsumer, consumer);
+			consumer.accept(new IRMemLoad(target, addr, load.location()));
 		}
 		case IRMemStore store -> {
 			final IRVar addr = strategy.source(store.addr(), null, preConsumer, consumer);
 			final IRVar value = strategy.source(store.value(), null, preConsumer, consumer);
 			consumer.accept(new IRMemStore(addr, value, store.location()));
 		}
+		case IRRetValue ret -> {
+			final IRVar var = strategy.source(ret.var(), null, preConsumer, consumer);
+			consumer.accept(new IRRetValue(var, ret.location()));
+		}
+		case IRString string -> {
+			IRVar target = string.target();
+			if (!strategy.isLiveAfter(target)) {
+				return;
+			}
+
+			target = strategy.target(target, consumer);
+			consumer.accept(new IRLiteral(target, string.stringIndex(), string.location()));
+		}
 		case IRUnary unary -> {
 			IRVar target = unary.target();
+			if (!strategy.isLiveAfter(target)) {
+				return;
+			}
+
 			target = strategy.target(target, consumer);
 			IRVar source = unary.source();
 			source = strategy.source(source, null, preConsumer, consumer);
 			consumer.accept(new IRUnary(unary.op(), target, source));
 		}
 		default -> {
-			preConsumer.accept(new IRComment("; not yet implemented"));
-			consumer.accept(instruction);
-//			throw new UnsupportedOperationException(instruction.toString());
+//			preConsumer.accept(new IRComment("; not yet implemented"));
+//			consumer.accept(instruction);
+			throw new UnsupportedOperationException(instruction.toString());
 		}
 		}
 		;

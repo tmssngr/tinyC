@@ -72,16 +72,41 @@ public final class RegisterAllocationStrategy {
 					volatileRegisters.add(register);
 					iterator.remove();
 				}
-				else {
-					throw new IllegalStateException();
+			}
+			if (volatileRegisters.isEmpty()) {
+				continue;
+			}
+
+			//noinspection UnnecessaryLocalVariable
+			final List<Integer> nonVolatileRegisters = registers;
+			final int nvReg = nonVolatileRegisters.size() > 0
+					? nonVolatileRegisters.getFirst()
+					: getFreeNonVolatileRegister();
+			if (nvReg >= 0) {
+				for (int register : volatileRegisters) {
+					movRegFromReg(var.var, register, nvReg, consumer);
 				}
+				liveVars.set(i, var.derive(List.of(nvReg)));
 			}
-			for (Integer register : volatileRegisters) {
-				final int nvReg = getFreeNonVolatileRegister();
-				movRegFromReg(var.var(), register, nvReg, consumer);
-				registers.add(nvReg);
+			else {
+				movRegsFromVar(var.var, volatileRegisters, consumer);
+				liveVars.set(i, var.derive(List.of()));
 			}
-			liveVars.set(i, var.derive(registers));
+		}
+	}
+
+	private void movRegsFromVar(IRVar var, List<Integer> registers, Consumer<IRInstruction> consumer) {
+		int mainRegister = -1;
+		for (int register : registers) {
+			if (mainRegister < 0) {
+				mainRegister = register;
+			}
+			else {
+				movRegFromReg(var, register, mainRegister, consumer);
+			}
+		}
+		if (mainRegister >= 0) {
+			movRegFromVar(mainRegister, var, consumer);
 		}
 	}
 
@@ -147,7 +172,9 @@ public final class RegisterAllocationStrategy {
 
 	@NotNull
 	public IRVar target(IRVar target, Consumer<IRInstruction> consumer) {
-		final LiveVarRegisterState state = remove(target);
+		final LiveVarRegisterState state = get(target);
+		Utils.assertTrue(state != null);
+		liveVars.remove(state);
 		int preferredRegister = -1;
 		for (int register : state.registers) {
 			if (preferredRegister < 0) {
@@ -220,31 +247,6 @@ public final class RegisterAllocationStrategy {
 		else {
 			movVarFromReg(source, register, preConsumer);
 			setRegisters(state, registers);
-		}
-		return reg(register, source);
-	}
-
-	@NotNull
-	public IRVar sourceCopyIfLive(IRVar source, Consumer<IRInstruction> preConsumer, Consumer<IRInstruction> postConsumer) {
-		final LiveVarRegisterState state = get(source);
-		if (state != null) {
-			if (state.registers.isEmpty()) {
-				liveVars.remove(state);
-				// return first free (below)
-			}
-			else {
-				throw new UnsupportedOperationException();
-			}
-		}
-
-		int register = getFreeRegister();
-		if (register < 0) {
-			register = freeRegisterExceptOf(-1, postConsumer);
-		}
-		liveVars.add(new LiveVarRegisterState(source, List.of(register)));
-		// is still live?
-		if (state != null) {
-			movVarFromReg(source, register, preConsumer);
 		}
 		return reg(register, source);
 	}
