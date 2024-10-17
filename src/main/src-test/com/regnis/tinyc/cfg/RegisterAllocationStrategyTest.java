@@ -560,94 +560,91 @@ public class RegisterAllocationStrategyTest {
 		)), strategy.getState());
 	}
 
-/*
 	@Test
-	public void testSourceCopyIfLive() {
+	public void testFreeVolatile() {
 		final IRVar a = var("a", 0);
 		final IRVar b = var("b", 1);
 		final IRVar c = var("c", 2);
-		final IRVar d = var("d", 3);
-		final IRVar e = var("e", 4);
 		final var strategy = new RegisterAllocationStrategy(2, 0, 2);
 		final int nv0 = strategy.nonVolatile(0);
 		final int nv1 = strategy.nonVolatile(1);
 
-		final List<IRInstruction> preInstructions = new ArrayList<>();
-		final List<IRInstruction> postInstructions = new ArrayList<>();
-		final Consumer<IRInstruction> preConsumer = preInstructions::addFirst;
-		final Consumer<IRInstruction> postConsumer = postInstructions::addFirst;
+		final List<IRInstruction> instructions = new ArrayList<>();
+		final Consumer<IRInstruction> consumer = instructions::addFirst;
 		// ------------------------------------------------------------------------------
-		// all free, return first reg
-		strategy.setState(new AllLiveVarRegisterState(List.of()));
-		IRVar source = strategy.sourceCopyIfLive(a, preConsumer, postConsumer);
-		assertEquals(reg(CALL_ARG_0, a), source);
-		assertEquals(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(a, List.of(CALL_ARG_0))
-		)), strategy.getState());
-		assertEquals(List.of(), preInstructions);
-		assertEquals(List.of(), postInstructions);
+		// nothing live
+		// -> nothing to do
+		strategy.freeVolatileRegisters(consumer);
+		assertEqualsVarStateAndInstructions(List.of(), strategy,
+		                                    List.of(), instructions);
 		// ------------------------------------------------------------------------------
-		// not live, no register free
+		// something live, but not in registers
+		// -> nothing to do
 		strategy.setState(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(a, List.of(CALL_ARG_0)),
-				new LiveVarRegisterState(b, List.of(CALL_ARG_1)),
-				new LiveVarRegisterState(c, List.of(nv0)),
-				new LiveVarRegisterState(d, List.of(nv1))
+				new LiveVarRegisterState(a, List.of())
 		)));
-		source = strategy.sourceCopyIfLive(e, preConsumer, postConsumer);
-		assertEquals(reg(CALL_ARG_0, e), source);
-		assertEquals(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(b, List.of(CALL_ARG_1)),
-				new LiveVarRegisterState(c, List.of(nv0)),
-				new LiveVarRegisterState(d, List.of(nv1)),
-				new LiveVarRegisterState(a, List.of()),
-				//                       v          ^
-				new LiveVarRegisterState(e, List.of(CALL_ARG_0))
-		)), strategy.getState());
-		assertEquals(List.of(), preInstructions);
-		assertEquals(List.of(
-				movRegFromVar(CALL_ARG_0, a)
-		), postInstructions);
+		strategy.freeVolatileRegisters(consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(a, List.of())
+		                                    ), strategy,
+		                                    List.of(), instructions);
 		// ------------------------------------------------------------------------------
-		// live, but not in register
-		postInstructions.clear();
+		// something live in non-volatile registers
+		// -> nothing to do
 		strategy.setState(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(a, List.of(CALL_ARG_0)),
-				new LiveVarRegisterState(b, List.of())
+				new LiveVarRegisterState(a, List.of(nv0))
 		)));
-		source = strategy.sourceCopyIfLive(b, preConsumer, postConsumer);
-		assertEquals(reg(CALL_ARG_1, b), source);
-		assertEquals(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(a, List.of(CALL_ARG_0)),
-				new LiveVarRegisterState(b, List.of(CALL_ARG_1))
-		)), strategy.getState());
-		assertEquals(List.of(
-				movVarFromReg(b, CALL_ARG_1)
-		), preInstructions);
-		assertEquals(List.of(), postInstructions);
+		strategy.freeVolatileRegisters(consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(a, List.of(nv0))
+		                                    ), strategy,
+		                                    List.of(), instructions);
 		// ------------------------------------------------------------------------------
-		// live, but no free register (one var using multiple registers)
-		preInstructions.clear();
+		// something live in volatile and non-volatile registers
+		// -> move
 		strategy.setState(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(a, List.of(CALL_ARG_0)),
-				new LiveVarRegisterState(b, List.of(CALL_ARG_1)),
-				new LiveVarRegisterState(c, List.of(nv0, nv1))
+				new LiveVarRegisterState(a, List.of(CALL_ARG_1, nv0))
 		)));
-		source = strategy.sourceCopyIfLive(a, preConsumer, postConsumer);
-		assertEquals(reg(CALL_ARG_0, a), source);
-		assertEquals(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(b, List.of(CALL_ARG_1)),
-				new LiveVarRegisterState(c, List.of(nv1)),
-				new LiveVarRegisterState(a, List.of(CALL_ARG_0, nv0))
-		)), strategy.getState());
-		assertEquals(List.of(
-				movVarFromReg(b, CALL_ARG_1)
-		), preInstructions);
-		assertEquals(List.of(
-				movRegFromReg("c", nv0, nv1)
-		), postInstructions);
+		strategy.freeVolatileRegisters(consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(a, List.of(nv0))
+		                                    ), strategy,
+		                                    List.of(
+													movRegFromReg(a, CALL_ARG_1, nv0)
+		                                    ), instructions);
+		// ------------------------------------------------------------------------------
+		// something live in volatile register (free non-volatile registers available)
+		// -> move
+		instructions.clear();
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(a, List.of(CALL_ARG_1))
+		)));
+		strategy.freeVolatileRegisters(consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(a, List.of(nv0))
+		                                    ), strategy,
+		                                    List.of(
+													movRegFromReg(a, CALL_ARG_1, nv0)
+		                                    ), instructions);
+		// ------------------------------------------------------------------------------
+		// something live in volatile register (no free non-volatile registers available)
+		// -> move from var
+		instructions.clear();
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(a, List.of(CALL_ARG_2)),
+				new LiveVarRegisterState(b, List.of(nv0)),
+				new LiveVarRegisterState(c, List.of(nv1))
+		)));
+		strategy.freeVolatileRegisters(consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(a, List.of()),
+				                                    new LiveVarRegisterState(b, List.of(nv0)),
+				                                    new LiveVarRegisterState(c, List.of(nv1))
+		                                    ), strategy,
+		                                    List.of(
+													movRegFromVar(CALL_ARG_2, a)
+		                                    ), instructions);
 	}
-*/
 
 	@Test
 	public void testFreeRegisterExceptOf() {
@@ -669,14 +666,14 @@ public class RegisterAllocationStrategyTest {
 		)));
 		int register = strategy.freeRegisterExceptOf(-1, consumer);
 		assertEquals(nv0, register);
-		assertEquals(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(a, List.of(CALL_ARG_1)),
-				new LiveVarRegisterState(b, List.of(CALL_ARG_2)),
-				new LiveVarRegisterState(c, List.of(nv1))
-		)), strategy.getState());
-		assertEquals(List.of(
-				movRegFromReg(c, nv0, nv1)
-		), instructions);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(a, List.of(CALL_ARG_1)),
+				                                    new LiveVarRegisterState(b, List.of(CALL_ARG_2)),
+				                                    new LiveVarRegisterState(c, List.of(nv1))
+		                                    ), strategy,
+		                                    List.of(
+				                                    movRegFromReg(c, nv0, nv1)
+		                                    ), instructions);
 		// ------------------------------------------------------------------------------
 		// pick one with single register
 		instructions.clear();
@@ -687,14 +684,14 @@ public class RegisterAllocationStrategyTest {
 		)));
 		register = strategy.freeRegisterExceptOf(-1, consumer);
 		assertEquals(CALL_ARG_1, register);
-		assertEquals(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(b, List.of(CALL_ARG_2)),
-				new LiveVarRegisterState(c, List.of(nv1)),
-				new LiveVarRegisterState(a, List.of())
-		)), strategy.getState());
-		assertEquals(List.of(
-				movRegFromVar(CALL_ARG_1, a)
-		), instructions);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(b, List.of(CALL_ARG_2)),
+				                                    new LiveVarRegisterState(c, List.of(nv1)),
+				                                    new LiveVarRegisterState(a, List.of())
+		                                    ), strategy,
+		                                    List.of(
+				                                    movRegFromVar(CALL_ARG_1, a)
+		                                    ), instructions);
 		// ------------------------------------------------------------------------------
 		// pick one with multiple registers (except of the specified one)
 		strategy.setState(new AllLiveVarRegisterState(List.of(
@@ -705,15 +702,15 @@ public class RegisterAllocationStrategyTest {
 		instructions.clear();
 		register = strategy.freeRegisterExceptOf(nv0, consumer);
 		assertEquals(nv1, register);
-		assertEquals(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(a, List.of(CALL_ARG_1)),
-				new LiveVarRegisterState(b, List.of(CALL_ARG_2)),
-				// this must remain live ------------v
-				new LiveVarRegisterState(c, List.of(nv0))
-		)), strategy.getState());
-		assertEquals(List.of(
-				movRegFromReg(c, nv1, nv0)
-		), instructions);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(a, List.of(CALL_ARG_1)),
+				                                    new LiveVarRegisterState(b, List.of(CALL_ARG_2)),
+				                                    // this must remain live ------------v
+				                                    new LiveVarRegisterState(c, List.of(nv0))
+		                                    ), strategy,
+		                                    List.of(
+				                                    movRegFromReg(c, nv1, nv0)
+		                                    ), instructions);
 		// ------------------------------------------------------------------------------
 		// pick one with single register (except of the specified one)
 		instructions.clear();
@@ -724,15 +721,15 @@ public class RegisterAllocationStrategyTest {
 		)));
 		register = strategy.freeRegisterExceptOf(CALL_ARG_1, consumer);
 		assertEquals(CALL_ARG_2, register);
-		assertEquals(new AllLiveVarRegisterState(List.of(
-				// this must remain live ------------v
-				new LiveVarRegisterState(a, List.of(CALL_ARG_1)),
-				new LiveVarRegisterState(c, List.of(nv1)),
-				new LiveVarRegisterState(b, List.of())
-		)), strategy.getState());
-		assertEquals(List.of(
-				movRegFromVar(CALL_ARG_2, b)
-		), instructions);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    // this must remain live ------------v
+				                                    new LiveVarRegisterState(a, List.of(CALL_ARG_1)),
+				                                    new LiveVarRegisterState(c, List.of(nv1)),
+				                                    new LiveVarRegisterState(b, List.of())
+		                                    ), strategy,
+		                                    List.of(
+				                                    movRegFromVar(CALL_ARG_2, b)
+		                                    ), instructions);
 	}
 
 	@Test

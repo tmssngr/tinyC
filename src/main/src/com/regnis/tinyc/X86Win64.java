@@ -662,13 +662,22 @@ public final class X86Win64 {
 
 	private static String getRegName(int reg, int size) {
 		return switch (reg) {
-			// ofset 0 mean result reg -> rax
+			// offset 0 mean result reg -> rax
+			// calling convention:
+			// The first four integer or pointer arguments are passed in the registers
+			// RCX, RDX, R8 and R9
+			// these are registers 1-4
+			// RAX, RCX, RDX, R8, R9, R10, R11 are considered volatile (caller-saved)
+			// RBX, RBP, RDI, RSI, RSP, R12, R13, R14, and R15 are considered nonvolatile
 			case 0 -> getXRegName('a', size);
-			case 1 -> getXRegName('b', size);
-			case 2 -> getXRegName('c', size);
-			case 3 -> getXRegName('d', size);
+			// volatile/first four arguments
+			case 1 -> getXRegName('c', size);
+			case 2 -> getXRegName('d', size);
+			case 3 -> getNRegName(8, size);
 			case 4 -> getNRegName(9, size);
-			case 5 -> getNRegName(10, size);
+			// non-volatile:
+			case 5 -> getXRegName('b', size);
+			case 6 -> getNRegName(12, size);
 			default -> throw new IllegalStateException();
 		};
 	}
