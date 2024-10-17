@@ -95,22 +95,7 @@ public final class RegisterAllocationStrategy {
 		}
 	}
 
-	private void movRegsFromVar(IRVar var, List<Integer> registers, Consumer<IRInstruction> consumer) {
-		int mainRegister = -1;
-		for (int register : registers) {
-			if (mainRegister < 0) {
-				mainRegister = register;
-			}
-			else {
-				movRegFromReg(var, register, mainRegister, consumer);
-			}
-		}
-		if (mainRegister >= 0) {
-			movRegFromVar(mainRegister, var, consumer);
-		}
-	}
-
-	public void freeRegister(int targetRegister, @NotNull IRVar allowed, @NotNull Predicate<Integer> registerPredicate, @NotNull Consumer<IRInstruction> consumer) {
+	public void freeRegister(int targetRegister, @Nullable IRVar allowed, @NotNull Predicate<Integer> registerPredicate, @NotNull Consumer<IRInstruction> consumer) {
 		final LiveVarRegisterState state = get(targetRegister);
 		if (state == null || state.var().equals(allowed)) {
 			return;
@@ -204,20 +189,25 @@ public final class RegisterAllocationStrategy {
 
 	@NotNull
 	public IRVar callTarget(@NotNull IRVar target, @NotNull Consumer<IRInstruction> consumer) {
-		freeRegister(CALL_RETURN_REG, target, register -> !isVolatile(register), consumer);
+		return target(target, CALL_RETURN_REG, register -> !isVolatile(register), consumer);
+	}
 
-		final LiveVarRegisterState state = remove(target);
+	@NotNull
+	public IRVar target(@NotNull IRVar var, int reg, @NotNull Predicate<Integer> registerPredicate, @NotNull Consumer<IRInstruction> consumer) {
+		freeRegister(reg, var, registerPredicate, consumer);
+
+		final LiveVarRegisterState state = remove(var);
 		if (state.registers.isEmpty()) {
-			movVarFromReg(target, CALL_RETURN_REG, consumer);
+			movVarFromReg(var, reg, consumer);
 		}
 		else {
 			for (int register : state.registers) {
-				if (register != CALL_RETURN_REG) {
-					movRegFromReg(state.var(), register, CALL_RETURN_REG, consumer);
+				if (register != reg) {
+					movRegFromReg(state.var(), register, reg, consumer);
 				}
 			}
 		}
-		return new IRVar(target.name(), CALL_RETURN_REG, VariableScope.register, target.type(), target.canBeRegister());
+		return reg(reg, var);
 	}
 
 	@NotNull
@@ -308,6 +298,21 @@ public final class RegisterAllocationStrategy {
 			setRegisters(state, registers);
 		}
 		return reg(freeRegister, var);
+	}
+
+	private void movRegsFromVar(IRVar var, List<Integer> registers, Consumer<IRInstruction> consumer) {
+		int mainRegister = -1;
+		for (int register : registers) {
+			if (mainRegister < 0) {
+				mainRegister = register;
+			}
+			else {
+				movRegFromReg(var, register, mainRegister, consumer);
+			}
+		}
+		if (mainRegister >= 0) {
+			movRegFromVar(mainRegister, var, consumer);
+		}
 	}
 
 	private void setRegisters(@NotNull LiveVarRegisterState state, @NotNull List<Integer> registers) {
