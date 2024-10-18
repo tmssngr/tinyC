@@ -95,9 +95,9 @@ public final class RegisterAllocationStrategy {
 		}
 	}
 
-	public void freeRegister(int targetRegister, @Nullable IRVar allowed, @NotNull Predicate<Integer> registerPredicate, @NotNull Consumer<IRInstruction> consumer) {
+	public void freeRegister(int targetRegister, @NotNull Predicate<Integer> registerPredicate, @NotNull Consumer<IRInstruction> consumer) {
 		final LiveVarRegisterState state = get(targetRegister);
-		if (state == null || state.var().equals(allowed)) {
+		if (state == null) {
 			return;
 		}
 
@@ -117,7 +117,7 @@ public final class RegisterAllocationStrategy {
 		if (preferredRegister < 0) {
 			preferredRegister = getFreeRegister(register -> {
 				// nothing allowed, so the targetRegister must be free
-				if (allowed == null && register == targetRegister) {
+				if (register == targetRegister) {
 					return false;
 				}
 				return registerPredicate.test(register);
@@ -200,7 +200,10 @@ public final class RegisterAllocationStrategy {
 
 	@NotNull
 	public IRVar target(@NotNull IRVar var, int reg, @NotNull Predicate<Integer> registerPredicate, @NotNull Consumer<IRInstruction> consumer) {
-		freeRegister(reg, var, registerPredicate, consumer);
+		final LiveVarRegisterState regState = get(reg);
+		if (regState != null && !regState.var().equals(var)) {
+			freeRegister(reg, registerPredicate, consumer);
+		}
 
 		final LiveVarRegisterState state = remove(var);
 		if (state.registers.isEmpty()) {

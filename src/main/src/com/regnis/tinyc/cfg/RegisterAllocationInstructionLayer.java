@@ -82,7 +82,7 @@ public final class RegisterAllocationInstructionLayer {
 				// (rdx rax) % %reg -> rdx
 				final int RAX = 0;
 				final int RDX = 2;
-				strategy.freeRegister(RDX, null, register -> register != RAX, consumer);
+				strategy.freeRegister(RDX, register -> register != RAX, consumer);
 				target = strategy.target(target, RAX, register -> register != RDX, consumer);
 				final IRVar left = strategy.sourceForModificationInReg(binary.left(), RAX);
 				final IRVar right = strategy.source(binary.right(), left, preConsumer, consumer);
