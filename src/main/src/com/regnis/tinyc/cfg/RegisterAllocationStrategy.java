@@ -115,7 +115,13 @@ public final class RegisterAllocationStrategy {
 			}
 		}
 		if (preferredRegister < 0) {
-			preferredRegister = getFreeRegister(registerPredicate);
+			preferredRegister = getFreeRegister(register -> {
+				// nothing allowed, so the targetRegister must be free
+				if (allowed == null && register == targetRegister) {
+					return false;
+				}
+				return registerPredicate.test(register);
+			});
 			if (preferredRegister >= 0) {
 				newRegisters.add(preferredRegister);
 			}
@@ -363,7 +369,7 @@ public final class RegisterAllocationStrategy {
 	}
 
 	private int getFreeRegister(Predicate<Integer> predicate) {
-		final Set<Integer> usedRegisters = getUsedRegisters(predicate);
+		final Set<Integer> usedRegisters = getUsedRegisters();
 
 		for (int register = CALL_ARG_1; register < maxRegisters; register++) {
 			if (!usedRegisters.contains(register)
@@ -375,14 +381,10 @@ public final class RegisterAllocationStrategy {
 	}
 
 	@NotNull
-	private Set<Integer> getUsedRegisters(Predicate<Integer> predicate) {
+	private Set<Integer> getUsedRegisters() {
 		final Set<Integer> usedRegisters = new HashSet<>();
 		for (LiveVarRegisterState var : liveVars) {
-			for (Integer register : var.registers) {
-				if (predicate.test(register)) {
-					usedRegisters.add(register);
-				}
-			}
+			usedRegisters.addAll(var.registers);
 		}
 		return usedRegisters;
 	}
