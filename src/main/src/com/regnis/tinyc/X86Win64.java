@@ -216,8 +216,14 @@ public final class X86Win64 {
 			writeIndented("sub rsp, " + size);
 		}
 
+		boolean writeComment = true;
 		for (final IRLocalVar var : localVars) {
 			if (var.isArg()) {
+				if (writeComment) {
+					writeComment = false;
+					writeComment("store register args to stack");
+				}
+				writeComment(var.name());
 				writeIndented("mov [rsp+" + localVarOffsets[var.index()] + "], " + getRegName(var.index() + 1));
 			}
 		}
@@ -267,8 +273,8 @@ public final class X86Win64 {
 	}
 
 	private void writeAddrOf(IRAddrOf addrOf) throws IOException {
-		final int addrReg = getRegisterVarRegisterIndex(addrOf.target());
-		addrOf(addrReg, addrOf.source());
+		final String targetRegName = getRegName(addrOf.target());
+		writeIndented("lea " + targetRegName + ", " + getVarAddress(addrOf.source()));
 	}
 
 	private void writeAddrOfArray(IRAddrOfArray addrOf) throws IOException {
@@ -302,12 +308,12 @@ public final class X86Win64 {
 		else {
 			Utils.assertTrue(addrOf.varIsArray());
 			if (targetReg == indexReg) {
-				final int addrReg = TMP_REG;
-				addrOf(addrReg, arrayOrPointer);
-				writeIndented("add " + targetRegName + ", " + getRegName(addrReg));
+				final String addrRegName = getRegName(TMP_REG);
+				writeIndented("lea " + addrRegName + ", " + getVarAddress(arrayOrPointer));
+				writeIndented("add " + targetRegName + ", " + addrRegName);
 			}
 			else {
-				addrOf(targetReg, arrayOrPointer);
+				writeIndented("lea " + targetRegName + ", " + getVarAddress(arrayOrPointer));
 				writeIndented("add " + targetRegName + ", " + getRegName(indexReg));
 			}
 		}
@@ -325,12 +331,12 @@ public final class X86Win64 {
 		}
 
 		if (addrReg == indexReg) {
-			final int tmpReg = TMP_REG;
-			addrOf(tmpReg, access.array());
-			writeIndented("add " + addrRegName + ", " + getRegName(tmpReg));
+			final String tmpRegName = getRegName(TMP_REG);
+			writeIndented("lea " + tmpRegName + ", " + getVarAddress(access.array()));
+			writeIndented("add " + addrRegName + ", " + tmpRegName);
 		}
 		else {
-			addrOf(addrReg, access.array());
+			writeIndented("lea " + addrRegName + ", " + getVarAddress(access.array()));
 			writeIndented("add " + addrRegName + ", " + indexRegName);
 		}
 	}
@@ -348,21 +354,18 @@ public final class X86Win64 {
 	private void writeCopy(IRCopy copy) throws IOException {
 		final IRVar source = copy.source();
 		final IRVar target = copy.target();
-		final int addrReg = TMP_REG;
 		if (source.scope() == VariableScope.register) {
 			if (target.scope() == VariableScope.register) {
 				writeIndented("mov " + getRegName(target) + ", " + getRegName(copy.source()));
 				return;
 			}
 
-			addrOf(addrReg, target);
-			writeIndented("mov [" + getRegName(addrReg) + "], " + getRegName(source));
+			writeIndented("mov " + getVarAddress(target) + ", " + getRegName(source));
 			return;
 		}
 
 		Utils.assertTrue(target.scope() == VariableScope.register);
-		addrOf(addrReg, source);
-		writeIndented("mov " + getRegName(target) + ", [" + getRegName(addrReg) + "]");
+		writeIndented("mov " + getRegName(target) + ", " + getVarAddress(source));
 	}
 
 	private void writeBinary(IRBinary binary) throws IOException {
@@ -606,7 +609,7 @@ public final class X86Win64 {
 					Utils.assertTrue(getRegisterVarRegisterIndex(arg) == i + 1);
 					continue;
 				}
-				final int argReg = loadVar(arg);
+				final int argReg = loadVar(arg, TMP_REG);
 				writeIndented("push " + getRegName(argReg));
 				this.rspOffset += 8;
 			}
@@ -631,29 +634,24 @@ public final class X86Win64 {
 		writeIndented("mov" + signedString + op + " " + targetRegName + ", " + getRegName(sourceReg, sourceVar));
 	}
 
-	private int loadVar(IRVar var) throws IOException {
+	@SuppressWarnings("SameParameterValue")
+	private int loadVar(IRVar var, int reg) throws IOException {
 		if (var.scope() == VariableScope.register) {
 			return getRegisterVarRegisterIndex(var);
 		}
 
-		final int reg = TMP_REG;
-		addrOf(reg, var);
-		final String addRegName = getRegName(reg);
-		final String valueRegName = getRegName(reg, var);
-		writeIndented("mov " + valueRegName + ", [" + addRegName + "]");
+		final String addrRegName = getRegName(reg);
+		writeIndented("lea " + addrRegName + ", " + getVarAddress(var));
+		writeIndented("mov " + getRegName(reg, var) + ", [" + addrRegName + "]");
 		return reg;
 	}
 
-	private void addrOf(int register, IRVar var) throws IOException {
-		final String addrReg = getRegName(register);
-		switch (var.scope()) {
-		case global -> writeIndented("lea " + addrReg + ", [" + getGlobalVarName(var.index()) + "]");
-		case function, argument -> {
-			final int offset = localVarOffsets[var.index()] + rspOffset;
-			writeIndented("lea " + addrReg + ", [rsp+" + offset + "]");
-		}
-		default -> throw new UnsupportedOperationException(String.valueOf(var.scope()));
-		}
+	private String getVarAddress(IRVar var) throws IOException {
+		return switch (var.scope()) {
+			case global -> "[" + getGlobalVarName(var.index()) + "]";
+			case function, argument -> "[rsp+" + (localVarOffsets[var.index()] + rspOffset) + "]";
+			default -> throw new UnsupportedOperationException(String.valueOf(var.scope()));
+		};
 	}
 
 	private void writeJump(IRJump jump) throws IOException {

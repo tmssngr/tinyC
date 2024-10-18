@@ -30,7 +30,7 @@ public final class RegisterAllocationInstructionLayer {
 			    && !(instruction instanceof IRBranch)) {
 				addLiveComment = true;
 			}
-			if (addLiveComment) {
+			if (addLiveComment && false) {
 				consumer.accept(new IRComment("live: " + strategy.getState().vars()));
 			}
 
