@@ -220,11 +220,14 @@ public final class RegisterAllocationStrategy {
 	}
 
 	@NotNull
-	public IRVar source(IRVar source, @Nullable IRVar keepReg, Consumer<IRInstruction> preConsumer, Consumer<IRInstruction> postConsumer) {
-		Utils.assertTrue(keepReg == null || keepReg.scope() == VariableScope.register);
+	public IRVar source(IRVar source, Consumer<IRInstruction> preConsumer, Consumer<IRInstruction> postConsumer) {
+		return source(source, r -> true, preConsumer, postConsumer);
+	}
 
+	@NotNull
+	public IRVar source(IRVar source, Predicate<Integer> canFreeRegister, Consumer<IRInstruction> preConsumer, Consumer<IRInstruction> postConsumer) {
 		final LiveVarRegisterState state = get(source);
-		// live?
+		// live (not last use)?
 		if (state != null) {
 			if (state.registers.size() > 0) {
 				return reg(state.registers.getFirst(), source);
@@ -236,7 +239,7 @@ public final class RegisterAllocationStrategy {
 
 		int register = getFreeRegister();
 		if (register < 0) {
-			register = freeRegisterExceptOf(keepReg != null ? keepReg.index() : 0, postConsumer);
+			register = freeAnyVarRegister(canFreeRegister, postConsumer);
 		}
 		final List<Integer> registers = List.of(register);
 		// is last use?
@@ -250,7 +253,7 @@ public final class RegisterAllocationStrategy {
 		return reg(register, source);
 	}
 
-	public int freeRegisterExceptOf(int keepRegister, Consumer<IRInstruction> consumer) {
+	public int freeAnyVarRegister(Predicate<Integer> canFreeRegister, Consumer<IRInstruction> consumer) {
 		LiveVarRegisterState varToSpill = null;
 		for (LiveVarRegisterState state : liveVars) {
 			if (state.registers.isEmpty()) {
@@ -261,12 +264,11 @@ public final class RegisterAllocationStrategy {
 				final List<Integer> registers = new ArrayList<>(state.registers);
 				int register = -1;
 				for (Integer r : registers) {
-					if (keepRegister >= 0 && r == keepRegister) {
-						continue;
+					if (canFreeRegister.test(r)) {
+						registers.remove(r);
+						register = r;
+						break;
 					}
-					registers.remove(r);
-					register = r;
-					break;
 				}
 				Utils.assertTrue(register >= 0);
 				setRegisters(state, registers);
@@ -277,7 +279,7 @@ public final class RegisterAllocationStrategy {
 			// todo pick best (e.g. farthest next use)
 			if (varToSpill == null) {
 				final int register = state.registers.getFirst();
-				if (keepRegister != register) {
+				if (canFreeRegister.test(register)) {
 					varToSpill = state;
 				}
 			}

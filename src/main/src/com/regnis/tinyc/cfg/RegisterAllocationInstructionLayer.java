@@ -68,7 +68,7 @@ public final class RegisterAllocationInstructionLayer {
 
 			addr = strategy.target(addr, consumer);
 			IRVar index = addrOf.index();
-			index = strategy.source(index, null, preConsumer, consumer);
+			index = strategy.source(index, preConsumer, consumer);
 			consumer.accept(new IRAddrOfArray(addr, addrOf.array(), index, addrOf.varIsArray(), addrOf.location()));
 		}
 		case IRArrayAccess access -> {
@@ -79,7 +79,7 @@ public final class RegisterAllocationInstructionLayer {
 
 			addr = strategy.target(addr, consumer);
 			IRVar index = access.index();
-			index = strategy.source(index, null, preConsumer, consumer);
+			index = strategy.source(index, preConsumer, consumer);
 			consumer.accept(new IRArrayAccess(addr, access.array(), index, access.location()));
 		}
 		case IRBinary binary -> {
@@ -95,30 +95,31 @@ public final class RegisterAllocationInstructionLayer {
 				// (rdx rax) % %reg -> rdx
 				final int RAX = 0;
 				final int RDX = 2;
-				strategy.freeRegister(RDX, register -> register != RAX, consumer);
-				target = strategy.target(target, RAX, register -> register != RDX, consumer);
+				final Predicate<Integer> predicate = r -> r != RAX && r != RDX;
+				strategy.freeRegister(RDX, predicate, consumer);
+				target = strategy.target(target, RAX, predicate, consumer);
 				final IRVar left = strategy.sourceForModificationInReg(binary.left(), RAX);
-				final IRVar right = strategy.source(binary.right(), left, preConsumer, consumer);
+				final IRVar right = strategy.source(binary.right(), predicate, preConsumer, consumer);
 				consumer.accept(new IRBinary(target, op, left, right, binary.location()));
 			}
 			else {
 				target = strategy.target(target, consumer);
 				if (op.relational) {
-					final IRVar left = strategy.source(binary.left(), null, preConsumer, consumer);
-					final IRVar right = strategy.source(binary.right(), left, preConsumer, consumer);
+					final IRVar left = strategy.source(binary.left(), preConsumer, consumer);
+					final IRVar right = strategy.source(binary.right(), preConsumer, consumer);
 					consumer.accept(new IRBinary(target, op, left, right, binary.location()));
 				}
 				else {
 					// add, sub, ... reuse first operand for target
 					final IRVar left = strategy.sourceForModificationInReg(binary.left(), target.index());
 					Utils.assertTrue(target.index() == left.index());
-					final IRVar right = strategy.source(binary.right(), left, preConsumer, consumer);
+					final IRVar right = strategy.source(binary.right(), preConsumer, consumer);
 					consumer.accept(new IRBinary(target, op, left, right, binary.location()));
 				}
 			}
 		}
 		case IRBranch branch -> {
-			final IRVar conditionVar = strategy.source(branch.conditionVar(), null, preConsumer, consumer);
+			final IRVar conditionVar = strategy.source(branch.conditionVar(), preConsumer, consumer);
 			consumer.accept(new IRBranch(conditionVar, branch.jumpOnTrue(), branch.target(), branch.nextLabel()));
 		}
 		case IRCall call -> {
@@ -139,7 +140,7 @@ public final class RegisterAllocationInstructionLayer {
 
 			target = strategy.target(target, consumer);
 			IRVar source = cast.source();
-			source = strategy.source(source, null, preConsumer, consumer);
+			source = strategy.source(source, preConsumer, consumer);
 			consumer.accept(new IRCast(target, source, cast.location()));
 		}
 		case IRComment ignored -> consumer.accept(instruction);
@@ -151,7 +152,7 @@ public final class RegisterAllocationInstructionLayer {
 
 			target = strategy.target(target, consumer);
 			IRVar source = copy.source();
-			source = strategy.source(source, null, preConsumer, consumer);
+			source = strategy.source(source, preConsumer, consumer);
 			consumer.accept(new IRCopy(target, source, copy.location()));
 		}
 		case IRJump ignored -> consumer.accept(instruction);
@@ -172,16 +173,16 @@ public final class RegisterAllocationInstructionLayer {
 
 			target = strategy.target(target, consumer);
 			IRVar addr = load.addr();
-			addr = strategy.source(addr, null, preConsumer, consumer);
+			addr = strategy.source(addr, preConsumer, consumer);
 			consumer.accept(new IRMemLoad(target, addr, load.location()));
 		}
 		case IRMemStore store -> {
-			final IRVar addr = strategy.source(store.addr(), null, preConsumer, consumer);
-			final IRVar value = strategy.source(store.value(), null, preConsumer, consumer);
+			final IRVar addr = strategy.source(store.addr(), preConsumer, consumer);
+			final IRVar value = strategy.source(store.value(), preConsumer, consumer);
 			consumer.accept(new IRMemStore(addr, value, store.location()));
 		}
 		case IRRetValue ret -> {
-			final IRVar var = strategy.source(ret.var(), null, preConsumer, consumer);
+			final IRVar var = strategy.source(ret.var(), preConsumer, consumer);
 			consumer.accept(new IRRetValue(var, ret.location()));
 		}
 		case IRString string -> {
@@ -201,7 +202,7 @@ public final class RegisterAllocationInstructionLayer {
 
 			target = strategy.target(target, consumer);
 			IRVar source = unary.source();
-			source = strategy.source(source, null, preConsumer, consumer);
+			source = strategy.source(source, preConsumer, consumer);
 			consumer.accept(new IRUnary(unary.op(), target, source));
 		}
 		default -> {
