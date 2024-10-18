@@ -66,6 +66,10 @@ public class RegisterAllocationStrategyTest {
 
 	@Test
 	public void testFreeRegister() {
+		final IRVar a = var("a", 0);
+		final IRVar b = var("b", 1);
+		final IRVar c = var("c", 2);
+		final IRVar d = var("d", 3);
 		final var strategy = new RegisterAllocationStrategy(2, 0, 2);
 		final int nonVolatile0 = strategy.nonVolatile(0);
 		final int nonVolatile1 = strategy.nonVolatile(1);
@@ -77,55 +81,55 @@ public class RegisterAllocationStrategyTest {
 		// register is already free
 		// -> nothing to do
 		strategy.setState(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(var("a", 0), List.of(CALL_ARG_1))
+				new LiveVarRegisterState(a, List.of(CALL_ARG_1))
 		)));
-		strategy.freeRegister(CALL_RETURN_REG, var("b", 1), registerPredicate, consumer);
+		strategy.freeRegister(CALL_RETURN_REG, b, registerPredicate, consumer);
 		assertEqualsVarStateAndInstructions(List.of(
-				                                    new LiveVarRegisterState(var("a", 0), List.of(CALL_ARG_1))
+				                                    new LiveVarRegisterState(a, List.of(CALL_ARG_1))
 		                                    ), strategy,
 		                                    List.of(), instructions);
 		// ------------------------------------------------------------------------------
 		// register is already free
 		// -> nothing to do
 		strategy.setState(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(var("a", 0), List.of(CALL_ARG_1))
+				new LiveVarRegisterState(a, List.of(CALL_ARG_1))
 		)));
-		strategy.freeRegister(CALL_RETURN_REG, var("a", 0), registerPredicate, consumer);
+		strategy.freeRegister(CALL_RETURN_REG, a, registerPredicate, consumer);
 		assertEqualsVarStateAndInstructions(List.of(
-				                                    new LiveVarRegisterState(var("a", 0), List.of(CALL_ARG_1))
+				                                    new LiveVarRegisterState(a, List.of(CALL_ARG_1))
 		                                    ), strategy,
 		                                    List.of(), instructions);
 		// ------------------------------------------------------------------------------
 		// allowed variable is already stored in this register
 		// -> nothing to do
 		strategy.setState(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(var("a", 0), List.of(CALL_RETURN_REG))
+				new LiveVarRegisterState(a, List.of(CALL_RETURN_REG))
 		)));
-		strategy.freeRegister(CALL_RETURN_REG, var("a", 0), registerPredicate, consumer);
+		strategy.freeRegister(CALL_RETURN_REG, a, registerPredicate, consumer);
 		assertEqualsVarStateAndInstructions(List.of(
-				                                    new LiveVarRegisterState(var("a", 0), List.of(CALL_RETURN_REG))
+				                                    new LiveVarRegisterState(a, List.of(CALL_RETURN_REG))
 		                                    ), strategy,
 		                                    List.of(), instructions);
 		// ------------------------------------------------------------------------------
 		// allowed variable is already stored in this register (and in another)
 		// -> nothing to do
 		strategy.setState(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(var("a", 0), List.of(CALL_RETURN_REG, nonVolatile0))
+				new LiveVarRegisterState(a, List.of(CALL_RETURN_REG, nonVolatile0))
 		)));
-		strategy.freeRegister(CALL_RETURN_REG, var("a", 0), registerPredicate, consumer);
+		strategy.freeRegister(CALL_RETURN_REG, a, registerPredicate, consumer);
 		assertEqualsVarStateAndInstructions(List.of(
-				                                    new LiveVarRegisterState(var("a", 0), List.of(CALL_RETURN_REG, nonVolatile0))
+				                                    new LiveVarRegisterState(a, List.of(CALL_RETURN_REG, nonVolatile0))
 		                                    ), strategy,
 		                                    List.of(), instructions);
 		// ------------------------------------------------------------------------------
 		// register is used by a different variable
 		// -> move it away
 		strategy.setState(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(var("a", 0), List.of(CALL_RETURN_REG))
+				new LiveVarRegisterState(a, List.of(CALL_RETURN_REG))
 		)));
-		strategy.freeRegister(CALL_RETURN_REG, var("b", 1), registerPredicate, consumer);
+		strategy.freeRegister(CALL_RETURN_REG, b, registerPredicate, consumer);
 		assertEqualsVarStateAndInstructions(List.of(
-				                                    new LiveVarRegisterState(var("a", 0), List.of(nonVolatile0))
+				                                    new LiveVarRegisterState(a, List.of(nonVolatile0))
 		                                    ), strategy,
 		                                    List.of(
 				                                    movRegFromReg("a", CALL_RETURN_REG, nonVolatile0)
@@ -135,11 +139,11 @@ public class RegisterAllocationStrategyTest {
 		// -> reuse a location
 		instructions.clear();
 		strategy.setState(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(var("a", 0), List.of(CALL_RETURN_REG, nonVolatile1))
+				new LiveVarRegisterState(a, List.of(CALL_RETURN_REG, nonVolatile1))
 		)));
-		strategy.freeRegister(CALL_RETURN_REG, var("b", 1), registerPredicate, consumer);
+		strategy.freeRegister(CALL_RETURN_REG, b, registerPredicate, consumer);
 		assertEqualsVarStateAndInstructions(List.of(
-				                                    new LiveVarRegisterState(var("a", 0), List.of(nonVolatile1))
+				                                    new LiveVarRegisterState(a, List.of(nonVolatile1))
 		                                    ), strategy,
 		                                    List.of(
 				                                    movRegFromReg("a", CALL_RETURN_REG, nonVolatile1)
@@ -149,37 +153,91 @@ public class RegisterAllocationStrategyTest {
 		// -> load from memory
 		instructions.clear();
 		strategy.setState(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(var("a", 0), List.of(CALL_RETURN_REG)),
-				new LiveVarRegisterState(var("b", 1), List.of(nonVolatile0)),
-				new LiveVarRegisterState(var("c", 2), List.of(nonVolatile1))
+				new LiveVarRegisterState(a, List.of(CALL_RETURN_REG)),
+				new LiveVarRegisterState(b, List.of(nonVolatile0)),
+				new LiveVarRegisterState(c, List.of(nonVolatile1))
 		)));
-		strategy.freeRegister(CALL_RETURN_REG, var("d", 3), registerPredicate, consumer);
+		strategy.freeRegister(CALL_RETURN_REG, d, registerPredicate, consumer);
 		assertEqualsVarStateAndInstructions(List.of(
-				                                    new LiveVarRegisterState(var("b", 1), List.of(nonVolatile0)),
-				                                    new LiveVarRegisterState(var("c", 2), List.of(nonVolatile1)),
-				                                    new LiveVarRegisterState(var("a", 0), List.of())
+				                                    new LiveVarRegisterState(b, List.of(nonVolatile0)),
+				                                    new LiveVarRegisterState(c, List.of(nonVolatile1)),
+				                                    new LiveVarRegisterState(a, List.of())
 		                                    ), strategy,
 		                                    List.of(
-				                                    movRegFromVar(CALL_RETURN_REG, var("a", 0))
+				                                    movRegFromVar(CALL_RETURN_REG, a)
 		                                    ), instructions);
 		// ------------------------------------------------------------------------------
 		// register is used by a different variable, no free register, multiple registers
 		// -> load from memory, reuse register
 		instructions.clear();
 		strategy.setState(new AllLiveVarRegisterState(List.of(
-				new LiveVarRegisterState(var("a", 0), List.of(CALL_RETURN_REG, CALL_ARG_1)),
-				new LiveVarRegisterState(var("b", 1), List.of(nonVolatile0)),
-				new LiveVarRegisterState(var("c", 2), List.of(nonVolatile1))
+				new LiveVarRegisterState(a, List.of(CALL_RETURN_REG, CALL_ARG_1)),
+				new LiveVarRegisterState(b, List.of(nonVolatile0)),
+				new LiveVarRegisterState(c, List.of(nonVolatile1))
 		)));
-		strategy.freeRegister(CALL_RETURN_REG, var("d", 3), registerPredicate, consumer);
+		strategy.freeRegister(CALL_RETURN_REG, d, registerPredicate, consumer);
 		assertEqualsVarStateAndInstructions(List.of(
-				                                    new LiveVarRegisterState(var("b", 1), List.of(nonVolatile0)),
-				                                    new LiveVarRegisterState(var("c", 2), List.of(nonVolatile1)),
-				                                    new LiveVarRegisterState(var("a", 0), List.of())
+				                                    new LiveVarRegisterState(b, List.of(nonVolatile0)),
+				                                    new LiveVarRegisterState(c, List.of(nonVolatile1)),
+				                                    new LiveVarRegisterState(a, List.of())
 		                                    ), strategy,
 		                                    List.of(
-				                                    movRegFromVar(CALL_RETURN_REG, var("a", 0)),
+				                                    movRegFromVar(CALL_RETURN_REG, a),
 				                                    movRegFromReg("a", CALL_ARG_1, CALL_RETURN_REG)
+		                                    ), instructions);
+		// ------------------------------------------------------------------------------
+		// register already used (var in single register)
+		// -> needs to be freed
+		instructions.clear();
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(a, List.of(CALL_ARG_1)),
+				new LiveVarRegisterState(b, List.of(CALL_ARG_2)),
+				new LiveVarRegisterState(c, List.of(nonVolatile0))
+		)));
+		strategy.freeRegister(CALL_ARG_2, null, registerPredicate, consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(a, List.of(CALL_ARG_1)),
+				                                    new LiveVarRegisterState(c, List.of(nonVolatile0)),
+				                                    new LiveVarRegisterState(b, List.of(nonVolatile1))
+		                                    ), strategy,
+		                                    List.of(
+													movRegFromReg(b, CALL_ARG_2, nonVolatile1)
+		                                    ), instructions);
+		// ------------------------------------------------------------------------------
+		// register already used (var in multiple registers)
+		// -> needs to be freed
+		instructions.clear();
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(a, List.of(CALL_ARG_1)),
+				new LiveVarRegisterState(b, List.of(CALL_ARG_2, nonVolatile0))
+		)));
+		strategy.freeRegister(CALL_ARG_2, null, registerPredicate, consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(a, List.of(CALL_ARG_1)),
+				                                    new LiveVarRegisterState(b, List.of(nonVolatile0))
+		                                    ), strategy,
+		                                    List.of(
+													movRegFromReg(b, CALL_ARG_2, nonVolatile0)
+		                                    ), instructions);
+		// ------------------------------------------------------------------------------
+		// register already used (var in single register), nothing free
+		// -> needs to be freed
+		instructions.clear();
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(a, List.of(CALL_ARG_1)),
+				new LiveVarRegisterState(b, List.of(CALL_ARG_2)),
+				new LiveVarRegisterState(c, List.of(nonVolatile0)),
+				new LiveVarRegisterState(d, List.of(nonVolatile1))
+		)));
+		strategy.freeRegister(CALL_ARG_2, null, registerPredicate, consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(a, List.of(CALL_ARG_1)),
+				                                    new LiveVarRegisterState(c, List.of(nonVolatile0)),
+				                                    new LiveVarRegisterState(d, List.of(nonVolatile1)),
+				                                    new LiveVarRegisterState(b, List.of())
+		                                    ), strategy,
+		                                    List.of(
+				                                    movRegFromVar(CALL_ARG_2, b)
 		                                    ), instructions);
 	}
 
