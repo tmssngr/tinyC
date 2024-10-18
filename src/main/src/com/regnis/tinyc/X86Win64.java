@@ -144,7 +144,7 @@ public final class X86Win64 {
 			final int size = prepareLocalVarsOffsets(function.localVars());
 			writeVarOffsets(function.localVars());
 			writeLabel(function.label());
-			writeFunctionProlog(size);
+			writeFunctionProlog(size, function.localVars());
 
 			writeInstructions(function.instructions());
 
@@ -161,14 +161,11 @@ public final class X86Win64 {
 
 	private int prepareLocalVarsOffsets(List<IRLocalVar> localVars) {
 		localVarOffsets = new int[localVars.size()];
-		int argCount = 0;
 		int offset = 0;
 		int i = 0;
+		// set offsets for local vars
 		for (IRLocalVar var : localVars) {
-			if (var.isArg()) {
-				argCount++;
-			}
-			else {
+			if (!var.isArg()) {
 				final int varSize = var.size();
 				offset = alignTo(offset, varSize);
 				localVarOffsets[i] = offset;
@@ -177,21 +174,25 @@ public final class X86Win64 {
 			i++;
 		}
 		final int localVarSize = alignTo16(offset);
-		// first arg 8 bytes
-		// second arg 8 bytes
-		// third arg 8 bytes
-		// fill area 0/8 bytes
-		// return address 8 bytes ----------------------
-		// local vars <localVarSize> bytes              v
-		int argOffset = alignTo16(argCount * 8 + 8) + localVarSize;
+		// 8 bytes (n)th arg
+		// 8 bytes (n-1)th arg
+		// ...
+		// 8 bytes 6th arg
+		// 8 bytes 5th arg
+		// 20h bytes (4 * 8) shadow space (actually, this is the space for the first arguments which are passed in registers)
+		// 8 bytes return address
+		// local vars <localVarSize> bytes
+
+		offset = localVarSize;
 		i = 0;
 		for (IRLocalVar var : localVars) {
 			if (!var.isArg()) {
 				break;
 			}
 
-			argOffset -= 8;
-			localVarOffsets[i] = argOffset;
+			// increase before settings, because of the return address
+			offset += 8;
+			localVarOffsets[i] = offset;
 			i++;
 		}
 
@@ -209,10 +210,16 @@ public final class X86Win64 {
 		}
 	}
 
-	private void writeFunctionProlog(int size) throws IOException {
+	private void writeFunctionProlog(int size, List<IRLocalVar> localVars) throws IOException {
 		if (size > 0) {
 			writeComment("reserve space for local variables");
 			writeIndented("sub rsp, " + size);
+		}
+
+		for (final IRLocalVar var : localVars) {
+			if (var.isArg()) {
+				writeIndented("mov [rsp+" + localVarOffsets[var.index()] + "], " + getRegName(var.index() + 1));
+			}
 		}
 	}
 
@@ -523,28 +530,47 @@ public final class X86Win64 {
 	}
 
 	private void writeCall(IRCall call) throws IOException {
-		final List<IRVar> args = call.args();
-		final int argsSize = args.size() * 8;
-		final int offset = (args.size() + 1) % 2 * 8;
-		for (IRVar arg : args) {
-			final int argValue = loadVar(arg);
-			writeIndented("push " + getRegName(argValue));
-			this.rspOffset += 8;
-		}
-		this.rspOffset = 0;
-
-		if (offset != 0) {
-			writeIndented("sub rsp, " + offset);
-		}
-		writeIndented("  call @" + call.name());
-		writeIndented("add rsp, " + (offset + argsSize));
-
 		final IRVar target = call.target();
 		if (target != null) {
-			Utils.assertTrue("rax".equals(getRegName(0)));
-			final String valueRegName = getRegName(0, target);
-			writeIndented("mov " + getRegName(target) + ", " + valueRegName);
+			Utils.assertTrue(getRegisterVarRegisterIndex(target) == 0);
 		}
+
+		final List<IRVar> args = call.args();
+		final int alignmentOffset = args.size() > 4 ? (args.size() + 1) % 2 * 8 : 0;
+		if (alignmentOffset != 0) {
+			writeIndented("sub rsp, " + alignmentOffset + "; align RSP to 10h");
+		}
+
+		final int prevRspOffset = rspOffset;
+		try {
+			// https://en.wikipedia.org/wiki/X86_calling_conventions#Microsoft_x64_calling_convention
+			// the 5th, 6th, ... arguments are pushed onto the stack (right to left).
+			// stack:
+			// (n)th arg
+			// (n-1)th arg
+			// ...
+			// 6th arg
+			// 5th arg
+			// 20h byte shadow space
+			// return address
+			for (int i = args.size(); i-- > 0; ) {
+				final IRVar arg = args.get(i);
+				if (i < 4) {
+					Utils.assertTrue(getRegisterVarRegisterIndex(arg) == i + 1);
+					continue;
+				}
+				final int argReg = loadVar(arg);
+				writeIndented("push " + getRegName(argReg));
+				this.rspOffset += 8;
+			}
+		}
+		finally {
+			this.rspOffset = prevRspOffset;
+		}
+
+		writeIndented("sub rsp, 20h; shadow space");
+		writeIndented("  call @" + call.name());
+		writeIndented("add rsp, " + Integer.toHexString(32 + alignmentOffset) + "h");
 	}
 
 	private void writeRetValue(IRRetValue retValue) throws IOException {
