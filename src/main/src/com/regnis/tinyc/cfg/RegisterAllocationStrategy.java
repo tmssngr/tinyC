@@ -311,6 +311,109 @@ public final class RegisterAllocationStrategy {
 		return reg(freeRegister, var);
 	}
 
+	public void handleFirstBlockBegin(Consumer<IRInstruction> consumer) {
+		final List<LiveVarRegisterState> args = new ArrayList<>();
+		int argCount = 0;
+		for (LiveVarRegisterState state : new ArrayList<>(liveVars)) {
+			if (state.registers.isEmpty()) {
+				continue;
+			}
+
+			final boolean isArgInRegisterVar = state.var.scope() == VariableScope.argument
+			                                   && state.var.index() < maxArgsInRegisters;
+			if (!isArgInRegisterVar) {
+				movRegsFromVar(state.var, state.registers, consumer);
+				setRegisters(state, List.of());
+				continue;
+			}
+
+			argCount = Math.max(state.var.index() + 1, argCount);
+			final int idealRegister = getIdealRegister(state.var);
+			if (state.registers.contains(idealRegister)) {
+				for (int register : state.registers) {
+					if (register != idealRegister) {
+						movRegFromReg(state.var, register, idealRegister, consumer);
+					}
+				}
+				continue;
+			}
+
+			if (state.registers.size() > 1) {
+				int remainingRegister = state.registers.getFirst();
+				for (int register : state.registers) {
+					if (register == 0 || register >= firstNonVolatileRegister) {
+						remainingRegister = register;
+						break;
+					}
+				}
+				for (int register : state.registers) {
+					if (register != remainingRegister) {
+						movRegFromReg(state.var, remainingRegister, register, consumer);
+					}
+				}
+				liveVars.remove(state);
+				state = setRegisters(state, List.of(remainingRegister));
+				liveVars.add(state);
+			}
+
+			args.add(state);
+		}
+
+		final int tmpRegister = getTempRegister(args);
+		final LiveVarRegisterState tmpState = args.removeFirst();
+		final List<Integer> freed = new ArrayList<>();
+		movRegsFromReg(tmpState, tmpRegister, freed, consumer);
+		outer:
+		while (args.size() > 0) {
+			final int i = freed.removeFirst();
+			for (LiveVarRegisterState arg : args) {
+				final int idealRegister = getIdealRegister(arg.var);
+				if (idealRegister == i) {
+					movRegsFromReg(arg, idealRegister, freed, consumer);
+					setRegisters(arg, List.of(idealRegister));
+					args.remove(arg);
+					continue outer;
+				}
+			}
+			throw new IllegalStateException();
+		}
+
+		final int idealRegister = getIdealRegister(tmpState.var);
+		movRegFromReg(tmpState.var, tmpRegister, idealRegister, consumer);
+		setRegisters(tmpState, List.of(idealRegister));
+	}
+
+	public void movRegsFromReg(LiveVarRegisterState state, int sourceRegister, List<Integer> freed, Consumer<IRInstruction> consumer) {
+		for (int register : state.registers) {
+			movRegFromReg(state.var, register, sourceRegister, consumer);
+			if (register != CALL_RETURN_REG && register < firstNonVolatileRegister) {
+				freed.add(register);
+			}
+		}
+	}
+
+	private int getIdealRegister(IRVar var) {
+		return var.index() + 1;
+	}
+
+	private int getTempRegister(List<LiveVarRegisterState> args) {
+		final Set<Integer> usedRegisters = getUsedRegisters(args);
+		for (int i = 0; i < maxRegisters; i++) {
+			if (!usedRegisters.contains(i)) {
+				return i;
+			}
+		}
+
+		for (LiveVarRegisterState state : args) {
+			if (state.registers.size() > 1) {
+				final List<Integer> newRegisters = new ArrayList<>(state.registers);
+
+				break;
+			}
+		}
+		throw new IllegalStateException();
+	}
+
 	private void movRegsFromVar(IRVar var, List<Integer> registers, Consumer<IRInstruction> consumer) {
 		int mainRegister = -1;
 		for (int register : registers) {
@@ -326,9 +429,11 @@ public final class RegisterAllocationStrategy {
 		}
 	}
 
-	private void setRegisters(@NotNull LiveVarRegisterState state, @NotNull List<Integer> registers) {
+	private LiveVarRegisterState setRegisters(@NotNull LiveVarRegisterState state, @NotNull List<Integer> registers) {
 		liveVars.remove(state);
-		liveVars.add(state.derive(registers));
+		final LiveVarRegisterState derived = state.derive(registers);
+		liveVars.add(derived);
+		return derived;
 	}
 
 	private void memToReg(LiveVarRegisterState state, @NotNull Consumer<IRInstruction> consumer) {
@@ -374,7 +479,7 @@ public final class RegisterAllocationStrategy {
 	}
 
 	private int getFreeRegister(Predicate<Integer> predicate) {
-		final Set<Integer> usedRegisters = getUsedRegisters();
+		final Set<Integer> usedRegisters = getUsedRegisters(liveVars);
 
 		for (int register = CALL_ARG_1; register < maxRegisters; register++) {
 			if (!usedRegisters.contains(register)
@@ -386,9 +491,9 @@ public final class RegisterAllocationStrategy {
 	}
 
 	@NotNull
-	private Set<Integer> getUsedRegisters() {
+	private Set<Integer> getUsedRegisters(List<LiveVarRegisterState> vars) {
 		final Set<Integer> usedRegisters = new HashSet<>();
-		for (LiveVarRegisterState var : liveVars) {
+		for (LiveVarRegisterState var : vars) {
 			usedRegisters.addAll(var.registers);
 		}
 		return usedRegisters;

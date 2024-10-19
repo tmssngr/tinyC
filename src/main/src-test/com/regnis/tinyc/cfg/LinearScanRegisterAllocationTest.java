@@ -124,21 +124,17 @@ public class LinearScanRegisterAllocationTest {
 				                   reg(0, t5)),
 				           LOCATION),
 				__dbg__(null, null, null, null)
-		), allocate(instructions, 4, true));
+		), allocate(instructions, true));
 	}
 
 	private static List<IRInstruction> allocate(List<IRInstruction> instructions) {
-		return allocate(instructions, 4, false);
+		return allocate(instructions, false);
 	}
 
-	private static List<IRInstruction> allocate(List<IRInstruction> instructions, int maxRegisters, boolean setProduceDebugInstructions) {
+	private static List<IRInstruction> allocate(List<IRInstruction> instructions, boolean setProduceDebugInstructions) {
 		final BasicBlock block = new BasicBlock("name", instructions, List.of(), List.of());
 		DetectVarLiveness.processBlock(block, Set.of());
-		final LinearScanRegisterAllocation allocation = new LinearScanRegisterAllocation(block, maxRegisters);
-		if (setProduceDebugInstructions) {
-			allocation.setProduceDebugInstructions();
-		}
-		return allocation.process().instructions();
+		return LinearScanRegisterAllocation.process(block).instructions();
 	}
 
 	@NotNull

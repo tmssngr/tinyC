@@ -44,7 +44,7 @@ public class RegisterAllocationStrategyTest {
 
 	@NotNull
 	static IRCopy movRegFromVar(int to, IRVar from) {
-		return new IRCopy(reg(from.name(), to),
+		return new IRCopy(new IRVar(from.name(), to, VariableScope.register, from.type(), from.canBeRegister()),
 		                  from,
 		                  Location.DUMMY);
 	}
@@ -104,7 +104,7 @@ public class RegisterAllocationStrategyTest {
 				                                    new LiveVarRegisterState(b, List.of(nonVolatile1))
 		                                    ), strategy,
 		                                    List.of(
-													movRegFromReg(b, CALL_ARG_2, nonVolatile1)
+				                                    movRegFromReg(b, CALL_ARG_2, nonVolatile1)
 		                                    ), instructions);
 		// ------------------------------------------------------------------------------
 		// register already used (var in multiple registers)
@@ -120,7 +120,7 @@ public class RegisterAllocationStrategyTest {
 				                                    new LiveVarRegisterState(b, List.of(nonVolatile0))
 		                                    ), strategy,
 		                                    List.of(
-													movRegFromReg(b, CALL_ARG_2, nonVolatile0)
+				                                    movRegFromReg(b, CALL_ARG_2, nonVolatile0)
 		                                    ), instructions);
 		// ------------------------------------------------------------------------------
 		// register already used (var in single register), nothing free
@@ -444,7 +444,7 @@ public class RegisterAllocationStrategyTest {
 		                                    ), strategy,
 		                                    List.of(), preInstructions,
 		                                    List.of(
-													movRegFromReg(a, nv0, CALL_ARG_1)
+				                                    movRegFromReg(a, nv0, CALL_ARG_1)
 		                                    ), postInstructions);
 	}
 
@@ -565,7 +565,7 @@ public class RegisterAllocationStrategyTest {
 		                                    ), strategy,
 		                                    List.of(), preInstructions,
 		                                    List.of(
-													movRegFromReg(a, nv0, CALL_ARG_1)
+				                                    movRegFromReg(a, nv0, CALL_ARG_1)
 		                                    ), postInstructions);
 		// ------------------------------------------------------------------------------
 		// multiple live (nothing free), some in multiple registers, ask for another
@@ -586,7 +586,7 @@ public class RegisterAllocationStrategyTest {
 		                                    ), strategy,
 		                                    List.of(), preInstructions,
 		                                    List.of(
-													movRegFromReg(a, CALL_ARG_1, nv0)
+				                                    movRegFromReg(a, CALL_ARG_1, nv0)
 		                                    ), postInstructions);
 	}
 
@@ -692,7 +692,7 @@ public class RegisterAllocationStrategyTest {
 				                                    new LiveVarRegisterState(a, List.of(nv0))
 		                                    ), strategy,
 		                                    List.of(
-													movRegFromReg(a, CALL_ARG_1, nv0)
+				                                    movRegFromReg(a, CALL_ARG_1, nv0)
 		                                    ), instructions);
 		// ------------------------------------------------------------------------------
 		// something live in volatile register (free non-volatile registers available)
@@ -706,7 +706,7 @@ public class RegisterAllocationStrategyTest {
 				                                    new LiveVarRegisterState(a, List.of(nv0))
 		                                    ), strategy,
 		                                    List.of(
-													movRegFromReg(a, CALL_ARG_1, nv0)
+				                                    movRegFromReg(a, CALL_ARG_1, nv0)
 		                                    ), instructions);
 		// ------------------------------------------------------------------------------
 		// something live in volatile register (no free non-volatile registers available)
@@ -724,7 +724,7 @@ public class RegisterAllocationStrategyTest {
 				                                    new LiveVarRegisterState(c, List.of(nv1))
 		                                    ), strategy,
 		                                    List.of(
-													movRegFromVar(CALL_ARG_2, a)
+				                                    movRegFromVar(CALL_ARG_2, a)
 		                                    ), instructions);
 	}
 
@@ -833,6 +833,42 @@ public class RegisterAllocationStrategyTest {
 	}
 
 	@Test
+	public void testHandleFirstBlockBegin() {
+		final IRVar a = var("a", 0);
+		final IRVar b0 = arg("b", 0);
+		final IRVar c1 = arg("c", 1);
+		final IRVar d2 = arg("d", 2);
+		final var strategy = new RegisterAllocationStrategy(2, 0, 2);
+		final int nonVolatile0 = strategy.nonVolatile(0);
+		final int nonVolatile1 = strategy.nonVolatile(1);
+
+		final List<IRInstruction> instructions = new ArrayList<>();
+		final Consumer<IRInstruction> consumer = instructions::addFirst;
+		// ------------------------------------------------------------------------------
+		// reverse order
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(a, List.of(CALL_RETURN_REG)),
+				new LiveVarRegisterState(b0, List.of(CALL_ARG_2)),
+				new LiveVarRegisterState(c1, List.of(CALL_ARG_1)),
+				new LiveVarRegisterState(d2, List.of(nonVolatile0))
+		)));
+		strategy.handleFirstBlockBegin(consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(a, List.of()),
+				                                    new LiveVarRegisterState(d2, List.of()),
+				                                    new LiveVarRegisterState(c1, List.of(CALL_ARG_2)),
+				                                    new LiveVarRegisterState(b0, List.of(CALL_ARG_1))
+		                                    ), strategy,
+		                                    List.of(
+				                                    movRegFromReg(b0, CALL_RETURN_REG, CALL_ARG_1),
+				                                    movRegFromReg(c1, CALL_ARG_1, CALL_ARG_2),
+				                                    movRegFromReg(b0, CALL_ARG_2, CALL_RETURN_REG),
+				                                    movRegFromVar(nonVolatile0, d2),
+				                                    movRegFromVar(CALL_RETURN_REG, a)
+		                                    ), instructions);
+	}
+
+	@Test
 	public void testCall() {
 		final var strategy = new RegisterAllocationStrategy(2, 0, 2);
 		final int nonVolatile0 = strategy.nonVolatile(0);
@@ -937,6 +973,10 @@ public class RegisterAllocationStrategyTest {
 				                                    movRegFromReg("y", CALL_ARG_1, nonVolatile0),
 				                                    movRegFromReg("a", nonVolatile0, CALL_RETURN_REG)
 		                                    ), instructions);
+	}
+
+	private static IRVar arg(String name, int index) {
+		return new IRVar(name, index, VariableScope.argument, Type.I32, true);
 	}
 
 	private static void assertEqualsVarStateAndInstructions(List<LiveVarRegisterState> expectedVarStates, RegisterAllocationStrategy strategy,

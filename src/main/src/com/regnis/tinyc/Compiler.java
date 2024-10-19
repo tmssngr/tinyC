@@ -86,7 +86,7 @@ public class Compiler {
 						determineBasicBlockChains(cfg);
 						irWriter.write(cfg);
 						dotWriter.writeCfg(cfg);
-						cfg = LinearScanRegisterAllocation.process(cfg, maxRegisters);
+						cfg = LinearScanRegisterAllocation.process(cfg);
 						final List<IRInstruction> instructions = getFlattenInstructions(cfg.blocks());
 
 						final IRFunction optimizedFunction = function.derive(instructions);
