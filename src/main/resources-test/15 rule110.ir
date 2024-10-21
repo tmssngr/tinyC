@@ -80,7 +80,8 @@
 	var 10: t.10
 	var 11: t.11
 	var 12: t.12
-	; 74 pc
+	var 13: t.13
+	; 84 pc
 	const t.1(1@function,u8), 124
 	call _, printChar [t.1(1@function,u8)]
 	const i(0@function,u8), 0
@@ -91,25 +92,27 @@
 	branch t.2(2@function,bool), false, @for_2_break
 	; 12:3 if [...] == 0
 	cast t.7(7@function,i64), i(0@function,u8)
-	addrof t.6(6@function,u8*), [board(0@global,u8*) + t.7(7@function,i64)]
+	cast t.8(8@function,u8*), t.7(7@function,i64)
+	addrof t.6(6@function,u8*), [board(0@global,u8*)]
+	add t.6(6@function,u8*), t.6(6@function,u8*), t.8(8@function,u8*)
 	load t.5(5@function,u8), [t.6(6@function,u8*)]
-	const t.8(8@function,u8), 0
-	equals t.4(4@function,bool), t.5(5@function,u8), t.8(8@function,u8)
+	const t.9(9@function,u8), 0
+	equals t.4(4@function,bool), t.5(5@function,u8), t.9(9@function,u8)
 	branch t.4(4@function,bool), false, @if_3_else
-	const t.9(9@function,u8), 32
-	call _, printChar [t.9(9@function,u8)]
+	const t.10(10@function,u8), 32
+	call _, printChar [t.10(10@function,u8)]
 	jump @if_3_end
 @if_3_else:
-	const t.10(10@function,u8), 42
-	call _, printChar [t.10(10@function,u8)]
+	const t.11(11@function,u8), 42
+	call _, printChar [t.11(11@function,u8)]
 @if_3_end:
 @for_2_continue:
-	const t.11(11@function,u8), 1
-	add i(0@function,u8), i(0@function,u8), t.11(11@function,u8)
+	const t.12(12@function,u8), 1
+	add i(0@function,u8), i(0@function,u8), t.12(12@function,u8)
 	jump @for_2
 @for_2_break:
-	const t.12(12@function,u8*), [string-0]
-	call _, printString [t.12(12@function,u8*)]
+	const t.13(13@function,u8*), [string-0]
+	call _, printString [t.13(13@function,u8*)]
 @printBoard_ret:
 
 @main:
@@ -157,7 +160,13 @@
 	var 40: t.40
 	var 41: t.41
 	var 42: t.42
-	; 238 pc
+	var 43: t.43
+	var 44: t.44
+	var 45: t.45
+	var 46: t.46
+	var 47: t.47
+	var 48: t.48
+	; 298 pc
 	const i(0@function,u8), 0
 	; 23:2 for i < 30
 @for_4:
@@ -166,66 +175,78 @@
 	branch t.4(4@function,bool), false, @for_4_break
 	const t.6(6@function,u8), 0
 	cast t.8(8@function,i64), i(0@function,u8)
-	addrof t.7(7@function,u8*), [board(0@global,u8*) + t.8(8@function,i64)]
+	cast t.9(9@function,u8*), t.8(8@function,i64)
+	addrof t.7(7@function,u8*), [board(0@global,u8*)]
+	add t.7(7@function,u8*), t.7(7@function,u8*), t.9(9@function,u8*)
 	store [t.7(7@function,u8*)], t.6(6@function,u8)
 @for_4_continue:
-	const t.9(9@function,u8), 1
-	add i(0@function,u8), i(0@function,u8), t.9(9@function,u8)
+	const t.10(10@function,u8), 1
+	add i(0@function,u8), i(0@function,u8), t.10(10@function,u8)
 	jump @for_4
 @for_4_break:
-	const t.10(10@function,u8), 1
-	const t.13(13@function,u8), 29
-	cast t.12(12@function,i64), t.13(13@function,u8)
-	addrof t.11(11@function,u8*), [board(0@global,u8*) + t.12(12@function,i64)]
-	store [t.11(11@function,u8*)], t.10(10@function,u8)
+	const t.11(11@function,u8), 1
+	const t.14(14@function,u8), 29
+	cast t.13(13@function,i64), t.14(14@function,u8)
+	cast t.15(15@function,u8*), t.13(13@function,i64)
+	addrof t.12(12@function,u8*), [board(0@global,u8*)]
+	add t.12(12@function,u8*), t.12(12@function,u8*), t.15(15@function,u8*)
+	store [t.12(12@function,u8*)], t.11(11@function,u8)
 	call _, printBoard []
 	const i(1@function,u8), 0
 	; 30:2 for i < 28
 @for_5:
-	const t.15(15@function,u8), 28
-	lt t.14(14@function,bool), i(1@function,u8), t.15(15@function,u8)
-	branch t.14(14@function,bool), false, @for_5_break
-	const t.19(19@function,i64), 0
-	addrof t.18(18@function,u8*), [board(0@global,u8*) + t.19(19@function,i64)]
-	load t.17(17@function,u8), [t.18(18@function,u8*)]
-	const t.20(20@function,u8), 1
-	shiftleft t.16(16@function,u8), t.17(17@function,u8), t.20(20@function,u8)
-	const t.23(23@function,i64), 1
-	addrof t.22(22@function,u8*), [board(0@global,u8*) + t.23(23@function,i64)]
-	load t.21(21@function,u8), [t.22(22@function,u8*)]
-	or pattern(2@function,u8), t.16(16@function,u8), t.21(21@function,u8)
+	const t.17(17@function,u8), 28
+	lt t.16(16@function,bool), i(1@function,u8), t.17(17@function,u8)
+	branch t.16(16@function,bool), false, @for_5_break
+	const t.21(21@function,i64), 0
+	cast t.22(22@function,u8*), t.21(21@function,i64)
+	addrof t.20(20@function,u8*), [board(0@global,u8*)]
+	add t.20(20@function,u8*), t.20(20@function,u8*), t.22(22@function,u8*)
+	load t.19(19@function,u8), [t.20(20@function,u8*)]
+	const t.23(23@function,u8), 1
+	shiftleft t.18(18@function,u8), t.19(19@function,u8), t.23(23@function,u8)
+	const t.26(26@function,i64), 1
+	cast t.27(27@function,u8*), t.26(26@function,i64)
+	addrof t.25(25@function,u8*), [board(0@global,u8*)]
+	add t.25(25@function,u8*), t.25(25@function,u8*), t.27(27@function,u8*)
+	load t.24(24@function,u8), [t.25(25@function,u8*)]
+	or pattern(2@function,u8), t.18(18@function,u8), t.24(24@function,u8)
 	const j(3@function,u8), 1
 	; 32:3 for j < 29
 @for_6:
-	const t.25(25@function,u8), 29
-	lt t.24(24@function,bool), j(3@function,u8), t.25(25@function,u8)
-	branch t.24(24@function,bool), false, @for_6_break
-	const t.28(28@function,u8), 1
-	shiftleft t.27(27@function,u8), pattern(2@function,u8), t.28(28@function,u8)
-	const t.29(29@function,u8), 7
-	and t.26(26@function,u8), t.27(27@function,u8), t.29(29@function,u8)
-	const t.34(34@function,u8), 1
-	add t.33(33@function,u8), j(3@function,u8), t.34(34@function,u8)
-	cast t.32(32@function,i64), t.33(33@function,u8)
-	addrof t.31(31@function,u8*), [board(0@global,u8*) + t.32(32@function,i64)]
-	load t.30(30@function,u8), [t.31(31@function,u8*)]
-	or pattern(2@function,u8), t.26(26@function,u8), t.30(30@function,u8)
-	const t.37(37@function,u8), 110
-	shiftright t.36(36@function,u8), t.37(37@function,u8), pattern(2@function,u8)
+	const t.29(29@function,u8), 29
+	lt t.28(28@function,bool), j(3@function,u8), t.29(29@function,u8)
+	branch t.28(28@function,bool), false, @for_6_break
+	const t.32(32@function,u8), 1
+	shiftleft t.31(31@function,u8), pattern(2@function,u8), t.32(32@function,u8)
+	const t.33(33@function,u8), 7
+	and t.30(30@function,u8), t.31(31@function,u8), t.33(33@function,u8)
 	const t.38(38@function,u8), 1
-	and t.35(35@function,u8), t.36(36@function,u8), t.38(38@function,u8)
-	cast t.40(40@function,i64), j(3@function,u8)
-	addrof t.39(39@function,u8*), [board(0@global,u8*) + t.40(40@function,i64)]
-	store [t.39(39@function,u8*)], t.35(35@function,u8)
+	add t.37(37@function,u8), j(3@function,u8), t.38(38@function,u8)
+	cast t.36(36@function,i64), t.37(37@function,u8)
+	cast t.39(39@function,u8*), t.36(36@function,i64)
+	addrof t.35(35@function,u8*), [board(0@global,u8*)]
+	add t.35(35@function,u8*), t.35(35@function,u8*), t.39(39@function,u8*)
+	load t.34(34@function,u8), [t.35(35@function,u8*)]
+	or pattern(2@function,u8), t.30(30@function,u8), t.34(34@function,u8)
+	const t.42(42@function,u8), 110
+	shiftright t.41(41@function,u8), t.42(42@function,u8), pattern(2@function,u8)
+	const t.43(43@function,u8), 1
+	and t.40(40@function,u8), t.41(41@function,u8), t.43(43@function,u8)
+	cast t.45(45@function,i64), j(3@function,u8)
+	cast t.46(46@function,u8*), t.45(45@function,i64)
+	addrof t.44(44@function,u8*), [board(0@global,u8*)]
+	add t.44(44@function,u8*), t.44(44@function,u8*), t.46(46@function,u8*)
+	store [t.44(44@function,u8*)], t.40(40@function,u8)
 @for_6_continue:
-	const t.41(41@function,u8), 1
-	add j(3@function,u8), j(3@function,u8), t.41(41@function,u8)
+	const t.47(47@function,u8), 1
+	add j(3@function,u8), j(3@function,u8), t.47(47@function,u8)
 	jump @for_6
 @for_6_break:
 	call _, printBoard []
 @for_5_continue:
-	const t.42(42@function,u8), 1
-	add i(1@function,u8), i(1@function,u8), t.42(42@function,u8)
+	const t.48(48@function,u8), 1
+	add i(1@function,u8), i(1@function,u8), t.48(48@function,u8)
 	jump @for_5
 @for_5_break:
 @main_ret:

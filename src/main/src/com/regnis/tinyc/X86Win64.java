@@ -266,20 +266,13 @@ public final class X86Win64 {
 	}
 
 	private void writeAddrOfArray(IRAddrOfArray addrOf) throws IOException {
-		final int indexReg = loadVar(addrOf.index());
-		final int size = getTypeSize(Objects.requireNonNull(addrOf.array().type().toType()));
-		if (size != 1) {
-			writeIndented("imul " + getRegName(indexReg) + ", " + size);
-		}
 		final int addrReg = addrOf(addrOf.array());
 		final String addrRegName = getRegName(addrReg);
 		if (!addrOf.varIsArray()) {
 			writeIndented("mov " + addrRegName + ", [" + addrRegName + "]");
 		}
-		writeIndented("add " + addrRegName + ", " + getRegName(indexReg));
 		storeVar(addrOf.addr(), addrReg);
 		free(addrReg);
-		free(indexReg);
 	}
 
 	private void writeLiteral(IRLiteral literal) throws IOException {

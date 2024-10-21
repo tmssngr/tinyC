@@ -7,9 +7,9 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRAddrOfArray(@NotNull IRVar addr, @NotNull IRVar array, @NotNull IRVar index, boolean varIsArray, @NotNull Location location) implements IRInstruction {
+public record IRAddrOfArray(@NotNull IRVar addr, @NotNull IRVar array, boolean varIsArray, @NotNull Location location) implements IRInstruction {
 	@Override
 	public String toString() {
-		return "addrof " + addr + ", [" + array + " + " + index + "]";
+		return "addrof " + addr + ", [" + array + "]";
 	}
 }

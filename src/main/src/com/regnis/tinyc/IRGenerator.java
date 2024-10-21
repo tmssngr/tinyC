@@ -415,8 +415,23 @@ public final class IRGenerator {
 
 	private void arrayAddr(IRVar var, ExprArrayAccess access, Location location) {
 		final IRVar index = writeExpression(access.index());
+		final int typeSize = getTypeSize(access.typeNotNull());
+		final IRVar offset;
+		if (typeSize > 1) {
+			offset = createTempVar(index.type());
+			write(new IRLiteral(offset, typeSize, location));
+			write(new IRBinary(offset, IRBinary.Op.Mul, offset, index, location));
+		}
+		else {
+			offset = index;
+		}
+
+		final IRVar pointerOffset = createTempVar(var.type());
+		write(new IRCast(pointerOffset, offset, location));
+
 		final ExprVarAccess varAccess = access.varAccess();
-		write(new IRAddrOfArray(var, varAccessToVar(varAccess), index, varAccess.varIsArray(), location));
+		write(new IRAddrOfArray(var, varAccessToVar(varAccess), varAccess.varIsArray(), location));
+		write(new IRBinary(var, IRBinary.Op.Add, var, pointerOffset, location));
 	}
 
 	private void writeBinary(IRVar var, ExprBinary binary) {

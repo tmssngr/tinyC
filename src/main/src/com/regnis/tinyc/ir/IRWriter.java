@@ -87,7 +87,6 @@ public final class IRWriter extends TextWriter {
 				sum++;
 			}
 			case IRAddrOfArray i -> {
-				sum += getInstructionTime(i.index());
 				sum += getInstructionTime(i.addr());
 				sum++;
 			}

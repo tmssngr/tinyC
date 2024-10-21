@@ -30,7 +30,9 @@
 	var 16: t.16
 	var 17: t.17
 	var 18: t.18
-	; 102 pc
+	var 19: t.19
+	var 20: t.20
+	; 122 pc
 	const pos(2@function,u8), 20
 	; 13:2 while true
 @while_1:
@@ -44,22 +46,26 @@
 	const t.9(9@function,u8), 48
 	add digit(4@function,u8), t.8(8@function,u8), t.9(9@function,u8)
 	cast t.11(11@function,i64), pos(2@function,u8)
-	addrof t.10(10@function,u8*), [buffer(1@function,u8*) + t.11(11@function,i64)]
+	cast t.12(12@function,u8*), t.11(11@function,i64)
+	addrof t.10(10@function,u8*), [buffer(1@function,u8*)]
+	add t.10(10@function,u8*), t.10(10@function,u8*), t.12(12@function,u8*)
 	store [t.10(10@function,u8*)], digit(4@function,u8)
 	; 19:3 if number == 0
-	const t.13(13@function,i64), 0
-	equals t.12(12@function,bool), number(0@argument,i64), t.13(13@function,i64)
-	branch t.12(12@function,bool), false, @if_2_end
+	const t.14(14@function,i64), 0
+	equals t.13(13@function,bool), number(0@argument,i64), t.14(14@function,i64)
+	branch t.13(13@function,bool), false, @if_2_end
 	jump @while_1_break
 @if_2_end:
 	jump @while_1
 @while_1_break:
-	cast t.15(15@function,i64), pos(2@function,u8)
-	addrof t.14(14@function,u8*), [buffer(1@function,u8*) + t.15(15@function,i64)]
-	const t.18(18@function,u8), 20
-	sub t.17(17@function,u8), t.18(18@function,u8), pos(2@function,u8)
-	cast t.16(16@function,i64), t.17(17@function,u8)
-	call _, printStringLength [t.14(14@function,u8*), t.16(16@function,i64)]
+	cast t.16(16@function,i64), pos(2@function,u8)
+	cast t.17(17@function,u8*), t.16(16@function,i64)
+	addrof t.15(15@function,u8*), [buffer(1@function,u8*)]
+	add t.15(15@function,u8*), t.15(15@function,u8*), t.17(17@function,u8*)
+	const t.20(20@function,u8), 20
+	sub t.19(19@function,u8), t.20(20@function,u8), pos(2@function,u8)
+	cast t.18(18@function,i64), t.19(19@function,u8)
+	call _, printStringLength [t.15(15@function,u8*), t.18(18@function,i64)]
 @printUint_ret:
 
 @printIntLf:
@@ -121,33 +127,51 @@
 	var 19: t.19
 	var 20: t.20
 	var 21: t.21
-	; 111 pc
+	var 22: t.22
+	var 23: t.23
+	var 24: t.24
+	var 25: t.25
+	var 26: t.26
+	var 27: t.27
+	; 171 pc
 	const chr(0@function,u8), 32
 	const t.3(3@function,i64), 0
-	addrof t.2(2@function,u8*), [chars(0@global,u8*) + t.3(3@function,i64)]
+	cast t.4(4@function,u8*), t.3(3@function,i64)
+	addrof t.2(2@function,u8*), [chars(0@global,u8*)]
+	add t.2(2@function,u8*), t.2(2@function,u8*), t.4(4@function,u8*)
 	store [t.2(2@function,u8*)], chr(0@function,u8)
-	const t.7(7@function,i64), 0
-	addrof t.6(6@function,u8*), [chars(0@global,u8*) + t.7(7@function,i64)]
-	load t.5(5@function,u8), [t.6(6@function,u8*)]
-	const t.8(8@function,u8), 1
-	add t.4(4@function,u8), t.5(5@function,u8), t.8(8@function,u8)
-	const t.10(10@function,i64), 1
-	addrof t.9(9@function,u8*), [chars(0@global,u8*) + t.10(10@function,i64)]
-	store [t.9(9@function,u8*)], t.4(4@function,u8)
-	const t.14(14@function,i64), 1
-	addrof t.13(13@function,u8*), [chars(0@global,u8*) + t.14(14@function,i64)]
-	load t.12(12@function,u8), [t.13(13@function,u8*)]
-	const t.15(15@function,u8), 2
-	add t.11(11@function,u8), t.12(12@function,u8), t.15(15@function,u8)
-	const t.18(18@function,u8), 2
-	cast t.17(17@function,i64), t.18(18@function,u8)
-	addrof t.16(16@function,u8*), [chars(0@global,u8*) + t.17(17@function,i64)]
-	store [t.16(16@function,u8*)], t.11(11@function,u8)
-	const t.20(20@function,i64), 2
-	addrof t.19(19@function,u8*), [chars(0@global,u8*) + t.20(20@function,i64)]
-	load result(1@function,u8), [t.19(19@function,u8*)]
-	cast t.21(21@function,i64), result(1@function,u8)
-	call _, printIntLf [t.21(21@function,i64)]
+	const t.8(8@function,i64), 0
+	cast t.9(9@function,u8*), t.8(8@function,i64)
+	addrof t.7(7@function,u8*), [chars(0@global,u8*)]
+	add t.7(7@function,u8*), t.7(7@function,u8*), t.9(9@function,u8*)
+	load t.6(6@function,u8), [t.7(7@function,u8*)]
+	const t.10(10@function,u8), 1
+	add t.5(5@function,u8), t.6(6@function,u8), t.10(10@function,u8)
+	const t.12(12@function,i64), 1
+	cast t.13(13@function,u8*), t.12(12@function,i64)
+	addrof t.11(11@function,u8*), [chars(0@global,u8*)]
+	add t.11(11@function,u8*), t.11(11@function,u8*), t.13(13@function,u8*)
+	store [t.11(11@function,u8*)], t.5(5@function,u8)
+	const t.17(17@function,i64), 1
+	cast t.18(18@function,u8*), t.17(17@function,i64)
+	addrof t.16(16@function,u8*), [chars(0@global,u8*)]
+	add t.16(16@function,u8*), t.16(16@function,u8*), t.18(18@function,u8*)
+	load t.15(15@function,u8), [t.16(16@function,u8*)]
+	const t.19(19@function,u8), 2
+	add t.14(14@function,u8), t.15(15@function,u8), t.19(19@function,u8)
+	const t.22(22@function,u8), 2
+	cast t.21(21@function,i64), t.22(22@function,u8)
+	cast t.23(23@function,u8*), t.21(21@function,i64)
+	addrof t.20(20@function,u8*), [chars(0@global,u8*)]
+	add t.20(20@function,u8*), t.20(20@function,u8*), t.23(23@function,u8*)
+	store [t.20(20@function,u8*)], t.14(14@function,u8)
+	const t.25(25@function,i64), 2
+	cast t.26(26@function,u8*), t.25(25@function,i64)
+	addrof t.24(24@function,u8*), [chars(0@global,u8*)]
+	add t.24(24@function,u8*), t.24(24@function,u8*), t.26(26@function,u8*)
+	load result(1@function,u8), [t.24(24@function,u8*)]
+	cast t.27(27@function,i64), result(1@function,u8)
+	call _, printIntLf [t.27(27@function,i64)]
 @main_ret:
 
 Global variables
