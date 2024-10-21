@@ -91,11 +91,6 @@ public final class IRWriter extends TextWriter {
 				sum += getInstructionTime(i.addr());
 				sum++;
 			}
-			case IRArrayAccess i -> {
-				sum += getInstructionTime(i.index());
-				sum += getInstructionTime(i.addr());
-				sum++;
-			}
 			case IRBinary i -> {
 				sum += getInstructionTime(i.left());
 				sum += getInstructionTime(i.right());

@@ -242,7 +242,6 @@ public final class X86Win64 {
 		case IRComment comment -> writeComment(comment.comment());
 		case IRAddrOf addrOf -> writeAddrOf(addrOf);
 		case IRAddrOfArray addrOf -> writeAddrOfArray(addrOf);
-		case IRArrayAccess access -> writeArrayAccess(access);
 		case IRLiteral literal -> writeLiteral(literal);
 		case IRString literal -> writeString(literal);
 		case IRCopy copy -> writeCopy(copy);
@@ -281,20 +280,6 @@ public final class X86Win64 {
 		storeVar(addrOf.addr(), addrReg);
 		free(addrReg);
 		free(indexReg);
-	}
-
-	private void writeArrayAccess(IRArrayAccess access) throws IOException {
-		final int indexReg = loadVar(access.index());
-		final String indexRegName = getRegName(indexReg);
-		final int size = getTypeSize(Objects.requireNonNull(access.array().type().toType()));
-		if (size != 1) {
-			writeIndented("imul " + indexRegName + ", " + size);
-		}
-		final int addrReg = addrOf(access.array());
-		writeIndented("add " + getRegName(addrReg) + ", " + indexRegName);
-		free(indexReg);
-		storeVar(access.addr(), addrReg);
-		free(addrReg);
 	}
 
 	private void writeLiteral(IRLiteral literal) throws IOException {

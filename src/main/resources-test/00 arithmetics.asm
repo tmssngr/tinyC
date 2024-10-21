@@ -138,21 +138,21 @@ start:
         add bl, cl
         lea rax, [rsp+32]
         mov [rax], bl
-        ; cast t.10(10@function,i64), pos(2@function,u8)
+        ; cast t.11(11@function,i64), pos(2@function,u8)
         lea rax, [rsp+20]
         mov bl, [rax]
         movzx rbx, bl
-        lea rax, [rsp+64]
+        lea rax, [rsp+72]
         mov [rax], rbx
-        ; array t.11(11@function,u8*), buffer(1@function,u8*) + t.10(10@function,i64)
-        lea rax, [rsp+64]
+        ; addrof t.10(10@function,u8*), [buffer(1@function,u8*) + t.11(11@function,i64)]
+        lea rax, [rsp+72]
         mov rbx, [rax]
         lea rax, [rsp+0]
         add rax, rbx
-        lea rbx, [rsp+72]
-        mov [rbx], rax
-        ; store [t.11(11@function,u8*)], digit(4@function,u8)
-        lea rax, [rsp+72]
+        lea rcx, [rsp+64]
+        mov [rcx], rax
+        ; store [t.10(10@function,u8*)], digit(4@function,u8)
+        lea rax, [rsp+64]
         mov rbx, [rax]
         lea rax, [rsp+32]
         mov cl, [rax]

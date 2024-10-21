@@ -43,9 +43,9 @@
 	cast t.8(8@function,u8), remainder(3@function,i64)
 	const t.9(9@function,u8), 48
 	add digit(4@function,u8), t.8(8@function,u8), t.9(9@function,u8)
-	cast t.10(10@function,i64), pos(2@function,u8)
-	array t.11(11@function,u8*), buffer(1@function,u8*) + t.10(10@function,i64)
-	store [t.11(11@function,u8*)], digit(4@function,u8)
+	cast t.11(11@function,i64), pos(2@function,u8)
+	addrof t.10(10@function,u8*), [buffer(1@function,u8*) + t.11(11@function,i64)]
+	store [t.10(10@function,u8*)], digit(4@function,u8)
 	; 19:3 if number == 0
 	const t.13(13@function,i64), 0
 	equals t.12(12@function,bool), number(0@argument,i64), t.13(13@function,i64)

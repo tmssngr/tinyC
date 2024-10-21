@@ -376,8 +376,8 @@ public final class IRGenerator {
 		}
 		case ExprArrayAccess access -> {
 			final IRVar valueVar = writeExpression(right);
-			final IRVar tmp = arrayAddress(access);
-			write(new IRMemStore(tmp, valueVar, access.location()));
+			final IRVar addr = arrayAddr(access);
+			write(new IRMemStore(addr, valueVar, access.location()));
 			return valueVar;
 		}
 		case ExprUnary unary -> {
@@ -402,17 +402,21 @@ public final class IRGenerator {
 	}
 
 	private void writeArrayAccess(IRVar var, ExprArrayAccess access) {
-		final IRVar addr = arrayAddress(access);
+		final IRVar addr = arrayAddr(access);
 		write(new IRMemLoad(var, addr, access.location()));
 	}
 
 	@NotNull
-	private IRVar arrayAddress(ExprArrayAccess access) {
-		final ExprVarAccess varAccess = access.varAccess();
-		final IRVar indexVar = writeExpression(access.index());
-		final IRVar addr = createTempVar(varAccess.typeNotNull());
-		write(new IRArrayAccess(addr, varAccessToVar(varAccess), indexVar, access.location()));
+	private IRVar arrayAddr(ExprArrayAccess access) {
+		final IRVar addr = createTempVar(access.varAccess().typeNotNull());
+		writeAddrOf(addr, access, access.location());
 		return addr;
+	}
+
+	private void arrayAddr(IRVar var, ExprArrayAccess access, Location location) {
+		final IRVar index = writeExpression(access.index());
+		final ExprVarAccess varAccess = access.varAccess();
+		write(new IRAddrOfArray(var, varAccessToVar(varAccess), index, varAccess.varIsArray(), location));
 	}
 
 	private void writeBinary(IRVar var, ExprBinary binary) {
@@ -488,11 +492,7 @@ public final class IRGenerator {
 	private void writeAddrOf(IRVar var, Expression expression, Location location) {
 		switch (expression) {
 		case ExprVarAccess access -> write(new IRAddrOf(var, varAccessToVar(access), location));
-		case ExprArrayAccess access -> {
-			final IRVar index = writeExpression(access.index());
-			final ExprVarAccess varAccess = access.varAccess();
-			write(new IRAddrOfArray(var, varAccessToVar(varAccess), index, varAccess.varIsArray(), location));
-		}
+		case ExprArrayAccess access -> arrayAddr(var, access, location);
 		case ExprMemberAccess access -> writeMemberAddress(var, access);
 		default -> throw new UnsupportedOperationException(String.valueOf(expression));
 		}
