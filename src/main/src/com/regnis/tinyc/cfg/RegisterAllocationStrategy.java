@@ -467,6 +467,29 @@ public final class RegisterAllocationStrategy {
 			}
 		}
 
+		while (!toRegToVar.isEmpty()) {
+			final Iterator<Map.Entry<Integer, IRVar>> it = toRegToVar.entrySet().iterator();
+			final Map.Entry<Integer, IRVar> entry = it.next();
+			final int register = entry.getKey();
+			IRVar var = entry.getValue();
+			var pair = Objects.requireNonNull(varToLists.get(var));
+			int fromReg = pair.first().getFirst();
+			List<Integer> toRegs = pair.second();
+			if (tmpReg < 0) {
+				movRegsFromVar(var, toRegs, consumer);
+			}
+			else {
+				movRegsFromReg(var, toRegs, tmpReg, consumer);
+			}
+
+			while (true) {
+				var = Objects.requireNonNull(toRegToVar.get(fromReg));
+				pair = Objects.requireNonNull(varToLists.get(var));
+				toRegs = pair.second();
+				movRegsFromReg(var, toRegs, fromReg, consumer);
+				fromReg = pair.first().getFirst();
+			}
+		}
 	}
 
 	private void setState(IRVar var, List<Integer> registers) {

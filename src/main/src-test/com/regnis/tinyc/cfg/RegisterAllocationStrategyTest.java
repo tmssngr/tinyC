@@ -998,6 +998,27 @@ public class RegisterAllocationStrategyTest {
 				                                    movRegFromReg(varA, CALL_RETURN_REG, CALL_ARG_1),
 				                                    movRegFromReg(varB, CALL_ARG_1, CALL_ARG_2)
 		                                    ), instructions);
+		// ------------------------------------------------------------------------------
+		// cycled regs
+		instructions.clear();
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(varA, List.of(CALL_ARG_1)),
+				new LiveVarRegisterState(varB, List.of(CALL_ARG_2))
+		)));
+		strategy.transferTo(List.of(
+				new LiveVarRegisterState(varA, List.of(CALL_ARG_2)),
+				new LiveVarRegisterState(varB, List.of(CALL_ARG_1))
+		), consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(varB, List.of(CALL_ARG_2)),
+				                                    new LiveVarRegisterState(varA, List.of(CALL_ARG_1))
+		                                    ), strategy,
+		                                    List.of(
+				                                    movRegFromReg(varA, CALL_RETURN_REG, CALL_ARG_1),
+				                                    movRegFromReg(varA, CALL_ARG_1, CALL_ARG_2),
+				                                    movRegFromReg(varA, CALL_ARG_2, CALL_ARG_1),
+				                                    movRegFromReg(varA, CALL_ARG_1, CALL_RETURN_REG)
+		                                    ), instructions);
 	}
 
 	@Test
