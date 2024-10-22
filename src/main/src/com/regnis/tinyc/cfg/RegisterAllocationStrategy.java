@@ -83,9 +83,7 @@ public final class RegisterAllocationStrategy {
 					? nonVolatileRegisters.getFirst()
 					: getFreeNonVolatileRegister();
 			if (nvReg >= 0) {
-				for (int register : volatileRegisters) {
-					movRegFromReg(var.var, register, nvReg, consumer);
-				}
+				movRegsFromReg(var.var, volatileRegisters, nvReg, consumer);
 				liveVars.set(i, var.derive(List.of(nvReg)));
 			}
 			else {
@@ -137,7 +135,7 @@ public final class RegisterAllocationStrategy {
 			}
 		}
 		else {
-			memToReg(state, consumer);
+			movRegsFromVar(state.var(), state.registers, consumer);
 		}
 	}
 
@@ -150,7 +148,7 @@ public final class RegisterAllocationStrategy {
 			}
 
 			newStates.add(state.derive(List.of()));
-			memToReg(state, consumer);
+			movRegsFromVar(state.var(), state.registers, consumer);
 		}
 
 		liveVars.clear();
@@ -383,11 +381,115 @@ public final class RegisterAllocationStrategy {
 		setRegisters(tmpState, List.of(idealRegister));
 	}
 
-	public void movRegsFromReg(LiveVarRegisterState state, int sourceRegister, List<Integer> freed, Consumer<IRInstruction> consumer) {
+	public void transferTo(@NotNull List<LiveVarRegisterState> newStates, Consumer<IRInstruction> consumer) {
+		final Map<IRVar, Pair<List<Integer>, List<Integer>>> varToLists = new LinkedHashMap<>();
+		for (LiveVarRegisterState var : liveVars) {
+			final Pair<List<Integer>, List<Integer>> prev
+					= varToLists.put(var.var, new Pair<>(List.of(), var.registers));
+			Utils.assertTrue(prev == null);
+		}
+		for (LiveVarRegisterState var : newStates) {
+			Utils.assertTrue(var.registers.size() < 2);
+			final Pair<List<Integer>, List<Integer>> prev = varToLists.get(var.var);
+			varToLists.put(var.var, new Pair<>(var.registers, prev != null ? prev.second() : List.of()));
+		}
+
+		final Map<Integer, IRVar> fromRegToVar = new HashMap<>();
+		final Map<Integer, IRVar> toRegToVar = new LinkedHashMap<>();
+		for (final var it = varToLists.entrySet().iterator(); it.hasNext(); ) {
+			final Map.Entry<IRVar, Pair<List<Integer>, List<Integer>>> entry = it.next();
+			final Pair<List<Integer>, List<Integer>> pair = entry.getValue();
+			final IRVar var = entry.getKey();
+			final List<Integer> fromRegs = pair.first();
+			final int fromReg = fromRegs.isEmpty() ? -1 : fromRegs.getFirst();
+			final List<Integer> toRegs = pair.second();
+			if (fromReg < 0) {
+				movRegsFromVar(var, toRegs, consumer);
+				setState(var, List.of());
+				it.remove();
+				continue;
+			}
+
+			if (toRegs.isEmpty()) {
+				movVarFromReg(var, fromReg, consumer);
+				setState(var, fromRegs);
+				it.remove();
+				continue;
+			}
+
+			if (toRegs.contains(fromReg)) {
+				movRegsFromReg(var, toRegs, fromReg, consumer);
+				setState(var, fromRegs);
+				it.remove();
+				continue;
+			}
+
+			Utils.assertTrue(fromRegToVar.put(fromReg, var) == null);
+			for (int reg : toRegs) {
+				Utils.assertTrue(toRegToVar.put(reg, var) == null);
+			}
+		}
+
+		if (toRegToVar.isEmpty()) {
+			return;
+		}
+
+		while (true) {
+			boolean repeat = false;
+			for (final Iterator<Map.Entry<Integer, IRVar>> it = toRegToVar.entrySet().iterator(); it.hasNext(); ) {
+				final Map.Entry<Integer, IRVar> entry = it.next();
+				final IRVar var = entry.getValue();
+				final var pair = Objects.requireNonNull(varToLists.get(var));
+				final int fromReg = pair.first().getFirst();
+				if (!toRegToVar.containsKey(fromReg)) {
+					final List<Integer> toRegs = pair.second();
+					movRegsFromReg(var, toRegs, fromReg, consumer);
+					setState(var, pair.first());
+					it.remove();
+					if (toRegToVar.isEmpty()) {
+						return;
+					}
+
+					repeat = true;
+				}
+			}
+
+			if (!repeat) {
+				break;
+			}
+		}
+
+		int tmpReg = -1;
+		for (int i = 0; i < maxRegisters; i++) {
+			if (toRegToVar.get(i) == null) {
+				tmpReg = i;
+				break;
+			}
+		}
+
+	}
+
+	private void setState(IRVar var, List<Integer> registers) {
+		final LiveVarRegisterState prevState = get(var);
+		if (prevState != null) {
+			liveVars.remove(prevState);
+		}
+		liveVars.add(new LiveVarRegisterState(var, registers));
+	}
+
+	private void movRegsFromReg(LiveVarRegisterState state, int sourceRegister, List<Integer> freed, Consumer<IRInstruction> consumer) {
 		for (int register : state.registers) {
 			movRegFromReg(state.var, register, sourceRegister, consumer);
 			if (register != CALL_RETURN_REG && register < firstNonVolatileRegister) {
 				freed.add(register);
+			}
+		}
+	}
+
+	private void movRegsFromReg(IRVar var, List<Integer> toRegs, int fromReg, Consumer<IRInstruction> consumer) {
+		for (int register : toRegs) {
+			if (register != fromReg) {
+				movRegFromReg(var, register, fromReg, consumer);
 			}
 		}
 	}
@@ -414,41 +516,11 @@ public final class RegisterAllocationStrategy {
 		throw new IllegalStateException();
 	}
 
-	private void movRegsFromVar(IRVar var, List<Integer> registers, Consumer<IRInstruction> consumer) {
-		int mainRegister = -1;
-		for (int register : registers) {
-			if (mainRegister < 0) {
-				mainRegister = register;
-			}
-			else {
-				movRegFromReg(var, register, mainRegister, consumer);
-			}
-		}
-		if (mainRegister >= 0) {
-			movRegFromVar(mainRegister, var, consumer);
-		}
-	}
-
 	private LiveVarRegisterState setRegisters(@NotNull LiveVarRegisterState state, @NotNull List<Integer> registers) {
 		liveVars.remove(state);
 		final LiveVarRegisterState derived = state.derive(registers);
 		liveVars.add(derived);
 		return derived;
-	}
-
-	private void memToReg(LiveVarRegisterState state, @NotNull Consumer<IRInstruction> consumer) {
-		IRVar registerVar = null;
-		int varInRegister = 0;
-		for (int register : state.registers) {
-			if (registerVar == null) {
-				registerVar = reg(register, state.var());
-				varInRegister = register;
-			}
-			else {
-				movRegFromVar(register, registerVar, consumer);
-			}
-		}
-		movRegFromVar(varInRegister, state.var(), consumer);
 	}
 
 	@NotNull
@@ -533,6 +605,26 @@ public final class RegisterAllocationStrategy {
 			}
 		}
 		return null;
+	}
+
+	private void movRegsFromVar(IRVar var, List<Integer> registers, Consumer<IRInstruction> consumer) {
+		int mainRegister = -1;
+		for (int register : registers) {
+			if (mainRegister < 0) {
+				mainRegister = register;
+			}
+			else {
+				movRegFromReg(var, register, mainRegister, consumer);
+			}
+		}
+		if (mainRegister >= 0) {
+			movRegFromVar(mainRegister, var, consumer);
+		}
+	}
+
+	private void movVarFromRegs(IRVar var, List<Integer> registers, Consumer<IRInstruction> consumer) {
+		Utils.assertTrue(registers.size() > 0);
+		movVarFromReg(var, registers.getFirst(), consumer);
 	}
 
 	private static void movVarFromReg(IRVar to, int from, Consumer<IRInstruction> consumer) {

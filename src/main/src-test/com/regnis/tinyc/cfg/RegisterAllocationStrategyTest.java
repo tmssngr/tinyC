@@ -832,6 +832,7 @@ public class RegisterAllocationStrategyTest {
 		                                    ), instructions);
 	}
 
+	@Deprecated
 	@Test
 	public void testHandleFirstBlockBegin() {
 		final IRVar a = var("a", 0);
@@ -865,6 +866,137 @@ public class RegisterAllocationStrategyTest {
 				                                    movRegFromReg(b0, CALL_ARG_2, CALL_RETURN_REG),
 				                                    movRegFromVar(nonVolatile0, d2),
 				                                    movRegFromVar(CALL_RETURN_REG, a)
+		                                    ), instructions);
+	}
+
+	@Test
+	public void testTransferToState() {
+		final IRVar varA = var("a", 0);
+		final IRVar varB = var("b", 1);
+		final IRVar arg0 = arg("arg0", 0);
+		final IRVar arg1 = arg("arg1", 1);
+		final IRVar arg2 = arg("arg2", 2);
+		final var strategy = new RegisterAllocationStrategy(2, 0, 2);
+		final int nonVolatile0 = strategy.nonVolatile(0);
+		final int nonVolatile1 = strategy.nonVolatile(1);
+
+		final List<IRInstruction> instructions = new ArrayList<>();
+		final Consumer<IRInstruction> consumer = instructions::addFirst;
+		// ------------------------------------------------------------------------------
+		// missing to live
+		strategy.setState(new AllLiveVarRegisterState(List.of()));
+		strategy.transferTo(List.of(
+				new LiveVarRegisterState(varA, List.of())
+		), consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(varA, List.of())
+		                                    ), strategy,
+		                                    List.of(), instructions);
+		// ------------------------------------------------------------------------------
+		// live to missing
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(varA, List.of())
+		)));
+		strategy.transferTo(List.of(), consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(varA, List.of())
+		                                    ), strategy,
+		                                    List.of(), instructions);
+		// ------------------------------------------------------------------------------
+		// from regs to var
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(varA, List.of())
+		)));
+		strategy.transferTo(List.of(
+				new LiveVarRegisterState(varA, List.of(CALL_RETURN_REG))
+		), consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(varA, List.of(CALL_RETURN_REG))
+		                                    ), strategy,
+		                                    List.of(
+													movVarFromReg(varA, CALL_RETURN_REG)
+		                                    ), instructions);
+		// ------------------------------------------------------------------------------
+		// from var to regs
+		instructions.clear();
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(varA, List.of(CALL_RETURN_REG, CALL_ARG_1))
+		)));
+		strategy.transferTo(List.of(
+				new LiveVarRegisterState(varA, List.of())
+		), consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(varA, List.of())
+		                                    ), strategy,
+		                                    List.of(
+				                                    movRegFromVar(CALL_RETURN_REG, varA),
+				                                    movRegFromReg(varA, CALL_ARG_1, CALL_RETURN_REG)
+		                                    ), instructions);
+		// ------------------------------------------------------------------------------
+		// equal regs
+		instructions.clear();
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(varA, List.of(CALL_RETURN_REG))
+		)));
+		strategy.transferTo(List.of(
+				new LiveVarRegisterState(varA, List.of(CALL_RETURN_REG))
+		), consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(varA, List.of(CALL_RETURN_REG))
+		                                    ), strategy,
+		                                    List.of(), instructions);
+		// ------------------------------------------------------------------------------
+		// one equal register
+		instructions.clear();
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(varA, List.of(CALL_RETURN_REG, CALL_ARG_2))
+		)));
+		strategy.transferTo(List.of(
+				new LiveVarRegisterState(varA, List.of(CALL_ARG_2))
+		), consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(varA, List.of(CALL_ARG_2))
+		                                    ), strategy,
+		                                    List.of(
+				                                    movRegFromReg(varA, CALL_RETURN_REG, CALL_ARG_2)
+		                                    ), instructions);
+		// ------------------------------------------------------------------------------
+		// different regs, no cycle
+		instructions.clear();
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(varA, List.of(CALL_RETURN_REG)),
+				new LiveVarRegisterState(varB, List.of(CALL_ARG_1))
+		)));
+		strategy.transferTo(List.of(
+				new LiveVarRegisterState(varA, List.of(CALL_ARG_2)),
+				new LiveVarRegisterState(varB, List.of(nonVolatile0))
+		), consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(varA, List.of(CALL_ARG_2)),
+				                                    new LiveVarRegisterState(varB, List.of(nonVolatile0))
+		                                    ), strategy,
+		                                    List.of(
+				                                    movRegFromReg(varB, CALL_ARG_1, nonVolatile0),
+				                                    movRegFromReg(varA, CALL_RETURN_REG, CALL_ARG_2)
+		                                    ), instructions);
+		// ------------------------------------------------------------------------------
+		// chained regs, no cycle, but order important
+		instructions.clear();
+		strategy.setState(new AllLiveVarRegisterState(List.of(
+				new LiveVarRegisterState(varA, List.of(CALL_RETURN_REG)),
+				new LiveVarRegisterState(varB, List.of(CALL_ARG_1))
+		)));
+		strategy.transferTo(List.of(
+				new LiveVarRegisterState(varA, List.of(CALL_ARG_1)),
+				new LiveVarRegisterState(varB, List.of(CALL_ARG_2))
+		), consumer);
+		assertEqualsVarStateAndInstructions(List.of(
+				                                    new LiveVarRegisterState(varB, List.of(CALL_ARG_2)),
+				                                    new LiveVarRegisterState(varA, List.of(CALL_ARG_1))
+		                                    ), strategy,
+		                                    List.of(
+				                                    movRegFromReg(varA, CALL_RETURN_REG, CALL_ARG_1),
+				                                    movRegFromReg(varB, CALL_ARG_1, CALL_ARG_2)
 		                                    ), instructions);
 	}
 
