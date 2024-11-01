@@ -267,10 +267,6 @@ public final class X86Win64 {
 
 	private void writeAddrOfArray(IRAddrOfArray addrOf) throws IOException {
 		final int addrReg = addrOf(addrOf.array());
-		final String addrRegName = getRegName(addrReg);
-		if (!addrOf.varIsArray()) {
-			writeIndented("mov " + addrRegName + ", [" + addrRegName + "]");
-		}
 		storeVar(addrOf.addr(), addrReg);
 		free(addrReg);
 	}

@@ -483,11 +483,11 @@ start:
         mov rbx, [rax]
         lea rax, [rsp+24]
         mov [rax], rbx
-        ; addrof second(0@function,u8*), [text(0@global,u8*)]
+        ; copy second(0@function,u8*), text(0@global,u8*)
         lea rax, [var_0]
-        mov rax, [rax]
-        lea rbx, [rsp+0]
-        mov [rbx], rax
+        mov rbx, [rax]
+        lea rax, [rsp+0]
+        mov [rax], rbx
         ; add second(0@function,u8*), second(0@function,u8*), t.3(3@function,u8*)
         lea rax, [rsp+0]
         mov rbx, [rax]

@@ -430,7 +430,12 @@ public final class IRGenerator {
 		write(new IRCast(pointerOffset, offset, location));
 
 		final ExprVarAccess varAccess = access.varAccess();
-		write(new IRAddrOfArray(var, varAccessToVar(varAccess), varAccess.varIsArray(), location));
+		if (varAccess.varIsArray()) {
+			write(new IRAddrOfArray(var, varAccessToVar(varAccess), location));
+		}
+		else {
+			write(new IRCopy(var, varAccessToVar(varAccess), location));
+		}
 		write(new IRBinary(var, IRBinary.Op.Add, var, pointerOffset, location));
 	}
 
