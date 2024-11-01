@@ -11,6 +11,11 @@ import org.junit.*;
 public class CompilerTest {
 
 	@Test
+	public void testBasics() throws IOException, InterruptedException {
+		compileAndRun("00 basics.c");
+	}
+
+	@Test
 	public void testArithmetics() throws IOException, InterruptedException {
 		compileAndRun("00 arithmetics.c");
 	}

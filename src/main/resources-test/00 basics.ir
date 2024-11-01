@@ -1,0 +1,125 @@
+@printChar:
+ Local variables
+	arg 0: chr
+	var 1: t.1
+	var 2: t.2
+	; 12 pc
+	addrof t.1(1@function,u8*), chr(0@argument,u8)
+	const t.2(2@function,i64), 1
+	call _, printStringLength [t.1(1@function,u8*), t.2(2@function,i64)]
+@printChar_ret:
+
+@printUint:
+ Local variables
+	arg 0: number
+	var 1: buffer
+	var 2: pos
+	var 3: remainder
+	var 4: digit
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	var 9: t.9
+	var 10: t.10
+	var 11: t.11
+	var 12: t.12
+	var 13: t.13
+	var 14: t.14
+	var 15: t.15
+	var 16: t.16
+	var 17: t.17
+	var 18: t.18
+	var 19: t.19
+	var 20: t.20
+	; 122 pc
+	const pos(2@function,u8), 20
+	; 13:2 while true
+@while_1:
+	const t.5(5@function,u8), 1
+	sub pos(2@function,u8), pos(2@function,u8), t.5(5@function,u8)
+	const t.6(6@function,i64), 10
+	mod remainder(3@function,i64), number(0@argument,i64), t.6(6@function,i64)
+	const t.7(7@function,i64), 10
+	div number(0@argument,i64), number(0@argument,i64), t.7(7@function,i64)
+	cast t.8(8@function,u8), remainder(3@function,i64)
+	const t.9(9@function,u8), 48
+	add digit(4@function,u8), t.8(8@function,u8), t.9(9@function,u8)
+	cast t.11(11@function,i64), pos(2@function,u8)
+	cast t.12(12@function,u8*), t.11(11@function,i64)
+	addrof t.10(10@function,u8*), [buffer(1@function,u8*)]
+	add t.10(10@function,u8*), t.10(10@function,u8*), t.12(12@function,u8*)
+	store [t.10(10@function,u8*)], digit(4@function,u8)
+	; 19:3 if number == 0
+	const t.14(14@function,i64), 0
+	equals t.13(13@function,bool), number(0@argument,i64), t.14(14@function,i64)
+	branch t.13(13@function,bool), false, @if_2_end
+	jump @while_1_break
+@if_2_end:
+	jump @while_1
+@while_1_break:
+	cast t.16(16@function,i64), pos(2@function,u8)
+	cast t.17(17@function,u8*), t.16(16@function,i64)
+	addrof t.15(15@function,u8*), [buffer(1@function,u8*)]
+	add t.15(15@function,u8*), t.15(15@function,u8*), t.17(17@function,u8*)
+	const t.20(20@function,u8), 20
+	sub t.19(19@function,u8), t.20(20@function,u8), pos(2@function,u8)
+	cast t.18(18@function,i64), t.19(19@function,u8)
+	call _, printStringLength [t.15(15@function,u8*), t.18(18@function,i64)]
+@printUint_ret:
+
+@printStringLength:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
+@main:
+ Local variables
+	var 0: onePtr
+	var 1: twoPtr
+	var 2: t.2
+	var 3: t.3
+	var 4: t.4
+	var 5: t.5
+	var 6: t.6
+	var 7: t.7
+	var 8: t.8
+	; 71 pc
+	; begin initialize global variables
+	const zero(0@global,u8), 48
+	const one(1@global,u8), 49
+	const two(2@global,u8), 50
+	const threeFour(3@global,u8), 34
+	; end initialize global variables
+	call _, printChar [zero(0@global,u8)]
+	addrof onePtr(0@function,u8*), one(1@global,u8)
+	load t.2(2@function,u8), [onePtr(0@function,u8*)]
+	call _, printChar [t.2(2@function,u8)]
+	addrof twoPtr(1@function,u8*), two(2@global,u8)
+	const t.5(5@function,i64), 0
+	cast t.6(6@function,u8*), t.5(5@function,i64)
+	copy t.4(4@function,u8*), twoPtr(1@function,u8*)
+	add t.4(4@function,u8*), t.4(4@function,u8*), t.6(6@function,u8*)
+	load t.3(3@function,u8), [t.4(4@function,u8*)]
+	call _, printChar [t.3(3@function,u8)]
+	cast t.7(7@function,i64), threeFour(3@global,u8)
+	call _, printUint [t.7(7@function,i64)]
+	const t.8(8@function,u8), 10
+	call _, printChar [t.8(8@function,u8)]
+@main_ret:
+
+Global variables
+	0: zero (1)
+	1: one (1)
+	2: two (1)
+	3: threeFour (1)
+
