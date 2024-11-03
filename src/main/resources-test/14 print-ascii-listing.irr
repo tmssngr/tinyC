@@ -33,34 +33,34 @@
 	move length, r0
 	jump @for_1
 @for_1_body:
-	const r0, 1
-	move r1, length
-	add r0, r1, r0
-	move r1, str
-	cast r1(i64), r1(u8*)
-	const r2, 1
-	add r1, r1, r2
-	cast r1(u8*), r1(i64)
-	move length, r0
-	move str, r1
+		const r0, 1
+		move r1, length
+		add r0, r1, r0
+		move r1, str
+		cast r1(i64), r1(u8*)
+		const r2, 1
+		add r1, r1, r2
+		cast r1(u8*), r1(i64)
+		move length, r0
+		move str, r1
 @for_1:
-	move r0, str
-	load r1, [r0]
-	const r2, 0
-	notequals r1, r1, r2
-	branch r1, true, @for_1_body
-	; 40:9 return length
-	move r0, length
-	ret r0
+		move r0, str
+		load r1, [r0]
+		const r2, 0
+		notequals r1, r1, r2
+		branch r1, true, @for_1_body
+		; 40:9 return length
+		move r0, length
+		ret r0
 
 @printNibble:
  Local variables
-	arg 0: x (u8/1)
-	var 1: t.1 (u8/1)
-	var 2: t.2 (bool/1)
-	var 3: t.3 (u8/1)
-	var 4: t.4 (u8/1)
-	var 5: t.5 (u8/1)
+		arg 0: x (u8/1)
+		var 1: t.1 (u8/1)
+		var 2: t.2 (bool/1)
+		var 3: t.3 (u8/1)
+		var 4: t.4 (u8/1)
+		var 5: t.5 (u8/1)
 	; 21 pc
 	const r0, 15
 	move r1, x
@@ -134,90 +134,90 @@
 	move i, r0
 	jump @for_3
 @for_3_body:
-	; 20:3 if i & 7 == 0
-	const r0, 7
-	move r1, i
-	move r2, r1
-	and r0, r2, r0
-	const r2, 0
-	equals r0, r0, r2
-	branch r0, false, @if_4_end
-	const r0, 32
-	call _, printChar [r0]
+		; 20:3 if i & 7 == 0
+		const r0, 7
+		move r1, i
+		move r2, r1
+		and r0, r2, r0
+		const r2, 0
+		equals r0, r0, r2
+		branch r0, false, @if_4_end
+		const r0, 32
+		call _, printChar [r0]
 @if_4_end:
-	call _, printNibble [i]
-	const r0, 1
-	move r1, i
-	add r0, r1, r0
-	move i, r0
+		call _, printNibble [i]
+		const r0, 1
+		move r1, i
+		add r0, r1, r0
+		move i, r0
 @for_3:
-	const r0, 16
-	move r1, i
-	lt r0, r1, r0
-	branch r0, true, @for_3_body
-	const r0, 10
-	call _, printChar [r0]
-	const r0, 32
-	; 27:2 for i < 128
-	move i, r0
-	jump @for_5
+		const r0, 16
+		move r1, i
+		lt r0, r1, r0
+		branch r0, true, @for_3_body
+		const r0, 10
+		call _, printChar [r0]
+		const r0, 32
+		; 27:2 for i < 128
+		move i, r0
+		jump @for_5
 @for_5_body:
-	; 28:3 if i & 15 == 0
-	const r0, 15
-	move r1, i
-	move r2, r1
-	and r0, r2, r0
-	const r2, 0
-	equals r0, r0, r2
-	branch r0, false, @if_6_end
-	call _, printHex2 [i]
+		; 28:3 if i & 15 == 0
+		const r0, 15
+		move r1, i
+		move r2, r1
+		and r0, r2, r0
+		const r2, 0
+		equals r0, r0, r2
+		branch r0, false, @if_6_end
+		call _, printHex2 [i]
 @if_6_end:
-	; 31:3 if i & 7 == 0
-	const r0, 7
-	move r1, i
-	move r2, r1
-	and r0, r2, r0
-	const r2, 0
-	equals r0, r0, r2
-	branch r0, false, @if_7_end
-	const r0, 32
-	call _, printChar [r0]
+		; 31:3 if i & 7 == 0
+		const r0, 7
+		move r1, i
+		move r2, r1
+		and r0, r2, r0
+		const r2, 0
+		equals r0, r0, r2
+		branch r0, false, @if_7_end
+		const r0, 32
+		call _, printChar [r0]
 @if_7_end:
-	call _, printChar [i]
-	; 35:3 if i & 15 == 15
-	const r0, 15
-	move r1, i
-	move r2, r1
-	and r0, r2, r0
-	const r2, 15
-	equals r0, r0, r2
-	branch r0, false, @for_5_continue
-	const r0, 10
-	call _, printChar [r0]
+		call _, printChar [i]
+		; 35:3 if i & 15 == 15
+		const r0, 15
+		move r1, i
+		move r2, r1
+		and r0, r2, r0
+		const r2, 15
+		equals r0, r0, r2
+		branch r0, false, @for_5_continue
+		const r0, 10
+		call _, printChar [r0]
 @for_5_continue:
-	const r0, 1
-	move r1, i
-	add r0, r1, r0
-	move i, r0
+		const r0, 1
+		move r1, i
+		add r0, r1, r0
+		move i, r0
 @for_5:
-	const r0, 128
-	move r1, i
-	lt r0, r1, r0
-	branch r0, true, @for_5_body
+		const r0, 128
+		move r1, i
+		lt r0, r1, r0
+		branch r0, true, @for_5_body
 
 @printStringLength:
-	mov     rdi, rsp
-	
-	lea     rcx, [hStdOut]
-	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
-	xor     r9, r9
-	push    0
-	sub     rsp, 20h
-	  call    [WriteFile]
-	mov     rsp, rdi
-	ret
+		mov     rdi, rsp
+		
+		lea     rcx, [hStdOut]
+		mov     rcx, [rcx]
+		mov     rdx, [rdi+18h]
+		mov     r8, [rdi+10h]
+		xor     r9, r9
+		push    0
+		sub     rsp, 20h
+		  call    [WriteFile]
+		mov     rsp, rdi
+		ret
 
 String literals
-	string lit 0 " x\0"
+		string lit 0 " x\0"

@@ -45,29 +45,29 @@
 	const pos, 20
 	; 13:2 while true
 @while_1:
-	const t.5, 1
-	sub pos, pos, t.5
-	const t.6, 10
-	move remainder, number
-	mod remainder, remainder, t.6
-	const t.7, 10
-	div number, number, t.7
-	cast t.8(u8), remainder(i64)
-	const t.9, 48
-	move digit, t.8
-	add digit, digit, t.9
-	cast t.11(i64), pos(u8)
-	cast t.12(u8*), t.11(i64)
-	addrof t.10, [buffer]
-	add t.10, t.10, t.12
-	store [t.10], digit
-	; 19:3 if number == 0
-	const t.14, 0
-	equals t.13, number, t.14
-	branch t.13, false, @if_2_end
-	jump @while_1_break
+		const t.5, 1
+		sub pos, pos, t.5
+		const t.6, 10
+		move remainder, number
+		mod remainder, remainder, t.6
+		const t.7, 10
+		div number, number, t.7
+		cast t.8(u8), remainder(i64)
+		const t.9, 48
+		move digit, t.8
+		add digit, digit, t.9
+		cast t.11(i64), pos(u8)
+		cast t.12(u8*), t.11(i64)
+		addrof t.10, [buffer]
+		add t.10, t.10, t.12
+		store [t.10], digit
+		; 19:3 if number == 0
+		const t.14, 0
+		equals t.13, number, t.14
+		branch t.13, false, @if_2_end
+		jump @while_1_break
 @if_2_end:
-	jump @while_1
+		jump @while_1
 @while_1_break:
 	cast t.16(i64), pos(u8)
 	cast t.17(u8*), t.16(i64)
@@ -116,19 +116,19 @@
 	const length, 0
 	; 37:2 for *str != 0
 @for_4:
-	load t.3, [str]
-	const t.4, 0
-	notequals t.2, t.3, t.4
-	branch t.2, false, @for_4_break
-	const t.5, 1
-	add length, length, t.5
+		load t.3, [str]
+		const t.4, 0
+		notequals t.2, t.3, t.4
+		branch t.2, false, @for_4_break
+		const t.5, 1
+		add length, length, t.5
 @for_4_continue:
-	cast t.7(i64), str(u8*)
-	const t.8, 1
-	move t.6, t.7
-	add t.6, t.6, t.8
-	cast str(u8*), t.6(i64)
-	jump @for_4
+		cast t.7(i64), str(u8*)
+		const t.8, 1
+		move t.6, t.7
+		add t.6, t.6, t.8
+		cast str(u8*), t.6(i64)
+		jump @for_4
 @for_4_break:
 	; 40:9 return length
 	ret length

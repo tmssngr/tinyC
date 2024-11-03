@@ -17,10 +17,10 @@ public class CfgGeneratorTest {
 	public void testRemovingRedundantCode() {
 		final ControlFlowGraph cfg = CfgGenerator.create("start", List.of(
 				new IRJump("end"),
-				new IRLabel("redundant"),
+				new IRLabel("redundant", 0),
 				new IRLiteral(new IRVar("a", 0, VariableScope.function, Type.BOOL), 0, new Location(1, 1)),
 				new IRLiteral(new IRVar("b", 1, VariableScope.function, Type.BOOL), 0, new Location(1, 1)),
-				new IRLabel("end")
+				new IRLabel("end", 0)
 		));
 		Assert.assertEquals(List.of(
 				new BasicBlock("start", List.of(
@@ -35,7 +35,7 @@ public class CfgGeneratorTest {
 	@Test
 	public void testCritialEdgeElimination() {
 		final ControlFlowGraph cfg = CfgGenerator.create("start", List.of(
-				new IRLabel("endlessloop"),
+				new IRLabel("endlessloop", 1),
 				new IRJump("endlessloop")
 		));
 		Assert.assertEquals(List.of(

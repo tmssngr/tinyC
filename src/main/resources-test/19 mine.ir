@@ -45,29 +45,29 @@
 	const pos, 20
 	; 13:2 while true
 @while_1:
-	const t.5, 1
-	sub pos, pos, t.5
-	const t.6, 10
-	move remainder, number
-	mod remainder, remainder, t.6
-	const t.7, 10
-	div number, number, t.7
-	cast t.8(u8), remainder(i64)
-	const t.9, 48
-	move digit, t.8
-	add digit, digit, t.9
-	cast t.11(i64), pos(u8)
-	cast t.12(u8*), t.11(i64)
-	addrof t.10, [buffer]
-	add t.10, t.10, t.12
-	store [t.10], digit
-	; 19:3 if number == 0
-	const t.14, 0
-	equals t.13, number, t.14
-	branch t.13, false, @if_2_end
-	jump @while_1_break
+		const t.5, 1
+		sub pos, pos, t.5
+		const t.6, 10
+		move remainder, number
+		mod remainder, remainder, t.6
+		const t.7, 10
+		div number, number, t.7
+		cast t.8(u8), remainder(i64)
+		const t.9, 48
+		move digit, t.8
+		add digit, digit, t.9
+		cast t.11(i64), pos(u8)
+		cast t.12(u8*), t.11(i64)
+		addrof t.10, [buffer]
+		add t.10, t.10, t.12
+		store [t.10], digit
+		; 19:3 if number == 0
+		const t.14, 0
+		equals t.13, number, t.14
+		branch t.13, false, @if_2_end
+		jump @while_1_break
 @if_2_end:
-	jump @while_1
+		jump @while_1
 @while_1_break:
 	cast t.16(i64), pos(u8)
 	cast t.17(u8*), t.16(i64)
@@ -95,19 +95,19 @@
 	const length, 0
 	; 37:2 for *str != 0
 @for_3:
-	load t.3, [str]
-	const t.4, 0
-	notequals t.2, t.3, t.4
-	branch t.2, false, @for_3_break
-	const t.5, 1
-	add length, length, t.5
+		load t.3, [str]
+		const t.4, 0
+		notequals t.2, t.3, t.4
+		branch t.2, false, @for_3_break
+		const t.5, 1
+		add length, length, t.5
 @for_3_continue:
-	cast t.7(i64), str(u8*)
-	const t.8, 1
-	move t.6, t.7
-	add t.6, t.6, t.8
-	cast str(u8*), t.6(i64)
-	jump @for_3
+		cast t.7(i64), str(u8*)
+		const t.8, 1
+		move t.6, t.7
+		add t.6, t.6, t.8
+		cast str(u8*), t.6(i64)
+		jump @for_3
 @for_3_break:
 	; 40:9 return length
 	ret length
@@ -351,39 +351,39 @@
 	const dr, -1
 	; 45:2 for dr <= 1
 @for_7:
-	const t.9, 1
-	lteq t.8, dr, t.9
-	branch t.8, false, @for_7_break
-	move r, row
-	add r, r, dr
-	const dc, -1
-	; 47:3 for dc <= 1
+		const t.9, 1
+		lteq t.8, dr, t.9
+		branch t.8, false, @for_7_break
+		move r, row
+		add r, r, dr
+		const dc, -1
+		; 47:3 for dc <= 1
 @for_8:
-	const t.11, 1
-	lteq t.10, dc, t.11
-	branch t.10, false, @for_8_break
-	move c, column
-	add c, c, dc
-	; 49:4 if checkCellBounds([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=49:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=49:27]])
-	call t.12, checkCellBounds, [r, c]
-	branch t.12, false, @if_9_end
-	call cell, getCell, [r, c]
-	; 51:5 if isBomb([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=51:16]])
-	call t.13, isBomb, [cell]
-	branch t.13, false, @if_10_end
-	const t.14, 1
-	add count, count, t.14
+			const t.11, 1
+			lteq t.10, dc, t.11
+			branch t.10, false, @for_8_break
+			move c, column
+			add c, c, dc
+			; 49:4 if checkCellBounds([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=49:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=49:27]])
+			call t.12, checkCellBounds, [r, c]
+			branch t.12, false, @if_9_end
+			call cell, getCell, [r, c]
+			; 51:5 if isBomb([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=51:16]])
+			call t.13, isBomb, [cell]
+			branch t.13, false, @if_10_end
+			const t.14, 1
+			add count, count, t.14
 @if_10_end:
 @if_9_end:
 @for_8_continue:
-	const t.15, 1
-	add dc, dc, t.15
-	jump @for_8
+			const t.15, 1
+			add dc, dc, t.15
+			jump @for_8
 @for_8_break:
 @for_7_continue:
-	const t.16, 1
-	add dr, dr, t.16
-	jump @for_7
+		const t.16, 1
+		add dr, dr, t.16
+		jump @for_7
 @for_7_break:
 	; 57:9 return count
 	ret count
@@ -509,35 +509,35 @@
 	const row, 0
 	; 96:2 for row < 20
 @for_18:
-	const t.10, 20
-	lt t.9, row, t.10
-	branch t.9, false, @for_18_break
-	const t.11, 124
-	call _, printChar [t.11]
-	const column, 0
-	; 98:3 for column < 40
+		const t.10, 20
+		lt t.9, row, t.10
+		branch t.9, false, @for_18_break
+		const t.11, 124
+		call _, printChar [t.11]
+		const column, 0
+		; 98:3 for column < 40
 @for_19:
-	const t.13, 40
-	lt t.12, column, t.13
-	branch t.12, false, @for_19_break
-	call spacer, getSpacer, [row, column, rowCursor, columnCursor]
-	call _, printChar [spacer]
-	call cell, getCell, [row, column]
-	call _, printCell [cell, row, column]
+			const t.13, 40
+			lt t.12, column, t.13
+			branch t.12, false, @for_19_break
+			call spacer, getSpacer, [row, column, rowCursor, columnCursor]
+			call _, printChar [spacer]
+			call cell, getCell, [row, column]
+			call _, printCell [cell, row, column]
 @for_19_continue:
-	const t.14, 1
-	add column, column, t.14
-	jump @for_19
+			const t.14, 1
+			add column, column, t.14
+			jump @for_19
 @for_19_break:
-	const t.15, 40
-	call spacer, getSpacer, [row, t.15, rowCursor, columnCursor]
-	call _, printChar [spacer]
-	const t.16, [string-0]
-	call _, printString [t.16]
+		const t.15, 40
+		call spacer, getSpacer, [row, t.15, rowCursor, columnCursor]
+		call _, printChar [spacer]
+		const t.16, [string-0]
+		call _, printString [t.16]
 @for_18_continue:
-	const t.17, 1
-	add row, row, t.17
-	jump @for_18
+		const t.17, 1
+		add row, row, t.17
+		jump @for_18
 @for_18_break:
 @printField_ret:
 
@@ -551,15 +551,15 @@
 	; 27 pc
 	; 111:2 for i > 0
 @for_20:
-	const t.2, 0
-	gt t.1, i, t.2
-	branch t.1, false, @for_20_break
-	const t.3, 48
-	call _, printChar [t.3]
+		const t.2, 0
+		gt t.1, i, t.2
+		branch t.1, false, @for_20_break
+		const t.3, 48
+		call _, printChar [t.3]
 @for_20_continue:
-	const t.4, 1
-	sub i, i, t.4
-	jump @for_20
+		const t.4, 1
+		sub i, i, t.4
+		jump @for_20
 @for_20_break:
 @printSpaces_ret:
 
@@ -584,17 +584,17 @@
 @if_21_end:
 	; 123:2 while true
 @while_22:
-	const t.4, 1
-	add count, count, t.4
-	const t.5, 10
-	div value, value, t.5
-	; 126:3 if value == 0
-	const t.7, 0
-	equals t.6, value, t.7
-	branch t.6, false, @if_23_end
-	jump @while_22_break
+		const t.4, 1
+		add count, count, t.4
+		const t.5, 10
+		div value, value, t.5
+		; 126:3 if value == 0
+		const t.7, 0
+		equals t.6, value, t.7
+		branch t.6, false, @if_23_end
+		jump @while_22_break
 @if_23_end:
-	jump @while_22
+		jump @while_22
 @while_22_break:
 	; 131:9 return count
 	ret count
@@ -623,35 +623,35 @@
 	const r, 0
 	; 136:2 for r < 20
 @for_24:
-	const t.5, 20
-	lt t.4, r, t.5
-	branch t.4, false, @for_24_break
-	const c, 0
-	; 137:3 for c < 40
+		const t.5, 20
+		lt t.4, r, t.5
+		branch t.4, false, @for_24_break
+		const c, 0
+		; 137:3 for c < 40
 @for_25:
-	const t.7, 40
-	lt t.6, c, t.7
-	branch t.6, false, @for_25_break
-	call cell, getCell, [r, c]
-	; 139:4 if cell & 6 == 0
-	const t.10, 6
-	move t.9, cell
-	and t.9, t.9, t.10
-	const t.11, 0
-	equals t.8, t.9, t.11
-	branch t.8, false, @if_26_end
-	const t.12, 1
-	add count, count, t.12
+			const t.7, 40
+			lt t.6, c, t.7
+			branch t.6, false, @for_25_break
+			call cell, getCell, [r, c]
+			; 139:4 if cell & 6 == 0
+			const t.10, 6
+			move t.9, cell
+			and t.9, t.9, t.10
+			const t.11, 0
+			equals t.8, t.9, t.11
+			branch t.8, false, @if_26_end
+			const t.12, 1
+			add count, count, t.12
 @if_26_end:
 @for_25_continue:
-	const t.13, 1
-	add c, c, t.13
-	jump @for_25
+			const t.13, 1
+			add c, c, t.13
+			jump @for_25
 @for_25_break:
 @for_24_continue:
-	const t.14, 1
-	add r, r, t.14
-	jump @for_24
+		const t.14, 1
+		add r, r, t.14
+		jump @for_24
 @for_24_break:
 	; 144:9 return count
 	ret count
@@ -728,26 +728,26 @@
 	const r, 0
 	; 166:2 for r < 20
 @for_28:
-	const t.3, 20
-	lt t.2, r, t.3
-	branch t.2, false, @for_28_break
-	const c, 0
-	; 167:3 for c < 40
+		const t.3, 20
+		lt t.2, r, t.3
+		branch t.2, false, @for_28_break
+		const c, 0
+		; 167:3 for c < 40
 @for_29:
-	const t.5, 40
-	lt t.4, c, t.5
-	branch t.4, false, @for_29_break
-	const t.6, 0
-	call _, setCell [r, c, t.6]
+			const t.5, 40
+			lt t.4, c, t.5
+			branch t.4, false, @for_29_break
+			const t.6, 0
+			call _, setCell [r, c, t.6]
 @for_29_continue:
-	const t.7, 1
-	add c, c, t.7
-	jump @for_29
+			const t.7, 1
+			add c, c, t.7
+			jump @for_29
 @for_29_break:
 @for_28_continue:
-	const t.8, 1
-	add r, r, t.8
-	jump @for_28
+		const t.8, 1
+		add r, r, t.8
+		jump @for_28
 @for_28_break:
 @clearField_ret:
 
@@ -779,41 +779,41 @@
 	const bombs, 40
 	; 174:2 for bombs > 0
 @for_30:
-	const t.6, 0
-	gt t.5, bombs, t.6
-	branch t.5, false, @for_30_break
-	call t.8, random, []
-	const t.9, 20
-	move t.7, t.8
-	mod t.7, t.7, t.9
-	cast row(i16), t.7(i32)
-	call t.11, random, []
-	const t.12, 40
-	move t.10, t.11
-	mod t.10, t.10, t.12
-	cast column(i16), t.10(i32)
-	; 177:3 if abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=177:11], right=ExprVarAccess[varName=curr_r, index=0, scope=argument, type=i16, varIsArray=false, location=177:20], location=177:18]]) > 1 || abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_c, index=1, scope=argument, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1
-	; 178:4 logic or
-	move t.15, row
-	sub t.15, t.15, curr_r
-	call t.14, abs, [t.15]
-	const t.16, 1
-	gt t.13, t.14, t.16
-	branch t.13, true, @or_next_32
-	move t.18, column
-	sub t.18, t.18, curr_c
-	call t.17, abs, [t.18]
-	const t.19, 1
-	gt t.13, t.17, t.19
+		const t.6, 0
+		gt t.5, bombs, t.6
+		branch t.5, false, @for_30_break
+		call t.8, random, []
+		const t.9, 20
+		move t.7, t.8
+		mod t.7, t.7, t.9
+		cast row(i16), t.7(i32)
+		call t.11, random, []
+		const t.12, 40
+		move t.10, t.11
+		mod t.10, t.10, t.12
+		cast column(i16), t.10(i32)
+		; 177:3 if abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=177:11], right=ExprVarAccess[varName=curr_r, index=0, scope=argument, type=i16, varIsArray=false, location=177:20], location=177:18]]) > 1 || abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_c, index=1, scope=argument, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1
+		; 178:4 logic or
+		move t.15, row
+		sub t.15, t.15, curr_r
+		call t.14, abs, [t.15]
+		const t.16, 1
+		gt t.13, t.14, t.16
+		branch t.13, true, @or_next_32
+		move t.18, column
+		sub t.18, t.18, curr_c
+		call t.17, abs, [t.18]
+		const t.19, 1
+		gt t.13, t.17, t.19
 @or_next_32:
-	branch t.13, false, @if_31_end
-	const t.20, 1
-	call _, setCell [row, column, t.20]
+		branch t.13, false, @if_31_end
+		const t.20, 1
+		call _, setCell [row, column, t.20]
 @if_31_end:
 @for_30_continue:
-	const t.21, 1
-	sub bombs, bombs, t.21
-	jump @for_30
+		const t.21, 1
+		sub bombs, bombs, t.21
+		jump @for_30
 @for_30_break:
 @initField_ret:
 
@@ -855,56 +855,56 @@
 	const dr, -1
 	; 189:2 for dr <= 1
 @for_34:
-	const t.11, 1
-	lteq t.10, dr, t.11
-	branch t.10, false, @for_34_break
-	move r, row
-	add r, r, dr
-	const dc, -1
-	; 191:3 for dc <= 1
+		const t.11, 1
+		lteq t.10, dr, t.11
+		branch t.10, false, @for_34_break
+		move r, row
+		add r, r, dr
+		const dc, -1
+		; 191:3 for dc <= 1
 @for_35:
-	const t.13, 1
-	lteq t.12, dc, t.13
-	branch t.12, false, @for_35_break
-	; 192:4 if dr == 0 && dc == 0
-	; 192:16 logic and
-	const t.15, 0
-	equals t.14, dr, t.15
-	branch t.14, false, @and_next_37
-	const t.16, 0
-	equals t.14, dc, t.16
+			const t.13, 1
+			lteq t.12, dc, t.13
+			branch t.12, false, @for_35_break
+			; 192:4 if dr == 0 && dc == 0
+			; 192:16 logic and
+			const t.15, 0
+			equals t.14, dr, t.15
+			branch t.14, false, @and_next_37
+			const t.16, 0
+			equals t.14, dc, t.16
 @and_next_37:
-	branch t.14, false, @if_36_end
-	jump @for_35_continue
+			branch t.14, false, @if_36_end
+			jump @for_35_continue
 @if_36_end:
-	move c, column
-	add c, c, dc
-	; 197:4 if !checkCellBounds([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=197:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=197:28]])
-	call t.18, checkCellBounds, [r, c]
-	notlog t.17, t.18
-	branch t.17, false, @if_38_end
-	jump @for_35_continue
+			move c, column
+			add c, c, dc
+			; 197:4 if !checkCellBounds([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=197:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=197:28]])
+			call t.18, checkCellBounds, [r, c]
+			notlog t.17, t.18
+			branch t.17, false, @if_38_end
+			jump @for_35_continue
 @if_38_end:
-	call cell, getCell, [r, c]
-	; 202:4 if isOpen([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=202:15]])
-	call t.19, isOpen, [cell]
-	branch t.19, false, @if_39_end
-	jump @for_35_continue
+			call cell, getCell, [r, c]
+			; 202:4 if isOpen([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=202:15]])
+			call t.19, isOpen, [cell]
+			branch t.19, false, @if_39_end
+			jump @for_35_continue
 @if_39_end:
-	const t.21, 2
-	move t.20, cell
-	or t.20, t.20, t.21
-	call _, setCell [r, c, t.20]
-	call _, maybeRevealAround [r, c]
+			const t.21, 2
+			move t.20, cell
+			or t.20, t.20, t.21
+			call _, setCell [r, c, t.20]
+			call _, maybeRevealAround [r, c]
 @for_35_continue:
-	const t.22, 1
-	add dc, dc, t.22
-	jump @for_35
+			const t.22, 1
+			add dc, dc, t.22
+			jump @for_35
 @for_35_break:
 @for_34_continue:
-	const t.23, 1
-	add dr, dr, t.23
-	jump @for_34
+		const t.23, 1
+		add dr, dr, t.23
+		jump @for_34
 @for_34_break:
 @maybeRevealAround_ret:
 
@@ -983,141 +983,141 @@
 	cast curr_r(i16), t.8(u8)
 	; 218:2 while true
 @while_40:
-	call _, printField [curr_r, curr_c]
-	; 220:3 if !needsInitialize
-	notlog t.9, needsInitialize
-	branch t.9, false, @if_41_end
-	; 221:4 if printLeft([])
-	call t.10, printLeft, []
-	branch t.10, false, @if_42_end
-	const t.11, [string-2]
-	call _, printString [t.11]
-	jump @while_40_break
+		call _, printField [curr_r, curr_c]
+		; 220:3 if !needsInitialize
+		notlog t.9, needsInitialize
+		branch t.9, false, @if_41_end
+		; 221:4 if printLeft([])
+		call t.10, printLeft, []
+		branch t.10, false, @if_42_end
+		const t.11, [string-2]
+		call _, printString [t.11]
+		jump @while_40_break
 @if_42_end:
 @if_41_end:
-	call chr, getChar, []
-	; 228:3 if chr == 27
-	const t.13, 27
-	equals t.12, chr, t.13
-	branch t.12, false, @if_43_end
-	jump @while_40_break
+		call chr, getChar, []
+		; 228:3 if chr == 27
+		const t.13, 27
+		equals t.12, chr, t.13
+		branch t.12, false, @if_43_end
+		jump @while_40_break
 @if_43_end:
-	; 233:3 if chr == 57416
-	const t.15, 57416
-	equals t.14, chr, t.15
-	branch t.14, false, @if_44_else
-	const t.18, 20
-	move t.17, curr_r
-	add t.17, t.17, t.18
-	const t.19, 1
-	move t.16, t.17
-	sub t.16, t.16, t.19
-	const t.20, 20
-	move curr_r, t.16
-	mod curr_r, curr_r, t.20
-	jump @if_44_end
+		; 233:3 if chr == 57416
+		const t.15, 57416
+		equals t.14, chr, t.15
+		branch t.14, false, @if_44_else
+		const t.18, 20
+		move t.17, curr_r
+		add t.17, t.17, t.18
+		const t.19, 1
+		move t.16, t.17
+		sub t.16, t.16, t.19
+		const t.20, 20
+		move curr_r, t.16
+		mod curr_r, curr_r, t.20
+		jump @if_44_end
 @if_44_else:
-	; 237:8 if chr == 57424
-	const t.22, 57424
-	equals t.21, chr, t.22
-	branch t.21, false, @if_45_else
-	const t.24, 1
-	move t.23, curr_r
-	add t.23, t.23, t.24
-	const t.25, 20
-	move curr_r, t.23
-	mod curr_r, curr_r, t.25
-	jump @if_45_end
+		; 237:8 if chr == 57424
+		const t.22, 57424
+		equals t.21, chr, t.22
+		branch t.21, false, @if_45_else
+		const t.24, 1
+		move t.23, curr_r
+		add t.23, t.23, t.24
+		const t.25, 20
+		move curr_r, t.23
+		mod curr_r, curr_r, t.25
+		jump @if_45_end
 @if_45_else:
-	; 241:8 if chr == 57419
-	const t.27, 57419
-	equals t.26, chr, t.27
-	branch t.26, false, @if_46_else
-	const t.30, 40
-	move t.29, curr_c
-	add t.29, t.29, t.30
-	const t.31, 1
-	move t.28, t.29
-	sub t.28, t.28, t.31
-	const t.32, 40
-	move curr_c, t.28
-	mod curr_c, curr_c, t.32
-	jump @if_46_end
+		; 241:8 if chr == 57419
+		const t.27, 57419
+		equals t.26, chr, t.27
+		branch t.26, false, @if_46_else
+		const t.30, 40
+		move t.29, curr_c
+		add t.29, t.29, t.30
+		const t.31, 1
+		move t.28, t.29
+		sub t.28, t.28, t.31
+		const t.32, 40
+		move curr_c, t.28
+		mod curr_c, curr_c, t.32
+		jump @if_46_end
 @if_46_else:
-	; 245:8 if chr == 57419
-	const t.34, 57419
-	equals t.33, chr, t.34
-	branch t.33, false, @if_47_else
-	const t.37, 40
-	move t.36, curr_c
-	add t.36, t.36, t.37
-	const t.38, 1
-	move t.35, t.36
-	sub t.35, t.35, t.38
-	const t.39, 40
-	move curr_c, t.35
-	mod curr_c, curr_c, t.39
-	jump @if_47_end
+		; 245:8 if chr == 57419
+		const t.34, 57419
+		equals t.33, chr, t.34
+		branch t.33, false, @if_47_else
+		const t.37, 40
+		move t.36, curr_c
+		add t.36, t.36, t.37
+		const t.38, 1
+		move t.35, t.36
+		sub t.35, t.35, t.38
+		const t.39, 40
+		move curr_c, t.35
+		mod curr_c, curr_c, t.39
+		jump @if_47_end
 @if_47_else:
-	; 249:8 if chr == 57421
-	const t.41, 57421
-	equals t.40, chr, t.41
-	branch t.40, false, @if_48_else
-	const t.43, 1
-	move t.42, curr_c
-	add t.42, t.42, t.43
-	const t.44, 40
-	move curr_c, t.42
-	mod curr_c, curr_c, t.44
-	jump @if_48_end
+		; 249:8 if chr == 57421
+		const t.41, 57421
+		equals t.40, chr, t.41
+		branch t.40, false, @if_48_else
+		const t.43, 1
+		move t.42, curr_c
+		add t.42, t.42, t.43
+		const t.44, 40
+		move curr_c, t.42
+		mod curr_c, curr_c, t.44
+		jump @if_48_end
 @if_48_else:
-	; 253:8 if chr == 32
-	const t.46, 32
-	equals t.45, chr, t.46
-	branch t.45, false, @if_49_else
-	; 254:4 if !needsInitialize
-	notlog t.47, needsInitialize
-	branch t.47, false, @if_50_end
-	call cell, getCell, [curr_r, curr_c]
-	; 256:5 if !isOpen([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=256:17]])
-	call t.49, isOpen, [cell]
-	notlog t.48, t.49
-	branch t.48, false, @if_51_end
-	const t.50, 4
-	xor cell, cell, t.50
-	call _, setCell [curr_r, curr_c, cell]
+		; 253:8 if chr == 32
+		const t.46, 32
+		equals t.45, chr, t.46
+		branch t.45, false, @if_49_else
+		; 254:4 if !needsInitialize
+		notlog t.47, needsInitialize
+		branch t.47, false, @if_50_end
+		call cell, getCell, [curr_r, curr_c]
+		; 256:5 if !isOpen([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=256:17]])
+		call t.49, isOpen, [cell]
+		notlog t.48, t.49
+		branch t.48, false, @if_51_end
+		const t.50, 4
+		xor cell, cell, t.50
+		call _, setCell [curr_r, curr_c, cell]
 @if_51_end:
 @if_50_end:
-	jump @if_49_end
+		jump @if_49_end
 @if_49_else:
-	; 262:8 if chr == 13
-	const t.52, 13
-	equals t.51, chr, t.52
-	branch t.51, false, @if_52_end
-	; 263:4 if needsInitialize
-	branch needsInitialize, false, @if_53_end
-	const needsInitialize, 0
-	call _, initField [curr_r, curr_c]
+		; 262:8 if chr == 13
+		const t.52, 13
+		equals t.51, chr, t.52
+		branch t.51, false, @if_52_end
+		; 263:4 if needsInitialize
+		branch needsInitialize, false, @if_53_end
+		const needsInitialize, 0
+		call _, initField [curr_r, curr_c]
 @if_53_end:
-	call cell, getCell, [curr_r, curr_c]
-	; 268:4 if !isOpen([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=268:16]])
-	call t.54, isOpen, [cell]
-	notlog t.53, t.54
-	branch t.53, false, @if_54_end
-	const t.56, 2
-	move t.55, cell
-	or t.55, t.55, t.56
-	call _, setCell [curr_r, curr_c, t.55]
+		call cell, getCell, [curr_r, curr_c]
+		; 268:4 if !isOpen([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=268:16]])
+		call t.54, isOpen, [cell]
+		notlog t.53, t.54
+		branch t.53, false, @if_54_end
+		const t.56, 2
+		move t.55, cell
+		or t.55, t.55, t.56
+		call _, setCell [curr_r, curr_c, t.55]
 @if_54_end:
-	; 271:4 if isBomb([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=271:15]])
-	call t.57, isBomb, [cell]
-	branch t.57, false, @if_55_end
-	call _, printField [curr_r, curr_c]
-	const t.58, [string-3]
-	call _, printString [t.58]
-	jump @while_40_break
+		; 271:4 if isBomb([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=271:15]])
+		call t.57, isBomb, [cell]
+		branch t.57, false, @if_55_end
+		call _, printField [curr_r, curr_c]
+		const t.58, [string-3]
+		call _, printString [t.58]
+		jump @while_40_break
 @if_55_end:
-	call _, maybeRevealAround [curr_r, curr_c]
+		call _, maybeRevealAround [curr_r, curr_c]
 @if_52_end:
 @if_49_end:
 @if_48_end:
@@ -1125,7 +1125,7 @@
 @if_46_end:
 @if_45_end:
 @if_44_end:
-	jump @while_40
+		jump @while_40
 @while_40_break:
 @main_ret:
 

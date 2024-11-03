@@ -14,8 +14,18 @@ import org.jetbrains.annotations.*;
  */
 public final class IRWriter extends TextWriter {
 
+	private int loopLevel;
+
 	public IRWriter(@NotNull BufferedWriter writer) {
 		super(writer);
+	}
+
+	@Override
+	protected void writeIndentation() throws IOException {
+		super.writeIndentation();
+		for (int i = loopLevel; i-- > 0; ) {
+			super.writeIndentation();
+		}
 	}
 
 	public void write(@NotNull IRProgram program) throws IOException {
@@ -93,6 +103,8 @@ public final class IRWriter extends TextWriter {
 			}
 		}
 
+		loopLevel = 0;
+
 		writeInstructions(function.instructions(), null);
 		writeln();
 	}
@@ -120,6 +132,7 @@ public final class IRWriter extends TextWriter {
 			final IRInstruction instruction = instructions.get(i);
 			if (instruction instanceof IRLabel label) {
 				writeln(label.label() + ":");
+				loopLevel = label.loopLevel();
 			}
 			else {
 				writeIndentation();

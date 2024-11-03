@@ -21,6 +21,7 @@ public final class IRGenerator {
 	private final Map<Type, TypeInfo> types = new HashMap<>();
 
 	private int labelIndex;
+	private int loopLevel;
 
 	private List<IRInstruction> instructions = List.of();
 	private List<IRVarDef> localVars = List.of();
@@ -83,6 +84,7 @@ public final class IRGenerator {
 			}
 
 			writeStatements(function.statements());
+			Utils.assertTrue(loopLevel == 0);
 			writeLabel(functionRetLabel);
 
 			final IRVarInfos varInfos = new IRVarInfos(localVars, localVarsCantBeRegister, Objects.requireNonNull(globalVars));
@@ -249,6 +251,7 @@ public final class IRGenerator {
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
 		final boolean endlessLoop = condition instanceof ExprBoolLiteral literal && literal.value();
 		writeComment(loopName + " " + condition.toUserString(), loop.location());
+		loopLevel++;
 		writeLabel(label);
 		if (!endlessLoop) {
 			final IRVar conditionVar = writeExpression(condition);
@@ -271,6 +274,7 @@ public final class IRGenerator {
 		}
 		write(new IRJump(label));
 
+		loopLevel--;
 		writeLabel(breakLabel);
 	}
 
@@ -584,7 +588,7 @@ public final class IRGenerator {
 	}
 
 	private void writeLabel(String label) {
-		write(new IRLabel(label));
+		write(new IRLabel(label, loopLevel));
 	}
 
 	private void writeComment(String s, Location location) {

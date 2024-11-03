@@ -5,7 +5,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRLabel(@NotNull String label) implements IRInstruction {
+public record IRLabel(@NotNull String label, int loopLevel) implements IRInstruction {
 	@Override
 	public String toString() {
 		return label + ":";

@@ -33,42 +33,42 @@
 	move length, r0
 	jump @for_1
 @for_1_body:
-	const r0, 1
-	move r1, length
-	add r0, r1, r0
-	move r1, str
-	cast r1(i64), r1(u8*)
-	const r2, 1
-	add r1, r1, r2
-	cast r1(u8*), r1(i64)
-	move length, r0
-	move str, r1
+		const r0, 1
+		move r1, length
+		add r0, r1, r0
+		move r1, str
+		cast r1(i64), r1(u8*)
+		const r2, 1
+		add r1, r1, r2
+		cast r1(u8*), r1(i64)
+		move length, r0
+		move str, r1
 @for_1:
-	move r0, str
-	load r1, [r0]
-	const r2, 0
-	notequals r1, r1, r2
-	branch r1, true, @for_1_body
-	; 40:9 return length
-	move r0, length
-	ret r0
+		move r0, str
+		load r1, [r0]
+		const r2, 0
+		notequals r1, r1, r2
+		branch r1, true, @for_1_body
+		; 40:9 return length
+		move r0, length
+		ret r0
 
 @printBoard:
  Local variables
-	var 0: i (u8/1)
-	var 1: t.1 (u8/1)
-	var 2: t.2 (bool/1)
-	var 3: t.3 (u8/1)
-	var 4: t.4 (bool/1)
-	var 5: t.5 (u8/1)
-	var 6: t.6 (u8*/8)
-	var 7: t.7 (i64/8)
-	var 8: t.8 (u8*/8)
-	var 9: t.9 (u8/1)
-	var 10: t.10 (u8/1)
-	var 11: t.11 (u8/1)
-	var 12: t.12 (u8/1)
-	var 13: t.13 (u8*/8)
+		var 0: i (u8/1)
+		var 1: t.1 (u8/1)
+		var 2: t.2 (bool/1)
+		var 3: t.3 (u8/1)
+		var 4: t.4 (bool/1)
+		var 5: t.5 (u8/1)
+		var 6: t.6 (u8*/8)
+		var 7: t.7 (i64/8)
+		var 8: t.8 (u8*/8)
+		var 9: t.9 (u8/1)
+		var 10: t.10 (u8/1)
+		var 11: t.11 (u8/1)
+		var 12: t.12 (u8/1)
+		var 13: t.13 (u8*/8)
 	; 33 pc
 	const r0, 124
 	call _, printChar [r0]
@@ -77,86 +77,86 @@
 	move i, r0
 	jump @for_2
 @for_2_body:
-	; 12:3 if [...] == 0
-	move r0, i
-	cast r1(i64), r0(u8)
-	cast r1(u8*), r1(i64)
-	addrof r2, [board]
-	add r1, r2, r1
-	load r1, [r1]
-	const r2, 0
-	equals r1, r1, r2
-	branch r1, true, @if_3_then
-	const r0, 42
-	call _, printChar [r0]
-	jump @for_2_continue
+		; 12:3 if [...] == 0
+		move r0, i
+		cast r1(i64), r0(u8)
+		cast r1(u8*), r1(i64)
+		addrof r2, [board]
+		add r1, r2, r1
+		load r1, [r1]
+		const r2, 0
+		equals r1, r1, r2
+		branch r1, true, @if_3_then
+		const r0, 42
+		call _, printChar [r0]
+		jump @for_2_continue
 @if_3_then:
-	const r0, 32
-	call _, printChar [r0]
+		const r0, 32
+		call _, printChar [r0]
 @for_2_continue:
-	const r0, 1
-	move r1, i
-	add r0, r1, r0
-	move i, r0
+		const r0, 1
+		move r1, i
+		add r0, r1, r0
+		move i, r0
 @for_2:
-	const r0, 30
-	move r1, i
-	lt r0, r1, r0
-	branch r0, true, @for_2_body
-	const r0, [string-0]
-	call _, printString [r0]
+		const r0, 30
+		move r1, i
+		lt r0, r1, r0
+		branch r0, true, @for_2_body
+		const r0, [string-0]
+		call _, printString [r0]
 
 @main:
  Local variables
-	var 0: i (u8/1)
-	var 1: i (u8/1)
-	var 2: pattern (u8/1)
-	var 3: j (u8/1)
-	var 4: t.4 (bool/1)
-	var 5: t.5 (u8/1)
-	var 6: t.6 (u8/1)
-	var 7: t.7 (u8*/8)
-	var 8: t.8 (i64/8)
-	var 9: t.9 (u8*/8)
-	var 10: t.10 (u8/1)
-	var 11: t.11 (u8/1)
-	var 12: t.12 (u8*/8)
-	var 13: t.13 (i64/8)
-	var 14: t.14 (u8/1)
-	var 15: t.15 (u8*/8)
-	var 16: t.16 (bool/1)
-	var 17: t.17 (u8/1)
-	var 18: t.18 (u8/1)
-	var 19: t.19 (u8/1)
-	var 20: t.20 (u8*/8)
-	var 21: t.21 (i64/8)
-	var 22: t.22 (u8*/8)
-	var 23: t.23 (u8/1)
-	var 24: t.24 (u8/1)
-	var 25: t.25 (u8*/8)
-	var 26: t.26 (i64/8)
-	var 27: t.27 (u8*/8)
-	var 28: t.28 (bool/1)
-	var 29: t.29 (u8/1)
-	var 30: t.30 (u8/1)
-	var 31: t.31 (u8/1)
-	var 32: t.32 (u8/1)
-	var 33: t.33 (u8/1)
-	var 34: t.34 (u8/1)
-	var 35: t.35 (u8*/8)
-	var 36: t.36 (i64/8)
-	var 37: t.37 (u8/1)
-	var 38: t.38 (u8/1)
-	var 39: t.39 (u8*/8)
-	var 40: t.40 (u8/1)
-	var 41: t.41 (u8/1)
-	var 42: t.42 (u8/1)
-	var 43: t.43 (u8/1)
-	var 44: t.44 (u8*/8)
-	var 45: t.45 (i64/8)
-	var 46: t.46 (u8*/8)
-	var 47: t.47 (u8/1)
-	var 48: t.48 (u8/1)
+		var 0: i (u8/1)
+		var 1: i (u8/1)
+		var 2: pattern (u8/1)
+		var 3: j (u8/1)
+		var 4: t.4 (bool/1)
+		var 5: t.5 (u8/1)
+		var 6: t.6 (u8/1)
+		var 7: t.7 (u8*/8)
+		var 8: t.8 (i64/8)
+		var 9: t.9 (u8*/8)
+		var 10: t.10 (u8/1)
+		var 11: t.11 (u8/1)
+		var 12: t.12 (u8*/8)
+		var 13: t.13 (i64/8)
+		var 14: t.14 (u8/1)
+		var 15: t.15 (u8*/8)
+		var 16: t.16 (bool/1)
+		var 17: t.17 (u8/1)
+		var 18: t.18 (u8/1)
+		var 19: t.19 (u8/1)
+		var 20: t.20 (u8*/8)
+		var 21: t.21 (i64/8)
+		var 22: t.22 (u8*/8)
+		var 23: t.23 (u8/1)
+		var 24: t.24 (u8/1)
+		var 25: t.25 (u8*/8)
+		var 26: t.26 (i64/8)
+		var 27: t.27 (u8*/8)
+		var 28: t.28 (bool/1)
+		var 29: t.29 (u8/1)
+		var 30: t.30 (u8/1)
+		var 31: t.31 (u8/1)
+		var 32: t.32 (u8/1)
+		var 33: t.33 (u8/1)
+		var 34: t.34 (u8/1)
+		var 35: t.35 (u8*/8)
+		var 36: t.36 (i64/8)
+		var 37: t.37 (u8/1)
+		var 38: t.38 (u8/1)
+		var 39: t.39 (u8*/8)
+		var 40: t.40 (u8/1)
+		var 41: t.41 (u8/1)
+		var 42: t.42 (u8/1)
+		var 43: t.43 (u8/1)
+		var 44: t.44 (u8*/8)
+		var 45: t.45 (i64/8)
+		var 46: t.46 (u8*/8)
+		var 47: t.47 (u8/1)
+		var 48: t.48 (u8/1)
 	; 105 pc
 	; begin initialize global variables
 	; end initialize global variables
@@ -165,114 +165,114 @@
 	move i, r0
 	jump @for_4
 @for_4_body:
-	const r0, 0
-	move r1, i
-	cast r2(i64), r1(u8)
-	cast r2(u8*), r2(i64)
-	addrof r3, [board]
-	add r2, r3, r2
-	store [r2], r0
-	const r0, 1
-	add r0, r1, r0
-	move i, r0
+		const r0, 0
+		move r1, i
+		cast r2(i64), r1(u8)
+		cast r2(u8*), r2(i64)
+		addrof r3, [board]
+		add r2, r3, r2
+		store [r2], r0
+		const r0, 1
+		add r0, r1, r0
+		move i, r0
 @for_4:
-	const r0, 30
-	move r1, i
-	lt r0, r1, r0
-	branch r0, true, @for_4_body
-	const r0, 1
-	const r1, 29
-	cast r1(i64), r1(u8)
-	cast r1(u8*), r1(i64)
-	addrof r2, [board]
-	add r1, r2, r1
-	store [r1], r0
-	call _, printBoard []
-	const r0, 0
-	; 30:2 for i < 28
-	move i, r0
-	jump @for_5
+		const r0, 30
+		move r1, i
+		lt r0, r1, r0
+		branch r0, true, @for_4_body
+		const r0, 1
+		const r1, 29
+		cast r1(i64), r1(u8)
+		cast r1(u8*), r1(i64)
+		addrof r2, [board]
+		add r1, r2, r1
+		store [r1], r0
+		call _, printBoard []
+		const r0, 0
+		; 30:2 for i < 28
+		move i, r0
+		jump @for_5
 @for_5_body:
-	const r0, 0
-	cast r0(u8*), r0(i64)
-	addrof r1, [board]
-	add r0, r1, r0
-	load r0, [r0]
-	const r1, 1
-	shiftleft r0, r0, r1
-	const r1, 1
-	cast r1(u8*), r1(i64)
-	addrof r2, [board]
-	add r1, r2, r1
-	load r1, [r1]
-	or r0, r0, r1
-	const r1, 1
-	; 32:3 for j < 29
-	move pattern, r0
-	move j, r1
-	jump @for_6
+		const r0, 0
+		cast r0(u8*), r0(i64)
+		addrof r1, [board]
+		add r0, r1, r0
+		load r0, [r0]
+		const r1, 1
+		shiftleft r0, r0, r1
+		const r1, 1
+		cast r1(u8*), r1(i64)
+		addrof r2, [board]
+		add r1, r2, r1
+		load r1, [r1]
+		or r0, r0, r1
+		const r1, 1
+		; 32:3 for j < 29
+		move pattern, r0
+		move j, r1
+		jump @for_6
 @for_6_body:
-	const r0, 1
-	move r1, pattern
-	shiftleft r0, r1, r0
-	const r1, 7
-	and r0, r0, r1
-	const r1, 1
-	move r2, j
-	move r3, r2
-	add r1, r3, r1
-	cast r1(i64), r1(u8)
-	cast r1(u8*), r1(i64)
-	addrof r3, [board]
-	add r1, r3, r1
-	load r1, [r1]
-	or r0, r0, r1
-	const r1, 110
-	shiftright r1, r1, r0
-	const r3, 1
-	and r1, r1, r3
-	cast r3(i64), r2(u8)
-	cast r3(u8*), r3(i64)
-	addrof r2, [board]
-	add r2, r2, r3
-	store [r2], r1
-	const r1, 1
-	move r2, j
-	add r1, r2, r1
-	move pattern, r0
-	move j, r1
+			const r0, 1
+			move r1, pattern
+			shiftleft r0, r1, r0
+			const r1, 7
+			and r0, r0, r1
+			const r1, 1
+			move r2, j
+			move r3, r2
+			add r1, r3, r1
+			cast r1(i64), r1(u8)
+			cast r1(u8*), r1(i64)
+			addrof r3, [board]
+			add r1, r3, r1
+			load r1, [r1]
+			or r0, r0, r1
+			const r1, 110
+			shiftright r1, r1, r0
+			const r3, 1
+			and r1, r1, r3
+			cast r3(i64), r2(u8)
+			cast r3(u8*), r3(i64)
+			addrof r2, [board]
+			add r2, r2, r3
+			store [r2], r1
+			const r1, 1
+			move r2, j
+			add r1, r2, r1
+			move pattern, r0
+			move j, r1
 @for_6:
-	const r0, 29
-	move r1, j
-	lt r0, r1, r0
-	branch r0, true, @for_6_body
-	call _, printBoard []
-	const r0, 1
-	move r1, i
-	add r0, r1, r0
-	move i, r0
+			const r0, 29
+			move r1, j
+			lt r0, r1, r0
+			branch r0, true, @for_6_body
+			call _, printBoard []
+			const r0, 1
+			move r1, i
+			add r0, r1, r0
+			move i, r0
 @for_5:
-	const r0, 28
-	move r1, i
-	lt r0, r1, r0
-	branch r0, true, @for_5_body
+		const r0, 28
+		move r1, i
+		lt r0, r1, r0
+		branch r0, true, @for_5_body
 
 @printStringLength:
-	mov     rdi, rsp
-	
-	lea     rcx, [hStdOut]
-	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
-	xor     r9, r9
-	push    0
-	sub     rsp, 20h
-	  call    [WriteFile]
-	mov     rsp, rdi
-	ret
+		mov     rdi, rsp
+		
+		lea     rcx, [hStdOut]
+		mov     rcx, [rcx]
+		mov     rdx, [rdi+18h]
+		mov     r8, [rdi+10h]
+		xor     r9, r9
+		push    0
+		sub     rsp, 20h
+		  call    [WriteFile]
+		mov     rsp, rdi
+		ret
 
 Global variables
-	0: board[] (u8*/240)
+		0: board[] (u8*/240)
 
 String literals
-	string lit 0 "|\n\0"
+		string lit 0 "|\n\0"

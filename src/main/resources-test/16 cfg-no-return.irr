@@ -7,9 +7,9 @@
 	; 3:2 while true
 	move i, r0
 @while_1:
-	const r0, 1
-	move r1, i
-	add r0, r1, r0
-	move i, r0
-	jump @while_1
+		const r0, 1
+		move r1, i
+		add r0, r1, r0
+		move i, r0
+		jump @while_1
 

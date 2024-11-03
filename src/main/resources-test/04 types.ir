@@ -36,29 +36,29 @@
 	const pos, 20
 	; 13:2 while true
 @while_1:
-	const t.5, 1
-	sub pos, pos, t.5
-	const t.6, 10
-	move remainder, number
-	mod remainder, remainder, t.6
-	const t.7, 10
-	div number, number, t.7
-	cast t.8(u8), remainder(i64)
-	const t.9, 48
-	move digit, t.8
-	add digit, digit, t.9
-	cast t.11(i64), pos(u8)
-	cast t.12(u8*), t.11(i64)
-	addrof t.10, [buffer]
-	add t.10, t.10, t.12
-	store [t.10], digit
-	; 19:3 if number == 0
-	const t.14, 0
-	equals t.13, number, t.14
-	branch t.13, false, @if_2_end
-	jump @while_1_break
+		const t.5, 1
+		sub pos, pos, t.5
+		const t.6, 10
+		move remainder, number
+		mod remainder, remainder, t.6
+		const t.7, 10
+		div number, number, t.7
+		cast t.8(u8), remainder(i64)
+		const t.9, 48
+		move digit, t.8
+		add digit, digit, t.9
+		cast t.11(i64), pos(u8)
+		cast t.12(u8*), t.11(i64)
+		addrof t.10, [buffer]
+		add t.10, t.10, t.12
+		store [t.10], digit
+		; 19:3 if number == 0
+		const t.14, 0
+		equals t.13, number, t.14
+		branch t.13, false, @if_2_end
+		jump @while_1_break
 @if_2_end:
-	jump @while_1
+		jump @while_1
 @while_1_break:
 	cast t.16(i64), pos(u8)
 	cast t.17(u8*), t.16(i64)
@@ -108,15 +108,15 @@
 	const i, 250
 	; 4:3 for i != 2
 @for_4:
-	const t.3, 2
-	notequals t.2, i, t.3
-	branch t.2, false, @for_4_break
-	cast t.4(i64), i(u8)
-	call _, printIntLf [t.4]
+		const t.3, 2
+		notequals t.2, i, t.3
+		branch t.2, false, @for_4_break
+		cast t.4(i64), i(u8)
+		call _, printIntLf [t.4]
 @for_4_continue:
-	const t.5, 1
-	add i, i, t.5
-	jump @for_4
+		const t.5, 1
+		add i, i, t.5
+		jump @for_4
 @for_4_break:
 	const v, 260
 	cast t.7(u8), v(i16)

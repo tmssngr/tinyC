@@ -85,7 +85,7 @@ public class Compiler {
 					irWriter.write(cfg);
 					dotWriter.writeCfg(cfg);
 					cfg = LinearScanRegisterAllocation.process(cfg, function.varInfos(), maxRegisters);
-					final List<IRInstruction> instructions = getFlattenInstructions(cfg.blocks());
+					final List<IRInstruction> instructions = cfg.getFlattenInstructions();
 
 					final IRFunction optimizedFunction = function.derive(instructions);
 					functions.add(optimizedFunction);
@@ -107,19 +107,6 @@ public class Compiler {
 			throw new IOException("Failed to compile");
 		}
 		return exeFile;
-	}
-
-	@NotNull
-	private static List<IRInstruction> getFlattenInstructions(@NotNull List<BasicBlock> blocks) {
-		final List<IRInstruction> instructions = new ArrayList<>();
-		for (BasicBlock block : blocks) {
-			if (block.name.startsWith("@")) {
-				instructions.add(new IRLabel(block.name));
-			}
-			instructions.addAll(block.instructions());
-		}
-
-		return IROptimizer.optimize(instructions);
 	}
 
 	private static Path useExtension(Path path, String extension) {

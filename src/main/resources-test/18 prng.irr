@@ -36,47 +36,47 @@
 	; 13:2 while true
 	move pos, r0
 @while_1:
-	const r0, 1
-	move r1, pos
-	sub r0, r1, r0
-	const r1, 10
-	move r2, number
-	move r3, r2
-	mod r1, r3, r1
-	const r3, 10
-	div r2, r2, r3
-	cast r1(u8), r1(i64)
-	const r3, 48
-	add r1, r1, r3
-	cast r3(i64), r0(u8)
-	cast r3(u8*), r3(i64)
-	; Spill pos
-	move pos, r0
-	addrof r0, [buffer]
-	add r0, r0, r3
-	store [r0], r1
-	; 19:3 if number == 0
-	const r0, 0
-	equals r0, r2, r0
-	move number, r2
-	branch r0, false, @while_1
-	move r0, pos
-	cast r1(i64), r0(u8)
-	cast r1(u8*), r1(i64)
-	addrof r2, [buffer]
-	add r1, r2, r1
-	const r2, 20
-	sub r0, r2, r0
-	cast r0(i64), r0(u8)
-	call _, printStringLength [r1, r0]
+		const r0, 1
+		move r1, pos
+		sub r0, r1, r0
+		const r1, 10
+		move r2, number
+		move r3, r2
+		mod r1, r3, r1
+		const r3, 10
+		div r2, r2, r3
+		cast r1(u8), r1(i64)
+		const r3, 48
+		add r1, r1, r3
+		cast r3(i64), r0(u8)
+		cast r3(u8*), r3(i64)
+		; Spill pos
+		move pos, r0
+		addrof r0, [buffer]
+		add r0, r0, r3
+		store [r0], r1
+		; 19:3 if number == 0
+		const r0, 0
+		equals r0, r2, r0
+		move number, r2
+		branch r0, false, @while_1
+		move r0, pos
+		cast r1(i64), r0(u8)
+		cast r1(u8*), r1(i64)
+		addrof r2, [buffer]
+		add r1, r2, r1
+		const r2, 20
+		sub r0, r2, r0
+		cast r0(i64), r0(u8)
+		call _, printStringLength [r1, r0]
 
 @printIntLf:
  Local variables
-	arg 0: number (i64/8)
-	var 1: t.1 (bool/1)
-	var 2: t.2 (i64/8)
-	var 3: t.3 (u8/1)
-	var 4: t.4 (u8/1)
+		arg 0: number (i64/8)
+		var 1: t.1 (bool/1)
+		var 2: t.2 (i64/8)
+		var 3: t.3 (u8/1)
+		var 4: t.4 (u8/1)
 	; 17 pc
 	; 27:2 if number < 0
 	const r0, 0
@@ -185,33 +185,33 @@
 	move i, r0
 	jump @for_4
 @for_4_body:
-	call r0, randomU8, []
-	cast r0(i64), r0(u8)
-	call _, printIntLf [r0]
-	const r0, 1
-	move r1, i
-	add r0, r1, r0
-	move i, r0
+		call r0, randomU8, []
+		cast r0(i64), r0(u8)
+		call _, printIntLf [r0]
+		const r0, 1
+		move r1, i
+		add r0, r1, r0
+		move i, r0
 @for_4:
-	const r0, 50
-	move r1, i
-	lt r0, r1, r0
-	branch r0, true, @for_4_body
+		const r0, 50
+		move r1, i
+		lt r0, r1, r0
+		branch r0, true, @for_4_body
 
 @printStringLength:
-	mov     rdi, rsp
-	
-	lea     rcx, [hStdOut]
-	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
-	xor     r9, r9
-	push    0
-	sub     rsp, 20h
-	  call    [WriteFile]
-	mov     rsp, rdi
-	ret
+		mov     rdi, rsp
+		
+		lea     rcx, [hStdOut]
+		mov     rcx, [rcx]
+		mov     rdx, [rdi+18h]
+		mov     r8, [rdi+10h]
+		xor     r9, r9
+		push    0
+		sub     rsp, 20h
+		  call    [WriteFile]
+		mov     rsp, rdi
+		ret
 
 Global variables
-	0: __random__ (i32/4)
+		0: __random__ (i32/4)
 

@@ -1,5 +1,7 @@
 package com.regnis.tinyc.cfg;
 
+import com.regnis.tinyc.ir.*;
+
 import java.util.*;
 
 import org.jetbrains.annotations.*;
@@ -12,12 +14,9 @@ import org.jetbrains.annotations.*;
 public final class ControlFlowGraph {
 
 	private final Cfg cfg;
-	private final List<BasicBlock> blocks;
 
 	public ControlFlowGraph(@NotNull Cfg cfg) {
 		this.cfg = cfg;
-
-		blocks = getSorted();
 	}
 
 	@Deprecated
@@ -28,8 +27,6 @@ public final class ControlFlowGraph {
 		}
 
 		cfg.check();
-
-		blocks = getSorted();
 	}
 
 	@NotNull
@@ -39,12 +36,29 @@ public final class ControlFlowGraph {
 
 	@NotNull
 	public List<BasicBlock> blocks() {
-		return Collections.unmodifiableList(blocks);
+		return Collections.unmodifiableList(getSorted());
 	}
 
 	@NotNull
 	public BasicBlock get(@NotNull String name) {
 		return cfg.get(name);
+	}
+
+	@NotNull
+	public List<IRInstruction> getFlattenInstructions() {
+		final CfgLoopInfos infos = new CfgLoopInfos(cfg);
+		final List<String> blocksInOrder = infos.getInOrder();
+		final List<IRInstruction> instructions = new ArrayList<>();
+		for (String name : blocksInOrder) {
+			final int level = infos.getLoopLevel(name);
+			final BasicBlock block = cfg.get(name);
+			if (name.startsWith("@")) {
+				instructions.add(new IRLabel(name, level));
+			}
+			instructions.addAll(block.instructions());
+		}
+
+		return IROptimizer.optimize(instructions);
 	}
 
 	private List<BasicBlock> getSorted() {

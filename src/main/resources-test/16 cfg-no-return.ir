@@ -6,9 +6,9 @@
 	const i, 0
 	; 3:2 while true
 @while_1:
-	const t.1, 1
-	add i, i, t.1
-	jump @while_1
+		const t.1, 1
+		add i, i, t.1
+		jump @while_1
 @while_1_break:
 @main_ret:
 

@@ -33,19 +33,19 @@
 	const length, 0
 	; 37:2 for *str != 0
 @for_1:
-	load t.3, [str]
-	const t.4, 0
-	notequals t.2, t.3, t.4
-	branch t.2, false, @for_1_break
-	const t.5, 1
-	add length, length, t.5
+		load t.3, [str]
+		const t.4, 0
+		notequals t.2, t.3, t.4
+		branch t.2, false, @for_1_break
+		const t.5, 1
+		add length, length, t.5
 @for_1_continue:
-	cast t.7(i64), str(u8*)
-	const t.8, 1
-	move t.6, t.7
-	add t.6, t.6, t.8
-	cast str(u8*), t.6(i64)
-	jump @for_1
+		cast t.7(i64), str(u8*)
+		const t.8, 1
+		move t.6, t.7
+		add t.6, t.6, t.8
+		cast str(u8*), t.6(i64)
+		jump @for_1
 @for_1_break:
 	; 40:9 return length
 	ret length
@@ -127,67 +127,67 @@
 	const i, 0
 	; 19:2 for i < 16
 @for_3:
-	const t.4, 16
-	lt t.3, i, t.4
-	branch t.3, false, @for_3_break
-	; 20:3 if i & 7 == 0
-	const t.7, 7
-	move t.6, i
-	and t.6, t.6, t.7
-	const t.8, 0
-	equals t.5, t.6, t.8
-	branch t.5, false, @if_4_end
-	const t.9, 32
-	call _, printChar [t.9]
+		const t.4, 16
+		lt t.3, i, t.4
+		branch t.3, false, @for_3_break
+		; 20:3 if i & 7 == 0
+		const t.7, 7
+		move t.6, i
+		and t.6, t.6, t.7
+		const t.8, 0
+		equals t.5, t.6, t.8
+		branch t.5, false, @if_4_end
+		const t.9, 32
+		call _, printChar [t.9]
 @if_4_end:
-	call _, printNibble [i]
+		call _, printNibble [i]
 @for_3_continue:
-	const t.10, 1
-	add i, i, t.10
-	jump @for_3
+		const t.10, 1
+		add i, i, t.10
+		jump @for_3
 @for_3_break:
 	const t.11, 10
 	call _, printChar [t.11]
 	const i, 32
 	; 27:2 for i < 128
 @for_5:
-	const t.13, 128
-	lt t.12, i, t.13
-	branch t.12, false, @for_5_break
-	; 28:3 if i & 15 == 0
-	const t.16, 15
-	move t.15, i
-	and t.15, t.15, t.16
-	const t.17, 0
-	equals t.14, t.15, t.17
-	branch t.14, false, @if_6_end
-	call _, printHex2 [i]
+		const t.13, 128
+		lt t.12, i, t.13
+		branch t.12, false, @for_5_break
+		; 28:3 if i & 15 == 0
+		const t.16, 15
+		move t.15, i
+		and t.15, t.15, t.16
+		const t.17, 0
+		equals t.14, t.15, t.17
+		branch t.14, false, @if_6_end
+		call _, printHex2 [i]
 @if_6_end:
-	; 31:3 if i & 7 == 0
-	const t.20, 7
-	move t.19, i
-	and t.19, t.19, t.20
-	const t.21, 0
-	equals t.18, t.19, t.21
-	branch t.18, false, @if_7_end
-	const t.22, 32
-	call _, printChar [t.22]
+		; 31:3 if i & 7 == 0
+		const t.20, 7
+		move t.19, i
+		and t.19, t.19, t.20
+		const t.21, 0
+		equals t.18, t.19, t.21
+		branch t.18, false, @if_7_end
+		const t.22, 32
+		call _, printChar [t.22]
 @if_7_end:
-	call _, printChar [i]
-	; 35:3 if i & 15 == 15
-	const t.25, 15
-	move t.24, i
-	and t.24, t.24, t.25
-	const t.26, 15
-	equals t.23, t.24, t.26
-	branch t.23, false, @if_8_end
-	const t.27, 10
-	call _, printChar [t.27]
+		call _, printChar [i]
+		; 35:3 if i & 15 == 15
+		const t.25, 15
+		move t.24, i
+		and t.24, t.24, t.25
+		const t.26, 15
+		equals t.23, t.24, t.26
+		branch t.23, false, @if_8_end
+		const t.27, 10
+		call _, printChar [t.27]
 @if_8_end:
 @for_5_continue:
-	const t.28, 1
-	add i, i, t.28
-	jump @for_5
+		const t.28, 1
+		add i, i, t.28
+		jump @for_5
 @for_5_break:
 @main_ret:
 
