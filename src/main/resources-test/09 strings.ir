@@ -160,7 +160,7 @@
 	call _, printLength []
 	const t.2(2@function,i64), 1
 	cast t.3(3@function,u8*), t.2(2@function,i64)
-	copy second(0@function,u8*), text(0@global,u8*)
+	move second(0@function,u8*), text(0@global,u8*)
 	add second(0@function,u8*), second(0@function,u8*), t.3(3@function,u8*)
 	call _, printString [second(0@function,u8*)]
 	load chr(1@function,u8), [text(0@global,u8*)]
@@ -182,7 +182,7 @@
 	var 9: t.9
 	; 62 pc
 	const length(0@function,i16), 0
-	copy ptr(1@function,u8*), text(0@global,u8*)
+	move ptr(1@function,u8*), text(0@global,u8*)
 	; 16:2 for *ptr != 0
 @for_5:
 	load t.3(3@function,u8), [ptr(1@function,u8*)]

@@ -298,7 +298,7 @@ public final class IRGenerator {
 		case ExprIntLiteral literal -> write(new IRLiteral(var, literal.value(), literal.location()));
 		case ExprBoolLiteral literal -> write(new IRLiteral(var, literal.value() ? 1 : 0, literal.location()));
 		case ExprStringLiteral literal -> write(new IRString(var, literal.index(), literal.location()));
-		case ExprVarAccess access -> write(new IRCopy(var, varAccessToVar(access), access.location()));
+		case ExprVarAccess access -> write(new IRMove(var, varAccessToVar(access), access.location()));
 		case ExprArrayAccess access -> writeArrayAccess(var, access);
 		case ExprMemberAccess access -> writeMemberAccess(var, access);
 		case ExprBinary binary -> writeBinary(var, binary);
@@ -434,7 +434,7 @@ public final class IRGenerator {
 			write(new IRAddrOfArray(var, varAccessToVar(varAccess), location));
 		}
 		else {
-			write(new IRCopy(var, varAccessToVar(varAccess), location));
+			write(new IRMove(var, varAccessToVar(varAccess), location));
 		}
 		write(new IRBinary(var, IRBinary.Op.Add, var, pointerOffset, location));
 	}
@@ -443,7 +443,7 @@ public final class IRGenerator {
 		switch (binary.op()) {
 		case Assign -> {
 			final IRVar binaryVar = writeAssign(binary);
-			write(new IRCopy(var, binaryVar, binary.location()));
+			write(new IRMove(var, binaryVar, binary.location()));
 		}
 		case Add -> writeBinary(IRBinary.Op.Add, var, binary);
 		case Sub -> writeBinary(IRBinary.Op.Sub, var, binary);

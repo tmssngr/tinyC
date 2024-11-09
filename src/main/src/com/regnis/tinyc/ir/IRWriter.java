@@ -114,7 +114,7 @@ public final class IRWriter extends TextWriter {
 				sum++;
 				sum += getInstructionTime(i.target());
 			}
-			case IRCopy i -> {
+			case IRMove i -> {
 				sum += getInstructionTime(i.source());
 				sum++;
 				sum += getInstructionTime(i.target());

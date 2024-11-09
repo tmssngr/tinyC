@@ -244,7 +244,7 @@ public final class X86Win64 {
 		case IRAddrOfArray addrOf -> writeAddrOfArray(addrOf);
 		case IRLiteral literal -> writeLiteral(literal);
 		case IRString literal -> writeString(literal);
-		case IRCopy copy -> writeCopy(copy);
+		case IRMove copy -> writeCopy(copy);
 		case IRBinary binary -> writeBinary(binary);
 		case IRUnary unary -> writeUnary(unary);
 		case IRCast cast -> writeCast(cast);
@@ -285,7 +285,7 @@ public final class X86Win64 {
 		free(valueReg);
 	}
 
-	private void writeCopy(IRCopy copy) throws IOException {
+	private void writeCopy(IRMove copy) throws IOException {
 		final int valueReg = loadVar(copy.source());
 		storeVar(copy.target(), valueReg);
 		free(valueReg);

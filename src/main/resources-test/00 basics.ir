@@ -107,7 +107,7 @@
 	addrof twoPtr(1@function,u8*), two(2@global,u8)
 	const t.5(5@function,i64), 0
 	cast t.6(6@function,u8*), t.5(5@function,i64)
-	copy t.4(4@function,u8*), twoPtr(1@function,u8*)
+	move t.4(4@function,u8*), twoPtr(1@function,u8*)
 	add t.4(4@function,u8*), t.4(4@function,u8*), t.6(6@function,u8*)
 	load t.3(3@function,u8), [t.4(4@function,u8*)]
 	call _, printChar [t.3(3@function,u8)]

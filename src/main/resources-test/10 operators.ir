@@ -272,60 +272,60 @@
 	const t.36(36@function,u8*), [string-3]
 	call _, printString [t.36(36@function,u8*)]
 	; 26:15 logic and
-	copy t.38(38@function,bool), f(5@function,bool)
+	move t.38(38@function,bool), f(5@function,bool)
 	branch t.38(38@function,bool), false, @and_next_5
-	copy t.38(38@function,bool), f(5@function,bool)
+	move t.38(38@function,bool), f(5@function,bool)
 @and_next_5:
 	cast t.37(37@function,i64), t.38(38@function,bool)
 	call _, printIntLf [t.37(37@function,i64)]
 	; 27:15 logic and
-	copy t.40(40@function,bool), f(5@function,bool)
+	move t.40(40@function,bool), f(5@function,bool)
 	branch t.40(40@function,bool), false, @and_next_6
-	copy t.40(40@function,bool), t(4@function,bool)
+	move t.40(40@function,bool), t(4@function,bool)
 @and_next_6:
 	cast t.39(39@function,i64), t.40(40@function,bool)
 	call _, printIntLf [t.39(39@function,i64)]
 	; 28:15 logic and
-	copy t.42(42@function,bool), t(4@function,bool)
+	move t.42(42@function,bool), t(4@function,bool)
 	branch t.42(42@function,bool), false, @and_next_7
-	copy t.42(42@function,bool), f(5@function,bool)
+	move t.42(42@function,bool), f(5@function,bool)
 @and_next_7:
 	cast t.41(41@function,i64), t.42(42@function,bool)
 	call _, printIntLf [t.41(41@function,i64)]
 	; 29:15 logic and
-	copy t.44(44@function,bool), t(4@function,bool)
+	move t.44(44@function,bool), t(4@function,bool)
 	branch t.44(44@function,bool), false, @and_next_8
-	copy t.44(44@function,bool), t(4@function,bool)
+	move t.44(44@function,bool), t(4@function,bool)
 @and_next_8:
 	cast t.43(43@function,i64), t.44(44@function,bool)
 	call _, printIntLf [t.43(43@function,i64)]
 	const t.45(45@function,u8*), [string-4]
 	call _, printString [t.45(45@function,u8*)]
 	; 31:15 logic or
-	copy t.47(47@function,bool), f(5@function,bool)
+	move t.47(47@function,bool), f(5@function,bool)
 	branch t.47(47@function,bool), true, @or_next_9
-	copy t.47(47@function,bool), f(5@function,bool)
+	move t.47(47@function,bool), f(5@function,bool)
 @or_next_9:
 	cast t.46(46@function,i64), t.47(47@function,bool)
 	call _, printIntLf [t.46(46@function,i64)]
 	; 32:15 logic or
-	copy t.49(49@function,bool), f(5@function,bool)
+	move t.49(49@function,bool), f(5@function,bool)
 	branch t.49(49@function,bool), true, @or_next_10
-	copy t.49(49@function,bool), t(4@function,bool)
+	move t.49(49@function,bool), t(4@function,bool)
 @or_next_10:
 	cast t.48(48@function,i64), t.49(49@function,bool)
 	call _, printIntLf [t.48(48@function,i64)]
 	; 33:15 logic or
-	copy t.51(51@function,bool), t(4@function,bool)
+	move t.51(51@function,bool), t(4@function,bool)
 	branch t.51(51@function,bool), true, @or_next_11
-	copy t.51(51@function,bool), f(5@function,bool)
+	move t.51(51@function,bool), f(5@function,bool)
 @or_next_11:
 	cast t.50(50@function,i64), t.51(51@function,bool)
 	call _, printIntLf [t.50(50@function,i64)]
 	; 34:15 logic or
-	copy t.53(53@function,bool), t(4@function,bool)
+	move t.53(53@function,bool), t(4@function,bool)
 	branch t.53(53@function,bool), true, @or_next_12
-	copy t.53(53@function,bool), t(4@function,bool)
+	move t.53(53@function,bool), t(4@function,bool)
 @or_next_12:
 	cast t.52(52@function,i64), t.53(53@function,bool)
 	call _, printIntLf [t.52(52@function,i64)]

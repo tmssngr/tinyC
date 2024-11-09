@@ -472,7 +472,7 @@ start:
         mov rbx, [rax]
         lea rax, [rsp+24]
         mov [rax], rbx
-        ; copy second(0@function,u8*), text(0@global,u8*)
+        ; move second(0@function,u8*), text(0@global,u8*)
         lea rax, [var_0]
         mov rbx, [rax]
         lea rax, [rsp+0]
@@ -531,7 +531,7 @@ start:
         mov ax, 0
         lea rbx, [rsp+0]
         mov [rbx], ax
-        ; copy ptr(1@function,u8*), text(0@global,u8*)
+        ; move ptr(1@function,u8*), text(0@global,u8*)
         lea rax, [var_0]
         mov rbx, [rax]
         lea rax, [rsp+8]

@@ -820,7 +820,7 @@ start:
           call @printString
         add rsp, 8
         ; 26:15 logic and
-        ; copy t.38(38@function,bool), f(5@function,bool)
+        ; move t.38(38@function,bool), f(5@function,bool)
         lea rax, [rsp+9]
         mov bl, [rax]
         lea rax, [rsp+248]
@@ -830,7 +830,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @and_next_5
-        ; copy t.38(38@function,bool), f(5@function,bool)
+        ; move t.38(38@function,bool), f(5@function,bool)
         lea rax, [rsp+9]
         mov bl, [rax]
         lea rax, [rsp+248]
@@ -849,7 +849,7 @@ start:
           call @printIntLf
         add rsp, 8
         ; 27:15 logic and
-        ; copy t.40(40@function,bool), f(5@function,bool)
+        ; move t.40(40@function,bool), f(5@function,bool)
         lea rax, [rsp+9]
         mov bl, [rax]
         lea rax, [rsp+264]
@@ -859,7 +859,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @and_next_6
-        ; copy t.40(40@function,bool), t(4@function,bool)
+        ; move t.40(40@function,bool), t(4@function,bool)
         lea rax, [rsp+8]
         mov bl, [rax]
         lea rax, [rsp+264]
@@ -878,7 +878,7 @@ start:
           call @printIntLf
         add rsp, 8
         ; 28:15 logic and
-        ; copy t.42(42@function,bool), t(4@function,bool)
+        ; move t.42(42@function,bool), t(4@function,bool)
         lea rax, [rsp+8]
         mov bl, [rax]
         lea rax, [rsp+280]
@@ -888,7 +888,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @and_next_7
-        ; copy t.42(42@function,bool), f(5@function,bool)
+        ; move t.42(42@function,bool), f(5@function,bool)
         lea rax, [rsp+9]
         mov bl, [rax]
         lea rax, [rsp+280]
@@ -907,7 +907,7 @@ start:
           call @printIntLf
         add rsp, 8
         ; 29:15 logic and
-        ; copy t.44(44@function,bool), t(4@function,bool)
+        ; move t.44(44@function,bool), t(4@function,bool)
         lea rax, [rsp+8]
         mov bl, [rax]
         lea rax, [rsp+296]
@@ -917,7 +917,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @and_next_8
-        ; copy t.44(44@function,bool), t(4@function,bool)
+        ; move t.44(44@function,bool), t(4@function,bool)
         lea rax, [rsp+8]
         mov bl, [rax]
         lea rax, [rsp+296]
@@ -946,7 +946,7 @@ start:
           call @printString
         add rsp, 8
         ; 31:15 logic or
-        ; copy t.47(47@function,bool), f(5@function,bool)
+        ; move t.47(47@function,bool), f(5@function,bool)
         lea rax, [rsp+9]
         mov bl, [rax]
         lea rax, [rsp+320]
@@ -956,7 +956,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @or_next_9
-        ; copy t.47(47@function,bool), f(5@function,bool)
+        ; move t.47(47@function,bool), f(5@function,bool)
         lea rax, [rsp+9]
         mov bl, [rax]
         lea rax, [rsp+320]
@@ -975,7 +975,7 @@ start:
           call @printIntLf
         add rsp, 8
         ; 32:15 logic or
-        ; copy t.49(49@function,bool), f(5@function,bool)
+        ; move t.49(49@function,bool), f(5@function,bool)
         lea rax, [rsp+9]
         mov bl, [rax]
         lea rax, [rsp+336]
@@ -985,7 +985,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @or_next_10
-        ; copy t.49(49@function,bool), t(4@function,bool)
+        ; move t.49(49@function,bool), t(4@function,bool)
         lea rax, [rsp+8]
         mov bl, [rax]
         lea rax, [rsp+336]
@@ -1004,7 +1004,7 @@ start:
           call @printIntLf
         add rsp, 8
         ; 33:15 logic or
-        ; copy t.51(51@function,bool), t(4@function,bool)
+        ; move t.51(51@function,bool), t(4@function,bool)
         lea rax, [rsp+8]
         mov bl, [rax]
         lea rax, [rsp+352]
@@ -1014,7 +1014,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @or_next_11
-        ; copy t.51(51@function,bool), f(5@function,bool)
+        ; move t.51(51@function,bool), f(5@function,bool)
         lea rax, [rsp+9]
         mov bl, [rax]
         lea rax, [rsp+352]
@@ -1033,7 +1033,7 @@ start:
           call @printIntLf
         add rsp, 8
         ; 34:15 logic or
-        ; copy t.53(53@function,bool), t(4@function,bool)
+        ; move t.53(53@function,bool), t(4@function,bool)
         lea rax, [rsp+8]
         mov bl, [rax]
         lea rax, [rsp+368]
@@ -1043,7 +1043,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @or_next_12
-        ; copy t.53(53@function,bool), t(4@function,bool)
+        ; move t.53(53@function,bool), t(4@function,bool)
         lea rax, [rsp+8]
         mov bl, [rax]
         lea rax, [rsp+368]

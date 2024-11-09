@@ -9,13 +9,13 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRCopy(@NotNull IRVar target, @NotNull IRVar source, @NotNull Location location) implements IRInstruction {
-	public IRCopy {
+public record IRMove(@NotNull IRVar target, @NotNull IRVar source, @NotNull Location location) implements IRInstruction {
+	public IRMove {
 		Utils.assertTrue(Objects.equals(target.type(), source.type()));
 	}
 
 	@Override
 	public String toString() {
-		return "copy " + target + ", " + source;
+		return "move " + target + ", " + source;
 	}
 }

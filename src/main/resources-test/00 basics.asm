@@ -323,7 +323,7 @@ start:
         mov rbx, [rax]
         lea rax, [rsp+40]
         mov [rax], rbx
-        ; copy t.4(4@function,u8*), twoPtr(1@function,u8*)
+        ; move t.4(4@function,u8*), twoPtr(1@function,u8*)
         lea rax, [rsp+8]
         mov rbx, [rax]
         lea rax, [rsp+24]
