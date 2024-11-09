@@ -58,8 +58,9 @@ public final class Cfg {
 		}
 	}
 
-	public void visitInPostOrder(@NotNull Consumer<BasicBlock> consumer) {
-		visitInPostOrder(root, new ArrayList<>(), consumer);
+	public List<String> getInOrder() {
+		final CfgLoopInfos infos = new CfgLoopInfos(this);
+		return infos.getInOrder();
 	}
 
 	public void setPredecessors() {
@@ -193,19 +194,6 @@ public final class Cfg {
 			}
 			visitPreOrder(successor, visited, consumer, biConsumer);
 		}
-	}
-
-	private void visitInPostOrder(@NotNull String name, List<String> visited, @NotNull Consumer<BasicBlock> consumer) {
-		if (visited.contains(name)) {
-			return;
-		}
-
-		visited.add(name);
-		final BasicBlock block = nameToBlock.get(name);
-		for (String successor : block.successors()) {
-			visitInPostOrder(successor, visited, consumer);
-		}
-		consumer.accept(block);
 	}
 
 	private record CriticalEdge(String predecessor, String successor) {
