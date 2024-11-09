@@ -3,8 +3,8 @@
 	arg 0: str
 	var 1: length
 	; 10 pc
-	call length(1@function,i64), strlen, [str(0@argument,u8*)]
-	call _, printStringLength [str(0@argument,u8*), length(1@function,i64)]
+	call length, strlen, [str]
+	call _, printStringLength [str, length]
 @printString_ret:
 
 @printChar:
@@ -13,9 +13,9 @@
 	var 1: t.1
 	var 2: t.2
 	; 12 pc
-	addrof t.1(1@function,u8*), chr(0@argument,u8)
-	const t.2(2@function,i64), 1
-	call _, printStringLength [t.1(1@function,u8*), t.2(2@function,i64)]
+	addrof t.1, chr
+	const t.2, 1
+	call _, printStringLength [t.1, t.2]
 @printChar_ret:
 
 @printUint:
@@ -42,39 +42,39 @@
 	var 19: t.19
 	var 20: t.20
 	; 122 pc
-	const pos(2@function,u8), 20
+	const pos, 20
 	; 13:2 while true
 @while_1:
-	const t.5(5@function,u8), 1
-	sub pos(2@function,u8), pos(2@function,u8), t.5(5@function,u8)
-	const t.6(6@function,i64), 10
-	mod remainder(3@function,i64), number(0@argument,i64), t.6(6@function,i64)
-	const t.7(7@function,i64), 10
-	div number(0@argument,i64), number(0@argument,i64), t.7(7@function,i64)
-	cast t.8(8@function,u8), remainder(3@function,i64)
-	const t.9(9@function,u8), 48
-	add digit(4@function,u8), t.8(8@function,u8), t.9(9@function,u8)
-	cast t.11(11@function,i64), pos(2@function,u8)
-	cast t.12(12@function,u8*), t.11(11@function,i64)
-	addrof t.10(10@function,u8*), [buffer(1@function,u8*)]
-	add t.10(10@function,u8*), t.10(10@function,u8*), t.12(12@function,u8*)
-	store [t.10(10@function,u8*)], digit(4@function,u8)
+	const t.5, 1
+	sub pos, pos, t.5
+	const t.6, 10
+	mod remainder, number, t.6
+	const t.7, 10
+	div number, number, t.7
+	cast t.8, remainder
+	const t.9, 48
+	add digit, t.8, t.9
+	cast t.11, pos
+	cast t.12, t.11
+	addrof t.10, [buffer]
+	add t.10, t.10, t.12
+	store [t.10], digit
 	; 19:3 if number == 0
-	const t.14(14@function,i64), 0
-	equals t.13(13@function,bool), number(0@argument,i64), t.14(14@function,i64)
-	branch t.13(13@function,bool), false, @if_2_end
+	const t.14, 0
+	equals t.13, number, t.14
+	branch t.13, false, @if_2_end
 	jump @while_1_break
 @if_2_end:
 	jump @while_1
 @while_1_break:
-	cast t.16(16@function,i64), pos(2@function,u8)
-	cast t.17(17@function,u8*), t.16(16@function,i64)
-	addrof t.15(15@function,u8*), [buffer(1@function,u8*)]
-	add t.15(15@function,u8*), t.15(15@function,u8*), t.17(17@function,u8*)
-	const t.20(20@function,u8), 20
-	sub t.19(19@function,u8), t.20(20@function,u8), pos(2@function,u8)
-	cast t.18(18@function,i64), t.19(19@function,u8)
-	call _, printStringLength [t.15(15@function,u8*), t.18(18@function,i64)]
+	cast t.16, pos
+	cast t.17, t.16
+	addrof t.15, [buffer]
+	add t.15, t.15, t.17
+	const t.20, 20
+	sub t.19, t.20, pos
+	cast t.18, t.19
+	call _, printStringLength [t.15, t.18]
 @printUint_ret:
 
 @printIntLf:
@@ -86,16 +86,16 @@
 	var 4: t.4
 	; 30 pc
 	; 27:2 if number < 0
-	const t.2(2@function,i64), 0
-	lt t.1(1@function,bool), number(0@argument,i64), t.2(2@function,i64)
-	branch t.1(1@function,bool), false, @if_3_end
-	const t.3(3@function,u8), 45
-	call _, printChar [t.3(3@function,u8)]
-	neg number(0@argument,i64), number(0@argument,i64)
+	const t.2, 0
+	lt t.1, number, t.2
+	branch t.1, false, @if_3_end
+	const t.3, 45
+	call _, printChar [t.3]
+	neg number, number
 @if_3_end:
-	call _, printUint [number(0@argument,i64)]
-	const t.4(4@function,u8), 10
-	call _, printChar [t.4(4@function,u8)]
+	call _, printUint [number]
+	const t.4, 10
+	call _, printChar [t.4]
 @printIntLf_ret:
 
 @strlen:
@@ -110,24 +110,24 @@
 	var 7: t.7
 	var 8: t.8
 	; 53 pc
-	const length(1@function,i64), 0
+	const length, 0
 	; 37:2 for *str != 0
 @for_4:
-	load t.3(3@function,u8), [str(0@argument,u8*)]
-	const t.4(4@function,u8), 0
-	notequals t.2(2@function,bool), t.3(3@function,u8), t.4(4@function,u8)
-	branch t.2(2@function,bool), false, @for_4_break
-	const t.5(5@function,i64), 1
-	add length(1@function,i64), length(1@function,i64), t.5(5@function,i64)
+	load t.3, [str]
+	const t.4, 0
+	notequals t.2, t.3, t.4
+	branch t.2, false, @for_4_break
+	const t.5, 1
+	add length, length, t.5
 @for_4_continue:
-	cast t.7(7@function,i64), str(0@argument,u8*)
-	const t.8(8@function,i64), 1
-	add t.6(6@function,i64), t.7(7@function,i64), t.8(8@function,i64)
-	cast str(0@argument,u8*), t.6(6@function,i64)
+	cast t.7, str
+	const t.8, 1
+	add t.6, t.7, t.8
+	cast str, t.6
 	jump @for_4
 @for_4_break:
 	; 40:9 return length
-	ret length(1@function,i64)
+	ret length
 	jump @strlen_ret
 @strlen_ret:
 
@@ -221,154 +221,154 @@
 	var 71: t.71
 	var 72: t.72
 	; 542 pc
-	const t.9(9@function,u8*), [string-0]
-	call _, printString [t.9(9@function,u8*)]
-	const a(0@function,i16), 0
-	const b(1@function,i16), 1
-	const c(2@function,i16), 2
-	const d(3@function,i16), 3
-	const t(4@function,bool), 1
-	const f(5@function,bool), 0
-	and t.11(11@function,i16), a(0@function,i16), a(0@function,i16)
-	cast t.10(10@function,i64), t.11(11@function,i16)
-	call _, printIntLf [t.10(10@function,i64)]
-	and t.13(13@function,i16), a(0@function,i16), b(1@function,i16)
-	cast t.12(12@function,i64), t.13(13@function,i16)
-	call _, printIntLf [t.12(12@function,i64)]
-	and t.15(15@function,i16), b(1@function,i16), a(0@function,i16)
-	cast t.14(14@function,i64), t.15(15@function,i16)
-	call _, printIntLf [t.14(14@function,i64)]
-	and t.17(17@function,i16), b(1@function,i16), b(1@function,i16)
-	cast t.16(16@function,i64), t.17(17@function,i16)
-	call _, printIntLf [t.16(16@function,i64)]
-	const t.18(18@function,u8*), [string-1]
-	call _, printString [t.18(18@function,u8*)]
-	or t.20(20@function,i16), a(0@function,i16), a(0@function,i16)
-	cast t.19(19@function,i64), t.20(20@function,i16)
-	call _, printIntLf [t.19(19@function,i64)]
-	or t.22(22@function,i16), a(0@function,i16), b(1@function,i16)
-	cast t.21(21@function,i64), t.22(22@function,i16)
-	call _, printIntLf [t.21(21@function,i64)]
-	or t.24(24@function,i16), b(1@function,i16), a(0@function,i16)
-	cast t.23(23@function,i64), t.24(24@function,i16)
-	call _, printIntLf [t.23(23@function,i64)]
-	or t.26(26@function,i16), b(1@function,i16), b(1@function,i16)
-	cast t.25(25@function,i64), t.26(26@function,i16)
-	call _, printIntLf [t.25(25@function,i64)]
-	const t.27(27@function,u8*), [string-2]
-	call _, printString [t.27(27@function,u8*)]
-	xor t.29(29@function,i16), a(0@function,i16), a(0@function,i16)
-	cast t.28(28@function,i64), t.29(29@function,i16)
-	call _, printIntLf [t.28(28@function,i64)]
-	xor t.31(31@function,i16), a(0@function,i16), c(2@function,i16)
-	cast t.30(30@function,i64), t.31(31@function,i16)
-	call _, printIntLf [t.30(30@function,i64)]
-	xor t.33(33@function,i16), b(1@function,i16), a(0@function,i16)
-	cast t.32(32@function,i64), t.33(33@function,i16)
-	call _, printIntLf [t.32(32@function,i64)]
-	xor t.35(35@function,i16), b(1@function,i16), c(2@function,i16)
-	cast t.34(34@function,i64), t.35(35@function,i16)
-	call _, printIntLf [t.34(34@function,i64)]
-	const t.36(36@function,u8*), [string-3]
-	call _, printString [t.36(36@function,u8*)]
+	const t.9, [string-0]
+	call _, printString [t.9]
+	const a, 0
+	const b, 1
+	const c, 2
+	const d, 3
+	const t, 1
+	const f, 0
+	and t.11, a, a
+	cast t.10, t.11
+	call _, printIntLf [t.10]
+	and t.13, a, b
+	cast t.12, t.13
+	call _, printIntLf [t.12]
+	and t.15, b, a
+	cast t.14, t.15
+	call _, printIntLf [t.14]
+	and t.17, b, b
+	cast t.16, t.17
+	call _, printIntLf [t.16]
+	const t.18, [string-1]
+	call _, printString [t.18]
+	or t.20, a, a
+	cast t.19, t.20
+	call _, printIntLf [t.19]
+	or t.22, a, b
+	cast t.21, t.22
+	call _, printIntLf [t.21]
+	or t.24, b, a
+	cast t.23, t.24
+	call _, printIntLf [t.23]
+	or t.26, b, b
+	cast t.25, t.26
+	call _, printIntLf [t.25]
+	const t.27, [string-2]
+	call _, printString [t.27]
+	xor t.29, a, a
+	cast t.28, t.29
+	call _, printIntLf [t.28]
+	xor t.31, a, c
+	cast t.30, t.31
+	call _, printIntLf [t.30]
+	xor t.33, b, a
+	cast t.32, t.33
+	call _, printIntLf [t.32]
+	xor t.35, b, c
+	cast t.34, t.35
+	call _, printIntLf [t.34]
+	const t.36, [string-3]
+	call _, printString [t.36]
 	; 26:15 logic and
-	move t.38(38@function,bool), f(5@function,bool)
-	branch t.38(38@function,bool), false, @and_next_5
-	move t.38(38@function,bool), f(5@function,bool)
+	move t.38, f
+	branch t.38, false, @and_next_5
+	move t.38, f
 @and_next_5:
-	cast t.37(37@function,i64), t.38(38@function,bool)
-	call _, printIntLf [t.37(37@function,i64)]
+	cast t.37, t.38
+	call _, printIntLf [t.37]
 	; 27:15 logic and
-	move t.40(40@function,bool), f(5@function,bool)
-	branch t.40(40@function,bool), false, @and_next_6
-	move t.40(40@function,bool), t(4@function,bool)
+	move t.40, f
+	branch t.40, false, @and_next_6
+	move t.40, t
 @and_next_6:
-	cast t.39(39@function,i64), t.40(40@function,bool)
-	call _, printIntLf [t.39(39@function,i64)]
+	cast t.39, t.40
+	call _, printIntLf [t.39]
 	; 28:15 logic and
-	move t.42(42@function,bool), t(4@function,bool)
-	branch t.42(42@function,bool), false, @and_next_7
-	move t.42(42@function,bool), f(5@function,bool)
+	move t.42, t
+	branch t.42, false, @and_next_7
+	move t.42, f
 @and_next_7:
-	cast t.41(41@function,i64), t.42(42@function,bool)
-	call _, printIntLf [t.41(41@function,i64)]
+	cast t.41, t.42
+	call _, printIntLf [t.41]
 	; 29:15 logic and
-	move t.44(44@function,bool), t(4@function,bool)
-	branch t.44(44@function,bool), false, @and_next_8
-	move t.44(44@function,bool), t(4@function,bool)
+	move t.44, t
+	branch t.44, false, @and_next_8
+	move t.44, t
 @and_next_8:
-	cast t.43(43@function,i64), t.44(44@function,bool)
-	call _, printIntLf [t.43(43@function,i64)]
-	const t.45(45@function,u8*), [string-4]
-	call _, printString [t.45(45@function,u8*)]
+	cast t.43, t.44
+	call _, printIntLf [t.43]
+	const t.45, [string-4]
+	call _, printString [t.45]
 	; 31:15 logic or
-	move t.47(47@function,bool), f(5@function,bool)
-	branch t.47(47@function,bool), true, @or_next_9
-	move t.47(47@function,bool), f(5@function,bool)
+	move t.47, f
+	branch t.47, true, @or_next_9
+	move t.47, f
 @or_next_9:
-	cast t.46(46@function,i64), t.47(47@function,bool)
-	call _, printIntLf [t.46(46@function,i64)]
+	cast t.46, t.47
+	call _, printIntLf [t.46]
 	; 32:15 logic or
-	move t.49(49@function,bool), f(5@function,bool)
-	branch t.49(49@function,bool), true, @or_next_10
-	move t.49(49@function,bool), t(4@function,bool)
+	move t.49, f
+	branch t.49, true, @or_next_10
+	move t.49, t
 @or_next_10:
-	cast t.48(48@function,i64), t.49(49@function,bool)
-	call _, printIntLf [t.48(48@function,i64)]
+	cast t.48, t.49
+	call _, printIntLf [t.48]
 	; 33:15 logic or
-	move t.51(51@function,bool), t(4@function,bool)
-	branch t.51(51@function,bool), true, @or_next_11
-	move t.51(51@function,bool), f(5@function,bool)
+	move t.51, t
+	branch t.51, true, @or_next_11
+	move t.51, f
 @or_next_11:
-	cast t.50(50@function,i64), t.51(51@function,bool)
-	call _, printIntLf [t.50(50@function,i64)]
+	cast t.50, t.51
+	call _, printIntLf [t.50]
 	; 34:15 logic or
-	move t.53(53@function,bool), t(4@function,bool)
-	branch t.53(53@function,bool), true, @or_next_12
-	move t.53(53@function,bool), t(4@function,bool)
+	move t.53, t
+	branch t.53, true, @or_next_12
+	move t.53, t
 @or_next_12:
-	cast t.52(52@function,i64), t.53(53@function,bool)
-	call _, printIntLf [t.52(52@function,i64)]
-	const t.54(54@function,u8*), [string-5]
-	call _, printString [t.54(54@function,u8*)]
-	notlog t.56(56@function,bool), f(5@function,bool)
-	cast t.55(55@function,i64), t.56(56@function,bool)
-	call _, printIntLf [t.55(55@function,i64)]
-	notlog t.58(58@function,bool), t(4@function,bool)
-	cast t.57(57@function,i64), t.58(58@function,bool)
-	call _, printIntLf [t.57(57@function,i64)]
-	const t.59(59@function,u8*), [string-6]
-	call _, printString [t.59(59@function,u8*)]
-	const b10(6@function,u8), 10
-	const b6(7@function,u8), 6
-	const b1(8@function,u8), 1
-	and t.62(62@function,u8), b10(6@function,u8), b6(7@function,u8)
-	or t.61(61@function,u8), t.62(62@function,u8), b1(8@function,u8)
-	cast t.60(60@function,i64), t.61(61@function,u8)
-	call _, printIntLf [t.60(60@function,i64)]
+	cast t.52, t.53
+	call _, printIntLf [t.52]
+	const t.54, [string-5]
+	call _, printString [t.54]
+	notlog t.56, f
+	cast t.55, t.56
+	call _, printIntLf [t.55]
+	notlog t.58, t
+	cast t.57, t.58
+	call _, printIntLf [t.57]
+	const t.59, [string-6]
+	call _, printString [t.59]
+	const b10, 10
+	const b6, 6
+	const b1, 1
+	and t.62, b10, b6
+	or t.61, t.62, b1
+	cast t.60, t.61
+	call _, printIntLf [t.60]
 	; 43:20 logic or
-	equals t.64(64@function,bool), b(1@function,i16), c(2@function,i16)
-	branch t.64(64@function,bool), true, @or_next_13
-	lt t.64(64@function,bool), c(2@function,i16), d(3@function,i16)
+	equals t.64, b, c
+	branch t.64, true, @or_next_13
+	lt t.64, c, d
 @or_next_13:
-	cast t.63(63@function,i64), t.64(64@function,bool)
-	call _, printIntLf [t.63(63@function,i64)]
+	cast t.63, t.64
+	call _, printIntLf [t.63]
 	; 44:20 logic and
-	equals t.66(66@function,bool), b(1@function,i16), c(2@function,i16)
-	branch t.66(66@function,bool), false, @and_next_14
-	lt t.66(66@function,bool), c(2@function,i16), d(3@function,i16)
+	equals t.66, b, c
+	branch t.66, false, @and_next_14
+	lt t.66, c, d
 @and_next_14:
-	cast t.65(65@function,i64), t.66(66@function,bool)
-	call _, printIntLf [t.65(65@function,i64)]
-	const t.68(68@function,i16), -1
-	cast t.67(67@function,i64), t.68(68@function,i16)
-	call _, printIntLf [t.67(67@function,i64)]
-	neg t.70(70@function,i16), b(1@function,i16)
-	cast t.69(69@function,i64), t.70(70@function,i16)
-	call _, printIntLf [t.69(69@function,i64)]
-	not t.72(72@function,u8), b1(8@function,u8)
-	cast t.71(71@function,i64), t.72(72@function,u8)
-	call _, printIntLf [t.71(71@function,i64)]
+	cast t.65, t.66
+	call _, printIntLf [t.65]
+	const t.68, -1
+	cast t.67, t.68
+	call _, printIntLf [t.67]
+	neg t.70, b
+	cast t.69, t.70
+	call _, printIntLf [t.69]
+	not t.72, b1
+	cast t.71, t.72
+	call _, printIntLf [t.71]
 @main_ret:
 
 String literals

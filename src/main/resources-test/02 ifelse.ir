@@ -4,9 +4,9 @@
 	var 1: t.1
 	var 2: t.2
 	; 12 pc
-	addrof t.1(1@function,u8*), chr(0@argument,u8)
-	const t.2(2@function,i64), 1
-	call _, printStringLength [t.1(1@function,u8*), t.2(2@function,i64)]
+	addrof t.1, chr
+	const t.2, 1
+	call _, printStringLength [t.1, t.2]
 @printChar_ret:
 
 @printUint:
@@ -33,39 +33,39 @@
 	var 19: t.19
 	var 20: t.20
 	; 122 pc
-	const pos(2@function,u8), 20
+	const pos, 20
 	; 13:2 while true
 @while_1:
-	const t.5(5@function,u8), 1
-	sub pos(2@function,u8), pos(2@function,u8), t.5(5@function,u8)
-	const t.6(6@function,i64), 10
-	mod remainder(3@function,i64), number(0@argument,i64), t.6(6@function,i64)
-	const t.7(7@function,i64), 10
-	div number(0@argument,i64), number(0@argument,i64), t.7(7@function,i64)
-	cast t.8(8@function,u8), remainder(3@function,i64)
-	const t.9(9@function,u8), 48
-	add digit(4@function,u8), t.8(8@function,u8), t.9(9@function,u8)
-	cast t.11(11@function,i64), pos(2@function,u8)
-	cast t.12(12@function,u8*), t.11(11@function,i64)
-	addrof t.10(10@function,u8*), [buffer(1@function,u8*)]
-	add t.10(10@function,u8*), t.10(10@function,u8*), t.12(12@function,u8*)
-	store [t.10(10@function,u8*)], digit(4@function,u8)
+	const t.5, 1
+	sub pos, pos, t.5
+	const t.6, 10
+	mod remainder, number, t.6
+	const t.7, 10
+	div number, number, t.7
+	cast t.8, remainder
+	const t.9, 48
+	add digit, t.8, t.9
+	cast t.11, pos
+	cast t.12, t.11
+	addrof t.10, [buffer]
+	add t.10, t.10, t.12
+	store [t.10], digit
 	; 19:3 if number == 0
-	const t.14(14@function,i64), 0
-	equals t.13(13@function,bool), number(0@argument,i64), t.14(14@function,i64)
-	branch t.13(13@function,bool), false, @if_2_end
+	const t.14, 0
+	equals t.13, number, t.14
+	branch t.13, false, @if_2_end
 	jump @while_1_break
 @if_2_end:
 	jump @while_1
 @while_1_break:
-	cast t.16(16@function,i64), pos(2@function,u8)
-	cast t.17(17@function,u8*), t.16(16@function,i64)
-	addrof t.15(15@function,u8*), [buffer(1@function,u8*)]
-	add t.15(15@function,u8*), t.15(15@function,u8*), t.17(17@function,u8*)
-	const t.20(20@function,u8), 20
-	sub t.19(19@function,u8), t.20(20@function,u8), pos(2@function,u8)
-	cast t.18(18@function,i64), t.19(19@function,u8)
-	call _, printStringLength [t.15(15@function,u8*), t.18(18@function,i64)]
+	cast t.16, pos
+	cast t.17, t.16
+	addrof t.15, [buffer]
+	add t.15, t.15, t.17
+	const t.20, 20
+	sub t.19, t.20, pos
+	cast t.18, t.19
+	call _, printStringLength [t.15, t.18]
 @printUint_ret:
 
 @printIntLf:
@@ -77,16 +77,16 @@
 	var 4: t.4
 	; 30 pc
 	; 27:2 if number < 0
-	const t.2(2@function,i64), 0
-	lt t.1(1@function,bool), number(0@argument,i64), t.2(2@function,i64)
-	branch t.1(1@function,bool), false, @if_3_end
-	const t.3(3@function,u8), 45
-	call _, printChar [t.3(3@function,u8)]
-	neg number(0@argument,i64), number(0@argument,i64)
+	const t.2, 0
+	lt t.1, number, t.2
+	branch t.1, false, @if_3_end
+	const t.3, 45
+	call _, printChar [t.3]
+	neg number, number
 @if_3_end:
-	call _, printUint [number(0@argument,i64)]
-	const t.4(4@function,u8), 10
-	call _, printChar [t.4(4@function,u8)]
+	call _, printUint [number]
+	const t.4, 10
+	call _, printChar [t.4]
 @printIntLf_ret:
 
 @printStringLength:
@@ -111,17 +111,17 @@
 	var 3: t.3
 	var 4: t.4
 	; 31 pc
-	const a(0@function,u8), 1
-	const b(1@function,u8), 2
+	const a, 1
+	const b, 2
 	; 6:2 if a > b
-	gt t.2(2@function,bool), a(0@function,u8), b(1@function,u8)
-	branch t.2(2@function,bool), false, @if_4_else
-	cast t.3(3@function,i64), a(0@function,u8)
-	call _, printIntLf [t.3(3@function,i64)]
+	gt t.2, a, b
+	branch t.2, false, @if_4_else
+	cast t.3, a
+	call _, printIntLf [t.3]
 	jump @if_4_end
 @if_4_else:
-	cast t.4(4@function,i64), b(1@function,u8)
-	call _, printIntLf [t.4(4@function,i64)]
+	cast t.4, b
+	call _, printIntLf [t.4]
 @if_4_end:
 @main_ret:
 

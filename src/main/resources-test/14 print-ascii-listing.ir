@@ -3,8 +3,8 @@
 	arg 0: str
 	var 1: length
 	; 10 pc
-	call length(1@function,i64), strlen, [str(0@argument,u8*)]
-	call _, printStringLength [str(0@argument,u8*), length(1@function,i64)]
+	call length, strlen, [str]
+	call _, printStringLength [str, length]
 @printString_ret:
 
 @printChar:
@@ -13,9 +13,9 @@
 	var 1: t.1
 	var 2: t.2
 	; 12 pc
-	addrof t.1(1@function,u8*), chr(0@argument,u8)
-	const t.2(2@function,i64), 1
-	call _, printStringLength [t.1(1@function,u8*), t.2(2@function,i64)]
+	addrof t.1, chr
+	const t.2, 1
+	call _, printStringLength [t.1, t.2]
 @printChar_ret:
 
 @strlen:
@@ -30,24 +30,24 @@
 	var 7: t.7
 	var 8: t.8
 	; 53 pc
-	const length(1@function,i64), 0
+	const length, 0
 	; 37:2 for *str != 0
 @for_1:
-	load t.3(3@function,u8), [str(0@argument,u8*)]
-	const t.4(4@function,u8), 0
-	notequals t.2(2@function,bool), t.3(3@function,u8), t.4(4@function,u8)
-	branch t.2(2@function,bool), false, @for_1_break
-	const t.5(5@function,i64), 1
-	add length(1@function,i64), length(1@function,i64), t.5(5@function,i64)
+	load t.3, [str]
+	const t.4, 0
+	notequals t.2, t.3, t.4
+	branch t.2, false, @for_1_break
+	const t.5, 1
+	add length, length, t.5
 @for_1_continue:
-	cast t.7(7@function,i64), str(0@argument,u8*)
-	const t.8(8@function,i64), 1
-	add t.6(6@function,i64), t.7(7@function,i64), t.8(8@function,i64)
-	cast str(0@argument,u8*), t.6(6@function,i64)
+	cast t.7, str
+	const t.8, 1
+	add t.6, t.7, t.8
+	cast str, t.6
 	jump @for_1
 @for_1_break:
 	; 40:9 return length
-	ret length(1@function,i64)
+	ret length
 	jump @strlen_ret
 @strlen_ret:
 
@@ -74,18 +74,18 @@
 	var 4: t.4
 	var 5: t.5
 	; 42 pc
-	const t.1(1@function,u8), 15
-	and x(0@argument,u8), x(0@argument,u8), t.1(1@function,u8)
+	const t.1, 15
+	and x, x, t.1
 	; 5:2 if x > 9
-	const t.3(3@function,u8), 9
-	gt t.2(2@function,bool), x(0@argument,u8), t.3(3@function,u8)
-	branch t.2(2@function,bool), false, @if_2_end
-	const t.4(4@function,u8), 7
-	add x(0@argument,u8), x(0@argument,u8), t.4(4@function,u8)
+	const t.3, 9
+	gt t.2, x, t.3
+	branch t.2, false, @if_2_end
+	const t.4, 7
+	add x, x, t.4
 @if_2_end:
-	const t.5(5@function,u8), 48
-	add x(0@argument,u8), x(0@argument,u8), t.5(5@function,u8)
-	call _, printChar [x(0@argument,u8)]
+	const t.5, 48
+	add x, x, t.5
+	call _, printChar [x]
 @printNibble_ret:
 
 @printHex2:
@@ -94,10 +94,10 @@
 	var 1: t.1
 	var 2: t.2
 	; 15 pc
-	const t.2(2@function,u8), 4
-	shiftright t.1(1@function,u8), x(0@argument,u8), t.2(2@function,u8)
-	call _, printNibble [t.1(1@function,u8)]
-	call _, printNibble [x(0@argument,u8)]
+	const t.2, 4
+	shiftright t.1, x, t.2
+	call _, printNibble [t.1]
+	call _, printNibble [x]
 @printHex2_ret:
 
 @main:
@@ -132,67 +132,67 @@
 	var 27: t.27
 	var 28: t.28
 	; 167 pc
-	const t.2(2@function,u8*), [string-0]
-	call _, printString [t.2(2@function,u8*)]
-	const i(0@function,u8), 0
+	const t.2, [string-0]
+	call _, printString [t.2]
+	const i, 0
 	; 19:2 for i < 16
 @for_3:
-	const t.4(4@function,u8), 16
-	lt t.3(3@function,bool), i(0@function,u8), t.4(4@function,u8)
-	branch t.3(3@function,bool), false, @for_3_break
+	const t.4, 16
+	lt t.3, i, t.4
+	branch t.3, false, @for_3_break
 	; 20:3 if i & 7 == 0
-	const t.7(7@function,u8), 7
-	and t.6(6@function,u8), i(0@function,u8), t.7(7@function,u8)
-	const t.8(8@function,u8), 0
-	equals t.5(5@function,bool), t.6(6@function,u8), t.8(8@function,u8)
-	branch t.5(5@function,bool), false, @if_4_end
-	const t.9(9@function,u8), 32
-	call _, printChar [t.9(9@function,u8)]
+	const t.7, 7
+	and t.6, i, t.7
+	const t.8, 0
+	equals t.5, t.6, t.8
+	branch t.5, false, @if_4_end
+	const t.9, 32
+	call _, printChar [t.9]
 @if_4_end:
-	call _, printNibble [i(0@function,u8)]
+	call _, printNibble [i]
 @for_3_continue:
-	const t.10(10@function,u8), 1
-	add i(0@function,u8), i(0@function,u8), t.10(10@function,u8)
+	const t.10, 1
+	add i, i, t.10
 	jump @for_3
 @for_3_break:
-	const t.11(11@function,u8), 10
-	call _, printChar [t.11(11@function,u8)]
-	const i(1@function,u8), 32
+	const t.11, 10
+	call _, printChar [t.11]
+	const i, 32
 	; 27:2 for i < 128
 @for_5:
-	const t.13(13@function,u8), 128
-	lt t.12(12@function,bool), i(1@function,u8), t.13(13@function,u8)
-	branch t.12(12@function,bool), false, @for_5_break
+	const t.13, 128
+	lt t.12, i, t.13
+	branch t.12, false, @for_5_break
 	; 28:3 if i & 15 == 0
-	const t.16(16@function,u8), 15
-	and t.15(15@function,u8), i(1@function,u8), t.16(16@function,u8)
-	const t.17(17@function,u8), 0
-	equals t.14(14@function,bool), t.15(15@function,u8), t.17(17@function,u8)
-	branch t.14(14@function,bool), false, @if_6_end
-	call _, printHex2 [i(1@function,u8)]
+	const t.16, 15
+	and t.15, i, t.16
+	const t.17, 0
+	equals t.14, t.15, t.17
+	branch t.14, false, @if_6_end
+	call _, printHex2 [i]
 @if_6_end:
 	; 31:3 if i & 7 == 0
-	const t.20(20@function,u8), 7
-	and t.19(19@function,u8), i(1@function,u8), t.20(20@function,u8)
-	const t.21(21@function,u8), 0
-	equals t.18(18@function,bool), t.19(19@function,u8), t.21(21@function,u8)
-	branch t.18(18@function,bool), false, @if_7_end
-	const t.22(22@function,u8), 32
-	call _, printChar [t.22(22@function,u8)]
+	const t.20, 7
+	and t.19, i, t.20
+	const t.21, 0
+	equals t.18, t.19, t.21
+	branch t.18, false, @if_7_end
+	const t.22, 32
+	call _, printChar [t.22]
 @if_7_end:
-	call _, printChar [i(1@function,u8)]
+	call _, printChar [i]
 	; 35:3 if i & 15 == 15
-	const t.25(25@function,u8), 15
-	and t.24(24@function,u8), i(1@function,u8), t.25(25@function,u8)
-	const t.26(26@function,u8), 15
-	equals t.23(23@function,bool), t.24(24@function,u8), t.26(26@function,u8)
-	branch t.23(23@function,bool), false, @if_8_end
-	const t.27(27@function,u8), 10
-	call _, printChar [t.27(27@function,u8)]
+	const t.25, 15
+	and t.24, i, t.25
+	const t.26, 15
+	equals t.23, t.24, t.26
+	branch t.23, false, @if_8_end
+	const t.27, 10
+	call _, printChar [t.27]
 @if_8_end:
 @for_5_continue:
-	const t.28(28@function,u8), 1
-	add i(1@function,u8), i(1@function,u8), t.28(28@function,u8)
+	const t.28, 1
+	add i, i, t.28
 	jump @for_5
 @for_5_break:
 @main_ret:
