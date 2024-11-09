@@ -342,25 +342,8 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 5:2 while i > 0
-@while_4:
-        ; const t.2, 0
-        mov al, 0
-        lea rbx, [rsp+2]
-        mov [rbx], al
-        ; gt t.1, i, t.2
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+2]
-        mov cl, [rax]
-        cmp bl, cl
-        seta bl
-        lea rax, [rsp+1]
-        mov [rax], bl
-        ; branch t.1, false, @while_5
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        or bl, bl
-        jz @while_5
+        jmp @while_4
+@while_4_body:
         ; cast t.3(i64), i(u8)
         lea rax, [rsp+0]
         mov bl, [rax]
@@ -385,7 +368,25 @@ start:
         sub bl, cl
         lea rax, [rsp+0]
         mov [rax], bl
-        jmp @while_4
+@while_4:
+        ; const t.2, 0
+        mov al, 0
+        lea rbx, [rsp+2]
+        mov [rbx], al
+        ; gt t.1, i, t.2
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        lea rax, [rsp+2]
+        mov cl, [rax]
+        cmp bl, cl
+        seta bl
+        lea rax, [rsp+1]
+        mov [rax], bl
+        ; branch t.1, true, @while_4_body
+        lea rax, [rsp+1]
+        mov bl, [rax]
+        or bl, bl
+        jnz @while_4_body
 @while_5:
         ; cast t.5(i64), i(u8)
         lea rax, [rsp+0]
