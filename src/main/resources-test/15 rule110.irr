@@ -31,12 +31,8 @@
 	const r0, 0
 	; 37:2 for *str != 0
 	move length, r0
-@for_1:
-	move r0, str
-	load r1, [r0]
-	const r2, 0
-	notequals r1, r1, r2
-	branch r1, false, @for_1_break
+	jump @for_1
+@for_1_body:
 	const r0, 1
 	move r1, length
 	add r0, r1, r0
@@ -47,8 +43,12 @@
 	cast r1(u8*), r1(i64)
 	move length, r0
 	move str, r1
-	jump @for_1
-@for_1_break:
+@for_1:
+	move r0, str
+	load r1, [r0]
+	const r2, 0
+	notequals r1, r1, r2
+	branch r1, true, @for_1_body
 	; 40:9 return length
 	move r0, length
 	ret r0
@@ -75,11 +75,8 @@
 	const r0, 0
 	; 11:2 for i < 30
 	move i, r0
-@for_2:
-	const r0, 30
-	move r1, i
-	lt r0, r1, r0
-	branch r0, false, @for_2_break
+	jump @for_2
+@for_2_body:
 	; 12:3 if [...] == 0
 	move r0, i
 	cast r1(i64), r0(u8)
@@ -101,8 +98,11 @@
 	move r1, i
 	add r0, r1, r0
 	move i, r0
-	jump @for_2
-@for_2_break:
+@for_2:
+	const r0, 30
+	move r1, i
+	lt r0, r1, r0
+	branch r0, true, @for_2_body
 	const r0, [string-0]
 	call _, printString [r0]
 
@@ -163,11 +163,8 @@
 	const r0, 0
 	; 23:2 for i < 30
 	move i, r0
-@for_4:
-	const r0, 30
-	move r1, i
-	lt r0, r1, r0
-	branch r0, false, @for_4_break
+	jump @for_4
+@for_4_body:
 	const r0, 0
 	move r1, i
 	cast r2(i64), r1(u8)
@@ -178,8 +175,11 @@
 	const r0, 1
 	add r0, r1, r0
 	move i, r0
-	jump @for_4
-@for_4_break:
+@for_4:
+	const r0, 30
+	move r1, i
+	lt r0, r1, r0
+	branch r0, true, @for_4_body
 	const r0, 1
 	const r1, 29
 	cast r1(i64), r1(u8)
@@ -191,11 +191,8 @@
 	const r0, 0
 	; 30:2 for i < 28
 	move i, r0
-@for_5:
-	const r0, 28
-	move r1, i
-	lt r0, r1, r0
-	branch r0, false, @main_ret
+	jump @for_5
+@for_5_body:
 	const r0, 0
 	cast r0(u8*), r0(i64)
 	addrof r1, [board]
@@ -213,11 +210,8 @@
 	; 32:3 for j < 29
 	move pattern, r0
 	move j, r1
-@for_6:
-	const r0, 29
-	move r1, j
-	lt r0, r1, r0
-	branch r0, false, @for_6_break
+	jump @for_6
+@for_6_body:
 	const r0, 1
 	move r1, pattern
 	shiftleft r0, r1, r0
@@ -247,15 +241,21 @@
 	add r1, r2, r1
 	move pattern, r0
 	move j, r1
-	jump @for_6
-@for_6_break:
+@for_6:
+	const r0, 29
+	move r1, j
+	lt r0, r1, r0
+	branch r0, true, @for_6_body
 	call _, printBoard []
 	const r0, 1
 	move r1, i
 	add r0, r1, r0
 	move i, r0
-	jump @for_5
-@main_ret:
+@for_5:
+	const r0, 28
+	move r1, i
+	lt r0, r1, r0
+	branch r0, true, @for_5_body
 
 @printStringLength:
 	mov     rdi, rsp

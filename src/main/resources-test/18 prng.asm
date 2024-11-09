@@ -391,18 +391,8 @@ start:
         ; move i, r0
         lea rax, [rsp+0]
         mov [rax], cl
-@for_4:
-        ; const r0, 50
-        mov cl, 50
-        ; move r1, i
-        lea rax, [rsp+0]
-        mov dl, [rax]
-        ; lt r0, r1, r0
-        cmp dl, cl
-        setb cl
-        ; branch r0, false, @main_ret
-        or cl, cl
-        jz @main_ret
+        jmp @for_4
+@for_4_body:
         ; call r0, randomU8, []
         sub rsp, 8
           call @randomU8
@@ -426,8 +416,18 @@ start:
         ; move i, r0
         lea rax, [rsp+0]
         mov [rax], cl
-        jmp @for_4
-@main_ret:
+@for_4:
+        ; const r0, 50
+        mov cl, 50
+        ; move r1, i
+        lea rax, [rsp+0]
+        mov dl, [rax]
+        ; lt r0, r1, r0
+        cmp dl, cl
+        setb cl
+        ; branch r0, true, @for_4_body
+        or cl, cl
+        jnz @for_4_body
         ; release space for local variables
         add rsp, 32
         ret

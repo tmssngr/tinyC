@@ -237,18 +237,8 @@ start:
         ; move i, r0
         lea rax, [rsp+0]
         mov [rax], cl
-@while_4:
-        ; const r0, 0
-        mov cl, 0
-        ; move r1, i
-        lea rax, [rsp+0]
-        mov dl, [rax]
-        ; gt r0, r1, r0
-        cmp dl, cl
-        seta cl
-        ; branch r0, false, @while_5
-        or cl, cl
-        jz @while_5
+        jmp @while_4
+@while_4_body:
         ; move r0, i
         lea rax, [rsp+0]
         mov cl, [rax]
@@ -270,7 +260,18 @@ start:
         ; move i, r0
         lea rax, [rsp+0]
         mov [rax], cl
-        jmp @while_4
+@while_4:
+        ; const r0, 0
+        mov cl, 0
+        ; move r1, i
+        lea rax, [rsp+0]
+        mov dl, [rax]
+        ; gt r0, r1, r0
+        cmp dl, cl
+        seta cl
+        ; branch r0, true, @while_4_body
+        or cl, cl
+        jnz @while_4_body
 @while_5:
         ; move r0, i
         lea rax, [rsp+0]

@@ -93,12 +93,8 @@
 	const r0, 0
 	; 37:2 for *str != 0
 	move length, r0
-@for_3:
-	move r0, str
-	load r1, [r0]
-	const r2, 0
-	notequals r1, r1, r2
-	branch r1, false, @for_3_break
+	jump @for_3
+@for_3_body:
 	const r0, 1
 	move r1, length
 	add r0, r1, r0
@@ -109,8 +105,12 @@
 	cast r1(u8*), r1(i64)
 	move length, r0
 	move str, r1
-	jump @for_3
-@for_3_break:
+@for_3:
+	move r0, str
+	load r1, [r0]
+	const r2, 0
+	notequals r1, r1, r2
+	branch r1, true, @for_3_body
 	; 40:9 return length
 	move r0, length
 	ret r0
@@ -343,11 +343,8 @@
 	; 45:2 for dr <= 1
 	move count, r0
 	move dr, r1
-@for_7:
-	const r0, 1
-	move r1, dr
-	lteq r0, r1, r0
-	branch r0, false, @for_7_break
+	jump @for_7
+@for_7_body:
 	move r0, row
 	move r1, r0
 	move r2, dr
@@ -356,11 +353,8 @@
 	; 47:3 for dc <= 1
 	move r, r1
 	move dc, r3
-@for_8:
-	const r0, 1
-	move r1, dc
-	lteq r0, r1, r0
-	branch r0, false, @for_8_break
+	jump @for_8
+@for_8_body:
 	move r0, column
 	move r1, r0
 	move r2, dc
@@ -382,14 +376,20 @@
 	move r1, dc
 	add r0, r1, r0
 	move dc, r0
-	jump @for_8
-@for_8_break:
+@for_8:
+	const r0, 1
+	move r1, dc
+	lteq r0, r1, r0
+	branch r0, true, @for_8_body
 	const r0, 1
 	move r1, dr
 	add r0, r1, r0
 	move dr, r0
-	jump @for_7
-@for_7_break:
+@for_7:
+	const r0, 1
+	move r1, dr
+	lteq r0, r1, r0
+	branch r0, true, @for_7_body
 	; 57:9 return count
 	move r0, count
 	ret r0
@@ -522,21 +522,15 @@
 	const r0, 0
 	; 96:2 for row < 20
 	move row, r0
-@for_18:
-	const r0, 20
-	move r1, row
-	lt r0, r1, r0
-	branch r0, false, @printField_ret
+	jump @for_18
+@for_18_body:
 	const r0, 124
 	call _, printChar [r0]
 	const r0, 0
 	; 98:3 for column < 40
 	move column, r0
-@for_19:
-	const r0, 40
-	move r1, column
-	lt r0, r1, r0
-	branch r0, false, @for_19_break
+	jump @for_19
+@for_19_body:
 	call r0, getSpacer, [row, column, rowCursor, columnCursor]
 	call _, printChar [r0]
 	call r0, getCell, [row, column]
@@ -545,8 +539,11 @@
 	move r1, column
 	add r0, r1, r0
 	move column, r0
-	jump @for_19
-@for_19_break:
+@for_19:
+	const r0, 40
+	move r1, column
+	lt r0, r1, r0
+	branch r0, true, @for_19_body
 	const r0, 40
 	call r0, getSpacer, [row, r0, rowCursor, columnCursor]
 	call _, printChar [r0]
@@ -556,8 +553,11 @@
 	move r1, row
 	add r0, r1, r0
 	move row, r0
-	jump @for_18
-@printField_ret:
+@for_18:
+	const r0, 20
+	move r1, row
+	lt r0, r1, r0
+	branch r0, true, @for_18_body
 
 @printSpaces:
  Local variables
@@ -567,19 +567,19 @@
 	var 3: t.3 (u8/1)
 	var 4: t.4 (i16/2)
 	; 14 pc
-@for_20:
-	const r0, 0
-	move r1, i
-	gt r0, r1, r0
-	branch r0, false, @printSpaces_ret
+	jump @for_20
+@for_20_body:
 	const r0, 48
 	call _, printChar [r0]
 	const r0, 1
 	move r1, i
 	sub r0, r1, r0
 	move i, r0
-	jump @for_20
-@printSpaces_ret:
+@for_20:
+	const r0, 0
+	move r1, i
+	gt r0, r1, r0
+	branch r0, true, @for_20_body
 
 @getDigitCount:
  Local variables
@@ -644,19 +644,13 @@
 	; 136:2 for r < 20
 	move count, r0
 	move r, r1
-@for_24:
-	const r0, 20
-	move r1, r
-	lt r0, r1, r0
-	branch r0, false, @for_24_break
+	jump @for_24
+@for_24_body:
 	const r0, 0
 	; 137:3 for c < 40
 	move c, r0
-@for_25:
-	const r0, 40
-	move r1, c
-	lt r0, r1, r0
-	branch r0, false, @for_25_break
+	jump @for_25
+@for_25_body:
 	call r0, getCell, [r, c]
 	; 139:4 if cell & 6 == 0
 	const r1, 6
@@ -673,14 +667,20 @@
 	move r1, c
 	add r0, r1, r0
 	move c, r0
-	jump @for_25
-@for_25_break:
+@for_25:
+	const r0, 40
+	move r1, c
+	lt r0, r1, r0
+	branch r0, true, @for_25_body
 	const r0, 1
 	move r1, r
 	add r0, r1, r0
 	move r, r0
-	jump @for_24
-@for_24_break:
+@for_24:
+	const r0, 20
+	move r1, r
+	lt r0, r1, r0
+	branch r0, true, @for_24_body
 	; 144:9 return count
 	move r0, count
 	ret r0
@@ -761,33 +761,33 @@
 	const r0, 0
 	; 166:2 for r < 20
 	move r, r0
-@for_28:
-	const r0, 20
-	move r1, r
-	lt r0, r1, r0
-	branch r0, false, @clearField_ret
+	jump @for_28
+@for_28_body:
 	const r0, 0
 	; 167:3 for c < 40
 	move c, r0
-@for_29:
-	const r0, 40
-	move r1, c
-	lt r0, r1, r0
-	branch r0, false, @for_29_break
+	jump @for_29
+@for_29_body:
 	const r0, 0
 	call _, setCell [r, c, r0]
 	const r0, 1
 	move r1, c
 	add r0, r1, r0
 	move c, r0
-	jump @for_29
-@for_29_break:
+@for_29:
+	const r0, 40
+	move r1, c
+	lt r0, r1, r0
+	branch r0, true, @for_29_body
 	const r0, 1
 	move r1, r
 	add r0, r1, r0
 	move r, r0
-	jump @for_28
-@clearField_ret:
+@for_28:
+	const r0, 20
+	move r1, r
+	lt r0, r1, r0
+	branch r0, true, @for_28_body
 
 @initField:
  Local variables
@@ -817,11 +817,8 @@
 	const r0, 40
 	; 174:2 for bombs > 0
 	move bombs, r0
-@for_30:
-	const r0, 0
-	move r1, bombs
-	gt r0, r1, r0
-	branch r0, false, @initField_ret
+	jump @for_30
+@for_30_body:
 	call r0, random, []
 	const r1, 20
 	mod r0, r0, r1
@@ -861,8 +858,11 @@
 	move r1, bombs
 	sub r0, r1, r0
 	move bombs, r0
-	jump @for_30
-@initField_ret:
+@for_30:
+	const r0, 0
+	move r1, bombs
+	gt r0, r1, r0
+	branch r0, true, @for_30_body
 
 @maybeRevealAround:
  Local variables
@@ -899,11 +899,8 @@
 	const r0, -1
 	; 189:2 for dr <= 1
 	move dr, r0
-@for_34:
-	const r0, 1
-	move r1, dr
-	lteq r0, r1, r0
-	branch r0, false, @maybeRevealAround_ret
+	jump @for_34
+@for_34_body:
 	move r0, row
 	move r1, r0
 	move r2, dr
@@ -912,11 +909,8 @@
 	; 191:3 for dc <= 1
 	move r, r1
 	move dc, r3
-@for_35:
-	const r0, 1
-	move r1, dc
-	lteq r0, r1, r0
-	branch r0, false, @for_35_break
+	jump @for_35
+@for_35_body:
 	; 192:4 if dr == 0 && dc == 0
 	; 192:16 logic and
 	const r0, 0
@@ -955,13 +949,20 @@
 	move r1, dc
 	add r0, r1, r0
 	move dc, r0
-	jump @for_35
-@for_35_break:
+@for_35:
+	const r0, 1
+	move r1, dc
+	lteq r0, r1, r0
+	branch r0, true, @for_35_body
 	const r0, 1
 	move r1, dr
 	add r0, r1, r0
 	move dr, r0
-	jump @for_34
+@for_34:
+	const r0, 1
+	move r1, dr
+	lteq r0, r1, r0
+	branch r0, true, @for_34_body
 @maybeRevealAround_ret:
 
 @main:
@@ -1025,7 +1026,7 @@
 	var 56: t.56 (u8/1)
 	var 57: t.57 (bool/1)
 	var 58: t.58 (u8*/8)
-	; 201 pc
+	; 202 pc
 	; begin initialize global variables
 	const r0, 0
 	; end initialize global variables
@@ -1042,12 +1043,8 @@
 	; 218:2 while true
 	move curr_c, r0
 	move curr_r, r1
-@while_40:
-	call _, printField [curr_r, curr_c]
-	; 220:3 if !needsInitialize
-	move r0, needsInitialize
-	notlog r1, r0
-	branch r1, false, @if_41_end
+	jump @while_40
+@if_41_then:
 	; 221:4 if printLeft([])
 	call r0, printLeft, []
 	branch r0, true, @if_42_then
@@ -1186,7 +1183,13 @@
 	call r0, isBomb, [cell]
 	branch r0, true, @if_55_then
 	call _, maybeRevealAround [curr_r, curr_c]
-	jump @while_40
+@while_40:
+	call _, printField [curr_r, curr_c]
+	; 220:3 if !needsInitialize
+	move r0, needsInitialize
+	notlog r1, r0
+	branch r1, false, @if_41_end
+	jump @if_41_then
 @if_42_then:
 	const r0, [string-2]
 	call _, printString [r0]

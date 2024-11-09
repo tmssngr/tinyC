@@ -13,11 +13,11 @@ digraph program {
 	subgraph fn_strlen {
 		BasicBlock_2_strlen [label="strlen",shape=box];
 		BasicBlock_2_strlen -> BasicBlock_2_for_1 [label="(length,str)"];
+		BasicBlock_2_for_1_body [label="for_1_body",shape=box];
+		BasicBlock_2_for_1_body -> BasicBlock_2_for_1 [label="(length,str)"];
 		BasicBlock_2_for_1 [label="for_1",shape=hexagon];
 		BasicBlock_2_for_1 -> BasicBlock_2_for_1_break [label="(length)"];
 		BasicBlock_2_for_1 -> BasicBlock_2_for_1_body [label="(length,str)"];
-		BasicBlock_2_for_1_body [label="for_1_body",shape=box];
-		BasicBlock_2_for_1_body -> BasicBlock_2_for_1 [label="(length,str)"];
 		BasicBlock_2_for_1_break [label="for_1_break",shape=box];
 		BasicBlock_2_for_1_break -> BasicBlock_2_strlen_ret;
 		BasicBlock_2_strlen_ret [label="strlen_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -42,9 +42,6 @@ digraph program {
 	subgraph fn_main {
 		BasicBlock_5_main [label="main",shape=box];
 		BasicBlock_5_main -> BasicBlock_5_for_3 [label="(i)"];
-		BasicBlock_5_for_3 [label="for_3",shape=hexagon];
-		BasicBlock_5_for_3 -> BasicBlock_5_for_3_break;
-		BasicBlock_5_for_3 -> BasicBlock_5_no_critical_edge_18 [label="(i)"];
 		BasicBlock_5_no_critical_edge_18 [label="no_critical_edge_18",shape=box];
 		BasicBlock_5_no_critical_edge_18 -> BasicBlock_5_for_3_body [label="(i)"];
 		BasicBlock_5_for_3_body [label="for_3_body",shape=hexagon];
@@ -58,11 +55,11 @@ digraph program {
 		BasicBlock_5_if_4_end -> BasicBlock_5_for_3_continue [label="(i)"];
 		BasicBlock_5_for_3_continue [label="for_3_continue",shape=box];
 		BasicBlock_5_for_3_continue -> BasicBlock_5_for_3 [label="(i)"];
+		BasicBlock_5_for_3 [label="for_3",shape=hexagon];
+		BasicBlock_5_for_3 -> BasicBlock_5_for_3_break;
+		BasicBlock_5_for_3 -> BasicBlock_5_no_critical_edge_18 [label="(i)"];
 		BasicBlock_5_for_3_break [label="for_3_break",shape=box];
 		BasicBlock_5_for_3_break -> BasicBlock_5_for_5 [label="(i)"];
-		BasicBlock_5_for_5 [label="for_5",shape=hexagon];
-		BasicBlock_5_for_5 -> BasicBlock_5_for_5_break;
-		BasicBlock_5_for_5 -> BasicBlock_5_no_critical_edge_19 [label="(i)"];
 		BasicBlock_5_no_critical_edge_19 [label="no_critical_edge_19",shape=box];
 		BasicBlock_5_no_critical_edge_19 -> BasicBlock_5_for_5_body [label="(i)"];
 		BasicBlock_5_for_5_body [label="for_5_body",shape=hexagon];
@@ -90,6 +87,9 @@ digraph program {
 		BasicBlock_5_if_8_end -> BasicBlock_5_for_5_continue [label="(i)"];
 		BasicBlock_5_for_5_continue [label="for_5_continue",shape=box];
 		BasicBlock_5_for_5_continue -> BasicBlock_5_for_5 [label="(i)"];
+		BasicBlock_5_for_5 [label="for_5",shape=hexagon];
+		BasicBlock_5_for_5 -> BasicBlock_5_for_5_break;
+		BasicBlock_5_for_5 -> BasicBlock_5_no_critical_edge_19 [label="(i)"];
 		BasicBlock_5_for_5_break [label="for_5_break",shape=box];
 		BasicBlock_5_for_5_break -> BasicBlock_5_main_ret;
 		BasicBlock_5_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];

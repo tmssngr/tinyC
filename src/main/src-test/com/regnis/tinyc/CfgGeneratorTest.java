@@ -43,13 +43,13 @@ public class CfgGeneratorTest {
 						new IRJump("endlessloop")
 				), List.of(), List.of("endlessloop")),
 
-				new BasicBlock("endlessloop", List.of(
-						new IRJump("@no_critical_edge_2")
-				), List.of("start", "@no_critical_edge_2"), List.of("@no_critical_edge_2")),
-
 				new BasicBlock("@no_critical_edge_2", List.of(
 						new IRJump("endlessloop")
-				), List.of("endlessloop"), List.of("endlessloop"))
+				), List.of("endlessloop"), List.of("endlessloop")),
+
+				new BasicBlock("endlessloop", List.of(
+						new IRJump("@no_critical_edge_2")
+				), List.of("start", "@no_critical_edge_2"), List.of("@no_critical_edge_2"))
 		), cfg.blocks());
 	}
 }

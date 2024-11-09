@@ -146,20 +146,32 @@ public class CfgLoopInfos {
 		while (!pendingStack.isEmpty()) {
 			final String name = pendingStack.removeLast();
 			blocksInOrder.add(name);
-			final BlockInfo block = getBlock(name);
-			final List<String> successors = block.successors();
-			for (String successor : successors) {
-				final BlockInfo successorBlock = getBlock(successor);
-				successorBlock.incomingForwardEdgeCount--;
-				final boolean isReadyForProcessing = successorBlock.incomingForwardEdgeCount == 0;
-				if (isReadyForProcessing) {
-					sortIntoStack(successor, pendingStack);
+			processBlock(name, pendingStack);
+		}
+	}
+
+	private void processBlock(String name, List<String> pendingStack) {
+		final BlockInfo block = getBlock(name);
+		final List<String> successors = block.successors();
+		for (String successor : successors) {
+			final BlockInfo successorBlock = getBlock(successor);
+			successorBlock.incomingForwardEdgeCount--;
+			final boolean isReadyForProcessing = successorBlock.incomingForwardEdgeCount == 0;
+			if (isReadyForProcessing) {
+				sortIntoStack(successor, pendingStack);
+				if (isLoopHeader(successor)) {
+					processBlock(successor, pendingStack);
 				}
 			}
 		}
 	}
 
 	private void sortIntoStack(String name, List<String> pendingStack) {
+		if (pendingStack.isEmpty()) {
+			pendingStack.add(name);
+			return;
+		}
+
 		final int weight = getWeight(name);
 		int i = pendingStack.size();
 		while (i-- > 0) {

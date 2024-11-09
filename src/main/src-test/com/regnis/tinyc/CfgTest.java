@@ -52,7 +52,7 @@ public class CfgTest {
 				               List.of())
 		);
 		final List<String> order = visitInPostOrder(blocks);
-		Assert.assertEquals(List.of("start", "loop", "body", "break"), order);
+		Assert.assertEquals(List.of("start", "body", "loop", "break"), order);
 	}
 
 	@NotNull

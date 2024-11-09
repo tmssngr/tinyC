@@ -41,14 +41,14 @@ public class CfgLoopInfosTest {
 		}
 		assertEquals(List.of(
 				pair("a", 0),
-				pair("bb", 1),
 				pair("cc", 1),
-				pair("ddd", 2),
 				pair("eee", 2),
+				pair("ddd", 2),
 				pair("ff", 1),
+				pair("bb", 1),
 				pair("g", 0),
-				pair("hh", 1),
 				pair("ii", 1),
+				pair("hh", 1),
 				pair("j", 0)
 		), nameToLoopLevel);
 	}

@@ -260,20 +260,8 @@ start:
         ; move length, r0
         lea rax, [rsp+0]
         mov [rax], rcx
-@for_4:
-        ; move r0, str
-        lea rax, [rsp+56]
-        mov rcx, [rax]
-        ; load r1, [r0]
-        mov dl, [rcx]
-        ; const r2, 0
-        mov r9b, 0
-        ; notequals r1, r1, r2
-        cmp dl, r9b
-        setne dl
-        ; branch r1, false, @for_4_break
-        or dl, dl
-        jz @for_4_break
+        jmp @for_4
+@for_4_body:
         ; const r0, 1
         mov rcx, 1
         ; move r1, length
@@ -298,8 +286,20 @@ start:
         ; move str, r1
         lea rax, [rsp+56]
         mov [rax], rdx
-        jmp @for_4
-@for_4_break:
+@for_4:
+        ; move r0, str
+        lea rax, [rsp+56]
+        mov rcx, [rax]
+        ; load r1, [r0]
+        mov dl, [rcx]
+        ; const r2, 0
+        mov r9b, 0
+        ; notequals r1, r1, r2
+        cmp dl, r9b
+        setne dl
+        ; branch r1, true, @for_4_body
+        or dl, dl
+        jnz @for_4_body
         ; 40:9 return length
         ; move r0, length
         lea rax, [rsp+0]

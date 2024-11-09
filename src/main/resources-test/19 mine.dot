@@ -13,11 +13,11 @@ digraph program {
 	subgraph fn_printUint {
 		BasicBlock_2_printUint [label="printUint",shape=box];
 		BasicBlock_2_printUint -> BasicBlock_2_while_1 [label="(number,pos)"];
+		BasicBlock_2_if_2_end [label="if_2_end",shape=box];
+		BasicBlock_2_if_2_end -> BasicBlock_2_while_1 [label="(number,pos)"];
 		BasicBlock_2_while_1 [label="while_1",shape=hexagon];
 		BasicBlock_2_while_1 -> BasicBlock_2_if_2_end [label="(number,pos)"];
 		BasicBlock_2_while_1 -> BasicBlock_2_if_2_then [label="(pos)"];
-		BasicBlock_2_if_2_end [label="if_2_end",shape=box];
-		BasicBlock_2_if_2_end -> BasicBlock_2_while_1 [label="(number,pos)"];
 		BasicBlock_2_if_2_then [label="if_2_then",shape=box];
 		BasicBlock_2_if_2_then -> BasicBlock_2_printUint_ret;
 		BasicBlock_2_printUint_ret [label="printUint_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -25,11 +25,11 @@ digraph program {
 	subgraph fn_strlen {
 		BasicBlock_3_strlen [label="strlen",shape=box];
 		BasicBlock_3_strlen -> BasicBlock_3_for_3 [label="(length,str)"];
+		BasicBlock_3_for_3_body [label="for_3_body",shape=box];
+		BasicBlock_3_for_3_body -> BasicBlock_3_for_3 [label="(length,str)"];
 		BasicBlock_3_for_3 [label="for_3",shape=hexagon];
 		BasicBlock_3_for_3 -> BasicBlock_3_for_3_break [label="(length)"];
 		BasicBlock_3_for_3 -> BasicBlock_3_for_3_body [label="(length,str)"];
-		BasicBlock_3_for_3_body [label="for_3_body",shape=box];
-		BasicBlock_3_for_3_body -> BasicBlock_3_for_3 [label="(length,str)"];
 		BasicBlock_3_for_3_break [label="for_3_break",shape=box];
 		BasicBlock_3_for_3_break -> BasicBlock_3_strlen_ret;
 		BasicBlock_3_strlen_ret [label="strlen_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -103,14 +103,8 @@ digraph program {
 	subgraph fn_getBombCountAround {
 		BasicBlock_13_getBombCountAround [label="getBombCountAround",shape=box];
 		BasicBlock_13_getBombCountAround -> BasicBlock_13_for_7 [label="(column,count,dr,row)"];
-		BasicBlock_13_for_7 [label="for_7",shape=hexagon];
-		BasicBlock_13_for_7 -> BasicBlock_13_for_7_break [label="(count)"];
-		BasicBlock_13_for_7 -> BasicBlock_13_for_7_body [label="(column,count,dr,row)"];
 		BasicBlock_13_for_7_body [label="for_7_body",shape=box];
 		BasicBlock_13_for_7_body -> BasicBlock_13_for_8 [label="(column,count,dc,dr,r,row)"];
-		BasicBlock_13_for_8 [label="for_8",shape=hexagon];
-		BasicBlock_13_for_8 -> BasicBlock_13_for_8_break [label="(column,count,dr,row)"];
-		BasicBlock_13_for_8 -> BasicBlock_13_no_critical_edge_14 [label="(column,count,dc,dr,r,row)"];
 		BasicBlock_13_no_critical_edge_14 [label="no_critical_edge_14",shape=box];
 		BasicBlock_13_no_critical_edge_14 -> BasicBlock_13_for_8_body [label="(column,count,dc,dr,r,row)"];
 		BasicBlock_13_for_8_body [label="for_8_body",shape=hexagon];
@@ -135,8 +129,14 @@ digraph program {
 		BasicBlock_13_if_9_end -> BasicBlock_13_for_8_continue [label="(column,count,dc,dr,r,row)"];
 		BasicBlock_13_for_8_continue [label="for_8_continue",shape=box];
 		BasicBlock_13_for_8_continue -> BasicBlock_13_for_8 [label="(column,count,dc,dr,r,row)"];
+		BasicBlock_13_for_8 [label="for_8",shape=hexagon];
+		BasicBlock_13_for_8 -> BasicBlock_13_for_8_break [label="(column,count,dr,row)"];
+		BasicBlock_13_for_8 -> BasicBlock_13_no_critical_edge_14 [label="(column,count,dc,dr,r,row)"];
 		BasicBlock_13_for_8_break [label="for_8_break",shape=box];
 		BasicBlock_13_for_8_break -> BasicBlock_13_for_7 [label="(column,count,dr,row)"];
+		BasicBlock_13_for_7 [label="for_7",shape=hexagon];
+		BasicBlock_13_for_7 -> BasicBlock_13_for_7_break [label="(count)"];
+		BasicBlock_13_for_7 -> BasicBlock_13_for_7_body [label="(column,count,dr,row)"];
 		BasicBlock_13_for_7_break [label="for_7_break",shape=box];
 		BasicBlock_13_for_7_break -> BasicBlock_13_getBombCountAround_ret;
 		BasicBlock_13_getBombCountAround_ret [label="getBombCountAround_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -217,18 +217,18 @@ digraph program {
 	subgraph fn_printField {
 		BasicBlock_16_printField [label="printField",shape=box];
 		BasicBlock_16_printField -> BasicBlock_16_for_18 [label="(columnCursor,row,rowCursor)"];
-		BasicBlock_16_for_18 [label="for_18",shape=hexagon];
-		BasicBlock_16_for_18 -> BasicBlock_16_for_18_break;
-		BasicBlock_16_for_18 -> BasicBlock_16_for_18_body [label="(columnCursor,row,rowCursor)"];
 		BasicBlock_16_for_18_body [label="for_18_body",shape=box];
 		BasicBlock_16_for_18_body -> BasicBlock_16_for_19 [label="(column,columnCursor,row,rowCursor)"];
+		BasicBlock_16_for_19_body [label="for_19_body",shape=box];
+		BasicBlock_16_for_19_body -> BasicBlock_16_for_19 [label="(column,columnCursor,row,rowCursor)"];
 		BasicBlock_16_for_19 [label="for_19",shape=hexagon];
 		BasicBlock_16_for_19 -> BasicBlock_16_for_19_break [label="(columnCursor,row,rowCursor)"];
 		BasicBlock_16_for_19 -> BasicBlock_16_for_19_body [label="(column,columnCursor,row,rowCursor)"];
-		BasicBlock_16_for_19_body [label="for_19_body",shape=box];
-		BasicBlock_16_for_19_body -> BasicBlock_16_for_19 [label="(column,columnCursor,row,rowCursor)"];
 		BasicBlock_16_for_19_break [label="for_19_break",shape=box];
 		BasicBlock_16_for_19_break -> BasicBlock_16_for_18 [label="(columnCursor,row,rowCursor)"];
+		BasicBlock_16_for_18 [label="for_18",shape=hexagon];
+		BasicBlock_16_for_18 -> BasicBlock_16_for_18_break;
+		BasicBlock_16_for_18 -> BasicBlock_16_for_18_body [label="(columnCursor,row,rowCursor)"];
 		BasicBlock_16_for_18_break [label="for_18_break",shape=box];
 		BasicBlock_16_for_18_break -> BasicBlock_16_printField_ret;
 		BasicBlock_16_printField_ret [label="printField_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -236,11 +236,11 @@ digraph program {
 	subgraph fn_printSpaces {
 		BasicBlock_17_printSpaces [label="printSpaces",shape=box];
 		BasicBlock_17_printSpaces -> BasicBlock_17_for_20 [label="(i)"];
+		BasicBlock_17_for_20_body [label="for_20_body",shape=box];
+		BasicBlock_17_for_20_body -> BasicBlock_17_for_20 [label="(i)"];
 		BasicBlock_17_for_20 [label="for_20",shape=hexagon];
 		BasicBlock_17_for_20 -> BasicBlock_17_for_20_break;
 		BasicBlock_17_for_20 -> BasicBlock_17_for_20_body [label="(i)"];
-		BasicBlock_17_for_20_body [label="for_20_body",shape=box];
-		BasicBlock_17_for_20_body -> BasicBlock_17_for_20 [label="(i)"];
 		BasicBlock_17_for_20_break [label="for_20_break",shape=box];
 		BasicBlock_17_for_20_break -> BasicBlock_17_printSpaces_ret;
 		BasicBlock_17_printSpaces_ret [label="printSpaces_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -257,11 +257,11 @@ digraph program {
 		BasicBlock_18_if_21_end -> BasicBlock_18_no_critical_edge_9 [label="(count,value)"];
 		BasicBlock_18_no_critical_edge_9 [label="no_critical_edge_9",shape=box];
 		BasicBlock_18_no_critical_edge_9 -> BasicBlock_18_while_22 [label="(count,value)"];
+		BasicBlock_18_if_23_end [label="if_23_end",shape=box];
+		BasicBlock_18_if_23_end -> BasicBlock_18_while_22 [label="(count,value)"];
 		BasicBlock_18_while_22 [label="while_22",shape=hexagon];
 		BasicBlock_18_while_22 -> BasicBlock_18_if_23_end [label="(count,value)"];
 		BasicBlock_18_while_22 -> BasicBlock_18_if_23_then [label="(count)"];
-		BasicBlock_18_if_23_end [label="if_23_end",shape=box];
-		BasicBlock_18_if_23_end -> BasicBlock_18_while_22 [label="(count,value)"];
 		BasicBlock_18_if_23_then [label="if_23_then",shape=box];
 		BasicBlock_18_if_23_then -> BasicBlock_18_getDigitCount_ret;
 		BasicBlock_18_getDigitCount_ret [label="getDigitCount_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -269,14 +269,8 @@ digraph program {
 	subgraph fn_getHiddenCount {
 		BasicBlock_19_getHiddenCount [label="getHiddenCount",shape=box];
 		BasicBlock_19_getHiddenCount -> BasicBlock_19_for_24 [label="(count,r)"];
-		BasicBlock_19_for_24 [label="for_24",shape=hexagon];
-		BasicBlock_19_for_24 -> BasicBlock_19_for_24_break [label="(count)"];
-		BasicBlock_19_for_24 -> BasicBlock_19_for_24_body [label="(count,r)"];
 		BasicBlock_19_for_24_body [label="for_24_body",shape=box];
 		BasicBlock_19_for_24_body -> BasicBlock_19_for_25 [label="(c,count,r)"];
-		BasicBlock_19_for_25 [label="for_25",shape=hexagon];
-		BasicBlock_19_for_25 -> BasicBlock_19_for_25_break [label="(count,r)"];
-		BasicBlock_19_for_25 -> BasicBlock_19_no_critical_edge_12 [label="(c,count,r)"];
 		BasicBlock_19_no_critical_edge_12 [label="no_critical_edge_12",shape=box];
 		BasicBlock_19_no_critical_edge_12 -> BasicBlock_19_for_25_body [label="(c,count,r)"];
 		BasicBlock_19_for_25_body [label="for_25_body",shape=hexagon];
@@ -290,8 +284,14 @@ digraph program {
 		BasicBlock_19_if_26_end -> BasicBlock_19_for_25_continue [label="(c,count,r)"];
 		BasicBlock_19_for_25_continue [label="for_25_continue",shape=box];
 		BasicBlock_19_for_25_continue -> BasicBlock_19_for_25 [label="(c,count,r)"];
+		BasicBlock_19_for_25 [label="for_25",shape=hexagon];
+		BasicBlock_19_for_25 -> BasicBlock_19_for_25_break [label="(count,r)"];
+		BasicBlock_19_for_25 -> BasicBlock_19_no_critical_edge_12 [label="(c,count,r)"];
 		BasicBlock_19_for_25_break [label="for_25_break",shape=box];
 		BasicBlock_19_for_25_break -> BasicBlock_19_for_24 [label="(count,r)"];
+		BasicBlock_19_for_24 [label="for_24",shape=hexagon];
+		BasicBlock_19_for_24 -> BasicBlock_19_for_24_break [label="(count)"];
+		BasicBlock_19_for_24 -> BasicBlock_19_for_24_body [label="(count,r)"];
 		BasicBlock_19_for_24_break [label="for_24_break",shape=box];
 		BasicBlock_19_for_24_break -> BasicBlock_19_getHiddenCount_ret;
 		BasicBlock_19_getHiddenCount_ret [label="getHiddenCount_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -314,18 +314,18 @@ digraph program {
 	subgraph fn_clearField {
 		BasicBlock_22_clearField [label="clearField",shape=box];
 		BasicBlock_22_clearField -> BasicBlock_22_for_28 [label="(r)"];
-		BasicBlock_22_for_28 [label="for_28",shape=hexagon];
-		BasicBlock_22_for_28 -> BasicBlock_22_for_28_break;
-		BasicBlock_22_for_28 -> BasicBlock_22_for_28_body [label="(r)"];
 		BasicBlock_22_for_28_body [label="for_28_body",shape=box];
 		BasicBlock_22_for_28_body -> BasicBlock_22_for_29 [label="(c,r)"];
+		BasicBlock_22_for_29_body [label="for_29_body",shape=box];
+		BasicBlock_22_for_29_body -> BasicBlock_22_for_29 [label="(c,r)"];
 		BasicBlock_22_for_29 [label="for_29",shape=hexagon];
 		BasicBlock_22_for_29 -> BasicBlock_22_for_29_break [label="(r)"];
 		BasicBlock_22_for_29 -> BasicBlock_22_for_29_body [label="(c,r)"];
-		BasicBlock_22_for_29_body [label="for_29_body",shape=box];
-		BasicBlock_22_for_29_body -> BasicBlock_22_for_29 [label="(c,r)"];
 		BasicBlock_22_for_29_break [label="for_29_break",shape=box];
 		BasicBlock_22_for_29_break -> BasicBlock_22_for_28 [label="(r)"];
+		BasicBlock_22_for_28 [label="for_28",shape=hexagon];
+		BasicBlock_22_for_28 -> BasicBlock_22_for_28_break;
+		BasicBlock_22_for_28 -> BasicBlock_22_for_28_body [label="(r)"];
 		BasicBlock_22_for_28_break [label="for_28_break",shape=box];
 		BasicBlock_22_for_28_break -> BasicBlock_22_clearField_ret;
 		BasicBlock_22_clearField_ret [label="clearField_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -333,9 +333,6 @@ digraph program {
 	subgraph fn_initField {
 		BasicBlock_23_initField [label="initField",shape=box];
 		BasicBlock_23_initField -> BasicBlock_23_for_30 [label="(bombs,curr_c,curr_r)"];
-		BasicBlock_23_for_30 [label="for_30",shape=hexagon];
-		BasicBlock_23_for_30 -> BasicBlock_23_for_30_break;
-		BasicBlock_23_for_30 -> BasicBlock_23_no_critical_edge_10 [label="(bombs,curr_c,curr_r)"];
 		BasicBlock_23_no_critical_edge_10 [label="no_critical_edge_10",shape=box];
 		BasicBlock_23_no_critical_edge_10 -> BasicBlock_23_for_30_body [label="(bombs,curr_c,curr_r)"];
 		BasicBlock_23_for_30_body [label="for_30_body",shape=hexagon];
@@ -356,6 +353,9 @@ digraph program {
 		BasicBlock_23_if_31_end -> BasicBlock_23_for_30_continue [label="(bombs,curr_c,curr_r)"];
 		BasicBlock_23_for_30_continue [label="for_30_continue",shape=box];
 		BasicBlock_23_for_30_continue -> BasicBlock_23_for_30 [label="(bombs,curr_c,curr_r)"];
+		BasicBlock_23_for_30 [label="for_30",shape=hexagon];
+		BasicBlock_23_for_30 -> BasicBlock_23_for_30_break;
+		BasicBlock_23_for_30 -> BasicBlock_23_no_critical_edge_10 [label="(bombs,curr_c,curr_r)"];
 		BasicBlock_23_for_30_break [label="for_30_break",shape=box];
 		BasicBlock_23_for_30_break -> BasicBlock_23_initField_ret;
 		BasicBlock_23_initField_ret [label="initField_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -366,16 +366,8 @@ digraph program {
 		BasicBlock_24_maybeRevealAround -> BasicBlock_24_if_33_then;
 		BasicBlock_24_if_33_end [label="if_33_end",shape=box];
 		BasicBlock_24_if_33_end -> BasicBlock_24_for_34 [label="(column,dr,row)"];
-		BasicBlock_24_if_33_then [label="if_33_then",shape=box];
-		BasicBlock_24_if_33_then -> BasicBlock_24_maybeRevealAround_ret;
-		BasicBlock_24_for_34 [label="for_34",shape=hexagon];
-		BasicBlock_24_for_34 -> BasicBlock_24_for_34_break;
-		BasicBlock_24_for_34 -> BasicBlock_24_for_34_body [label="(column,dr,row)"];
 		BasicBlock_24_for_34_body [label="for_34_body",shape=box];
 		BasicBlock_24_for_34_body -> BasicBlock_24_for_35 [label="(column,dc,dr,r,row)"];
-		BasicBlock_24_for_35 [label="for_35",shape=hexagon];
-		BasicBlock_24_for_35 -> BasicBlock_24_for_35_break [label="(column,dr,row)"];
-		BasicBlock_24_for_35 -> BasicBlock_24_no_critical_edge_20 [label="(column,dc,dr,r,row)"];
 		BasicBlock_24_no_critical_edge_20 [label="no_critical_edge_20",shape=box];
 		BasicBlock_24_no_critical_edge_20 -> BasicBlock_24_for_35_body [label="(column,dc,dr,r,row)"];
 		BasicBlock_24_for_35_body [label="for_35_body",shape=hexagon];
@@ -410,8 +402,16 @@ digraph program {
 		BasicBlock_24_for_35_continue -> BasicBlock_24_no_critical_edge_24 [label="(column,dc,dr,r,row)"];
 		BasicBlock_24_no_critical_edge_24 [label="no_critical_edge_24",shape=box];
 		BasicBlock_24_no_critical_edge_24 -> BasicBlock_24_for_35 [label="(column,dc,dr,r,row)"];
+		BasicBlock_24_for_35 [label="for_35",shape=hexagon];
+		BasicBlock_24_for_35 -> BasicBlock_24_for_35_break [label="(column,dr,row)"];
+		BasicBlock_24_for_35 -> BasicBlock_24_no_critical_edge_20 [label="(column,dc,dr,r,row)"];
 		BasicBlock_24_for_35_break [label="for_35_break",shape=box];
 		BasicBlock_24_for_35_break -> BasicBlock_24_for_34 [label="(column,dr,row)"];
+		BasicBlock_24_if_33_then [label="if_33_then",shape=box];
+		BasicBlock_24_if_33_then -> BasicBlock_24_maybeRevealAround_ret;
+		BasicBlock_24_for_34 [label="for_34",shape=hexagon];
+		BasicBlock_24_for_34 -> BasicBlock_24_for_34_break;
+		BasicBlock_24_for_34 -> BasicBlock_24_for_34_body [label="(column,dr,row)"];
 		BasicBlock_24_for_34_break [label="for_34_break",shape=box];
 		BasicBlock_24_for_34_break -> BasicBlock_24_maybeRevealAround_ret;
 		BasicBlock_24_maybeRevealAround_ret [label="maybeRevealAround_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -419,9 +419,6 @@ digraph program {
 	subgraph fn_main {
 		BasicBlock_25_main [label="main",shape=box];
 		BasicBlock_25_main -> BasicBlock_25_while_40 [label="(curr_c,curr_r,needsInitialize)"];
-		BasicBlock_25_while_40 [label="while_40",shape=hexagon];
-		BasicBlock_25_while_40 -> BasicBlock_25_no_critical_edge_40 [label="(curr_c,curr_r,needsInitialize)"];
-		BasicBlock_25_while_40 -> BasicBlock_25_no_critical_edge_41 [label="(curr_c,curr_r,needsInitialize)"];
 		BasicBlock_25_no_critical_edge_40 [label="no_critical_edge_40",shape=box];
 		BasicBlock_25_no_critical_edge_40 -> BasicBlock_25_if_41_end [label="(curr_c,curr_r,needsInitialize)"];
 		BasicBlock_25_no_critical_edge_41 [label="no_critical_edge_41",shape=box];
@@ -554,6 +551,9 @@ digraph program {
 		BasicBlock_25_if_44_end -> BasicBlock_25_no_critical_edge_58 [label="(curr_c,curr_r,needsInitialize)"];
 		BasicBlock_25_no_critical_edge_58 [label="no_critical_edge_58",shape=box];
 		BasicBlock_25_no_critical_edge_58 -> BasicBlock_25_while_40 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_25_while_40 [label="while_40",shape=hexagon];
+		BasicBlock_25_while_40 -> BasicBlock_25_no_critical_edge_40 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_25_while_40 -> BasicBlock_25_no_critical_edge_41 [label="(curr_c,curr_r,needsInitialize)"];
 		BasicBlock_25_if_42_then [label="if_42_then",shape=box];
 		BasicBlock_25_if_42_then -> BasicBlock_25_while_40_break;
 		BasicBlock_25_if_43_then [label="if_43_then",shape=box];
