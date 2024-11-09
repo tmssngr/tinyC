@@ -183,11 +183,8 @@
 	const r0, 0
 	; 5:2 for i < 50
 	move i, r0
-@for_4:
-	const r0, 50
-	move r1, i
-	lt r0, r1, r0
-	branch r0, false, @main_ret
+	jump @for_4
+@for_4_body:
 	call r0, randomU8, []
 	cast r0(i64), r0(u8)
 	call _, printIntLf [r0]
@@ -195,8 +192,11 @@
 	move r1, i
 	add r0, r1, r0
 	move i, r0
-	jump @for_4
-@main_ret:
+@for_4:
+	const r0, 50
+	move r1, i
+	lt r0, r1, r0
+	branch r0, true, @for_4_body
 
 @printStringLength:
 	mov     rdi, rsp

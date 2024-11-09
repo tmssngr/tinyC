@@ -236,18 +236,8 @@ start:
         ; move i, r0
         lea rax, [rsp+0]
         mov [rax], cl
-@for_4:
-        ; const r0, 2
-        mov cl, 2
-        ; move r1, i
-        lea rax, [rsp+0]
-        mov dl, [rax]
-        ; notequals r0, r1, r0
-        cmp dl, cl
-        setne cl
-        ; branch r0, false, @for_4_break
-        or cl, cl
-        jz @for_4_break
+        jmp @for_4
+@for_4_body:
         ; move r0, i
         lea rax, [rsp+0]
         mov cl, [rax]
@@ -269,8 +259,18 @@ start:
         ; move i, r0
         lea rax, [rsp+0]
         mov [rax], cl
-        jmp @for_4
-@for_4_break:
+@for_4:
+        ; const r0, 2
+        mov cl, 2
+        ; move r1, i
+        lea rax, [rsp+0]
+        mov dl, [rax]
+        ; notequals r0, r1, r0
+        cmp dl, cl
+        setne cl
+        ; branch r0, true, @for_4_body
+        or cl, cl
+        jnz @for_4_body
         ; const r0, 260
         mov cx, 260
         ; cast r0(u8), r0(i16)

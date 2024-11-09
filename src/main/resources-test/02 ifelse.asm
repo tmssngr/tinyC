@@ -241,11 +241,11 @@ start:
         ; move b, r1
         lea rax, [rsp+1]
         mov [rax], dl
-        ; branch r2, false, @if_4_else
+        ; branch r2, true, @if_4_then
         or r9b, r9b
-        jz @if_4_else
-        ; move r0, a
-        lea rax, [rsp+0]
+        jnz @if_4_then
+        ; move r0, b
+        lea rax, [rsp+1]
         mov cl, [rax]
         ; cast r0(i64), r0(u8)
         movzx rcx, cl
@@ -254,9 +254,9 @@ start:
           call @printIntLf
         add rsp, 8
         jmp @main_ret
-@if_4_else:
-        ; move r0, b
-        lea rax, [rsp+1]
+@if_4_then:
+        ; move r0, a
+        lea rax, [rsp+0]
         mov cl, [rax]
         ; cast r0(i64), r0(u8)
         movzx rcx, cl

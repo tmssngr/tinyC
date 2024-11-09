@@ -85,20 +85,8 @@ start:
         ; move length, r0
         lea rax, [rsp+0]
         mov [rax], rcx
-@for_1:
-        ; move r0, str
-        lea rax, [rsp+56]
-        mov rcx, [rax]
-        ; load r1, [r0]
-        mov dl, [rcx]
-        ; const r2, 0
-        mov r9b, 0
-        ; notequals r1, r1, r2
-        cmp dl, r9b
-        setne dl
-        ; branch r1, false, @for_1_break
-        or dl, dl
-        jz @for_1_break
+        jmp @for_1
+@for_1_body:
         ; const r0, 1
         mov rcx, 1
         ; move r1, length
@@ -123,8 +111,20 @@ start:
         ; move str, r1
         lea rax, [rsp+56]
         mov [rax], rdx
-        jmp @for_1
-@for_1_break:
+@for_1:
+        ; move r0, str
+        lea rax, [rsp+56]
+        mov rcx, [rax]
+        ; load r1, [r0]
+        mov dl, [rcx]
+        ; const r2, 0
+        mov r9b, 0
+        ; notequals r1, r1, r2
+        cmp dl, r9b
+        setne dl
+        ; branch r1, true, @for_1_body
+        or dl, dl
+        jnz @for_1_body
         ; 40:9 return length
         ; move r0, length
         lea rax, [rsp+0]
@@ -165,18 +165,8 @@ start:
         ; move i, r0
         lea rax, [rsp+0]
         mov [rax], cl
-@for_2:
-        ; const r0, 30
-        mov cl, 30
-        ; move r1, i
-        lea rax, [rsp+0]
-        mov dl, [rax]
-        ; lt r0, r1, r0
-        cmp dl, cl
-        setb cl
-        ; branch r0, false, @for_2_break
-        or cl, cl
-        jz @for_2_break
+        jmp @for_2
+@for_2_body:
         ; 12:3 if [...] == 0
         ; move r0, i
         lea rax, [rsp+0]
@@ -197,19 +187,19 @@ start:
         ; equals r1, r1, r2
         cmp dl, r9b
         sete dl
-        ; branch r1, false, @if_3_else
+        ; branch r1, true, @if_3_then
         or dl, dl
-        jz @if_3_else
-        ; const r0, 32
-        mov cl, 32
+        jnz @if_3_then
+        ; const r0, 42
+        mov cl, 42
         ; call _, printChar [r0]
         push rcx
           call @printChar
         add rsp, 8
         jmp @for_2_continue
-@if_3_else:
-        ; const r0, 42
-        mov cl, 42
+@if_3_then:
+        ; const r0, 32
+        mov cl, 32
         ; call _, printChar [r0]
         push rcx
           call @printChar
@@ -227,8 +217,18 @@ start:
         ; move i, r0
         lea rax, [rsp+0]
         mov [rax], cl
-        jmp @for_2
-@for_2_break:
+@for_2:
+        ; const r0, 30
+        mov cl, 30
+        ; move r1, i
+        lea rax, [rsp+0]
+        mov dl, [rax]
+        ; lt r0, r1, r0
+        cmp dl, cl
+        setb cl
+        ; branch r0, true, @for_2_body
+        or cl, cl
+        jnz @for_2_body
         ; const r0, [string-0]
         lea rcx, [string_0]
         ; call _, printString [r0]
@@ -300,18 +300,8 @@ start:
         ; move i, r0
         lea rax, [rsp+0]
         mov [rax], cl
-@for_4:
-        ; const r0, 30
-        mov cl, 30
-        ; move r1, i
-        lea rax, [rsp+0]
-        mov dl, [rax]
-        ; lt r0, r1, r0
-        cmp dl, cl
-        setb cl
-        ; branch r0, false, @for_4_break
-        or cl, cl
-        jz @for_4_break
+        jmp @for_4
+@for_4_body:
         ; const r0, 0
         mov cl, 0
         ; move r1, i
@@ -337,8 +327,18 @@ start:
         ; move i, r0
         lea rax, [rsp+0]
         mov [rax], cl
-        jmp @for_4
-@for_4_break:
+@for_4:
+        ; const r0, 30
+        mov cl, 30
+        ; move r1, i
+        lea rax, [rsp+0]
+        mov dl, [rax]
+        ; lt r0, r1, r0
+        cmp dl, cl
+        setb cl
+        ; branch r0, true, @for_4_body
+        or cl, cl
+        jnz @for_4_body
         ; const r0, 1
         mov cl, 1
         ; const r1, 29
@@ -364,18 +364,8 @@ start:
         ; move i, r0
         lea rax, [rsp+1]
         mov [rax], cl
-@for_5:
-        ; const r0, 28
-        mov cl, 28
-        ; move r1, i
-        lea rax, [rsp+1]
-        mov dl, [rax]
-        ; lt r0, r1, r0
-        cmp dl, cl
-        setb cl
-        ; branch r0, false, @main_ret
-        or cl, cl
-        jz @main_ret
+        jmp @for_5
+@for_5_body:
         ; const r0, 0
         mov rcx, 0
         ; cast r0(u8*), r0(i64)
@@ -416,18 +406,8 @@ start:
         ; move j, r1
         lea rax, [rsp+3]
         mov [rax], dl
-@for_6:
-        ; const r0, 29
-        mov cl, 29
-        ; move r1, j
-        lea rax, [rsp+3]
-        mov dl, [rax]
-        ; lt r0, r1, r0
-        cmp dl, cl
-        setb cl
-        ; branch r0, false, @for_6_break
-        or cl, cl
-        jz @for_6_break
+        jmp @for_6
+@for_6_body:
         ; const r0, 1
         mov cl, 1
         ; move r1, pattern
@@ -501,8 +481,18 @@ start:
         ; move j, r1
         lea rax, [rsp+3]
         mov [rax], dl
-        jmp @for_6
-@for_6_break:
+@for_6:
+        ; const r0, 29
+        mov cl, 29
+        ; move r1, j
+        lea rax, [rsp+3]
+        mov dl, [rax]
+        ; lt r0, r1, r0
+        cmp dl, cl
+        setb cl
+        ; branch r0, true, @for_6_body
+        or cl, cl
+        jnz @for_6_body
         ; call _, printBoard []
         sub rsp, 8
           call @printBoard
@@ -519,8 +509,18 @@ start:
         ; move i, r0
         lea rax, [rsp+1]
         mov [rax], cl
-        jmp @for_5
-@main_ret:
+@for_5:
+        ; const r0, 28
+        mov cl, 28
+        ; move r1, i
+        lea rax, [rsp+1]
+        mov dl, [rax]
+        ; lt r0, r1, r0
+        cmp dl, cl
+        setb cl
+        ; branch r0, true, @for_5_body
+        or cl, cl
+        jnz @for_5_body
         ; release space for local variables
         add rsp, 224
         ret
