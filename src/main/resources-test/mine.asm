@@ -2574,13 +2574,11 @@ start:
         setne bl
         lea rax, [rsp+9]
         mov [rax], bl
-        ; branch t.7, false, @if_33_end
+        ; branch t.7, true, @maybeRevealAround_ret
         lea rax, [rsp+9]
         mov bl, [rax]
         or bl, bl
-        jz @if_33_end
-        jmp @maybeRevealAround_ret
-@if_33_end:
+        jnz @maybeRevealAround_ret
         ; const dr, -1
         mov ax, -1
         lea rbx, [rsp+0]
@@ -2676,13 +2674,11 @@ start:
         lea rax, [rsp+20]
         mov [rax], bl
 @and_next_37:
-        ; branch t.14, false, @if_36_end
+        ; branch t.14, true, @for_35_continue
         lea rax, [rsp+20]
         mov bl, [rax]
         or bl, bl
-        jz @if_36_end
-        jmp @for_35_continue
-@if_36_end:
+        jnz @for_35_continue
         ; move c, column
         lea rax, [rsp+64]
         mov bx, [rax]
@@ -2716,13 +2712,11 @@ start:
         sete bl
         lea rax, [rsp+26]
         mov [rax], bl
-        ; branch t.17, false, @if_38_end
+        ; branch t.17, true, @for_35_continue
         lea rax, [rsp+26]
         mov bl, [rax]
         or bl, bl
-        jz @if_38_end
-        jmp @for_35_continue
-@if_38_end:
+        jnz @for_35_continue
         ; call cell, getCell, [r, c]
         lea rax, [rsp+2]
         mov bx, [rax]
@@ -2744,13 +2738,11 @@ start:
         add rsp, 8
         lea rbx, [rsp+28]
         mov [rbx], al
-        ; branch t.19, false, @if_39_end
+        ; branch t.19, true, @for_35_continue
         lea rax, [rsp+28]
         mov bl, [rax]
         or bl, bl
-        jz @if_39_end
-        jmp @for_35_continue
-@if_39_end:
+        jnz @for_35_continue
         ; const t.21, 2
         mov al, 2
         lea rbx, [rsp+30]
@@ -2999,13 +2991,11 @@ start:
         sete bl
         lea rax, [rsp+32]
         mov [rax], bl
-        ; branch t.12, false, @if_43_end
+        ; branch t.12, true, @main_ret
         lea rax, [rsp+32]
         mov bl, [rax]
         or bl, bl
-        jz @if_43_end
-        jmp @main_ret
-@if_43_end:
+        jnz @main_ret
         ; 233:3 if chr == 57416
         ; const t.15, 57416
         mov ax, 57416
