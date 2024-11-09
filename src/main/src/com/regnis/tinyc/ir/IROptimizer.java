@@ -15,16 +15,8 @@ public class IROptimizer {
 		while (true) {
 			final List<IRInstruction> instructions = removeObsoleteLabelJump(initialInstructions);
 
-			new Peephole2Optimization<>(instructions) {
-				@Override
-				protected void handle(IRInstruction item1, IRInstruction item2) {
-					if (item1 instanceof IRJump jump
-					    && item2 instanceof IRLabel label
-					    && jump.label().equals(label.label())) {
-						remove();
-					}
-				}
-			}.process();
+			removeJumpLabel(instructions);
+			removeBranchJumpLabel(instructions);
 
 			removeObsoleteLabels(instructions);
 
@@ -34,6 +26,35 @@ public class IROptimizer {
 
 			initialInstructions = instructions;
 		}
+	}
+
+	private static void removeJumpLabel(List<IRInstruction> instructions) {
+		new Peephole2Optimization<>(instructions) {
+			@Override
+			protected void handle(IRInstruction item1, IRInstruction item2) {
+				if (item1 instanceof IRJump jump
+				    && item2 instanceof IRLabel label
+				    && Objects.equals(jump.label(), label.label())) {
+					remove();
+				}
+			}
+		}.process();
+	}
+
+	private static void removeBranchJumpLabel(List<IRInstruction> instructions) {
+		new Peephole3Optimization<>(instructions) {
+			@Override
+			protected void handle(IRInstruction item1, IRInstruction item2, IRInstruction item3) {
+				if (item1 instanceof IRBranch branch
+				    && item2 instanceof IRJump jump
+				    && item3 instanceof IRLabel label
+				    && Objects.equals(branch.target(), label.label())) {
+					remove();
+					remove();
+					insert(new IRBranch(branch.conditionVar(), !branch.jumpOnTrue(), jump.label(), branch.target()));
+				}
+			}
+		}.process();
 	}
 
 	private static List<IRInstruction> removeObsoleteLabelJump(List<IRInstruction> instructions) {

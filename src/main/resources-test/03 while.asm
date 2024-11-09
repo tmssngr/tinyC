@@ -423,13 +423,11 @@ start:
         setb bl
         lea rax, [rsp+33]
         mov [rax], bl
-        ; branch t.7, false, @main_ret
+        ; branch t.7, true, @while_5
         lea rax, [rsp+33]
         mov bl, [rax]
         or bl, bl
-        jz @main_ret
-        jmp @while_5
-@main_ret:
+        jnz @while_5
         ; release space for local variables
         add rsp, 48
         ret
