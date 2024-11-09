@@ -93,25 +93,8 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], rax
         ; 37:2 for *str != 0
-@for_1:
-        ; load t.3, [str]
-        lea rax, [rsp+56]
-        mov rbx, [rax]
-        mov al, [rbx]
-        lea rbx, [rsp+9]
-        mov [rbx], al
-        ; notequals t.2, t.3, 0
-        lea rax, [rsp+9]
-        mov bl, [rax]
-        cmp bl, 0
-        setne bl
-        lea rax, [rsp+8]
-        mov [rax], bl
-        ; branch t.2, false, @for_1_break
-        lea rax, [rsp+8]
-        mov bl, [rax]
-        or bl, bl
-        jz @for_1_break
+        jmp @for_1
+@for_1_body:
         ; inc length
         lea rax, [rsp+0]
         mov rbx, [rax]
@@ -145,8 +128,25 @@ start:
         mov rbx, [rax]
         lea rax, [rsp+56]
         mov [rax], rbx
-        jmp @for_1
-@for_1_break:
+@for_1:
+        ; load t.3, [str]
+        lea rax, [rsp+56]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+9]
+        mov [rbx], al
+        ; notequals t.2, t.3, 0
+        lea rax, [rsp+9]
+        mov bl, [rax]
+        cmp bl, 0
+        setne bl
+        lea rax, [rsp+8]
+        mov [rax], bl
+        ; branch t.2, true, @for_1_body
+        lea rax, [rsp+8]
+        mov bl, [rax]
+        or bl, bl
+        jnz @for_1_body
         ; 40:9 return length
         ; ret length
         lea rax, [rsp+0]
@@ -186,19 +186,8 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 11:2 for i < 30
-@for_2:
-        ; lt t.2, i, 30
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        cmp bl, 30
-        setb bl
-        lea rax, [rsp+2]
-        mov [rax], bl
-        ; branch t.2, false, @for_2_break
-        lea rax, [rsp+2]
-        mov bl, [rax]
-        or bl, bl
-        jz @for_2_break
+        jmp @for_2
+@for_2_body:
         ; 12:3 if [...] == 0
         ; cast t.6(i64), i(u8)
         lea rax, [rsp+0]
@@ -236,29 +225,29 @@ start:
         sete bl
         lea rax, [rsp+3]
         mov [rax], bl
-        ; branch t.3, false, @if_3_else
+        ; branch t.3, true, @if_3_then
         lea rax, [rsp+3]
         mov bl, [rax]
         or bl, bl
-        jz @if_3_else
-        ; const t.8, 32
-        mov al, 32
-        lea rbx, [rsp+32]
-        mov [rbx], al
-        ; call printChar[t.8]
-        lea rax, [rsp+32]
-        mov bl, [rax]
-        push rbx
-          call @printChar
-        add rsp, 8
-        jmp @for_2_continue
-@if_3_else:
+        jnz @if_3_then
         ; const t.9, 42
         mov al, 42
         lea rbx, [rsp+33]
         mov [rbx], al
         ; call printChar[t.9]
         lea rax, [rsp+33]
+        mov bl, [rax]
+        push rbx
+          call @printChar
+        add rsp, 8
+        jmp @for_2_continue
+@if_3_then:
+        ; const t.8, 32
+        mov al, 32
+        lea rbx, [rsp+32]
+        mov [rbx], al
+        ; call printChar[t.8]
+        lea rax, [rsp+32]
         mov bl, [rax]
         push rbx
           call @printChar
@@ -270,8 +259,19 @@ start:
         inc bl
         lea rax, [rsp+0]
         mov [rax], bl
-        jmp @for_2
-@for_2_break:
+@for_2:
+        ; lt t.2, i, 30
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        cmp bl, 30
+        setb bl
+        lea rax, [rsp+2]
+        mov [rax], bl
+        ; branch t.2, true, @for_2_body
+        lea rax, [rsp+2]
+        mov bl, [rax]
+        or bl, bl
+        jnz @for_2_body
         ; const t.10, [string-0]
         lea rax, [string_0]
         lea rbx, [rsp+40]
@@ -340,19 +340,8 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 23:2 for i < 30
-@for_4:
-        ; lt t.4, i, 30
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        cmp bl, 30
-        setb bl
-        lea rax, [rsp+4]
-        mov [rax], bl
-        ; branch t.4, false, @for_4_break
-        lea rax, [rsp+4]
-        mov bl, [rax]
-        or bl, bl
-        jz @for_4_break
+        jmp @for_4
+@for_4_body:
         ; const t.5, 0
         mov al, 0
         lea rbx, [rsp+5]
@@ -392,8 +381,19 @@ start:
         inc bl
         lea rax, [rsp+0]
         mov [rax], bl
-        jmp @for_4
-@for_4_break:
+@for_4:
+        ; lt t.4, i, 30
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        cmp bl, 30
+        setb bl
+        lea rax, [rsp+4]
+        mov [rax], bl
+        ; branch t.4, true, @for_4_body
+        lea rax, [rsp+4]
+        mov bl, [rax]
+        or bl, bl
+        jnz @for_4_body
         ; const t.9, 1
         mov al, 1
         lea rbx, [rsp+32]
@@ -440,19 +440,8 @@ start:
         lea rbx, [rsp+1]
         mov [rbx], al
         ; 30:2 for i < 28
-@for_5:
-        ; lt t.14, i, 28
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        cmp bl, 28
-        setb bl
-        lea rax, [rsp+72]
-        mov [rax], bl
-        ; branch t.14, false, @main_ret
-        lea rax, [rsp+72]
-        mov bl, [rax]
-        or bl, bl
-        jz @main_ret
+        jmp @for_5
+@for_5_body:
         ; const t.18, 0
         mov rax, 0
         lea rbx, [rsp+88]
@@ -542,19 +531,8 @@ start:
         lea rbx, [rsp+3]
         mov [rbx], al
         ; 32:3 for j < 29
-@for_6:
-        ; lt t.25, j, 29
-        lea rax, [rsp+3]
-        mov bl, [rax]
-        cmp bl, 29
-        setb bl
-        lea rax, [rsp+136]
-        mov [rax], bl
-        ; branch t.25, false, @for_6_break
-        lea rax, [rsp+136]
-        mov bl, [rax]
-        or bl, bl
-        jz @for_6_break
+        jmp @for_6
+@for_6_body:
         ; const t.28, 1
         mov al, 1
         lea rbx, [rsp+139]
@@ -717,8 +695,19 @@ start:
         inc bl
         lea rax, [rsp+3]
         mov [rax], bl
-        jmp @for_6
-@for_6_break:
+@for_6:
+        ; lt t.25, j, 29
+        lea rax, [rsp+3]
+        mov bl, [rax]
+        cmp bl, 29
+        setb bl
+        lea rax, [rsp+136]
+        mov [rax], bl
+        ; branch t.25, true, @for_6_body
+        lea rax, [rsp+136]
+        mov bl, [rax]
+        or bl, bl
+        jnz @for_6_body
         ; call printBoard[]
         sub rsp, 8
           call @printBoard
@@ -729,8 +718,19 @@ start:
         inc bl
         lea rax, [rsp+1]
         mov [rax], bl
-        jmp @for_5
-@main_ret:
+@for_5:
+        ; lt t.14, i, 28
+        lea rax, [rsp+1]
+        mov bl, [rax]
+        cmp bl, 28
+        setb bl
+        lea rax, [rsp+72]
+        mov [rax], bl
+        ; branch t.14, true, @for_5_body
+        lea rax, [rsp+72]
+        mov bl, [rax]
+        or bl, bl
+        jnz @for_5_body
         ; release space for local variables
         add rsp, 208
         ret

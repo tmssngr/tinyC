@@ -109,13 +109,13 @@
 	gt r2, r0, r1
 	move a, r0
 	move b, r1
-	branch r2, false, @if_4_else
-	move r0, a
+	branch r2, true, @if_4_then
+	move r0, b
 	cast r0(i64), r0(u8)
 	call _, printIntLf [r0]
 	jump @main_ret
-@if_4_else:
-	move r0, b
+@if_4_then:
+	move r0, a
 	cast r0(i64), r0(u8)
 	call _, printIntLf [r0]
 @main_ret:

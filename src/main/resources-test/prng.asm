@@ -602,19 +602,8 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 5:2 for i < 50
-@for_4:
-        ; lt t.3, i, 50
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        cmp bl, 50
-        setb bl
-        lea rax, [rsp+8]
-        mov [rax], bl
-        ; branch t.3, false, @main_ret
-        lea rax, [rsp+8]
-        mov bl, [rax]
-        or bl, bl
-        jz @main_ret
+        jmp @for_4
+@for_4_body:
         ; call r = randomU8[] -> u8
         sub rsp, 8
           call @randomU8
@@ -639,8 +628,19 @@ start:
         inc bl
         lea rax, [rsp+0]
         mov [rax], bl
-        jmp @for_4
-@main_ret:
+@for_4:
+        ; lt t.3, i, 50
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        cmp bl, 50
+        setb bl
+        lea rax, [rsp+8]
+        mov [rax], bl
+        ; branch t.3, true, @for_4_body
+        lea rax, [rsp+8]
+        mov bl, [rax]
+        or bl, bl
+        jnz @for_4_body
         ; release space for local variables
         add rsp, 32
         ret

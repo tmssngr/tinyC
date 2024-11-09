@@ -31,12 +31,8 @@
 	const r0, 0
 	; 37:2 for *str != 0
 	move length, r0
-@for_1:
-	move r0, str
-	load r1, [r0]
-	const r2, 0
-	notequals r1, r1, r2
-	branch r1, false, @for_1_break
+	jump @for_1
+@for_1_body:
 	const r0, 1
 	move r1, length
 	add r0, r1, r0
@@ -47,8 +43,12 @@
 	cast r1(u8*), r1(i64)
 	move length, r0
 	move str, r1
-	jump @for_1
-@for_1_break:
+@for_1:
+	move r0, str
+	load r1, [r0]
+	const r2, 0
+	notequals r1, r1, r2
+	branch r1, true, @for_1_body
 	; 40:9 return length
 	move r0, length
 	ret r0
@@ -132,11 +132,8 @@
 	const r0, 0
 	; 19:2 for i < 16
 	move i, r0
-@for_3:
-	const r0, 16
-	move r1, i
-	lt r0, r1, r0
-	branch r0, false, @for_3_break
+	jump @for_3
+@for_3_body:
 	; 20:3 if i & 7 == 0
 	const r0, 7
 	move r1, i
@@ -153,18 +150,18 @@
 	move r1, i
 	add r0, r1, r0
 	move i, r0
-	jump @for_3
-@for_3_break:
+@for_3:
+	const r0, 16
+	move r1, i
+	lt r0, r1, r0
+	branch r0, true, @for_3_body
 	const r0, 10
 	call _, printChar [r0]
 	const r0, 32
 	; 27:2 for i < 128
 	move i, r0
-@for_5:
-	const r0, 128
-	move r1, i
-	lt r0, r1, r0
-	branch r0, false, @main_ret
+	jump @for_5
+@for_5_body:
 	; 28:3 if i & 15 == 0
 	const r0, 15
 	move r1, i
@@ -202,8 +199,11 @@
 	move r1, i
 	add r0, r1, r0
 	move i, r0
-	jump @for_5
-@main_ret:
+@for_5:
+	const r0, 128
+	move r1, i
+	lt r0, r1, r0
+	branch r0, true, @for_5_body
 
 @printStringLength:
 	mov     rdi, rsp

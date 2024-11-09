@@ -110,11 +110,8 @@
 	const r0, 5
 	; 5:2 while i > 0
 	move i, r0
-@while_4:
-	const r0, 0
-	move r1, i
-	gt r0, r1, r0
-	branch r0, false, @while_5
+	jump @while_4
+@while_4_body:
 	move r0, i
 	cast r1(i64), r0(u8)
 	call _, printIntLf [r1]
@@ -122,7 +119,11 @@
 	move r1, i
 	sub r0, r1, r0
 	move i, r0
-	jump @while_4
+@while_4:
+	const r0, 0
+	move r1, i
+	gt r0, r1, r0
+	branch r0, true, @while_4_body
 @while_5:
 	move r0, i
 	cast r1(i64), r0(u8)

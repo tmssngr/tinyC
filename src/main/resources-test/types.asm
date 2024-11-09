@@ -318,19 +318,8 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 4:3 for i != 2
-@for_4:
-        ; notequals t.2, i, 2
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        cmp bl, 2
-        setne bl
-        lea rax, [rsp+4]
-        mov [rax], bl
-        ; branch t.2, false, @for_4_break
-        lea rax, [rsp+4]
-        mov bl, [rax]
-        or bl, bl
-        jz @for_4_break
+        jmp @for_4
+@for_4_body:
         ; cast t.3(i64), i(u8)
         lea rax, [rsp+0]
         mov bl, [rax]
@@ -349,8 +338,19 @@ start:
         inc bl
         lea rax, [rsp+0]
         mov [rax], bl
-        jmp @for_4
-@for_4_break:
+@for_4:
+        ; notequals t.2, i, 2
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        cmp bl, 2
+        setne bl
+        lea rax, [rsp+4]
+        mov [rax], bl
+        ; branch t.2, true, @for_4_body
+        lea rax, [rsp+4]
+        mov bl, [rax]
+        or bl, bl
+        jnz @for_4_body
         ; const v, 260
         mov ax, 260
         lea rbx, [rsp+2]

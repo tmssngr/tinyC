@@ -1,3 +1,11 @@
+@printString:
+ Local variables
+	arg 0: str (u8*/8)
+	var 1: length (i64/8)
+	; 6 pc
+	call r0, strlen, [str]
+	call _, printStringLength [str, r0]
+
 @printChar:
  Local variables
 	arg 0: chr (u8/1)
@@ -93,110 +101,107 @@
 	const r0, 10
 	call _, printChar [r0]
 
-@initRandom:
+@strlen:
  Local variables
-	arg 0: salt (i32/4)
-	; 6 pc
-	move r0, salt
-	move __random__, r0
-
-@random:
- Local variables
-	var 0: r (i32/4)
-	var 1: b (i32/4)
-	var 2: c (i32/4)
-	var 3: d (i32/4)
-	var 4: e (i32/4)
-	var 5: t.5 (i32/4)
-	var 6: t.6 (i32/4)
-	var 7: t.7 (i32/4)
-	var 8: t.8 (i32/4)
-	var 9: t.9 (i32/4)
-	var 10: t.10 (i32/4)
-	var 11: t.11 (i32/4)
-	var 12: t.12 (i32/4)
-	var 13: t.13 (i32/4)
-	var 14: t.14 (i32/4)
-	var 15: t.15 (i32/4)
-	var 16: t.16 (i32/4)
-	var 17: t.17 (i32/4)
-	var 18: t.18 (i32/4)
-	var 19: t.19 (i32/4)
-	var 20: t.20 (i32/4)
-	; 25 pc
-	move r0, __random__
-	const r1, 524287
-	move r2, r0
-	and r1, r2, r1
-	const r2, 48271
-	mul r1, r1, r2
-	const r2, 15
-	shiftright r0, r0, r2
-	const r2, 48271
-	mul r0, r0, r2
-	const r2, 65535
-	move r3, r0
-	and r2, r3, r2
-	const r3, 15
-	shiftleft r2, r2, r3
-	const r3, 16
-	shiftright r0, r0, r3
-	add r0, r0, r1
-	add r0, r0, r2
-	const r1, 2147483647
-	move r2, r0
-	and r1, r2, r1
-	const r2, 31
-	shiftright r0, r0, r2
-	move __random__, r1
+	arg 0: str (u8*/8)
+	var 1: length (i64/8)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (i64/8)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (i64/8)
+	; 31 pc
+	const r0, 0
+	; 37:2 for *str != 0
+	move length, r0
+	jump @for_4
+@for_4_body:
+	const r0, 1
+	move r1, length
 	add r0, r1, r0
-	; 127:9 return __random__
-	move __random__, r0
-	ret r0
-
-@randomU8:
- Local variables
-	var 0: t.0 (u8/1)
-	var 1: t.1 (i32/4)
-	; 3 pc
-	; 131:10 return (u8)
-	call r0, random, []
-	cast r0(u8), r0(i32)
+	move r1, str
+	cast r1(i64), r1(u8*)
+	const r2, 1
+	add r1, r1, r2
+	cast r1(u8*), r1(i64)
+	move length, r0
+	move str, r1
+@for_4:
+	move r0, str
+	load r1, [r0]
+	const r2, 0
+	notequals r1, r1, r2
+	branch r1, true, @for_4_body
+	; 40:9 return length
+	move r0, length
 	ret r0
 
 @main:
  Local variables
-	var 0: i (u8/1)
-	var 1: r (u8/1)
-	var 2: t.2 (i32/4)
-	var 3: t.3 (bool/1)
-	var 4: t.4 (u8/1)
-	var 5: t.5 (i64/8)
-	var 6: t.6 (u8/1)
-	; 23 pc
+	var 0: second (u8*/8)
+	var 1: chr (u8/1)
+	var 2: t.2 (i64/8)
+	var 3: t.3 (u8*/8)
+	var 4: t.4 (i64/8)
+	; 20 pc
 	; begin initialize global variables
-	const r0, 0
+	const r0, [string-0]
 	; end initialize global variables
-	const r1, 7439742
-	move __random__, r0
-	call _, initRandom [r1]
-	const r0, 0
-	; 5:2 for i < 50
-	move i, r0
-	jump @for_4
-@for_4_body:
-	call r0, randomU8, []
+	move text, r0
+	call _, printString [r0]
+	call _, printLength []
+	const r0, 1
+	cast r0(u8*), r0(i64)
+	move r1, text
+	move r2, r1
+	add r0, r2, r0
+	call _, printString [r0]
+	move r0, text
+	load r0, [r0]
 	cast r0(i64), r0(u8)
 	call _, printIntLf [r0]
+
+@printLength:
+ Local variables
+	var 0: length (i16/2)
+	var 1: ptr (u8*/8)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (i16/2)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (i64/8)
+	var 9: t.9 (i64/8)
+	; 38 pc
+	const r0, 0
+	move r1, text
+	; 16:2 for *ptr != 0
+	move length, r0
+	move ptr, r1
+	jump @for_5
+@for_5_body:
 	const r0, 1
-	move r1, i
+	move r1, length
 	add r0, r1, r0
-	move i, r0
-@for_4:
-	const r0, 50
-	move r1, i
-	lt r0, r1, r0
-	branch r0, true, @for_4_body
+	move r1, ptr
+	cast r1(i64), r1(u8*)
+	const r2, 1
+	add r1, r1, r2
+	cast r1(u8*), r1(i64)
+	move length, r0
+	move ptr, r1
+@for_5:
+	move r0, ptr
+	load r1, [r0]
+	const r2, 0
+	notequals r1, r1, r2
+	branch r1, true, @for_5_body
+	move r0, length
+	cast r0(i64), r0(i16)
+	call _, printIntLf [r0]
 
 @printStringLength:
 	mov     rdi, rsp
@@ -213,5 +218,7 @@
 	ret
 
 Global variables
-	0: __random__ (i32/4)
+	0: text (u8*/8)
 
+String literals
+	string lit 0 "hello world\n\0"
