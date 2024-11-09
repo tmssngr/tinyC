@@ -109,11 +109,8 @@
 	const r0, 250
 	; 4:3 for i != 2
 	move i, r0
-@for_4:
-	const r0, 2
-	move r1, i
-	notequals r0, r1, r0
-	branch r0, false, @for_4_break
+	jump @for_4
+@for_4_body:
 	move r0, i
 	cast r1(i64), r0(u8)
 	call _, printIntLf [r1]
@@ -121,8 +118,11 @@
 	move r1, i
 	add r0, r1, r0
 	move i, r0
-	jump @for_4
-@for_4_break:
+@for_4:
+	const r0, 2
+	move r1, i
+	notequals r0, r1, r0
+	branch r0, true, @for_4_body
 	const r0, 260
 	cast r0(u8), r0(i16)
 	cast r0(i64), r0(u8)

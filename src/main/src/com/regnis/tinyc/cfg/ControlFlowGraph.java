@@ -17,15 +17,7 @@ public final class ControlFlowGraph {
 	public ControlFlowGraph(@NotNull Cfg cfg) {
 		this.cfg = cfg;
 
-		blocks = new ArrayList<>();
-		cfg.visitInPostOrder(block -> {
-			if (block.successors().isEmpty()) {
-				blocks.add(block);
-			}
-			else {
-				blocks.addFirst(block);
-			}
-		});
+		blocks = getSorted();
 	}
 
 	@Deprecated
@@ -37,15 +29,7 @@ public final class ControlFlowGraph {
 
 		cfg.check();
 
-		blocks = new ArrayList<>();
-		cfg.visitInPostOrder(block -> {
-			if (block.successors().isEmpty()) {
-				blocks.add(block);
-			}
-			else {
-				blocks.addFirst(block);
-			}
-		});
+		blocks = getSorted();
 	}
 
 	@NotNull
@@ -61,5 +45,13 @@ public final class ControlFlowGraph {
 	@NotNull
 	public BasicBlock get(@NotNull String name) {
 		return cfg.get(name);
+	}
+
+	private List<BasicBlock> getSorted() {
+		final List<BasicBlock> blocks = new ArrayList<>();
+		for (String name : cfg.getInOrder()) {
+			blocks.add(cfg.get(name));
+		}
+		return blocks;
 	}
 }
