@@ -116,12 +116,8 @@
 	const r0, 0
 	; 37:2 for *str != 0
 	move length, r0
-@for_4:
-	move r0, str
-	load r1, [r0]
-	const r2, 0
-	notequals r1, r1, r2
-	branch r1, false, @for_4_break
+	jump @for_4
+@for_4_body:
 	const r0, 1
 	move r1, length
 	add r0, r1, r0
@@ -132,8 +128,12 @@
 	cast r1(u8*), r1(i64)
 	move length, r0
 	move str, r1
-	jump @for_4
-@for_4_break:
+@for_4:
+	move r0, str
+	load r1, [r0]
+	const r2, 0
+	notequals r1, r1, r2
+	branch r1, true, @for_4_body
 	; 40:9 return length
 	move r0, length
 	ret r0

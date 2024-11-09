@@ -65,15 +65,15 @@ public class CfgGeneratorTest {
 						new IRJump("loop")
 				), List.of(), List.of("loop")),
 
+				new BasicBlock("@no_critical_edge_3", List.of(
+						new IRJump("loop")
+				), List.of("loop"), List.of("loop")),
+
 				new BasicBlock("loop", List.of(
 						new IRCall(cond, "getSomething", List.of(), Location.DUMMY),
 						new IRBranch(cond, false, "@no_critical_edge_3", ""),
 						new IRJump("break")
 				), List.of("start", "@no_critical_edge_3"), List.of("@no_critical_edge_3", "break")),
-
-				new BasicBlock("@no_critical_edge_3", List.of(
-						new IRJump("loop")
-				), List.of("loop"), List.of("loop")),
 
 				new BasicBlock("break", List.of(
 				), List.of("loop"), List.of())

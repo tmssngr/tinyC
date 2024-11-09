@@ -351,25 +351,11 @@ start:
         seta bl
         lea rax, [rsp+2]
         mov [rax], bl
-        ; branch t.2, false, @if_4_else
+        ; branch t.2, true, @if_4_then
         lea rax, [rsp+2]
         mov bl, [rax]
         or bl, bl
-        jz @if_4_else
-        ; cast t.3(i64), a(u8)
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        movzx rbx, bl
-        lea rax, [rsp+8]
-        mov [rax], rbx
-        ; call _, printIntLf [t.3]
-        lea rax, [rsp+8]
-        mov rbx, [rax]
-        push rbx
-          call @printIntLf
-        add rsp, 8
-        jmp @main_ret
-@if_4_else:
+        jnz @if_4_then
         ; cast t.4(i64), b(u8)
         lea rax, [rsp+1]
         mov bl, [rax]
@@ -378,6 +364,20 @@ start:
         mov [rax], rbx
         ; call _, printIntLf [t.4]
         lea rax, [rsp+16]
+        mov rbx, [rax]
+        push rbx
+          call @printIntLf
+        add rsp, 8
+        jmp @main_ret
+@if_4_then:
+        ; cast t.3(i64), a(u8)
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        movzx rbx, bl
+        lea rax, [rsp+8]
+        mov [rax], rbx
+        ; call _, printIntLf [t.3]
+        lea rax, [rsp+8]
         mov rbx, [rax]
         push rbx
           call @printIntLf
