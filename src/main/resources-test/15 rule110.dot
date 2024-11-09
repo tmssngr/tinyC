@@ -33,10 +33,10 @@ digraph program {
 		BasicBlock_3_for_2_body [label="for_2_body",shape=hexagon];
 		BasicBlock_3_for_2_body -> BasicBlock_3_if_3_else [label="(i)"];
 		BasicBlock_3_for_2_body -> BasicBlock_3_if_3_then [label="(i)"];
-		BasicBlock_3_if_3_then [label="if_3_then",shape=box];
-		BasicBlock_3_if_3_then -> BasicBlock_3_if_3_end [label="(i)"];
 		BasicBlock_3_if_3_else [label="if_3_else",shape=box];
 		BasicBlock_3_if_3_else -> BasicBlock_3_if_3_end [label="(i)"];
+		BasicBlock_3_if_3_then [label="if_3_then",shape=box];
+		BasicBlock_3_if_3_then -> BasicBlock_3_if_3_end [label="(i)"];
 		BasicBlock_3_if_3_end [label="if_3_end",shape=box];
 		BasicBlock_3_if_3_end -> BasicBlock_3_for_2_continue [label="(i)"];
 		BasicBlock_3_for_2_continue [label="for_2_continue",shape=box];

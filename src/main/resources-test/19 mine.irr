@@ -454,15 +454,26 @@
 	var 8: t.8 (u8/1)
 	var 9: t.9 (u8/1)
 	var 10: t.10 (bool/1)
-	; 47 pc
+	; 49 pc
 	const r0, 46
 	; 74:2 if isOpen([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=74:13]])
 	move chr, r0
 	call r0, isOpen, [cell]
-	branch r0, false, @if_14_else
+	branch r0, true, @if_14_then
+	; 88:7 if isFlag([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=88:18]])
+	call r0, isFlag, [cell]
+	branch r0, false, @if_14_end
+	jump @if_17_then
+@if_14_then:
 	; 75:3 if isBomb([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=75:14]])
 	call r0, isBomb, [cell]
 	branch r0, false, @if_15_else
+	jump @if_15_then
+@if_17_then:
+	const r0, 35
+	move chr, r0
+	jump @if_14_end
+@if_15_then:
 	const r0, 42
 	move chr, r0
 	jump @if_14_end
@@ -472,21 +483,14 @@
 	const r1, 0
 	gt r1, r0, r1
 	move count, r0
-	branch r1, false, @if_16_else
-	const r0, 48
-	move r1, count
-	add r0, r1, r0
-	move chr, r0
-	jump @if_14_end
-@if_16_else:
+	branch r1, true, @if_16_then
 	const r0, 32
 	move chr, r0
 	jump @if_14_end
-@if_14_else:
-	; 88:7 if isFlag([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=88:18]])
-	call r0, isFlag, [cell]
-	branch r0, false, @if_14_end
-	const r0, 35
+@if_16_then:
+	const r0, 48
+	move r1, count
+	add r0, r1, r0
 	move chr, r0
 @if_14_end:
 	call _, printChar [chr]
@@ -730,15 +734,15 @@
 	const r0, 0
 	move r1, a
 	lt r0, r1, r0
-	branch r0, false, @if_27_end
+	branch r0, true, @if_27_then
+	; 162:9 return a
+	move r0, a
+	ret r0
+	jump @abs_ret
+@if_27_then:
 	; 160:10 return -a
 	move r0, a
 	neg r0, r0
-	ret r0
-	jump @abs_ret
-@if_27_end:
-	; 162:9 return a
-	move r0, a
 	ret r0
 @abs_ret:
 
@@ -1021,7 +1025,7 @@
 	var 56: t.56 (u8/1)
 	var 57: t.57 (bool/1)
 	var 58: t.58 (u8*/8)
-	; 197 pc
+	; 201 pc
 	; begin initialize global variables
 	const r0, 0
 	; end initialize global variables
@@ -1046,10 +1050,7 @@
 	branch r1, false, @if_41_end
 	; 221:4 if printLeft([])
 	call r0, printLeft, []
-	branch r0, false, @if_41_end
-	const r0, [string-2]
-	call _, printString [r0]
-	jump @main_ret
+	branch r0, true, @if_42_then
 @if_41_end:
 	call r0, getChar, []
 	; 228:3 if chr == 27
@@ -1132,33 +1133,42 @@
 	const r0, 32
 	move r1, chr
 	equals r0, r1, r0
-	branch r0, false, @if_49_else
+	branch r0, true, @if_49_then
+	; 262:8 if chr == 13
+	const r0, 13
+	move r1, chr
+	equals r0, r1, r0
+	branch r0, false, @while_40
+	jump @if_52_then
+@if_49_then:
 	; 254:4 if !needsInitialize
 	move r0, needsInitialize
 	notlog r1, r0
 	branch r1, false, @while_40
+	jump @if_50_then
+@if_52_then:
+	move r0, needsInitialize
+	branch r0, false, @if_53_end
+	jump @if_53_then
+@if_50_then:
 	call r0, getCell, [curr_r, curr_c]
 	; 256:5 if !isOpen([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=256:17]])
 	move cell, r0
 	call r0, isOpen, [r0]
 	notlog r0, r0
 	branch r0, false, @while_40
+	jump @if_51_then
+@if_53_then:
+	const r0, 0
+	move needsInitialize, r0
+	call _, initField [curr_r, curr_c]
+	jump @if_53_end
+@if_51_then:
 	const r0, 4
 	move r1, cell
 	xor r0, r1, r0
 	call _, setCell [curr_r, curr_c, r0]
 	jump @while_40
-@if_49_else:
-	; 262:8 if chr == 13
-	const r0, 13
-	move r1, chr
-	equals r0, r1, r0
-	branch r0, false, @while_40
-	move r0, needsInitialize
-	branch r0, false, @if_53_end
-	const r0, 0
-	move needsInitialize, r0
-	call _, initField [curr_r, curr_c]
 @if_53_end:
 	call r0, getCell, [curr_r, curr_c]
 	; 268:4 if !isOpen([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=268:16]])
@@ -1174,14 +1184,17 @@
 @if_54_end:
 	; 271:4 if isBomb([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=271:15]])
 	call r0, isBomb, [cell]
-	branch r0, false, @if_55_end
+	branch r0, true, @if_55_then
+	call _, maybeRevealAround [curr_r, curr_c]
+	jump @while_40
+@if_42_then:
+	const r0, [string-2]
+	call _, printString [r0]
+	jump @main_ret
+@if_55_then:
 	call _, printField [curr_r, curr_c]
 	const r0, [string-3]
 	call _, printString [r0]
-	jump @main_ret
-@if_55_end:
-	call _, maybeRevealAround [curr_r, curr_c]
-	jump @while_40
 @main_ret:
 
 @printStringLength:

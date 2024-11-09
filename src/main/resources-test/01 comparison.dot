@@ -16,20 +16,20 @@ digraph program {
 		BasicBlock_2_while_1 [label="while_1",shape=hexagon];
 		BasicBlock_2_while_1 -> BasicBlock_2_if_2_end [label="(number,pos)"];
 		BasicBlock_2_while_1 -> BasicBlock_2_if_2_then [label="(pos)"];
-		BasicBlock_2_if_2_then [label="if_2_then",shape=box];
-		BasicBlock_2_if_2_then -> BasicBlock_2_printUint_ret;
 		BasicBlock_2_if_2_end [label="if_2_end",shape=box];
 		BasicBlock_2_if_2_end -> BasicBlock_2_while_1 [label="(number,pos)"];
+		BasicBlock_2_if_2_then [label="if_2_then",shape=box];
+		BasicBlock_2_if_2_then -> BasicBlock_2_printUint_ret;
 		BasicBlock_2_printUint_ret [label="printUint_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printIntLf {
 		BasicBlock_3_printIntLf [label="printIntLf",shape=hexagon];
 		BasicBlock_3_printIntLf -> BasicBlock_3_no_critical_edge_4 [label="(number)"];
 		BasicBlock_3_printIntLf -> BasicBlock_3_if_3_then [label="(number)"];
-		BasicBlock_3_if_3_then [label="if_3_then",shape=box];
-		BasicBlock_3_if_3_then -> BasicBlock_3_if_3_end [label="(number)"];
 		BasicBlock_3_no_critical_edge_4 [label="no_critical_edge_4",shape=box];
 		BasicBlock_3_no_critical_edge_4 -> BasicBlock_3_if_3_end [label="(number)"];
+		BasicBlock_3_if_3_then [label="if_3_then",shape=box];
+		BasicBlock_3_if_3_then -> BasicBlock_3_if_3_end [label="(number)"];
 		BasicBlock_3_if_3_end [label="if_3_end",shape=box];
 		BasicBlock_3_if_3_end -> BasicBlock_3_printIntLf_ret;
 		BasicBlock_3_printIntLf_ret [label="printIntLf_ret",shape=oval,style=filled,fillcolor="#fff5ee"];

@@ -197,19 +197,19 @@ start:
         ; equals r1, r1, r2
         cmp dl, r9b
         sete dl
-        ; branch r1, false, @if_3_else
+        ; branch r1, true, @if_3_then
         or dl, dl
-        jz @if_3_else
-        ; const r0, 32
-        mov cl, 32
+        jnz @if_3_then
+        ; const r0, 42
+        mov cl, 42
         ; call _, printChar [r0]
         push rcx
           call @printChar
         add rsp, 8
         jmp @for_2_continue
-@if_3_else:
-        ; const r0, 42
-        mov cl, 42
+@if_3_then:
+        ; const r0, 32
+        mov cl, 32
         ; call _, printChar [r0]
         push rcx
           call @printChar

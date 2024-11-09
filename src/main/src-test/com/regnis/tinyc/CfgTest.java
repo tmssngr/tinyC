@@ -61,16 +61,7 @@ public class CfgTest {
 		for (BasicBlock block : blocks) {
 			cfg.add(block);
 		}
-		final List<String> order = new ArrayList<>();
-		cfg.visitInPostOrder(block -> {
-			final String name = block.name;
-			if (block.successors().isEmpty()) {
-				order.add(name);
-			}
-			else {
-				order.addFirst(name);
-			}
-		});
-		return order;
+
+		return cfg.getInOrder();
 	}
 }

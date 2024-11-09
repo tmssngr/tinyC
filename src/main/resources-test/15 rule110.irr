@@ -89,12 +89,12 @@
 	load r1, [r1]
 	const r2, 0
 	equals r1, r1, r2
-	branch r1, false, @if_3_else
-	const r0, 32
+	branch r1, true, @if_3_then
+	const r0, 42
 	call _, printChar [r0]
 	jump @for_2_continue
-@if_3_else:
-	const r0, 42
+@if_3_then:
+	const r0, 32
 	call _, printChar [r0]
 @for_2_continue:
 	const r0, 1
