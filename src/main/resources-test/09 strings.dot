@@ -17,9 +17,7 @@ digraph program {
 		BasicBlock_2_while_1 -> BasicBlock_2_if_2_end [label="(number,pos)"];
 		BasicBlock_2_while_1 -> BasicBlock_2_if_2_then [label="(pos)"];
 		BasicBlock_2_if_2_then [label="if_2_then",shape=box];
-		BasicBlock_2_if_2_then -> BasicBlock_2_while_1_break [label="(pos)"];
-		BasicBlock_2_while_1_break [label="while_1_break",shape=box];
-		BasicBlock_2_while_1_break -> BasicBlock_2_printUint_ret;
+		BasicBlock_2_if_2_then -> BasicBlock_2_printUint_ret;
 		BasicBlock_2_if_2_end [label="if_2_end",shape=box];
 		BasicBlock_2_if_2_end -> BasicBlock_2_while_1 [label="(number,pos)"];
 		BasicBlock_2_printUint_ret [label="printUint_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -43,9 +41,7 @@ digraph program {
 		BasicBlock_4_for_4 -> BasicBlock_4_for_4_break [label="(length)"];
 		BasicBlock_4_for_4 -> BasicBlock_4_for_4_body [label="(length,str)"];
 		BasicBlock_4_for_4_body [label="for_4_body",shape=box];
-		BasicBlock_4_for_4_body -> BasicBlock_4_for_4_continue [label="(length,str)"];
-		BasicBlock_4_for_4_continue [label="for_4_continue",shape=box];
-		BasicBlock_4_for_4_continue -> BasicBlock_4_for_4 [label="(length,str)"];
+		BasicBlock_4_for_4_body -> BasicBlock_4_for_4 [label="(length,str)"];
 		BasicBlock_4_for_4_break [label="for_4_break",shape=box];
 		BasicBlock_4_for_4_break -> BasicBlock_4_strlen_ret;
 		BasicBlock_4_strlen_ret [label="strlen_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -62,9 +58,7 @@ digraph program {
 		BasicBlock_6_for_5 -> BasicBlock_6_for_5_break [label="(length)"];
 		BasicBlock_6_for_5 -> BasicBlock_6_for_5_body [label="(length,ptr)"];
 		BasicBlock_6_for_5_body [label="for_5_body",shape=box];
-		BasicBlock_6_for_5_body -> BasicBlock_6_for_5_continue [label="(length,ptr)"];
-		BasicBlock_6_for_5_continue [label="for_5_continue",shape=box];
-		BasicBlock_6_for_5_continue -> BasicBlock_6_for_5 [label="(length,ptr)"];
+		BasicBlock_6_for_5_body -> BasicBlock_6_for_5 [label="(length,ptr)"];
 		BasicBlock_6_for_5_break [label="for_5_break",shape=box];
 		BasicBlock_6_for_5_break -> BasicBlock_6_printLength_ret;
 		BasicBlock_6_printLength_ret [label="printLength_ret",shape=oval,style=filled,fillcolor="#fff5ee"];

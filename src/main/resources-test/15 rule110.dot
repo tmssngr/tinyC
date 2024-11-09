@@ -17,9 +17,7 @@ digraph program {
 		BasicBlock_2_for_1 -> BasicBlock_2_for_1_break [label="(length)"];
 		BasicBlock_2_for_1 -> BasicBlock_2_for_1_body [label="(length,str)"];
 		BasicBlock_2_for_1_body [label="for_1_body",shape=box];
-		BasicBlock_2_for_1_body -> BasicBlock_2_for_1_continue [label="(length,str)"];
-		BasicBlock_2_for_1_continue [label="for_1_continue",shape=box];
-		BasicBlock_2_for_1_continue -> BasicBlock_2_for_1 [label="(length,str)"];
+		BasicBlock_2_for_1_body -> BasicBlock_2_for_1 [label="(length,str)"];
 		BasicBlock_2_for_1_break [label="for_1_break",shape=box];
 		BasicBlock_2_for_1_break -> BasicBlock_2_strlen_ret;
 		BasicBlock_2_strlen_ret [label="strlen_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -54,9 +52,7 @@ digraph program {
 		BasicBlock_4_for_4 -> BasicBlock_4_for_4_break;
 		BasicBlock_4_for_4 -> BasicBlock_4_for_4_body [label="(i)"];
 		BasicBlock_4_for_4_body [label="for_4_body",shape=box];
-		BasicBlock_4_for_4_body -> BasicBlock_4_for_4_continue [label="(i)"];
-		BasicBlock_4_for_4_continue [label="for_4_continue",shape=box];
-		BasicBlock_4_for_4_continue -> BasicBlock_4_for_4 [label="(i)"];
+		BasicBlock_4_for_4_body -> BasicBlock_4_for_4 [label="(i)"];
 		BasicBlock_4_for_4_break [label="for_4_break",shape=box];
 		BasicBlock_4_for_4_break -> BasicBlock_4_for_5 [label="(i)"];
 		BasicBlock_4_for_5 [label="for_5",shape=hexagon];
@@ -68,13 +64,9 @@ digraph program {
 		BasicBlock_4_for_6 -> BasicBlock_4_for_6_break [label="(i)"];
 		BasicBlock_4_for_6 -> BasicBlock_4_for_6_body [label="(i,j,pattern)"];
 		BasicBlock_4_for_6_body [label="for_6_body",shape=box];
-		BasicBlock_4_for_6_body -> BasicBlock_4_for_6_continue [label="(i,j,pattern)"];
-		BasicBlock_4_for_6_continue [label="for_6_continue",shape=box];
-		BasicBlock_4_for_6_continue -> BasicBlock_4_for_6 [label="(i,j,pattern)"];
+		BasicBlock_4_for_6_body -> BasicBlock_4_for_6 [label="(i,j,pattern)"];
 		BasicBlock_4_for_6_break [label="for_6_break",shape=box];
-		BasicBlock_4_for_6_break -> BasicBlock_4_for_5_continue [label="(i)"];
-		BasicBlock_4_for_5_continue [label="for_5_continue",shape=box];
-		BasicBlock_4_for_5_continue -> BasicBlock_4_for_5 [label="(i)"];
+		BasicBlock_4_for_6_break -> BasicBlock_4_for_5 [label="(i)"];
 		BasicBlock_4_for_5_break [label="for_5_break",shape=box];
 		BasicBlock_4_for_5_break -> BasicBlock_4_main_ret;
 		BasicBlock_4_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];

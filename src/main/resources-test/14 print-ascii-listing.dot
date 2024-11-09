@@ -17,9 +17,7 @@ digraph program {
 		BasicBlock_2_for_1 -> BasicBlock_2_for_1_break [label="(length)"];
 		BasicBlock_2_for_1 -> BasicBlock_2_for_1_body [label="(length,str)"];
 		BasicBlock_2_for_1_body [label="for_1_body",shape=box];
-		BasicBlock_2_for_1_body -> BasicBlock_2_for_1_continue [label="(length,str)"];
-		BasicBlock_2_for_1_continue [label="for_1_continue",shape=box];
-		BasicBlock_2_for_1_continue -> BasicBlock_2_for_1 [label="(length,str)"];
+		BasicBlock_2_for_1_body -> BasicBlock_2_for_1 [label="(length,str)"];
 		BasicBlock_2_for_1_break [label="for_1_break",shape=box];
 		BasicBlock_2_for_1_break -> BasicBlock_2_strlen_ret;
 		BasicBlock_2_strlen_ret [label="strlen_ret",shape=oval,style=filled,fillcolor="#fff5ee"];

@@ -99,6 +99,63 @@ public final class Cfg {
 		for (CriticalEdge criticalEdge : candidates) {
 			eliminateCriticalEdge(criticalEdge);
 		}
+
+		squashSimpleNeighborBlocks();
+	}
+
+	public void squashSimpleNeighborBlocks() {
+		final Set<String> singleInOutBlocks = new HashSet<>();
+		visitPreOrder(block -> {
+			if (block.predecessors().size() == 1
+			    && block.successors().size() == 1) {
+				singleInOutBlocks.add(block.name);
+			}
+		}, null);
+
+		while (true) {
+			final Iterator<String> it = singleInOutBlocks.iterator();
+			if (!it.hasNext()) {
+				break;
+			}
+
+			final String name = it.next();
+			it.remove();
+
+			final BasicBlock block = get(name);
+			final String predecessor = block.predecessors().getFirst();
+			if (singleInOutBlocks.contains(predecessor)) {
+				replaceWithSingleBlock(predecessor, name);
+				continue;
+			}
+
+			final String successor = block.successors().getFirst();
+			if (singleInOutBlocks.contains(successor)) {
+				replaceWithSingleBlock(name, successor);
+				singleInOutBlocks.remove(successor);
+			}
+		}
+	}
+
+	private void replaceWithSingleBlock(String predecessor, String name) {
+		final BasicBlock block1 = get(predecessor);
+		final BasicBlock block2 = get(name);
+		Utils.assertTrue(block1.predecessors().size() == 1);
+		Utils.assertTrue(block1.successors().equals(List.of(name)));
+		Utils.assertTrue(block2.predecessors().equals(List.of(predecessor)));
+		Utils.assertTrue(block2.successors().size() == 1);
+
+		final String successor = block2.successors().getFirst();
+		final BasicBlock block3 = get(successor);
+
+		nameToBlock.remove(name);
+		nameToBlock.remove(predecessor);
+		block3.replacePredecessor(name, predecessor);
+		final List<IRInstruction> instructions = new ArrayList<>(block1.instructions());
+		final IRInstruction lastInstruction = instructions.removeLast();
+		Utils.assertTrue(lastInstruction instanceof IRJump(String label) && label.equals(name));
+		instructions.addAll(block2.instructions());
+		final BasicBlock newBlock = new BasicBlock(predecessor, instructions, block1.predecessors(), List.of(successor));
+		add(newBlock);
 	}
 
 	@NotNull
