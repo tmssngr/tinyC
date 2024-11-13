@@ -29,7 +29,7 @@ public class IRGeneratorTest {
 				            }""");
 		assertEquals(new IRProgram(List.of(
 				             new IRFunction("get", "@get", Type.U8, List.of(
-						             new IRLocalVar("t.0", 0, false, 1)
+						             new IRVarDef("t.0", 0, VariableScope.function, Type.U8, 1)
 				             ), List.of(
 						             new IRComment("2:10 return 0"),
 						             new IRLiteral(tmp(0, Type.U8), 0, loc(1, 9)),
@@ -38,11 +38,11 @@ public class IRGeneratorTest {
 						             new IRLabel("@get_ret")
 				             ), List.of()),
 				             new IRFunction("foo", "@foo", Type.VOID, List.of(
-						             new IRLocalVar("chr", 0, false, 1),
-						             new IRLocalVar("t.1", 1, false, 1),
-						             new IRLocalVar("t.2", 2, false, 1),
-						             new IRLocalVar("t.3", 3, false, 1),
-						             new IRLocalVar("t.4", 4, false, 1)
+						             new IRVarDef("chr", 0, VariableScope.function, Type.U8, 1),
+						             new IRVarDef("t.1", 1, VariableScope.function, Type.BOOL, 1),
+						             new IRVarDef("t.2", 2, VariableScope.function, Type.U8, 1),
+						             new IRVarDef("t.3", 3, VariableScope.function, Type.BOOL, 1),
+						             new IRVarDef("t.4", 4, VariableScope.function, Type.U8, 1)
 				             ), List.of(
 						             new IRComment("5:3 while true"),
 						             new IRLabel("@while_1"),
@@ -101,7 +101,7 @@ public class IRGeneratorTest {
 		Assert.assertEquals(expected, actual);
 	}
 
-	private void assertEquals(IRLocalVar expected, IRLocalVar actual) {
+	private void assertEquals(IRVarDef expected, IRVarDef actual) {
 		Assert.assertEquals(expected, actual);
 	}
 

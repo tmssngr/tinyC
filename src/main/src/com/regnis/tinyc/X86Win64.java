@@ -96,7 +96,7 @@ public final class X86Win64 {
 				              """);
 	}
 
-	private void writePostamble(List<IRGlobalVar> globalVariables, List<IRStringLiteral> stringLiterals) throws IOException {
+	private void writePostamble(List<IRVarDef> globalVariables, List<IRStringLiteral> stringLiterals) throws IOException {
 		writeNL();
 
 		writeLines("section '.data' data readable writeable");
@@ -104,7 +104,7 @@ public final class X86Win64 {
 				              hStdIn  rb 8
 				              hStdOut rb 8
 				              hStdErr rb 8""");
-		for (IRGlobalVar variable : globalVariables) {
+		for (IRVarDef variable : globalVariables) {
 			writeComment("variable " + variable);
 			writeIndented(getGlobalVarName(variable.index()) + " rb " + variable.size());
 		}
@@ -159,13 +159,13 @@ public final class X86Win64 {
 		}
 	}
 
-	private int prepareLocalVarsOffsets(List<IRLocalVar> localVars) {
+	private int prepareLocalVarsOffsets(List<IRVarDef> localVars) {
 		localVarOffsets = new int[localVars.size()];
 		int argCount = 0;
 		int offset = 0;
 		int i = 0;
-		for (IRLocalVar var : localVars) {
-			if (var.isArg()) {
+		for (IRVarDef var : localVars) {
+			if (var.scope() == VariableScope.argument) {
 				argCount++;
 			}
 			else {
@@ -185,8 +185,9 @@ public final class X86Win64 {
 		// local vars <localVarSize> bytes              v
 		int argOffset = alignTo16(argCount * 8 + 8) + localVarSize;
 		i = 0;
-		for (IRLocalVar var : localVars) {
-			if (!var.isArg()) {
+		for (IRVarDef var : localVars) {
+			if (var.scope() != VariableScope.argument) {
+				Utils.assertTrue(var.scope() == VariableScope.function);
 				break;
 			}
 
@@ -198,12 +199,13 @@ public final class X86Win64 {
 		return localVarSize;
 	}
 
-	private void writeVarOffsets(List<IRLocalVar> localVars) throws IOException {
-		for (IRLocalVar var : localVars) {
-			if (var.isArg()) {
+	private void writeVarOffsets(List<IRVarDef> localVars) throws IOException {
+		for (IRVarDef var : localVars) {
+			if (var.scope() == VariableScope.argument) {
 				writeComment("  rsp+" + localVarOffsets[var.index()] + ": arg " + var.name());
 			}
 			else {
+				Utils.assertTrue(var.scope() == VariableScope.function);
 				writeComment("  rsp+" + localVarOffsets[var.index()] + ": var " + var.name());
 			}
 		}

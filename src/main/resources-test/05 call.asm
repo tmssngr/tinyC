@@ -518,7 +518,7 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: i (1)
+        ; variable 0: i (u8/1)
         var_0 rb 1
 
 section '.idata' import data readable writeable

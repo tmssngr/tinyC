@@ -639,7 +639,7 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: text (8)
+        ; variable 0: text (u8*/8)
         var_0 rb 8
 
 section '.data' data readable

@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 
 import java.io.*;
 import java.util.*;
@@ -30,12 +31,12 @@ public final class IRWriter extends TextWriter {
 
 	private void writeFunction(IRFunction function) throws IOException {
 		writeln(function.label() + ":");
-		final List<IRLocalVar> localVars = function.localVars();
+		final List<IRVarDef> localVars = function.localVars();
 		if (localVars.size() > 0) {
 			writeln(" Local variables");
-			for (IRLocalVar var : localVars) {
+			for (IRVarDef var : localVars) {
 				writeIndentation();
-				write(var.isArg() ? "arg " : "var ");
+				write(var.scope() == VariableScope.argument ? "arg " : "var ");
 				writeln(var.toString());
 			}
 		}
@@ -158,13 +159,13 @@ public final class IRWriter extends TextWriter {
 		return 2;
 	}
 
-	private void writeGlobalVars(List<IRGlobalVar> globalVars) throws IOException {
+	private void writeGlobalVars(List<IRVarDef> globalVars) throws IOException {
 		if (globalVars.isEmpty()) {
 			return;
 		}
 
 		writeln("Global variables");
-		for (IRGlobalVar var : globalVars) {
+		for (IRVarDef var : globalVars) {
 			writeIndentation();
 			writeln(var.toString());
 		}

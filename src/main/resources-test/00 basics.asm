@@ -399,13 +399,13 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: zero (1)
+        ; variable 0: zero (u8/1)
         var_0 rb 1
-        ; variable 1: one (1)
+        ; variable 1: one (u8/1)
         var_1 rb 1
-        ; variable 2: two (1)
+        ; variable 2: two (u8/1)
         var_2 rb 1
-        ; variable 3: threeFour (1)
+        ; variable 3: threeFour (u8/1)
         var_3 rb 1
 
 section '.idata' import data readable writeable

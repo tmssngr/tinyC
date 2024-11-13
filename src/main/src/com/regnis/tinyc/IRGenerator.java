@@ -24,7 +24,7 @@ public final class IRGenerator {
 	private int labelIndex;
 
 	private List<IRInstruction> instructions = List.of();
-	private List<IRLocalVar> localVars = List.of();
+	private List<IRVarDef> localVars = List.of();
 	private List<Integer> localVarsCantBeRegister = List.of();
 	private String functionRetLabel;
 	private BreakContinueLabels breakContinueLabels;
@@ -36,7 +36,7 @@ public final class IRGenerator {
 	private IRProgram convertProgram(Program program) {
 		initializeTypes(program.typeDefs());
 
-		final List<IRGlobalVar> globalVars = processGlobalVars(program.globalVariables());
+		final List<IRVarDef> globalVars = processGlobalVars(program.globalVariables());
 
 		final List<IRFunction> functions = new ArrayList<>();
 
@@ -101,7 +101,7 @@ public final class IRGenerator {
 			final int size = variable.isArray()
 					? getTypeSize(Objects.requireNonNull(type.toType())) * variable.arraySize()
 					: getTypeSize(type);
-			localVars.add(new IRLocalVar(variable.name(), variable.index(), variable.scope() == VariableScope.argument, size));
+			localVars.add(new IRVarDef(variable.name(), variable.index(), variable.scope(), type, size));
 			if (!variable.canBeRegister()) {
 				localVarsCantBeRegister.add(variable.index());
 			}
@@ -134,12 +134,12 @@ public final class IRGenerator {
 		}
 	}
 
-	private List<IRGlobalVar> processGlobalVars(List<Variable> globalVariables) {
-		final List<IRGlobalVar> globalVars = new ArrayList<>();
+	private List<IRVarDef> processGlobalVars(List<Variable> globalVariables) {
+		final List<IRVarDef> globalVars = new ArrayList<>();
 		for (Variable variable : globalVariables) {
 			Utils.assertTrue(variable.scope() == VariableScope.global);
 			final int size = getVariableSize(variable);
-			globalVars.add(new IRGlobalVar(variable.name(), variable.index(), size));
+			globalVars.add(new IRVarDef(variable.name(), variable.index(), VariableScope.global, variable.type(), size));
 			if (!variable.canBeRegister()) {
 				globalVarsCantBeRegister.add(variable.index());
 			}
@@ -551,7 +551,7 @@ public final class IRGenerator {
 		final int index = localVars.size();
 		final String name = "t." + index;
 		final IRVar var = new IRVar(name, index, VariableScope.function, type, true);
-		localVars.add(new IRLocalVar(name, index, false, getTypeSize(type)));
+		localVars.add(new IRVarDef(name, index, VariableScope.function, type, getTypeSize(type)));
 		return var;
 	}
 

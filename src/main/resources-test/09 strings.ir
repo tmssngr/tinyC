@@ -1,7 +1,7 @@
 @printString:
  Local variables
-	arg 0: str
-	var 1: length
+	arg 0: str (u8*/8)
+	var 1: length (i64/8)
 	; 10 pc
 	call length, strlen, [str]
 	call _, printStringLength [str, length]
@@ -9,9 +9,9 @@
 
 @printChar:
  Local variables
-	arg 0: chr
-	var 1: t.1
-	var 2: t.2
+	arg 0: chr (u8/1)
+	var 1: t.1 (u8*/8)
+	var 2: t.2 (i64/8)
 	; 12 pc
 	addrof t.1, chr
 	const t.2, 1
@@ -20,27 +20,27 @@
 
 @printUint:
  Local variables
-	arg 0: number
-	var 1: buffer
-	var 2: pos
-	var 3: remainder
-	var 4: digit
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
-	var 10: t.10
-	var 11: t.11
-	var 12: t.12
-	var 13: t.13
-	var 14: t.14
-	var 15: t.15
-	var 16: t.16
-	var 17: t.17
-	var 18: t.18
-	var 19: t.19
-	var 20: t.20
+	arg 0: number (i64/8)
+	var 1: buffer (u8*/20)
+	var 2: pos (u8/1)
+	var 3: remainder (i64/8)
+	var 4: digit (u8/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (u8/1)
+	var 9: t.9 (u8/1)
+	var 10: t.10 (u8*/8)
+	var 11: t.11 (i64/8)
+	var 12: t.12 (u8*/8)
+	var 13: t.13 (bool/1)
+	var 14: t.14 (i64/8)
+	var 15: t.15 (u8*/8)
+	var 16: t.16 (i64/8)
+	var 17: t.17 (u8*/8)
+	var 18: t.18 (i64/8)
+	var 19: t.19 (u8/1)
+	var 20: t.20 (u8/1)
 	; 122 pc
 	const pos, 20
 	; 13:2 while true
@@ -79,11 +79,11 @@
 
 @printIntLf:
  Local variables
-	arg 0: number
-	var 1: t.1
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
+	arg 0: number (i64/8)
+	var 1: t.1 (bool/1)
+	var 2: t.2 (i64/8)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
 	; 30 pc
 	; 27:2 if number < 0
 	const t.2, 0
@@ -100,15 +100,15 @@
 
 @strlen:
  Local variables
-	arg 0: str
-	var 1: length
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
+	arg 0: str (u8*/8)
+	var 1: length (i64/8)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (i64/8)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (i64/8)
 	; 53 pc
 	const length, 0
 	; 37:2 for *str != 0
@@ -147,11 +147,11 @@
 
 @main:
  Local variables
-	var 0: second
-	var 1: chr
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
+	var 0: second (u8*/8)
+	var 1: chr (u8/1)
+	var 2: t.2 (i64/8)
+	var 3: t.3 (u8*/8)
+	var 4: t.4 (i64/8)
 	; 43 pc
 	; begin initialize global variables
 	const text, [string-0]
@@ -170,16 +170,16 @@
 
 @printLength:
  Local variables
-	var 0: length
-	var 1: ptr
-	var 2: t.2
-	var 3: t.3
-	var 4: t.4
-	var 5: t.5
-	var 6: t.6
-	var 7: t.7
-	var 8: t.8
-	var 9: t.9
+	var 0: length (i16/2)
+	var 1: ptr (u8*/8)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (i16/2)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (i64/8)
+	var 9: t.9 (i64/8)
 	; 62 pc
 	const length, 0
 	move ptr, text
@@ -203,7 +203,7 @@
 @printLength_ret:
 
 Global variables
-	0: text (8)
+	0: text (u8*/8)
 
 String literals
 	string lit 0 "hello world\n\0"

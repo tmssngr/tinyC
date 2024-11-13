@@ -427,11 +427,11 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: space (2)
+        ; variable 0: space (i16/2)
         var_0 rb 2
-        ; variable 1: next (2)
+        ; variable 1: next (i16/2)
         var_1 rb 2
-        ; variable 2: ptrToSpace (8)
+        ; variable 2: ptrToSpace (i16*/8)
         var_2 rb 8
 
 section '.idata' import data readable writeable
