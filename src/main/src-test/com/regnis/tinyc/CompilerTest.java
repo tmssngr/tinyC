@@ -3,6 +3,7 @@ package com.regnis.tinyc;
 import java.io.*;
 import java.nio.file.*;
 
+import org.jetbrains.annotations.*;
 import org.junit.*;
 
 /**
@@ -95,7 +96,18 @@ public class CompilerTest {
 		compileAndRun("15 rule110.c");
 	}
 
+	@Test
+	public void testCfgNoReturn() throws IOException, InterruptedException {
+		final Path inputFile = absolutePath("16 cfg-no-return.c");
+		Compiler.compile(inputFile);
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
-		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
+		Compiler.compileAndRun(absolutePath(fileName));
+	}
+
+	@NotNull
+	private Path absolutePath(String fileName) {
+		return Path.of("src/main/resources-test", fileName);
 	}
 }

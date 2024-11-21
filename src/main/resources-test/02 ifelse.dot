@@ -1,0 +1,46 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printChar {
+		BasicBlock_0_printChar [label="printChar",shape=box];
+		BasicBlock_0_printChar -> BasicBlock_0_printChar_ret;
+		BasicBlock_0_printChar_ret [label="printChar_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printUint {
+		BasicBlock_1_printUint [label="printUint",shape=box];
+		BasicBlock_1_printUint -> BasicBlock_1_while_1 [label="(number,pos)"];
+		BasicBlock_1_while_1 [label="while_1",shape=hexagon];
+		BasicBlock_1_while_1 -> BasicBlock_1_if_2_end [label="(number,pos)"];
+		BasicBlock_1_while_1 -> BasicBlock_1_if_2_then [label="(pos)"];
+		BasicBlock_1_if_2_then [label="if_2_then",shape=box];
+		BasicBlock_1_if_2_then -> BasicBlock_1_while_1_break [label="(pos)"];
+		BasicBlock_1_while_1_break [label="while_1_break",shape=box];
+		BasicBlock_1_while_1_break -> BasicBlock_1_printUint_ret;
+		BasicBlock_1_if_2_end [label="if_2_end",shape=box];
+		BasicBlock_1_if_2_end -> BasicBlock_1_while_1 [label="(number,pos)"];
+		BasicBlock_1_printUint_ret [label="printUint_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf {
+		BasicBlock_2_printIntLf [label="printIntLf",shape=hexagon];
+		BasicBlock_2_printIntLf -> BasicBlock_2_no_critical_edge_4 [label="(number)"];
+		BasicBlock_2_printIntLf -> BasicBlock_2_if_3_then [label="(number)"];
+		BasicBlock_2_if_3_then [label="if_3_then",shape=box];
+		BasicBlock_2_if_3_then -> BasicBlock_2_if_3_end [label="(number)"];
+		BasicBlock_2_no_critical_edge_4 [label="no_critical_edge_4",shape=box];
+		BasicBlock_2_no_critical_edge_4 -> BasicBlock_2_if_3_end [label="(number)"];
+		BasicBlock_2_if_3_end [label="if_3_end",shape=box];
+		BasicBlock_2_if_3_end -> BasicBlock_2_printIntLf_ret;
+		BasicBlock_2_printIntLf_ret [label="printIntLf_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_3_main [label="main",shape=hexagon];
+		BasicBlock_3_main -> BasicBlock_3_if_4_else [label="(b)"];
+		BasicBlock_3_main -> BasicBlock_3_if_4_then [label="(a)"];
+		BasicBlock_3_if_4_then [label="if_4_then",shape=box];
+		BasicBlock_3_if_4_then -> BasicBlock_3_if_4_end;
+		BasicBlock_3_if_4_else [label="if_4_else",shape=box];
+		BasicBlock_3_if_4_else -> BasicBlock_3_if_4_end;
+		BasicBlock_3_if_4_end [label="if_4_end",shape=box];
+		BasicBlock_3_if_4_end -> BasicBlock_3_main_ret;
+		BasicBlock_3_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}
