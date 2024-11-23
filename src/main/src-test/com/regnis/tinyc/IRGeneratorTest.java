@@ -29,7 +29,7 @@ public class IRGeneratorTest {
 				            }""");
 		assertEquals(new IRProgram(List.of(
 				             new IRFunction("get", "@get", Type.U8, new IRVarInfos(List.of(
-						             new IRVarDef("t.0", 0, VariableScope.function, Type.U8, 1)
+						             new IRVarDef(new IRVar("t.0", 0, VariableScope.function, Type.U8), 1)
 				             ), Set.of(), null), List.of(
 						             new IRComment("2:10 return 0"),
 						             new IRLiteral(tmp(0, Type.U8), 0, loc(1, 9)),
@@ -38,11 +38,11 @@ public class IRGeneratorTest {
 						             new IRLabel("@get_ret")
 				             )),
 				             new IRFunction("foo", "@foo", Type.VOID, new IRVarInfos(List.of(
-						             new IRVarDef("chr", 0, VariableScope.function, Type.U8, 1),
-						             new IRVarDef("t.1", 1, VariableScope.function, Type.BOOL, 1),
-						             new IRVarDef("t.2", 2, VariableScope.function, Type.U8, 1),
-						             new IRVarDef("t.3", 3, VariableScope.function, Type.BOOL, 1),
-						             new IRVarDef("t.4", 4, VariableScope.function, Type.U8, 1)
+						             new IRVarDef(new IRVar("chr", 0, VariableScope.function, Type.U8), 1),
+						             new IRVarDef(new IRVar("t.1", 1, VariableScope.function, Type.BOOL), 1),
+						             new IRVarDef(new IRVar("t.2", 2, VariableScope.function, Type.U8), 1),
+						             new IRVarDef(new IRVar("t.3", 3, VariableScope.function, Type.BOOL), 1),
+						             new IRVarDef(new IRVar("t.4", 4, VariableScope.function, Type.U8), 1)
 				             ), Set.of(), null), List.of(
 						             new IRComment("5:3 while true"),
 						             new IRLabel("@while_1"),

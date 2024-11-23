@@ -1,15 +1,18 @@
 package com.regnis.tinyc.ir;
 
-import com.regnis.tinyc.ast.*;
-
 import org.jetbrains.annotations.*;
 
 /**
  * @author Thomas Singer
  */
-public record IRVarDef(@NotNull String name, int index, @NotNull VariableScope scope, @NotNull Type type, int size) {
+public record IRVarDef(@NotNull IRVar var, int size) {
 	@Override
 	public String toString() {
-		return index + ": " + name + " (" + type + "/" + size + ")";
+		return var + "/" + size;
+	}
+
+	@NotNull
+	public String getString() {
+		return var.index() + ": " + var.name() + " (" + var.type() + "/" + size() + ")";
 	}
 }

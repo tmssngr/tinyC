@@ -102,9 +102,10 @@ public final class IRGenerator {
 			final int size = variable.isArray()
 					? getTypeSize(Objects.requireNonNull(type.toType())) * variable.arraySize()
 					: getTypeSize(type);
-			localVars.add(new IRVarDef(variable.name(), variable.index(), variable.scope(), type, size));
+			final IRVar var = new IRVar(variable.name(), variable.index(), variable.scope(), type);
+			localVars.add(new IRVarDef(var, size));
 			if (!variable.canBeRegister()) {
-				localVarsCantBeRegister.add(new IRVar(variable.name(), variable.index(), variable.scope(), type));
+				localVarsCantBeRegister.add(var);
 			}
 		}
 		return localVarsCantBeRegister;
@@ -142,9 +143,10 @@ public final class IRGenerator {
 		for (Variable variable : globalVariables) {
 			Utils.assertTrue(variable.scope() == VariableScope.global);
 			final int size = getVariableSize(variable);
-			globalVars.add(new IRVarDef(variable.name(), variable.index(), VariableScope.global, variable.type(), size));
+			final IRVar var = new IRVar(variable.name(), variable.index(), VariableScope.global, variable.type());
+			globalVars.add(new IRVarDef(var, size));
 			if (!variable.canBeRegister()) {
-				cantBeRegister.add(new IRVar(variable.name(), variable.index(), VariableScope.global, variable.type()));
+				cantBeRegister.add(var);
 			}
 		}
 		return new IRVarInfos(globalVars, cantBeRegister, null);
@@ -548,7 +550,7 @@ public final class IRGenerator {
 		final int index = localVars.size();
 		final String name = "t." + index;
 		final IRVar var = new IRVar(name, index, VariableScope.function, type);
-		localVars.add(new IRVarDef(name, index, VariableScope.function, type, getTypeSize(type)));
+		localVars.add(new IRVarDef(var, getTypeSize(type)));
 		return var;
 	}
 
