@@ -9,10 +9,10 @@ import org.jetbrains.annotations.*;
  */
 public record IRProgram(@NotNull List<IRFunction> functions,
 						@NotNull List<IRAsmFunction> asmFunctions,
-                        @NotNull List<IRVarDef> globalVars,
+						@NotNull IRVarInfos varInfos,
                         @NotNull List<IRStringLiteral> stringLiterals) {
 
 	public IRProgram derive(List<IRFunction> functions) {
-		return new IRProgram(functions, asmFunctions, globalVars, stringLiterals);
+		return new IRProgram(functions, asmFunctions, varInfos, stringLiterals);
 	}
 }

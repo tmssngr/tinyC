@@ -19,15 +19,14 @@ public final class IRGenerator {
 	}
 
 	private final Map<Type, TypeInfo> types = new HashMap<>();
-	private final List<Integer> globalVarsCantBeRegister = new ArrayList<>();
 
 	private int labelIndex;
 
 	private List<IRInstruction> instructions = List.of();
 	private List<IRVarDef> localVars = List.of();
-	private List<Integer> localVarsCantBeRegister = List.of();
 	private String functionRetLabel;
 	private BreakContinueLabels breakContinueLabels;
+	private IRVarInfos globalVars;
 
 	private IRGenerator() {
 	}
@@ -36,7 +35,7 @@ public final class IRGenerator {
 	private IRProgram convertProgram(Program program) {
 		initializeTypes(program.typeDefs());
 
-		final List<IRVarDef> globalVars = processGlobalVars(program.globalVariables());
+		globalVars = processGlobalVars(program.globalVariables());
 
 		final List<IRFunction> functions = new ArrayList<>();
 		final List<IRAsmFunction> asmFunctions = new ArrayList<>();
@@ -75,7 +74,7 @@ public final class IRGenerator {
 			return;
 		}
 
-		processLocalVars(function);
+		final Set<IRVar> localVarsCantBeRegister = processLocalVars(function);
 		instructions = new ArrayList<>();
 		try {
 			functionRetLabel = functionLabel + "_ret";
@@ -86,18 +85,18 @@ public final class IRGenerator {
 			writeStatements(function.statements());
 			writeLabel(functionRetLabel);
 
-			functions.add(new IRFunction(name, functionLabel, Objects.requireNonNull(function.returnType()), localVars, instructions));
+			final IRVarInfos varInfos = new IRVarInfos(localVars, localVarsCantBeRegister, Objects.requireNonNull(globalVars));
+			functions.add(new IRFunction(name, functionLabel, Objects.requireNonNull(function.returnType()), varInfos, instructions));
 		}
 		finally {
 			localVars = List.of();
-			localVarsCantBeRegister = List.of();
 			instructions = List.of();
 		}
 	}
 
-	private void processLocalVars(Function function) {
+	private Set<IRVar> processLocalVars(Function function) {
 		localVars = new ArrayList<>();
-		localVarsCantBeRegister = new ArrayList<>();
+		final Set<IRVar> localVarsCantBeRegister = new HashSet<>();
 		for (Variable variable : function.localVars()) {
 			final Type type = variable.type();
 			final int size = variable.isArray()
@@ -105,9 +104,10 @@ public final class IRGenerator {
 					: getTypeSize(type);
 			localVars.add(new IRVarDef(variable.name(), variable.index(), variable.scope(), type, size));
 			if (!variable.canBeRegister()) {
-				localVarsCantBeRegister.add(variable.index());
+				localVarsCantBeRegister.add(new IRVar(variable.name(), variable.index(), variable.scope(), type));
 			}
 		}
+		return localVarsCantBeRegister;
 	}
 
 	private int getTypeSize(Type type) {
@@ -136,17 +136,18 @@ public final class IRGenerator {
 		}
 	}
 
-	private List<IRVarDef> processGlobalVars(List<Variable> globalVariables) {
+	private IRVarInfos processGlobalVars(List<Variable> globalVariables) {
 		final List<IRVarDef> globalVars = new ArrayList<>();
+		final Set<IRVar> cantBeRegister = new HashSet<>();
 		for (Variable variable : globalVariables) {
 			Utils.assertTrue(variable.scope() == VariableScope.global);
 			final int size = getVariableSize(variable);
 			globalVars.add(new IRVarDef(variable.name(), variable.index(), VariableScope.global, variable.type(), size));
 			if (!variable.canBeRegister()) {
-				globalVarsCantBeRegister.add(variable.index());
+				cantBeRegister.add(new IRVar(variable.name(), variable.index(), VariableScope.global, variable.type()));
 			}
 		}
-		return globalVars;
+		return new IRVarInfos(globalVars, cantBeRegister, null);
 	}
 
 	private int getVariableSize(Variable variable) {
@@ -540,19 +541,13 @@ public final class IRGenerator {
 
 	@NotNull
 	private IRVar varAccessToVar(ExprVarAccess access) {
-		final int index = access.index();
-		final VariableScope scope = access.scope();
-		final boolean cantBeRegister = switch (scope) {
-			case global -> globalVarsCantBeRegister.contains(index);
-			case argument, function -> localVarsCantBeRegister.contains(index);
-		};
-		return new IRVar(access.varName(), index, scope, access.typeNotNull(), !cantBeRegister);
+		return new IRVar(access.varName(), access.index(), access.scope(), access.typeNotNull());
 	}
 
 	private IRVar createTempVar(@NotNull Type type) {
 		final int index = localVars.size();
 		final String name = "t." + index;
-		final IRVar var = new IRVar(name, index, VariableScope.function, type, true);
+		final IRVar var = new IRVar(name, index, VariableScope.function, type);
 		localVars.add(new IRVarDef(name, index, VariableScope.function, type, getTypeSize(type)));
 		return var;
 	}

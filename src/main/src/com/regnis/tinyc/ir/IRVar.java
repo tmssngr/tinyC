@@ -7,7 +7,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRVar(@NotNull String name, int index, @NotNull VariableScope scope, @NotNull Type type, boolean canBeRegister) {
+public record IRVar(@NotNull String name, int index, @NotNull VariableScope scope, @NotNull Type type) {
 	@Override
 	public String toString() {
 		return name;

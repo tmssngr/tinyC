@@ -19,7 +19,7 @@ public final class IRWriter extends TextWriter {
 
 	public void write(@NotNull IRProgram program) throws IOException {
 		writeFunctions(program);
-		writeGlobalVars(program.globalVars());
+		writeGlobalVars(program.varInfos().vars());
 		writeStringLiterals(program.stringLiterals());
 	}
 
@@ -34,7 +34,7 @@ public final class IRWriter extends TextWriter {
 
 	private void writeFunction(IRFunction function) throws IOException {
 		writeln(function.label() + ":");
-		final List<IRVarDef> localVars = function.localVars();
+		final List<IRVarDef> localVars = function.varInfos().vars();
 		if (localVars.size() > 0) {
 			writeln(" Local variables");
 			for (IRVarDef var : localVars) {

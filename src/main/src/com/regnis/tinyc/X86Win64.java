@@ -48,7 +48,7 @@ public final class X86Win64 {
 		}
 
 		writeInit();
-		writePostamble(program.globalVars(), program.stringLiterals());
+		writePostamble(program.varInfos().vars(), program.stringLiterals());
 	}
 
 	private void writePreample() throws IOException {
@@ -147,8 +147,9 @@ public final class X86Win64 {
 	private void writeFunction(IRFunction function) throws IOException {
 		writeComment(function.toString());
 
-		final int size = prepareLocalVarsOffsets(function.localVars());
-		writeVarOffsets(function.localVars());
+		final List<IRVarDef> localVars = function.varInfos().vars();
+		final int size = prepareLocalVarsOffsets(localVars);
+		writeVarOffsets(localVars);
 		writeLabel(function.label());
 		writeFunctionProlog(size);
 
