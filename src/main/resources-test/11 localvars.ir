@@ -89,6 +89,16 @@
 	call _, printChar [t.4]
 @printIntLf_ret:
 
+@main:
+ Local variables
+	var 0: a (u8/1)
+	var 1: t.1 (i64/8)
+	; 10 pc
+	const a, 10
+	cast t.1, a
+	call _, printIntLf [t.1]
+@main_ret:
+
 @printStringLength:
 	mov     rdi, rsp
 	
@@ -102,14 +112,4 @@
 	  call    [WriteFile]
 	mov     rsp, rdi
 	ret
-
-@main:
- Local variables
-	var 0: a (u8/1)
-	var 1: t.1 (i64/8)
-	; 10 pc
-	const a, 10
-	cast t.1, a
-	call _, printIntLf [t.1]
-@main_ret:
 

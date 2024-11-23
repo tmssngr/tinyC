@@ -51,20 +51,6 @@
 	jump @strlen_ret
 @strlen_ret:
 
-@printStringLength:
-	mov     rdi, rsp
-	
-	lea     rcx, [hStdOut]
-	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
-	xor     r9, r9
-	push    0
-	sub     rsp, 20h
-	  call    [WriteFile]
-	mov     rsp, rdi
-	ret
-
 @printNibble:
  Local variables
 	arg 0: x (u8/1)
@@ -196,6 +182,20 @@
 	jump @for_5
 @for_5_break:
 @main_ret:
+
+@printStringLength:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
 
 String literals
 	string lit 0 " x\0"

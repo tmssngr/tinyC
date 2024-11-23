@@ -27,6 +27,9 @@ public final class IRWriter extends TextWriter {
 		for (IRFunction function : program.functions()) {
 			writeFunction(function);
 		}
+		for (IRAsmFunction function : program.asmFunctions()) {
+			writeAsmFunction(function);
+		}
 	}
 
 	private void writeFunction(IRFunction function) throws IOException {
@@ -42,7 +45,11 @@ public final class IRWriter extends TextWriter {
 		}
 
 		writeInstructions(function.instructions());
+		writeln();
+	}
 
+	private void writeAsmFunction(IRAsmFunction function) throws IOException {
+		writeln(function.label() + ":");
 		for (String asmLine : function.asmLines()) {
 			writeIndentation();
 			writeln(asmLine);

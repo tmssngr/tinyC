@@ -68,20 +68,6 @@
 	call _, printStringLength [t.15, t.18]
 @printUint_ret:
 
-@printStringLength:
-	mov     rdi, rsp
-	
-	lea     rcx, [hStdOut]
-	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
-	xor     r9, r9
-	push    0
-	sub     rsp, 20h
-	  call    [WriteFile]
-	mov     rsp, rdi
-	ret
-
 @main:
  Local variables
 	var 0: onePtr (u8*/8)
@@ -116,6 +102,20 @@
 	const t.8, 10
 	call _, printChar [t.8]
 @main_ret:
+
+@printStringLength:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
 
 Global variables
 	0: zero (u8/1)

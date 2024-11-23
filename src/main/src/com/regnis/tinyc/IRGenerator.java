@@ -39,13 +39,14 @@ public final class IRGenerator {
 		final List<IRVarDef> globalVars = processGlobalVars(program.globalVariables());
 
 		final List<IRFunction> functions = new ArrayList<>();
+		final List<IRAsmFunction> asmFunctions = new ArrayList<>();
 
 		for (Function function : program.functions()) {
-			functions.add(convertFunction(function, program.globalVars()));
+			convertFunction(function, functions, asmFunctions, program.globalVars());
 		}
 
 		final List<IRStringLiteral> stringLiterals = createStringLiterals(program.stringLiterals());
-		return new IRProgram(functions, globalVars, stringLiterals);
+		return new IRProgram(functions, asmFunctions, globalVars, stringLiterals);
 	}
 
 	private void initializeTypes(List<TypeDef> typeDefs) {
@@ -64,13 +65,14 @@ public final class IRGenerator {
 		return new TypeInfo(offset, memberToOffset);
 	}
 
-	private IRFunction convertFunction(Function function, List<Statement> declarations) {
+	private void convertFunction(Function function, List<IRFunction> functions, List<IRAsmFunction> asmFunctions, List<Statement> declarations) {
 		final String name = function.name();
 		final String functionLabel = getFunctionLabel(name);
 		if (function.asmLines().size() > 0) {
 			Utils.assertTrue(function.localVars().isEmpty());
 			Utils.assertTrue(function.statements().isEmpty());
-			return new IRFunction(name, functionLabel, function.returnTypeNotNull(), List.of(), List.of(), function.asmLines());
+			asmFunctions.add(new IRAsmFunction(name, functionLabel, function.returnTypeNotNull(), function.asmLines()));
+			return;
 		}
 
 		processLocalVars(function);
@@ -84,7 +86,7 @@ public final class IRGenerator {
 			writeStatements(function.statements());
 			writeLabel(functionRetLabel);
 
-			return new IRFunction(name, functionLabel, Objects.requireNonNull(function.returnType()), localVars, instructions, List.of());
+			functions.add(new IRFunction(name, functionLabel, Objects.requireNonNull(function.returnType()), localVars, instructions));
 		}
 		finally {
 			localVars = List.of();

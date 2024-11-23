@@ -36,7 +36,7 @@ public class IRGeneratorTest {
 						             new IRRetValue(tmp(0, Type.U8), loc(1, 2)),
 						             new IRJump("@get_ret"),
 						             new IRLabel("@get_ret")
-				             ), List.of()),
+				             )),
 				             new IRFunction("foo", "@foo", Type.VOID, List.of(
 						             new IRVarDef("chr", 0, VariableScope.function, Type.U8, 1),
 						             new IRVarDef("t.1", 1, VariableScope.function, Type.BOOL, 1),
@@ -64,8 +64,8 @@ public class IRGeneratorTest {
 						             new IRJump("@while_1"),
 						             new IRLabel("@while_1_break"),
 						             new IRLabel("@foo_ret")
-				             ), List.of())
-		             ), List.of(), List.of()),
+				             ))
+		             ), List.of(), List.of(), List.of()),
 		             convert("""
 				                     u8 get() {
 				                       return 0;

@@ -8,10 +8,11 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record IRProgram(@NotNull List<IRFunction> functions,
+						@NotNull List<IRAsmFunction> asmFunctions,
                         @NotNull List<IRVarDef> globalVars,
                         @NotNull List<IRStringLiteral> stringLiterals) {
 
 	public IRProgram derive(List<IRFunction> functions) {
-		return new IRProgram(functions, globalVars, stringLiterals);
+		return new IRProgram(functions, asmFunctions, globalVars, stringLiterals);
 	}
 }

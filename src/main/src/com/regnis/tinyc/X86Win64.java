@@ -39,6 +39,14 @@ public final class X86Win64 {
 			addEmptyLine = true;
 		}
 
+		for (IRAsmFunction function : program.asmFunctions()) {
+			if (addEmptyLine) {
+				writeNL();
+			}
+			writeAsmFunction(function);
+			addEmptyLine = true;
+		}
+
 		writeInit();
 		writePostamble(program.globalVars(), program.stringLiterals());
 	}
@@ -139,22 +147,22 @@ public final class X86Win64 {
 	private void writeFunction(IRFunction function) throws IOException {
 		writeComment(function.toString());
 
-		final List<String> asmLines = function.asmLines();
-		if (asmLines.isEmpty()) {
-			final int size = prepareLocalVarsOffsets(function.localVars());
-			writeVarOffsets(function.localVars());
-			writeLabel(function.label());
-			writeFunctionProlog(size);
+		final int size = prepareLocalVarsOffsets(function.localVars());
+		writeVarOffsets(function.localVars());
+		writeLabel(function.label());
+		writeFunctionProlog(size);
 
-			writeInstructions(function.instructions());
+		writeInstructions(function.instructions());
 
-			writeFunctionEpilog(size);
-			localVarOffsets = new int[0];
-			return;
-		}
+		writeFunctionEpilog(size);
+		localVarOffsets = new int[0];
+	}
+
+	private void writeAsmFunction(IRAsmFunction function) throws IOException {
+		writeComment(function.toString());
 
 		writeLabel(function.label());
-		for (String line : asmLines) {
+		for (String line : function.asmLines()) {
 			writeLines(line, line.contains(":") ? "" : INDENTATION);
 		}
 	}

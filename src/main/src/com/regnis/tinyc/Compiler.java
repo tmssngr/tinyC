@@ -63,15 +63,10 @@ public class Compiler {
 
 		final List<IRFunction> functions = new ArrayList<>();
 		for (IRFunction function : irProgram.functions()) {
-			if (function.asmLines().isEmpty()) {
-				final List<IRInstruction> instructions = IROptimizer.optimize(function.instructions());
+			final List<IRInstruction> instructions = IROptimizer.optimize(function.instructions());
 
-				final IRFunction optimizedFunction = function.derive(instructions);
-				functions.add(optimizedFunction);
-			}
-			else {
-				functions.add(function);
-			}
+			final IRFunction optimizedFunction = function.derive(instructions);
+			functions.add(optimizedFunction);
 		}
 
 		irProgram = irProgram.derive(functions);

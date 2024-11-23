@@ -307,21 +307,6 @@ start:
         add rsp, 32
         ret
 
-        ; void printStringLength
-@printStringLength:
-        mov     rdi, rsp
-
-        lea     rcx, [hStdOut]
-        mov     rcx, [rcx]
-        mov     rdx, [rdi+18h]
-        mov     r8, [rdi+10h]
-        xor     r9, r9
-        push    0
-        sub     rsp, 20h
-          call    [WriteFile]
-        mov     rsp, rdi
-        ret
-
         ; void main
         ;   rsp+0: var foo
         ;   rsp+2: var bar
@@ -564,6 +549,21 @@ start:
         add rsp, 8
         ; release space for local variables
         add rsp, 128
+        ret
+
+        ; void printStringLength
+@printStringLength:
+        mov     rdi, rsp
+
+        lea     rcx, [hStdOut]
+        mov     rcx, [rcx]
+        mov     rdx, [rdi+18h]
+        mov     r8, [rdi+10h]
+        xor     r9, r9
+        push    0
+        sub     rsp, 20h
+          call    [WriteFile]
+        mov     rsp, rdi
         ret
 init:
         sub rsp, 20h

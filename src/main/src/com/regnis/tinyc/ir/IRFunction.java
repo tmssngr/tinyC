@@ -9,7 +9,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRFunction(@NotNull String name, @NotNull String label, @NotNull Type returnType, @NotNull List<IRVarDef> localVars, @NotNull List<IRInstruction> instructions, List<String> asmLines) {
+public record IRFunction(@NotNull String name, @NotNull String label, @NotNull Type returnType, @NotNull List<IRVarDef> localVars, @NotNull List<IRInstruction> instructions) {
 
 	@Override
 	public String toString() {
@@ -19,6 +19,6 @@ public record IRFunction(@NotNull String name, @NotNull String label, @NotNull T
 	@NotNull
 	public IRFunction derive(List<IRInstruction> instructions) {
 		return new IRFunction(name(), label(), returnType(), localVars(),
-		                      instructions, List.of());
+		                      instructions);
 	}
 }

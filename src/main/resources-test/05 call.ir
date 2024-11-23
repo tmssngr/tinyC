@@ -89,20 +89,6 @@
 	call _, printChar [t.4]
 @printIntLf_ret:
 
-@printStringLength:
-	mov     rdi, rsp
-	
-	lea     rcx, [hStdOut]
-	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
-	xor     r9, r9
-	push    0
-	sub     rsp, 20h
-	  call    [WriteFile]
-	mov     rsp, rdi
-	ret
-
 @main:
  Local variables
 	var 0: t.0 (u8/1)
@@ -157,6 +143,20 @@
 	cast t.9, e
 	call _, printIntLf [t.9]
 @doPrint_ret:
+
+@printStringLength:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
 
 Global variables
 	0: i (u8/1)
