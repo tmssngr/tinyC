@@ -1,0 +1,15 @@
+@main:
+ Local variables
+	var 0: i (u8/1)
+	var 1: t.1 (u8/1)
+	; 11 pc
+	const r0, 0
+	; 3:2 while true
+	move i, r0
+@while_1:
+	const r0, 1
+	move r1, i
+	add r0, r1, r0
+	move i, r0
+	jump @while_1
+

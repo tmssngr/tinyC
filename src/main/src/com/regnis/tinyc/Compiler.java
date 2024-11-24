@@ -46,6 +46,7 @@ public class Compiler {
 		final Path astFile = useExtension(inputFile, ".ast");
 		final Path astSimpleFile = useExtension(inputFile, ".asts");
 		final Path irFile = useExtension(inputFile, ".ir");
+		final Path irRegFile = useExtension(inputFile, ".irr");
 		final Path dotFile = useExtension(inputFile, ".dot");
 		final Path svgFile = useExtension(inputFile, ".svg");
 		final Path cfgFile = useExtension(inputFile, ".cfg");
@@ -53,6 +54,7 @@ public class Compiler {
 		final Path exeFile = useExtension(inputFile, ".exe");
 		Files.deleteIfExists(astFile);
 		Files.deleteIfExists(irFile);
+		Files.deleteIfExists(irRegFile);
 		Files.deleteIfExists(dotFile);
 		Files.deleteIfExists(svgFile);
 		Files.deleteIfExists(cfgFile);
@@ -68,6 +70,7 @@ public class Compiler {
 		IRProgram irProgram = IRGenerator.convert(program);
 		write(irProgram, irFile);
 
+		final int maxRegisters = 4;
 		final List<IRFunction> functions = new ArrayList<>();
 		try (final BufferedWriter cfgWriter = Files.newBufferedWriter(cfgFile)) {
 			final IRWriter irWriter = new IRWriter(cfgWriter);
@@ -76,12 +79,12 @@ public class Compiler {
 				dotWriter.begin();
 				for (IRFunction function : irProgram.functions()) {
 					final String name = function.name();
-					final ControlFlowGraph cfg = CfgGenerator.create(name, function.instructions());
+					ControlFlowGraph cfg = CfgGenerator.create(name, function.instructions());
 					DetectVarLiveness.process(cfg);
 					irWriter.write(cfg);
 					dotWriter.writeCfg(cfg);
-					final List<BasicBlock> blocks = cfg.blocks();
-					final List<IRInstruction> instructions = getFlattenInstructions(blocks);
+					cfg = LinearScanRegisterAllocation.process(cfg, function.varInfos(), maxRegisters);
+					final List<IRInstruction> instructions = getFlattenInstructions(cfg.blocks());
 
 					final IRFunction optimizedFunction = function.derive(instructions);
 					functions.add(optimizedFunction);
@@ -92,6 +95,7 @@ public class Compiler {
 		launchGraphViz(dotFile, svgFile);
 
 		irProgram = irProgram.derive(functions);
+		write(irProgram, irRegFile);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);

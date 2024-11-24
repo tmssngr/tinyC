@@ -218,61 +218,93 @@ start:
 
         ; void main
         ;   rsp+0: var a
-        ;   rsp+8: var b
-        ;   rsp+16: var c
-        ;   rsp+24: var d
-        ;   rsp+32: var t.4
-        ;   rsp+40: var t.5
-        ;   rsp+42: var t.6
-        ;   rsp+48: var t.7
-        ;   rsp+56: var t.8
-        ;   rsp+58: var t.9
-        ;   rsp+60: var t.10
+        ;   rsp+2: var b
+        ;   rsp+4: var c
+        ;   rsp+6: var d
+        ;   rsp+8: var t.4
+        ;   rsp+16: var t.5
+        ;   rsp+24: var t.6
+        ;   rsp+32: var t.7
+        ;   rsp+40: var t.8
+        ;   rsp+48: var t.9
+        ;   rsp+56: var t.10
         ;   rsp+64: var t.11
 @main:
         ; reserve space for local variables
         sub rsp, 80
-        ; const r0, 10
-        mov cx, 10
-        ; cast r1(i64), r0(i16)
-        movzx rdx, cx
+        ; const r0, 0
+        mov cx, 0
+        ; const r1, 1
+        mov dx, 1
+        ; const r2, 2
+        mov r9w, 2
+        ; const r3, 3
+        mov r10w, 3
+        ; Spill b
+        ; move b, r1
+        lea rax, [rsp+2]
+        mov [rax], dx
+        ; move r1, r0
+        mov dx, cx
+        ; Spill a
         ; move a, r0
         lea rax, [rsp+0]
         mov [rax], cx
-        ; call _, printIntLf [r1]
-        push rdx
-          call @printIntLf
-        add rsp, 8
-        ; addrof r0, a
-        lea rcx, [rsp+0]
-        ; load r0, [r0]
-        mov cx, [rcx]
-        ; const r1, 1
-        mov dx, 1
-        ; sub r0, r0, r1
-        sub cx, dx
-        ; cast r1(i64), r0(i16)
-        movzx rdx, cx
-        ; move c, r0
-        lea rax, [rsp+16]
-        mov [rax], cx
-        ; call _, printIntLf [r1]
-        push rdx
-          call @printIntLf
-        add rsp, 8
-        ; addrof r0, c
-        lea rcx, [rsp+16]
-        ; load r1, [r0]
-        mov dx, [rcx]
-        ; const r2, 1
-        mov r9w, 1
-        ; sub r1, r1, r2
-        sub dx, r9w
-        ; store [r0], r1
-        mov [rcx], dx
-        ; move r0, c
-        lea rax, [rsp+16]
+        ; move r0, b
+        lea rax, [rsp+2]
         mov cx, [rax]
+        ; add r1, r1, r0
+        add dx, cx
+        ; cast r1(i64), r1(i16)
+        movzx rdx, dx
+        ; move c, r2
+        lea rax, [rsp+4]
+        mov [rax], r9w
+        ; move d, r3
+        lea rax, [rsp+6]
+        mov [rax], r10w
+        ; call _, printIntLf [r1]
+        push rdx
+          call @printIntLf
+        add rsp, 8
+        ; move r0, c
+        lea rax, [rsp+4]
+        mov cx, [rax]
+        ; move r1, r0
+        mov dx, cx
+        ; move r2, d
+        lea rax, [rsp+6]
+        mov r9w, [rax]
+        ; add r1, r1, r2
+        add dx, r9w
+        ; cast r1(i64), r1(i16)
+        movzx rdx, dx
+        ; call _, printIntLf [r1]
+        push rdx
+          call @printIntLf
+        add rsp, 8
+        ; move r0, d
+        lea rax, [rsp+6]
+        mov cx, [rax]
+        ; move r1, c
+        lea rax, [rsp+4]
+        mov dx, [rax]
+        ; add r0, r0, r1
+        add cx, dx
+        ; cast r0(i64), r0(i16)
+        movzx rcx, cx
+        ; call _, printIntLf [r0]
+        push rcx
+          call @printIntLf
+        add rsp, 8
+        ; move r0, b
+        lea rax, [rsp+2]
+        mov cx, [rax]
+        ; move r1, a
+        lea rax, [rsp+0]
+        mov dx, [rax]
+        ; add r0, r0, r1
+        add cx, dx
         ; cast r0(i64), r0(i16)
         movzx rcx, cx
         ; call _, printIntLf [r0]
