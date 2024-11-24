@@ -150,7 +150,7 @@ start:
         mov rbx, rax
         lea rdx, [rsp+152]
         mov [rdx], rbx
-        ; cast t.8, remainder
+        ; cast t.8(u8), remainder(i64)
         lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+56]
@@ -167,13 +167,13 @@ start:
         add bl, cl
         lea rax, [rsp+32]
         mov [rax], bl
-        ; cast t.11, pos
+        ; cast t.11(i64), pos(u8)
         lea rax, [rsp+20]
         mov bl, [rax]
         movzx rbx, bl
         lea rax, [rsp+72]
         mov [rax], rbx
-        ; cast t.12, t.11
+        ; cast t.12(u8*), t.11(i64)
         lea rax, [rsp+72]
         mov rbx, [rax]
         lea rax, [rsp+80]
@@ -215,13 +215,13 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @while_1
-        ; cast t.16, pos
+        ; cast t.16(i64), pos(u8)
         lea rax, [rsp+20]
         mov bl, [rax]
         movzx rbx, bl
         lea rax, [rsp+112]
         mov [rax], rbx
-        ; cast t.17, t.16
+        ; cast t.17(u8*), t.16(i64)
         lea rax, [rsp+112]
         mov rbx, [rax]
         lea rax, [rsp+120]
@@ -250,7 +250,7 @@ start:
         sub bl, cl
         lea rax, [rsp+136]
         mov [rax], bl
-        ; cast t.18, t.19
+        ; cast t.18(i64), t.19(u8)
         lea rax, [rsp+136]
         mov bl, [rax]
         movzx rbx, bl
@@ -390,7 +390,7 @@ start:
         add rbx, rcx
         lea rax, [rsp+0]
         mov [rax], rbx
-        ; cast t.7, str
+        ; cast t.7(i64), str(u8*)
         lea rax, [rsp+56]
         mov rbx, [rax]
         lea rax, [rsp+32]
@@ -407,7 +407,7 @@ start:
         add rbx, rcx
         lea rax, [rsp+24]
         mov [rax], rbx
-        ; cast str, t.6
+        ; cast str(u8*), t.6(i64)
         lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+56]
@@ -508,7 +508,7 @@ start:
         setl bl
         lea rax, [rsp+24]
         mov [rax], bl
-        ; cast t.5, t.6
+        ; cast t.5(i64), t.6(bool)
         lea rax, [rsp+24]
         mov bl, [rax]
         movzx rbx, bl
@@ -529,7 +529,7 @@ start:
         setl bl
         lea rax, [rsp+40]
         mov [rax], bl
-        ; cast t.7, t.8
+        ; cast t.7(i64), t.8(bool)
         lea rax, [rsp+40]
         mov bl, [rax]
         movzx rbx, bl
@@ -568,7 +568,7 @@ start:
         setb bl
         lea rax, [rsp+64]
         mov [rax], bl
-        ; cast t.10, t.11
+        ; cast t.10(i64), t.11(bool)
         lea rax, [rsp+64]
         mov bl, [rax]
         movzx rbx, bl
@@ -589,7 +589,7 @@ start:
         setb bl
         lea rax, [rsp+80]
         mov [rax], bl
-        ; cast t.12, t.13
+        ; cast t.12(i64), t.13(bool)
         lea rax, [rsp+80]
         mov bl, [rax]
         movzx rbx, bl
@@ -620,7 +620,7 @@ start:
         setle bl
         lea rax, [rsp+104]
         mov [rax], bl
-        ; cast t.15, t.16
+        ; cast t.15(i64), t.16(bool)
         lea rax, [rsp+104]
         mov bl, [rax]
         movzx rbx, bl
@@ -641,7 +641,7 @@ start:
         setle bl
         lea rax, [rsp+120]
         mov [rax], bl
-        ; cast t.17, t.18
+        ; cast t.17(i64), t.18(bool)
         lea rax, [rsp+120]
         mov bl, [rax]
         movzx rbx, bl
@@ -672,7 +672,7 @@ start:
         setbe bl
         lea rax, [rsp+144]
         mov [rax], bl
-        ; cast t.20, t.21
+        ; cast t.20(i64), t.21(bool)
         lea rax, [rsp+144]
         mov bl, [rax]
         movzx rbx, bl
@@ -693,7 +693,7 @@ start:
         setbe bl
         lea rax, [rsp+160]
         mov [rax], bl
-        ; cast t.22, t.23
+        ; cast t.22(i64), t.23(bool)
         lea rax, [rsp+160]
         mov bl, [rax]
         movzx rbx, bl
@@ -724,7 +724,7 @@ start:
         sete bl
         lea rax, [rsp+184]
         mov [rax], bl
-        ; cast t.25, t.26
+        ; cast t.25(i64), t.26(bool)
         lea rax, [rsp+184]
         mov bl, [rax]
         movzx rbx, bl
@@ -745,7 +745,7 @@ start:
         sete bl
         lea rax, [rsp+200]
         mov [rax], bl
-        ; cast t.27, t.28
+        ; cast t.27(i64), t.28(bool)
         lea rax, [rsp+200]
         mov bl, [rax]
         movzx rbx, bl
@@ -776,7 +776,7 @@ start:
         setne bl
         lea rax, [rsp+224]
         mov [rax], bl
-        ; cast t.30, t.31
+        ; cast t.30(i64), t.31(bool)
         lea rax, [rsp+224]
         mov bl, [rax]
         movzx rbx, bl
@@ -797,7 +797,7 @@ start:
         setne bl
         lea rax, [rsp+240]
         mov [rax], bl
-        ; cast t.32, t.33
+        ; cast t.32(i64), t.33(bool)
         lea rax, [rsp+240]
         mov bl, [rax]
         movzx rbx, bl
@@ -828,7 +828,7 @@ start:
         setge bl
         lea rax, [rsp+264]
         mov [rax], bl
-        ; cast t.35, t.36
+        ; cast t.35(i64), t.36(bool)
         lea rax, [rsp+264]
         mov bl, [rax]
         movzx rbx, bl
@@ -849,7 +849,7 @@ start:
         setge bl
         lea rax, [rsp+280]
         mov [rax], bl
-        ; cast t.37, t.38
+        ; cast t.37(i64), t.38(bool)
         lea rax, [rsp+280]
         mov bl, [rax]
         movzx rbx, bl
@@ -880,7 +880,7 @@ start:
         setae bl
         lea rax, [rsp+304]
         mov [rax], bl
-        ; cast t.40, t.41
+        ; cast t.40(i64), t.41(bool)
         lea rax, [rsp+304]
         mov bl, [rax]
         movzx rbx, bl
@@ -901,7 +901,7 @@ start:
         setae bl
         lea rax, [rsp+320]
         mov [rax], bl
-        ; cast t.42, t.43
+        ; cast t.42(i64), t.43(bool)
         lea rax, [rsp+320]
         mov bl, [rax]
         movzx rbx, bl
@@ -932,7 +932,7 @@ start:
         setg bl
         lea rax, [rsp+344]
         mov [rax], bl
-        ; cast t.45, t.46
+        ; cast t.45(i64), t.46(bool)
         lea rax, [rsp+344]
         mov bl, [rax]
         movzx rbx, bl
@@ -953,7 +953,7 @@ start:
         setg bl
         lea rax, [rsp+360]
         mov [rax], bl
-        ; cast t.47, t.48
+        ; cast t.47(i64), t.48(bool)
         lea rax, [rsp+360]
         mov bl, [rax]
         movzx rbx, bl
@@ -984,7 +984,7 @@ start:
         seta bl
         lea rax, [rsp+384]
         mov [rax], bl
-        ; cast t.50, t.51
+        ; cast t.50(i64), t.51(bool)
         lea rax, [rsp+384]
         mov bl, [rax]
         movzx rbx, bl
@@ -1005,7 +1005,7 @@ start:
         seta bl
         lea rax, [rsp+400]
         mov [rax], bl
-        ; cast t.52, t.53
+        ; cast t.52(i64), t.53(bool)
         lea rax, [rsp+400]
         mov bl, [rax]
         movzx rbx, bl

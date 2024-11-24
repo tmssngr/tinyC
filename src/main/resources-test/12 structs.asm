@@ -122,7 +122,7 @@ start:
         mov rbx, rax
         lea rdx, [rsp+152]
         mov [rdx], rbx
-        ; cast t.8, remainder
+        ; cast t.8(u8), remainder(i64)
         lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+56]
@@ -139,13 +139,13 @@ start:
         add bl, cl
         lea rax, [rsp+32]
         mov [rax], bl
-        ; cast t.11, pos
+        ; cast t.11(i64), pos(u8)
         lea rax, [rsp+20]
         mov bl, [rax]
         movzx rbx, bl
         lea rax, [rsp+72]
         mov [rax], rbx
-        ; cast t.12, t.11
+        ; cast t.12(u8*), t.11(i64)
         lea rax, [rsp+72]
         mov rbx, [rax]
         lea rax, [rsp+80]
@@ -187,13 +187,13 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @while_1
-        ; cast t.16, pos
+        ; cast t.16(i64), pos(u8)
         lea rax, [rsp+20]
         mov bl, [rax]
         movzx rbx, bl
         lea rax, [rsp+112]
         mov [rax], rbx
-        ; cast t.17, t.16
+        ; cast t.17(u8*), t.16(i64)
         lea rax, [rsp+112]
         mov rbx, [rax]
         lea rax, [rsp+120]
@@ -222,7 +222,7 @@ start:
         sub bl, cl
         lea rax, [rsp+136]
         mov [rax], bl
-        ; cast t.18, t.19
+        ; cast t.18(i64), t.19(u8)
         lea rax, [rsp+136]
         mov bl, [rax]
         movzx rbx, bl
@@ -402,7 +402,7 @@ start:
         mov al, [rbx]
         lea rbx, [rsp+80]
         mov [rbx], al
-        ; cast t.10, t.11
+        ; cast t.10(i64), t.11(u8)
         lea rax, [rsp+80]
         mov bl, [rax]
         movzx rbx, bl
@@ -437,7 +437,7 @@ start:
         mov al, [rbx]
         lea rbx, [rsp+104]
         mov [rbx], al
-        ; cast t.13, t.14
+        ; cast t.13(i64), t.14(u8)
         lea rax, [rsp+104]
         mov bl, [rax]
         movzx rbx, bl
@@ -460,7 +460,7 @@ start:
         mov al, [rbx]
         lea rbx, [rsp+136]
         mov [rbx], al
-        ; cast t.17, t.18
+        ; cast t.17(i64), t.18(u8)
         lea rax, [rsp+136]
         mov bl, [rax]
         movzx rbx, bl

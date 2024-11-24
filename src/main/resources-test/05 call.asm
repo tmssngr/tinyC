@@ -122,7 +122,7 @@ start:
         mov rbx, rax
         lea rdx, [rsp+152]
         mov [rdx], rbx
-        ; cast t.8, remainder
+        ; cast t.8(u8), remainder(i64)
         lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+56]
@@ -139,13 +139,13 @@ start:
         add bl, cl
         lea rax, [rsp+32]
         mov [rax], bl
-        ; cast t.11, pos
+        ; cast t.11(i64), pos(u8)
         lea rax, [rsp+20]
         mov bl, [rax]
         movzx rbx, bl
         lea rax, [rsp+72]
         mov [rax], rbx
-        ; cast t.12, t.11
+        ; cast t.12(u8*), t.11(i64)
         lea rax, [rsp+72]
         mov rbx, [rax]
         lea rax, [rsp+80]
@@ -187,13 +187,13 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @while_1
-        ; cast t.16, pos
+        ; cast t.16(i64), pos(u8)
         lea rax, [rsp+20]
         mov bl, [rax]
         movzx rbx, bl
         lea rax, [rsp+112]
         mov [rax], rbx
-        ; cast t.17, t.16
+        ; cast t.17(u8*), t.16(i64)
         lea rax, [rsp+112]
         mov rbx, [rax]
         lea rax, [rsp+120]
@@ -222,7 +222,7 @@ start:
         sub bl, cl
         lea rax, [rsp+136]
         mov [rax], bl
-        ; cast t.18, t.19
+        ; cast t.18(i64), t.19(u8)
         lea rax, [rsp+136]
         mov bl, [rax]
         movzx rbx, bl
@@ -414,7 +414,7 @@ start:
 @doPrint:
         ; reserve space for local variables
         sub rsp, 48
-        ; cast t.5, a
+        ; cast t.5(i64), a(u8)
         lea rax, [rsp+88]
         mov bl, [rax]
         movzx rbx, bl
@@ -426,7 +426,7 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; cast t.6, b
+        ; cast t.6(i64), b(u8)
         lea rax, [rsp+80]
         mov bl, [rax]
         movzx rbx, bl
@@ -438,7 +438,7 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; cast t.7, c
+        ; cast t.7(i64), c(u8)
         lea rax, [rsp+72]
         mov bl, [rax]
         movzx rbx, bl
@@ -450,7 +450,7 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; cast t.8, d
+        ; cast t.8(i64), d(u8)
         lea rax, [rsp+64]
         mov bl, [rax]
         movzx rbx, bl
@@ -462,7 +462,7 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; cast t.9, e
+        ; cast t.9(i64), e(u8)
         lea rax, [rsp+56]
         mov bl, [rax]
         movzx rbx, bl

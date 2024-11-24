@@ -51,11 +51,11 @@
 	mod remainder, number, t.6
 	const t.7, 10
 	div number, number, t.7
-	cast t.8, remainder
+	cast t.8(u8), remainder(i64)
 	const t.9, 48
 	add digit, t.8, t.9
-	cast t.11, pos
-	cast t.12, t.11
+	cast t.11(i64), pos(u8)
+	cast t.12(u8*), t.11(i64)
 	addrof t.10, [buffer]
 	add t.10, t.10, t.12
 	store [t.10], digit
@@ -67,13 +67,13 @@
 @if_2_end:
 	jump @while_1
 @while_1_break:
-	cast t.16, pos
-	cast t.17, t.16
+	cast t.16(i64), pos(u8)
+	cast t.17(u8*), t.16(i64)
 	addrof t.15, [buffer]
 	add t.15, t.15, t.17
 	const t.20, 20
 	sub t.19, t.20, pos
-	cast t.18, t.19
+	cast t.18(i64), t.19(u8)
 	call _, printStringLength [t.15, t.18]
 @printUint_ret:
 
@@ -120,10 +120,10 @@
 	const t.5, 1
 	add length, length, t.5
 @for_4_continue:
-	cast t.7, str
+	cast t.7(i64), str(u8*)
 	const t.8, 1
 	add t.6, t.7, t.8
-	cast str, t.6
+	cast str(u8*), t.6(i64)
 	jump @for_4
 @for_4_break:
 	; 40:9 return length
@@ -193,84 +193,84 @@
 	const a, 1
 	const b, 2
 	lt t.6, a, b
-	cast t.5, t.6
+	cast t.5(i64), t.6(bool)
 	call _, printIntLf [t.5]
 	lt t.8, b, a
-	cast t.7, t.8
+	cast t.7(i64), t.8(bool)
 	call _, printIntLf [t.7]
 	const t.9, [string-1]
 	call _, printString [t.9]
 	const c, 0
 	const d, 128
 	lt t.11, c, d
-	cast t.10, t.11
+	cast t.10(i64), t.11(bool)
 	call _, printIntLf [t.10]
 	lt t.13, d, c
-	cast t.12, t.13
+	cast t.12(i64), t.13(bool)
 	call _, printIntLf [t.12]
 	const t.14, [string-2]
 	call _, printString [t.14]
 	lteq t.16, a, b
-	cast t.15, t.16
+	cast t.15(i64), t.16(bool)
 	call _, printIntLf [t.15]
 	lteq t.18, b, a
-	cast t.17, t.18
+	cast t.17(i64), t.18(bool)
 	call _, printIntLf [t.17]
 	const t.19, [string-3]
 	call _, printString [t.19]
 	lteq t.21, c, d
-	cast t.20, t.21
+	cast t.20(i64), t.21(bool)
 	call _, printIntLf [t.20]
 	lteq t.23, d, c
-	cast t.22, t.23
+	cast t.22(i64), t.23(bool)
 	call _, printIntLf [t.22]
 	const t.24, [string-4]
 	call _, printString [t.24]
 	equals t.26, a, b
-	cast t.25, t.26
+	cast t.25(i64), t.26(bool)
 	call _, printIntLf [t.25]
 	equals t.28, b, a
-	cast t.27, t.28
+	cast t.27(i64), t.28(bool)
 	call _, printIntLf [t.27]
 	const t.29, [string-5]
 	call _, printString [t.29]
 	notequals t.31, a, b
-	cast t.30, t.31
+	cast t.30(i64), t.31(bool)
 	call _, printIntLf [t.30]
 	notequals t.33, b, a
-	cast t.32, t.33
+	cast t.32(i64), t.33(bool)
 	call _, printIntLf [t.32]
 	const t.34, [string-6]
 	call _, printString [t.34]
 	gteq t.36, a, b
-	cast t.35, t.36
+	cast t.35(i64), t.36(bool)
 	call _, printIntLf [t.35]
 	gteq t.38, b, a
-	cast t.37, t.38
+	cast t.37(i64), t.38(bool)
 	call _, printIntLf [t.37]
 	const t.39, [string-7]
 	call _, printString [t.39]
 	gteq t.41, c, d
-	cast t.40, t.41
+	cast t.40(i64), t.41(bool)
 	call _, printIntLf [t.40]
 	gteq t.43, d, c
-	cast t.42, t.43
+	cast t.42(i64), t.43(bool)
 	call _, printIntLf [t.42]
 	const t.44, [string-8]
 	call _, printString [t.44]
 	gt t.46, a, b
-	cast t.45, t.46
+	cast t.45(i64), t.46(bool)
 	call _, printIntLf [t.45]
 	gt t.48, b, a
-	cast t.47, t.48
+	cast t.47(i64), t.48(bool)
 	call _, printIntLf [t.47]
 	const t.49, [string-9]
 	call _, printString [t.49]
 	gt t.51, c, d
-	cast t.50, t.51
+	cast t.50(i64), t.51(bool)
 	call _, printIntLf [t.50]
 	gt t.53, d, c
-	cast t.52, t.53
+	cast t.52(i64), t.53(bool)
 	call _, printIntLf [t.52]
 @main_ret:
 

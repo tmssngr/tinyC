@@ -51,11 +51,11 @@
 	mod remainder, number, t.6
 	const t.7, 10
 	div number, number, t.7
-	cast t.8, remainder
+	cast t.8(u8), remainder(i64)
 	const t.9, 48
 	add digit, t.8, t.9
-	cast t.11, pos
-	cast t.12, t.11
+	cast t.11(i64), pos(u8)
+	cast t.12(u8*), t.11(i64)
 	addrof t.10, [buffer]
 	add t.10, t.10, t.12
 	store [t.10], digit
@@ -67,13 +67,13 @@
 @if_2_end:
 	jump @while_1
 @while_1_break:
-	cast t.16, pos
-	cast t.17, t.16
+	cast t.16(i64), pos(u8)
+	cast t.17(u8*), t.16(i64)
 	addrof t.15, [buffer]
 	add t.15, t.15, t.17
 	const t.20, 20
 	sub t.19, t.20, pos
-	cast t.18, t.19
+	cast t.18(i64), t.19(u8)
 	call _, printStringLength [t.15, t.18]
 @printUint_ret:
 
@@ -120,10 +120,10 @@
 	const t.5, 1
 	add length, length, t.5
 @for_4_continue:
-	cast t.7, str
+	cast t.7(i64), str(u8*)
 	const t.8, 1
 	add t.6, t.7, t.8
-	cast str, t.6
+	cast str(u8*), t.6(i64)
 	jump @for_4
 @for_4_break:
 	; 40:9 return length
@@ -145,12 +145,12 @@
 	call _, printString [text]
 	call _, printLength []
 	const t.2, 1
-	cast t.3, t.2
+	cast t.3(u8*), t.2(i64)
 	move second, text
 	add second, second, t.3
 	call _, printString [second]
 	load chr, [text]
-	cast t.4, chr
+	cast t.4(i64), chr(u8)
 	call _, printIntLf [t.4]
 @main_ret:
 
@@ -178,13 +178,13 @@
 	const t.5, 1
 	add length, length, t.5
 @for_5_continue:
-	cast t.7, ptr
+	cast t.7(i64), ptr(u8*)
 	const t.8, 1
 	add t.6, t.7, t.8
-	cast ptr, t.6
+	cast ptr(u8*), t.6(i64)
 	jump @for_5
 @for_5_break:
-	cast t.9, length
+	cast t.9(i64), length(i16)
 	call _, printIntLf [t.9]
 @printLength_ret:
 
