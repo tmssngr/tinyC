@@ -259,6 +259,7 @@ public final class X86Win64 {
 		case IRString literal -> writeString(literal);
 		case IRMove copy -> writeCopy(copy);
 		case IRBinary binary -> writeBinary(binary);
+		case IRCompare compare -> writeCompare(compare);
 		case IRUnary unary -> writeUnary(unary);
 		case IRCast cast -> writeCast(cast);
 		case IRMemLoad load -> writeLoad(load);
@@ -400,13 +401,6 @@ public final class X86Win64 {
 		case Or -> writeBinary("or", binary);
 		case Xor -> writeBinary("xor", binary);
 
-		case Lt -> writeRelational(signed ? "setl" : "setb", binary); // setb (below) = setc (carry)
-		case LtEq -> writeRelational(signed ? "setle" : "setbe", binary);
-		case Equals -> writeRelational("sete", binary);
-		case NotEquals -> writeRelational("setne", binary);
-		case GtEq -> writeRelational(signed ? "setge" : "setae", binary); // setae (above or equal) = setnc (not carry)
-		case Gt -> writeRelational(signed ? "setg" : "seta", binary); // seta (above)
-
 		default -> throw new UnsupportedOperationException(String.valueOf(binary));
 		}
 	}
@@ -422,14 +416,28 @@ public final class X86Win64 {
 		free(leftReg);
 	}
 
-	private void writeRelational(String command, IRBinary binary) throws IOException {
-		final int leftReg = loadVar(binary.left());
-		final String leftRegName = getRegName(leftReg, binary.left());
-		final int rightReg = loadVar(binary.right());
-		final String rightRegName = getRegName(rightReg, binary.right());
+	private void writeCompare(IRCompare compare) throws IOException {
+		final boolean signed = compare.left().type() != Type.U8;
+		switch (compare.op()) {
+		case Lt -> writeCompare(signed ? "setl" : "setb", compare); // setb (below) = setc (carry)
+		case LtEq -> writeCompare(signed ? "setle" : "setbe", compare);
+		case Equals -> writeCompare("sete", compare);
+		case NotEquals -> writeCompare("setne", compare);
+		case GtEq -> writeCompare(signed ? "setge" : "setae", compare); // setae (above or equal) = setnc (not carry)
+		case Gt -> writeCompare(signed ? "setg" : "seta", compare); // seta (above)
+
+		default -> throw new UnsupportedOperationException(String.valueOf(compare));
+		}
+	}
+
+	private void writeCompare(String command, IRCompare compare) throws IOException {
+		final int leftReg = loadVar(compare.left());
+		final String leftRegName = getRegName(leftReg, compare.left());
+		final int rightReg = loadVar(compare.right());
+		final String rightRegName = getRegName(rightReg, compare.right());
 		writeIndented("cmp " + leftRegName + ", " + rightRegName);
 		writeIndented(command + " " + getRegName(leftReg, 1));
-		storeVar(binary.target(), leftReg);
+		storeVar(compare.target(), leftReg);
 		free(rightReg);
 		free(leftReg);
 	}

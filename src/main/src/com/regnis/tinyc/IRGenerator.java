@@ -496,12 +496,12 @@ public final class IRGenerator {
 			writeLabel(nextLabel);
 		}
 
-		case Lt -> writeBinary(IRBinary.Op.Lt, var, binary);
-		case LtEq -> writeBinary(IRBinary.Op.LtEq, var, binary);
-		case Equals -> writeBinary(IRBinary.Op.Equals, var, binary);
-		case NotEquals -> writeBinary(IRBinary.Op.NotEquals, var, binary);
-		case GtEq -> writeBinary(IRBinary.Op.GtEq, var, binary);
-		case Gt -> writeBinary(IRBinary.Op.Gt, var, binary);
+		case Lt -> writeCompare(IRCompare.Op.Lt, var, binary);
+		case LtEq -> writeCompare(IRCompare.Op.LtEq, var, binary);
+		case Equals -> writeCompare(IRCompare.Op.Equals, var, binary);
+		case NotEquals -> writeCompare(IRCompare.Op.NotEquals, var, binary);
+		case GtEq -> writeCompare(IRCompare.Op.GtEq, var, binary);
+		case Gt -> writeCompare(IRCompare.Op.Gt, var, binary);
 		default -> throw new UnsupportedOperationException(String.valueOf(binary));
 		}
 	}
@@ -510,6 +510,12 @@ public final class IRGenerator {
 		final IRVar left = writeExpression(binary.left());
 		final IRVar right = writeExpression(binary.right());
 		write(new IRBinary(var, op, left, right, binary.location()));
+	}
+
+	private void writeCompare(IRCompare.Op op, IRVar var, ExprBinary binary) {
+		final IRVar left = writeExpression(binary.left());
+		final IRVar right = writeExpression(binary.right());
+		write(new IRCompare(var, op, left, right, binary.location()));
 	}
 
 	private void writeUnary(IRVar var, ExprUnary unary) {
