@@ -32,19 +32,21 @@
 	var 18: t.18 (i64/8)
 	var 19: t.19 (u8/1)
 	var 20: t.20 (u8/1)
-	; 122 pc
+	; 137 pc
 	const pos, 20
 	; 13:2 while true
 @while_1:
 	const t.5, 1
 	sub pos, pos, t.5
 	const t.6, 10
-	mod remainder, number, t.6
+	move remainder, number
+	mod remainder, remainder, t.6
 	const t.7, 10
 	div number, number, t.7
 	cast t.8(u8), remainder(i64)
 	const t.9, 48
-	add digit, t.8, t.9
+	move digit, t.8
+	add digit, digit, t.9
 	cast t.11(i64), pos(u8)
 	cast t.12(u8*), t.11(i64)
 	addrof t.10, [buffer]
@@ -63,7 +65,8 @@
 	addrof t.15, [buffer]
 	add t.15, t.15, t.17
 	const t.20, 20
-	sub t.19, t.20, pos
+	move t.19, t.20
+	sub t.19, t.19, pos
 	cast t.18(i64), t.19(u8)
 	call _, printStringLength [t.15, t.18]
 @printUint_ret:
@@ -113,12 +116,14 @@
 	var 19: t.19 (i16/2)
 	var 20: t.20 (i64/8)
 	var 21: t.21 (i16/2)
-	; 145 pc
+	; 180 pc
 	const t.5, 22
 	cast foo(i16), t.5(u8)
-	mul bar, foo, foo
+	move bar, foo
+	mul bar, bar, foo
 	const foo, 1
-	add t.7, bar, foo
+	move t.7, bar
+	add t.7, t.7, foo
 	cast t.6(i64), t.7(i16)
 	call _, printIntLf [t.6]
 	const t.8, 21
@@ -129,25 +134,30 @@
 	call _, printIntLf [t.10]
 	const a, 1000
 	const b, 10
-	div t.12, a, b
+	move t.12, a
+	div t.12, t.12, b
 	cast t.11(i64), t.12(i16)
 	call _, printIntLf [t.11]
 	const t.15, 255
-	and t.14, a, t.15
+	move t.14, a
+	and t.14, t.14, t.15
 	cast t.13(i64), t.14(i16)
 	call _, printIntLf [t.13]
 	const a, 10
 	const b, 1
-	shiftright t.17, a, b
+	move t.17, a
+	shiftright t.17, t.17, b
 	cast t.16(i64), t.17(i16)
 	call _, printIntLf [t.16]
 	const a, 9
 	const b, 2
-	shiftright t.19, a, b
+	move t.19, a
+	shiftright t.19, t.19, b
 	cast t.18(i64), t.19(i16)
 	call _, printIntLf [t.18]
 	const a, 1
-	shiftleft t.21, a, b
+	move t.21, a
+	shiftleft t.21, t.21, b
 	cast t.20(i64), t.21(i16)
 	call _, printIntLf [t.20]
 @main_ret:

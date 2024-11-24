@@ -509,7 +509,21 @@ public final class IRGenerator {
 	private void writeBinary(IRBinary.Op op, IRVar var, ExprBinary binary) {
 		final IRVar left = writeExpression(binary.left());
 		final IRVar right = writeExpression(binary.right());
-		write(new IRBinary(var, op, left, right, binary.location()));
+		Utils.assertTrue(var.type().equals(left.type()));
+		final Location location = binary.location();
+		if (Objects.equals(var, left)) {
+			write(new IRBinary(var, op, var, right, location));
+		}
+		else if (Objects.equals(var, right)) {
+			final IRVar tmp = createTempVar(var.type());
+			write(new IRMove(tmp, left, location));
+			write(new IRBinary(tmp, op, tmp, right, location));
+			write(new IRMove(var, tmp, location));
+		}
+		else {
+			write(new IRMove(var, left, location));
+			write(new IRBinary(var, op, var, right, location));
+		}
 	}
 
 	private void writeCompare(IRCompare.Op op, IRVar var, ExprBinary binary) {

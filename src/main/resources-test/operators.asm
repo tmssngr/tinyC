@@ -124,8 +124,13 @@ start:
         mov rax, 10
         lea rbx, [rsp+40]
         mov [rbx], rax
-        ; mod remainder, number, t.6
+        ; move remainder, number
         lea rax, [rsp+152]
+        mov rbx, [rax]
+        lea rax, [rsp+24]
+        mov [rax], rbx
+        ; mod remainder, remainder, t.6
+        lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+40]
         mov rcx, [rax]
@@ -159,8 +164,13 @@ start:
         mov al, 48
         lea rbx, [rsp+57]
         mov [rbx], al
-        ; add digit, t.8, t.9
+        ; move digit, t.8
         lea rax, [rsp+56]
+        mov bl, [rax]
+        lea rax, [rsp+32]
+        mov [rax], bl
+        ; add digit, digit, t.9
+        lea rax, [rsp+32]
         mov bl, [rax]
         lea rax, [rsp+57]
         mov cl, [rax]
@@ -242,8 +252,13 @@ start:
         mov al, 20
         lea rbx, [rsp+137]
         mov [rbx], al
-        ; sub t.19, t.20, pos
+        ; move t.19, t.20
         lea rax, [rsp+137]
+        mov bl, [rax]
+        lea rax, [rsp+136]
+        mov [rax], bl
+        ; sub t.19, t.19, pos
+        lea rax, [rsp+136]
         mov bl, [rax]
         lea rax, [rsp+20]
         mov cl, [rax]
@@ -399,8 +414,13 @@ start:
         mov rax, 1
         lea rbx, [rsp+40]
         mov [rbx], rax
-        ; add t.6, t.7, t.8
+        ; move t.6, t.7
         lea rax, [rsp+32]
+        mov rbx, [rax]
+        lea rax, [rsp+24]
+        mov [rax], rbx
+        ; add t.6, t.6, t.8
+        lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+40]
         mov rcx, [rax]
@@ -534,8 +554,13 @@ start:
         mov al, 0
         lea rbx, [rsp+9]
         mov [rbx], al
-        ; and t.11, a, a
+        ; move t.11, a
         lea rax, [rsp+0]
+        mov bx, [rax]
+        lea rax, [rsp+32]
+        mov [rax], bx
+        ; and t.11, t.11, a
+        lea rax, [rsp+32]
         mov bx, [rax]
         lea rax, [rsp+0]
         mov cx, [rax]
@@ -554,8 +579,13 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; and t.13, a, b
+        ; move t.13, a
         lea rax, [rsp+0]
+        mov bx, [rax]
+        lea rax, [rsp+48]
+        mov [rax], bx
+        ; and t.13, t.13, b
+        lea rax, [rsp+48]
         mov bx, [rax]
         lea rax, [rsp+2]
         mov cx, [rax]
@@ -574,8 +604,13 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; and t.15, b, a
+        ; move t.15, b
         lea rax, [rsp+2]
+        mov bx, [rax]
+        lea rax, [rsp+64]
+        mov [rax], bx
+        ; and t.15, t.15, a
+        lea rax, [rsp+64]
         mov bx, [rax]
         lea rax, [rsp+0]
         mov cx, [rax]
@@ -594,8 +629,13 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; and t.17, b, b
+        ; move t.17, b
         lea rax, [rsp+2]
+        mov bx, [rax]
+        lea rax, [rsp+80]
+        mov [rax], bx
+        ; and t.17, t.17, b
+        lea rax, [rsp+80]
         mov bx, [rax]
         lea rax, [rsp+2]
         mov cx, [rax]
@@ -624,8 +664,13 @@ start:
         push rbx
           call @printString
         add rsp, 8
-        ; or t.20, a, a
+        ; move t.20, a
         lea rax, [rsp+0]
+        mov bx, [rax]
+        lea rax, [rsp+104]
+        mov [rax], bx
+        ; or t.20, t.20, a
+        lea rax, [rsp+104]
         mov bx, [rax]
         lea rax, [rsp+0]
         mov cx, [rax]
@@ -644,8 +689,13 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; or t.22, a, b
+        ; move t.22, a
         lea rax, [rsp+0]
+        mov bx, [rax]
+        lea rax, [rsp+120]
+        mov [rax], bx
+        ; or t.22, t.22, b
+        lea rax, [rsp+120]
         mov bx, [rax]
         lea rax, [rsp+2]
         mov cx, [rax]
@@ -664,8 +714,13 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; or t.24, b, a
+        ; move t.24, b
         lea rax, [rsp+2]
+        mov bx, [rax]
+        lea rax, [rsp+136]
+        mov [rax], bx
+        ; or t.24, t.24, a
+        lea rax, [rsp+136]
         mov bx, [rax]
         lea rax, [rsp+0]
         mov cx, [rax]
@@ -684,8 +739,13 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; or t.26, b, b
+        ; move t.26, b
         lea rax, [rsp+2]
+        mov bx, [rax]
+        lea rax, [rsp+152]
+        mov [rax], bx
+        ; or t.26, t.26, b
+        lea rax, [rsp+152]
         mov bx, [rax]
         lea rax, [rsp+2]
         mov cx, [rax]
@@ -714,8 +774,13 @@ start:
         push rbx
           call @printString
         add rsp, 8
-        ; xor t.29, a, a
+        ; move t.29, a
         lea rax, [rsp+0]
+        mov bx, [rax]
+        lea rax, [rsp+176]
+        mov [rax], bx
+        ; xor t.29, t.29, a
+        lea rax, [rsp+176]
         mov bx, [rax]
         lea rax, [rsp+0]
         mov cx, [rax]
@@ -734,8 +799,13 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; xor t.31, a, c
+        ; move t.31, a
         lea rax, [rsp+0]
+        mov bx, [rax]
+        lea rax, [rsp+192]
+        mov [rax], bx
+        ; xor t.31, t.31, c
+        lea rax, [rsp+192]
         mov bx, [rax]
         lea rax, [rsp+4]
         mov cx, [rax]
@@ -754,8 +824,13 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; xor t.33, b, a
+        ; move t.33, b
         lea rax, [rsp+2]
+        mov bx, [rax]
+        lea rax, [rsp+208]
+        mov [rax], bx
+        ; xor t.33, t.33, a
+        lea rax, [rsp+208]
         mov bx, [rax]
         lea rax, [rsp+0]
         mov cx, [rax]
@@ -774,8 +849,13 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; xor t.35, b, c
+        ; move t.35, b
         lea rax, [rsp+2]
+        mov bx, [rax]
+        lea rax, [rsp+224]
+        mov [rax], bx
+        ; xor t.35, t.35, c
+        lea rax, [rsp+224]
         mov bx, [rax]
         lea rax, [rsp+4]
         mov cx, [rax]
@@ -1116,16 +1196,26 @@ start:
         mov al, 1
         lea rbx, [rsp+12]
         mov [rbx], al
-        ; and t.62, b10, b6
+        ; move t.62, b10
         lea rax, [rsp+10]
+        mov bl, [rax]
+        lea rax, [rsp+433]
+        mov [rax], bl
+        ; and t.62, t.62, b6
+        lea rax, [rsp+433]
         mov bl, [rax]
         lea rax, [rsp+11]
         mov cl, [rax]
         and bl, cl
         lea rax, [rsp+433]
         mov [rax], bl
-        ; or t.61, t.62, b1
+        ; move t.61, t.62
         lea rax, [rsp+433]
+        mov bl, [rax]
+        lea rax, [rsp+432]
+        mov [rax], bl
+        ; or t.61, t.61, b1
+        lea rax, [rsp+432]
         mov bl, [rax]
         lea rax, [rsp+12]
         mov cl, [rax]

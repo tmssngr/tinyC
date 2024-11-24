@@ -32,19 +32,21 @@
 	var 18: t.18 (i64/8)
 	var 19: t.19 (u8/1)
 	var 20: t.20 (u8/1)
-	; 122 pc
+	; 137 pc
 	const pos, 20
 	; 13:2 while true
 @while_1:
 	const t.5, 1
 	sub pos, pos, t.5
 	const t.6, 10
-	mod remainder, number, t.6
+	move remainder, number
+	mod remainder, remainder, t.6
 	const t.7, 10
 	div number, number, t.7
 	cast t.8(u8), remainder(i64)
 	const t.9, 48
-	add digit, t.8, t.9
+	move digit, t.8
+	add digit, digit, t.9
 	cast t.11(i64), pos(u8)
 	cast t.12(u8*), t.11(i64)
 	addrof t.10, [buffer]
@@ -63,7 +65,8 @@
 	addrof t.15, [buffer]
 	add t.15, t.15, t.17
 	const t.20, 20
-	sub t.19, t.20, pos
+	move t.19, t.20
+	sub t.19, t.19, pos
 	cast t.18(i64), t.19(u8)
 	call _, printStringLength [t.15, t.18]
 @printUint_ret:
@@ -110,7 +113,7 @@
 	var 16: t.16 (u8*/8)
 	var 17: t.17 (i64/8)
 	var 18: t.18 (u8/1)
-	; 119 pc
+	; 124 pc
 	const t.2, 1
 	; 9:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=9:2].x
 	addrof t.3, pos
@@ -119,7 +122,8 @@
 	addrof t.6, pos
 	load t.5, [t.6]
 	const t.7, 1
-	add t.4, t.5, t.7
+	move t.4, t.5
+	add t.4, t.4, t.7
 	; 10:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:2].y
 	addrof t.8, pos
 	const t.9, 1

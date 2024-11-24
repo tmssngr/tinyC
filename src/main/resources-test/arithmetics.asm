@@ -96,8 +96,13 @@ start:
         mov rax, 10
         lea rbx, [rsp+40]
         mov [rbx], rax
-        ; mod remainder, number, t.6
+        ; move remainder, number
         lea rax, [rsp+152]
+        mov rbx, [rax]
+        lea rax, [rsp+24]
+        mov [rax], rbx
+        ; mod remainder, remainder, t.6
+        lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+40]
         mov rcx, [rax]
@@ -131,8 +136,13 @@ start:
         mov al, 48
         lea rbx, [rsp+57]
         mov [rbx], al
-        ; add digit, t.8, t.9
+        ; move digit, t.8
         lea rax, [rsp+56]
+        mov bl, [rax]
+        lea rax, [rsp+32]
+        mov [rax], bl
+        ; add digit, digit, t.9
+        lea rax, [rsp+32]
         mov bl, [rax]
         lea rax, [rsp+57]
         mov cl, [rax]
@@ -214,8 +224,13 @@ start:
         mov al, 20
         lea rbx, [rsp+137]
         mov [rbx], al
-        ; sub t.19, t.20, pos
+        ; move t.19, t.20
         lea rax, [rsp+137]
+        mov bl, [rax]
+        lea rax, [rsp+136]
+        mov [rax], bl
+        ; sub t.19, t.19, pos
+        lea rax, [rsp+136]
         mov bl, [rax]
         lea rax, [rsp+20]
         mov cl, [rax]
@@ -343,8 +358,13 @@ start:
         movzx bx, bl
         lea rax, [rsp+0]
         mov [rax], bx
-        ; mul bar, foo, foo
+        ; move bar, foo
         lea rax, [rsp+0]
+        mov bx, [rax]
+        lea rax, [rsp+2]
+        mov [rax], bx
+        ; mul bar, bar, foo
+        lea rax, [rsp+2]
         mov bx, [rax]
         lea rax, [rsp+0]
         mov cx, [rax]
@@ -357,8 +377,13 @@ start:
         mov ax, 1
         lea rbx, [rsp+0]
         mov [rbx], ax
-        ; add t.7, bar, foo
+        ; move t.7, bar
         lea rax, [rsp+2]
+        mov bx, [rax]
+        lea rax, [rsp+24]
+        mov [rax], bx
+        ; add t.7, t.7, foo
+        lea rax, [rsp+24]
         mov bx, [rax]
         lea rax, [rsp+0]
         mov cx, [rax]
@@ -419,8 +444,13 @@ start:
         mov ax, 10
         lea rbx, [rsp+8]
         mov [rbx], ax
-        ; div t.12, a, b
+        ; move t.12, a
         lea rax, [rsp+6]
+        mov bx, [rax]
+        lea rax, [rsp+56]
+        mov [rax], bx
+        ; div t.12, t.12, b
+        lea rax, [rsp+56]
         mov bx, [rax]
         lea rax, [rsp+8]
         mov cx, [rax]
@@ -447,8 +477,13 @@ start:
         mov ax, 255
         lea rbx, [rsp+74]
         mov [rbx], ax
-        ; and t.14, a, t.15
+        ; move t.14, a
         lea rax, [rsp+6]
+        mov bx, [rax]
+        lea rax, [rsp+72]
+        mov [rax], bx
+        ; and t.14, t.14, t.15
+        lea rax, [rsp+72]
         mov bx, [rax]
         lea rax, [rsp+74]
         mov cx, [rax]
@@ -475,8 +510,13 @@ start:
         mov ax, 1
         lea rbx, [rsp+8]
         mov [rbx], ax
-        ; shiftright t.17, a, b
+        ; move t.17, a
         lea rax, [rsp+6]
+        mov bx, [rax]
+        lea rax, [rsp+88]
+        mov [rax], bx
+        ; shiftright t.17, t.17, b
+        lea rax, [rsp+88]
         mov bx, [rax]
         lea rax, [rsp+8]
         mov cx, [rax]
@@ -503,8 +543,13 @@ start:
         mov ax, 2
         lea rbx, [rsp+8]
         mov [rbx], ax
-        ; shiftright t.19, a, b
+        ; move t.19, a
         lea rax, [rsp+6]
+        mov bx, [rax]
+        lea rax, [rsp+104]
+        mov [rax], bx
+        ; shiftright t.19, t.19, b
+        lea rax, [rsp+104]
         mov bx, [rax]
         lea rax, [rsp+8]
         mov cx, [rax]
@@ -527,8 +572,13 @@ start:
         mov ax, 1
         lea rbx, [rsp+6]
         mov [rbx], ax
-        ; shiftleft t.21, a, b
+        ; move t.21, a
         lea rax, [rsp+6]
+        mov bx, [rax]
+        lea rax, [rsp+120]
+        mov [rax], bx
+        ; shiftleft t.21, t.21, b
+        lea rax, [rsp+120]
         mov bx, [rax]
         lea rax, [rsp+8]
         mov cx, [rax]
