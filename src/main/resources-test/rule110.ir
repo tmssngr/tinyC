@@ -40,10 +40,10 @@
 	const t.5, 1
 	add length, length, t.5
 @for_1_continue:
-	cast t.7, str
+	cast t.7(i64), str(u8*)
 	const t.8, 1
 	add t.6, t.7, t.8
-	cast str, t.6
+	cast str(u8*), t.6(i64)
 	jump @for_1
 @for_1_break:
 	; 40:9 return length
@@ -77,8 +77,8 @@
 	lt t.2, i, t.3
 	branch t.2, false, @for_2_break
 	; 12:3 if [...] == 0
-	cast t.7, i
-	cast t.8, t.7
+	cast t.7(i64), i(u8)
+	cast t.8(u8*), t.7(i64)
 	addrof t.6, [board]
 	add t.6, t.6, t.8
 	load t.5, [t.6]
@@ -160,8 +160,8 @@
 	lt t.4, i, t.5
 	branch t.4, false, @for_4_break
 	const t.6, 0
-	cast t.8, i
-	cast t.9, t.8
+	cast t.8(i64), i(u8)
+	cast t.9(u8*), t.8(i64)
 	addrof t.7, [board]
 	add t.7, t.7, t.9
 	store [t.7], t.6
@@ -172,8 +172,8 @@
 @for_4_break:
 	const t.11, 1
 	const t.14, 29
-	cast t.13, t.14
-	cast t.15, t.13
+	cast t.13(i64), t.14(u8)
+	cast t.15(u8*), t.13(i64)
 	addrof t.12, [board]
 	add t.12, t.12, t.15
 	store [t.12], t.11
@@ -185,14 +185,14 @@
 	lt t.16, i, t.17
 	branch t.16, false, @for_5_break
 	const t.21, 0
-	cast t.22, t.21
+	cast t.22(u8*), t.21(i64)
 	addrof t.20, [board]
 	add t.20, t.20, t.22
 	load t.19, [t.20]
 	const t.23, 1
 	shiftleft t.18, t.19, t.23
 	const t.26, 1
-	cast t.27, t.26
+	cast t.27(u8*), t.26(i64)
 	addrof t.25, [board]
 	add t.25, t.25, t.27
 	load t.24, [t.25]
@@ -209,8 +209,8 @@
 	and t.30, t.31, t.33
 	const t.38, 1
 	add t.37, j, t.38
-	cast t.36, t.37
-	cast t.39, t.36
+	cast t.36(i64), t.37(u8)
+	cast t.39(u8*), t.36(i64)
 	addrof t.35, [board]
 	add t.35, t.35, t.39
 	load t.34, [t.35]
@@ -219,8 +219,8 @@
 	shiftright t.41, t.42, pattern
 	const t.43, 1
 	and t.40, t.41, t.43
-	cast t.45, j
-	cast t.46, t.45
+	cast t.45(i64), j(u8)
+	cast t.46(u8*), t.45(i64)
 	addrof t.44, [board]
 	add t.44, t.44, t.46
 	store [t.44], t.40

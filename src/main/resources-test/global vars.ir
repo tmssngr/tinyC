@@ -42,11 +42,11 @@
 	mod remainder, number, t.6
 	const t.7, 10
 	div number, number, t.7
-	cast t.8, remainder
+	cast t.8(u8), remainder(i64)
 	const t.9, 48
 	add digit, t.8, t.9
-	cast t.11, pos
-	cast t.12, t.11
+	cast t.11(i64), pos(u8)
+	cast t.12(u8*), t.11(i64)
 	addrof t.10, [buffer]
 	add t.10, t.10, t.12
 	store [t.10], digit
@@ -58,13 +58,13 @@
 @if_2_end:
 	jump @while_1
 @while_1_break:
-	cast t.16, pos
-	cast t.17, t.16
+	cast t.16(i64), pos(u8)
+	cast t.17(u8*), t.16(i64)
 	addrof t.15, [buffer]
 	add t.15, t.15, t.17
 	const t.20, 20
 	sub t.19, t.20, pos
-	cast t.18, t.19
+	cast t.18(i64), t.19(u8)
 	call _, printStringLength [t.15, t.18]
 @printUint_ret:
 
@@ -103,14 +103,14 @@
 	const next, 63
 	addrof ptrToSpace, space
 	; end initialize global variables
-	cast t.0, next
+	cast t.0(i64), next(i16)
 	call _, printIntLf [t.0]
-	cast t.2, ptrToSpace
+	cast t.2(i64), ptrToSpace(i16*)
 	const t.3, 2
 	add t.1, t.2, t.3
-	cast ptrToSpace, t.1
+	cast ptrToSpace(i16*), t.1(i64)
 	load t.5, [ptrToSpace]
-	cast t.4, t.5
+	cast t.4(i64), t.5(i16)
 	call _, printIntLf [t.4]
 @main_ret:
 

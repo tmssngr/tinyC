@@ -122,7 +122,7 @@ start:
         mov rbx, rax
         lea rdx, [rsp+152]
         mov [rdx], rbx
-        ; cast t.8, remainder
+        ; cast t.8(u8), remainder(i64)
         lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+56]
@@ -139,13 +139,13 @@ start:
         add bl, cl
         lea rax, [rsp+32]
         mov [rax], bl
-        ; cast t.11, pos
+        ; cast t.11(i64), pos(u8)
         lea rax, [rsp+20]
         mov bl, [rax]
         movzx rbx, bl
         lea rax, [rsp+72]
         mov [rax], rbx
-        ; cast t.12, t.11
+        ; cast t.12(u8*), t.11(i64)
         lea rax, [rsp+72]
         mov rbx, [rax]
         lea rax, [rsp+80]
@@ -187,13 +187,13 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @while_1
-        ; cast t.16, pos
+        ; cast t.16(i64), pos(u8)
         lea rax, [rsp+20]
         mov bl, [rax]
         movzx rbx, bl
         lea rax, [rsp+112]
         mov [rax], rbx
-        ; cast t.17, t.16
+        ; cast t.17(u8*), t.16(i64)
         lea rax, [rsp+112]
         mov rbx, [rax]
         lea rax, [rsp+120]
@@ -222,7 +222,7 @@ start:
         sub bl, cl
         lea rax, [rsp+136]
         mov [rax], bl
-        ; cast t.18, t.19
+        ; cast t.18(i64), t.19(u8)
         lea rax, [rsp+136]
         mov bl, [rax]
         movzx rbx, bl
@@ -331,7 +331,7 @@ start:
         lea rbx, [var_2]
         mov [rbx], rax
         ; end initialize global variables
-        ; cast t.0, next
+        ; cast t.0(i64), next(i16)
         lea rax, [var_1]
         mov bx, [rax]
         movzx rbx, bx
@@ -343,7 +343,7 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; cast t.2, ptrToSpace
+        ; cast t.2(i64), ptrToSpace(i16*)
         lea rax, [var_2]
         mov rbx, [rax]
         lea rax, [rsp+16]
@@ -360,7 +360,7 @@ start:
         add rbx, rcx
         lea rax, [rsp+8]
         mov [rax], rbx
-        ; cast ptrToSpace, t.1
+        ; cast ptrToSpace(i16*), t.1(i64)
         lea rax, [rsp+8]
         mov rbx, [rax]
         lea rax, [var_2]
@@ -371,7 +371,7 @@ start:
         mov ax, [rbx]
         lea rbx, [rsp+40]
         mov [rbx], ax
-        ; cast t.4, t.5
+        ; cast t.4(i64), t.5(i16)
         lea rax, [rsp+40]
         mov bx, [rax]
         movzx rbx, bx

@@ -42,11 +42,11 @@
 	mod remainder, number, t.6
 	const t.7, 10
 	div number, number, t.7
-	cast t.8, remainder
+	cast t.8(u8), remainder(i64)
 	const t.9, 48
 	add digit, t.8, t.9
-	cast t.11, pos
-	cast t.12, t.11
+	cast t.11(i64), pos(u8)
+	cast t.12(u8*), t.11(i64)
 	addrof t.10, [buffer]
 	add t.10, t.10, t.12
 	store [t.10], digit
@@ -58,13 +58,13 @@
 @if_2_end:
 	jump @while_1
 @while_1_break:
-	cast t.16, pos
-	cast t.17, t.16
+	cast t.16(i64), pos(u8)
+	cast t.17(u8*), t.16(i64)
 	addrof t.15, [buffer]
 	add t.15, t.15, t.17
 	const t.20, 20
 	sub t.19, t.20, pos
-	cast t.18, t.19
+	cast t.18(i64), t.19(u8)
 	call _, printStringLength [t.15, t.18]
 @printUint_ret:
 
@@ -92,12 +92,12 @@
 	call _, printChar [t.2]
 	addrof twoPtr, two
 	const t.5, 0
-	cast t.6, t.5
+	cast t.6(u8*), t.5(i64)
 	move t.4, twoPtr
 	add t.4, t.4, t.6
 	load t.3, [t.4]
 	call _, printChar [t.3]
-	cast t.7, threeFour
+	cast t.7(i64), threeFour(u8)
 	call _, printUint [t.7]
 	const t.8, 10
 	call _, printChar [t.8]

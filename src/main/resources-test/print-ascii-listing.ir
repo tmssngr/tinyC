@@ -40,10 +40,10 @@
 	const t.5, 1
 	add length, length, t.5
 @for_1_continue:
-	cast t.7, str
+	cast t.7(i64), str(u8*)
 	const t.8, 1
 	add t.6, t.7, t.8
-	cast str, t.6
+	cast str(u8*), t.6(i64)
 	jump @for_1
 @for_1_break:
 	; 40:9 return length

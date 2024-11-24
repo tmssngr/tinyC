@@ -132,7 +132,7 @@ start:
         add rbx, rcx
         lea rax, [rsp+0]
         mov [rax], rbx
-        ; cast t.7, str
+        ; cast t.7(i64), str(u8*)
         lea rax, [rsp+56]
         mov rbx, [rax]
         lea rax, [rsp+32]
@@ -149,7 +149,7 @@ start:
         add rbx, rcx
         lea rax, [rsp+24]
         mov [rax], rbx
-        ; cast str, t.6
+        ; cast str(u8*), t.6(i64)
         lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+56]

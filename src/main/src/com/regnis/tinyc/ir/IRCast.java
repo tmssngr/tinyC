@@ -10,6 +10,6 @@ import org.jetbrains.annotations.*;
 public record IRCast(@NotNull IRVar target, @NotNull IRVar source, @NotNull Location location) implements IRInstruction {
 	@Override
 	public String toString() {
-		return "cast " + target + ", " + source;
+		return "cast " + target + "(" + target.type() + "), " + source + "(" + source.type() + ")";
 	}
 }
