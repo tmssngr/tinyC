@@ -122,6 +122,12 @@ public final class IRWriter extends TextWriter {
 				sum++;
 				sum += getInstructionTime(i.target());
 			}
+			case IRCompare i -> {
+				sum += getInstructionTime(i.left());
+				sum += getInstructionTime(i.right());
+				sum++;
+				sum += getInstructionTime(i.target());
+			}
 			case IRMove i -> {
 				sum += getInstructionTime(i.source());
 				sum++;
