@@ -141,8 +141,13 @@ start:
         mov rax, 1
         lea rbx, [rsp+40]
         mov [rbx], rax
-        ; add t.6, t.7, t.8
+        ; move t.6, t.7
         lea rax, [rsp+32]
+        mov rbx, [rax]
+        lea rax, [rsp+24]
+        mov [rax], rbx
+        ; add t.6, t.6, t.8
+        lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+40]
         mov rcx, [rax]
@@ -536,8 +541,13 @@ start:
         mov al, 1
         lea rbx, [rsp+104]
         mov [rbx], al
-        ; shiftleft t.18, t.19, t.23
+        ; move t.18, t.19
         lea rax, [rsp+75]
+        mov bl, [rax]
+        lea rax, [rsp+74]
+        mov [rax], bl
+        ; shiftleft t.18, t.18, t.23
+        lea rax, [rsp+74]
         mov bl, [rax]
         lea rax, [rsp+104]
         mov cl, [rax]
@@ -571,8 +581,13 @@ start:
         mov al, [rbx]
         lea rbx, [rsp+105]
         mov [rbx], al
-        ; or pattern, t.18, t.24
+        ; move pattern, t.18
         lea rax, [rsp+74]
+        mov bl, [rax]
+        lea rax, [rsp+2]
+        mov [rax], bl
+        ; or pattern, pattern, t.24
+        lea rax, [rsp+2]
         mov bl, [rax]
         lea rax, [rsp+105]
         mov cl, [rax]
@@ -607,8 +622,13 @@ start:
         mov al, 1
         lea rbx, [rsp+140]
         mov [rbx], al
-        ; shiftleft t.31, pattern, t.32
+        ; move t.31, pattern
         lea rax, [rsp+2]
+        mov bl, [rax]
+        lea rax, [rsp+139]
+        mov [rax], bl
+        ; shiftleft t.31, t.31, t.32
+        lea rax, [rsp+139]
         mov bl, [rax]
         lea rax, [rsp+140]
         mov cl, [rax]
@@ -619,8 +639,13 @@ start:
         mov al, 7
         lea rbx, [rsp+141]
         mov [rbx], al
-        ; and t.30, t.31, t.33
+        ; move t.30, t.31
         lea rax, [rsp+139]
+        mov bl, [rax]
+        lea rax, [rsp+138]
+        mov [rax], bl
+        ; and t.30, t.30, t.33
+        lea rax, [rsp+138]
         mov bl, [rax]
         lea rax, [rsp+141]
         mov cl, [rax]
@@ -631,8 +656,13 @@ start:
         mov al, 1
         lea rbx, [rsp+161]
         mov [rbx], al
-        ; add t.37, j, t.38
+        ; move t.37, j
         lea rax, [rsp+3]
+        mov bl, [rax]
+        lea rax, [rsp+160]
+        mov [rax], bl
+        ; add t.37, t.37, t.38
+        lea rax, [rsp+160]
         mov bl, [rax]
         lea rax, [rsp+161]
         mov cl, [rax]
@@ -668,8 +698,13 @@ start:
         mov al, [rbx]
         lea rbx, [rsp+142]
         mov [rbx], al
-        ; or pattern, t.30, t.34
+        ; move pattern, t.30
         lea rax, [rsp+138]
+        mov bl, [rax]
+        lea rax, [rsp+2]
+        mov [rax], bl
+        ; or pattern, pattern, t.34
+        lea rax, [rsp+2]
         mov bl, [rax]
         lea rax, [rsp+142]
         mov cl, [rax]
@@ -680,8 +715,13 @@ start:
         mov al, 110
         lea rbx, [rsp+178]
         mov [rbx], al
-        ; shiftright t.41, t.42, pattern
+        ; move t.41, t.42
         lea rax, [rsp+178]
+        mov bl, [rax]
+        lea rax, [rsp+177]
+        mov [rax], bl
+        ; shiftright t.41, t.41, pattern
+        lea rax, [rsp+177]
         mov bl, [rax]
         lea rax, [rsp+2]
         mov cl, [rax]
@@ -692,8 +732,13 @@ start:
         mov al, 1
         lea rbx, [rsp+179]
         mov [rbx], al
-        ; and t.40, t.41, t.43
+        ; move t.40, t.41
         lea rax, [rsp+177]
+        mov bl, [rax]
+        lea rax, [rsp+176]
+        mov [rax], bl
+        ; and t.40, t.40, t.43
+        lea rax, [rsp+176]
         mov bl, [rax]
         lea rax, [rsp+179]
         mov cl, [rax]

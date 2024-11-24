@@ -141,8 +141,13 @@ start:
         mov rax, 1
         lea rbx, [rsp+40]
         mov [rbx], rax
-        ; add t.6, t.7, t.8
+        ; move t.6, t.7
         lea rax, [rsp+32]
+        mov rbx, [rax]
+        lea rax, [rsp+24]
+        mov [rax], rbx
+        ; add t.6, t.6, t.8
+        lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+40]
         mov rcx, [rax]
@@ -252,8 +257,13 @@ start:
         mov al, 4
         lea rbx, [rsp+1]
         mov [rbx], al
-        ; shiftright t.1, x, t.2
+        ; move t.1, x
         lea rax, [rsp+24]
+        mov bl, [rax]
+        lea rax, [rsp+0]
+        mov [rax], bl
+        ; shiftright t.1, t.1, t.2
+        lea rax, [rsp+0]
         mov bl, [rax]
         lea rax, [rsp+1]
         mov cl, [rax]
@@ -348,8 +358,13 @@ start:
         mov al, 7
         lea rbx, [rsp+20]
         mov [rbx], al
-        ; and t.6, i, t.7
+        ; move t.6, i
         lea rax, [rsp+0]
+        mov bl, [rax]
+        lea rax, [rsp+19]
+        mov [rax], bl
+        ; and t.6, t.6, t.7
+        lea rax, [rsp+19]
         mov bl, [rax]
         lea rax, [rsp+20]
         mov cl, [rax]
@@ -444,8 +459,13 @@ start:
         mov al, 15
         lea rbx, [rsp+29]
         mov [rbx], al
-        ; and t.15, i, t.16
+        ; move t.15, i
         lea rax, [rsp+1]
+        mov bl, [rax]
+        lea rax, [rsp+28]
+        mov [rax], bl
+        ; and t.15, t.15, t.16
+        lea rax, [rsp+28]
         mov bl, [rax]
         lea rax, [rsp+29]
         mov cl, [rax]
@@ -482,8 +502,13 @@ start:
         mov al, 7
         lea rbx, [rsp+33]
         mov [rbx], al
-        ; and t.19, i, t.20
+        ; move t.19, i
         lea rax, [rsp+1]
+        mov bl, [rax]
+        lea rax, [rsp+32]
+        mov [rax], bl
+        ; and t.19, t.19, t.20
+        lea rax, [rsp+32]
         mov bl, [rax]
         lea rax, [rsp+33]
         mov cl, [rax]
@@ -530,8 +555,13 @@ start:
         mov al, 15
         lea rbx, [rsp+38]
         mov [rbx], al
-        ; and t.24, i, t.25
+        ; move t.24, i
         lea rax, [rsp+1]
+        mov bl, [rax]
+        lea rax, [rsp+37]
+        mov [rax], bl
+        ; and t.24, t.24, t.25
+        lea rax, [rsp+37]
         mov bl, [rax]
         lea rax, [rsp+38]
         mov cl, [rax]

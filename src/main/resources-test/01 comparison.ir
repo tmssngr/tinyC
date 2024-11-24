@@ -41,19 +41,21 @@
 	var 18: t.18 (i64/8)
 	var 19: t.19 (u8/1)
 	var 20: t.20 (u8/1)
-	; 122 pc
+	; 137 pc
 	const pos, 20
 	; 13:2 while true
 @while_1:
 	const t.5, 1
 	sub pos, pos, t.5
 	const t.6, 10
-	mod remainder, number, t.6
+	move remainder, number
+	mod remainder, remainder, t.6
 	const t.7, 10
 	div number, number, t.7
 	cast t.8(u8), remainder(i64)
 	const t.9, 48
-	add digit, t.8, t.9
+	move digit, t.8
+	add digit, digit, t.9
 	cast t.11(i64), pos(u8)
 	cast t.12(u8*), t.11(i64)
 	addrof t.10, [buffer]
@@ -72,7 +74,8 @@
 	addrof t.15, [buffer]
 	add t.15, t.15, t.17
 	const t.20, 20
-	sub t.19, t.20, pos
+	move t.19, t.20
+	sub t.19, t.19, pos
 	cast t.18(i64), t.19(u8)
 	call _, printStringLength [t.15, t.18]
 @printUint_ret:
@@ -109,7 +112,7 @@
 	var 6: t.6 (i64/8)
 	var 7: t.7 (i64/8)
 	var 8: t.8 (i64/8)
-	; 53 pc
+	; 58 pc
 	const length, 0
 	; 37:2 for *str != 0
 @for_4:
@@ -122,7 +125,8 @@
 @for_4_continue:
 	cast t.7(i64), str(u8*)
 	const t.8, 1
-	add t.6, t.7, t.8
+	move t.6, t.7
+	add t.6, t.6, t.8
 	cast str(u8*), t.6(i64)
 	jump @for_4
 @for_4_break:
