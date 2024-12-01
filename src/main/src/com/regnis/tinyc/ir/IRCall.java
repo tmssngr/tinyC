@@ -2,7 +2,7 @@ package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
 
-import java.util.List;
+import java.util.*;
 
 import org.jetbrains.annotations.*;
 
