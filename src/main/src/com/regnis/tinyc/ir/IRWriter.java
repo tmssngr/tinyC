@@ -87,8 +87,10 @@ public final class IRWriter extends TextWriter {
 		int sum = 0;
 		for (IRInstruction instruction : instructions) {
 			switch (instruction) {
-			case IRLabel ignored -> {}
-			case IRComment ignored -> {}
+			case IRLabel ignored -> {
+			}
+			case IRComment ignored -> {
+			}
 			case IRAddrOf i -> {
 				sum += getInstructionTime(i.source());
 				sum += getInstructionTime(i.target());
