@@ -644,16 +644,16 @@ public class ParserTest {
 
 		testIllegal(Messages.expectedStatement(), loc(1, 4),
 		            """
-				                void main() {
-				                    10
-				                }""");
+				            void main() {
+				                10
+				            }""");
 
 		// different check:
 		testIllegal(Messages.expectedStatement(), loc(1, 4),
 		            """
-				                void main() {
-				                    ,
-				                }""");
+				            void main() {
+				                ,
+				            }""");
 	}
 
 	@Test
@@ -695,20 +695,20 @@ public class ParserTest {
 
 		testIllegal(Messages.unclosedIfdef(), loc(0, 0),
 		            """
-				                #ifdef X86_64
-				                void main() {
-				                }""");
+				            #ifdef X86_64
+				            void main() {
+				            }""");
 		testIllegal(Messages.unclosedIfdef(), loc(2, 1),
-				                """
-				                #ifdef X86_64
-				                void main() {
-				                }""", Set.of("X86_64"));
+		            """
+				            #ifdef X86_64
+				            void main() {
+				            }""", Set.of("X86_64"));
 		testIllegal(Messages.endWithoutIfdef(), loc(2, 0),
 		            """
-				                void main() {
-				                }
-				                #end
-				                """);
+				            void main() {
+				            }
+				            #end
+				            """);
 	}
 
 	private static void testIllegal(String expectedMessage, Location expectedLocation, String input) {

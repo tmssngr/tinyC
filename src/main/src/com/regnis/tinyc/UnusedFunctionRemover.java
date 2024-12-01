@@ -90,7 +90,8 @@ public class UnusedFunctionRemover {
 				process(expression);
 			}
 		}
-		case StmtBreakContinue ignored -> {}
+		case StmtBreakContinue ignored -> {
+		}
 		default -> throw new UnsupportedOperationException(statement.getClass().toString());
 		}
 	}
@@ -123,9 +124,12 @@ public class UnusedFunctionRemover {
 				pendingFunctions.add(name);
 			}
 		}
-		case ExprStringLiteral ignored -> {}
-		case ExprIntLiteral ignored -> {}
-		case ExprBoolLiteral ignored -> {}
+		case ExprStringLiteral ignored -> {
+		}
+		case ExprIntLiteral ignored -> {
+		}
+		case ExprBoolLiteral ignored -> {
+		}
 		default -> throw new UnsupportedOperationException(expression.getClass().toString());
 		}
 	}
