@@ -102,9 +102,8 @@
 	var 5: t.5 (u8/1)
 	var 6: t.6 (i64/8)
 	var 7: t.7 (u8/1)
-	; 49 pc
+	; 47 pc
 	; begin initialize global variables
-	const __random__, 0
 	; end initialize global variables
 	const i, 250
 	; 4:3 for i != 2
@@ -138,7 +137,4 @@
 	  call    [WriteFile]
 	mov     rsp, rdi
 	ret
-
-Global variables
-	0: __random__ (i32/4)
 

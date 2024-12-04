@@ -50,4 +50,9 @@ public final class IRVarInfos implements IRCanBeRegister {
 	public List<IRVarDef> vars() {
 		return vars;
 	}
+
+	@NotNull
+	public IRVarInfos derive(IRVarInfos newParent) {
+		return new IRVarInfos(vars, cantBeRegister, newParent);
+	}
 }

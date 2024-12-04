@@ -332,13 +332,9 @@ start:
         ; reserve space for local variables
         sub rsp, 16
         ; begin initialize global variables
-        ; const __random__, 0
-        mov eax, 0
-        lea rbx, [var_0]
-        mov [rbx], eax
         ; const i, 0
         mov al, 0
-        lea rbx, [var_1]
+        lea rbx, [var_0]
         mov [rbx], al
         ; end initialize global variables
         ; call t.0, next, []
@@ -403,16 +399,16 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; add i, i, t.0
-        lea rax, [var_1]
+        lea rax, [var_0]
         mov bl, [rax]
         lea rax, [rsp+0]
         mov cl, [rax]
         add bl, cl
-        lea rax, [var_1]
+        lea rax, [var_0]
         mov [rax], bl
         ; 11:9 return i
         ; ret i
-        lea rax, [var_1]
+        lea rax, [var_0]
         mov bl, [rax]
         mov rax, rbx
         ; release space for local variables
@@ -537,10 +533,8 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: __random__ (i32/4)
-        var_0 rb 4
-        ; variable 1: i (u8/1)
-        var_1 rb 1
+        ; variable 0: i (u8/1)
+        var_0 rb 1
 
 section '.idata' import data readable writeable
 
