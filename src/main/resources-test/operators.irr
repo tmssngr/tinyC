@@ -1,7 +1,6 @@
 @printString:
  Local variables
 	arg 0: str (u8*/8)
-	var 1: length (i64/8)
 	; 6 pc
 	call r0, strlen, [str]
 	call _, printStringLength [str, r0]
@@ -9,8 +8,6 @@
 @printChar:
  Local variables
 	arg 0: chr (u8/1)
-	var 1: t.1 (u8*/8)
-	var 2: t.2 (i64/8)
 	; 4 pc
 	addrof r0, chr
 	const r1, 1
@@ -21,24 +18,6 @@
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
 	var 2: pos (u8/1)
-	var 3: remainder (i64/8)
-	var 4: digit (u8/1)
-	var 5: t.5 (u8/1)
-	var 6: t.6 (i64/8)
-	var 7: t.7 (i64/8)
-	var 8: t.8 (u8/1)
-	var 9: t.9 (u8/1)
-	var 10: t.10 (u8*/8)
-	var 11: t.11 (i64/8)
-	var 12: t.12 (u8*/8)
-	var 13: t.13 (bool/1)
-	var 14: t.14 (i64/8)
-	var 15: t.15 (u8*/8)
-	var 16: t.16 (i64/8)
-	var 17: t.17 (u8*/8)
-	var 18: t.18 (i64/8)
-	var 19: t.19 (u8/1)
-	var 20: t.20 (u8/1)
 	; 39 pc
 	const r0, 20
 	; 13:2 while true
@@ -81,10 +60,6 @@
 @printIntLf:
  Local variables
 	arg 0: number (i64/8)
-	var 1: t.1 (bool/1)
-	var 2: t.2 (i64/8)
-	var 3: t.3 (u8/1)
-	var 4: t.4 (u8/1)
 	; 17 pc
 	; 27:2 if number < 0
 	const r0, 0
@@ -105,13 +80,6 @@
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
-	var 2: t.2 (bool/1)
-	var 3: t.3 (u8/1)
-	var 4: t.4 (u8/1)
-	var 5: t.5 (i64/8)
-	var 6: t.6 (i64/8)
-	var 7: t.7 (i64/8)
-	var 8: t.8 (i64/8)
 	; 31 pc
 	const r0, 0
 	; 37:2 for *str != 0
@@ -146,73 +114,17 @@
 	var 3: d (i16/2)
 	var 4: t (bool/1)
 	var 5: f (bool/1)
-	var 6: b10 (u8/1)
-	var 7: b6 (u8/1)
-	var 8: b1 (u8/1)
-	var 9: t.9 (u8*/8)
-	var 10: t.10 (i64/8)
-	var 11: t.11 (i16/2)
-	var 12: t.12 (i64/8)
-	var 13: t.13 (i16/2)
-	var 14: t.14 (i64/8)
-	var 15: t.15 (i16/2)
-	var 16: t.16 (i64/8)
-	var 17: t.17 (i16/2)
-	var 18: t.18 (u8*/8)
-	var 19: t.19 (i64/8)
-	var 20: t.20 (i16/2)
-	var 21: t.21 (i64/8)
-	var 22: t.22 (i16/2)
-	var 23: t.23 (i64/8)
-	var 24: t.24 (i16/2)
-	var 25: t.25 (i64/8)
-	var 26: t.26 (i16/2)
-	var 27: t.27 (u8*/8)
-	var 28: t.28 (i64/8)
-	var 29: t.29 (i16/2)
-	var 30: t.30 (i64/8)
-	var 31: t.31 (i16/2)
-	var 32: t.32 (i64/8)
-	var 33: t.33 (i16/2)
-	var 34: t.34 (i64/8)
-	var 35: t.35 (i16/2)
-	var 36: t.36 (u8*/8)
-	var 37: t.37 (i64/8)
-	var 38: t.38 (bool/1)
-	var 39: t.39 (i64/8)
-	var 40: t.40 (bool/1)
-	var 41: t.41 (i64/8)
-	var 42: t.42 (bool/1)
-	var 43: t.43 (i64/8)
-	var 44: t.44 (bool/1)
-	var 45: t.45 (u8*/8)
-	var 46: t.46 (i64/8)
-	var 47: t.47 (bool/1)
-	var 48: t.48 (i64/8)
-	var 49: t.49 (bool/1)
-	var 50: t.50 (i64/8)
-	var 51: t.51 (bool/1)
-	var 52: t.52 (i64/8)
-	var 53: t.53 (bool/1)
-	var 54: t.54 (u8*/8)
-	var 55: t.55 (i64/8)
-	var 56: t.56 (bool/1)
-	var 57: t.57 (i64/8)
-	var 58: t.58 (bool/1)
-	var 59: t.59 (u8*/8)
-	var 60: t.60 (i64/8)
-	var 61: t.61 (u8/1)
-	var 62: t.62 (u8/1)
-	var 63: t.63 (i64/8)
-	var 64: t.64 (bool/1)
-	var 65: t.65 (i64/8)
-	var 66: t.66 (bool/1)
-	var 67: t.67 (i64/8)
-	var 68: t.68 (i16/2)
-	var 69: t.69 (i64/8)
-	var 70: t.70 (i16/2)
-	var 71: t.71 (i64/8)
-	var 72: t.72 (u8/1)
+	var 6: b1 (u8/1)
+	var 7: t.38 (bool/1)
+	var 8: t.40 (bool/1)
+	var 9: t.42 (bool/1)
+	var 10: t.44 (bool/1)
+	var 11: t.47 (bool/1)
+	var 12: t.49 (bool/1)
+	var 13: t.51 (bool/1)
+	var 14: t.53 (bool/1)
+	var 15: t.64 (bool/1)
+	var 16: t.66 (bool/1)
 	; 382 pc
 	; begin initialize global variables
 	; end initialize global variables

@@ -21,39 +21,30 @@ start:
           call [ExitProcess]
 
         ; void printString
-        ;   rsp+24: arg str
-        ;   rsp+0: var length
+        ;   rsp+8: arg str
 @printString:
-        ; reserve space for local variables
-        sub rsp, 16
         ; call r0, strlen, [str]
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov rax, [rax]
         push rax
           call @strlen
         add rsp, 8
         mov rcx, rax
         ; call _, printStringLength [str, r0]
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov rax, [rax]
         push rax
         push rcx
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; void printChar
-        ;   rsp+24: arg chr
-        ;   rsp+0: var t.1
-        ;   rsp+8: var t.2
+        ;   rsp+8: arg chr
 @printChar:
-        ; reserve space for local variables
-        sub rsp, 16
         ; addrof r0, chr
-        lea rcx, [rsp+24]
+        lea rcx, [rsp+8]
         ; const r1, 1
         mov rdx, 1
         ; call _, printStringLength [r0, r1]
@@ -62,23 +53,14 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; i64 strlen
-        ;   rsp+56: arg str
+        ;   rsp+24: arg str
         ;   rsp+0: var length
-        ;   rsp+8: var t.2
-        ;   rsp+9: var t.3
-        ;   rsp+10: var t.4
-        ;   rsp+16: var t.5
-        ;   rsp+24: var t.6
-        ;   rsp+32: var t.7
-        ;   rsp+40: var t.8
 @strlen:
         ; reserve space for local variables
-        sub rsp, 48
+        sub rsp, 16
         ; const r0, 0
         mov rcx, 0
         ; 37:2 for *str != 0
@@ -87,7 +69,7 @@ start:
         mov [rax], rcx
 @for_1:
         ; move r0, str
-        lea rax, [rsp+56]
+        lea rax, [rsp+24]
         mov rcx, [rax]
         ; load r1, [r0]
         mov dl, [rcx]
@@ -109,7 +91,7 @@ start:
         add rax, rcx
         mov rcx, rax
         ; move r1, str
-        lea rax, [rsp+56]
+        lea rax, [rsp+24]
         mov rdx, [rax]
         ; cast r1(i64), r1(u8*)
         ; const r2, 1
@@ -121,7 +103,7 @@ start:
         lea rax, [rsp+0]
         mov [rax], rcx
         ; move str, r1
-        lea rax, [rsp+56]
+        lea rax, [rsp+24]
         mov [rax], rdx
         jmp @for_1
 @for_1_break:
@@ -132,27 +114,14 @@ start:
         ; ret r0
         mov rax, rcx
         ; release space for local variables
-        add rsp, 48
+        add rsp, 16
         ret
 
         ; void printBoard
         ;   rsp+0: var i
-        ;   rsp+1: var t.1
-        ;   rsp+2: var t.2
-        ;   rsp+3: var t.3
-        ;   rsp+4: var t.4
-        ;   rsp+5: var t.5
-        ;   rsp+8: var t.6
-        ;   rsp+16: var t.7
-        ;   rsp+24: var t.8
-        ;   rsp+32: var t.9
-        ;   rsp+33: var t.10
-        ;   rsp+34: var t.11
-        ;   rsp+35: var t.12
-        ;   rsp+40: var t.13
 @printBoard:
         ; reserve space for local variables
-        sub rsp, 48
+        sub rsp, 16
         ; const r0, 124
         mov cl, 124
         ; call _, printChar [r0]
@@ -236,7 +205,7 @@ start:
           call @printString
         add rsp, 8
         ; release space for local variables
-        add rsp, 48
+        add rsp, 16
         ret
 
         ; void main
@@ -244,54 +213,9 @@ start:
         ;   rsp+1: var i
         ;   rsp+2: var pattern
         ;   rsp+3: var j
-        ;   rsp+4: var t.4
-        ;   rsp+5: var t.5
-        ;   rsp+6: var t.6
-        ;   rsp+8: var t.7
-        ;   rsp+16: var t.8
-        ;   rsp+24: var t.9
-        ;   rsp+32: var t.10
-        ;   rsp+33: var t.11
-        ;   rsp+40: var t.12
-        ;   rsp+48: var t.13
-        ;   rsp+56: var t.14
-        ;   rsp+64: var t.15
-        ;   rsp+72: var t.16
-        ;   rsp+73: var t.17
-        ;   rsp+74: var t.18
-        ;   rsp+75: var t.19
-        ;   rsp+80: var t.20
-        ;   rsp+88: var t.21
-        ;   rsp+96: var t.22
-        ;   rsp+104: var t.23
-        ;   rsp+105: var t.24
-        ;   rsp+112: var t.25
-        ;   rsp+120: var t.26
-        ;   rsp+128: var t.27
-        ;   rsp+136: var t.28
-        ;   rsp+137: var t.29
-        ;   rsp+138: var t.30
-        ;   rsp+139: var t.31
-        ;   rsp+140: var t.32
-        ;   rsp+141: var t.33
-        ;   rsp+142: var t.34
-        ;   rsp+144: var t.35
-        ;   rsp+152: var t.36
-        ;   rsp+160: var t.37
-        ;   rsp+161: var t.38
-        ;   rsp+168: var t.39
-        ;   rsp+176: var t.40
-        ;   rsp+177: var t.41
-        ;   rsp+178: var t.42
-        ;   rsp+179: var t.43
-        ;   rsp+184: var t.44
-        ;   rsp+192: var t.45
-        ;   rsp+200: var t.46
-        ;   rsp+208: var t.47
-        ;   rsp+209: var t.48
 @main:
         ; reserve space for local variables
-        sub rsp, 224
+        sub rsp, 16
         ; begin initialize global variables
         ; end initialize global variables
         ; const r0, 0
@@ -522,7 +446,7 @@ start:
         jmp @for_5
 @main_ret:
         ; release space for local variables
-        add rsp, 224
+        add rsp, 16
         ret
 
         ; void printStringLength
