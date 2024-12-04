@@ -96,9 +96,8 @@
  Local variables
 	var 0: a (u8/1)
 	var 1: t.1 (i64/8)
-	; 12 pc
+	; 10 pc
 	; begin initialize global variables
-	const __random__, 0
 	; end initialize global variables
 	const a, 10
 	cast t.1(i64), a(u8)
@@ -118,7 +117,4 @@
 	  call    [WriteFile]
 	mov     rsp, rdi
 	ret
-
-Global variables
-	0: __random__ (i32/4)
 

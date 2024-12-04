@@ -235,7 +235,7 @@ start:
         lea rax, [rsp+24]
         mov [rax], rbx
         ; addrof t.6, [board]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+8]
         mov [rbx], rax
         ; add t.6, t.6, t.8
@@ -375,10 +375,6 @@ start:
         ; reserve space for local variables
         sub rsp, 224
         ; begin initialize global variables
-        ; const __random__, 0
-        mov eax, 0
-        lea rbx, [var_0]
-        mov [rbx], eax
         ; end initialize global variables
         ; const i, 0
         mov al, 0
@@ -420,7 +416,7 @@ start:
         lea rax, [rsp+24]
         mov [rax], rbx
         ; addrof t.7, [board]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+8]
         mov [rbx], rax
         ; add t.7, t.7, t.9
@@ -471,7 +467,7 @@ start:
         lea rax, [rsp+64]
         mov [rax], rbx
         ; addrof t.12, [board]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+40]
         mov [rbx], rax
         ; add t.12, t.12, t.15
@@ -526,7 +522,7 @@ start:
         lea rax, [rsp+96]
         mov [rax], rbx
         ; addrof t.20, [board]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+80]
         mov [rbx], rax
         ; add t.20, t.20, t.22
@@ -570,7 +566,7 @@ start:
         lea rax, [rsp+128]
         mov [rax], rbx
         ; addrof t.25, [board]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+112]
         mov [rbx], rax
         ; add t.25, t.25, t.27
@@ -687,7 +683,7 @@ start:
         lea rax, [rsp+168]
         mov [rax], rbx
         ; addrof t.35, [board]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+144]
         mov [rbx], rax
         ; add t.35, t.35, t.39
@@ -763,7 +759,7 @@ start:
         lea rax, [rsp+200]
         mov [rax], rbx
         ; addrof t.44, [board]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+184]
         mov [rbx], rax
         ; add t.44, t.44, t.46
@@ -856,10 +852,8 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: __random__ (i32/4)
-        var_0 rb 4
-        ; variable 1: board[] (u8*/240)
-        var_1 rb 240
+        ; variable 0: board[] (u8*/240)
+        var_0 rb 240
 
 section '.data' data readable
         string_0 db '|', 0x0a, 0x00

@@ -119,9 +119,8 @@
 	var 26: t.26 (u8/1)
 	var 27: t.27 (u8/1)
 	var 28: t.28 (u8/1)
-	; 189 pc
+	; 187 pc
 	; begin initialize global variables
-	const __random__, 0
 	; end initialize global variables
 	const t.2, [string-0]
 	call _, printString [t.2]
@@ -205,9 +204,6 @@
 	  call    [WriteFile]
 	mov     rsp, rdi
 	ret
-
-Global variables
-	0: __random__ (i32/4)
 
 String literals
 	string lit 0 " x\0"

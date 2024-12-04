@@ -453,17 +453,13 @@ start:
         ; reserve space for local variables
         sub rsp, 48
         ; begin initialize global variables
-        ; const __random__, 0
-        mov eax, 0
-        lea rbx, [var_0]
-        mov [rbx], eax
         ; const text, [string-0]
         lea rax, [string_0]
-        lea rbx, [var_1]
+        lea rbx, [var_0]
         mov [rbx], rax
         ; end initialize global variables
         ; call _, printString [text]
-        lea rax, [var_1]
+        lea rax, [var_0]
         mov rbx, [rax]
         push rbx
           call @printString
@@ -482,7 +478,7 @@ start:
         lea rax, [rsp+24]
         mov [rax], rbx
         ; move second, text
-        lea rax, [var_1]
+        lea rax, [var_0]
         mov rbx, [rax]
         lea rax, [rsp+0]
         mov [rax], rbx
@@ -501,7 +497,7 @@ start:
           call @printString
         add rsp, 8
         ; load chr, [text]
-        lea rax, [var_1]
+        lea rax, [var_0]
         mov rbx, [rax]
         mov al, [rbx]
         lea rbx, [rsp+8]
@@ -541,7 +537,7 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], ax
         ; move ptr, text
-        lea rax, [var_1]
+        lea rax, [var_0]
         mov rbx, [rax]
         lea rax, [rsp+8]
         mov [rax], rbx
@@ -668,10 +664,8 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: __random__ (i32/4)
-        var_0 rb 4
-        ; variable 1: text (u8*/8)
-        var_1 rb 8
+        ; variable 0: text (u8*/8)
+        var_0 rb 8
 
 section '.data' data readable
         string_0 db 'hello world', 0x0a, 0x00

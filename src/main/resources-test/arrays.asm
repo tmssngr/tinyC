@@ -355,10 +355,6 @@ start:
         ; reserve space for local variables
         sub rsp, 208
         ; begin initialize global variables
-        ; const __random__, 0
-        mov eax, 0
-        lea rbx, [var_0]
-        mov [rbx], eax
         ; end initialize global variables
         ; const chr, 32
         mov al, 32
@@ -374,7 +370,7 @@ start:
         lea rax, [rsp+24]
         mov [rax], rbx
         ; addrof t.2, [chars]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+8]
         mov [rbx], rax
         ; add t.2, t.2, t.4
@@ -401,7 +397,7 @@ start:
         lea rax, [rsp+56]
         mov [rax], rbx
         ; addrof t.7, [chars]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+40]
         mov [rbx], rax
         ; add t.7, t.7, t.9
@@ -445,7 +441,7 @@ start:
         lea rax, [rsp+88]
         mov [rax], rbx
         ; addrof t.11, [chars]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+72]
         mov [rbx], rax
         ; add t.11, t.11, t.13
@@ -472,7 +468,7 @@ start:
         lea rax, [rsp+120]
         mov [rax], rbx
         ; addrof t.16, [chars]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+104]
         mov [rbx], rax
         ; add t.16, t.16, t.18
@@ -522,7 +518,7 @@ start:
         lea rax, [rsp+160]
         mov [rax], rbx
         ; addrof t.20, [chars]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+136]
         mov [rbx], rax
         ; add t.20, t.20, t.23
@@ -549,7 +545,7 @@ start:
         lea rax, [rsp+184]
         mov [rax], rbx
         ; addrof t.24, [chars]
-        lea rax, [var_1]
+        lea rax, [var_0]
         lea rbx, [rsp+168]
         mov [rbx], rax
         ; add t.24, t.24, t.26
@@ -622,10 +618,8 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: __random__ (i32/4)
-        var_0 rb 4
-        ; variable 1: chars[] (u8*/2048)
-        var_1 rb 2048
+        ; variable 0: chars[] (u8*/2048)
+        var_0 rb 2048
 
 section '.idata' import data readable writeable
 

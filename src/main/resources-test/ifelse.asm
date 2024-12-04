@@ -332,10 +332,6 @@ start:
         ; reserve space for local variables
         sub rsp, 32
         ; begin initialize global variables
-        ; const __random__, 0
-        mov eax, 0
-        lea rbx, [var_0]
-        mov [rbx], eax
         ; end initialize global variables
         ; const a, 1
         mov al, 1
@@ -431,8 +427,6 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: __random__ (i32/4)
-        var_0 rb 4
 
 section '.idata' import data readable writeable
 

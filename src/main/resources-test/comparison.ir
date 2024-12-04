@@ -191,9 +191,8 @@
 	var 51: t.51 (bool/1)
 	var 52: t.52 (i64/8)
 	var 53: t.53 (bool/1)
-	; 370 pc
+	; 368 pc
 	; begin initialize global variables
-	const __random__, 0
 	; end initialize global variables
 	const t.4, [string-0]
 	call _, printString [t.4]
@@ -294,9 +293,6 @@
 	  call    [WriteFile]
 	mov     rsp, rdi
 	ret
-
-Global variables
-	0: __random__ (i32/4)
 
 String literals
 	string lit 0 "< (signed)\n\0"

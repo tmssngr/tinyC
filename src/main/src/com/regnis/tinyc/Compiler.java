@@ -66,6 +66,7 @@ public class Compiler {
 		write(program, astSimpleFile);
 
 		IRProgram irProgram = IRGenerator.convert(program);
+		irProgram = CleanupGlobalUnusedVariables.process(irProgram);
 		write(irProgram, irFile);
 
 		final List<IRFunction> functions = new ArrayList<>();
