@@ -1,0 +1,291 @@
+@printString:
+ Local variables
+	arg 0: str (u8*/8)
+	var 1: chr (u8/1)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	; 23 pc
+	; 2:2 while true
+@while_1:
+	load chr, [str]
+	; 4:3 if chr == 0
+	const t.3, 0
+	equals t.2, chr, t.3
+	branch t.2, false, @if_2_end
+	jump @while_1_break
+@if_2_end:
+	call _, printChar [chr]
+	jump @while_1
+@while_1_break:
+@printString_ret:
+
+@printStringLength:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	var 2: chr (u8/1)
+	var 3: t.3 (bool/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (u8/1)
+	; 31 pc
+	; 13:2 while length > 0
+@while_3:
+	const t.4, 0
+	gt t.3, length, t.4
+	branch t.3, false, @while_3_break
+	load chr, [str]
+	call _, printChar [chr]
+	const t.5, 1
+	sub length, length, t.5
+	jump @while_3
+@while_3_break:
+@printStringLength_ret:
+
+@printUint:
+ Local variables
+	arg 0: number (i16/2)
+	var 1: buffer[] (u8*/20)
+	var 2: pos (u8/1)
+	var 3: remainder (i64/8)
+	var 4: digit (u8/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (i16/2)
+	var 7: t.7 (i16/2)
+	var 8: t.8 (i16/2)
+	var 9: t.9 (u8/1)
+	var 10: t.10 (u8/1)
+	var 11: t.11 (u8*/8)
+	var 12: t.12 (i16/2)
+	var 13: t.13 (u8*/8)
+	var 14: t.14 (bool/1)
+	var 15: t.15 (i16/2)
+	var 16: t.16 (u8*/8)
+	var 17: t.17 (i16/2)
+	var 18: t.18 (u8*/8)
+	var 19: t.19 (u8/1)
+	var 20: t.20 (u8/1)
+	; 137 pc
+	const pos, 20
+	; 24:2 while true
+@while_4:
+	const t.5, 1
+	sub pos, pos, t.5
+	const t.7, 10
+	move t.6, number
+	mod t.6, t.6, t.7
+	cast remainder(i64), t.6(i16)
+	const t.8, 10
+	div number, number, t.8
+	cast t.9(u8), remainder(i64)
+	const t.10, 48
+	move digit, t.9
+	add digit, digit, t.10
+	cast t.12(i16), pos(u8)
+	cast t.13(u8*), t.12(i16)
+	addrof t.11, [buffer]
+	add t.11, t.11, t.13
+	store [t.11], digit
+	; 30:3 if number == 0
+	const t.15, 0
+	equals t.14, number, t.15
+	branch t.14, false, @if_5_end
+	jump @while_4_break
+@if_5_end:
+	jump @while_4
+@while_4_break:
+	cast t.17(i16), pos(u8)
+	cast t.18(u8*), t.17(i16)
+	addrof t.16, [buffer]
+	add t.16, t.16, t.18
+	const t.20, 20
+	move t.19, t.20
+	sub t.19, t.19, pos
+	call _, printStringLength [t.16, t.19]
+@printUint_ret:
+
+@printIntLf:
+ Local variables
+	arg 0: number (i16/2)
+	var 1: t.1 (bool/1)
+	var 2: t.2 (i16/2)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	; 30 pc
+	; 38:2 if number < 0
+	const t.2, 0
+	lt t.1, number, t.2
+	branch t.1, false, @if_6_end
+	const t.3, 45
+	call _, printChar [t.3]
+	neg number, number
+@if_6_end:
+	call _, printUint [number]
+	const t.4, 10
+	call _, printChar [t.4]
+@printIntLf_ret:
+
+@main:
+ Local variables
+	var 0: a (i16/2)
+	var 1: b (i16/2)
+	var 2: c (u8/1)
+	var 3: d (u8/1)
+	var 4: t.4 (u8*/8)
+	var 5: t.5 (i16/2)
+	var 6: t.6 (bool/1)
+	var 7: t.7 (i16/2)
+	var 8: t.8 (bool/1)
+	var 9: t.9 (u8*/8)
+	var 10: t.10 (i16/2)
+	var 11: t.11 (bool/1)
+	var 12: t.12 (i16/2)
+	var 13: t.13 (bool/1)
+	var 14: t.14 (u8*/8)
+	var 15: t.15 (i16/2)
+	var 16: t.16 (bool/1)
+	var 17: t.17 (i16/2)
+	var 18: t.18 (bool/1)
+	var 19: t.19 (u8*/8)
+	var 20: t.20 (i16/2)
+	var 21: t.21 (bool/1)
+	var 22: t.22 (i16/2)
+	var 23: t.23 (bool/1)
+	var 24: t.24 (u8*/8)
+	var 25: t.25 (i16/2)
+	var 26: t.26 (bool/1)
+	var 27: t.27 (i16/2)
+	var 28: t.28 (bool/1)
+	var 29: t.29 (u8*/8)
+	var 30: t.30 (i16/2)
+	var 31: t.31 (bool/1)
+	var 32: t.32 (i16/2)
+	var 33: t.33 (bool/1)
+	var 34: t.34 (u8*/8)
+	var 35: t.35 (i16/2)
+	var 36: t.36 (bool/1)
+	var 37: t.37 (i16/2)
+	var 38: t.38 (bool/1)
+	var 39: t.39 (u8*/8)
+	var 40: t.40 (i16/2)
+	var 41: t.41 (bool/1)
+	var 42: t.42 (i16/2)
+	var 43: t.43 (bool/1)
+	var 44: t.44 (u8*/8)
+	var 45: t.45 (i16/2)
+	var 46: t.46 (bool/1)
+	var 47: t.47 (i16/2)
+	var 48: t.48 (bool/1)
+	var 49: t.49 (u8*/8)
+	var 50: t.50 (i16/2)
+	var 51: t.51 (bool/1)
+	var 52: t.52 (i16/2)
+	var 53: t.53 (bool/1)
+	; 368 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const t.4, [string-0]
+	call _, printString [t.4]
+	const a, 1
+	const b, 2
+	lt t.6, a, b
+	cast t.5(i16), t.6(bool)
+	call _, printIntLf [t.5]
+	lt t.8, b, a
+	cast t.7(i16), t.8(bool)
+	call _, printIntLf [t.7]
+	const t.9, [string-1]
+	call _, printString [t.9]
+	const c, 0
+	const d, 128
+	lt t.11, c, d
+	cast t.10(i16), t.11(bool)
+	call _, printIntLf [t.10]
+	lt t.13, d, c
+	cast t.12(i16), t.13(bool)
+	call _, printIntLf [t.12]
+	const t.14, [string-2]
+	call _, printString [t.14]
+	lteq t.16, a, b
+	cast t.15(i16), t.16(bool)
+	call _, printIntLf [t.15]
+	lteq t.18, b, a
+	cast t.17(i16), t.18(bool)
+	call _, printIntLf [t.17]
+	const t.19, [string-3]
+	call _, printString [t.19]
+	lteq t.21, c, d
+	cast t.20(i16), t.21(bool)
+	call _, printIntLf [t.20]
+	lteq t.23, d, c
+	cast t.22(i16), t.23(bool)
+	call _, printIntLf [t.22]
+	const t.24, [string-4]
+	call _, printString [t.24]
+	equals t.26, a, b
+	cast t.25(i16), t.26(bool)
+	call _, printIntLf [t.25]
+	equals t.28, b, a
+	cast t.27(i16), t.28(bool)
+	call _, printIntLf [t.27]
+	const t.29, [string-5]
+	call _, printString [t.29]
+	notequals t.31, a, b
+	cast t.30(i16), t.31(bool)
+	call _, printIntLf [t.30]
+	notequals t.33, b, a
+	cast t.32(i16), t.33(bool)
+	call _, printIntLf [t.32]
+	const t.34, [string-6]
+	call _, printString [t.34]
+	gteq t.36, a, b
+	cast t.35(i16), t.36(bool)
+	call _, printIntLf [t.35]
+	gteq t.38, b, a
+	cast t.37(i16), t.38(bool)
+	call _, printIntLf [t.37]
+	const t.39, [string-7]
+	call _, printString [t.39]
+	gteq t.41, c, d
+	cast t.40(i16), t.41(bool)
+	call _, printIntLf [t.40]
+	gteq t.43, d, c
+	cast t.42(i16), t.43(bool)
+	call _, printIntLf [t.42]
+	const t.44, [string-8]
+	call _, printString [t.44]
+	gt t.46, a, b
+	cast t.45(i16), t.46(bool)
+	call _, printIntLf [t.45]
+	gt t.48, b, a
+	cast t.47(i16), t.48(bool)
+	call _, printIntLf [t.47]
+	const t.49, [string-9]
+	call _, printString [t.49]
+	gt t.51, c, d
+	cast t.50(i16), t.51(bool)
+	call _, printIntLf [t.50]
+	gt t.53, d, c
+	cast t.52(i16), t.53(bool)
+	call _, printIntLf [t.52]
+@main_ret:
+
+@printChar:
+	ld   r0, SPH
+	ld   r1, SPL
+	add  r1, 3
+	adc  r0, 0
+	ldc  r1, @rr0
+	ld   %15, r1
+	jp   %0818
+
+String literals
+	string lit 0 "< (signed)\n\0"
+	string lit 1 "< (unsigned)\n\0"
+	string lit 2 "<= (signed)\n\0"
+	string lit 3 "<= (unsigned)\n\0"
+	string lit 4 "==\n\0"
+	string lit 5 "!=\n\0"
+	string lit 6 ">= (signed)\n\0"
+	string lit 7 ">= (unsigned)\n\0"
+	string lit 8 "> (signed)\n\0"
+	string lit 9 "> (unsigned)\n\0"

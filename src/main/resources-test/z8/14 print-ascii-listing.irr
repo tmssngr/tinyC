@@ -1,0 +1,146 @@
+@printString:
+ Local variables
+	arg 0: str (u8*/8)
+	var 1: chr (u8/1)
+	; 14 pc
+@while_1:
+	move r0, str
+	load r1, [r0]
+	; 4:3 if chr == 0
+	const r2, 0
+	equals r2, r1, r2
+	move chr, r1
+	branch r2, true, @printString_ret
+	call _, printChar [chr]
+	jump @while_1
+@printString_ret:
+
+@printNibble:
+ Local variables
+	arg 0: x (u8/1)
+	; 21 pc
+	const r0, 15
+	move r1, x
+	and r0, r1, r0
+	; 5:2 if x > 9
+	const r1, 9
+	gt r1, r0, r1
+	move x, r0
+	branch r1, false, @if_3_end
+	const r0, 7
+	move r1, x
+	add r0, r1, r0
+	move x, r0
+@if_3_end:
+	const r0, 48
+	move r1, x
+	add r0, r1, r0
+	call _, printChar [r0]
+
+@printHex2:
+ Local variables
+	arg 0: x (u8/1)
+	; 9 pc
+	const r0, 4
+	move r1, x
+	move r2, r1
+	shiftright r0, r2, r0
+	call _, printNibble [r0]
+	call _, printNibble [x]
+
+@main:
+ Local variables
+	var 0: i (u8/1)
+	var 1: i (u8/1)
+	; 75 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const r0, [string-0]
+	call _, printString [r0]
+	const r0, 0
+	; 19:2 for i < 16
+	move i, r0
+@for_4:
+	const r0, 16
+	move r1, i
+	lt r0, r1, r0
+	branch r0, false, @for_4_break
+	; 20:3 if i & 7 == 0
+	const r0, 7
+	move r1, i
+	move r2, r1
+	and r0, r2, r0
+	const r2, 0
+	equals r0, r0, r2
+	branch r0, false, @if_5_end
+	const r0, 32
+	call _, printChar [r0]
+@if_5_end:
+	call _, printNibble [i]
+	const r0, 1
+	move r1, i
+	add r0, r1, r0
+	move i, r0
+	jump @for_4
+@for_4_break:
+	const r0, 10
+	call _, printChar [r0]
+	const r0, 32
+	; 27:2 for i < 128
+	move i, r0
+@for_6:
+	const r0, 128
+	move r1, i
+	lt r0, r1, r0
+	branch r0, false, @main_ret
+	; 28:3 if i & 15 == 0
+	const r0, 15
+	move r1, i
+	move r2, r1
+	and r0, r2, r0
+	const r2, 0
+	equals r0, r0, r2
+	branch r0, false, @if_7_end
+	call _, printHex2 [i]
+@if_7_end:
+	; 31:3 if i & 7 == 0
+	const r0, 7
+	move r1, i
+	move r2, r1
+	and r0, r2, r0
+	const r2, 0
+	equals r0, r0, r2
+	branch r0, false, @if_8_end
+	const r0, 32
+	call _, printChar [r0]
+@if_8_end:
+	call _, printChar [i]
+	; 35:3 if i & 15 == 15
+	const r0, 15
+	move r1, i
+	move r2, r1
+	and r0, r2, r0
+	const r2, 15
+	equals r0, r0, r2
+	branch r0, false, @for_6_continue
+	const r0, 10
+	call _, printChar [r0]
+@for_6_continue:
+	const r0, 1
+	move r1, i
+	add r0, r1, r0
+	move i, r0
+	jump @for_6
+@main_ret:
+
+@printChar:
+	ld   r0, SPH
+	ld   r1, SPL
+	add  r1, 3
+	adc  r0, 0
+	ldc  r1, @rr0
+	ld   %15, r1
+	jp   %0818
+
+String literals
+	string lit 0 " x\0"
