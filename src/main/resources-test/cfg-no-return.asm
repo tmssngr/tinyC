@@ -22,7 +22,6 @@ start:
 
         ; void main
         ;   rsp+0: var i
-        ;   rsp+1: var t.1
 @main:
         ; reserve space for local variables
         sub rsp, 16

@@ -95,7 +95,7 @@ public class Compiler {
 		}
 		launchGraphViz(dotFile, svgFile);
 
-		irProgram = irProgram.derive(functions);
+		irProgram = CleanupLocalUnusedVariables.process(irProgram.derive(functions));
 		write(irProgram, irRegFile);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {

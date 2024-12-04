@@ -1,8 +1,6 @@
 @printChar:
  Local variables
 	arg 0: chr (u8/1)
-	var 1: t.1 (u8*/8)
-	var 2: t.2 (i64/8)
 	; 4 pc
 	addrof r0, chr
 	const r1, 1
@@ -13,24 +11,6 @@
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
 	var 2: pos (u8/1)
-	var 3: remainder (i64/8)
-	var 4: digit (u8/1)
-	var 5: t.5 (u8/1)
-	var 6: t.6 (i64/8)
-	var 7: t.7 (i64/8)
-	var 8: t.8 (u8/1)
-	var 9: t.9 (u8/1)
-	var 10: t.10 (u8*/8)
-	var 11: t.11 (i64/8)
-	var 12: t.12 (u8*/8)
-	var 13: t.13 (bool/1)
-	var 14: t.14 (i64/8)
-	var 15: t.15 (u8*/8)
-	var 16: t.16 (i64/8)
-	var 17: t.17 (u8*/8)
-	var 18: t.18 (i64/8)
-	var 19: t.19 (u8/1)
-	var 20: t.20 (u8/1)
 	; 39 pc
 	const r0, 20
 	; 13:2 while true
@@ -73,10 +53,6 @@
 @printIntLf:
  Local variables
 	arg 0: number (i64/8)
-	var 1: t.1 (bool/1)
-	var 2: t.2 (i64/8)
-	var 3: t.3 (u8/1)
-	var 4: t.4 (u8/1)
 	; 17 pc
 	; 27:2 if number < 0
 	const r0, 0
@@ -99,7 +75,6 @@
 	var 1: t.1 (u8/1)
 	var 2: t.2 (u8/1)
 	var 3: t.3 (u8/1)
-	var 4: t.4 (u8/1)
 	; 29 pc
 	; begin initialize global variables
 	const r0, 0
@@ -117,8 +92,6 @@
 	call _, doPrint [t.0, t.1, t.2, t.3, r0]
 
 @next:
- Local variables
-	var 0: t.0 (u8/1)
 	; 8 pc
 	const r0, 1
 	move r1, i
@@ -134,11 +107,6 @@
 	arg 2: c (u8/1)
 	arg 3: d (u8/1)
 	arg 4: e (u8/1)
-	var 5: t.5 (i64/8)
-	var 6: t.6 (i64/8)
-	var 7: t.7 (i64/8)
-	var 8: t.8 (i64/8)
-	var 9: t.9 (i64/8)
 	; 25 pc
 	move r0, a
 	cast r0(i64), r0(u8)

@@ -52,6 +52,11 @@ public final class IRVarInfos implements IRCanBeRegister {
 	}
 
 	@NotNull
+	public IRVarInfos global() {
+		return parent != null ? parent : this;
+	}
+
+	@NotNull
 	public IRVarInfos derive(IRVarInfos newParent) {
 		return new IRVarInfos(vars, cantBeRegister, newParent);
 	}
