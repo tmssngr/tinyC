@@ -113,8 +113,8 @@ public final class X86Win64 {
 				              hStdOut rb 8
 				              hStdErr rb 8""");
 		for (IRVarDef variable : globalVariables) {
-			writeComment("variable " + variable);
-			writeIndented(getGlobalVarName(variable.index()) + " rb " + variable.size());
+			writeComment("variable " + variable.getString());
+			writeIndented(getGlobalVarName(variable.var().index()) + " rb " + variable.size());
 		}
 		writeNL();
 
@@ -174,7 +174,7 @@ public final class X86Win64 {
 		int offset = 0;
 		int i = 0;
 		for (IRVarDef var : localVars) {
-			if (var.scope() == VariableScope.argument) {
+			if (var.var().scope() == VariableScope.argument) {
 				argCount++;
 			}
 			else {
@@ -195,8 +195,9 @@ public final class X86Win64 {
 		int argOffset = alignTo16(argCount * 8 + 8) + localVarSize;
 		i = 0;
 		for (IRVarDef var : localVars) {
-			if (var.scope() != VariableScope.argument) {
-				Utils.assertTrue(var.scope() == VariableScope.function);
+			final VariableScope scope = var.var().scope();
+			if (scope != VariableScope.argument) {
+				Utils.assertTrue(scope == VariableScope.function);
 				break;
 			}
 
@@ -209,7 +210,8 @@ public final class X86Win64 {
 	}
 
 	private void writeVarOffsets(List<IRVarDef> localVars) throws IOException {
-		for (IRVarDef var : localVars) {
+		for (IRVarDef varDef : localVars) {
+			final IRVar var = varDef.var();
 			if (var.scope() == VariableScope.argument) {
 				writeComment("  rsp+" + localVarOffsets[var.index()] + ": arg " + var.name());
 			}

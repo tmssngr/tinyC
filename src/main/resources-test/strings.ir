@@ -21,7 +21,7 @@
 @printUint:
  Local variables
 	arg 0: number (i64/8)
-	var 1: buffer (u8*/20)
+	var 1: buffer[] (u8*/20)
 	var 2: pos (u8/1)
 	var 3: remainder (i64/8)
 	var 4: digit (u8/1)

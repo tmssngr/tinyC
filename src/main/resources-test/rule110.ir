@@ -252,7 +252,7 @@
 	ret
 
 Global variables
-	0: board (u8*/240)
+	0: board[] (u8*/240)
 
 String literals
 	string lit 0 "|\n\0"

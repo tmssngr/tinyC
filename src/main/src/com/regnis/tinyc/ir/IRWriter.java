@@ -37,10 +37,10 @@ public final class IRWriter extends TextWriter {
 		final List<IRVarDef> localVars = function.varInfos().vars();
 		if (localVars.size() > 0) {
 			writeln(" Local variables");
-			for (IRVarDef var : localVars) {
+			for (IRVarDef varDef : localVars) {
 				writeIndentation();
-				write(var.scope() == VariableScope.argument ? "arg " : "var ");
-				writeln(var.toString());
+				write(varDef.var().scope() == VariableScope.argument ? "arg " : "var ");
+				writeln(varDef.getString());
 			}
 		}
 
@@ -174,9 +174,9 @@ public final class IRWriter extends TextWriter {
 		}
 
 		writeln("Global variables");
-		for (IRVarDef var : globalVars) {
+		for (IRVarDef def : globalVars) {
 			writeIndentation();
-			writeln(var.toString());
+			writeln(def.getString());
 		}
 		writeln();
 	}
