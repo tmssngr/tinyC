@@ -21,14 +21,10 @@ start:
           call [ExitProcess]
 
         ; void printChar
-        ;   rsp+24: arg chr
-        ;   rsp+0: var t.1
-        ;   rsp+8: var t.2
+        ;   rsp+8: arg chr
 @printChar:
-        ; reserve space for local variables
-        sub rsp, 16
         ; addrof r0, chr
-        lea rcx, [rsp+24]
+        lea rcx, [rsp+8]
         ; const r1, 1
         mov rdx, 1
         ; call _, printStringLength [r0, r1]
@@ -37,35 +33,15 @@ start:
         sub rsp, 8
           call @printStringLength
         add rsp, 24
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; void printUint
-        ;   rsp+152: arg number
+        ;   rsp+40: arg number
         ;   rsp+0: var buffer
         ;   rsp+20: var pos
-        ;   rsp+24: var remainder
-        ;   rsp+32: var digit
-        ;   rsp+33: var t.5
-        ;   rsp+40: var t.6
-        ;   rsp+48: var t.7
-        ;   rsp+56: var t.8
-        ;   rsp+57: var t.9
-        ;   rsp+64: var t.10
-        ;   rsp+72: var t.11
-        ;   rsp+80: var t.12
-        ;   rsp+88: var t.13
-        ;   rsp+96: var t.14
-        ;   rsp+104: var t.15
-        ;   rsp+112: var t.16
-        ;   rsp+120: var t.17
-        ;   rsp+128: var t.18
-        ;   rsp+136: var t.19
-        ;   rsp+137: var t.20
 @printUint:
         ; reserve space for local variables
-        sub rsp, 144
+        sub rsp, 32
         ; const r0, 20
         mov cl, 20
         ; 13:2 while true
@@ -85,7 +61,7 @@ start:
         ; const r1, 10
         mov rdx, 10
         ; move r2, number
-        lea rax, [rsp+152]
+        lea rax, [rsp+40]
         mov r9, [rax]
         ; move r3, r2
         mov r10, r9
@@ -129,7 +105,7 @@ start:
         cmp r9, rcx
         sete cl
         ; move number, r2
-        lea rax, [rsp+152]
+        lea rax, [rsp+40]
         mov [rax], r9
         ; branch r0, false, @while_1
         or cl, cl
@@ -161,23 +137,17 @@ start:
           call @printStringLength
         add rsp, 24
         ; release space for local variables
-        add rsp, 144
+        add rsp, 32
         ret
 
         ; void printIntLf
-        ;   rsp+40: arg number
-        ;   rsp+0: var t.1
-        ;   rsp+8: var t.2
-        ;   rsp+16: var t.3
-        ;   rsp+17: var t.4
+        ;   rsp+8: arg number
 @printIntLf:
-        ; reserve space for local variables
-        sub rsp, 32
         ; 27:2 if number < 0
         ; const r0, 0
         mov rcx, 0
         ; move r1, number
-        lea rax, [rsp+40]
+        lea rax, [rsp+8]
         mov rdx, [rax]
         ; lt r0, r1, r0
         cmp rdx, rcx
@@ -192,16 +162,16 @@ start:
           call @printChar
         add rsp, 8
         ; move r0, number
-        lea rax, [rsp+40]
+        lea rax, [rsp+8]
         mov rcx, [rax]
         ; neg r0, r0
         neg rcx
         ; move number, r0
-        lea rax, [rsp+40]
+        lea rax, [rsp+8]
         mov [rax], rcx
 @if_3_end:
         ; call _, printUint [number]
-        lea rax, [rsp+40]
+        lea rax, [rsp+8]
         mov rax, [rax]
         push rax
           call @printUint
@@ -212,33 +182,13 @@ start:
         push rcx
           call @printChar
         add rsp, 8
-        ; release space for local variables
-        add rsp, 32
         ret
 
         ; void main
         ;   rsp+0: var pos
-        ;   rsp+8: var x
-        ;   rsp+16: var t.2
-        ;   rsp+24: var t.3
-        ;   rsp+32: var t.4
-        ;   rsp+33: var t.5
-        ;   rsp+40: var t.6
-        ;   rsp+48: var t.7
-        ;   rsp+56: var t.8
-        ;   rsp+64: var t.9
-        ;   rsp+72: var t.10
-        ;   rsp+80: var t.11
-        ;   rsp+88: var t.12
-        ;   rsp+96: var t.13
-        ;   rsp+104: var t.14
-        ;   rsp+112: var t.15
-        ;   rsp+120: var t.16
-        ;   rsp+128: var t.17
-        ;   rsp+136: var t.18
 @main:
         ; reserve space for local variables
-        sub rsp, 144
+        sub rsp, 16
         ; begin initialize global variables
         ; end initialize global variables
         ; const r0, 1
@@ -304,7 +254,7 @@ start:
           call @printIntLf
         add rsp, 8
         ; release space for local variables
-        add rsp, 144
+        add rsp, 16
         ret
 
         ; void printStringLength
