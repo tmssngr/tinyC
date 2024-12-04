@@ -1,0 +1,217 @@
+@printChar:
+ Local variables
+	arg 0: chr (u8/1)
+	var 1: t.1 (u8*/8)
+	var 2: t.2 (i64/8)
+	; 4 pc
+	addrof r0, chr
+	const r1, 1
+	call _, printStringLength [r0, r1]
+
+@printUint:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: buffer[] (u8*/20)
+	var 2: pos (u8/1)
+	var 3: remainder (i64/8)
+	var 4: digit (u8/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (u8/1)
+	var 9: t.9 (u8/1)
+	var 10: t.10 (u8*/8)
+	var 11: t.11 (i64/8)
+	var 12: t.12 (u8*/8)
+	var 13: t.13 (bool/1)
+	var 14: t.14 (i64/8)
+	var 15: t.15 (u8*/8)
+	var 16: t.16 (i64/8)
+	var 17: t.17 (u8*/8)
+	var 18: t.18 (i64/8)
+	var 19: t.19 (u8/1)
+	var 20: t.20 (u8/1)
+	; 39 pc
+	const r0, 20
+	; 13:2 while true
+	move pos, r0
+@while_1:
+	const r0, 1
+	move r1, pos
+	sub r0, r1, r0
+	const r1, 10
+	move r2, number
+	move r3, r2
+	mod r1, r3, r1
+	const r3, 10
+	div r2, r2, r3
+	cast r1(u8), r1(i64)
+	const r3, 48
+	add r1, r1, r3
+	cast r3(i64), r0(u8)
+	cast r3(u8*), r3(i64)
+	; Spill pos
+	move pos, r0
+	addrof r0, [buffer]
+	add r0, r0, r3
+	store [r0], r1
+	; 19:3 if number == 0
+	const r0, 0
+	equals r0, r2, r0
+	move number, r2
+	branch r0, false, @while_1
+	move r0, pos
+	cast r1(i64), r0(u8)
+	cast r1(u8*), r1(i64)
+	addrof r2, [buffer]
+	add r1, r2, r1
+	const r2, 20
+	sub r0, r2, r0
+	cast r0(i64), r0(u8)
+	call _, printStringLength [r1, r0]
+
+@printIntLf:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: t.1 (bool/1)
+	var 2: t.2 (i64/8)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	; 17 pc
+	; 27:2 if number < 0
+	const r0, 0
+	move r1, number
+	lt r0, r1, r0
+	branch r0, false, @if_3_end
+	const r0, 45
+	call _, printChar [r0]
+	move r0, number
+	neg r0, r0
+	move number, r0
+@if_3_end:
+	call _, printUint [number]
+	const r0, 10
+	call _, printChar [r0]
+
+@initRandom:
+ Local variables
+	arg 0: salt (i32/4)
+	; 6 pc
+	move r0, salt
+	move __random__, r0
+
+@random:
+ Local variables
+	var 0: r (i32/4)
+	var 1: b (i32/4)
+	var 2: c (i32/4)
+	var 3: d (i32/4)
+	var 4: e (i32/4)
+	var 5: t.5 (i32/4)
+	var 6: t.6 (i32/4)
+	var 7: t.7 (i32/4)
+	var 8: t.8 (i32/4)
+	var 9: t.9 (i32/4)
+	var 10: t.10 (i32/4)
+	var 11: t.11 (i32/4)
+	var 12: t.12 (i32/4)
+	var 13: t.13 (i32/4)
+	var 14: t.14 (i32/4)
+	var 15: t.15 (i32/4)
+	var 16: t.16 (i32/4)
+	var 17: t.17 (i32/4)
+	var 18: t.18 (i32/4)
+	var 19: t.19 (i32/4)
+	var 20: t.20 (i32/4)
+	; 25 pc
+	move r0, __random__
+	const r1, 524287
+	move r2, r0
+	and r1, r2, r1
+	const r2, 48271
+	mul r1, r1, r2
+	const r2, 15
+	shiftright r0, r0, r2
+	const r2, 48271
+	mul r0, r0, r2
+	const r2, 65535
+	move r3, r0
+	and r2, r3, r2
+	const r3, 15
+	shiftleft r2, r2, r3
+	const r3, 16
+	shiftright r0, r0, r3
+	add r0, r0, r1
+	add r0, r0, r2
+	const r1, 2147483647
+	move r2, r0
+	and r1, r2, r1
+	const r2, 31
+	shiftright r0, r0, r2
+	move __random__, r1
+	add r0, r1, r0
+	; 127:9 return __random__
+	move __random__, r0
+	ret r0
+
+@randomU8:
+ Local variables
+	var 0: t.0 (u8/1)
+	var 1: t.1 (i32/4)
+	; 3 pc
+	; 131:10 return (u8)
+	call r0, random, []
+	cast r0(u8), r0(i32)
+	ret r0
+
+@main:
+ Local variables
+	var 0: i (u8/1)
+	var 1: r (u8/1)
+	var 2: t.2 (i32/4)
+	var 3: t.3 (bool/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (i64/8)
+	var 6: t.6 (u8/1)
+	; 23 pc
+	; begin initialize global variables
+	const r0, 0
+	; end initialize global variables
+	const r1, 7439742
+	move __random__, r0
+	call _, initRandom [r1]
+	const r0, 0
+	; 5:2 for i < 50
+	move i, r0
+@for_4:
+	const r0, 50
+	move r1, i
+	lt r0, r1, r0
+	branch r0, false, @main_ret
+	call r0, randomU8, []
+	cast r0(i64), r0(u8)
+	call _, printIntLf [r0]
+	const r0, 1
+	move r1, i
+	add r0, r1, r0
+	move i, r0
+	jump @for_4
+@main_ret:
+
+@printStringLength:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
+Global variables
+	0: __random__ (i32/4)
+

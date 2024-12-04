@@ -108,6 +108,8 @@
 	var 10: t.10 (i16/2)
 	var 11: t.11 (i64/8)
 	; 29 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0, 10
 	cast r1(i64), r0(i16)
 	move a, r0

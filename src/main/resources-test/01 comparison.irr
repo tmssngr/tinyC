@@ -195,6 +195,8 @@
 	var 52: t.52 (i64/8)
 	var 53: t.53 (bool/1)
 	; 200 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0, [string-0]
 	call _, printString [r0]
 	const r0, 1

@@ -104,6 +104,8 @@
 	var 6: t.6 (i64/8)
 	var 7: t.7 (u8/1)
 	; 24 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0, 250
 	; 4:3 for i != 2
 	move i, r0

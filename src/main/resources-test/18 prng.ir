@@ -1,0 +1,224 @@
+@printChar:
+ Local variables
+	arg 0: chr (u8/1)
+	var 1: t.1 (u8*/8)
+	var 2: t.2 (i64/8)
+	; 12 pc
+	addrof t.1, chr
+	const t.2, 1
+	call _, printStringLength [t.1, t.2]
+@printChar_ret:
+
+@printUint:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: buffer[] (u8*/20)
+	var 2: pos (u8/1)
+	var 3: remainder (i64/8)
+	var 4: digit (u8/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (u8/1)
+	var 9: t.9 (u8/1)
+	var 10: t.10 (u8*/8)
+	var 11: t.11 (i64/8)
+	var 12: t.12 (u8*/8)
+	var 13: t.13 (bool/1)
+	var 14: t.14 (i64/8)
+	var 15: t.15 (u8*/8)
+	var 16: t.16 (i64/8)
+	var 17: t.17 (u8*/8)
+	var 18: t.18 (i64/8)
+	var 19: t.19 (u8/1)
+	var 20: t.20 (u8/1)
+	; 137 pc
+	const pos, 20
+	; 13:2 while true
+@while_1:
+	const t.5, 1
+	sub pos, pos, t.5
+	const t.6, 10
+	move remainder, number
+	mod remainder, remainder, t.6
+	const t.7, 10
+	div number, number, t.7
+	cast t.8(u8), remainder(i64)
+	const t.9, 48
+	move digit, t.8
+	add digit, digit, t.9
+	cast t.11(i64), pos(u8)
+	cast t.12(u8*), t.11(i64)
+	addrof t.10, [buffer]
+	add t.10, t.10, t.12
+	store [t.10], digit
+	; 19:3 if number == 0
+	const t.14, 0
+	equals t.13, number, t.14
+	branch t.13, false, @if_2_end
+	jump @while_1_break
+@if_2_end:
+	jump @while_1
+@while_1_break:
+	cast t.16(i64), pos(u8)
+	cast t.17(u8*), t.16(i64)
+	addrof t.15, [buffer]
+	add t.15, t.15, t.17
+	const t.20, 20
+	move t.19, t.20
+	sub t.19, t.19, pos
+	cast t.18(i64), t.19(u8)
+	call _, printStringLength [t.15, t.18]
+@printUint_ret:
+
+@printIntLf:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: t.1 (bool/1)
+	var 2: t.2 (i64/8)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	; 30 pc
+	; 27:2 if number < 0
+	const t.2, 0
+	lt t.1, number, t.2
+	branch t.1, false, @if_3_end
+	const t.3, 45
+	call _, printChar [t.3]
+	neg number, number
+@if_3_end:
+	call _, printUint [number]
+	const t.4, 10
+	call _, printChar [t.4]
+@printIntLf_ret:
+
+@initRandom:
+ Local variables
+	arg 0: salt (i32/4)
+	; 5 pc
+	move __random__, salt
+@initRandom_ret:
+
+@random:
+ Local variables
+	var 0: r (i32/4)
+	var 1: b (i32/4)
+	var 2: c (i32/4)
+	var 3: d (i32/4)
+	var 4: e (i32/4)
+	var 5: t.5 (i32/4)
+	var 6: t.6 (i32/4)
+	var 7: t.7 (i32/4)
+	var 8: t.8 (i32/4)
+	var 9: t.9 (i32/4)
+	var 10: t.10 (i32/4)
+	var 11: t.11 (i32/4)
+	var 12: t.12 (i32/4)
+	var 13: t.13 (i32/4)
+	var 14: t.14 (i32/4)
+	var 15: t.15 (i32/4)
+	var 16: t.16 (i32/4)
+	var 17: t.17 (i32/4)
+	var 18: t.18 (i32/4)
+	var 19: t.19 (i32/4)
+	var 20: t.20 (i32/4)
+	; 171 pc
+	move r, __random__
+	const t.6, 524287
+	move t.5, r
+	and t.5, t.5, t.6
+	const t.7, 48271
+	move b, t.5
+	mul b, b, t.7
+	const t.9, 15
+	move t.8, r
+	shiftright t.8, t.8, t.9
+	const t.10, 48271
+	move c, t.8
+	mul c, c, t.10
+	const t.12, 65535
+	move t.11, c
+	and t.11, t.11, t.12
+	const t.13, 15
+	move d, t.11
+	shiftleft d, d, t.13
+	const t.16, 16
+	move t.15, c
+	shiftright t.15, t.15, t.16
+	move t.14, t.15
+	add t.14, t.14, b
+	move e, t.14
+	add e, e, d
+	const t.18, 2147483647
+	move t.17, e
+	and t.17, t.17, t.18
+	const t.20, 31
+	move t.19, e
+	shiftright t.19, t.19, t.20
+	move __random__, t.17
+	add __random__, __random__, t.19
+	; 127:9 return __random__
+	ret __random__
+	jump @random_ret
+@random_ret:
+
+@randomU8:
+ Local variables
+	var 0: t.0 (u8/1)
+	var 1: t.1 (i32/4)
+	; 12 pc
+	; 131:10 return (u8)
+	call t.1, random, []
+	cast t.0(u8), t.1(i32)
+	ret t.0
+	jump @randomU8_ret
+@randomU8_ret:
+
+@main:
+ Local variables
+	var 0: i (u8/1)
+	var 1: r (u8/1)
+	var 2: t.2 (i32/4)
+	var 3: t.3 (bool/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (i64/8)
+	var 6: t.6 (u8/1)
+	; 42 pc
+	; begin initialize global variables
+	const __random__, 0
+	; end initialize global variables
+	const t.2, 7439742
+	call _, initRandom [t.2]
+	const i, 0
+	; 5:2 for i < 50
+@for_4:
+	const t.4, 50
+	lt t.3, i, t.4
+	branch t.3, false, @for_4_break
+	call r, randomU8, []
+	cast t.5(i64), r(u8)
+	call _, printIntLf [t.5]
+@for_4_continue:
+	const t.6, 1
+	add i, i, t.6
+	jump @for_4
+@for_4_break:
+@main_ret:
+
+@printStringLength:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
+Global variables
+	0: __random__ (i32/4)
+

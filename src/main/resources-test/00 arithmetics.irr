@@ -118,6 +118,8 @@
 	var 20: t.20 (i64/8)
 	var 21: t.21 (i16/2)
 	; 42 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0, 22
 	cast r0(i16), r0(u8)
 	move r1, r0

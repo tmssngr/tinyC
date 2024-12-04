@@ -123,6 +123,8 @@
 	var 26: t.26 (u8*/8)
 	var 27: t.27 (i64/8)
 	; 181 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const chr, 32
 	const t.3, 0
 	cast t.4(u8*), t.3(i64)

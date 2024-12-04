@@ -158,6 +158,8 @@
 	var 47: t.47 (u8/1)
 	var 48: t.48 (u8/1)
 	; 105 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0, 0
 	; 23:2 for i < 30
 	move i, r0

@@ -232,6 +232,8 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 80
+        ; begin initialize global variables
+        ; end initialize global variables
         ; const r0, 0
         mov cx, 0
         ; const r1, 1

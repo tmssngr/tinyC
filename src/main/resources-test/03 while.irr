@@ -105,6 +105,8 @@
 	var 7: t.7 (bool/1)
 	var 8: t.8 (u8/1)
 	; 35 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const r0, 5
 	; 5:2 while i > 0
 	move i, r0

@@ -211,6 +211,8 @@
 	var 71: t.71 (i64/8)
 	var 72: t.72 (u8/1)
 	; 612 pc
+	; begin initialize global variables
+	; end initialize global variables
 	const t.9, [string-0]
 	call _, printString [t.9]
 	const a, 0
