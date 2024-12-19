@@ -565,12 +565,6 @@ public final class IRGenerator {
 	}
 
 	private void write(@NotNull IRInstruction instruction) {
-/*
-		if (!(instruction instanceof IR2Label)) {
-			System.out.print("\t");
-		}
-		System.out.println(instruction);
-*/
 		instructions.add(instruction);
 	}
 
