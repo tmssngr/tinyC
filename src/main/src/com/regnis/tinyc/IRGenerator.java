@@ -285,7 +285,15 @@ public final class IRGenerator {
 
 	private IRVar writeExpression(Expression expression) {
 		return switch (expression) {
-			case ExprVarAccess access -> varAccessToVar(access);
+			case ExprVarAccess access -> {
+				final IRVar var = varAccessToVar(access);
+				if (access.varIsArray()) {
+					final IRVar tmp = createTempVar(expression.typeNotNull());
+					write(new IRAddrOfArray(tmp, var, access.location()));
+					yield tmp;
+				}
+				yield var;
+			}
 			case ExprArrayAccess access -> writeArrayAccess(access);
 			case ExprBinary binary -> writeBinary(binary);
 			default -> {
