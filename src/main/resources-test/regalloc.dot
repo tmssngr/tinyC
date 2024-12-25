@@ -1,0 +1,40 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_simple {
+		BasicBlock_0_simple [label="simple",shape=box];
+		BasicBlock_0_simple -> BasicBlock_0_simple_ret;
+		BasicBlock_0_simple_ret [label="simple_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_registerHint {
+		BasicBlock_1_registerHint [label="registerHint",shape=box];
+		BasicBlock_1_registerHint -> BasicBlock_1_registerHint_ret;
+		BasicBlock_1_registerHint_ret [label="registerHint_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_max {
+		BasicBlock_2_max [label="max",shape=hexagon];
+		BasicBlock_2_max -> BasicBlock_2_if_1_end [label="(a)"];
+		BasicBlock_2_max -> BasicBlock_2_if_1_then [label="(b)"];
+		BasicBlock_2_if_1_end [label="if_1_end",shape=box];
+		BasicBlock_2_if_1_end -> BasicBlock_2_max_ret;
+		BasicBlock_2_if_1_then [label="if_1_then",shape=box];
+		BasicBlock_2_if_1_then -> BasicBlock_2_max_ret;
+		BasicBlock_2_max_ret [label="max_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_fibonacci {
+		BasicBlock_3_fibonacci [label="fibonacci",shape=box];
+		BasicBlock_3_fibonacci -> BasicBlock_3_while_2 [label="(a,b,i)"];
+		BasicBlock_3_while_2_body [label="while_2_body",shape=box];
+		BasicBlock_3_while_2_body -> BasicBlock_3_while_2 [label="(a,b,i)"];
+		BasicBlock_3_while_2 [label="while_2",shape=hexagon];
+		BasicBlock_3_while_2 -> BasicBlock_3_while_2_break [label="(a)"];
+		BasicBlock_3_while_2 -> BasicBlock_3_while_2_body [label="(a,b,i)"];
+		BasicBlock_3_while_2_break [label="while_2_break",shape=box];
+		BasicBlock_3_while_2_break -> BasicBlock_3_fibonacci_ret;
+		BasicBlock_3_fibonacci_ret [label="fibonacci_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_4_main [label="main",shape=box];
+		BasicBlock_4_main -> BasicBlock_4_main_ret;
+		BasicBlock_4_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

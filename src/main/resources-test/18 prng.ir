@@ -157,7 +157,7 @@
 	shiftright t.19, t.19, t.20
 	move __random__, t.17
 	add __random__, __random__, t.19
-	; 127:9 return __random__
+	; 123:9 return __random__
 	ret __random__
 	jump @random_ret
 @random_ret:
@@ -167,7 +167,7 @@
 	var 0: t.0 (u8/1)
 	var 1: t.1 (i32/4)
 	; 12 pc
-	; 131:10 return (u8)
+	; 127:10 return (u8)
 	call t.1, random, []
 	cast t.0(u8), t.1(i32)
 	ret t.0
@@ -208,10 +208,10 @@
 @printStringLength:
 	mov     rdi, rsp
 	
+	mov     r8, rdx
+	mov     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
 	xor     r9, r9
 	push    0
 	sub     rsp, 20h

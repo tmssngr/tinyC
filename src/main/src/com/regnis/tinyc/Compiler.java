@@ -3,6 +3,7 @@ package com.regnis.tinyc;
 import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
+import com.regnis.tinyc.linearscanregalloc.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -71,7 +72,6 @@ public class Compiler {
 		irProgram = CleanupGlobalUnusedVariables.process(irProgram);
 		write(irProgram, irFile);
 
-		final int maxRegisters = 4;
 		final List<IRFunction> functions = new ArrayList<>();
 		try (final BufferedWriter cfgWriter = Files.newBufferedWriter(cfgFile)) {
 			final IRWriter irWriter = new IRWriter(cfgWriter);
@@ -80,14 +80,13 @@ public class Compiler {
 				dotWriter.begin();
 				for (IRFunction function : irProgram.functions()) {
 					final String name = function.name();
-					ControlFlowGraph cfg = CfgGenerator.create(name, function.instructions());
-					DetectVarLiveness.process(cfg);
+					final ControlFlowGraph cfg = CfgGenerator.create(name, function.instructions());
+					DetectVarLiveness.process(cfg, true);
 					irWriter.write(cfg);
 					dotWriter.writeCfg(cfg);
-					cfg = LinearScanRegisterAllocation.process(cfg, function.varInfos(), maxRegisters);
-					final List<IRInstruction> instructions = getFlattenInstructions(cfg.blocks());
-
-					final IRFunction optimizedFunction = function.derive(instructions);
+					final List<IRInstruction> instructions = LSRegAlloc.process(function, LSArchitecture.WIN_X86_64);
+					final List<IRInstruction> optimizedInstructions = IROptimizer.optimize(instructions);
+					final IRFunction optimizedFunction = CleanupLocalUnusedVariables.optimize(function.derive(optimizedInstructions));
 					functions.add(optimizedFunction);
 				}
 				dotWriter.end();
@@ -107,19 +106,6 @@ public class Compiler {
 			throw new IOException("Failed to compile");
 		}
 		return exeFile;
-	}
-
-	@NotNull
-	private static List<IRInstruction> getFlattenInstructions(@NotNull List<BasicBlock> blocks) {
-		final List<IRInstruction> instructions = new ArrayList<>();
-		for (BasicBlock block : blocks) {
-			if (block.name.startsWith("@")) {
-				instructions.add(new IRLabel(block.name));
-			}
-			instructions.addAll(block.instructions());
-		}
-
-		return IROptimizer.optimize(instructions);
 	}
 
 	private static Path useExtension(Path path, String extension) {
