@@ -12,87 +12,82 @@ public class CompilerTest {
 
 	@Test
 	public void testBasics() throws IOException, InterruptedException {
-		compileAndRun("00 basics.c");
+		compileAndRun("basics.c");
 	}
 
 	@Test
 	public void testArithmetics() throws IOException, InterruptedException {
-		compileAndRun("00 arithmetics.c");
+		compileAndRun("arithmetics.c");
 	}
 
 	@Test
 	public void testComparison() throws IOException, InterruptedException {
-		compileAndRun("01 comparison.c");
+		compileAndRun("comparison.c");
 	}
 
 	@Test
 	public void testIfElse() throws IOException, InterruptedException {
-		compileAndRun("02 ifelse.c");
+		compileAndRun("ifelse.c");
 	}
 
 	@Test
 	public void testWhile() throws IOException, InterruptedException {
-		compileAndRun("03 while.c");
+		compileAndRun("while.c");
 	}
 
 	@Test
 	public void testTypes() throws IOException, InterruptedException {
-		compileAndRun("04 types.c");
+		compileAndRun("types.c");
 	}
 
 	@Test
 	public void testCall() throws IOException, InterruptedException {
-		compileAndRun("05 call.c");
+		compileAndRun("call.c");
 	}
 
 	@Test
 	public void testPointers() throws IOException, InterruptedException {
-		compileAndRun("06 pointers.c");
+		compileAndRun("pointers.c");
 	}
 
 	@Test
 	public void testGlobalVars() throws IOException, InterruptedException {
-		compileAndRun("07 global vars.c");
+		compileAndRun("global vars.c");
 	}
 
 	@Test
 	public void testArrays() throws IOException, InterruptedException {
-		compileAndRun("08 arrays.c");
+		compileAndRun("arrays.c");
 	}
 
 	@Test
 	public void testStrings() throws IOException, InterruptedException {
-		compileAndRun("09 strings.c");
+		compileAndRun("strings.c");
 	}
 
 	@Test
 	public void testOperators() throws IOException, InterruptedException {
-		compileAndRun("10 operators.c");
+		compileAndRun("operators.c");
 	}
 
 	@Test
 	public void testLocalVars() throws IOException, InterruptedException {
-		compileAndRun("11 localvars.c");
+		compileAndRun("localvars.c");
 	}
 
 	@Test
 	public void testStructs() throws IOException, InterruptedException {
-		compileAndRun("12 structs.c");
-	}
-
-	@Test
-	public void testInclude() throws IOException, InterruptedException {
-		compileAndRun("13 include.c");
+		compileAndRun("structs.c");
 	}
 
 	@Test
 	public void testPrintAsciiListing() throws IOException, InterruptedException {
-		compileAndRun("14 print-ascii-listing.c");
+		compileAndRun("print-ascii-listing.c");
 	}
 
 	@Test
 	public void testRule110() throws IOException, InterruptedException {
-		compileAndRun("15 rule110.c");
+		compileAndRun("rule110.c");
 	}
 
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
