@@ -73,12 +73,12 @@ public record ExprBinary(@NotNull Op op, @Nullable Type type, @NotNull Expressio
 				case And -> And;
 				case Or -> Or;
 				case Xor -> Xor;
-				case Lt -> GtEq;
-				case LtEq -> Gt;
+				case LtEq -> GtEq;
+				case Lt -> Gt;
 				case Equals -> Equals;
 				case NotEquals -> NotEquals;
-				case GtEq -> Lt;
-				case Gt -> LtEq;
+				case Gt -> Lt;
+				case GtEq -> LtEq;
 				default -> null;
 			};
 		}

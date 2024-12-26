@@ -222,6 +222,38 @@ public class ArithmeticSimplifierTest {
 		                                                          loc(3, 4))));
 	}
 
+	@Test
+	public void testBinaryRelation() {
+		testBinaryRelation(ExprBinary.Op.Gt, ExprBinary.Op.Lt);
+		testBinaryRelation(ExprBinary.Op.GtEq, ExprBinary.Op.LtEq);
+		testBinaryRelation(ExprBinary.Op.Equals, ExprBinary.Op.Equals);
+		testBinaryRelation(ExprBinary.Op.NotEquals, ExprBinary.Op.NotEquals);
+		testBinaryRelation(ExprBinary.Op.LtEq, ExprBinary.Op.GtEq);
+		testBinaryRelation(ExprBinary.Op.Lt, ExprBinary.Op.Gt);
+	}
+
+	private void testBinaryRelation(ExprBinary.Op expectedSwappedOp, ExprBinary.Op op) {
+		final ExprVarAccess a = variable("a");
+		// keep
+		assertEquals(new ExprBinary(op, Type.BOOL,
+		                            a,
+		                            literal(0),
+		                            loc(3, 4)),
+		             ArithmeticSimplifier.simplify(new ExprBinary(op, Type.BOOL,
+		                                                          a,
+		                                                          literal(0),
+		                                                          loc(3, 4))));
+		// swap
+		assertEquals(new ExprBinary(expectedSwappedOp, Type.BOOL,
+		                            a,
+		                            literal(0),
+		                            loc(3, 4)),
+		             ArithmeticSimplifier.simplify(new ExprBinary(op, Type.BOOL,
+		                                                          literal(0),
+		                                                          a,
+		                                                          loc(3, 4))));
+	}
+
 	private static void testSwapped(Expression expectedResult, ExprBinary.Op op, ExprVarAccess expression, int literal) {
 		assertEquals(expectedResult,
 		             ArithmeticSimplifier.simplify(new ExprBinary(op, Type.I16,
