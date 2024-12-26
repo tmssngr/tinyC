@@ -1,5 +1,7 @@
 package com.regnis.tinyc.cfg;
 
+import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
@@ -36,42 +38,7 @@ public final class DetectVarLiveness {
 		return changed;
 	}
 
-	private static boolean detect(ControlFlowGraph cfg) {
-		final Set<String> processed = new HashSet<>();
-
-		boolean changed = false;
-
-		final List<String> pending = new ArrayList<>();
-		pending.add(cfg.blocks().getLast().name);
-
-		while (!pending.isEmpty()) {
-			final String name = pending.removeFirst();
-			if (!processed.add(name)) {
-				continue;
-			}
-
-			final BasicBlock block = cfg.get(name);
-			final Set<IRVar> live = getLiveInFromAllNext(block, cfg);
-			if (processBlock(block, live)) {
-				changed = true;
-			}
-
-			pending.addAll(block.predecessors());
-		}
-		return changed;
-	}
-
-	private static Set<IRVar> getLiveInFromAllNext(BasicBlock block, ControlFlowGraph cfg) {
-		final Set<IRVar> liveIn = new HashSet<>();
-		for (String next : block.successors()) {
-			final BasicBlock nextBlock = cfg.get(next);
-			liveIn.addAll(nextBlock.getLiveBefore());
-		}
-		return liveIn;
-	}
-
-	@SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
-	private static void detectLiveness(IRInstruction instruction, Set<IRVar> uses, Set<IRVar> defines) {
+	public static void detectLiveness(IRInstruction instruction, Set<IRVar> uses, Set<IRVar> defines) {
 		switch (instruction) {
 		case IRAddrOf addrOf -> {
 			defined(addrOf.target(), defines);
@@ -141,11 +108,47 @@ public final class DetectVarLiveness {
 		}
 	}
 
+	private static boolean detect(ControlFlowGraph cfg) {
+		final Set<String> processed = new HashSet<>();
+
+		boolean changed = false;
+
+		final List<String> pending = new ArrayList<>();
+		pending.add(cfg.blocks().getLast().name);
+
+		while (!pending.isEmpty()) {
+			final String name = pending.removeFirst();
+			if (!processed.add(name)) {
+				continue;
+			}
+
+			final BasicBlock block = cfg.get(name);
+			final Set<IRVar> live = getLiveInFromAllNext(block, cfg);
+			if (processBlock(block, live)) {
+				changed = true;
+			}
+
+			pending.addAll(block.predecessors());
+		}
+		return changed;
+	}
+
+	private static Set<IRVar> getLiveInFromAllNext(BasicBlock block, ControlFlowGraph cfg) {
+		final Set<IRVar> liveIn = new HashSet<>();
+		for (String next : block.successors()) {
+			final BasicBlock nextBlock = cfg.get(next);
+			liveIn.addAll(nextBlock.getLiveBefore());
+		}
+		return liveIn;
+	}
+
 	private static void uses(IRVar var, Set<IRVar> uses) {
+		Utils.assertTrue(var.scope() != VariableScope.register);
 		uses.add(var);
 	}
 
 	private static void defined(IRVar var, Set<IRVar> defines) {
+		Utils.assertTrue(var.scope() != VariableScope.register);
 		defines.add(var);
 	}
 }

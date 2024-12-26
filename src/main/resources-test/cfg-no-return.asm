@@ -26,24 +26,25 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 16
-        ; const i, 0
-        mov al, 0
-        lea rbx, [rsp+0]
-        mov [rbx], al
+        ; const r0, 0
+        mov cl, 0
         ; 3:2 while true
+        ; move i, r0
+        lea rax, [rsp+0]
+        mov [rax], cl
 @while_1:
-        ; const t.1, 1
-        mov al, 1
-        lea rbx, [rsp+1]
-        mov [rbx], al
-        ; add i, i, t.1
+        ; const r0, 1
+        mov cl, 1
+        ; move r1, i
         lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+1]
-        mov cl, [rax]
-        add bl, cl
+        mov dl, [rax]
+        ; add r0, r1, r0
+        mov al, dl
+        add al, cl
+        mov cl, al
+        ; move i, r0
         lea rax, [rsp+0]
-        mov [rax], bl
+        mov [rax], cl
         jmp @while_1
         ; release space for local variables
         add rsp, 16
