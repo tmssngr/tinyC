@@ -1,0 +1,54 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printString {
+		BasicBlock_0_printString [label="printString",shape=box];
+		BasicBlock_0_printString -> BasicBlock_0_printString_ret;
+		BasicBlock_0_printString_ret [label="printString_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printChar {
+		BasicBlock_1_printChar [label="printChar",shape=box];
+		BasicBlock_1_printChar -> BasicBlock_1_printChar_ret;
+		BasicBlock_1_printChar_ret [label="printChar_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printUint {
+		BasicBlock_2_printUint [label="printUint",shape=box];
+		BasicBlock_2_printUint -> BasicBlock_2_while_1 [label="(number,pos)"];
+		BasicBlock_2_while_1 [label="while_1",shape=hexagon];
+		BasicBlock_2_while_1 -> BasicBlock_2_if_2_end [label="(number,pos)"];
+		BasicBlock_2_while_1 -> BasicBlock_2_if_2_then [label="(pos)"];
+		BasicBlock_2_if_2_then [label="if_2_then",shape=box];
+		BasicBlock_2_if_2_then -> BasicBlock_2_printUint_ret;
+		BasicBlock_2_if_2_end [label="if_2_end",shape=box];
+		BasicBlock_2_if_2_end -> BasicBlock_2_while_1 [label="(number,pos)"];
+		BasicBlock_2_printUint_ret [label="printUint_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf {
+		BasicBlock_3_printIntLf [label="printIntLf",shape=hexagon];
+		BasicBlock_3_printIntLf -> BasicBlock_3_no_critical_edge_4 [label="(number)"];
+		BasicBlock_3_printIntLf -> BasicBlock_3_if_3_then [label="(number)"];
+		BasicBlock_3_if_3_then [label="if_3_then",shape=box];
+		BasicBlock_3_if_3_then -> BasicBlock_3_if_3_end [label="(number)"];
+		BasicBlock_3_no_critical_edge_4 [label="no_critical_edge_4",shape=box];
+		BasicBlock_3_no_critical_edge_4 -> BasicBlock_3_if_3_end [label="(number)"];
+		BasicBlock_3_if_3_end [label="if_3_end",shape=box];
+		BasicBlock_3_if_3_end -> BasicBlock_3_printIntLf_ret;
+		BasicBlock_3_printIntLf_ret [label="printIntLf_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_strlen {
+		BasicBlock_4_strlen [label="strlen",shape=box];
+		BasicBlock_4_strlen -> BasicBlock_4_for_4 [label="(length,str)"];
+		BasicBlock_4_for_4 [label="for_4",shape=hexagon];
+		BasicBlock_4_for_4 -> BasicBlock_4_for_4_break [label="(length)"];
+		BasicBlock_4_for_4 -> BasicBlock_4_for_4_body [label="(length,str)"];
+		BasicBlock_4_for_4_body [label="for_4_body",shape=box];
+		BasicBlock_4_for_4_body -> BasicBlock_4_for_4 [label="(length,str)"];
+		BasicBlock_4_for_4_break [label="for_4_break",shape=box];
+		BasicBlock_4_for_4_break -> BasicBlock_4_strlen_ret;
+		BasicBlock_4_strlen_ret [label="strlen_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_5_main [label="main",shape=box];
+		BasicBlock_5_main -> BasicBlock_5_main_ret;
+		BasicBlock_5_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

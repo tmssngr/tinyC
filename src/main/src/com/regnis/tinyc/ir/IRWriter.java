@@ -2,6 +2,7 @@ package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.cfg.*;
 
 import java.io.*;
 import java.util.*;
@@ -21,6 +22,54 @@ public final class IRWriter extends TextWriter {
 		writeFunctions(program);
 		writeGlobalVars(program.varInfos().vars());
 		writeStringLiterals(program.stringLiterals());
+	}
+
+	public void write(ControlFlowGraph cfg) throws IOException {
+		write("; CFG for function ");
+		writeln(cfg.name());
+		for (BasicBlock block : cfg.blocks()) {
+			writeBlock(block);
+			writeln();
+		}
+		writeln();
+	}
+
+	private void writeBlock(BasicBlock block) throws IOException {
+		write("; block ");
+		writeln(block.name);
+
+		writeIndentation();
+		write("; predecessors=");
+		writeln(block.predecessors().toString());
+
+		write(block.getLiveBefore());
+
+		writeInstructions(block.instructions(), block);
+
+		writeIndentation();
+		write("; successors=");
+		writeln(block.successors().toString());
+	}
+
+	private void write(Set<IRVar> live) throws IOException {
+//		write("; live: ");
+		if (!live.isEmpty()) {
+			writeIndentation();
+			writeIndentation();
+			write(String.valueOf(live.size()));
+			write(": ");
+			final List<IRVar> vars = new ArrayList<>(live);
+			vars.sort(Comparator.comparing(IRVar::name));
+			boolean addComma = false;
+			for (IRVar var : vars) {
+				if (addComma) {
+					write(", ");
+				}
+				write(var.name());
+				addComma = true;
+			}
+			writeln();
+		}
 	}
 
 	private void writeFunctions(IRProgram program) throws IOException {
@@ -44,7 +93,7 @@ public final class IRWriter extends TextWriter {
 			}
 		}
 
-		writeInstructions(function.instructions());
+		writeInstructions(function.instructions(), null);
 		writeln();
 	}
 
@@ -57,7 +106,7 @@ public final class IRWriter extends TextWriter {
 		writeln();
 	}
 
-	private void writeInstructions(List<IRInstruction> instructions) throws IOException {
+	private void writeInstructions(List<IRInstruction> instructions, @Nullable BasicBlock block) throws IOException {
 		if (instructions.isEmpty()) {
 			return;
 		}
@@ -67,7 +116,8 @@ public final class IRWriter extends TextWriter {
 		// processor cycles
 		writeln("; " + instructionTime + " pc");
 
-		for (IRInstruction instruction : instructions) {
+		for (int i = 0; i < instructions.size(); i++) {
+			final IRInstruction instruction = instructions.get(i);
 			if (instruction instanceof IRLabel label) {
 				writeln(label.label() + ":");
 			}
@@ -78,6 +128,14 @@ public final class IRWriter extends TextWriter {
 				}
 				else {
 					writeln(instruction.toString());
+					if (block != null) {
+						try {
+							write(block.getLiveAfter(i));
+						}
+						catch (NullPointerException e) {
+							writeln("##########################");
+						}
+					}
 				}
 			}
 		}

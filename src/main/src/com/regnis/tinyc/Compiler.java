@@ -1,6 +1,7 @@
 package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.io.*;
@@ -45,10 +46,16 @@ public class Compiler {
 		final Path astFile = useExtension(inputFile, ".ast");
 		final Path astSimpleFile = useExtension(inputFile, ".asts");
 		final Path irFile = useExtension(inputFile, ".ir");
+		final Path dotFile = useExtension(inputFile, ".dot");
+		final Path svgFile = useExtension(inputFile, ".svg");
+		final Path cfgFile = useExtension(inputFile, ".cfg");
 		final Path asmFile = useExtension(inputFile, ".asm");
 		final Path exeFile = useExtension(inputFile, ".exe");
 		Files.deleteIfExists(astFile);
 		Files.deleteIfExists(irFile);
+		Files.deleteIfExists(dotFile);
+		Files.deleteIfExists(svgFile);
+		Files.deleteIfExists(cfgFile);
 		Files.deleteIfExists(asmFile);
 		Files.deleteIfExists(exeFile);
 
@@ -62,12 +69,27 @@ public class Compiler {
 		write(irProgram, irFile);
 
 		final List<IRFunction> functions = new ArrayList<>();
-		for (IRFunction function : irProgram.functions()) {
-			final List<IRInstruction> instructions = IROptimizer.optimize(function.instructions());
+		try (final BufferedWriter cfgWriter = Files.newBufferedWriter(cfgFile)) {
+			final IRWriter irWriter = new IRWriter(cfgWriter);
+			try (final BufferedWriter writer = Files.newBufferedWriter(dotFile)) {
+				final DotWriter dotWriter = new DotWriter(writer);
+				dotWriter.begin();
+				for (IRFunction function : irProgram.functions()) {
+					final String name = function.name();
+					final ControlFlowGraph cfg = CfgGenerator.create(name, function.instructions());
+					DetectVarLiveness.process(cfg);
+					irWriter.write(cfg);
+					dotWriter.writeCfg(cfg);
+					final List<BasicBlock> blocks = cfg.blocks();
+					final List<IRInstruction> instructions = getFlattenInstructions(blocks);
 
-			final IRFunction optimizedFunction = function.derive(instructions);
-			functions.add(optimizedFunction);
+					final IRFunction optimizedFunction = function.derive(instructions);
+					functions.add(optimizedFunction);
+				}
+				dotWriter.end();
+			}
 		}
+		launchGraphViz(dotFile, svgFile);
 
 		irProgram = irProgram.derive(functions);
 
@@ -80,6 +102,19 @@ public class Compiler {
 			throw new IOException("Failed to compile");
 		}
 		return exeFile;
+	}
+
+	@NotNull
+	private static List<IRInstruction> getFlattenInstructions(@NotNull List<BasicBlock> blocks) {
+		final List<IRInstruction> instructions = new ArrayList<>();
+		for (BasicBlock block : blocks) {
+			if (block.name.startsWith("@")) {
+				instructions.add(new IRLabel(block.name));
+			}
+			instructions.addAll(block.instructions());
+		}
+
+		return IROptimizer.optimize(instructions);
 	}
 
 	private static Path useExtension(Path path, String extension) {
@@ -102,6 +137,23 @@ public class Compiler {
 			final IRWriter irWriter = new IRWriter(writer);
 			irWriter.write(program);
 		}
+	}
+
+	private static void launchGraphViz(Path dotFile, Path svgFile) throws IOException, InterruptedException {
+		if (true) {
+			return;
+		}
+		final Path dotExeFile = Path.of(System.getProperty("user.home"), "Apps/graphviz/bin/dot.exe");
+		final ProcessBuilder processBuilder = new ProcessBuilder(List.of(
+				dotExeFile.toString(),
+				"-Tsvg",
+				dotFile.toString(),
+				"-o",
+				svgFile.toString()
+		));
+		processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+		processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
+		execute(processBuilder);
 	}
 
 	private static boolean launchFasm(Path asmFile) throws IOException, InterruptedException {

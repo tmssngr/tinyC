@@ -102,6 +102,12 @@ public class CompilerTest {
 		Compiler.compile(inputFile);
 	}
 
+	@Test
+	public void testCfgNoReturn() throws IOException, InterruptedException {
+		final Path inputFile = absolutePath("cfg-no-return.c");
+		Compiler.compile(inputFile);
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(absolutePath(fileName));
 	}
