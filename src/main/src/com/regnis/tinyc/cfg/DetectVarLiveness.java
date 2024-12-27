@@ -1,5 +1,6 @@
 package com.regnis.tinyc.cfg;
 
+import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
@@ -11,12 +12,12 @@ import org.jetbrains.annotations.*;
  */
 public final class DetectVarLiveness {
 
-	public static void process(ControlFlowGraph cfg) {
-		while (detect(cfg)) {
+	public static void process(ControlFlowGraph cfg, boolean alsoForGlobal) {
+		while (detect(cfg, alsoForGlobal)) {
 		}
 	}
 
-	public static boolean processBlock(@NotNull BasicBlock block, @NotNull Set<IRVar> liveOut) {
+	public static boolean processBlock(@NotNull BasicBlock block, @NotNull Set<IRVar> liveOut, boolean alsoForGlobal) {
 		final Set<IRVar> live = new HashSet<>(liveOut);
 		final Set<IRVar> liveAfter = new HashSet<>(live);
 		boolean changed = liveAfter.addAll(block.getLiveAfter());
@@ -26,7 +27,7 @@ public final class DetectVarLiveness {
 			final IRInstruction instruction = instructions.get(i);
 			final Set<IRVar> uses = new HashSet<>();
 			final Set<IRVar> defines = new HashSet<>();
-			detectLiveness(instruction, uses, defines);
+			detectLiveness(instruction, alsoForGlobal, uses, defines);
 			if (block.setLive(i, uses, defines, live)) {
 				changed = true;
 			}
@@ -36,7 +37,13 @@ public final class DetectVarLiveness {
 		return changed;
 	}
 
-	private static boolean detect(ControlFlowGraph cfg) {
+	public static void detectLiveness(IRInstruction instruction, boolean alsoForGlobal, Set<IRVar> uses, Set<IRVar> defines) {
+		IRUtils.getVars(instruction,
+		                var -> add(var, alsoForGlobal, uses),
+		                var -> add(var, alsoForGlobal, defines));
+	}
+
+	private static boolean detect(ControlFlowGraph cfg, boolean alsoForGlobal) {
 		final Set<String> processed = new HashSet<>();
 
 		boolean changed = false;
@@ -52,7 +59,7 @@ public final class DetectVarLiveness {
 
 			final BasicBlock block = cfg.get(name);
 			final Set<IRVar> live = getLiveInFromAllNext(block, cfg);
-			if (processBlock(block, live)) {
+			if (processBlock(block, live, alsoForGlobal)) {
 				changed = true;
 			}
 
@@ -70,82 +77,9 @@ public final class DetectVarLiveness {
 		return liveIn;
 	}
 
-	@SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
-	private static void detectLiveness(IRInstruction instruction, Set<IRVar> uses, Set<IRVar> defines) {
-		switch (instruction) {
-		case IRAddrOf addrOf -> {
-			defined(addrOf.target(), defines);
-			uses(addrOf.source(), uses);
+	private static void add(IRVar var, boolean alsoForGlobal, Set<IRVar> uses) {
+		if (alsoForGlobal || var.scope() != VariableScope.global) {
+			uses.add(var);
 		}
-		case IRAddrOfArray addrOfArray -> {
-			defined(addrOfArray.addr(), defines);
-		}
-		case IRBinary binary -> {
-			defined(binary.target(), defines);
-			uses(binary.left(), uses);
-			uses(binary.right(), uses);
-		}
-		case IRBranch branch -> {
-			uses(branch.conditionVar(), uses);
-		}
-		case IRCall call -> {
-			final IRVar target = call.target();
-			if (target != null) {
-				defined(target, defines);
-			}
-			for (IRVar arg : call.args()) {
-				uses(arg, uses);
-			}
-		}
-		case IRCast cast -> {
-			defined(cast.target(), defines);
-			uses(cast.source(), uses);
-		}
-		case IRComment ignored -> {
-		}
-		case IRCompare compare -> {
-			defined(compare.target(), defines);
-			uses(compare.left(), uses);
-			uses(compare.right(), uses);
-		}
-		case IRJump ignored -> {
-		}
-		case IRLiteral literal -> {
-			defined(literal.target(), defines);
-		}
-		case IRMemLoad load -> {
-			defined(load.target(), defines);
-			uses(load.addr(), uses);
-		}
-		case IRMemStore store -> {
-			uses(store.addr(), uses);
-			uses(store.value(), uses);
-		}
-		case IRMove copy -> {
-			defined(copy.target(), defines);
-			uses(copy.source(), uses);
-		}
-		case IRRetValue retValue -> {
-			uses(retValue.var(), uses);
-		}
-		case IRString string -> {
-			defined(string.target(), defines);
-		}
-		case IRUnary unary -> {
-			defined(unary.target(), defines);
-			uses(unary.source(), uses);
-		}
-		default -> {
-			throw new UnsupportedOperationException(instruction.toString());
-		}
-		}
-	}
-
-	private static void uses(IRVar var, Set<IRVar> uses) {
-		uses.add(var);
-	}
-
-	private static void defined(IRVar var, Set<IRVar> defines) {
-		defines.add(var);
 	}
 }

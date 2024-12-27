@@ -92,12 +92,7 @@ public class IRGeneratorTest {
 	private void assertEquals(IRFunction expected, IRFunction actual) {
 		TestUtils.assertEquals(expected.varInfos().vars(), actual.varInfos().vars(),
 		                       this::assertEqualsVars);
-		TestUtils.assertEquals(expected.instructions(), actual.instructions(),
-		                       this::assertEquals);
-		Assert.assertEquals(expected, actual);
-	}
-
-	private void assertEquals(IRInstruction expected, IRInstruction actual) {
+		IRTestUtils.assertEqualsInstructions(expected.instructions(), actual.instructions());
 		Assert.assertEquals(expected, actual);
 	}
 

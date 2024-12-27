@@ -1,0 +1,50 @@
+u8 simple() {
+	u8 four;
+	u8 three;
+	u8 one;
+
+	four = 4;
+	three = 3;
+	one = four - three;
+	return one;
+}
+
+u8 registerHint(u8 a, u8 b) {
+	return a + b;
+}
+
+u8 max(u8 a, u8 b) {
+	if (a < b) {
+		return b;
+	}
+	return a;
+}
+
+i16 fibonacci(u8 i) {
+	i16 a;
+	i16 b;
+	i16 c;
+
+	a = 0;
+	b = 1;
+	while (i > 0) {
+		i = i - 1;
+		c = a + b;
+		a = b;
+		b = c;
+	}
+	return a;
+}
+
+void main() {
+	u8 one;
+	u8 two;
+	u8 oneOrTwo;
+	i16 f5;
+
+	one = simple();
+	two = 2;
+	registerHint(one, two);
+	oneOrTwo = max(one, two);
+	f5 = fibonacci(5);
+}

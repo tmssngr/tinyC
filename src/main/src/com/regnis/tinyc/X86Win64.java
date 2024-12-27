@@ -6,6 +6,7 @@ import com.regnis.tinyc.ir.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -15,12 +16,13 @@ import org.jetbrains.annotations.*;
 public final class X86Win64 {
 
 	private static final String INDENTATION = "        ";
+	private static final int TMP_REG = 99;
+	private static final int FIRST_NON_VOLATILE_REGISTER = 6;
 
 	private final BufferedWriter writer;
-	private final TrivialRegisterAllocator allocator = new TrivialRegisterAllocator();
 
 	@SuppressWarnings("unused") private boolean debug;
-	private int[] localVarOffsets = new int[0];
+	private X86StackOffsets stackOffsets = X86StackOffsets.DUMMY;
 	private int rspOffset;
 
 	public X86Win64(@NotNull BufferedWriter writer) {
@@ -67,21 +69,19 @@ public final class X86Win64 {
 				           start:""");
 		writeComment("alignment");
 		writeIndented("and rsp, -16");
-
-		writeIndented("sub rsp, 8");
-		writeIndented("  call init");
-		writeIndented("add rsp, 8");
-		writeIndented("  call @main");
+		writeIndented("call init");
+		writeIndented("call @main");
 		writeIndented("mov rcx, 0");
 		writeIndented("sub rsp, 0x20");
-		writeIndented("  call [ExitProcess]");
+		writeIndented("call [ExitProcess]");
 		writeNL();
 	}
 
 	private void writeInit() throws IOException {
 		writeLabel("init");
+		// 8 to compensate for the return address; 20h for the shadow space
 		writeIndented("""
-				              sub rsp, 20h
+				              sub rsp, 28h
 				                mov rcx, STD_IN_HANDLE
 				                call [GetStdHandle]
 				                ; handle in rax, 0 if invalid
@@ -99,7 +99,7 @@ public final class X86Win64 {
 				                ; handle in rax, 0 if invalid
 				                lea rcx, [hStdErr]
 				                mov qword [rcx], rax
-				              add rsp, 20h
+				              add rsp, 28h
 				              ret
 				              """);
 	}
@@ -147,16 +147,36 @@ public final class X86Win64 {
 	private void writeFunction(IRFunction function) throws IOException {
 		writeComment(function.toString());
 
+		final int nonvolatileRegistersToPushPop = getNonVolatileRegistersToPushPop(function.instructions());
 		final List<IRVarDef> localVars = function.varInfos().vars();
-		final int size = prepareLocalVarsOffsets(localVars);
-		writeVarOffsets(localVars);
+		stackOffsets = new X86StackOffsets(localVars, nonvolatileRegistersToPushPop);
+		final int size = stackOffsets.getRspOffset();
+		writeVarOffsetAsComments(localVars);
 		writeLabel(function.label());
-		writeFunctionProlog(size);
+		writeFunctionProlog(size, nonvolatileRegistersToPushPop);
 
 		writeInstructions(function.instructions());
 
-		writeFunctionEpilog(size);
-		localVarOffsets = new int[0];
+		writeFunctionEpilog(size, nonvolatileRegistersToPushPop);
+		stackOffsets = X86StackOffsets.DUMMY;
+	}
+
+	private int getNonVolatileRegistersToPushPop(List<IRInstruction> instructions) {
+		class MaxRegConsumer implements Consumer<IRVar> {
+			private int maxReg;
+
+			@Override
+			public void accept(IRVar var) {
+				if (var.scope() == VariableScope.register) {
+					maxReg = Math.max(maxReg, var.index() + 1);
+				}
+			}
+		}
+		final MaxRegConsumer consumer = new MaxRegConsumer();
+		for (IRInstruction instruction : instructions) {
+			IRUtils.getVars(instruction, consumer, consumer);
+		}
+		return Math.max(0, consumer.maxReg - FIRST_NON_VOLATILE_REGISTER);
 	}
 
 	private void writeAsmFunction(IRAsmFunction function) throws IOException {
@@ -168,70 +188,41 @@ public final class X86Win64 {
 		}
 	}
 
-	private int prepareLocalVarsOffsets(List<IRVarDef> localVars) {
-		localVarOffsets = new int[localVars.size()];
-		int argCount = 0;
-		int offset = 0;
-		int i = 0;
-		for (IRVarDef var : localVars) {
-			if (var.var().scope() == VariableScope.argument) {
-				argCount++;
-			}
-			else {
-				final int varSize = var.size();
-				offset = alignTo(offset, varSize);
-				localVarOffsets[i] = offset;
-				offset += varSize;
-			}
-			i++;
-		}
-		final int localVarSize = alignTo16(offset);
-		// first arg 8 bytes
-		// second arg 8 bytes
-		// third arg 8 bytes
-		// fill area 0/8 bytes
-		// return address 8 bytes ----------------------
-		// local vars <localVarSize> bytes              v
-		int argOffset = alignTo16(argCount * 8 + 8) + localVarSize;
-		i = 0;
-		for (IRVarDef var : localVars) {
-			final VariableScope scope = var.var().scope();
-			if (scope != VariableScope.argument) {
-				Utils.assertTrue(scope == VariableScope.function);
-				break;
-			}
-
-			argOffset -= 8;
-			localVarOffsets[i] = argOffset;
-			i++;
-		}
-
-		return localVarSize;
-	}
-
-	private void writeVarOffsets(List<IRVarDef> localVars) throws IOException {
+	private void writeVarOffsetAsComments(List<IRVarDef> localVars) throws IOException {
 		for (IRVarDef varDef : localVars) {
 			final IRVar var = varDef.var();
 			if (var.scope() == VariableScope.argument) {
-				writeComment("  rsp+" + localVarOffsets[var.index()] + ": arg " + var.name());
+				writeComment("  rsp+" + stackOffsets.getOffset(var) + ": arg " + var.name());
 			}
 			else {
 				Utils.assertTrue(var.scope() == VariableScope.function);
-				writeComment("  rsp+" + localVarOffsets[var.index()] + ": var " + var.name());
+				writeComment("  rsp+" + stackOffsets.getOffset(var) + ": var " + var.name());
 			}
 		}
 	}
 
-	private void writeFunctionProlog(int size) throws IOException {
+	private void writeFunctionProlog(int size, int pushedNonvolatileRegisterCount) throws IOException {
 		if (size > 0) {
-			writeComment("reserve space for local variables");
 			writeIndented("sub rsp, " + size);
+		}
+
+		if (pushedNonvolatileRegisterCount > 0) {
+			writeComment("save globbered non-volatile registers");
+			for (int i = 0; i < pushedNonvolatileRegisterCount; i++) {
+				writeIndented("push " + getRegName(FIRST_NON_VOLATILE_REGISTER + i));
+			}
 		}
 	}
 
-	private void writeFunctionEpilog(int size) throws IOException {
+	private void writeFunctionEpilog(int size, int pushedNonvolatileRegisterCount) throws IOException {
+		if (pushedNonvolatileRegisterCount > 0) {
+			writeComment("restore globbered non-volatile registers");
+			for (int i = pushedNonvolatileRegisterCount; i-- > 0;) {
+				writeIndented("pop " + getRegName(FIRST_NON_VOLATILE_REGISTER + i));
+			}
+		}
+
 		if (size > 0) {
-			writeComment("release space for local variables");
 			writeIndented("add rsp, " + size);
 		}
 		writeIndented("ret");
@@ -249,60 +240,70 @@ public final class X86Win64 {
 		    && !(instruction instanceof IRJump)) {
 			writeComment(String.valueOf(instruction));
 		}
-		Utils.assertTrue(allocator.isNoneUsed());
+
 		switch (instruction) {
-		case IRLabel label -> writeLabel(label.label());
-		case IRComment comment -> writeComment(comment.comment());
 		case IRAddrOf addrOf -> writeAddrOf(addrOf);
 		case IRAddrOfArray addrOf -> writeAddrOfArray(addrOf);
-		case IRLiteral literal -> writeLiteral(literal);
-		case IRString literal -> writeString(literal);
-		case IRMove copy -> writeCopy(copy);
 		case IRBinary binary -> writeBinary(binary);
-		case IRCompare compare -> writeCompare(compare);
-		case IRUnary unary -> writeUnary(unary);
+		case IRBranch branch -> writeBranch(branch);
+		case IRCall call -> writeCall(call);
 		case IRCast cast -> writeCast(cast);
+		case IRComment comment -> writeComment(comment.comment());
+		case IRCompare compare -> writeCompare(compare);
+		case IRJump jump -> writeJump(jump);
+		case IRLabel label -> writeLabel(label.label());
+		case IRLiteral literal -> writeLiteral(literal);
 		case IRMemLoad load -> writeLoad(load);
 		case IRMemStore store -> writeStore(store);
-		case IRBranch branch -> writeBranch(branch);
-		case IRJump jump -> writeJump(jump);
-		case IRCall call -> writeCall(call);
+		case IRMove copy -> writeCopy(copy);
 		case IRRetValue retValue -> writeRetValue(retValue);
+		case IRString literal -> writeString(literal);
+		case IRUnary unary -> writeUnary(unary);
 		default -> throw new UnsupportedOperationException(instruction.getClass() + " " + instruction);
 		}
-		Utils.assertTrue(allocator.isNoneUsed(), instruction + ": not all regs freed");
 	}
 
 	private void writeAddrOf(IRAddrOf addrOf) throws IOException {
-		final int addrReg = addrOf(addrOf.source());
-		storeVar(addrOf.target(), addrReg);
-		free(addrReg);
+		final int addrReg = getRegisterVarRegisterIndex(addrOf.target());
+		addrOf(addrReg, addrOf.source());
 	}
 
 	private void writeAddrOfArray(IRAddrOfArray addrOf) throws IOException {
-		final int addrReg = addrOf(addrOf.array());
-		storeVar(addrOf.addr(), addrReg);
-		free(addrReg);
+		final IRVar arrayOrPointer = addrOf.array();
+		Utils.assertTrue(arrayOrPointer.scope() != VariableScope.register);
+		final IRVar target = addrOf.addr();
+		final int targetReg = getRegisterVarRegisterIndex(target);
+		addrOf(targetReg, arrayOrPointer);
 	}
 
 	private void writeLiteral(IRLiteral literal) throws IOException {
-		final int valueReg = getFreeReg();
-		writeIndented("mov " + getRegName(valueReg, literal.target()) + ", " + literal.value());
-		storeVar(literal.target(), valueReg);
-		free(valueReg);
+		final IRVar target = literal.target();
+		final int value = literal.value();
+		writeIndented("mov " + getRegName(target) + ", " + value);
 	}
 
 	private void writeString(IRString literal) throws IOException {
-		final int valueReg = getFreeReg();
-		writeIndented("lea " + getRegName(valueReg) + ", [" + getStringLiteralName(literal.stringIndex()) + "]");
-		storeVar(literal.target(), valueReg);
-		free(valueReg);
+		writeIndented("lea " + getRegName(literal.target()) + ", [" + getStringLiteralName(literal.stringIndex()) + "]");
 	}
 
 	private void writeCopy(IRMove copy) throws IOException {
-		final int valueReg = loadVar(copy.source());
-		storeVar(copy.target(), valueReg);
-		free(valueReg);
+		final IRVar source = copy.source();
+		final IRVar target = copy.target();
+		final int addrReg = TMP_REG;
+		if (source.scope() == VariableScope.register) {
+			if (target.scope() == VariableScope.register) {
+				writeIndented("mov " + getRegName(target) + ", " + getRegName(copy.source()));
+				return;
+			}
+
+			addrOf(addrReg, target);
+			writeIndented("mov [" + getRegName(addrReg) + "], " + getRegName(source));
+			return;
+		}
+
+		Utils.assertTrue(target.scope() == VariableScope.register);
+		addrOf(addrReg, source);
+		writeIndented("mov " + getRegName(target) + ", [" + getRegName(addrReg) + "]");
 	}
 
 	private void writeBinary(IRBinary binary) throws IOException {
@@ -311,90 +312,75 @@ public final class X86Win64 {
 		case Add -> writeBinary("add", binary);
 		case Sub -> writeBinary("sub", binary);
 		case Mul -> {
-			final int leftReg = loadVar(binary.left());
+			final int leftReg = getRegisterVarRegisterIndex(binary.left());
 			final String leftRegName = getRegName(leftReg);
-			final int rightReg = loadVar(binary.right());
+			final int rightReg = getRegisterVarRegisterIndex(binary.right());
 			final String rightRegName = getRegName(rightReg);
+			final int targetReg = getRegisterVarRegisterIndex(binary.target());
+			final String targetRegName = getRegName(targetReg);
 			if (getTypeSize(binary.left().type()) != 8) {
 				writeMovx(leftRegName, leftReg, binary.left(), true);
 			}
+
 			if (getTypeSize(binary.right().type()) != 8) {
 				writeMovx(rightRegName, rightReg, binary.right(), true);
 			}
-			writeIndented("imul " + " " + leftRegName + ", " + rightRegName);
-			storeVar(binary.target(), leftReg);
-			free(rightReg);
-			free(leftReg);
+
+			if (targetReg == leftReg) {
+				writeIndented("imul " + " " + leftRegName + ", " + rightRegName);
+			}
+			else {
+				// maybe combine with movsx above
+				writeIndented("mov rax, " + leftRegName);
+				writeIndented("imul rax, " + rightRegName);
+				writeIndented("mov " + targetRegName + ", rax");
+			}
 		}
 		case Div, Mod -> {
 			final Type type = binary.left().type();
 			Utils.assertTrue(Objects.equals(type, binary.right().type()));
 			final int size = getTypeSize(type);
 			// https://www.felixcloutier.com/x86/idiv
-			// (edx eax) / %reg -> eax
-			// (edx eax) % %reg -> edx
-			final int leftReg = loadVar(binary.left());
-			final String leftRegName = getRegName(leftReg);
-			Utils.assertTrue("rbx".equals(leftRegName));
-
-			final int rightReg = loadVar(binary.right());
-			final String rightRegName = getRegName(rightReg);
-			Utils.assertTrue("rcx".equals(rightRegName));
-
-			final int rax = getFreeReg();
-			Utils.assertTrue("rax".equals(getRegName(rax)));
-
-			if (size == 8) {
-				writeIndented("mov rax, " + leftRegName);
-			}
-			else if (type.equals(Type.U8)) {
-				writeIndented("movzx rax, " + getRegName(leftReg, size));
-				writeIndented("movzx rcx, " + getRegName(rightReg, size));
+			// (rdx rax) / %reg -> rax
+			// (rdx rax) % %reg -> rdx
+			final int leftReg = getRegisterVarRegisterIndex(binary.left());
+			Utils.assertTrue(leftReg == 0);
+			final int targetReg = getRegisterVarRegisterIndex(binary.target());
+			if (binary.op() == IRBinary.Op.Div) {
+				Utils.assertTrue(targetReg == 0);
 			}
 			else {
+				Utils.assertTrue(targetReg == 2);
+			}
+			final int rightReg = getRegisterVarRegisterIndex(binary.right());
+			Utils.assertTrue(rightReg != 2);
+			final String rightRegName = getRegName(rightReg);
+
+			final int rdx = 2;
+			Utils.assertTrue("rdx".equals(getRegName(rdx)));
+			if (size != 8) {
 				writeMovx("rax", leftReg, binary.left(), signed);
-				writeMovx("rcx", rightReg, binary.right(), signed);
+				writeMovx(rightRegName, rightReg, binary.right(), signed);
 			}
 			writeIndented("cqo"); // rdx := signbit(rax)
 			writeIndented("idiv " + rightRegName);
-			writeIndented("mov rbx, " + (binary.op() == IRBinary.Op.Mod ? "rdx" : "rax"));
-			storeVar(binary.target(), leftReg);
-			free(rax);
-			free(rightReg);
-			free(leftReg);
 		}
 
-		case ShiftLeft -> {
-			final int leftReg = loadVar(binary.left());
+		case ShiftLeft, ShiftRight -> {
+			final String op = binary.op() == IRBinary.Op.ShiftRight
+					? signed ? "sar" : "shr"
+					: signed ? "sal" : "shl";
+
+			final int leftReg = getRegisterVarRegisterIndex(binary.left());
+			final int targetReg = getRegisterVarRegisterIndex(binary.target());
+			Utils.assertTrue(leftReg == targetReg);
+			Utils.assertTrue(leftReg != 1);
+			final int rightReg = getRegisterVarRegisterIndex(binary.right());
+			Utils.assertTrue(rightReg == 1);
 			final String leftRegName = getRegName(leftReg, binary.left());
-			final int rightReg = loadVar(binary.right());
-			final String rightRegName = getRegName(rightReg, 1);
-			Utils.assertTrue("cl".equals(rightRegName));
-			if (signed) {
-				writeIndented("sal" + " " + leftRegName + ", cl");
-			}
-			else {
-				writeIndented("shl" + " " + leftRegName + ", cl");
-			}
-			storeVar(binary.target(), leftReg);
-			free(rightReg);
-			free(leftReg);
-		}
-		case ShiftRight -> {
-			final int leftReg = loadVar(binary.left());
-			final String leftRegName = getRegName(leftReg, binary.left());
-			final int rightReg = loadVar(binary.right());
-			final String rightRegName = getRegName(rightReg, 1);
-			Utils.assertTrue("cl".equals(rightRegName));
-			if (signed) {
-				writeIndented("sar" + " " + leftRegName + ", cl");
-			}
-			else {
-				writeIndented("shr" + " " + leftRegName + ", cl");
-			}
-			storeVar(binary.target(), leftReg);
-			free(rightReg);
-			free(leftReg);
+
+			Utils.assertTrue("cl".equals(getRegName(rightReg, 1)));
+			writeIndented(op + " " + leftRegName + ", cl");
 		}
 
 		case And -> writeBinary("and", binary);
@@ -406,14 +392,27 @@ public final class X86Win64 {
 	}
 
 	private void writeBinary(String op, IRBinary binary) throws IOException {
-		final int leftReg = loadVar(binary.left());
-		final String leftRegName = getRegName(leftReg, binary.left());
-		final int rightReg = loadVar(binary.right());
+		final IRVar left = binary.left();
+		final IRVar target = binary.target();
+		final int leftReg = getRegisterVarRegisterIndex(left);
+		final String leftRegName = getRegName(leftReg, left);
+		final int rightReg = getRegisterVarRegisterIndex(binary.right());
 		final String rightRegName = getRegName(rightReg, binary.right());
-		writeIndented(op + " " + leftRegName + ", " + rightRegName);
-		storeVar(binary.target(), leftReg);
-		free(rightReg);
-		free(leftReg);
+		final int targetReg = getRegisterVarRegisterIndex(target);
+		final String targetRegName = getRegName(targetReg, left);
+		if (targetReg == leftReg) {
+			writeIndented(op + " " + targetRegName + ", " + rightRegName);
+		}
+		else if (targetReg == rightReg) {
+			final String tmpRegName = getRegName(TMP_REG, target);
+			writeIndented("mov " + tmpRegName + ", " + leftRegName);
+			writeIndented(op + " " + tmpRegName + ", " + rightRegName);
+			writeIndented("mov " + targetRegName + ", " + tmpRegName);
+		}
+		else {
+			writeIndented("mov " + targetRegName + ", " + leftRegName);
+			writeIndented(op + " " + targetRegName + ", " + rightRegName);
+		}
 	}
 
 	private void writeCompare(IRCompare compare) throws IOException {
@@ -431,78 +430,71 @@ public final class X86Win64 {
 	}
 
 	private void writeCompare(String command, IRCompare compare) throws IOException {
-		final int leftReg = loadVar(compare.left());
+		final int leftReg = getRegisterVarRegisterIndex(compare.left());
 		final String leftRegName = getRegName(leftReg, compare.left());
-		final int rightReg = loadVar(compare.right());
+		final int rightReg = getRegisterVarRegisterIndex(compare.right());
 		final String rightRegName = getRegName(rightReg, compare.right());
+		final int targetReg = getRegisterVarRegisterIndex(compare.target());
 		writeIndented("cmp " + leftRegName + ", " + rightRegName);
-		writeIndented(command + " " + getRegName(leftReg, 1));
-		storeVar(compare.target(), leftReg);
-		free(rightReg);
-		free(leftReg);
+		writeIndented(command + " " + getRegName(targetReg, 1));
 	}
 
 	private void writeUnary(IRUnary unary) throws IOException {
 		switch (unary.op()) {
-		case Neg -> {
-			final int valueReg = loadVar(unary.source());
-			writeIndented("neg " + getRegName(valueReg));
-			storeVar(unary.target(), valueReg);
-			free(valueReg);
-		}
-		case Not -> {
-			final int valueReg = loadVar(unary.source());
-			writeIndented("not " + getRegName(valueReg));
-			storeVar(unary.target(), valueReg);
-			free(valueReg);
+		case Neg, Not -> {
+			final int valueReg = getRegisterVarRegisterIndex(unary.source());
+			final int targetReg = getRegisterVarRegisterIndex(unary.target());
+			final String targetRegName = getRegName(targetReg);
+			if (valueReg != targetReg) {
+				writeIndented("mov " + targetRegName + ", " + getRegName(valueReg));
+			}
+
+			if (unary.op() == IRUnary.Op.Neg) {
+				writeIndented("neg " + targetRegName);
+			}
+			else {
+				writeIndented("not " + targetRegName);
+			}
 		}
 		case NotLog -> {
-			final int valueReg = loadVar(unary.source());
+			final int valueReg = getRegisterVarRegisterIndex(unary.source());
 			final String regName = getRegName(valueReg, unary.source());
 			writeIndented("or " + regName + ", " + regName);
-			writeIndented("sete " + regName);
-			storeVar(unary.target(), valueReg);
-			free(valueReg);
+			writeIndented("sete " + getRegName(unary.target()));
 		}
 		default -> throw new UnsupportedOperationException(String.valueOf(unary));
 		}
 	}
 
 	private void writeCast(IRCast cast) throws IOException {
-		final int valueReg = loadVar(cast.source());
-		final int sourceSize = getTypeSize(cast.source().type());
-		final int targetSize = getTypeSize(cast.target().type());
+		final IRVar source = cast.source();
+		final IRVar target = cast.target();
+		final int sourceReg = getRegisterVarRegisterIndex(source);
+		final int targetReg = getRegisterVarRegisterIndex(target);
+		final int sourceSize = getTypeSize(source.type());
+		final int targetSize = getTypeSize(target.type());
 		if (targetSize > sourceSize) {
-			writeIndented("movzx " + getRegName(valueReg, targetSize) + ", " + getRegName(valueReg, sourceSize));
+			writeIndented("movzx " + getRegName(targetReg, targetSize) + ", " + getRegName(sourceReg, sourceSize));
 		}
-		storeVar(cast.target(), valueReg);
-		free(valueReg);
+		else if (sourceReg != targetReg) {
+			writeIndented("mov " + getRegName(targetReg, targetSize) + ", " + getRegName(sourceReg, targetSize));
+		}
 	}
 
 	private void writeLoad(IRMemLoad load) throws IOException {
-		final int addrReg = loadVar(load.addr());
-		final String addrRegName = getRegName(addrReg);
-		final int valueReg = getFreeReg();
-		writeIndented("mov " + getRegName(valueReg, load.target()) + ", [" + addrRegName + "]");
-		free(addrReg);
-		storeVar(load.target(), valueReg);
-		free(valueReg);
+		final int addrReg = getRegisterVarRegisterIndex(load.addr());
+		writeIndented("mov " + getRegName(load.target()) + ", [" + getRegName(addrReg) + "]");
 	}
 
 	private void writeStore(IRMemStore store) throws IOException {
-		final int addrReg = loadVar(store.addr());
-		final String addrRegName = getRegName(addrReg);
-		final int valueReg = loadVar(store.value());
-		writeIndented("mov [" + addrRegName + "], " + getRegName(valueReg, store.value()));
-		free(valueReg);
-		free(addrReg);
+		final int addrReg = getRegisterVarRegisterIndex(store.addr());
+		writeIndented("mov [" + getRegName(addrReg) + "], " + getRegName(store.value()));
 	}
 
 	private void writeBranch(IRBranch branch) throws IOException {
-		final int conditionReg = loadVar(branch.conditionVar());
+		final int conditionReg = getRegisterVarRegisterIndex(branch.conditionVar());
 		final String conditionRegName = getRegName(conditionReg, 1);
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
-		free(conditionReg);
 		if (branch.jumpOnTrue()) {
 			writeIndented("jnz " + branch.target());
 		}
@@ -512,36 +504,54 @@ public final class X86Win64 {
 	}
 
 	private void writeCall(IRCall call) throws IOException {
-		final List<IRVar> args = call.args();
-		final int argsSize = args.size() * 8;
-		final int offset = (args.size() + 1) % 2 * 8;
-		for (IRVar arg : args) {
-			final int argValue = loadVar(arg);
-			writeIndented("push " + getRegName(argValue));
-			free(argValue);
-			this.rspOffset += 8;
-		}
-		this.rspOffset = 0;
-
-		if (offset != 0) {
-			writeIndented("sub rsp, " + offset);
-		}
-		writeIndented("  call @" + call.name());
-		writeIndented("add rsp, " + (offset + argsSize));
-
 		final IRVar target = call.target();
 		if (target != null) {
-			final int valueReg = getFreeReg();
-			Utils.assertTrue("rax".equals(getRegName(valueReg)));
-			storeVar(target, valueReg);
-			free(valueReg);
+			Utils.assertTrue(getRegisterVarRegisterIndex(target) == 0);
 		}
+
+		final List<IRVar> args = call.args();
+		final int alignmentOffset = args.size() > 4 ? (args.size() + 1) % 2 * 8 : 0;
+		if (alignmentOffset != 0) {
+			writeIndented("sub rsp, " + alignmentOffset + "; align RSP to 10h");
+		}
+
+		int pushOffset = 0;
+		final int prevRspOffset = rspOffset;
+		try {
+			// https://en.wikipedia.org/wiki/X86_calling_conventions#Microsoft_x64_calling_convention
+			// the 5th, 6th, ... arguments are pushed onto the stack (right to left).
+			// stack:
+			// (n)th arg
+			// (n-1)th arg
+			// ...
+			// 6th arg
+			// 5th arg
+			// 20h byte shadow space
+			// return address
+			for (int i = args.size(); i-- > 0; ) {
+				final IRVar arg = args.get(i);
+				if (i < 4) {
+					Utils.assertTrue(getRegisterVarRegisterIndex(arg) == i + 1);
+					continue;
+				}
+				final int argReg = loadVar(arg);
+				writeIndented("push " + getRegName(argReg));
+				this.rspOffset += 8;
+				pushOffset += 8;
+			}
+		}
+		finally {
+			this.rspOffset = prevRspOffset;
+		}
+
+		writeIndented("sub rsp, 20h; shadow space");
+		writeIndented("call @" + call.name());
+		writeIndented("add rsp, " + Integer.toHexString(0x20 + alignmentOffset + pushOffset) + "h");
 	}
 
 	private void writeRetValue(IRRetValue retValue) throws IOException {
-		final int valueReg = loadVar(retValue.var());
+		final int valueReg = getRegisterVarRegisterIndex(retValue.var());
 		writeIndented("mov rax, " + getRegName(valueReg));
-		free(valueReg);
 	}
 
 	private void writeMovx(String targetRegName, int sourceReg, IRVar sourceVar, boolean signed) throws IOException {
@@ -550,47 +560,29 @@ public final class X86Win64 {
 		writeIndented("mov" + signedString + op + " " + targetRegName + ", " + getRegName(sourceReg, sourceVar));
 	}
 
-	private void storeVar(IRVar var, int valueReg) throws IOException {
-		final int addrReg = addrOf(var);
-		final String addRegName = getRegName(addrReg);
-
-		final String valueRegName = getRegName(valueReg, var);
-		writeIndented("mov [" + addRegName + "], " + valueRegName);
-
-		free(addrReg);
-	}
-
 	private int loadVar(IRVar var) throws IOException {
-		final int addrReg = addrOf(var);
-		final String addRegName = getRegName(addrReg);
+		if (var.scope() == VariableScope.register) {
+			return getRegisterVarRegisterIndex(var);
+		}
 
-		final int valueReg = getFreeReg();
-		final String valueRegName = getRegName(valueReg, var);
+		final int reg = TMP_REG;
+		addrOf(reg, var);
+		final String addRegName = getRegName(reg);
+		final String valueRegName = getRegName(reg, var);
 		writeIndented("mov " + valueRegName + ", [" + addRegName + "]");
-
-		free(addrReg);
-		return valueReg;
+		return reg;
 	}
 
-	private int addrOf(IRVar var) throws IOException {
-		final int addrReg = getFreeReg();
-		final String addr = getRegName(addrReg);
-		if (var.scope() == VariableScope.global) {
-			writeIndented("lea " + addr + ", [" + getGlobalVarName(var.index()) + "]");
+	private void addrOf(int register, IRVar var) throws IOException {
+		final String addrReg = getRegName(register);
+		switch (var.scope()) {
+		case global -> writeIndented("lea " + addrReg + ", [" + getGlobalVarName(var.index()) + "]");
+		case function, argument -> {
+			final int offset = stackOffsets.getOffset(var) + rspOffset;
+			writeIndented("lea " + addrReg + ", [rsp+" + offset + "]");
 		}
-		else {
-			final int offset = localVarOffsets[var.index()] + rspOffset;
-			writeIndented("lea " + addr + ", [rsp+" + offset + "]");
+		default -> throw new UnsupportedOperationException(String.valueOf(var.scope()));
 		}
-		return addrReg;
-	}
-
-	private int getFreeReg() {
-		return allocator.allocate();
-	}
-
-	private void free(int addrReg) {
-		allocator.free(addrReg);
 	}
 
 	private void writeJump(IRJump jump) throws IOException {
@@ -637,16 +629,18 @@ public final class X86Win64 {
 	}
 
 	@NotNull
-	private String getRegName(int valueReg, IRVar var) {
+	private static String getRegName(int valueReg, IRVar var) {
 		return getRegName(valueReg, getTypeSize(var.type()));
 	}
 
-	private static int alignTo16(int offset) {
-		return alignTo(offset, 16);
+	private static String getRegName(IRVar var) {
+		final int reg = getRegisterVarRegisterIndex(var);
+		return getRegName(reg, getTypeSize(var.type()));
 	}
 
-	private static int alignTo(int offset, int alignment) {
-		return (offset + alignment - 1) / alignment * alignment;
+	private static int getRegisterVarRegisterIndex(IRVar var) {
+		Utils.assertTrue(var.scope() == VariableScope.register);
+		return var.index();
 	}
 
 	private static String getRegName(int reg) {
@@ -655,18 +649,30 @@ public final class X86Win64 {
 
 	private static String getRegName(int reg, int size) {
 		return switch (reg) {
-			// ofset 0 mean result reg -> rax
-			case 0 -> getXRegName('a', size);
-			case 1 -> getXRegName('b', size);
-			case 2 -> getXRegName('c', size);
-			case 3 -> getXRegName('d', size);
-			case 4 -> switch (size) {
-				case 1 -> "r9b";
-				case 2 -> "r9w";
-				case 4 -> "r9d";
-				default -> "r9";
-			};
+			case 0 -> getXRegName('a', size); // return
+			case 1 -> getXRegName('c', size); // first arg
+			case 2 -> getXRegName('d', size); // second arg
+			case 3 -> getNRegName(8, size);   // third arg
+			case 4 -> getNRegName(9, size);   // fourth arg
+			case 5 -> getNRegName(10, size);
+			// non-volatile
+			case 6 -> getXRegName('b', size);
+			case 7 -> getNRegName(12, size);
+			case 8 -> getNRegName(13, size);
+			case 9 -> getNRegName(14, size);
+			case 10 -> getNRegName(15, size);
+			case TMP_REG -> getNRegName(11, size); // temp
 			default -> throw new IllegalStateException();
+		};
+	}
+
+	@NotNull
+	private static String getNRegName(int reg, int size) {
+		return switch (size) {
+			case 1 -> "r" + reg + "b";
+			case 2 -> "r" + reg + "w";
+			case 4 -> "r" + reg + "d";
+			default -> "r" + reg;
 		};
 	}
 
@@ -725,56 +731,5 @@ public final class X86Win64 {
 
 	private static String getStringLiteralName(int index) {
 		return "string_" + index;
-	}
-
-	private static class TrivialRegisterAllocator {
-
-		private static final int MAX_REGISTERS = 4;
-
-		private int freeRegs;
-
-		@Override
-		public String toString() {
-			final StringBuilder buffer = new StringBuilder();
-			buffer.append("used: ");
-			int mask = 1;
-			boolean first = true;
-			for (int i = 0; i < MAX_REGISTERS; i++, mask += mask) {
-				if ((freeRegs & mask) != 0) {
-					if (first) {
-						first = false;
-					}
-					else {
-						buffer.append(", ");
-					}
-					buffer.append(i);
-				}
-			}
-			if (first) {
-				buffer.append("none");
-			}
-			return buffer.toString();
-		}
-
-		public int allocate() {
-			int mask = 1;
-			for (int i = 0; i < MAX_REGISTERS; i++, mask += mask) {
-				if ((freeRegs & mask) == 0) {
-					freeRegs |= mask;
-					return i;
-				}
-			}
-			throw new IllegalStateException("no free reg");
-		}
-
-		public void free(int reg) {
-			final int mask = 1 << reg;
-			Utils.assertTrue((freeRegs & mask) != 0);
-			freeRegs ^= mask;
-		}
-
-		public boolean isNoneUsed() {
-			return freeRegs == 0;
-		}
 	}
 }
