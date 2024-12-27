@@ -15,7 +15,36 @@ import static org.junit.Assert.assertEquals;
 public class CfgLoopInfosTest {
 
 	@Test
-	public void test() {
+	public void testNestedIfs() {
+		final Cfg cfg = new Cfg("getSpacer");
+		add("getSpacer", List.of("then11", "nce8"), cfg);
+		add("then11", List.of("then12", "end12"), cfg);
+		add("nce8", List.of("end11"), cfg);
+		add("then12", List.of("ret"), cfg);
+		add("end12", List.of("then13", "end13"), cfg);
+		add("then13", List.of("ret"), cfg);
+		add("end13", List.of("end11"), cfg);
+		add("end11", List.of("ret"), cfg);
+		add("ret", List.of(), cfg);
+		cfg.setPredecessors();
+		final CfgLoopInfos infos = new CfgLoopInfos(cfg);
+		final List<String> inOrder = infos.getInOrder();
+		assertEquals(List.of(
+				"getSpacer",
+				"then11",
+				"then12",
+				"end12",
+				"then13",
+				"end13",
+				"end11",
+				"nce8",
+				"ret"
+
+		), inOrder);
+	}
+
+	@Test
+	public void testLoop() {
 		final Cfg cfg = new Cfg("a");
 		add("a", List.of("bb"), cfg);
 		add("bb", List.of("cc"), cfg);

@@ -17,6 +17,27 @@ public class CfgLoopInfos {
 	public CfgLoopInfos(Cfg cfg) {
 		this.cfg = cfg;
 		detectLoopHeadersAndNodes();
+
+		for (int i = 0; i < blocksInOrder.size(); i++) {
+			final String name = blocksInOrder.get(i);
+			final BasicBlock block = cfg.get(name);
+			final List<String> successors = block.successors();
+			if (successors.size() > 1) {
+				boolean found = false;
+				for (String successor : successors) {
+					if (blocksInOrder.indexOf(successor) == i + 1) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					System.out.println("Blocks out of order");
+					System.out.println(blocksInOrder);
+					System.out.println("  " + name + ": " + successors);
+					break;
+				}
+			}
+		}
 	}
 
 	public Map<String, Set<String>> getLoops() {
