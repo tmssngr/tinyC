@@ -1108,11 +1108,11 @@ start:
         setle bl
         lea rax, [rsp+14]
         mov [rax], bl
-        ; branch t.10, false, @for_7_continue
+        ; branch t.10, false, @for_8_break
         lea rax, [rsp+14]
         mov bl, [rax]
         or bl, bl
-        jz @for_7_continue
+        jz @for_8_break
         ; move c, column
         lea rax, [rsp+48]
         mov bx, [rax]
@@ -1196,7 +1196,7 @@ start:
         lea rax, [rsp+6]
         mov [rax], bx
         jmp @for_8
-@for_7_continue:
+@for_8_break:
         ; const t.16, 1
         mov ax, 1
         lea rbx, [rsp+24]
@@ -1441,6 +1441,7 @@ start:
         mov al, 32
         lea rbx, [rsp+0]
         mov [rbx], al
+        jmp @if_14_end
 @if_14_else:
         ; 88:7 if isFlag([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=88:18]])
         ; call t.10, isFlag, [cell]
@@ -1696,7 +1697,6 @@ start:
 @printSpaces:
         ; reserve space for local variables
         sub rsp, 16
-        ; 111:2 for i > 0
 @for_20:
         ; const t.2, 0
         mov ax, 0
@@ -1774,11 +1774,11 @@ start:
         setl bl
         lea rax, [rsp+1]
         mov [rax], bl
-        ; branch t.2, false, @if_21_end
+        ; branch t.2, false, @while_22
         lea rax, [rsp+1]
         mov bl, [rax]
         or bl, bl
-        jz @if_21_end
+        jz @while_22
         ; const count, 1
         mov al, 1
         lea rbx, [rsp+0]
@@ -1789,8 +1789,6 @@ start:
         neg rbx
         lea rax, [rsp+24]
         mov [rax], bx
-@if_21_end:
-        ; 123:2 while true
 @while_22:
         ; const t.4, 1
         mov al, 1
@@ -1914,11 +1912,11 @@ start:
         setl bl
         lea rax, [rsp+10]
         mov [rax], bl
-        ; branch t.6, false, @for_24_continue
+        ; branch t.6, false, @for_25_break
         lea rax, [rsp+10]
         mov bl, [rax]
         or bl, bl
-        jz @for_24_continue
+        jz @for_25_break
         ; call cell, getCell, [r, c]
         lea rax, [rsp+2]
         mov bx, [rax]
@@ -1993,7 +1991,7 @@ start:
         lea rax, [rsp+4]
         mov [rax], bx
         jmp @for_25
-@for_24_continue:
+@for_25_break:
         ; const t.14, 1
         mov ax, 1
         lea rbx, [rsp+22]
@@ -2239,11 +2237,11 @@ start:
         setl bl
         lea rax, [rsp+8]
         mov [rax], bl
-        ; branch t.4, false, @for_28_continue
+        ; branch t.4, false, @for_29_break
         lea rax, [rsp+8]
         mov bl, [rax]
         or bl, bl
-        jz @for_28_continue
+        jz @for_29_break
         ; const t.6, 0
         mov al, 0
         lea rbx, [rsp+12]
@@ -2273,7 +2271,7 @@ start:
         lea rax, [rsp+2]
         mov [rax], bx
         jmp @for_29
-@for_28_continue:
+@for_29_break:
         ; const t.8, 1
         mov ax, 1
         lea rbx, [rsp+16]
@@ -2581,7 +2579,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_33_end
-        ; 186:3 return
         jmp @maybeRevealAround_ret
 @if_33_end:
         ; const dr, -1
@@ -2640,11 +2637,11 @@ start:
         setle bl
         lea rax, [rsp+16]
         mov [rax], bl
-        ; branch t.12, false, @for_34_continue
+        ; branch t.12, false, @for_35_break
         lea rax, [rsp+16]
         mov bl, [rax]
         or bl, bl
-        jz @for_34_continue
+        jz @for_35_break
         ; 192:4 if dr == 0 && dc == 0
         ; 192:16 logic and
         ; const t.15, 0
@@ -2807,7 +2804,7 @@ start:
         lea rax, [rsp+4]
         mov [rax], bx
         jmp @for_35
-@for_34_continue:
+@for_35_break:
         ; const t.23, 1
         mov ax, 1
         lea rbx, [rsp+34]
@@ -3444,6 +3441,7 @@ start:
         push rbx
           call @setCell
         add rsp, 24
+        jmp @while_40
 @if_49_else:
         ; 262:8 if chr == 13
         ; const t.52, 13
@@ -3464,7 +3462,6 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @while_40
-        ; 263:4 if needsInitialize
         ; branch needsInitialize, false, @if_53_end
         lea rax, [rsp+0]
         mov bl, [rax]
@@ -3594,6 +3591,7 @@ start:
         sub rsp, 8
           call @maybeRevealAround
         add rsp, 24
+        jmp @while_40
 @main_ret:
         ; release space for local variables
         add rsp, 128
