@@ -34,7 +34,7 @@ public class Compiler {
 	}
 
 	@NotNull
-	private static Path compile(@NotNull Path inputFile) throws IOException, InterruptedException {
+	public static Path compile(@NotNull Path inputFile) throws IOException, InterruptedException {
 		final Program parsedProgram = Parser.parse(inputFile, Set.of("X86_64"));
 
 		final TypeChecker checker = new TypeChecker(Type.I64);

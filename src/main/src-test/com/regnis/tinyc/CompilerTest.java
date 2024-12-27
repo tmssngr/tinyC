@@ -3,6 +3,7 @@ package com.regnis.tinyc;
 import java.io.*;
 import java.nio.file.*;
 
+import org.jetbrains.annotations.*;
 import org.junit.*;
 
 /**
@@ -91,6 +92,11 @@ public class CompilerTest {
 	}
 
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
-		Compiler.compileAndRun(Path.of("src/main/resources-test", fileName));
+		Compiler.compileAndRun(absolutePath(fileName));
+	}
+
+	@NotNull
+	private Path absolutePath(String fileName) {
+		return Path.of("src/main/resources-test", fileName);
 	}
 }
