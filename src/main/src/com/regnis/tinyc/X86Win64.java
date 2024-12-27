@@ -316,10 +316,10 @@ public final class X86Win64 {
 			final int rightReg = loadVar(binary.right());
 			final String rightRegName = getRegName(rightReg);
 			if (getTypeSize(binary.left().type()) != 8) {
-				writeIndented("movsx " + leftRegName + ", " + getRegName(leftReg, binary.left()));
+				writeMovx(leftRegName, leftReg, binary.left(), true);
 			}
 			if (getTypeSize(binary.right().type()) != 8) {
-				writeIndented("movsx " + rightRegName + ", " + getRegName(rightReg, binary.right()));
+				writeMovx(rightRegName, rightReg, binary.right(), true);
 			}
 			writeIndented("imul " + " " + leftRegName + ", " + rightRegName);
 			storeVar(binary.target(), leftReg);
@@ -352,8 +352,8 @@ public final class X86Win64 {
 				writeIndented("movzx rcx, " + getRegName(rightReg, size));
 			}
 			else {
-				writeIndented("movsx rax, " + getRegName(leftReg, size));
-				writeIndented("movsx rcx, " + getRegName(rightReg, size));
+				writeMovx("rax", leftReg, binary.left(), signed);
+				writeMovx("rcx", rightReg, binary.right(), signed);
 			}
 			writeIndented("cqo"); // rdx := signbit(rax)
 			writeIndented("idiv " + rightRegName);
@@ -542,6 +542,12 @@ public final class X86Win64 {
 		final int valueReg = loadVar(retValue.var());
 		writeIndented("mov rax, " + getRegName(valueReg));
 		free(valueReg);
+	}
+
+	private void writeMovx(String targetRegName, int sourceReg, IRVar sourceVar, boolean signed) throws IOException {
+		final String signedString = signed ? "s" : "z";
+		final String op = getTypeSize(sourceVar.type()) == 4 ? "xd" : "x";
+		writeIndented("mov" + signedString + op + " " + targetRegName + ", " + getRegName(sourceReg, sourceVar));
 	}
 
 	private void storeVar(IRVar var, int valueReg) throws IOException {

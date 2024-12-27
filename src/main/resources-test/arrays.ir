@@ -122,7 +122,10 @@
 	var 25: t.25 (i64/8)
 	var 26: t.26 (u8*/8)
 	var 27: t.27 (i64/8)
-	; 181 pc
+	; 183 pc
+	; begin initialize global variables
+	const __random__, 0
+	; end initialize global variables
 	const chr, 32
 	const t.3, 0
 	cast t.4(u8*), t.3(i64)
@@ -180,5 +183,6 @@
 	ret
 
 Global variables
-	0: chars[] (u8*/2048)
+	0: __random__ (i32/4)
+	1: chars[] (u8*/2048)
 

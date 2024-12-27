@@ -99,7 +99,10 @@
 	var 2: t.2 (bool/1)
 	var 3: t.3 (i64/8)
 	var 4: t.4 (i64/8)
-	; 31 pc
+	; 33 pc
+	; begin initialize global variables
+	const __random__, 0
+	; end initialize global variables
 	const a, 1
 	const b, 2
 	; 6:2 if a > b
@@ -127,4 +130,7 @@
 	  call    [WriteFile]
 	mov     rsp, rdi
 	ret
+
+Global variables
+	0: __random__ (i32/4)
 

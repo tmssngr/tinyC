@@ -333,21 +333,25 @@ start:
         ; reserve space for local variables
         sub rsp, 48
         ; begin initialize global variables
+        ; const __random__, 0
+        mov eax, 0
+        lea rbx, [var_0]
+        mov [rbx], eax
         ; const space, 32
         mov ax, 32
-        lea rbx, [var_0]
+        lea rbx, [var_1]
         mov [rbx], ax
         ; const next, 63
         mov ax, 63
-        lea rbx, [var_1]
+        lea rbx, [var_2]
         mov [rbx], ax
         ; addrof ptrToSpace, space
-        lea rax, [var_0]
-        lea rbx, [var_2]
+        lea rax, [var_1]
+        lea rbx, [var_3]
         mov [rbx], rax
         ; end initialize global variables
         ; cast t.0(i64), next(i16)
-        lea rax, [var_1]
+        lea rax, [var_2]
         mov bx, [rax]
         movzx rbx, bx
         lea rax, [rsp+0]
@@ -359,7 +363,7 @@ start:
           call @printIntLf
         add rsp, 8
         ; cast t.2(i64), ptrToSpace(i16*)
-        lea rax, [var_2]
+        lea rax, [var_3]
         mov rbx, [rax]
         lea rax, [rsp+16]
         mov [rax], rbx
@@ -383,10 +387,10 @@ start:
         ; cast ptrToSpace(i16*), t.1(i64)
         lea rax, [rsp+8]
         mov rbx, [rax]
-        lea rax, [var_2]
+        lea rax, [var_3]
         mov [rax], rbx
         ; load t.5, [ptrToSpace]
-        lea rax, [var_2]
+        lea rax, [var_3]
         mov rbx, [rax]
         mov ax, [rbx]
         lea rbx, [rsp+40]
@@ -447,12 +451,14 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: space (i16/2)
-        var_0 rb 2
-        ; variable 1: next (i16/2)
+        ; variable 0: __random__ (i32/4)
+        var_0 rb 4
+        ; variable 1: space (i16/2)
         var_1 rb 2
-        ; variable 2: ptrToSpace (i16*/8)
-        var_2 rb 8
+        ; variable 2: next (i16/2)
+        var_2 rb 2
+        ; variable 3: ptrToSpace (i16*/8)
+        var_3 rb 8
 
 section '.idata' import data readable writeable
 
