@@ -106,7 +106,10 @@
 	var 9: t.9 (i16/2)
 	var 10: t.10 (i16/2)
 	var 11: t.11 (i64/8)
-	; 82 pc
+	; 84 pc
+	; begin initialize global variables
+	const __random__, 0
+	; end initialize global variables
 	const a, 10
 	cast t.4(i64), a(i16)
 	call _, printIntLf [t.4]
@@ -140,4 +143,7 @@
 	  call    [WriteFile]
 	mov     rsp, rdi
 	ret
+
+Global variables
+	0: __random__ (i32/4)
 

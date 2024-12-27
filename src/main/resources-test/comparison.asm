@@ -501,6 +501,12 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 416
+        ; begin initialize global variables
+        ; const __random__, 0
+        mov eax, 0
+        lea rbx, [var_0]
+        mov [rbx], eax
+        ; end initialize global variables
         ; const t.4, [string-0]
         lea rax, [string_0]
         lea rbx, [rsp+8]
@@ -1081,6 +1087,8 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
+        ; variable 0: __random__ (i32/4)
+        var_0 rb 4
 
 section '.data' data readable
         string_0 db '< (signed)', 0x0a, 0x00

@@ -271,31 +271,35 @@ start:
         ; reserve space for local variables
         sub rsp, 64
         ; begin initialize global variables
+        ; const __random__, 0
+        mov eax, 0
+        lea rbx, [var_0]
+        mov [rbx], eax
         ; const zero, 48
         mov al, 48
-        lea rbx, [var_0]
+        lea rbx, [var_1]
         mov [rbx], al
         ; const one, 49
         mov al, 49
-        lea rbx, [var_1]
+        lea rbx, [var_2]
         mov [rbx], al
         ; const two, 50
         mov al, 50
-        lea rbx, [var_2]
+        lea rbx, [var_3]
         mov [rbx], al
         ; const threeFour, 34
         mov al, 34
-        lea rbx, [var_3]
+        lea rbx, [var_4]
         mov [rbx], al
         ; end initialize global variables
         ; call _, printChar [zero]
-        lea rax, [var_0]
+        lea rax, [var_1]
         mov bl, [rax]
         push rbx
           call @printChar
         add rsp, 8
         ; addrof onePtr, one
-        lea rax, [var_1]
+        lea rax, [var_2]
         lea rbx, [rsp+0]
         mov [rbx], rax
         ; load t.2, [onePtr]
@@ -311,7 +315,7 @@ start:
           call @printChar
         add rsp, 8
         ; addrof twoPtr, two
-        lea rax, [var_2]
+        lea rax, [var_3]
         lea rbx, [rsp+8]
         mov [rbx], rax
         ; const t.5, 0
@@ -349,7 +353,7 @@ start:
           call @printChar
         add rsp, 8
         ; cast t.7(i64), threeFour(u8)
-        lea rax, [var_3]
+        lea rax, [var_4]
         mov bl, [rax]
         movzx rbx, bl
         lea rax, [rsp+48]
@@ -414,14 +418,16 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: zero (u8/1)
-        var_0 rb 1
-        ; variable 1: one (u8/1)
+        ; variable 0: __random__ (i32/4)
+        var_0 rb 4
+        ; variable 1: zero (u8/1)
         var_1 rb 1
-        ; variable 2: two (u8/1)
+        ; variable 2: one (u8/1)
         var_2 rb 1
-        ; variable 3: threeFour (u8/1)
+        ; variable 3: two (u8/1)
         var_3 rb 1
+        ; variable 4: threeFour (u8/1)
+        var_4 rb 1
 
 section '.idata' import data readable writeable
 

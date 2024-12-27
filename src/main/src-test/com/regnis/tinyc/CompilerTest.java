@@ -91,6 +91,11 @@ public class CompilerTest {
 		compileAndRun("rule110.c");
 	}
 
+	@Test
+	public void testPrng() throws IOException, InterruptedException {
+		compileAndRun("prng.c");
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(absolutePath(fileName));
 	}

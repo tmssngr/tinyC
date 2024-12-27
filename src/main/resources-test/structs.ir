@@ -113,7 +113,10 @@
 	var 16: t.16 (u8*/8)
 	var 17: t.17 (i64/8)
 	var 18: t.18 (u8/1)
-	; 124 pc
+	; 126 pc
+	; begin initialize global variables
+	const __random__, 0
+	; end initialize global variables
 	const t.2, 1
 	; 9:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=9:2].x
 	addrof t.3, pos
@@ -161,4 +164,7 @@
 	  call    [WriteFile]
 	mov     rsp, rdi
 	ret
+
+Global variables
+	0: __random__ (i32/4)
 
