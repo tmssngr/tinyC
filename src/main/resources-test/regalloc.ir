@@ -1,0 +1,92 @@
+@simple:
+ Local variables
+	var 0: four (u8/1)
+	var 1: three (u8/1)
+	var 2: one (u8/1)
+	; 20 pc
+	const four, 4
+	const three, 3
+	move one, four
+	sub one, one, three
+	; 5:9 return one
+	ret one
+	jump @simple_ret
+@simple_ret:
+
+@registerHint:
+ Local variables
+	arg 0: a (u8/1)
+	arg 1: b (u8/1)
+	var 2: t.2 (u8/1)
+	; 16 pc
+	; 9:11 return a + b
+	move t.2, a
+	add t.2, t.2, b
+	ret t.2
+	jump @registerHint_ret
+@registerHint_ret:
+
+@max:
+ Local variables
+	arg 0: a (u8/1)
+	arg 1: b (u8/1)
+	var 2: t.2 (bool/1)
+	; 18 pc
+	; 13:2 if a < b
+	lt t.2, a, b
+	branch t.2, false, @if_1_end
+	; 14:10 return b
+	ret b
+	jump @max_ret
+@if_1_end:
+	; 16:9 return a
+	ret a
+	jump @max_ret
+@max_ret:
+
+@fibonacci:
+ Local variables
+	arg 0: i (u8/1)
+	var 1: a (i16/2)
+	var 2: b (i16/2)
+	var 3: c (i16/2)
+	var 4: t.4 (bool/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (u8/1)
+	; 52 pc
+	const a, 0
+	const b, 1
+	; 22:2 while i > 0
+@while_2:
+	const t.5, 0
+	gt t.4, i, t.5
+	branch t.4, false, @while_2_break
+	const t.6, 1
+	sub i, i, t.6
+	move c, a
+	add c, c, b
+	move a, b
+	move b, c
+	jump @while_2
+@while_2_break:
+	; 28:9 return a
+	ret a
+	jump @fibonacci_ret
+@fibonacci_ret:
+
+@main:
+ Local variables
+	var 0: one (u8/1)
+	var 1: two (u8/1)
+	var 2: oneOrTwo (u8/1)
+	var 3: f5 (i16/2)
+	var 4: t.4 (u8/1)
+	; 24 pc
+	call one, simple, []
+	const two, 2
+	call _, registerHint [one, two]
+	call oneOrTwo, max, [one, two]
+	const t.4, 5
+	call f5, fibonacci, [t.4]
+@main_ret:
+

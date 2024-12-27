@@ -14,8 +14,8 @@ public final class IRVarInfos implements IRCanBeRegister {
 	private final IRVarInfos parent;
 
 	public IRVarInfos(@NotNull List<IRVarDef> vars, @NotNull Set<IRVar> cantBeRegister, @Nullable IRVarInfos parent) {
-		this.vars = vars;
-		this.cantBeRegister = cantBeRegister;
+		this.vars = Collections.unmodifiableList(vars);
+		this.cantBeRegister = Collections.unmodifiableSet(cantBeRegister);
 		this.parent = parent;
 	}
 
@@ -49,6 +49,25 @@ public final class IRVarInfos implements IRCanBeRegister {
 	@NotNull
 	public List<IRVarDef> vars() {
 		return vars;
+	}
+
+	@NotNull
+	public Set<IRVar> cantBeRegister() {
+		return cantBeRegister;
+	}
+
+	@NotNull
+	public IRVarInfos global() {
+		return parent != null ? parent : this;
+	}
+
+	public int size(@NotNull IRVar var) {
+		for (IRVarDef def : vars) {
+			if (def.var().equals(var)) {
+				return def.size();
+			}
+		}
+		throw new IllegalStateException("Unknown var " + var);
 	}
 
 	@NotNull

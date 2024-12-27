@@ -179,7 +179,7 @@
 	shiftright t.19, t.19, t.20
 	move __random__, t.17
 	add __random__, __random__, t.19
-	; 127:9 return __random__
+	; 123:9 return __random__
 	ret __random__
 	jump @random_ret
 @random_ret:
@@ -1132,10 +1132,10 @@
 @printStringLength:
 	mov     rdi, rsp
 	
+	mov     r8, rdx
+	mov     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
 	xor     r9, r9
 	push    0
 	sub     rsp, 20h
@@ -1160,17 +1160,15 @@
 	ret
 
 @setCursor:
-	mov     rdi, rsp
-	and     spl, 0xf0
-	
+	sub     rsp, 28h
+	shl     rcx, 16
+	movsxd  rcx, ecx
+	movsx   rdx, dx
+	add     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     dx, [rdi+10h]
-	shl     rdx, 16
-	mov     dx, [rdi+18h]
-	sub     rsp, 20h
-	  call   [SetConsoleCursorPosition]
-	mov     rsp, rdi
+	call   [SetConsoleCursorPosition]
+	add     rsp, 28h
 	ret
 
 Global variables

@@ -78,10 +78,6 @@ public class IROptimizer {
 			}
 		}.process();
 
-		if (obsoleteLabels.isEmpty()) {
-			return instructions;
-		}
-
 		final List<IRInstruction> newInstructions = new ArrayList<>(instructions.size());
 		boolean skipJump = false;
 		for (IRInstruction instruction : instructions) {
