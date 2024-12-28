@@ -34,6 +34,11 @@ public final class Cfg {
 		return block;
 	}
 
+	@NotNull
+	public Set<String> allNames() {
+		return Collections.unmodifiableSet(nameToBlock.keySet());
+	}
+
 	public void add(@NotNull BasicBlock block) {
 		final BasicBlock prev = nameToBlock.put(block.name, block);
 		Utils.assertTrue(prev == null, "duplicate definition of block " + block.name);

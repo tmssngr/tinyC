@@ -17,34 +17,68 @@ public class CfgLoopInfosTest {
 	@Test
 	public void testNestedIfs() {
 		final Cfg cfg = new Cfg("getSpacer");
-		add("getSpacer", List.of("then11", "nce8"), cfg);
-		add("then11", List.of("then12", "end12"), cfg);
-		add("nce8", List.of("end11"), cfg);
-		add("then12", List.of("ret"), cfg);
-		add("end12", List.of("then13", "end13"), cfg);
-		add("then13", List.of("ret"), cfg);
-		add("end13", List.of("end11"), cfg);
-		add("end11", List.of("ret"), cfg);
+		add("getSpacer", List.of("then1", "nce"), cfg);
+		add("then1", List.of("then2", "end2"), cfg);
+		add("nce", List.of("end1"), cfg);
+		add("then2", List.of("ret"), cfg);
+		add("end2", List.of("then3", "end3"), cfg);
+		add("then3", List.of("ret"), cfg);
+		add("end3", List.of("end1"), cfg);
+		add("end1", List.of("ret"), cfg);
 		add("ret", List.of(), cfg);
 		cfg.setPredecessors();
 		final CfgLoopInfos infos = new CfgLoopInfos(cfg);
-		final List<String> inOrder = infos.getInOrder();
+
+		final List<CfgLoopInfos.BlockPath> paths = infos.getBlockPaths();
+		final CfgLoopInfos.BlockPath root = new CfgLoopInfos.BlockPath("getSpacer");
+		assertEquals(List.of(
+				root.resolve("nce").resolve("end1").resolve("ret"),
+				root.resolve("then1").resolve("end2").resolve("end3").resolve("end1").resolve("ret"),
+				root.resolve("then1").resolve("end2").resolve("then3").resolve("ret"),
+				root.resolve("then1").resolve("then2").resolve("ret")
+		), paths);
+
+		final List<String> order3 = infos.detectOrder3();
+
+		final List<String> inOrder = infos.getBlocksInOrder2();
 		assertEquals(List.of(
 				"getSpacer",
-				"then11",
-				"then12",
-				"end12",
-				"then13",
-				"end13",
-				"end11",
-				"nce8",
+				"then1",
+				"then2",
+				"end2",
+				"then3",
+				"end3",
+				"end1",
+				"nce",
 				"ret"
 
 		), inOrder);
 	}
 
 	@Test
-	public void testLoop() {
+	public void testSimpleLoop() {
+		final Cfg cfg = new Cfg("start");
+		add("start", List.of("loop"), cfg);
+		add("loop", List.of("break", "body"), cfg);
+		add("body", List.of("loop"), cfg);
+		add("break", List.of(), cfg);
+		cfg.setPredecessors();
+		final CfgLoopInfos infos = new CfgLoopInfos(cfg);
+
+		final List<String> order3 = infos.detectOrder3();
+
+		final List<CfgLoopInfos.BlockPath> paths = infos.getBlockPaths();
+		final CfgLoopInfos.BlockPath root = new CfgLoopInfos.BlockPath("start");
+		assertEquals(List.of(
+				root.resolve("loop").resolve("body").resolve("loop"),
+				root.resolve("loop").resolve("break")
+		), paths);
+
+		final List<String> inOrder = infos.getBlocksInOrder2();
+	}
+
+	@Test
+	public void testNestedLoop() {
 		final Cfg cfg = new Cfg("a");
 		add("a", List.of("bb"), cfg);
 		add("bb", List.of("cc"), cfg);
