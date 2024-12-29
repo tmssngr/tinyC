@@ -251,23 +251,23 @@ public final class X86Win64 {
 		}
 		Utils.assertTrue(allocator.isNoneUsed());
 		switch (instruction) {
-		case IRLabel label -> writeLabel(label.label());
-		case IRComment comment -> writeComment(comment.comment());
 		case IRAddrOf addrOf -> writeAddrOf(addrOf);
 		case IRAddrOfArray addrOf -> writeAddrOfArray(addrOf);
-		case IRLiteral literal -> writeLiteral(literal);
-		case IRString literal -> writeString(literal);
-		case IRMove copy -> writeCopy(copy);
 		case IRBinary binary -> writeBinary(binary);
-		case IRCompare compare -> writeCompare(compare);
-		case IRUnary unary -> writeUnary(unary);
+		case IRBranch branch -> writeBranch(branch);
+		case IRCall call -> writeCall(call);
 		case IRCast cast -> writeCast(cast);
+		case IRComment comment -> writeComment(comment.comment());
+		case IRCompare compare -> writeCompare(compare);
+		case IRJump jump -> writeJump(jump);
+		case IRLabel label -> writeLabel(label.label());
+		case IRLiteral literal -> writeLiteral(literal);
 		case IRMemLoad load -> writeLoad(load);
 		case IRMemStore store -> writeStore(store);
-		case IRBranch branch -> writeBranch(branch);
-		case IRJump jump -> writeJump(jump);
-		case IRCall call -> writeCall(call);
+		case IRMove copy -> writeCopy(copy);
 		case IRRetValue retValue -> writeRetValue(retValue);
+		case IRString literal -> writeString(literal);
+		case IRUnary unary -> writeUnary(unary);
 		default -> throw new UnsupportedOperationException(instruction.getClass() + " " + instruction);
 		}
 		Utils.assertTrue(allocator.isNoneUsed(), instruction + ": not all regs freed");
