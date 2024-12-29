@@ -12,11 +12,8 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public final class X86Win64 {
+public final class X86Win64 extends AsmWriter {
 
-	private static final String INDENTATION = "        ";
-
-	private final BufferedWriter writer;
 	private final TrivialRegisterAllocator allocator = new TrivialRegisterAllocator();
 
 	@SuppressWarnings("unused") private boolean debug;
@@ -24,7 +21,7 @@ public final class X86Win64 {
 	private int rspOffset;
 
 	public X86Win64(@NotNull BufferedWriter writer) {
-		this.writer = writer;
+		super(writer);
 	}
 
 	public void write(IRProgram program) throws IOException {
@@ -159,15 +156,6 @@ public final class X86Win64 {
 		localVarOffsets = new int[0];
 	}
 
-	private void writeAsmFunction(IRAsmFunction function) throws IOException {
-		writeComment(function.toString());
-
-		writeLabel(function.label());
-		for (String line : function.asmLines()) {
-			writeLines(line, line.contains(":") ? "" : INDENTATION);
-		}
-	}
-
 	private int prepareLocalVarsOffsets(List<IRVarDef> localVars) {
 		localVarOffsets = new int[localVars.size()];
 		int argCount = 0;
@@ -237,75 +225,25 @@ public final class X86Win64 {
 		writeIndented("ret");
 	}
 
-	private void writeInstructions(List<IRInstruction> instructions) throws IOException {
-		for (IRInstruction instruction : instructions) {
-			writeInstruction(instruction);
-		}
-	}
-
-	private void writeInstruction(IRInstruction instruction) throws IOException {
-		if (!(instruction instanceof IRComment)
-		    && !(instruction instanceof IRLabel)
-		    && !(instruction instanceof IRJump)) {
-			writeComment(String.valueOf(instruction));
-		}
+	protected void writeInstruction(IRInstruction instruction) throws IOException {
 		Utils.assertTrue(allocator.isNoneUsed());
-		switch (instruction) {
-		case IRLabel label -> writeLabel(label.label());
-		case IRComment comment -> writeComment(comment.comment());
-		case IRAddrOf addrOf -> writeAddrOf(addrOf);
-		case IRAddrOfArray addrOf -> writeAddrOfArray(addrOf);
-		case IRLiteral literal -> writeLiteral(literal);
-		case IRString literal -> writeString(literal);
-		case IRMove copy -> writeCopy(copy);
-		case IRBinary binary -> writeBinary(binary);
-		case IRCompare compare -> writeCompare(compare);
-		case IRUnary unary -> writeUnary(unary);
-		case IRCast cast -> writeCast(cast);
-		case IRMemLoad load -> writeLoad(load);
-		case IRMemStore store -> writeStore(store);
-		case IRBranch branch -> writeBranch(branch);
-		case IRJump jump -> writeJump(jump);
-		case IRCall call -> writeCall(call);
-		case IRRetValue retValue -> writeRetValue(retValue);
-		default -> throw new UnsupportedOperationException(instruction.getClass() + " " + instruction);
-		}
+		super.writeInstruction(instruction);
 		Utils.assertTrue(allocator.isNoneUsed(), instruction + ": not all regs freed");
 	}
 
-	private void writeAddrOf(IRAddrOf addrOf) throws IOException {
+	protected void writeAddrOf(IRAddrOf addrOf) throws IOException {
 		final int addrReg = addrOf(addrOf.source());
 		storeVar(addrOf.target(), addrReg);
 		free(addrReg);
 	}
 
-	private void writeAddrOfArray(IRAddrOfArray addrOf) throws IOException {
+	protected void writeAddrOfArray(IRAddrOfArray addrOf) throws IOException {
 		final int addrReg = addrOf(addrOf.array());
 		storeVar(addrOf.addr(), addrReg);
 		free(addrReg);
 	}
 
-	private void writeLiteral(IRLiteral literal) throws IOException {
-		final int valueReg = getFreeReg();
-		writeIndented("mov " + getRegName(valueReg, literal.target()) + ", " + literal.value());
-		storeVar(literal.target(), valueReg);
-		free(valueReg);
-	}
-
-	private void writeString(IRString literal) throws IOException {
-		final int valueReg = getFreeReg();
-		writeIndented("lea " + getRegName(valueReg) + ", [" + getStringLiteralName(literal.stringIndex()) + "]");
-		storeVar(literal.target(), valueReg);
-		free(valueReg);
-	}
-
-	private void writeCopy(IRMove copy) throws IOException {
-		final int valueReg = loadVar(copy.source());
-		storeVar(copy.target(), valueReg);
-		free(valueReg);
-	}
-
-	private void writeBinary(IRBinary binary) throws IOException {
+	protected void writeBinary(IRBinary binary) throws IOException {
 		final boolean signed = binary.left().type() != Type.U8;
 		switch (binary.op()) {
 		case Add -> writeBinary("add", binary);
@@ -405,100 +343,7 @@ public final class X86Win64 {
 		}
 	}
 
-	private void writeBinary(String op, IRBinary binary) throws IOException {
-		final int leftReg = loadVar(binary.left());
-		final String leftRegName = getRegName(leftReg, binary.left());
-		final int rightReg = loadVar(binary.right());
-		final String rightRegName = getRegName(rightReg, binary.right());
-		writeIndented(op + " " + leftRegName + ", " + rightRegName);
-		storeVar(binary.target(), leftReg);
-		free(rightReg);
-		free(leftReg);
-	}
-
-	private void writeCompare(IRCompare compare) throws IOException {
-		final boolean signed = compare.left().type() != Type.U8;
-		switch (compare.op()) {
-		case Lt -> writeCompare(signed ? "setl" : "setb", compare); // setb (below) = setc (carry)
-		case LtEq -> writeCompare(signed ? "setle" : "setbe", compare);
-		case Equals -> writeCompare("sete", compare);
-		case NotEquals -> writeCompare("setne", compare);
-		case GtEq -> writeCompare(signed ? "setge" : "setae", compare); // setae (above or equal) = setnc (not carry)
-		case Gt -> writeCompare(signed ? "setg" : "seta", compare); // seta (above)
-
-		default -> throw new UnsupportedOperationException(String.valueOf(compare));
-		}
-	}
-
-	private void writeCompare(String command, IRCompare compare) throws IOException {
-		final int leftReg = loadVar(compare.left());
-		final String leftRegName = getRegName(leftReg, compare.left());
-		final int rightReg = loadVar(compare.right());
-		final String rightRegName = getRegName(rightReg, compare.right());
-		writeIndented("cmp " + leftRegName + ", " + rightRegName);
-		writeIndented(command + " " + getRegName(leftReg, 1));
-		storeVar(compare.target(), leftReg);
-		free(rightReg);
-		free(leftReg);
-	}
-
-	private void writeUnary(IRUnary unary) throws IOException {
-		switch (unary.op()) {
-		case Neg -> {
-			final int valueReg = loadVar(unary.source());
-			writeIndented("neg " + getRegName(valueReg));
-			storeVar(unary.target(), valueReg);
-			free(valueReg);
-		}
-		case Not -> {
-			final int valueReg = loadVar(unary.source());
-			writeIndented("not " + getRegName(valueReg));
-			storeVar(unary.target(), valueReg);
-			free(valueReg);
-		}
-		case NotLog -> {
-			final int valueReg = loadVar(unary.source());
-			final String regName = getRegName(valueReg, unary.source());
-			writeIndented("or " + regName + ", " + regName);
-			writeIndented("sete " + regName);
-			storeVar(unary.target(), valueReg);
-			free(valueReg);
-		}
-		default -> throw new UnsupportedOperationException(String.valueOf(unary));
-		}
-	}
-
-	private void writeCast(IRCast cast) throws IOException {
-		final int valueReg = loadVar(cast.source());
-		final int sourceSize = getTypeSize(cast.source().type());
-		final int targetSize = getTypeSize(cast.target().type());
-		if (targetSize > sourceSize) {
-			writeIndented("movzx " + getRegName(valueReg, targetSize) + ", " + getRegName(valueReg, sourceSize));
-		}
-		storeVar(cast.target(), valueReg);
-		free(valueReg);
-	}
-
-	private void writeLoad(IRMemLoad load) throws IOException {
-		final int addrReg = loadVar(load.addr());
-		final String addrRegName = getRegName(addrReg);
-		final int valueReg = getFreeReg();
-		writeIndented("mov " + getRegName(valueReg, load.target()) + ", [" + addrRegName + "]");
-		free(addrReg);
-		storeVar(load.target(), valueReg);
-		free(valueReg);
-	}
-
-	private void writeStore(IRMemStore store) throws IOException {
-		final int addrReg = loadVar(store.addr());
-		final String addrRegName = getRegName(addrReg);
-		final int valueReg = loadVar(store.value());
-		writeIndented("mov [" + addrRegName + "], " + getRegName(valueReg, store.value()));
-		free(valueReg);
-		free(addrReg);
-	}
-
-	private void writeBranch(IRBranch branch) throws IOException {
+	protected void writeBranch(IRBranch branch) throws IOException {
 		final int conditionReg = loadVar(branch.conditionVar());
 		final String conditionRegName = getRegName(conditionReg, 1);
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
@@ -511,7 +356,7 @@ public final class X86Win64 {
 		}
 	}
 
-	private void writeCall(IRCall call) throws IOException {
+	protected void writeCall(IRCall call) throws IOException {
 		final List<IRVar> args = call.args();
 		final int argsSize = args.size() * 8;
 		final int offset = (args.size() + 1) % 2 * 8;
@@ -538,10 +383,123 @@ public final class X86Win64 {
 		}
 	}
 
-	private void writeRetValue(IRRetValue retValue) throws IOException {
+	protected void writeCast(IRCast cast) throws IOException {
+		final int valueReg = loadVar(cast.source());
+		final int sourceSize = getTypeSize(cast.source().type());
+		final int targetSize = getTypeSize(cast.target().type());
+		if (targetSize > sourceSize) {
+			writeIndented("movzx " + getRegName(valueReg, targetSize) + ", " + getRegName(valueReg, sourceSize));
+		}
+		storeVar(cast.target(), valueReg);
+		free(valueReg);
+	}
+
+	protected void writeCompare(IRCompare compare) throws IOException {
+		final boolean signed = compare.left().type() != Type.U8;
+		switch (compare.op()) {
+		case Lt -> writeCompare(signed ? "setl" : "setb", compare); // setb (below) = setc (carry)
+		case LtEq -> writeCompare(signed ? "setle" : "setbe", compare);
+		case Equals -> writeCompare("sete", compare);
+		case NotEquals -> writeCompare("setne", compare);
+		case GtEq -> writeCompare(signed ? "setge" : "setae", compare); // setae (above or equal) = setnc (not carry)
+		case Gt -> writeCompare(signed ? "setg" : "seta", compare); // seta (above)
+
+		default -> throw new UnsupportedOperationException(String.valueOf(compare));
+		}
+	}
+
+	protected void writeMove(IRMove copy) throws IOException {
+		final int valueReg = loadVar(copy.source());
+		storeVar(copy.target(), valueReg);
+		free(valueReg);
+	}
+
+	protected void writeLiteral(IRLiteral literal) throws IOException {
+		final int valueReg = getFreeReg();
+		writeIndented("mov " + getRegName(valueReg, literal.target()) + ", " + literal.value());
+		storeVar(literal.target(), valueReg);
+		free(valueReg);
+	}
+
+	protected void writeMemLoad(IRMemLoad load) throws IOException {
+		final int addrReg = loadVar(load.addr());
+		final String addrRegName = getRegName(addrReg);
+		final int valueReg = getFreeReg();
+		writeIndented("mov " + getRegName(valueReg, load.target()) + ", [" + addrRegName + "]");
+		free(addrReg);
+		storeVar(load.target(), valueReg);
+		free(valueReg);
+	}
+
+	protected void writeMemStore(IRMemStore store) throws IOException {
+		final int addrReg = loadVar(store.addr());
+		final String addrRegName = getRegName(addrReg);
+		final int valueReg = loadVar(store.value());
+		writeIndented("mov [" + addrRegName + "], " + getRegName(valueReg, store.value()));
+		free(valueReg);
+		free(addrReg);
+	}
+
+	protected void writeRetValue(IRRetValue retValue) throws IOException {
 		final int valueReg = loadVar(retValue.var());
 		writeIndented("mov rax, " + getRegName(valueReg));
 		free(valueReg);
+	}
+
+	protected void writeString(IRString literal) throws IOException {
+		final int valueReg = getFreeReg();
+		writeIndented("lea " + getRegName(valueReg) + ", [" + getStringLiteralName(literal.stringIndex()) + "]");
+		storeVar(literal.target(), valueReg);
+		free(valueReg);
+	}
+
+	protected void writeUnary(IRUnary unary) throws IOException {
+		switch (unary.op()) {
+		case Neg -> {
+			final int valueReg = loadVar(unary.source());
+			writeIndented("neg " + getRegName(valueReg));
+			storeVar(unary.target(), valueReg);
+			free(valueReg);
+		}
+		case Not -> {
+			final int valueReg = loadVar(unary.source());
+			writeIndented("not " + getRegName(valueReg));
+			storeVar(unary.target(), valueReg);
+			free(valueReg);
+		}
+		case NotLog -> {
+			final int valueReg = loadVar(unary.source());
+			final String regName = getRegName(valueReg, unary.source());
+			writeIndented("or " + regName + ", " + regName);
+			writeIndented("sete " + regName);
+			storeVar(unary.target(), valueReg);
+			free(valueReg);
+		}
+		default -> throw new UnsupportedOperationException(String.valueOf(unary));
+		}
+	}
+
+	private void writeBinary(String op, IRBinary binary) throws IOException {
+		final int leftReg = loadVar(binary.left());
+		final String leftRegName = getRegName(leftReg, binary.left());
+		final int rightReg = loadVar(binary.right());
+		final String rightRegName = getRegName(rightReg, binary.right());
+		writeIndented(op + " " + leftRegName + ", " + rightRegName);
+		storeVar(binary.target(), leftReg);
+		free(rightReg);
+		free(leftReg);
+	}
+
+	private void writeCompare(String command, IRCompare compare) throws IOException {
+		final int leftReg = loadVar(compare.left());
+		final String leftRegName = getRegName(leftReg, compare.left());
+		final int rightReg = loadVar(compare.right());
+		final String rightRegName = getRegName(rightReg, compare.right());
+		writeIndented("cmp " + leftRegName + ", " + rightRegName);
+		writeIndented(command + " " + getRegName(leftReg, 1));
+		storeVar(compare.target(), leftReg);
+		free(rightReg);
+		free(leftReg);
 	}
 
 	private void writeMovx(String targetRegName, int sourceReg, IRVar sourceVar, boolean signed) throws IOException {
@@ -593,47 +551,8 @@ public final class X86Win64 {
 		allocator.free(addrReg);
 	}
 
-	private void writeJump(IRJump jump) throws IOException {
+	protected void writeJump(IRJump jump) throws IOException {
 		writeIndented("jmp " + jump.label());
-	}
-
-	private void writeLabel(String label) throws IOException {
-		write(label + ":");
-		writeNL();
-	}
-
-	private void writeComment(String s) throws IOException {
-		writeIndented("; " + s);
-	}
-
-	private void writeIndented(String text) throws IOException {
-		writeLines(text, INDENTATION);
-	}
-
-	private void writeLines(String text) throws IOException {
-		writeLines(text, null);
-	}
-
-	private void writeLines(String text, @Nullable String leading) throws IOException {
-		final String[] lines = text.split("\\r?\\n");
-		for (String line : lines) {
-			if (leading != null && line.length() > 0) {
-				write(leading);
-			}
-			write(line);
-			writeNL();
-		}
-	}
-
-	private void writeNL() throws IOException {
-		write(System.lineSeparator());
-	}
-
-	private void write(String text) throws IOException {
-		writer.write(text);
-		if (debug) {
-			System.out.print(text);
-		}
 	}
 
 	@NotNull
