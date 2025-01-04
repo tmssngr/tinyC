@@ -26,7 +26,7 @@ public class Compiler {
 	}
 
 	public static void compileAndRun(@NotNull Path inputFile) throws IOException, InterruptedException {
-		final Path outputFile = useExtension(inputFile, ".out");
+		final Path outputFile = useExtension(inputFile, "", ".out");
 		compileAndRun(inputFile, outputFile);
 	}
 
@@ -37,22 +37,35 @@ public class Compiler {
 
 	@NotNull
 	public static Path compile(@NotNull Path inputFile) throws IOException, InterruptedException {
-		final Program parsedProgram = Parser.parse(inputFile, Set.of("X86_64"));
+		compile(inputFile, "z8/", TargetArchitecture.Z8);
 
-		final TypeChecker checker = new TypeChecker(Type.I64);
+		final String subdir = "";
+		final Path exeFile = useExtension(inputFile, subdir, ".exe");
+		Files.deleteIfExists(exeFile);
+		final Path asmFile = compile(inputFile, subdir, TargetArchitecture.WIN_X86_64);
+		if (!launchFasm(asmFile)) {
+			throw new IOException("Failed to compile");
+		}
+		return exeFile;
+	}
+
+	@NotNull
+	private static Path compile(@NotNull Path inputFile, String subdir, TargetArchitecture architecture) throws IOException, InterruptedException {
+		final Program parsedProgram = Parser.parse(inputFile, architecture.defines);
+
+		final TypeChecker checker = new TypeChecker(architecture.pointerIntType);
 		final Program typedProgram = checker.check(parsedProgram);
 
 		Program program = UnusedFunctionRemover.removeUnusedFunctions(typedProgram);
 
-		final Path astFile = useExtension(inputFile, ".ast");
-		final Path astSimpleFile = useExtension(inputFile, ".asts");
-		final Path irFile = useExtension(inputFile, ".ir");
-		final Path irRegFile = useExtension(inputFile, ".irr");
-		final Path dotFile = useExtension(inputFile, ".dot");
-		final Path svgFile = useExtension(inputFile, ".svg");
-		final Path cfgFile = useExtension(inputFile, ".cfg");
-		final Path asmFile = useExtension(inputFile, ".asm");
-		final Path exeFile = useExtension(inputFile, ".exe");
+		final Path astFile = useExtension(inputFile, subdir, ".ast");
+		final Path astSimpleFile = useExtension(inputFile, subdir, ".asts");
+		final Path irFile = useExtension(inputFile, subdir, ".ir");
+		final Path irRegFile = useExtension(inputFile, subdir, ".irr");
+		final Path dotFile = useExtension(inputFile, subdir, ".dot");
+		final Path svgFile = useExtension(inputFile, subdir, ".svg");
+		final Path cfgFile = useExtension(inputFile, subdir, ".cfg");
+		final Path asmFile = useExtension(inputFile, subdir, ".asm");
 		Files.deleteIfExists(astFile);
 		Files.deleteIfExists(irFile);
 		Files.deleteIfExists(irRegFile);
@@ -60,7 +73,6 @@ public class Compiler {
 		Files.deleteIfExists(svgFile);
 		Files.deleteIfExists(cfgFile);
 		Files.deleteIfExists(asmFile);
-		Files.deleteIfExists(exeFile);
 
 		write(program, astFile);
 
@@ -84,7 +96,7 @@ public class Compiler {
 					DetectVarLiveness.process(cfg, true);
 					irWriter.write(cfg);
 					dotWriter.writeCfg(cfg);
-					final List<IRInstruction> instructions = LSRegAlloc.process(function, LSArchitecture.WIN_X86_64);
+					final List<IRInstruction> instructions = LSRegAlloc.process(function, architecture.architecture);
 					final List<IRInstruction> optimizedInstructions = IROptimizer.optimize(instructions);
 					final IRFunction optimizedFunction = CleanupLocalUnusedVariables.optimize(function.derive(optimizedInstructions));
 					functions.add(optimizedFunction);
@@ -98,22 +110,21 @@ public class Compiler {
 		write(irProgram, irRegFile);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
-			final X86Win64 output = new X86Win64(writer);
+			final AsmWriter output = architecture.createAsmWriter(writer);
 			output.write(irProgram);
 		}
 
-		if (!launchFasm(asmFile)) {
-			throw new IOException("Failed to compile");
-		}
-		return exeFile;
+		return asmFile;
 	}
 
-	private static Path useExtension(Path path, String extension) {
+	private static Path useExtension(Path path, String subdir, String extension) throws IOException {
 		final String fileName = path.getFileName().toString();
 		final int dotIndex = fileName.lastIndexOf('.');
 		final String derivedName = dotIndex > 1 ? fileName.substring(0, dotIndex) + extension
 				: fileName + extension;
-		return path.resolveSibling(derivedName);
+		final Path file = path.resolveSibling(subdir + derivedName);
+		Files.createDirectories(file.getParent());
+		return file;
 	}
 
 	private static void write(Program program, Path file) throws IOException {
