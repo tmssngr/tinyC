@@ -25,7 +25,7 @@ public final class X86Win64 extends AsmWriter {
 		super(writer);
 	}
 
-	public void write(IRProgram program) throws IOException {
+	public void write(@NotNull IRProgram program) throws IOException {
 		writePreample();
 
 		boolean addEmptyLine = false;

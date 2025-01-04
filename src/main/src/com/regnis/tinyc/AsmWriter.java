@@ -12,6 +12,8 @@ import org.jetbrains.annotations.*;
  */
 abstract class AsmWriter {
 
+	public abstract void write(@NotNull IRProgram program) throws IOException;
+
 	protected abstract void writeAddrOf(IRAddrOf addrOf) throws IOException;
 
 	protected abstract void writeAddrOfArray(IRAddrOfArray addrOf) throws IOException;
