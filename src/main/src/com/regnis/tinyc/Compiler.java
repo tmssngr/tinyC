@@ -39,6 +39,11 @@ public class Compiler {
 	public static Path compile(@NotNull Path inputFile) throws IOException, InterruptedException {
 		compile(inputFile, "z8/", TargetArchitecture.Z8);
 
+		return compileWinX86_64(inputFile);
+	}
+
+	@NotNull
+	private static Path compileWinX86_64(@NotNull Path inputFile) throws IOException, InterruptedException {
 		final String subdir = "";
 		final Path exeFile = useExtension(inputFile, subdir, ".exe");
 		Files.deleteIfExists(exeFile);
