@@ -1,0 +1,172 @@
+@printStringLength:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	var 2: chr (u8/1)
+	var 3: t.3 (bool/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (u8/1)
+	; 31 pc
+	; 13:2 while length > 0
+@while_1:
+	const t.4, 0
+	gt t.3, length, t.4
+	branch t.3, false, @while_1_break
+	load chr, [str]
+	call _, printChar [chr]
+	const t.5, 1
+	sub length, length, t.5
+	jump @while_1
+@while_1_break:
+@printStringLength_ret:
+
+@printUint:
+ Local variables
+	arg 0: number (i16/2)
+	var 1: buffer[] (u8*/20)
+	var 2: pos (u8/1)
+	var 3: remainder (i64/8)
+	var 4: digit (u8/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (i16/2)
+	var 7: t.7 (i16/2)
+	var 8: t.8 (i16/2)
+	var 9: t.9 (u8/1)
+	var 10: t.10 (u8/1)
+	var 11: t.11 (u8*/8)
+	var 12: t.12 (i16/2)
+	var 13: t.13 (u8*/8)
+	var 14: t.14 (bool/1)
+	var 15: t.15 (i16/2)
+	var 16: t.16 (u8*/8)
+	var 17: t.17 (i16/2)
+	var 18: t.18 (u8*/8)
+	var 19: t.19 (u8/1)
+	var 20: t.20 (u8/1)
+	; 137 pc
+	const pos, 20
+	; 24:2 while true
+@while_2:
+	const t.5, 1
+	sub pos, pos, t.5
+	const t.7, 10
+	move t.6, number
+	mod t.6, t.6, t.7
+	cast remainder(i64), t.6(i16)
+	const t.8, 10
+	div number, number, t.8
+	cast t.9(u8), remainder(i64)
+	const t.10, 48
+	move digit, t.9
+	add digit, digit, t.10
+	cast t.12(i16), pos(u8)
+	cast t.13(u8*), t.12(i16)
+	addrof t.11, [buffer]
+	add t.11, t.11, t.13
+	store [t.11], digit
+	; 30:3 if number == 0
+	const t.15, 0
+	equals t.14, number, t.15
+	branch t.14, false, @if_3_end
+	jump @while_2_break
+@if_3_end:
+	jump @while_2
+@while_2_break:
+	cast t.17(i16), pos(u8)
+	cast t.18(u8*), t.17(i16)
+	addrof t.16, [buffer]
+	add t.16, t.16, t.18
+	const t.20, 20
+	move t.19, t.20
+	sub t.19, t.19, pos
+	call _, printStringLength [t.16, t.19]
+@printUint_ret:
+
+@printIntLf:
+ Local variables
+	arg 0: number (i16/2)
+	var 1: t.1 (bool/1)
+	var 2: t.2 (i16/2)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	; 30 pc
+	; 38:2 if number < 0
+	const t.2, 0
+	lt t.1, number, t.2
+	branch t.1, false, @if_4_end
+	const t.3, 45
+	call _, printChar [t.3]
+	neg number, number
+@if_4_end:
+	call _, printUint [number]
+	const t.4, 10
+	call _, printChar [t.4]
+@printIntLf_ret:
+
+@initRandom:
+ Local variables
+	arg 0: salt (i32/4)
+	; 0 pc
+@initRandom_ret:
+
+@random:
+ Local variables
+	var 0: t.0 (i32/4)
+	; 6 pc
+	; 70:9 return 0
+	const t.0, 0
+	ret t.0
+	jump @random_ret
+@random_ret:
+
+@randomU8:
+ Local variables
+	var 0: t.0 (u8/1)
+	var 1: t.1 (i32/4)
+	; 12 pc
+	; 74:10 return (u8)
+	call t.1, random, []
+	cast t.0(u8), t.1(i32)
+	ret t.0
+	jump @randomU8_ret
+@randomU8_ret:
+
+@main:
+ Local variables
+	var 0: i (u8/1)
+	var 1: r (u8/1)
+	var 2: t.2 (i32/4)
+	var 3: t.3 (bool/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (i16/2)
+	var 6: t.6 (u8/1)
+	; 40 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const t.2, 7439742
+	call _, initRandom [t.2]
+	const i, 0
+	; 5:2 for i < 50
+@for_5:
+	const t.4, 50
+	lt t.3, i, t.4
+	branch t.3, false, @for_5_break
+	call r, randomU8, []
+	cast t.5(i16), r(u8)
+	call _, printIntLf [t.5]
+@for_5_continue:
+	const t.6, 1
+	add i, i, t.6
+	jump @for_5
+@for_5_break:
+@main_ret:
+
+@printChar:
+	ld   r0, SPH
+	ld   r1, SPL
+	add  r1, 3
+	adc  r0, 0
+	ldc  r1, @rr0
+	ld   %15, r1
+	jp   %0818
+

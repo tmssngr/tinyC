@@ -1,0 +1,68 @@
+@simple:
+	; 2 pc
+	const r1, 4
+	const r2, 3
+	move r0, r1
+	sub r0, r0, r2
+	; 5:9 return one
+
+@registerHint:
+ Local variables
+	arg 0: a (u8/1)
+	arg 1: b (u8/1)
+	; 2 pc
+	; 9:11 return a + b
+	move r0, r1
+	add r0, r0, r2
+
+@max:
+ Local variables
+	arg 0: a (u8/1)
+	arg 1: b (u8/1)
+	; 5 pc
+	; 13:2 if a < b
+	lt r3, r1, r2
+	branch r3, true, @if_1_then
+	; 16:9 return a
+	move r0, r1
+	jump @max_ret
+@if_1_then:
+	; 14:10 return b
+	move r0, r2
+@max_ret:
+
+@fibonacci:
+ Local variables
+	arg 0: i (u8/1)
+	; 8 pc
+	const r0, 0
+	const r2, 1
+	; 22:2 while i > 0
+	jump @while_2
+@while_2_body:
+	const r3, 1
+	sub r1, r1, r3
+	move r3, r0
+	add r3, r3, r2
+	move r0, r2
+	move r2, r3
+@while_2:
+	const r3, 0
+	gt r3, r1, r3
+	branch r3, true, @while_2_body
+	; 28:9 return a
+
+@main:
+	; 9 pc
+	call r0, simple, []
+	move r5, r0
+	const r6, 2
+	move r1, r5
+	move r2, r6
+	call _, registerHint [r1, r2]
+	move r1, r5
+	move r2, r6
+	call r0, max, [r1, r2]
+	const r1, 5
+	call r0, fibonacci, [r1]
+

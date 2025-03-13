@@ -1,0 +1,318 @@
+@printString:
+ Local variables
+	arg 0: str (u8*/8)
+	; 8 pc
+	move r5, r1
+	; 2:2 while true
+	jump @while_1
+@if_2_end:
+	move r1, r6
+	call _, printChar [r1]
+@while_1:
+	load r6, [r5]
+	; 4:3 if chr == 0
+	const r0, 0
+	equals r0, r6, r0
+	branch r0, false, @if_2_end
+
+@printStringLength:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	; 9 pc
+	move r5, r1
+	move r6, r2
+	; 13:2 while length > 0
+	jump @while_3
+@while_3_body:
+	load r1, [r5]
+	call _, printChar [r1]
+	const r0, 1
+	sub r6, r6, r0
+@while_3:
+	const r0, 0
+	gt r0, r6, r0
+	branch r0, true, @while_3_body
+
+@printUint:
+ Local variables
+	arg 0: number (i16/2)
+	var 1: buffer[] (u8*/20)
+	; 22 pc
+	const r5, 20
+	; 24:2 while true
+@while_4:
+	const r6, 1
+	sub r5, r5, r6
+	const r6, 10
+	move r0, r1
+	mod r0, r0, r6
+	cast r6(i64), r0(i16)
+	const r0, 10
+	div r1, r1, r0
+	cast r6(u8), r6(i64)
+	const r0, 48
+	add r6, r6, r0
+	cast r0(i16), r5(u8)
+	cast r0(u8*), r0(i16)
+	addrof r3, [buffer]
+	add r3, r3, r0
+	store [r3], r6
+	; 30:3 if number == 0
+	const r6, 0
+	equals r6, r1, r6
+	branch r6, false, @while_4
+	cast r6(i16), r5(u8)
+	cast r6(u8*), r6(i16)
+	addrof r1, [buffer]
+	add r1, r1, r6
+	const r6, 20
+	move r2, r6
+	sub r2, r2, r5
+	call _, printStringLength [r1, r2]
+
+@printIntLf:
+ Local variables
+	arg 0: number (i16/2)
+	; 8 pc
+	move r5, r1
+	; 38:2 if number < 0
+	const r6, 0
+	lt r6, r5, r6
+	branch r6, false, @if_6_end
+	const r1, 45
+	call _, printChar [r1]
+	neg r5, r5
+@if_6_end:
+	move r1, r5
+	call _, printUint [r1]
+	const r1, 10
+	call _, printChar [r1]
+
+@main:
+ Local variables
+	var 0: c (i16/2)
+	var 1: d (i16/2)
+	var 2: t (bool/1)
+	var 3: f (bool/1)
+	var 4: b1 (u8/1)
+	; 250 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const r1, [string-0]
+	call _, printString [r1]
+	const r5, 0
+	const r6, 1
+	const r0, 2
+	const r2, 3
+	const r3, 1
+	const r4, 0
+	move r1, r5
+	and r1, r1, r5
+	move c, r0
+	move d, r2
+	move t, r3
+	move f, r4
+	call _, printIntLf [r1]
+	move r1, r5
+	and r1, r1, r6
+	call _, printIntLf [r1]
+	move r1, r6
+	and r1, r1, r5
+	call _, printIntLf [r1]
+	move r1, r6
+	and r1, r1, r6
+	call _, printIntLf [r1]
+	const r1, [string-1]
+	call _, printString [r1]
+	move r1, r5
+	or r1, r1, r5
+	call _, printIntLf [r1]
+	move r1, r5
+	or r1, r1, r6
+	call _, printIntLf [r1]
+	move r1, r6
+	or r1, r1, r5
+	call _, printIntLf [r1]
+	move r1, r6
+	or r1, r1, r6
+	call _, printIntLf [r1]
+	const r1, [string-2]
+	call _, printString [r1]
+	move r1, r5
+	xor r1, r1, r5
+	call _, printIntLf [r1]
+	move r1, r5
+	move r0, c
+	xor r1, r1, r0
+	move c, r0
+	call _, printIntLf [r1]
+	move r1, r6
+	xor r1, r1, r5
+	call _, printIntLf [r1]
+	move r1, r6
+	move r5, c
+	xor r1, r1, r5
+	call _, printIntLf [r1]
+	const r1, [string-3]
+	call _, printString [r1]
+	; 26:15 logic and
+	move r0, f
+	move r2, r0
+	branch r2, false, @and_next_7
+	move r2, r0
+@and_next_7:
+	cast r1(i16), r2(bool)
+	move f, r0
+	call _, printIntLf [r1]
+	; 27:15 logic and
+	move r0, f
+	move r2, r0
+	branch r2, true, @and_2nd_8
+	move r3, t
+	jump @and_next_8
+@and_2nd_8:
+	move r3, t
+	move r2, r3
+@and_next_8:
+	cast r1(i16), r2(bool)
+	move t, r3
+	move f, r0
+	call _, printIntLf [r1]
+	; 28:15 logic and
+	move r0, t
+	move r2, r0
+	branch r2, true, @and_2nd_9
+	move r3, f
+	jump @and_next_9
+@and_2nd_9:
+	move r3, f
+	move r2, r3
+@and_next_9:
+	cast r1(i16), r2(bool)
+	move t, r0
+	move f, r3
+	call _, printIntLf [r1]
+	; 29:15 logic and
+	move r0, t
+	move r2, r0
+	branch r2, false, @and_next_10
+	move r2, r0
+@and_next_10:
+	cast r1(i16), r2(bool)
+	move t, r0
+	call _, printIntLf [r1]
+	const r1, [string-4]
+	call _, printString [r1]
+	; 31:15 logic or
+	move r0, f
+	move r2, r0
+	branch r2, true, @or_next_11
+	move r2, r0
+@or_next_11:
+	cast r1(i16), r2(bool)
+	move f, r0
+	call _, printIntLf [r1]
+	; 32:15 logic or
+	move r0, f
+	move r2, r0
+	branch r2, false, @or_2nd_12
+	move r3, t
+	jump @or_next_12
+@or_2nd_12:
+	move r3, t
+	move r2, r3
+@or_next_12:
+	cast r1(i16), r2(bool)
+	move t, r3
+	move f, r0
+	call _, printIntLf [r1]
+	; 33:15 logic or
+	move r0, t
+	move r2, r0
+	branch r2, false, @or_2nd_13
+	move r3, f
+	jump @or_next_13
+@or_2nd_13:
+	move r3, f
+	move r2, r3
+@or_next_13:
+	cast r1(i16), r2(bool)
+	move t, r0
+	move f, r3
+	call _, printIntLf [r1]
+	; 34:15 logic or
+	move r0, t
+	move r2, r0
+	branch r2, true, @or_next_14
+	move r2, r0
+@or_next_14:
+	cast r1(i16), r2(bool)
+	move t, r0
+	call _, printIntLf [r1]
+	const r1, [string-5]
+	call _, printString [r1]
+	move r0, f
+	notlog r0, r0
+	cast r1(i16), r0(bool)
+	call _, printIntLf [r1]
+	move r0, t
+	notlog r0, r0
+	cast r1(i16), r0(bool)
+	call _, printIntLf [r1]
+	const r1, [string-6]
+	call _, printString [r1]
+	const r0, 10
+	const r2, 6
+	const r3, 1
+	and r0, r0, r2
+	or r0, r0, r3
+	cast r1(i16), r0(u8)
+	move b1, r3
+	call _, printIntLf [r1]
+	; 43:20 logic or
+	equals r0, r6, r5
+	branch r0, false, @or_2nd_15
+	move r2, d
+	jump @or_next_15
+@or_2nd_15:
+	move r2, d
+	lt r0, r5, r2
+@or_next_15:
+	cast r1(i16), r0(bool)
+	move d, r2
+	call _, printIntLf [r1]
+	; 44:20 logic and
+	equals r0, r6, r5
+	branch r0, false, @and_next_16
+	move r2, d
+	lt r0, r5, r2
+@and_next_16:
+	cast r1(i16), r0(bool)
+	call _, printIntLf [r1]
+	const r1, -1
+	call _, printIntLf [r1]
+	neg r1, r6
+	call _, printIntLf [r1]
+	move r5, b1
+	not r5, r5
+	cast r1(i16), r5(u8)
+	call _, printIntLf [r1]
+
+@printChar:
+	ld   r0, SPH
+	ld   r1, SPL
+	add  r1, 3
+	adc  r0, 0
+	ldc  r1, @rr0
+	ld   %15, r1
+	jp   %0818
+
+String literals
+	string lit 0 "Bit-&:\n\0"
+	string lit 1 "\nBit-|:\n\0"
+	string lit 2 "\nBit-^:\n\0"
+	string lit 3 "\nLogic-&&:\n\0"
+	string lit 4 "\nLogic-||:\n\0"
+	string lit 5 "\nLogic-!:\n\0"
+	string lit 6 "\nmisc:\n\0"

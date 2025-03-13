@@ -1,0 +1,109 @@
+@printStringLength:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	; 9 pc
+	move r5, r1
+	move r6, r2
+	; 13:2 while length > 0
+	jump @while_1
+@while_1_body:
+	load r1, [r5]
+	call _, printChar [r1]
+	const r0, 1
+	sub r6, r6, r0
+@while_1:
+	const r0, 0
+	gt r0, r6, r0
+	branch r0, true, @while_1_body
+
+@printUint:
+ Local variables
+	arg 0: number (i16/2)
+	var 1: buffer[] (u8*/20)
+	; 22 pc
+	const r5, 20
+	; 24:2 while true
+@while_2:
+	const r6, 1
+	sub r5, r5, r6
+	const r6, 10
+	move r0, r1
+	mod r0, r0, r6
+	cast r6(i64), r0(i16)
+	const r0, 10
+	div r1, r1, r0
+	cast r6(u8), r6(i64)
+	const r0, 48
+	add r6, r6, r0
+	cast r0(i16), r5(u8)
+	cast r0(u8*), r0(i16)
+	addrof r3, [buffer]
+	add r3, r3, r0
+	store [r3], r6
+	; 30:3 if number == 0
+	const r6, 0
+	equals r6, r1, r6
+	branch r6, false, @while_2
+	cast r6(i16), r5(u8)
+	cast r6(u8*), r6(i16)
+	addrof r1, [buffer]
+	add r1, r1, r6
+	const r6, 20
+	move r2, r6
+	sub r2, r2, r5
+	call _, printStringLength [r1, r2]
+
+@printIntLf:
+ Local variables
+	arg 0: number (i16/2)
+	; 8 pc
+	move r5, r1
+	; 38:2 if number < 0
+	const r6, 0
+	lt r6, r5, r6
+	branch r6, false, @if_4_end
+	const r1, 45
+	call _, printChar [r1]
+	neg r5, r5
+@if_4_end:
+	move r1, r5
+	call _, printUint [r1]
+	const r1, 10
+	call _, printChar [r1]
+
+@main:
+	; 11 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const r5, 5
+	; 5:2 while i > 0
+	jump @while_5
+@while_5_body:
+	cast r1(i16), r5(u8)
+	call _, printIntLf [r1]
+	const r6, 1
+	sub r5, r5, r6
+@while_5:
+	const r6, 0
+	gt r6, r5, r6
+	branch r6, true, @while_5_body
+@while_6:
+	cast r1(i16), r5(u8)
+	call _, printIntLf [r1]
+	const r0, 1
+	add r5, r5, r0
+	; 13:3 if i < 5
+	const r0, 5
+	lt r0, r5, r0
+	branch r0, true, @while_6
+
+@printChar:
+	ld   r0, SPH
+	ld   r1, SPL
+	add  r1, 3
+	adc  r0, 0
+	ldc  r1, @rr0
+	ld   %15, r1
+	jp   %0818
+

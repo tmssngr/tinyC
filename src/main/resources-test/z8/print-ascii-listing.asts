@@ -1,0 +1,58 @@
+i32 __random__;
+
+void printString(u8* str) {
+	u8 chr;
+
+	while (true) {
+		chr = *str;
+		if (chr == 0) {
+			break;
+		}
+		printChar(chr);
+	}
+}
+
+void printChar(u8 chr) {
+}
+
+void printNibble(u8 x) {
+	x = x & 15;
+	if (x > 9) {
+		x = x + 7;
+	}
+	x = x + 48;
+	printChar(x);
+}
+
+void printHex2(u8 x) {
+	printNibble(x >> 4);
+	printNibble(x);
+}
+
+void main() {
+	u8 i;
+	u8 i;
+
+	printString(" x");
+	i = 0;
+	for (; i < 16; i = i + 1) {
+		if ((i & 7) == 0) {
+			printChar(32);
+		}
+		printNibble(i);
+	}
+	printChar(10);
+	i = 32;
+	for (; i < 128; i = i + 1) {
+		if ((i & 15) == 0) {
+			printHex2(i);
+		}
+		if ((i & 7) == 0) {
+			printChar(32);
+		}
+		printChar(i);
+		if ((i & 15) == 15) {
+			printChar(10);
+		}
+	}
+}

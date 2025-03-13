@@ -1,0 +1,52 @@
+i32 __random__;
+i16 space;
+i16 next;
+i16* ptrToSpace;
+
+void printStringLength(u8* str, u8 length) {
+	u8 chr;
+
+	while (length > 0) {
+		chr = *str;
+		printChar(chr);
+		length = length - 1;
+	}
+}
+
+void printUint(i16 number) {
+	u8* buffer[20];
+	u8 pos;
+	i64 remainder;
+	u8 digit;
+
+	pos = 20;
+	while (true) {
+		pos = pos - 1;
+		remainder = (i64)(number % 10);
+		number = number / 10;
+		digit = ((u8)remainder) + 48;
+		buffer[(i16)pos] = digit;
+		if (number == 0) {
+			break;
+		}
+	}
+	printStringLength(&buffer[(i16)pos], 20 - pos);
+}
+
+void printIntLf(i16 number) {
+	if (number < 0) {
+		printChar(45);
+		number = -number;
+	}
+	printUint(number);
+	printChar(10);
+}
+
+void printChar(u8 chr) {
+}
+
+void main() {
+	printIntLf(next);
+	ptrToSpace = (i16*)(((i16)ptrToSpace) + 2);
+	printIntLf(*ptrToSpace);
+}
