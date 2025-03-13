@@ -3,6 +3,7 @@ package com.regnis.tinyc;
 import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
+import com.regnis.tinyc.linearscanregalloc.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -46,6 +47,7 @@ public class Compiler {
 		final Path astFile = useExtension(inputFile, ".ast");
 		final Path astSimpleFile = useExtension(inputFile, ".asts");
 		final Path irFile = useExtension(inputFile, ".ir");
+		final Path irRegFile = useExtension(inputFile, ".irr");
 		final Path dotFile = useExtension(inputFile, ".dot");
 		final Path svgFile = useExtension(inputFile, ".svg");
 		final Path cfgFile = useExtension(inputFile, ".cfg");
@@ -53,6 +55,7 @@ public class Compiler {
 		final Path exeFile = useExtension(inputFile, ".exe");
 		Files.deleteIfExists(astFile);
 		Files.deleteIfExists(irFile);
+		Files.deleteIfExists(irRegFile);
 		Files.deleteIfExists(dotFile);
 		Files.deleteIfExists(svgFile);
 		Files.deleteIfExists(cfgFile);
@@ -78,13 +81,12 @@ public class Compiler {
 				for (IRFunction function : irProgram.functions()) {
 					final String name = function.name();
 					final ControlFlowGraph cfg = CfgGenerator.create(name, function.instructions());
-					DetectVarLiveness.process(cfg);
+					DetectVarLiveness.process(cfg, true);
 					irWriter.write(cfg);
 					dotWriter.writeCfg(cfg);
-					final List<BasicBlock> blocks = cfg.blocks();
-					final List<IRInstruction> instructions = getFlattenInstructions(blocks);
-
-					final IRFunction optimizedFunction = function.derive(instructions);
+					final List<IRInstruction> instructions = LSRegAlloc.process(function, LSArchitecture.WIN_X86_64);
+					final List<IRInstruction> optimizedInstructions = IROptimizer.optimize(instructions);
+					final IRFunction optimizedFunction = CleanupLocalUnusedVariables.optimize(function.derive(optimizedInstructions));
 					functions.add(optimizedFunction);
 				}
 				dotWriter.end();
@@ -93,6 +95,7 @@ public class Compiler {
 		launchGraphViz(dotFile, svgFile);
 
 		irProgram = irProgram.derive(functions);
+		write(irProgram, irRegFile);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);
@@ -103,19 +106,6 @@ public class Compiler {
 			throw new IOException("Failed to compile");
 		}
 		return exeFile;
-	}
-
-	@NotNull
-	private static List<IRInstruction> getFlattenInstructions(@NotNull List<BasicBlock> blocks) {
-		final List<IRInstruction> instructions = new ArrayList<>();
-		for (BasicBlock block : blocks) {
-			if (block.name.startsWith("@")) {
-				instructions.add(new IRLabel(block.name));
-			}
-			instructions.addAll(block.instructions());
-		}
-
-		return IROptimizer.optimize(instructions);
 	}
 
 	private static Path useExtension(Path path, String extension) {
