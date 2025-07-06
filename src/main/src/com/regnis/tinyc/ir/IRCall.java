@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 
 import java.util.*;
 
@@ -9,12 +10,27 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRCall(@Nullable IRVar target, @NotNull String name, @NotNull List<IRVar> args, @NotNull Location location) implements IRInstruction {
+public record IRCall(@Nullable IRVar target, @NotNull Type type, @NotNull String name, @NotNull List<IRVar> args, @NotNull Location location) implements IRInstruction {
+	public IRCall {
+		if (target != null) {
+			Utils.assertTrue(type.equals(target.type()));
+		}
+	}
+
 	@Override
 	public String toString() {
-		if (target == null) {
-			return "call _, " + name + " " + args;
+		final StringBuilder buffer = new StringBuilder();
+		buffer.append("call ");
+		if (type != Type.VOID) {
+			buffer.append(target != null ? target.toString() : "_");
+			buffer.append(" = ");
 		}
-		return "call " + target + ", " + name + ", " + args;
+		buffer.append(name);
+		buffer.append(args);
+		if (type != Type.VOID) {
+			buffer.append(" -> ");
+			buffer.append(type);
+		}
+		return buffer.toString();
 	}
 }

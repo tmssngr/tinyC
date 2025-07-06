@@ -26,7 +26,7 @@ start:
 @printString:
         ; reserve space for local variables
         sub rsp, 16
-        ; call length, strlen, [str]
+        ; call length = strlen[str] -> i64
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -34,7 +34,7 @@ start:
         add rsp, 8
         lea rbx, [rsp+0]
         mov [rbx], rax
-        ; call _, printStringLength [str, length]
+        ; call printStringLength[str, length]
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -63,7 +63,7 @@ start:
         mov rax, 1
         lea rbx, [rsp+8]
         mov [rbx], rax
-        ; call _, printStringLength [t.1, t.2]
+        ; call printStringLength[t.1, t.2]
         lea rax, [rsp+0]
         mov rbx, [rax]
         push rbx
@@ -175,7 +175,7 @@ start:
         mov al, 124
         lea rbx, [rsp+1]
         mov [rbx], al
-        ; call _, printChar [t.1]
+        ; call printChar[t.1]
         lea rax, [rsp+1]
         mov bl, [rax]
         push rbx
@@ -245,7 +245,7 @@ start:
         mov al, 32
         lea rbx, [rsp+32]
         mov [rbx], al
-        ; call _, printChar [t.8]
+        ; call printChar[t.8]
         lea rax, [rsp+32]
         mov bl, [rax]
         push rbx
@@ -257,7 +257,7 @@ start:
         mov al, 42
         lea rbx, [rsp+33]
         mov [rbx], al
-        ; call _, printChar [t.9]
+        ; call printChar[t.9]
         lea rax, [rsp+33]
         mov bl, [rax]
         push rbx
@@ -276,7 +276,7 @@ start:
         lea rax, [string_0]
         lea rbx, [rsp+40]
         mov [rbx], rax
-        ; call _, printString [t.10]
+        ; call printString[t.10]
         lea rax, [rsp+40]
         mov rbx, [rax]
         push rbx
@@ -431,7 +431,7 @@ start:
         lea rax, [rsp+32]
         mov cl, [rax]
         mov [rbx], cl
-        ; call _, printBoard []
+        ; call printBoard[]
         sub rsp, 8
           call @printBoard
         add rsp, 8
@@ -719,7 +719,7 @@ start:
         mov [rax], bl
         jmp @for_6
 @for_6_break:
-        ; call _, printBoard []
+        ; call printBoard[]
         sub rsp, 8
           call @printBoard
         add rsp, 8

@@ -35,7 +35,7 @@ start:
         mov rax, 1
         lea rbx, [rsp+8]
         mov [rbx], rax
-        ; call _, printStringLength [t.1, t.2]
+        ; call printStringLength[t.1, t.2]
         lea rax, [rsp+0]
         mov rbx, [rax]
         push rbx
@@ -229,7 +229,7 @@ start:
         movzx rbx, bl
         lea rax, [rsp+120]
         mov [rax], rbx
-        ; call _, printStringLength [t.13, t.16]
+        ; call printStringLength[t.13, t.16]
         lea rax, [rsp+96]
         mov rbx, [rax]
         push rbx
@@ -268,7 +268,7 @@ start:
         mov al, 45
         lea rbx, [rsp+1]
         mov [rbx], al
-        ; call _, printChar [t.2]
+        ; call printChar[t.2]
         lea rax, [rsp+1]
         mov bl, [rax]
         push rbx
@@ -281,7 +281,7 @@ start:
         lea rax, [rsp+24]
         mov [rax], rbx
 @if_3_end:
-        ; call _, printUint [number]
+        ; call printUint[number]
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -291,7 +291,7 @@ start:
         mov al, 10
         lea rbx, [rsp+2]
         mov [rbx], al
-        ; call _, printChar [t.3]
+        ; call printChar[t.3]
         lea rax, [rsp+2]
         mov bl, [rax]
         push rbx
@@ -547,7 +547,7 @@ start:
         movzx rbx, bl
         lea rax, [rsp+192]
         mov [rax], rbx
-        ; call _, printIntLf [t.27]
+        ; call printIntLf[t.27]
         lea rax, [rsp+192]
         mov rbx, [rax]
         push rbx
