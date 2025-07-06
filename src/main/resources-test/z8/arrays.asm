@@ -44,6 +44,6 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: chars[] (u8*/2048)
-        var_0 rb 2048
+        ; variable 0: chars[] (u8*/512)
+        var_0 rb 512
 

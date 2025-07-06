@@ -10,7 +10,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public interface LSArchitecture extends LSCallingConventionProvider {
+public interface LSArchitecture extends LSCallingConventionProvider, LSTypeRegisterCountProvider {
 
 	int registerCount();
 
@@ -40,6 +40,11 @@ public interface LSArchitecture extends LSCallingConventionProvider {
 		}
 
 		@Override
+		public int registerCount(@NotNull Type type) {
+			return 1;
+		}
+
+		@Override
 		public LSCallingConvention getCallingConvention(@NotNull Type targetType, @NotNull List<Type> argTypes) {
 			return callingConvention;
 		}
@@ -61,17 +66,26 @@ public interface LSArchitecture extends LSCallingConventionProvider {
 			return false;
 		}
 
+		public int registerCount(@NotNull Type type) {
+			Utils.assertTrue(type != Type.VOID);
+			if (type.isPointer()) {
+				return 2;
+			}
+
+			return Type.getSize(type);
+		}
+
 		@Override
 		public LSCallingConvention getCallingConvention(@NotNull Type returnType, @NotNull List<Type> argTypes) {
 			final List<Integer> registers = new ArrayList<>();
 			int register = 0;
 			if (returnType != Type.VOID) {
-				register = getSize(returnType);
+				register = registerCount(returnType);
 			}
 
 			int volatileRegisterCount = registerCount / 2;
 			for (Type type : argTypes) {
-				final int size = getSize(type);
+				final int size = registerCount(type);
 				if (type.isPointer() && (register & 1) == 1) {
 					register++;
 				}
@@ -85,15 +99,6 @@ public interface LSArchitecture extends LSCallingConventionProvider {
 				register = nextRegister;
 			}
 			return new LSCallingConvention(registers, volatileRegisterCount);
-		}
-
-		private int getSize(Type type) {
-			Utils.assertTrue(type != Type.VOID);
-			if (type.isPointer()) {
-				return 2;
-			}
-
-			return Type.getSize(type);
 		}
 	}
 }

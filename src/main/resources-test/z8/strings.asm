@@ -50,8 +50,8 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: text (u8*/8)
-        var_0 rb 8
+        ; variable 0: text (u8*/2)
+        var_0 rb 2
 
 section '.data' data readable
         string_0 db 'hello world', 0x0a, 0x00

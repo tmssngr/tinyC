@@ -17,11 +17,11 @@ public final class LSRegAlloc {
 
 	@NotNull
 	public static List<IRInstruction> process(@NotNull IRFunction function, @NotNull LSArchitecture architecture) {
-		return process(function, architecture.isX86(), architecture.registerCount(), architecture);
+		return process(function, architecture.isX86(), architecture.registerCount(), architecture, architecture);
 	}
 
 	@NotNull
-	public static List<IRInstruction> process(@NotNull IRFunction function, boolean isX86, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider) {
+	public static List<IRInstruction> process(@NotNull IRFunction function, boolean isX86, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull LSTypeRegisterCountProvider typeRegisterCountProvider) {
 		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, isX86);
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), preprocessorResult.instructions());
 		DetectVarLiveness.process(cfg, false);
@@ -30,7 +30,7 @@ public final class LSRegAlloc {
 		final IRVarInfos varInfos = preprocessorResult.varInfos();
 		final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(function.returnType(), varInfos.getArgumentTypes());
 
-		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, isX86);
+		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, typeRegisterCountProvider, registerCount, isX86);
 		intervalFactory.addFunctionArgs(varInfos, callingConvention.argRegisters());
 		for (BasicBlock block : blocks) {
 			prepareBlock(block, intervalFactory);
@@ -40,7 +40,7 @@ public final class LSRegAlloc {
 
 //		intervalFactory.debugPrint(function.name());
 
-		final LSAlgorithm algorithm = new LSAlgorithm(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount);
+		final LSAlgorithm algorithm = new LSAlgorithm(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), typeRegisterCountProvider, registerCount);
 		final Map<IRVar, LSVarRegisters> registerVarIntervals = algorithm.run();
 
 		final Function<IRVar, IRVar> localCopyToGlobalOriginal = preprocessorResult.localCopyToGlobalOriginal();

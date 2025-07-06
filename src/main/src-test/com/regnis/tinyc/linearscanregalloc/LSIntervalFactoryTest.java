@@ -41,9 +41,11 @@ public class LSIntervalFactoryTest {
 				new IRVarDef(c, 8),
 				new IRVarDef(d, 8)
 		), Set.of(), globalVarInfos);
-		final LSIntervalFactory intervals = new LSIntervalFactory(varInfos, (targetType, argTypes) -> {
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> {
 			throw new UnsupportedOperationException();
-		}, 4, false);
+		};
+		final LSTypeRegisterCountProvider typeRegisterCountProvider = type -> 1;
+		final LSIntervalFactory intervals = new LSIntervalFactory(varInfos, callingConventionProvider, typeRegisterCountProvider, 4, false);
 		intervals.addFunctionArgs(varInfos, List.of(1, 2));
 		assertEquals(List.of(), intervals.getInstructions());
 		assertEqualIntervals(List.of(), intervals.getVarIntervals());
@@ -165,11 +167,13 @@ public class LSIntervalFactoryTest {
 		final IRVarInfos varInfos = new IRVarInfos(List.of(
 				new IRVarDef(a, 8)
 		), Set.of(), globalVarInfos);
-		final LSIntervalFactory intervals = new LSIntervalFactory(varInfos, (targetType, argTypes) -> {
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> {
 			assertEquals(Type.VOID, targetType);
 			assertEquals(List.of(Type.I64), argTypes);
 			return new LSCallingConvention(List.of(), 4);
-		}, 5, false);
+		};
+		final LSTypeRegisterCountProvider typeRegisterCountProvider = type -> 1;
+		final LSIntervalFactory intervals = new LSIntervalFactory(varInfos, callingConventionProvider, typeRegisterCountProvider, 5, false);
 		intervals.addFunctionArgs(varInfos, List.of());
 		assertEquals(List.of(), intervals.getInstructions());
 		assertEqualIntervals(List.of(), intervals.getVarIntervals());

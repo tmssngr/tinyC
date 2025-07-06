@@ -113,8 +113,8 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: field[] (u8*/6400)
-        var_0 rb 6400
+        ; variable 0: field[] (u8*/1600)
+        var_0 rb 1600
 
 section '.data' data readable
         string_0 db '|', 0x0a, 0x00

@@ -1,18 +1,17 @@
 @printString:
  Local variables
-	arg 0: str (u8*/8)
+	arg 0: str (u8*/2)
 	; 8 pc
 	move r8, r0
 	; 2:2 while true
 	jump @while_1
 @if_2_end:
-	move r0, r9
+	move r0, r10
 	call printChar[r0]
 @while_1:
-	load r9, [r8]
+	load r10, [r8]
 	; 4:3 if chr == 0
-	const r0, 0
-	equals r0, r9, r0
+	equals r0, r10, 0
 	branch r0, false, @if_2_end
 
 @printBoard:
@@ -26,11 +25,10 @@
 	; 12:3 if [...] == 0
 	cast r9(i16), r8(u8)
 	cast r9(u8*), r9(i16)
-	addrof r10, [board]
-	add r10, r10, r9
-	load r9, [r10]
-	const r10, 0
-	equals r9, r9, r10
+	addrof r11, [board]
+	add r11, r11, r9
+	load r9, [r11]
+	equals r9, r9, 0
 	branch r9, true, @if_4_then
 	const r0, 42
 	call printChar[r0]
@@ -41,8 +39,7 @@
 @for_3_continue:
 	inc r8
 @for_3:
-	const r9, 30
-	lt r9, r8, r9
+	lt r9, r8, 30
 	branch r9, true, @for_3_body
 	const r0, [string-0]
 	call printString[r0]
@@ -58,21 +55,20 @@
 	const r9, 0
 	cast r10(i16), r8(u8)
 	cast r10(u8*), r10(i16)
-	addrof r11, [board]
-	add r11, r11, r10
-	store [r11], r9
+	addrof r12, [board]
+	add r12, r12, r10
+	store [r12], r9
 	inc r8
 @for_5:
-	const r9, 30
-	lt r9, r8, r9
+	lt r9, r8, 30
 	branch r9, true, @for_5_body
 	const r8, 1
 	const r9, 29
 	cast r9(i16), r9(u8)
 	cast r9(u8*), r9(i16)
-	addrof r10, [board]
-	add r10, r10, r9
-	store [r10], r8
+	addrof r11, [board]
+	add r11, r11, r9
+	store [r11], r8
 	call printBoard[]
 	const r8, 0
 	; 30:2 for i < 28
@@ -80,16 +76,16 @@
 @for_6_body:
 	const r9, 0
 	cast r9(u8*), r9(i16)
-	addrof r10, [board]
-	add r10, r10, r9
-	load r9, [r10]
+	addrof r11, [board]
+	add r11, r11, r9
+	load r9, [r11]
 	const r10, 1
 	shiftleft r9, r9, r10
 	const r10, 1
 	cast r10(u8*), r10(i16)
-	addrof r11, [board]
-	add r11, r11, r10
-	load r10, [r11]
+	addrof r12, [board]
+	add r12, r12, r10
+	load r10, [r12]
 	or r9, r9, r10
 	const r10, 1
 	; 32:3 for j < 29
@@ -103,11 +99,11 @@
 	const r11, 1
 	move r13, r10
 	add r13, r13, r11
-	cast r11(i16), r13(u8)
-	cast r11(u8*), r11(i16)
-	addrof r13, [board]
-	add r13, r13, r11
-	load r11, [r13]
+	cast r13(i16), r13(u8)
+	cast r13(u8*), r13(i16)
+	addrof r0, [board]
+	add r0, r0, r13
+	load r11, [r0]
 	move r9, r12
 	or r9, r9, r11
 	const r11, 110
@@ -116,19 +112,17 @@
 	and r11, r11, r12
 	cast r12(i16), r10(u8)
 	cast r12(u8*), r12(i16)
-	addrof r13, [board]
-	add r13, r13, r12
-	store [r13], r11
+	addrof r14, [board]
+	add r14, r14, r12
+	store [r14], r11
 	inc r10
 @for_7:
-	const r11, 29
-	lt r11, r10, r11
+	lt r11, r10, 29
 	branch r11, true, @for_7_body
 	call printBoard[]
 	inc r8
 @for_6:
-	const r0, 28
-	lt r0, r8, r0
+	lt r0, r8, 28
 	branch r0, true, @for_6_body
 
 @printChar:
@@ -141,7 +135,7 @@
 	jp   %0818
 
 Global variables
-	0: board[] (u8*/240)
+	0: board[] (u8*/60)
 
 String literals
 	string lit 0 "|\n\0"

@@ -20,13 +20,15 @@ final class LSIntervalFactory {
 	private final LSInterval[] fixedIntervals;
 	private final IRCanBeRegister canBeRegister;
 	private final LSCallingConventionProvider callingConventionProvider;
+	private final LSTypeRegisterCountProvider typeRegisterCountProvider;
 	private final boolean isX86;
 
 	private Indices indices;
 
-	public LSIntervalFactory(@NotNull IRCanBeRegister canBeRegister, @NotNull LSCallingConventionProvider callingConventionProvider, int registerCount, boolean isX86) {
+	public LSIntervalFactory(@NotNull IRCanBeRegister canBeRegister, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull LSTypeRegisterCountProvider typeRegisterCountProvider, int registerCount, boolean isX86) {
 		this.canBeRegister = canBeRegister;
 		this.callingConventionProvider = callingConventionProvider;
+		this.typeRegisterCountProvider = typeRegisterCountProvider;
 		this.isX86 = isX86;
 
 		fixedIntervals = new LSInterval[registerCount];
@@ -77,9 +79,13 @@ final class LSIntervalFactory {
 				continue;
 			}
 
-			final int register = argRegisters.get(index);
-			final LSInterval interval = getRegisterInterval(register);
-			interval.startNewRange(-1);
+			int count = typeRegisterCountProvider.registerCount(var.type());
+			Utils.assertTrue(count > 0);
+			int register = argRegisters.get(index);
+			for (; count > 0; count--, register++) {
+				final LSInterval interval = getRegisterInterval(register);
+				interval.startNewRange(-1);
+			}
 		}
 	}
 
@@ -96,8 +102,22 @@ final class LSIntervalFactory {
 			if (!canBeRegister(var)) {
 				continue;
 			}
-			final LSInterval interval = getInterval(var);
-			interval.extendRangeMaybeCreate(index);
+
+			if (var.scope() == VariableScope.register) {
+				int register = var.index();
+				int count = typeRegisterCountProvider.registerCount(var.type());
+				do {
+					final LSInterval interval = getRegisterInterval(register);
+					interval.extendRangeMaybeCreate(index);
+					count--;
+					register++;
+				}
+				while (count > 0);
+			}
+			else {
+				final LSInterval interval = getNonRegisterInterval(var);
+				interval.extendRangeMaybeCreate(index);
+			}
 		}
 	}
 
@@ -157,7 +177,7 @@ final class LSIntervalFactory {
 			if (target != null) {
 				Utils.assertTrue(target.scope() == VariableScope.register);
 				Utils.assertTrue(target.index() == 0);
-				final LSInterval interval = getInterval(target);
+				final LSInterval interval = getRegisterInterval(0);
 				interval.extendRange(index + 2);
 				interval.addUse(index + 1);
 			}
@@ -276,9 +296,26 @@ final class LSIntervalFactory {
 			return;
 		}
 
-		final LSInterval interval = getInterval(var);
-
 		final int index = getIndex();
+		if (var.scope() == VariableScope.register) {
+			int count = typeRegisterCountProvider.registerCount(var.type());
+			int register = var.index();
+			do {
+				final LSInterval interval = getRegisterInterval(register);
+				setReadUse(index, interval);
+				count--;
+				register++;
+			}
+			while (count > 0);
+			return;
+		}
+
+		final LSInterval interval = getNonRegisterInterval(var);
+		setReadUse(index, interval);
+	}
+
+	private void setReadUse(int index, LSInterval interval) {
+		Utils.assertTrue(index % 2 == 0);
 		interval.extendRange(index + 1);
 		interval.addUse(index);
 	}
@@ -289,12 +326,33 @@ final class LSIntervalFactory {
 			return null;
 		}
 
-		final LSInterval interval = getInterval(var);
-
 		final int index = getIndex() + 1;
+		if (var.scope() == VariableScope.register) {
+			int count = typeRegisterCountProvider.registerCount(var.type());
+			int register = var.index();
+			LSInterval firstInterval = null;
+			do {
+				final LSInterval interval = getRegisterInterval(register);
+				setWriteUse(index, interval);
+				if (firstInterval == null) {
+					firstInterval = interval;
+				}
+				count--;
+				register++;
+			}
+			while (count > 0);
+			return firstInterval;
+		}
+
+		final LSInterval interval = getNonRegisterInterval(var);
+		setWriteUse(index, interval);
+		return interval;
+	}
+
+	private void setWriteUse(int index, LSInterval interval) {
+		Utils.assertTrue(index % 2 == 1);
 		interval.startNewRange(index);
 		interval.addUse(index);
-		return interval;
 	}
 
 	private boolean canBeRegister(@NotNull IRVar var) {
@@ -306,11 +364,7 @@ final class LSIntervalFactory {
 	}
 
 	@NotNull
-	private LSInterval getInterval(@NotNull IRVar var) {
-		if (var.scope() == VariableScope.register) {
-			return getRegisterInterval(var.index());
-		}
-
+	private LSInterval getNonRegisterInterval(@NotNull IRVar var) {
 		LSInterval interval = varToInterval.get(var);
 		if (interval == null) {
 			interval = new LSInterval(var);

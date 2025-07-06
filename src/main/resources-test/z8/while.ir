@@ -1,15 +1,13 @@
 @printStringLength:
  Local variables
-	arg 0: str (u8*/8)
+	arg 0: str (u8*/2)
 	arg 1: length (u8/1)
 	var 2: chr (u8/1)
 	var 3: t.3 (bool/1)
-	var 4: t.4 (u8/1)
-	; 27 pc
+	; 23 pc
 	; 13:2 while length > 0
 @while_1:
-	const t.4, 0
-	gt t.3, length, t.4
+	gt t.3, length, 0
 	branch t.3, false, @while_1_break
 	load chr, [str]
 	call printChar[chr]
@@ -30,17 +28,16 @@
 	var 7: t.7 (i16/2)
 	var 8: t.8 (u8/1)
 	var 9: t.9 (u8/1)
-	var 10: t.10 (u8*/8)
+	var 10: t.10 (u8*/2)
 	var 11: t.11 (i16/2)
-	var 12: t.12 (u8*/8)
+	var 12: t.12 (u8*/2)
 	var 13: t.13 (bool/1)
-	var 14: t.14 (i16/2)
-	var 15: t.15 (u8*/8)
-	var 16: t.16 (i16/2)
-	var 17: t.17 (u8*/8)
+	var 14: t.14 (u8*/2)
+	var 15: t.15 (i16/2)
+	var 16: t.16 (u8*/2)
+	var 17: t.17 (u8/1)
 	var 18: t.18 (u8/1)
-	var 19: t.19 (u8/1)
-	; 133 pc
+	; 129 pc
 	const pos, 20
 	; 24:2 while true
 @while_2:
@@ -61,76 +58,69 @@
 	add t.10, t.10, t.12
 	store [t.10], digit
 	; 30:3 if number == 0
-	const t.14, 0
-	equals t.13, number, t.14
+	equals t.13, number, 0
 	branch t.13, false, @if_3_end
 	jump @while_2_break
 @if_3_end:
 	jump @while_2
 @while_2_break:
-	cast t.16(i16), pos(u8)
-	cast t.17(u8*), t.16(i16)
-	addrof t.15, [buffer]
-	add t.15, t.15, t.17
-	const t.19, 20
-	move t.18, t.19
-	sub t.18, t.18, pos
-	call printStringLength[t.15, t.18]
+	cast t.15(i16), pos(u8)
+	cast t.16(u8*), t.15(i16)
+	addrof t.14, [buffer]
+	add t.14, t.14, t.16
+	const t.18, 20
+	move t.17, t.18
+	sub t.17, t.17, pos
+	call printStringLength[t.14, t.17]
 @printUint_ret:
 
 @printIntLf:
  Local variables
 	arg 0: number (i16/2)
 	var 1: t.1 (bool/1)
-	var 2: t.2 (i16/2)
+	var 2: t.2 (u8/1)
 	var 3: t.3 (u8/1)
-	var 4: t.4 (u8/1)
-	; 30 pc
+	; 26 pc
 	; 38:2 if number < 0
-	const t.2, 0
-	lt t.1, number, t.2
+	lt t.1, number, 0
 	branch t.1, false, @if_4_end
-	const t.3, 45
-	call printChar[t.3]
+	const t.2, 45
+	call printChar[t.2]
 	neg number, number
 @if_4_end:
 	call printUint[number]
-	const t.4, 10
-	call printChar[t.4]
+	const t.3, 10
+	call printChar[t.3]
 @printIntLf_ret:
 
 @main:
  Local variables
 	var 0: i (u8/1)
 	var 1: t.1 (bool/1)
-	var 2: t.2 (u8/1)
+	var 2: t.2 (i16/2)
 	var 3: t.3 (i16/2)
-	var 4: t.4 (i16/2)
-	var 5: t.5 (bool/1)
-	var 6: t.6 (u8/1)
-	; 58 pc
+	var 4: t.4 (bool/1)
+	; 50 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const i, 5
 	; 5:2 while i > 0
 @while_5:
-	const t.2, 0
-	gt t.1, i, t.2
+	gt t.1, i, 0
 	branch t.1, false, @while_5_break
-	cast t.3(i16), i(u8)
-	call printIntLf[t.3]
+	cast t.2(i16), i(u8)
+	call printIntLf[t.2]
 	dec i
 	jump @while_5
 @while_5_break:
 	; 10:2 while true
 @while_6:
-	cast t.4(i16), i(u8)
-	call printIntLf[t.4]
+	cast t.3(i16), i(u8)
+	call printIntLf[t.3]
 	inc i
 	; 13:3 if i < 5
-	const t.6, 5
-	lt t.5, i, t.6
-	branch t.5, false, @if_7_end
+	lt t.4, i, 5
+	branch t.4, false, @if_7_end
 	jump @while_6
 @if_7_end:
 	jump @while_6_break

@@ -15,6 +15,8 @@ import static org.junit.Assert.*;
  */
 public class LSAlgorithmTest {
 
+	private static final LSTypeRegisterCountProvider X86_PROVIDER = type -> 1;
+
 	@Test
 	public void test1() {
 		// 0: a = 1
@@ -23,7 +25,7 @@ public class LSAlgorithmTest {
 		final LSAlgorithm algorithm = new LSAlgorithm(List.of(
 				LSInterval.testVar(varA, List.of(new LSRange(1, 3)), List.of(LSUse.write(1),
 				                                                             LSUse.read(2)))
-		), List.of(), 4);
+		), List.of(), X86_PROVIDER, 4);
 
 		final Map<IRVar, LSVarRegisters> result = algorithm.run();
 		assertEquals(1, result.size());
@@ -63,7 +65,7 @@ public class LSAlgorithmTest {
 				LSInterval.testFixed(0, List.of(new LSRange(4, 6))),
 				LSInterval.testFixed(1, List.of(new LSRange(-1, 0), new LSRange(2, 5), new LSRange(8, 12))),
 				LSInterval.testFixed(2, List.of(new LSRange(4, 5), new LSRange(10, 13)))
-		), 4);
+		), X86_PROVIDER, 4);
 
 		final Map<IRVar, LSVarRegisters> result = algorithm.run();
 		assertEquals(2, result.size());
@@ -97,7 +99,7 @@ public class LSAlgorithmTest {
 		), List.of(
 				LSInterval.testFixed(0, List.of(new LSRange(2), new LSRange(6))),
 				LSInterval.testFixed(1, List.of(new LSRange(2), new LSRange(5, 7)))
-		), 2);
+		), X86_PROVIDER, 2);
 
 		final Map<IRVar, LSVarRegisters> result = algorithm.run();
 		assertEquals(1, result.size());
@@ -143,7 +145,7 @@ public class LSAlgorithmTest {
 		), List.of(
 				LSInterval.testFixed(0, List.of(new LSRange(4, 7), new LSRange(11, 12))),
 				LSInterval.testFixed(1, List.of(new LSRange(3, 5)))
-		), 2);
+		), X86_PROVIDER, 2);
 
 		final Map<IRVar, LSVarRegisters> result = algorithm.run();
 		assertEquals(2, result.size());

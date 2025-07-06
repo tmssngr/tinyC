@@ -1,18 +1,17 @@
 @printString:
  Local variables
-	arg 0: str (u8*/8)
+	arg 0: str (u8*/2)
 	; 8 pc
 	move r8, r0
 	; 2:2 while true
 	jump @while_1
 @if_2_end:
-	move r0, r9
+	move r0, r10
 	call printChar[r0]
 @while_1:
-	load r9, [r8]
+	load r10, [r8]
 	; 4:3 if chr == 0
-	const r0, 0
-	equals r0, r9, r0
+	equals r0, r10, 0
 	branch r0, false, @if_2_end
 
 @printNibble:
@@ -22,8 +21,7 @@
 	const r8, 15
 	and r0, r0, r8
 	; 5:2 if x > 9
-	const r8, 9
-	gt r8, r0, r8
+	gt r8, r0, 9
 	branch r8, false, @if_3_end
 	add r0, 7
 @if_3_end:
@@ -56,8 +54,7 @@
 	const r9, 7
 	move r10, r8
 	and r10, r10, r9
-	const r9, 0
-	equals r9, r10, r9
+	equals r9, r10, 0
 	branch r9, false, @if_5_end
 	const r0, 32
 	call printChar[r0]
@@ -66,8 +63,7 @@
 	call printNibble[r0]
 	inc r8
 @for_4:
-	const r9, 16
-	lt r9, r8, r9
+	lt r9, r8, 16
 	branch r9, true, @for_4_body
 	const r0, 10
 	call printChar[r0]
@@ -79,8 +75,7 @@
 	const r9, 15
 	move r10, r8
 	and r10, r10, r9
-	const r9, 0
-	equals r9, r10, r9
+	equals r9, r10, 0
 	branch r9, false, @if_7_end
 	move r0, r8
 	call printHex2[r0]
@@ -89,8 +84,7 @@
 	const r9, 7
 	move r10, r8
 	and r10, r10, r9
-	const r9, 0
-	equals r9, r10, r9
+	equals r9, r10, 0
 	branch r9, false, @if_8_end
 	const r0, 32
 	call printChar[r0]
@@ -101,16 +95,14 @@
 	const r9, 15
 	move r10, r8
 	and r10, r10, r9
-	const r9, 15
-	equals r9, r10, r9
+	equals r9, r10, 15
 	branch r9, false, @for_6_continue
 	const r0, 10
 	call printChar[r0]
 @for_6_continue:
 	inc r8
 @for_6:
-	const r0, 128
-	lt r0, r8, r0
+	lt r0, r8, 128
 	branch r0, true, @for_6_body
 
 @printChar:
