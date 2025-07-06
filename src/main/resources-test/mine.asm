@@ -26,7 +26,7 @@ start:
 @printString:
         ; reserve space for local variables
         sub rsp, 16
-        ; call length, strlen, [str]
+        ; call length = strlen[str] -> i64
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -34,7 +34,7 @@ start:
         add rsp, 8
         lea rbx, [rsp+0]
         mov [rbx], rax
-        ; call _, printStringLength [str, length]
+        ; call printStringLength[str, length]
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -63,7 +63,7 @@ start:
         mov rax, 1
         lea rbx, [rsp+8]
         mov [rbx], rax
-        ; call _, printStringLength [t.1, t.2]
+        ; call printStringLength[t.1, t.2]
         lea rax, [rsp+0]
         mov rbx, [rax]
         push rbx
@@ -271,7 +271,7 @@ start:
         movzx rbx, bl
         lea rax, [rsp+128]
         mov [rax], rbx
-        ; call _, printStringLength [t.15, t.18]
+        ; call printStringLength[t.15, t.18]
         lea rax, [rsp+104]
         mov rbx, [rax]
         push rbx
@@ -685,7 +685,7 @@ start:
         ; reserve space for local variables
         sub rsp, 48
         ; 19:15 return [...]
-        ; call t.5, rowColumnToCell, [row, column]
+        ; call t.5 = rowColumnToCell[row, column] -> i16
         lea rax, [rsp+72]
         mov bx, [rax]
         push rbx
@@ -982,7 +982,7 @@ start:
 @setCell:
         ; reserve space for local variables
         sub rsp, 32
-        ; call t.5, rowColumnToCell, [row, column]
+        ; call t.5 = rowColumnToCell[row, column] -> i16
         lea rax, [rsp+56]
         mov bx, [rax]
         push rbx
@@ -1127,7 +1127,7 @@ start:
         lea rax, [rsp+8]
         mov [rax], bx
         ; 49:4 if checkCellBounds([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=49:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=49:27]])
-        ; call t.12, checkCellBounds, [r, c]
+        ; call t.12 = checkCellBounds[r, c] -> bool
         lea rax, [rsp+4]
         mov bx, [rax]
         push rbx
@@ -1144,7 +1144,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_8_continue
-        ; call cell, getCell, [r, c]
+        ; call cell = getCell[r, c] -> u8
         lea rax, [rsp+4]
         mov bx, [rax]
         push rbx
@@ -1157,7 +1157,7 @@ start:
         lea rbx, [rsp+10]
         mov [rbx], al
         ; 51:5 if isBomb([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=51:16]])
-        ; call t.13, isBomb, [cell]
+        ; call t.13 = isBomb[cell] -> bool
         lea rax, [rsp+10]
         mov bl, [rax]
         push rbx
@@ -1354,7 +1354,7 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 74:2 if isOpen([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=74:13]])
-        ; call t.5, isOpen, [cell]
+        ; call t.5 = isOpen[cell] -> bool
         lea rax, [rsp+40]
         mov bl, [rax]
         push rbx
@@ -1368,7 +1368,7 @@ start:
         or bl, bl
         jz @if_14_else
         ; 75:3 if isBomb([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=75:14]])
-        ; call t.6, isBomb, [cell]
+        ; call t.6 = isBomb[cell] -> bool
         lea rax, [rsp+40]
         mov bl, [rax]
         push rbx
@@ -1387,7 +1387,7 @@ start:
         mov [rbx], al
         jmp @if_14_end
 @if_15_else:
-        ; call count, getBombCountAround, [row, column]
+        ; call count = getBombCountAround[row, column] -> u8
         lea rax, [rsp+32]
         mov bx, [rax]
         push rbx
@@ -1444,7 +1444,7 @@ start:
         jmp @if_14_end
 @if_14_else:
         ; 88:7 if isFlag([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=88:18]])
-        ; call t.10, isFlag, [cell]
+        ; call t.10 = isFlag[cell] -> bool
         lea rax, [rsp+40]
         mov bl, [rax]
         push rbx
@@ -1462,7 +1462,7 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
 @if_14_end:
-        ; call _, printChar [chr]
+        ; call printChar[chr]
         lea rax, [rsp+0]
         mov bl, [rax]
         push rbx
@@ -1502,7 +1502,7 @@ start:
         mov ax, 0
         lea rbx, [rsp+10]
         mov [rbx], ax
-        ; call _, setCursor [t.7, t.8]
+        ; call setCursor[t.7, t.8]
         lea rax, [rsp+8]
         mov bx, [rax]
         push rbx
@@ -1540,7 +1540,7 @@ start:
         mov al, 124
         lea rbx, [rsp+16]
         mov [rbx], al
-        ; call _, printChar [t.11]
+        ; call printChar[t.11]
         lea rax, [rsp+16]
         mov bl, [rax]
         push rbx
@@ -1570,7 +1570,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_19_break
-        ; call spacer, getSpacer, [row, column, rowCursor, columnCursor]
+        ; call spacer = getSpacer[row, column, rowCursor, columnCursor] -> u8
         lea rax, [rsp+0]
         mov bx, [rax]
         push rbx
@@ -1588,13 +1588,13 @@ start:
         add rsp, 40
         lea rbx, [rsp+4]
         mov [rbx], al
-        ; call _, printChar [spacer]
+        ; call printChar[spacer]
         lea rax, [rsp+4]
         mov bl, [rax]
         push rbx
           call @printChar
         add rsp, 8
-        ; call cell, getCell, [row, column]
+        ; call cell = getCell[row, column] -> u8
         lea rax, [rsp+0]
         mov bx, [rax]
         push rbx
@@ -1606,7 +1606,7 @@ start:
         add rsp, 24
         lea rbx, [rsp+5]
         mov [rbx], al
-        ; call _, printCell [cell, row, column]
+        ; call printCell[cell, row, column]
         lea rax, [rsp+5]
         mov bl, [rax]
         push rbx
@@ -1636,7 +1636,7 @@ start:
         mov ax, 40
         lea rbx, [rsp+22]
         mov [rbx], ax
-        ; call spacer, getSpacer, [row, t.15, rowCursor, columnCursor]
+        ; call spacer = getSpacer[row, t.15, rowCursor, columnCursor] -> u8
         lea rax, [rsp+0]
         mov bx, [rax]
         push rbx
@@ -1654,7 +1654,7 @@ start:
         add rsp, 40
         lea rbx, [rsp+6]
         mov [rbx], al
-        ; call _, printChar [spacer]
+        ; call printChar[spacer]
         lea rax, [rsp+6]
         mov bl, [rax]
         push rbx
@@ -1664,7 +1664,7 @@ start:
         lea rax, [string_0]
         lea rbx, [rsp+24]
         mov [rbx], rax
-        ; call _, printString [t.16]
+        ; call printString[t.16]
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -1720,7 +1720,7 @@ start:
         mov al, 48
         lea rbx, [rsp+4]
         mov [rbx], al
-        ; call _, printChar [t.3]
+        ; call printChar[t.3]
         lea rax, [rsp+4]
         mov bl, [rax]
         push rbx
@@ -1917,7 +1917,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @for_25_break
-        ; call cell, getCell, [r, c]
+        ; call cell = getCell[r, c] -> u8
         lea rax, [rsp+2]
         mov bx, [rax]
         push rbx
@@ -2030,13 +2030,13 @@ start:
 @printLeft:
         ; reserve space for local variables
         sub rsp, 48
-        ; call count, getHiddenCount, []
+        ; call count = getHiddenCount[] -> i16
         sub rsp, 8
           call @getHiddenCount
         add rsp, 8
         lea rbx, [rsp+0]
         mov [rbx], ax
-        ; call t.3, getDigitCount, [count]
+        ; call t.3 = getDigitCount[count] -> u8
         lea rax, [rsp+0]
         mov bx, [rax]
         push rbx
@@ -2054,7 +2054,7 @@ start:
         mov ax, 40
         lea rbx, [rsp+8]
         mov [rbx], ax
-        ; call t.4, getDigitCount, [t.5]
+        ; call t.4 = getDigitCount[t.5] -> u8
         lea rax, [rsp+8]
         mov bx, [rax]
         push rbx
@@ -2072,7 +2072,7 @@ start:
         lea rax, [string_1]
         lea rbx, [rsp+16]
         mov [rbx], rax
-        ; call _, printString [t.6]
+        ; call printString[t.6]
         lea rax, [rsp+16]
         mov rbx, [rax]
         push rbx
@@ -2091,7 +2091,7 @@ start:
         sub bx, cx
         lea rax, [rsp+24]
         mov [rax], bx
-        ; call _, printSpaces [t.7]
+        ; call printSpaces[t.7]
         lea rax, [rsp+24]
         mov bx, [rax]
         push rbx
@@ -2103,7 +2103,7 @@ start:
         movzx rbx, bx
         lea rax, [rsp+32]
         mov [rax], rbx
-        ; call _, printUint [t.8]
+        ; call printUint[t.8]
         lea rax, [rsp+32]
         mov rbx, [rax]
         push rbx
@@ -2246,7 +2246,7 @@ start:
         mov al, 0
         lea rbx, [rsp+12]
         mov [rbx], al
-        ; call _, setCell [r, c, t.6]
+        ; call setCell[r, c, t.6]
         lea rax, [rsp+0]
         mov bx, [rax]
         push rbx
@@ -2340,7 +2340,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @initField_ret
-        ; call t.8, random, []
+        ; call t.8 = random[] -> i32
         sub rsp, 8
           call @random
         add rsp, 8
@@ -2372,7 +2372,7 @@ start:
         mov ebx, [rax]
         lea rax, [rsp+2]
         mov [rax], bx
-        ; call t.11, random, []
+        ; call t.11 = random[] -> i32
         sub rsp, 8
           call @random
         add rsp, 8
@@ -2419,7 +2419,7 @@ start:
         sub bx, cx
         lea rax, [rsp+40]
         mov [rax], bx
-        ; call t.14, abs, [t.15]
+        ; call t.14 = abs[t.15] -> i16
         lea rax, [rsp+40]
         mov bx, [rax]
         push rbx
@@ -2458,7 +2458,7 @@ start:
         sub bx, cx
         lea rax, [rsp+46]
         mov [rax], bx
-        ; call t.17, abs, [t.18]
+        ; call t.17 = abs[t.18] -> i16
         lea rax, [rsp+46]
         mov bx, [rax]
         push rbx
@@ -2489,7 +2489,7 @@ start:
         mov al, 1
         lea rbx, [rsp+50]
         mov [rbx], al
-        ; call _, setCell [row, column, t.20]
+        ; call setCell[row, column, t.20]
         lea rax, [rsp+2]
         mov bx, [rax]
         push rbx
@@ -2549,7 +2549,7 @@ start:
         ; reserve space for local variables
         sub rsp, 48
         ; 185:2 if getBombCountAround([ExprVarAccess[varName=row, index=0, scope=argument, type=i16, varIsArray=false, location=185:25], ExprVarAccess[varName=column, index=1, scope=argument, type=i16, varIsArray=false, location=185:30]]) != 0
-        ; call t.8, getBombCountAround, [row, column]
+        ; call t.8 = getBombCountAround[row, column] -> u8
         lea rax, [rsp+72]
         mov bx, [rax]
         push rbx
@@ -2693,7 +2693,7 @@ start:
         lea rax, [rsp+6]
         mov [rax], bx
         ; 197:4 if !checkCellBounds([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=197:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=197:28]])
-        ; call t.18, checkCellBounds, [r, c]
+        ; call t.18 = checkCellBounds[r, c] -> bool
         lea rax, [rsp+2]
         mov bx, [rax]
         push rbx
@@ -2717,7 +2717,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @for_35_continue
-        ; call cell, getCell, [r, c]
+        ; call cell = getCell[r, c] -> u8
         lea rax, [rsp+2]
         mov bx, [rax]
         push rbx
@@ -2730,7 +2730,7 @@ start:
         lea rbx, [rsp+8]
         mov [rbx], al
         ; 202:4 if isOpen([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=202:15]])
-        ; call t.19, isOpen, [cell]
+        ; call t.19 = isOpen[cell] -> bool
         lea rax, [rsp+8]
         mov bl, [rax]
         push rbx
@@ -2760,7 +2760,7 @@ start:
         or bl, cl
         lea rax, [rsp+29]
         mov [rax], bl
-        ; call _, setCell [r, c, t.20]
+        ; call setCell[r, c, t.20]
         lea rax, [rsp+2]
         mov bx, [rax]
         push rbx
@@ -2772,7 +2772,7 @@ start:
         push rbx
           call @setCell
         add rsp, 24
-        ; call _, maybeRevealAround [r, c]
+        ; call maybeRevealAround[r, c]
         lea rax, [rsp+2]
         mov bx, [rax]
         push rbx
@@ -2888,7 +2888,7 @@ start:
         mov eax, 7439742
         lea rbx, [rsp+12]
         mov [rbx], eax
-        ; call _, initRandom [t.6]
+        ; call initRandom[t.6]
         lea rax, [rsp+12]
         mov ebx, [rax]
         push rbx
@@ -2898,7 +2898,7 @@ start:
         mov al, 1
         lea rbx, [rsp+0]
         mov [rbx], al
-        ; call _, clearField []
+        ; call clearField[]
         sub rsp, 8
           call @clearField
         add rsp, 8
@@ -2924,7 +2924,7 @@ start:
         mov [rax], bx
         ; 218:2 while true
 @while_40:
-        ; call _, printField [curr_r, curr_c]
+        ; call printField[curr_r, curr_c]
         lea rax, [rsp+4]
         mov bx, [rax]
         push rbx
@@ -2948,7 +2948,7 @@ start:
         or bl, bl
         jz @if_41_end
         ; 221:4 if printLeft([])
-        ; call t.10, printLeft, []
+        ; call t.10 = printLeft[] -> bool
         sub rsp, 8
           call @printLeft
         add rsp, 8
@@ -2963,7 +2963,7 @@ start:
         lea rax, [string_2]
         lea rbx, [rsp+24]
         mov [rbx], rax
-        ; call _, printString [t.11]
+        ; call printString[t.11]
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -2971,7 +2971,7 @@ start:
         add rsp, 8
         jmp @main_ret
 @if_41_end:
-        ; call chr, getChar, []
+        ; call chr = getChar[] -> i16
         sub rsp, 8
           call @getChar
         add rsp, 8
@@ -3374,7 +3374,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @while_40
-        ; call cell, getCell, [curr_r, curr_c]
+        ; call cell = getCell[curr_r, curr_c] -> u8
         lea rax, [rsp+4]
         mov bx, [rax]
         push rbx
@@ -3387,7 +3387,7 @@ start:
         lea rbx, [rsp+8]
         mov [rbx], al
         ; 256:5 if !isOpen([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=256:17]])
-        ; call t.49, isOpen, [cell]
+        ; call t.49 = isOpen[cell] -> bool
         lea rax, [rsp+8]
         mov bl, [rax]
         push rbx
@@ -3419,7 +3419,7 @@ start:
         xor bl, cl
         lea rax, [rsp+8]
         mov [rax], bl
-        ; call _, setCell [curr_r, curr_c, cell]
+        ; call setCell[curr_r, curr_c, cell]
         lea rax, [rsp+4]
         mov bx, [rax]
         push rbx
@@ -3461,7 +3461,7 @@ start:
         mov al, 0
         lea rbx, [rsp+0]
         mov [rbx], al
-        ; call _, initField [curr_r, curr_c]
+        ; call initField[curr_r, curr_c]
         lea rax, [rsp+4]
         mov bx, [rax]
         push rbx
@@ -3472,7 +3472,7 @@ start:
           call @initField
         add rsp, 24
 @if_53_end:
-        ; call cell, getCell, [curr_r, curr_c]
+        ; call cell = getCell[curr_r, curr_c] -> u8
         lea rax, [rsp+4]
         mov bx, [rax]
         push rbx
@@ -3485,7 +3485,7 @@ start:
         lea rbx, [rsp+9]
         mov [rbx], al
         ; 268:4 if !isOpen([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=268:16]])
-        ; call t.54, isOpen, [cell]
+        ; call t.54 = isOpen[cell] -> bool
         lea rax, [rsp+9]
         mov bl, [rax]
         push rbx
@@ -3522,7 +3522,7 @@ start:
         or bl, cl
         lea rax, [rsp+112]
         mov [rax], bl
-        ; call _, setCell [curr_r, curr_c, t.55]
+        ; call setCell[curr_r, curr_c, t.55]
         lea rax, [rsp+4]
         mov bx, [rax]
         push rbx
@@ -3536,7 +3536,7 @@ start:
         add rsp, 24
 @if_54_end:
         ; 271:4 if isBomb([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=271:15]])
-        ; call t.57, isBomb, [cell]
+        ; call t.57 = isBomb[cell] -> bool
         lea rax, [rsp+9]
         mov bl, [rax]
         push rbx
@@ -3549,7 +3549,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_55_end
-        ; call _, printField [curr_r, curr_c]
+        ; call printField[curr_r, curr_c]
         lea rax, [rsp+4]
         mov bx, [rax]
         push rbx
@@ -3563,7 +3563,7 @@ start:
         lea rax, [string_3]
         lea rbx, [rsp+120]
         mov [rbx], rax
-        ; call _, printString [t.58]
+        ; call printString[t.58]
         lea rax, [rsp+120]
         mov rbx, [rax]
         push rbx
@@ -3571,7 +3571,7 @@ start:
         add rsp, 8
         jmp @main_ret
 @if_55_end:
-        ; call _, maybeRevealAround [curr_r, curr_c]
+        ; call maybeRevealAround[curr_r, curr_c]
         lea rax, [rsp+4]
         mov bx, [rax]
         push rbx

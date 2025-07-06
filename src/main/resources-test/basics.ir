@@ -6,7 +6,7 @@
 	; 12 pc
 	addrof t.1, chr
 	const t.2, 1
-	call _, printStringLength [t.1, t.2]
+	call printStringLength[t.1, t.2]
 @printChar_ret:
 
 @printUint:
@@ -68,7 +68,7 @@
 	move t.19, t.20
 	sub t.19, t.19, pos
 	cast t.18(i64), t.19(u8)
-	call _, printStringLength [t.15, t.18]
+	call printStringLength[t.15, t.18]
 @printUint_ret:
 
 @main:
@@ -89,21 +89,21 @@
 	const two, 50
 	const threeFour, 34
 	; end initialize global variables
-	call _, printChar [zero]
+	call printChar[zero]
 	addrof onePtr, one
 	load t.2, [onePtr]
-	call _, printChar [t.2]
+	call printChar[t.2]
 	addrof twoPtr, two
 	const t.5, 0
 	cast t.6(u8*), t.5(i64)
 	move t.4, twoPtr
 	add t.4, t.4, t.6
 	load t.3, [t.4]
-	call _, printChar [t.3]
+	call printChar[t.3]
 	cast t.7(i64), threeFour(u8)
-	call _, printUint [t.7]
+	call printUint[t.7]
 	const t.8, 10
-	call _, printChar [t.8]
+	call printChar[t.8]
 @main_ret:
 
 @printStringLength:

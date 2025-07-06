@@ -6,7 +6,7 @@
 	; 12 pc
 	addrof t.1, chr
 	const t.2, 1
-	call _, printStringLength [t.1, t.2]
+	call printStringLength[t.1, t.2]
 @printChar_ret:
 
 @printUint:
@@ -68,7 +68,7 @@
 	move t.19, t.20
 	sub t.19, t.19, pos
 	cast t.18(i64), t.19(u8)
-	call _, printStringLength [t.15, t.18]
+	call printStringLength[t.15, t.18]
 @printUint_ret:
 
 @printIntLf:
@@ -84,12 +84,12 @@
 	lt t.1, number, t.2
 	branch t.1, false, @if_3_end
 	const t.3, 45
-	call _, printChar [t.3]
+	call printChar[t.3]
 	neg number, number
 @if_3_end:
-	call _, printUint [number]
+	call printUint[number]
 	const t.4, 10
-	call _, printChar [t.4]
+	call printChar[t.4]
 @printIntLf_ret:
 
 @initRandom:
@@ -168,7 +168,7 @@
 	var 1: t.1 (i32/4)
 	; 12 pc
 	; 131:10 return (u8)
-	call t.1, random, []
+	call t.1 = random[] -> i32
 	cast t.0(u8), t.1(i32)
 	ret t.0
 	jump @randomU8_ret
@@ -188,16 +188,16 @@
 	const __random__, 0
 	; end initialize global variables
 	const t.2, 7439742
-	call _, initRandom [t.2]
+	call initRandom[t.2]
 	const i, 0
 	; 5:2 for i < 50
 @for_4:
 	const t.4, 50
 	lt t.3, i, t.4
 	branch t.3, false, @for_4_break
-	call r, randomU8, []
+	call r = randomU8[] -> u8
 	cast t.5(i64), r(u8)
-	call _, printIntLf [t.5]
+	call printIntLf[t.5]
 @for_4_continue:
 	const t.6, 1
 	add i, i, t.6

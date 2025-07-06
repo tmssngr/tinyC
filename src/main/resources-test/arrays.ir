@@ -6,7 +6,7 @@
 	; 12 pc
 	addrof t.1, chr
 	const t.2, 1
-	call _, printStringLength [t.1, t.2]
+	call printStringLength[t.1, t.2]
 @printChar_ret:
 
 @printUint:
@@ -68,7 +68,7 @@
 	move t.19, t.20
 	sub t.19, t.19, pos
 	cast t.18(i64), t.19(u8)
-	call _, printStringLength [t.15, t.18]
+	call printStringLength[t.15, t.18]
 @printUint_ret:
 
 @printIntLf:
@@ -84,12 +84,12 @@
 	lt t.1, number, t.2
 	branch t.1, false, @if_3_end
 	const t.3, 45
-	call _, printChar [t.3]
+	call printChar[t.3]
 	neg number, number
 @if_3_end:
-	call _, printUint [number]
+	call printUint[number]
 	const t.4, 10
-	call _, printChar [t.4]
+	call printChar[t.4]
 @printIntLf_ret:
 
 @main:
@@ -164,7 +164,7 @@
 	add t.24, t.24, t.26
 	load result, [t.24]
 	cast t.27(i64), result(u8)
-	call _, printIntLf [t.27]
+	call printIntLf[t.27]
 @main_ret:
 
 @printStringLength:

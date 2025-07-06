@@ -155,7 +155,7 @@ public class CleanupGlobalUnusedVariables extends CleanupUnusedVariables {
 				final IRVar target = call.target();
 				if (target != null && isUnusedGlobal(target)) {
 					final IRCall modifiedCall = (IRCall)replaceFor(instruction);
-					return new IRCall(null, modifiedCall.name(), modifiedCall.args(), modifiedCall.location());
+					return new IRCall(null, call.type(), modifiedCall.name(), modifiedCall.args(), modifiedCall.location());
 				}
 			}
 			default -> {

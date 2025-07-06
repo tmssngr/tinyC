@@ -579,7 +579,7 @@ public final class IRGenerator {
 		for (Expression expression : call.argExpressions()) {
 			args.add(writeExpression(expression));
 		}
-		write(new IRCall(var, call.name(), args, call.location()));
+		write(new IRCall(var, Objects.requireNonNull(call.type()), call.name(), args, call.location()));
 	}
 
 	@NotNull

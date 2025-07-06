@@ -27,7 +27,7 @@ public abstract class IRVarReplacer {
 				if (target != null) {
 					target = replace(target);
 				}
-				yield new IRCall(target, call.name(), args, call.location());
+				yield new IRCall(target, call.type(), call.name(), args, call.location());
 			}
 			case IRCast cast -> new IRCast(replace(cast.target()), replace(cast.source()), cast.location());
 			case IRComment ignored -> instruction;

@@ -6,7 +6,7 @@
 	; 12 pc
 	addrof t.1, chr
 	const t.2, 1
-	call _, printStringLength [t.1, t.2]
+	call printStringLength[t.1, t.2]
 @printChar_ret:
 
 @printUint:
@@ -68,7 +68,7 @@
 	move t.19, t.20
 	sub t.19, t.19, pos
 	cast t.18(i64), t.19(u8)
-	call _, printStringLength [t.15, t.18]
+	call printStringLength[t.15, t.18]
 @printUint_ret:
 
 @printIntLf:
@@ -84,12 +84,12 @@
 	lt t.1, number, t.2
 	branch t.1, false, @if_3_end
 	const t.3, 45
-	call _, printChar [t.3]
+	call printChar[t.3]
 	neg number, number
 @if_3_end:
-	call _, printUint [number]
+	call printUint[number]
 	const t.4, 10
-	call _, printChar [t.4]
+	call printChar[t.4]
 @printIntLf_ret:
 
 @main:
@@ -103,12 +103,12 @@
 	; begin initialize global variables
 	const i, 0
 	; end initialize global variables
-	call t.0, next, []
-	call t.1, next, []
-	call t.2, next, []
-	call t.3, next, []
-	call t.4, next, []
-	call _, doPrint [t.0, t.1, t.2, t.3, t.4]
+	call t.0 = next[] -> u8
+	call t.1 = next[] -> u8
+	call t.2 = next[] -> u8
+	call t.3 = next[] -> u8
+	call t.4 = next[] -> u8
+	call doPrint[t.0, t.1, t.2, t.3, t.4]
 @main_ret:
 
 @next:
@@ -136,15 +136,15 @@
 	var 9: t.9 (i64/8)
 	; 40 pc
 	cast t.5(i64), a(u8)
-	call _, printIntLf [t.5]
+	call printIntLf[t.5]
 	cast t.6(i64), b(u8)
-	call _, printIntLf [t.6]
+	call printIntLf[t.6]
 	cast t.7(i64), c(u8)
-	call _, printIntLf [t.7]
+	call printIntLf[t.7]
 	cast t.8(i64), d(u8)
-	call _, printIntLf [t.8]
+	call printIntLf[t.8]
 	cast t.9(i64), e(u8)
-	call _, printIntLf [t.9]
+	call printIntLf[t.9]
 @doPrint_ret:
 
 @printStringLength:
