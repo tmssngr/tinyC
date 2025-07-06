@@ -6,7 +6,7 @@
 	; 12 pc
 	addrof t.1, chr
 	const t.2, 1
-	call _, printStringLength [t.1, t.2]
+	call printStringLength[t.1, t.2]
 @printChar_ret:
 
 @printUint:
@@ -64,7 +64,7 @@
 	move t.17, t.18
 	sub t.17, t.17, pos
 	cast t.16(i64), t.17(u8)
-	call _, printStringLength [t.13, t.16]
+	call printStringLength[t.13, t.16]
 @printUint_ret:
 
 @printIntLf:
@@ -78,12 +78,12 @@
 	lt t.1, number, 0
 	branch t.1, false, @if_3_end
 	const t.2, 45
-	call _, printChar [t.2]
+	call printChar[t.2]
 	neg number, number
 @if_3_end:
-	call _, printUint [number]
+	call printUint[number]
 	const t.3, 10
-	call _, printChar [t.3]
+	call printChar[t.3]
 @printIntLf_ret:
 
 @main:
@@ -121,41 +121,41 @@
 	move t.7, bar
 	add t.7, t.7, foo
 	cast t.6(i64), t.7(i16)
-	call _, printIntLf [t.6]
+	call printIntLf[t.6]
 	const t.8, 21
 	cast foo(i16), t.8(u8)
 	cast t.9(i64), foo(i16)
-	call _, printIntLf [t.9]
+	call printIntLf[t.9]
 	cast t.10(i64), bazz(i16)
-	call _, printIntLf [t.10]
+	call printIntLf[t.10]
 	const a, 1000
 	const b, 10
 	move t.12, a
 	div t.12, t.12, b
 	cast t.11(i64), t.12(i16)
-	call _, printIntLf [t.11]
+	call printIntLf[t.11]
 	const t.15, 255
 	move t.14, a
 	and t.14, t.14, t.15
 	cast t.13(i64), t.14(i16)
-	call _, printIntLf [t.13]
+	call printIntLf[t.13]
 	const a, 10
 	const b, 1
 	move t.17, a
 	shiftright t.17, t.17, b
 	cast t.16(i64), t.17(i16)
-	call _, printIntLf [t.16]
+	call printIntLf[t.16]
 	const a, 9
 	const b, 2
 	move t.19, a
 	shiftright t.19, t.19, b
 	cast t.18(i64), t.19(i16)
-	call _, printIntLf [t.18]
+	call printIntLf[t.18]
 	const a, 1
 	move t.21, a
 	shiftleft t.21, t.21, b
 	cast t.20(i64), t.21(i16)
-	call _, printIntLf [t.20]
+	call printIntLf[t.20]
 @main_ret:
 
 @printStringLength:

@@ -44,7 +44,7 @@ public class IRGeneratorTest {
 				             ), Set.of(), null), List.of(
 						             new IRComment("5:3 while true"),
 						             new IRLabel("@while_1"),
-						             new IRCall(var("chr", 0, Type.U8), "get", List.of(), loc(5, 13)),
+						             new IRCall(var("chr", 0, Type.U8), Type.U8, "get", List.of(), loc(5, 13)),
 						             new IRComment("7:5 if chr > 97"),
 						             new IRCompareConst(tmp(1, Type.BOOL), IRCompareOp.Gt, var("chr", 0, Type.U8), 97, loc(6, 12)),
 						             new IRBranch(tmp(1, Type.BOOL), false, "@if_2_end",

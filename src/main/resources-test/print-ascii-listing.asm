@@ -26,7 +26,7 @@ start:
 @printString:
         ; reserve space for local variables
         sub rsp, 16
-        ; call length, strlen, [str]
+        ; call length = strlen[str] -> i64
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -34,7 +34,7 @@ start:
         add rsp, 8
         lea rbx, [rsp+0]
         mov [rbx], rax
-        ; call _, printStringLength [str, length]
+        ; call printStringLength[str, length]
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -63,7 +63,7 @@ start:
         mov rax, 1
         lea rbx, [rsp+8]
         mov [rbx], rax
-        ; call _, printStringLength [t.1, t.2]
+        ; call printStringLength[t.1, t.2]
         lea rax, [rsp+0]
         mov rbx, [rax]
         push rbx
@@ -201,7 +201,7 @@ start:
         add bl, 48
         lea rax, [rsp+24]
         mov [rax], bl
-        ; call _, printChar [x]
+        ; call printChar[x]
         lea rax, [rsp+24]
         mov bl, [rax]
         push rbx
@@ -235,13 +235,13 @@ start:
         shr bl, cl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; call _, printNibble [t.1]
+        ; call printNibble[t.1]
         lea rax, [rsp+0]
         mov bl, [rax]
         push rbx
           call @printNibble
         add rsp, 8
-        ; call _, printNibble [x]
+        ; call printNibble[x]
         lea rax, [rsp+24]
         mov bl, [rax]
         push rbx
@@ -282,7 +282,7 @@ start:
         lea rax, [string_0]
         lea rbx, [rsp+8]
         mov [rbx], rax
-        ; call _, printString [t.2]
+        ; call printString[t.2]
         lea rax, [rsp+8]
         mov rbx, [rax]
         push rbx
@@ -340,14 +340,14 @@ start:
         mov al, 32
         lea rbx, [rsp+20]
         mov [rbx], al
-        ; call _, printChar [t.7]
+        ; call printChar[t.7]
         lea rax, [rsp+20]
         mov bl, [rax]
         push rbx
           call @printChar
         add rsp, 8
 @if_4_end:
-        ; call _, printNibble [i]
+        ; call printNibble[i]
         lea rax, [rsp+0]
         mov bl, [rax]
         push rbx
@@ -365,7 +365,7 @@ start:
         mov al, 10
         lea rbx, [rsp+21]
         mov [rbx], al
-        ; call _, printChar [t.8]
+        ; call printChar[t.8]
         lea rax, [rsp+21]
         mov bl, [rax]
         push rbx
@@ -419,7 +419,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_6_end
-        ; call _, printHex2 [i]
+        ; call printHex2[i]
         lea rax, [rsp+1]
         mov bl, [rax]
         push rbx
@@ -460,14 +460,14 @@ start:
         mov al, 32
         lea rbx, [rsp+29]
         mov [rbx], al
-        ; call _, printChar [t.16]
+        ; call printChar[t.16]
         lea rax, [rsp+29]
         mov bl, [rax]
         push rbx
           call @printChar
         add rsp, 8
 @if_7_end:
-        ; call _, printChar [i]
+        ; call printChar[i]
         lea rax, [rsp+1]
         mov bl, [rax]
         push rbx
@@ -507,7 +507,7 @@ start:
         mov al, 10
         lea rbx, [rsp+33]
         mov [rbx], al
-        ; call _, printChar [t.20]
+        ; call printChar[t.20]
         lea rax, [rsp+33]
         mov bl, [rax]
         push rbx

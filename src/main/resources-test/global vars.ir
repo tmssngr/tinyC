@@ -6,7 +6,7 @@
 	; 12 pc
 	addrof t.1, chr
 	const t.2, 1
-	call _, printStringLength [t.1, t.2]
+	call printStringLength[t.1, t.2]
 @printChar_ret:
 
 @printUint:
@@ -64,7 +64,7 @@
 	move t.17, t.18
 	sub t.17, t.17, pos
 	cast t.16(i64), t.17(u8)
-	call _, printStringLength [t.13, t.16]
+	call printStringLength[t.13, t.16]
 @printUint_ret:
 
 @printIntLf:
@@ -78,12 +78,12 @@
 	lt t.1, number, 0
 	branch t.1, false, @if_3_end
 	const t.2, 45
-	call _, printChar [t.2]
+	call printChar[t.2]
 	neg number, number
 @if_3_end:
-	call _, printUint [number]
+	call printUint[number]
 	const t.3, 10
-	call _, printChar [t.3]
+	call printChar[t.3]
 @printIntLf_ret:
 
 @main:
@@ -101,7 +101,7 @@
 	addrof ptrToSpace, space
 	; end initialize global variables
 	cast t.0(i64), next(i16)
-	call _, printIntLf [t.0]
+	call printIntLf[t.0]
 	cast t.2(i64), ptrToSpace(i16*)
 	const t.3, 2
 	move t.1, t.2
@@ -109,7 +109,7 @@
 	cast ptrToSpace(i16*), t.1(i64)
 	load t.5, [ptrToSpace]
 	cast t.4(i64), t.5(i16)
-	call _, printIntLf [t.4]
+	call printIntLf[t.4]
 @main_ret:
 
 @printStringLength:

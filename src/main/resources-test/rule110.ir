@@ -3,8 +3,8 @@
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
 	; 10 pc
-	call length, strlen, [str]
-	call _, printStringLength [str, length]
+	call length = strlen[str] -> i64
+	call printStringLength[str, length]
 @printString_ret:
 
 @printChar:
@@ -15,7 +15,7 @@
 	; 12 pc
 	addrof t.1, chr
 	const t.2, 1
-	call _, printStringLength [t.1, t.2]
+	call printStringLength[t.1, t.2]
 @printChar_ret:
 
 @strlen:
@@ -63,7 +63,7 @@
 	var 10: t.10 (u8*/8)
 	; 72 pc
 	const t.1, 124
-	call _, printChar [t.1]
+	call printChar[t.1]
 	const i, 0
 	; 11:2 for i < 30
 @for_2:
@@ -78,18 +78,18 @@
 	equals t.3, t.4, 0
 	branch t.3, false, @if_3_else
 	const t.8, 32
-	call _, printChar [t.8]
+	call printChar[t.8]
 	jump @if_3_end
 @if_3_else:
 	const t.9, 42
-	call _, printChar [t.9]
+	call printChar[t.9]
 @if_3_end:
 @for_2_continue:
 	inc i
 	jump @for_2
 @for_2_break:
 	const t.10, [string-0]
-	call _, printString [t.10]
+	call printString[t.10]
 @printBoard_ret:
 
 @main:
@@ -162,7 +162,7 @@
 	addrof t.10, [board]
 	add t.10, t.10, t.13
 	store [t.10], t.9
-	call _, printBoard []
+	call printBoard[]
 	const i, 0
 	; 30:2 for i < 28
 @for_5:
@@ -219,7 +219,7 @@
 	inc j
 	jump @for_6
 @for_6_break:
-	call _, printBoard []
+	call printBoard[]
 @for_5_continue:
 	inc i
 	jump @for_5

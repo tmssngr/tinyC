@@ -5,7 +5,6 @@ import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
-import java.util.function.*;
 
 import org.junit.*;
 
@@ -57,7 +56,7 @@ public class CfgGeneratorTest {
 		final IRVar cond = new IRVar("cond", 2, VariableScope.function, Type.BOOL);
 		final ControlFlowGraph cfg = CfgGenerator.create("start", List.of(
 				new IRLabel("loop"),
-				new IRCall(cond, "getSomething", List.of(), Location.DUMMY),
+				new IRCall(cond, Type.BOOL, "getSomething", List.of(), Location.DUMMY),
 				new IRBranch(cond, false, "loop", "break")
 		));
 		assertEqualsBlocks(List.of(
@@ -66,7 +65,7 @@ public class CfgGeneratorTest {
 				), List.of(), List.of("loop")),
 
 				new BasicBlock("loop", List.of(
-						new IRCall(cond, "getSomething", List.of(), Location.DUMMY),
+						new IRCall(cond, Type.BOOL, "getSomething", List.of(), Location.DUMMY),
 						new IRBranch(cond, false, "@no_critical_edge_3", ""),
 						new IRJump("break")
 				), List.of("start", "@no_critical_edge_3"), List.of("@no_critical_edge_3", "break")),

@@ -35,7 +35,7 @@ start:
         mov rax, 1
         lea rbx, [rsp+8]
         mov [rbx], rax
-        ; call _, printStringLength [t.1, t.2]
+        ; call printStringLength[t.1, t.2]
         lea rax, [rsp+0]
         mov rbx, [rax]
         push rbx
@@ -229,7 +229,7 @@ start:
         movzx rbx, bl
         lea rax, [rsp+120]
         mov [rax], rbx
-        ; call _, printStringLength [t.13, t.16]
+        ; call printStringLength[t.13, t.16]
         lea rax, [rsp+96]
         mov rbx, [rax]
         push rbx
@@ -268,7 +268,7 @@ start:
         mov al, 45
         lea rbx, [rsp+1]
         mov [rbx], al
-        ; call _, printChar [t.2]
+        ; call printChar[t.2]
         lea rax, [rsp+1]
         mov bl, [rax]
         push rbx
@@ -281,7 +281,7 @@ start:
         lea rax, [rsp+24]
         mov [rax], rbx
 @if_3_end:
-        ; call _, printUint [number]
+        ; call printUint[number]
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -291,7 +291,7 @@ start:
         mov al, 10
         lea rbx, [rsp+2]
         mov [rbx], al
-        ; call _, printChar [t.3]
+        ; call printChar[t.3]
         lea rax, [rsp+2]
         mov bl, [rax]
         push rbx
@@ -316,37 +316,37 @@ start:
         lea rbx, [var_0]
         mov [rbx], al
         ; end initialize global variables
-        ; call t.0, next, []
+        ; call t.0 = next[] -> u8
         sub rsp, 8
           call @next
         add rsp, 8
         lea rbx, [rsp+0]
         mov [rbx], al
-        ; call t.1, next, []
+        ; call t.1 = next[] -> u8
         sub rsp, 8
           call @next
         add rsp, 8
         lea rbx, [rsp+1]
         mov [rbx], al
-        ; call t.2, next, []
+        ; call t.2 = next[] -> u8
         sub rsp, 8
           call @next
         add rsp, 8
         lea rbx, [rsp+2]
         mov [rbx], al
-        ; call t.3, next, []
+        ; call t.3 = next[] -> u8
         sub rsp, 8
           call @next
         add rsp, 8
         lea rbx, [rsp+3]
         mov [rbx], al
-        ; call t.4, next, []
+        ; call t.4 = next[] -> u8
         sub rsp, 8
           call @next
         add rsp, 8
         lea rbx, [rsp+4]
         mov [rbx], al
-        ; call _, doPrint [t.0, t.1, t.2, t.3, t.4]
+        ; call doPrint[t.0, t.1, t.2, t.3, t.4]
         lea rax, [rsp+0]
         mov bl, [rax]
         push rbx
@@ -403,7 +403,7 @@ start:
         movzx rbx, bl
         lea rax, [rsp+0]
         mov [rax], rbx
-        ; call _, printIntLf [t.5]
+        ; call printIntLf[t.5]
         lea rax, [rsp+0]
         mov rbx, [rax]
         push rbx
@@ -415,7 +415,7 @@ start:
         movzx rbx, bl
         lea rax, [rsp+8]
         mov [rax], rbx
-        ; call _, printIntLf [t.6]
+        ; call printIntLf[t.6]
         lea rax, [rsp+8]
         mov rbx, [rax]
         push rbx
@@ -427,7 +427,7 @@ start:
         movzx rbx, bl
         lea rax, [rsp+16]
         mov [rax], rbx
-        ; call _, printIntLf [t.7]
+        ; call printIntLf[t.7]
         lea rax, [rsp+16]
         mov rbx, [rax]
         push rbx
@@ -439,7 +439,7 @@ start:
         movzx rbx, bl
         lea rax, [rsp+24]
         mov [rax], rbx
-        ; call _, printIntLf [t.8]
+        ; call printIntLf[t.8]
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -451,7 +451,7 @@ start:
         movzx rbx, bl
         lea rax, [rsp+32]
         mov [rax], rbx
-        ; call _, printIntLf [t.9]
+        ; call printIntLf[t.9]
         lea rax, [rsp+32]
         mov rbx, [rax]
         push rbx
