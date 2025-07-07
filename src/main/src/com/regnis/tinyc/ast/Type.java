@@ -1,25 +1,37 @@
 package com.regnis.tinyc.ast;
 
+import com.regnis.tinyc.*;
+import jdk.jshell.execution.*;
+
 import org.jetbrains.annotations.*;
 
 /**
  * @author Thomas Singer
  */
-public record Type(@NotNull String name, @Nullable Type toType, boolean isInt) {
-	public static final Type VOID = new Type("void", null, false);
-	public static final Type BOOL = new Type("bool", null, false);
-	public static final Type U8 = new Type("u8", null, true);
-	public static final Type I16 = new Type("i16", null, true);
-	public static final Type I32 = new Type("i32", null, true);
-	public static final Type I64 = new Type("i64", null, true);
+public record Type(@NotNull String name, @Nullable Type toType, @NotNull Category category) {
+	public static final Type VOID = new Type("void", null, Category.Other);
+	public static final Type BOOL = new Type("bool", null, Category.Other);
+	public static final Type U8 = new Type("u8", null, Category.Integer);
+	public static final Type I16 = new Type("i16", null, Category.Integer);
+	public static final Type I32 = new Type("i32", null, Category.Integer);
+	public static final Type I64 = new Type("i64", null, Category.Integer);
 	public static final Type POINTER_U8 = Type.pointer(Type.U8);
 
+	public Type {
+		if (category == Category.Pointer) {
+			Utils.assertTrue(toType != null);
+		}
+		else {
+			Utils.assertTrue(toType == null);
+		}
+	}
+
 	public static Type pointer(@NotNull Type toType) {
-		return new Type(toType.name + "*", toType, false);
+		return new Type(toType.name + "*", toType, Category.Pointer);
 	}
 
 	public static Type struct(@NotNull String name) {
-		return new Type(name, null, false);
+		return new Type(name, null, Category.Struct);
 	}
 
 	public static int getSize(@NotNull Type type) {
@@ -60,10 +72,18 @@ public record Type(@NotNull String name, @Nullable Type toType, boolean isInt) {
 	}
 
 	public boolean isPointer() {
-		return toType != null;
+		return category == Category.Pointer;
 	}
 
 	public boolean isInt() {
-		return isInt;
+		return category == Category.Integer;
+	}
+
+	public boolean isStruct() {
+		return category == Category.Struct;
+	}
+
+	private enum Category {
+		Integer, Pointer, Struct, Other
 	}
 }
