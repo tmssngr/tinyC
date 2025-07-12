@@ -108,6 +108,12 @@ public class CompilerTest {
 		Compiler.compile(inputFile);
 	}
 
+	@Test
+	public void testRegAlloc() throws IOException, InterruptedException {
+		final Path inputFile = absolutePath("regalloc.c");
+		Compiler.compile(inputFile);
+	}
+
 	private void compileAndRun(String fileName) throws IOException, InterruptedException {
 		Compiler.compileAndRun(absolutePath(fileName));
 	}
