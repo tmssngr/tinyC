@@ -253,6 +253,7 @@ public final class X86Win64 {
 		switch (instruction) {
 		case IRLabel label -> writeLabel(label.label());
 		case IRComment comment -> writeComment(comment.comment());
+		case IRAddConst addConst -> writeAddConst(addConst);
 		case IRAddrOf addrOf -> writeAddrOf(addrOf);
 		case IRAddrOfArray addrOf -> writeAddrOfArray(addrOf);
 		case IRLiteral literal -> writeLiteral(literal);
@@ -271,6 +272,32 @@ public final class X86Win64 {
 		default -> throw new UnsupportedOperationException(instruction.getClass() + " " + instruction);
 		}
 		Utils.assertTrue(allocator.isNoneUsed(), instruction + ": not all regs freed");
+	}
+
+	private void writeAddConst(IRAddConst addConst) throws IOException {
+		final IRVar var = addConst.var();
+		int offset = addConst.offset();
+		final int reg = loadVar(var);
+		final String regName = getRegName(reg, var);
+		if (offset > 0) {
+			if (offset == 1) {
+				writeIndented("inc " + regName);
+			}
+			else {
+				writeIndented("add " + regName + ", " + offset);
+			}
+		}
+		else {
+			offset = -offset;
+			if (offset == 1) {
+				writeIndented("dec " + regName);
+			}
+			else {
+				writeIndented("sub " + regName + ", " + offset);
+			}
+		}
+		storeVar(var, reg);
+		free(reg);
 	}
 
 	private void writeAddrOf(IRAddrOf addrOf) throws IOException {
