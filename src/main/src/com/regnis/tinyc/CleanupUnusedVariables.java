@@ -12,6 +12,7 @@ public abstract class CleanupUnusedVariables {
 
 	protected void process(IRInstruction instruction) {
 		switch (instruction) {
+		case IRAddConst addConst -> readWrite(addConst.var(), List.of(addConst.var()));
 		case IRAddrOf addrOf -> readWrite(addrOf.target(), List.of(addrOf.source()));
 		case IRAddrOfArray addrOf -> readWrite(addrOf.addr(), List.of(addrOf.array()));
 		case IRBinary binary -> readWrite(binary.target(), List.of(binary.left(), binary.right()));

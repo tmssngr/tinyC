@@ -22,7 +22,6 @@ start:
 
         ; void main
         ;   rsp+0: var i
-        ;   rsp+1: var t.1
 @main:
         ; reserve space for local variables
         sub rsp, 16
@@ -32,16 +31,10 @@ start:
         mov [rbx], al
         ; 3:2 while true
 @while_1:
-        ; const t.1, 1
-        mov al, 1
-        lea rbx, [rsp+1]
-        mov [rbx], al
-        ; add i, i, t.1
+        ; inc i
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+1]
-        mov cl, [rax]
-        add bl, cl
+        inc bl
         lea rax, [rsp+0]
         mov [rax], bl
         jmp @while_1
