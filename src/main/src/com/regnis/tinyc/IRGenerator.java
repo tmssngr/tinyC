@@ -354,9 +354,7 @@ public final class IRGenerator {
 		writeAddrOf(addr, access.expression(), access.location());
 		final int offset = getMemberOffset(access);
 		if (offset != 0) {
-			final IRVar offsetVar = createTempVar(addr.type());
-			write(new IRLiteral(offsetVar, offset, access.location()));
-			write(new IRBinary(addr, IRBinary.Op.Add, addr, offsetVar, access.location()));
+			write(new IRAddConst(addr, offset));
 		}
 	}
 
@@ -524,6 +522,19 @@ public final class IRGenerator {
 	}
 
 	private void writeBinary(IRBinary.Op op, IRVar var, ExprBinary binary) {
+		if (op == IRBinary.Op.Add || op == IRBinary.Op.Sub) {
+			if (binary.left() instanceof ExprVarAccess varAccess && varAccess.index() == var.index() && varAccess.scope() == var.scope()
+			    && binary.right() instanceof ExprIntLiteral intLiteral) {
+				Utils.assertTrue(var.type().equals(varAccess.type()));
+				Utils.assertTrue(var.name().equals(varAccess.varName()));
+				final int value = intLiteral.value();
+				if (value != 0) {
+					write(new IRAddConst(var, op == IRBinary.Op.Add ? value : -value));
+				}
+				return;
+			}
+		}
+
 		final IRVar left = writeExpression(binary.left());
 		final IRVar right = writeExpression(binary.right());
 		Utils.assertTrue(var.type().equals(left.type()));

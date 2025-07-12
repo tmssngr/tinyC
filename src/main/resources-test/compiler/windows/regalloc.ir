@@ -53,8 +53,7 @@
 	var 3: c (i16/2)
 	var 4: t.4 (bool/1)
 	var 5: t.5 (u8/1)
-	var 6: t.6 (u8/1)
-	; 52 pc
+	; 48 pc
 	const a, 0
 	const b, 1
 	; 22:2 while i > 0
@@ -63,8 +62,7 @@
 	gt t.4, i, t.5
 	branch t.4, false, @while_2_break, @while_2_body
 @while_2_body:
-	const t.6, 1
-	sub i, i, t.6
+	dec i
 	move c, a
 	add c, c, b
 	move a, b

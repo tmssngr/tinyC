@@ -14,6 +14,7 @@ public abstract class IRVarReplacer {
 
 	public IRInstruction replaceFor(IRInstruction instruction) {
 		return switch (instruction) {
+			case IRAddConst addConst -> new IRAddConst(replace(addConst.var()), addConst.offset());
 			case IRAddrOf addrOf -> new IRAddrOf(replace(addrOf.target()), replace(addrOf.source()), addrOf.location());
 			case IRAddrOfArray addrOf -> new IRAddrOfArray(replace(addrOf.addr()), replace(addrOf.array()), addrOf.location());
 			case IRBinary binary -> new IRBinary(replace(binary.target()), binary.op(), replace(binary.left()), replace(binary.right()), binary.location());

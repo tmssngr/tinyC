@@ -149,6 +149,10 @@ public final class IRWriter extends TextWriter {
 			}
 			case IRComment ignored -> {
 			}
+			case IRAddConst i -> {
+				sum += 2 * getInstructionTime(i.var());
+				sum++;
+			}
 			case IRAddrOf i -> {
 				sum += getInstructionTime(i.source());
 				sum += getInstructionTime(i.target());

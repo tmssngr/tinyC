@@ -14,6 +14,8 @@ abstract class AsmWriter {
 
 	public abstract void write(@NotNull IRProgram program) throws IOException;
 
+	protected abstract void writeAddConst(IRAddConst addConst) throws IOException;
+
 	protected abstract void writeAddrOf(IRAddrOf addrOf) throws IOException;
 
 	protected abstract void writeAddrOfArray(IRAddrOfArray addrOf) throws IOException;
@@ -76,6 +78,7 @@ abstract class AsmWriter {
 		}
 
 		switch (instruction) {
+		case IRAddConst addConst -> writeAddConst(addConst);
 		case IRAddrOf addrOf -> writeAddrOf(addrOf);
 		case IRAddrOfArray addrOf -> writeAddrOfArray(addrOf);
 		case IRBinary binary -> writeBinary(binary);

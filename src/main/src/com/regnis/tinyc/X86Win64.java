@@ -231,6 +231,32 @@ public final class X86Win64 extends AsmWriter {
 		Utils.assertTrue(allocator.isNoneUsed(), instruction + ": not all regs freed");
 	}
 
+	protected void writeAddConst(IRAddConst addConst) throws IOException {
+		final IRVar var = addConst.var();
+		int offset = addConst.offset();
+		final int reg = loadVar(var);
+		final String regName = getRegName(reg, var);
+		if (offset > 0) {
+			if (offset == 1) {
+				writeIndented("inc " + regName);
+			}
+			else {
+				writeIndented("add " + regName + ", " + offset);
+			}
+		}
+		else {
+			offset = -offset;
+			if (offset == 1) {
+				writeIndented("dec " + regName);
+			}
+			else {
+				writeIndented("sub " + regName + ", " + offset);
+			}
+		}
+		storeVar(var, reg);
+		free(reg);
+	}
+
 	protected void writeAddrOf(IRAddrOf addrOf) throws IOException {
 		final int addrReg = addrOf(addrOf.source());
 		storeVar(addrOf.target(), addrReg);

@@ -15,53 +15,51 @@
 	var 2: pos (u8/1)
 	var 3: remainder (i64/8)
 	var 4: digit (u8/1)
-	var 5: t.5 (u8/1)
+	var 5: t.5 (i64/8)
 	var 6: t.6 (i64/8)
-	var 7: t.7 (i64/8)
+	var 7: t.7 (u8/1)
 	var 8: t.8 (u8/1)
-	var 9: t.9 (u8/1)
-	var 10: t.10 (u8*/8)
-	var 11: t.11 (i64/8)
-	var 12: t.12 (u8*/8)
-	var 13: t.13 (bool/1)
-	var 14: t.14 (i64/8)
-	var 15: t.15 (u8*/8)
-	var 16: t.16 (i64/8)
-	var 17: t.17 (u8*/8)
+	var 9: t.9 (u8*/8)
+	var 10: t.10 (i64/8)
+	var 11: t.11 (u8*/8)
+	var 12: t.12 (bool/1)
+	var 13: t.13 (i64/8)
+	var 14: t.14 (u8*/8)
+	var 15: t.15 (i64/8)
+	var 16: t.16 (u8*/8)
+	var 17: t.17 (u8/1)
 	var 18: t.18 (u8/1)
-	var 19: t.19 (u8/1)
-	; 130 pc
+	; 126 pc
 	const pos, 20
 	; 25:2 while true
 @while_1:
-	const t.5, 1
-	sub pos, pos, t.5
-	const t.6, 10
+	dec pos
+	const t.5, 10
 	move remainder, number
-	mod remainder, remainder, t.6
-	const t.7, 10
-	div number, number, t.7
-	cast t.8(u8), remainder(i64)
-	const t.9, 48
-	move digit, t.8
-	add digit, digit, t.9
-	cast t.11(i64), pos(u8)
-	cast t.12(u8*), t.11(i64)
-	addrof t.10, [buffer]
-	add t.10, t.10, t.12
-	store [t.10], digit
+	mod remainder, remainder, t.5
+	const t.6, 10
+	div number, number, t.6
+	cast t.7(u8), remainder(i64)
+	const t.8, 48
+	move digit, t.7
+	add digit, digit, t.8
+	cast t.10(i64), pos(u8)
+	cast t.11(u8*), t.10(i64)
+	addrof t.9, [buffer]
+	add t.9, t.9, t.11
+	store [t.9], digit
 	; 31:3 if number == 0
-	const t.14, 0
-	equals t.13, number, t.14
-	branch t.13, false, @while_1, @while_1_break
-	cast t.16(i64), pos(u8)
-	cast t.17(u8*), t.16(i64)
-	addrof t.15, [buffer]
-	add t.15, t.15, t.17
-	const t.19, 20
-	move t.18, t.19
-	sub t.18, t.18, pos
-	call printStringLength@@u8@u8[t.15, t.18]
+	const t.13, 0
+	equals t.12, number, t.13
+	branch t.12, false, @while_1, @while_1_break
+	cast t.15(i64), pos(u8)
+	cast t.16(u8*), t.15(i64)
+	addrof t.14, [buffer]
+	add t.14, t.14, t.16
+	const t.18, 20
+	move t.17, t.18
+	sub t.17, t.17, pos
+	call printStringLength@@u8@u8[t.14, t.17]
 
 @printIntLf@i16:
  Local variables

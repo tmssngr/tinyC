@@ -47,15 +47,13 @@
 	var 3: c (i16/2)
 	var 4: t.4 (bool/1)
 	var 5: t.5 (u8/1)
-	var 6: t.6 (u8/1)
-	; 51 pc
+	; 47 pc
 	const a, 0
 	const b, 1
 	; 22:2 while i > 0
 	jump @while_2
 @while_2_body:
-	const t.6, 1
-	sub i, i, t.6
+	dec i
 	move c, a
 	add c, c, b
 	move a, b

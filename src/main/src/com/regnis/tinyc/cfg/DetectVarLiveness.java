@@ -73,6 +73,10 @@ public final class DetectVarLiveness {
 	@SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
 	private static void detectLiveness(IRInstruction instruction, Set<IRVar> uses, Set<IRVar> defines) {
 		switch (instruction) {
+		case IRAddConst addConst -> {
+			defined(addConst.var(), defines);
+			uses(addConst.var(), uses);
+		}
 		case IRAddrOf addrOf -> {
 			defined(addrOf.target(), defines);
 			uses(addrOf.source(), uses);
