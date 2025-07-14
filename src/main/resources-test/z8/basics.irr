@@ -43,9 +43,9 @@
 	equals r9, r0, 0
 	branch r9, false, @while_2
 	cast r9(i16), r8(u8)
-	cast r9(u8*), r9(i16)
+	cast r10(u8*), r9(i16)
 	addrof r0, [buffer]
-	add r0, r0, r9
+	add r0, r0, r10
 	const r9, 20
 	move r2, r9
 	sub r2, r2, r8
@@ -69,8 +69,8 @@
 	call printChar[r0]
 	addrof r8, two
 	const r11, 0
-	cast r11(u8*), r11(i16)
-	add r8, r8, r11
+	cast r12(u8*), r11(i16)
+	add r8, r8, r12
 	load r0, [r8]
 	call printChar[r0]
 	move r10, threeFour

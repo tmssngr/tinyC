@@ -1,9 +1,11 @@
 package com.regnis.tinyc.linearscanregalloc;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -40,9 +42,12 @@ final class LSAlgorithm {
 			checkActiveForExpiredOrInactive(from);
 			checkInactiveForExpiredOrInactive(from);
 
-			final int neededRegisterCount = typeRegisterCountProvider.registerCount(current.var().type());
-			if (!tryAllocateFree(current, neededRegisterCount)) {
-				allocateBlockedReg(current, neededRegisterCount);
+			final Type type = current.var().type();
+			final int neededRegisterCount = typeRegisterCountProvider.registerCount(type);
+			final IntPredicate regPredicate = reg -> typeRegisterCountProvider.canUseRegister(type, reg);
+
+			if (!tryAllocateFree(current, neededRegisterCount, regPredicate)) {
+				allocateBlockedReg(current, neededRegisterCount, regPredicate);
 			}
 
 			if (current.register() >= 0) {
@@ -89,7 +94,7 @@ final class LSAlgorithm {
 		}
 	}
 
-	private boolean tryAllocateFree(LSInterval current, int neededRegisterCount) {
+	private boolean tryAllocateFree(LSInterval current, int neededRegisterCount, IntPredicate regPredicate) {
 		final RegisterPositions registersFreeUntil = new RegisterPositions(registerCount);
 		prepareFreeUntil(current, registersFreeUntil);
 
@@ -101,7 +106,7 @@ final class LSAlgorithm {
 			reg = registerHint;
 		}
 		else {
-			reg = registersFreeUntil.getExactOrMax(currentTo, neededRegisterCount);
+			reg = registersFreeUntil.getExactOrMax(currentTo, neededRegisterCount, regPredicate);
 			if (reg < 0) {
 				return false;
 			}
@@ -137,14 +142,14 @@ final class LSAlgorithm {
 	 * The interval that is not used for the longest time is spilled because
 	 * this frees a register as long as possible.
 	 */
-	private void allocateBlockedReg(LSInterval current, int neededRegisterCount) {
+	private void allocateBlockedReg(LSInterval current, int neededRegisterCount, IntPredicate regPredicate) {
 		final RegisterPositions registersUsedNext = new RegisterPositions(registerCount);
 		final RegisterPositions registersBlockedNext = new RegisterPositions(registerCount);
 
 		final int from = current.getFrom();
 		prepareUseAndBlockPos(from, registersUsedNext, registersBlockedNext);
 
-		final int reg = Math.max(registersUsedNext.getMax(neededRegisterCount), 0);
+		final int reg = Math.max(registersUsedNext.getMax(neededRegisterCount, regPredicate), 0);
 		final int maxUsedNext = registersUsedNext.getMin(reg, neededRegisterCount);
 
 		final int firstCurrentUse = current.getUsedNext(0, Integer.MAX_VALUE);
@@ -268,8 +273,11 @@ final class LSAlgorithm {
 			return pos;
 		}
 
-		public int getExactOrMax(int to, int neededRegisterCount) {
+		public int getExactOrMax(int to, int neededRegisterCount, IntPredicate regPredicate) {
 			for (int reg = 0, highestRegisterToTest = positions.length - neededRegisterCount; reg <= highestRegisterToTest; reg++) {
+				if (!regPredicate.test(reg)) {
+					continue;
+				}
 				int pos = positions[reg];
 				if (pos == to) {
 					boolean skip = false;
@@ -286,13 +294,16 @@ final class LSAlgorithm {
 					return reg;
 				}
 			}
-			return getMax(neededRegisterCount);
+			return getMax(neededRegisterCount, regPredicate);
 		}
 
-		public int getMax(int neededRegisterCount) {
+		public int getMax(int neededRegisterCount, IntPredicate regPredicate) {
 			int maxReg = -1;
 			int max = 0;
 			for (int reg = 0, highestRegisterToTest = positions.length - neededRegisterCount; reg <= highestRegisterToTest; reg++) {
+				if (!regPredicate.test(reg)) {
+					continue;
+				}
 				final int pos = getMin(reg, neededRegisterCount);
 				if (pos > max) {
 					max = pos;

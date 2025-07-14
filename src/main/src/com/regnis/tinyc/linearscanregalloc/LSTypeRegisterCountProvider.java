@@ -10,4 +10,6 @@ import org.jetbrains.annotations.*;
 public interface LSTypeRegisterCountProvider {
 
 	int registerCount(@NotNull Type type);
+
+	boolean canUseRegister(@NotNull Type type, int register);
 }

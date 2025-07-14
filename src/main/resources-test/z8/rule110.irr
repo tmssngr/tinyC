@@ -24,10 +24,10 @@
 @for_3_body:
 	; 12:3 if [...] == 0
 	cast r9(i16), r8(u8)
-	cast r9(u8*), r9(i16)
-	addrof r11, [board]
-	add r11, r11, r9
-	load r9, [r11]
+	cast r10(u8*), r9(i16)
+	addrof r12, [board]
+	add r12, r12, r10
+	load r9, [r12]
 	equals r9, r9, 0
 	branch r9, true, @if_4_then
 	const r0, 42
@@ -65,20 +65,20 @@
 	const r8, 1
 	const r9, 29
 	cast r9(i16), r9(u8)
-	cast r9(u8*), r9(i16)
-	addrof r11, [board]
-	add r11, r11, r9
-	store [r11], r8
+	cast r10(u8*), r9(i16)
+	addrof r12, [board]
+	add r12, r12, r10
+	store [r12], r8
 	call printBoard[]
 	const r8, 0
 	; 30:2 for i < 28
 	jump @for_6
 @for_6_body:
 	const r9, 0
-	cast r9(u8*), r9(i16)
-	addrof r11, [board]
-	add r11, r11, r9
-	load r9, [r11]
+	cast r10(u8*), r9(i16)
+	addrof r12, [board]
+	add r12, r12, r10
+	load r9, [r12]
 	const r10, 1
 	shiftleft r9, r9, r10
 	const r10, 1
@@ -100,9 +100,9 @@
 	move r13, r10
 	add r13, r13, r11
 	cast r13(i16), r13(u8)
-	cast r13(u8*), r13(i16)
+	cast r14(u8*), r13(i16)
 	addrof r0, [board]
-	add r0, r0, r13
+	add r0, r0, r14
 	load r11, [r0]
 	move r9, r12
 	or r9, r9, r11

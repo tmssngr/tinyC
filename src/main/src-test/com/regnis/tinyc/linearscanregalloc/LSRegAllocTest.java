@@ -6,6 +6,7 @@ import com.regnis.tinyc.ir.*;
 
 import java.util.*;
 
+import org.jetbrains.annotations.*;
 import org.junit.*;
 
 import static org.junit.Assert.assertEquals;
@@ -15,6 +16,17 @@ import static org.junit.Assert.assertEquals;
  */
 public class LSRegAllocTest {
 
+	private static final LSTypeRegisterCountProvider X86_PROVIDER = new LSTypeRegisterCountProvider() {
+		@Override
+		public int registerCount(@NotNull Type type) {
+			return 1;
+		}
+
+		@Override
+		public boolean canUseRegister(@NotNull Type type, int register) {
+			return true;
+		}
+	};
 	private static final int U8_SIZE = 1;
 
 	@Test
@@ -42,8 +54,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final LSTypeRegisterCountProvider typeRegisterCountProvider = type -> 1;
-		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider, typeRegisterCountProvider);
+		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider, X86_PROVIDER);
 		assertEquals(List.of(
 				new IRLiteral(varFour.asRegister(r1), 4, Location.DUMMY),
 				new IRLiteral(varThree.asRegister(r2), 3, Location.DUMMY),
@@ -75,8 +86,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final LSTypeRegisterCountProvider typeRegisterCountProvider = type -> 1;
-		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider, typeRegisterCountProvider);
+		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider, X86_PROVIDER);
 		assertEquals(List.of(
 				new IRMove(varT2.asRegister(rRet), argA.asRegister(rArg1), Location.DUMMY),
 				new IRBinary(varT2.asRegister(rRet), IRBinary.Op.Add, varT2.asRegister(rRet), argB.asRegister(rArg2), Location.DUMMY)
@@ -104,8 +114,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(1, 0);
-		final LSTypeRegisterCountProvider typeRegisterCountProvider = type -> 1;
-		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 2, callingConventionProvider, typeRegisterCountProvider);
+		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 2, callingConventionProvider, X86_PROVIDER);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varA.asRegister(rRet), 1, Location.DUMMY),
 				new IRMove(varA.asRegister(rArg1), varA.asRegister(rRet), Location.DUMMY),
@@ -144,8 +153,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final LSTypeRegisterCountProvider typeRegisterCountProvider = type -> 1;
-		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider, typeRegisterCountProvider);
+		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider, X86_PROVIDER);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRCompare(varTmp.asRegister(rRet), IRCompareOp.Lt, varA.asRegister(rArg1), varB.asRegister(rArg2), Location.DUMMY),
 				new IRBranch(varTmp.asRegister(rRet), false, "@if_1_end", "@if_1_then"),
@@ -181,8 +189,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final LSTypeRegisterCountProvider typeRegisterCountProvider = type -> 1;
-		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 5, callingConventionProvider, typeRegisterCountProvider);
+		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 5, callingConventionProvider, X86_PROVIDER);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRMove(varStr.asRegister(rNV1), varStr.asRegister(rArg1), Location.DUMMY),
 				// todo
@@ -217,8 +224,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final LSTypeRegisterCountProvider typeRegisterCountProvider = type -> 1;
-		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider, typeRegisterCountProvider);
+		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider, X86_PROVIDER);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varOne.asRegister(rArg1), 1, Location.DUMMY),
 				new IRMove(varLocalGlobal.asRegister(rRet), varGlobal, Location.DUMMY),

@@ -45,6 +45,11 @@ public interface LSArchitecture extends LSCallingConventionProvider, LSTypeRegis
 		}
 
 		@Override
+		public boolean canUseRegister(@NotNull Type type, int register) {
+			return true;
+		}
+
+		@Override
 		public LSCallingConvention getCallingConvention(@NotNull Type targetType, @NotNull List<Type> argTypes) {
 			return callingConvention;
 		}
@@ -76,6 +81,12 @@ public interface LSArchitecture extends LSCallingConventionProvider, LSTypeRegis
 		}
 
 		@Override
+		public boolean canUseRegister(@NotNull Type type, int register) {
+			Utils.assertTrue(type != Type.VOID);
+			return !type.isPointer() || (register & 1) == 0;
+		}
+
+		@Override
 		public LSCallingConvention getCallingConvention(@NotNull Type returnType, @NotNull List<Type> argTypes) {
 			final List<Integer> registers = new ArrayList<>();
 			int register = 0;
@@ -86,9 +97,11 @@ public interface LSArchitecture extends LSCallingConventionProvider, LSTypeRegis
 			int volatileRegisterCount = registerCount / 2;
 			for (Type type : argTypes) {
 				final int size = registerCount(type);
-				if (type.isPointer() && (register & 1) == 1) {
+				if (!canUseRegister(type, register)) {
 					register++;
+					Utils.assertTrue(canUseRegister(type, register));
 				}
+
 				final int nextRegister = register + size;
 				if (nextRegister >= registerCount) {
 					volatileRegisterCount = register;

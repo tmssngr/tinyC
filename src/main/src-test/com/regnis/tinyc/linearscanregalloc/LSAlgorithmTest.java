@@ -6,6 +6,7 @@ import com.regnis.tinyc.ir.*;
 
 import java.util.*;
 
+import org.jetbrains.annotations.*;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -15,7 +16,17 @@ import static org.junit.Assert.*;
  */
 public class LSAlgorithmTest {
 
-	private static final LSTypeRegisterCountProvider X86_PROVIDER = type -> 1;
+	private static final LSTypeRegisterCountProvider X86_PROVIDER = new LSTypeRegisterCountProvider() {
+		@Override
+		public int registerCount(@NotNull Type type) {
+			return 1;
+		}
+
+		@Override
+		public boolean canUseRegister(@NotNull Type type, int register) {
+			return true;
+		}
+	};
 
 	@Test
 	public void test1() {

@@ -43,9 +43,9 @@
 	equals r9, r0, 0
 	branch r9, false, @while_2
 	cast r9(i16), r8(u8)
-	cast r9(u8*), r9(i16)
+	cast r10(u8*), r9(i16)
 	addrof r0, [buffer]
-	add r0, r0, r9
+	add r0, r0, r10
 	const r9, 20
 	move r2, r9
 	sub r2, r2, r8
@@ -79,8 +79,8 @@
 	addrof r10, pos
 	store [r10], r9
 	; 10:14 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:10].x
-	addrof r9, pos
-	load r9, [r9]
+	addrof r10, pos
+	load r9, [r10]
 	const r10, 1
 	add r9, r9, r10
 	; 10:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:2].y
@@ -88,14 +88,14 @@
 	inc r10
 	store [r10], r9
 	; 11:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=11:13].x
-	addrof r9, pos
-	load r9, [r9]
+	addrof r10, pos
+	load r9, [r10]
 	cast r0(i16), r9(u8)
 	call printIntLf[r0]
 	; 12:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=12:13].y
-	addrof r9, pos
-	inc r9
-	load r9, [r9]
+	addrof r10, pos
+	inc r10
+	load r9, [r10]
 	cast r0(i16), r9(u8)
 	call printIntLf[r0]
 	; 13:15 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=13:11].x

@@ -43,9 +43,9 @@
 	equals r9, r0, 0
 	branch r9, false, @while_2
 	cast r9(i16), r8(u8)
-	cast r9(u8*), r9(i16)
+	cast r10(u8*), r9(i16)
 	addrof r0, [buffer]
-	add r0, r0, r9
+	add r0, r0, r10
 	const r9, 20
 	move r2, r9
 	sub r2, r2, r8
@@ -74,10 +74,10 @@
 	; end initialize global variables
 	const r8, 32
 	const r9, 0
-	cast r9(u8*), r9(i16)
-	addrof r11, [chars]
-	add r11, r11, r9
-	store [r11], r8
+	cast r10(u8*), r9(i16)
+	addrof r12, [chars]
+	add r12, r12, r10
+	store [r12], r8
 	const r8, 0
 	cast r8(u8*), r8(i16)
 	addrof r10, [chars]
@@ -86,10 +86,10 @@
 	const r9, 1
 	add r8, r8, r9
 	const r9, 1
-	cast r9(u8*), r9(i16)
-	addrof r11, [chars]
-	add r11, r11, r9
-	store [r11], r8
+	cast r10(u8*), r9(i16)
+	addrof r12, [chars]
+	add r12, r12, r10
+	store [r12], r8
 	const r8, 1
 	cast r8(u8*), r8(i16)
 	addrof r10, [chars]
@@ -99,10 +99,10 @@
 	add r8, r8, r9
 	const r9, 2
 	cast r9(i16), r9(u8)
-	cast r9(u8*), r9(i16)
-	addrof r11, [chars]
-	add r11, r11, r9
-	store [r11], r8
+	cast r10(u8*), r9(i16)
+	addrof r12, [chars]
+	add r12, r12, r10
+	store [r12], r8
 	const r8, 2
 	cast r8(u8*), r8(i16)
 	addrof r10, [chars]
