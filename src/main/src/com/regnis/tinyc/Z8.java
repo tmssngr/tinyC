@@ -2,6 +2,7 @@ package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
+import com.regnis.tinyc.linearscanregalloc.*;
 
 import java.io.*;
 import java.nio.charset.*;
@@ -15,9 +16,17 @@ import org.jetbrains.annotations.*;
 public final class Z8 extends AsmWriter {
 
 	private static final int TMP_REG = 99;
+	private static final int FIRST_REG = 0x20;
 
-	public Z8(@NotNull BufferedWriter writer) {
+	private final LSArchitecture.Z8 architecture;
+	private final int registerCount;
+
+	private Z8StackOffsets stackOffsets;
+
+	public Z8(@NotNull BufferedWriter writer, @NotNull LSArchitecture.Z8 architecture) {
 		super(writer);
+		registerCount = architecture.registerCount();
+		this.architecture = architecture;
 	}
 
 	public void write(@NotNull IRProgram program) throws IOException {
@@ -45,7 +54,43 @@ public final class Z8 extends AsmWriter {
 
 	@Override
 	protected void writeAddConst(IRAddConst addConst) throws IOException {
-		notYetImplemented();
+		final IRVar var = addConst.var();
+		final int index = getRegister(var);
+		int offset = addConst.offset();
+		final int typeSize = registerCount(var);
+		if (offset > 0) {
+			if (offset == 1 && typeSize == 1) {
+				writeIndented("inc " + getRegName(index));
+			}
+			else if (offset == 1 && typeSize == 2 && (index & 1) == 0) {
+				writeIndented("incw " + getRegName(index));
+			}
+			else {
+				final int[] bytes = toBytes(offset, typeSize);
+				String op = "add";
+				for (int i = typeSize; i-- > 0; ) {
+					writeIndented(op + " " + getRegName(index + i) + ", #%" + Utils.toHex2(bytes[i]));
+					op = "adc";
+				}
+			}
+		}
+		else {
+			offset = -offset;
+			if (offset == 1 && typeSize == 1) {
+				writeIndented("dec " + getRegName(index));
+			}
+			else if (offset == 1 && typeSize == 2 && (index & 1) == 0) {
+				writeIndented("decw " + getRegName(index));
+			}
+			else {
+				final int[] bytes = toBytes(offset, typeSize);
+				String op = "sub";
+				for (int i = typeSize; i-- > 0; ) {
+					writeIndented(op + " " + getRegName(index + i) + ", #%" + Utils.toHex2(bytes[i]));
+					op = "sbc";
+				}
+			}
+		}
 	}
 
 	protected void writeAddrOf(IRAddrOf addrOf) throws IOException {
@@ -59,8 +104,8 @@ public final class Z8 extends AsmWriter {
 	protected void writeBinary(IRBinary binary) throws IOException {
 		final boolean signed = binary.left().type() != Type.U8;
 		switch (binary.op()) {
-		case Add -> writeBinary("add", binary);
-		case Sub -> writeBinary("sub", binary);
+		case Add -> writeBinary("add", "adc", binary);
+		case Sub -> writeBinary("sub", "sbc", binary);
 		case Mul -> {
 			notYetImplemented();
 		}
@@ -72,20 +117,47 @@ public final class Z8 extends AsmWriter {
 			notYetImplemented();
 		}
 
-		case And -> writeBinary("and", binary);
-		case Or -> writeBinary("or", binary);
-		case Xor -> writeBinary("xor", binary);
+		case And -> writeBinary("and", "and", binary);
+		case Or -> writeBinary("or", "or", binary);
+		case Xor -> writeBinary("xor", "xor", binary);
 
 		default -> throw new UnsupportedOperationException(String.valueOf(binary));
 		}
 	}
 
 	protected void writeBranch(IRBranch branch) throws IOException {
-		notYetImplemented();
+		final IRVar var = branch.conditionVar();
+		final String reg = getRegName(var.index());
+		writeIndented("or " + reg + ", " + reg);
+		if (branch.jumpOnTrue()) {
+			writeIndented("jp nz, " + branch.target());
+		}
+		else {
+			writeIndented("jp z, " + branch.target());
+		}
 	}
 
 	protected void writeCall(IRCall call) throws IOException {
-		notYetImplemented();
+		final LSCallingConvention callingConvention = architecture.getCallingConvention(call.type(), call.getArgumentTypes());
+		final Iterator<Integer> argRegisters = callingConvention.argRegisters().iterator();
+		for (IRVar arg : call.args()) {
+			if (argRegisters.hasNext()) {
+				argRegisters.next();
+				continue;
+			}
+
+			if (arg.scope() == VariableScope.register) {
+				final int index = arg.index();
+				final int typeSize = registerCount(arg);
+				for (int i = 0; i < typeSize; i++) {
+					writeIndented("push " + getRegName(index + i));
+				}
+			}
+			else {
+				writeComment("need to push " + arg.name());
+			}
+		}
+		writeIndented("call " + call.name());
 	}
 
 	protected void writeCast(IRCast cast) throws IOException {
@@ -122,15 +194,55 @@ public final class Z8 extends AsmWriter {
 	}
 
 	protected void writeMove(IRMove copy) throws IOException {
+		final IRVar source = copy.source();
+		final IRVar target = copy.target();
+		final int typeSize = registerCount(source);
+		if (source.scope() == VariableScope.register && target.scope() == VariableScope.register) {
+			final int sourceReg = getRegister(source);
+			final int targetReg = getRegister(target);
+			for (int i = 0; i < typeSize; i++) {
+				writeIndented("ld " + getRegName(targetReg + i) + ", " + getRegName(sourceReg + i));
+			}
+			return;
+		}
 		notYetImplemented();
 	}
 
 	protected void writeLiteral(IRLiteral literal) throws IOException {
-		notYetImplemented();
+		final IRVar target = literal.target();
+		if (target.scope() != VariableScope.register) {
+			notYetImplemented();
+			return;
+		}
+		final int index = getRegister(target);
+		final int typeSize = registerCount(target);
+		final int value = literal.value();
+		final int[] bytes = toBytes(value, typeSize);
+
+		for (int i = 0; i < typeSize; i++) {
+			writeIndented("ld " + getRegName(index + i) + ", #%" + Utils.toHex2(bytes[i]));
+		}
 	}
 
 	protected void writeMemLoad(IRMemLoad load) throws IOException {
-		notYetImplemented();
+		final IRVar target = load.target();
+		final int targetIndex = getRegister(target);
+
+		final IRVar addr = load.addr();
+		final int addrIndex = getRegister(addr);
+		Utils.assertTrue((addrIndex & 1) == 0);
+		final String addrReg = getRegName(addrIndex);
+
+		final int typeSize = registerCount(target);
+		for (int i = 0; i < typeSize; i++) {
+			if (i > 0) {
+				writeIndented("incw " + addrReg);
+			}
+			writeIndented("lde " + getRegName(targetIndex + i) + ", r" + addrReg);
+		}
+		for (int i = 1; i < typeSize; i++) {
+			writeIndented("decw " + addrReg);
+		}
 	}
 
 	protected void writeMemStore(IRMemStore store) throws IOException {
@@ -146,9 +258,63 @@ public final class Z8 extends AsmWriter {
 	}
 
 	protected void writeUnary(IRUnary unary) throws IOException {
+		final IRVar source = unary.source();
+		final IRVar target = unary.target();
 		switch (unary.op()) {
-		case Neg, Not -> {
-			notYetImplemented();
+		case Neg -> {
+			final int sourceReg = getRegister(source);
+			final int targetReg = getRegister(target);
+			if (sourceReg == targetReg) {
+				final int registerCount = registerCount(target);
+				for (int i = 0; i < registerCount; i++) {
+					writeIndented("com " + getRegName(targetReg + i));
+				}
+				if (registerCount == 1) {
+					writeIndented("inc " + getRegName(targetReg));
+				}
+				else if (registerCount == 2 && (targetReg & 1) == 0) {
+					writeIndented("incw " + getRegName(targetReg));
+				}
+				else {
+					boolean first = true;
+					for (int i = registerCount; i-- > 0; first = false) {
+						if (first) {
+							writeIndented("add " + getRegName(targetReg + i) + ", #%01");
+						}
+						else {
+							writeIndented("adc " + getRegName(targetReg + i) + ", #%00");
+						}
+					}
+				}
+			}
+			else {
+				final int registerCount = registerCount(target);
+				for (int i = 0; i < registerCount; i++) {
+					writeIndented("ld " + getRegName(targetReg + i) + ", #%00");
+				}
+				boolean first = true;
+				for (int i = registerCount; i-- > 0; first = false) {
+					if (first) {
+						writeIndented("sub " + getRegName(targetReg + i) + ", " + getRegName(sourceReg + i));
+					}
+					else {
+						writeIndented("sbc " + getRegName(targetReg + i) + ", " + getRegName(sourceReg + i));
+					}
+				}
+			}
+		}
+		case Not -> {
+			final int sourceReg = getRegister(source);
+			final int targetReg = getRegister(target);
+			final int registerCount = registerCount(target);
+			if (sourceReg != targetReg) {
+				for (int i = 0; i < registerCount; i++) {
+					writeIndented("ld " + getRegName(targetReg + i) + ", " + getRegName(sourceReg + i));
+				}
+			}
+			for (int i = 0; i < registerCount; i++) {
+				writeIndented("com " + getRegName(targetReg + i));
+			}
 		}
 		case NotLog -> {
 			notYetImplemented();
@@ -158,30 +324,22 @@ public final class Z8 extends AsmWriter {
 	}
 
 	protected void writeJump(IRJump jump) throws IOException {
-		notYetImplemented();
+		writeIndented("jp " + jump.label());
 	}
 
 	private void writePreample() throws IOException {
-		writeLines("""
-				           format pe64 console
-				           include 'win64ax.inc'
-				           
-				           STD_IN_HANDLE = -10
-				           STD_OUT_HANDLE = -11
-				           STD_ERR_HANDLE = -12
-				           
-				           entry start
-				           
-				           section '.text' code readable executable
-				           
-				           start:""");
-		writeComment("alignment");
-		writeIndented("and rsp, -16");
-		writeIndented("call init");
+		writeIndented(".const RP  = %FD");
+		writeIndented(".const SPH = %FE");
+		writeIndented(".const SPL = %FF");
+		writeNL();
+		writeIndented(".org %E000");
+		writeNL();
+		writeLabel("start");
+		writeIndented("push RP");
+		writeIndented("srp  #%20");
 		writeIndented("call @main");
-		writeIndented("mov rcx, 0");
-		writeIndented("sub rsp, 0x20");
-		writeIndented("call [ExitProcess]");
+		writeIndented("pop  RP");
+		writeIndented("ret");
 		writeNL();
 	}
 
@@ -212,11 +370,87 @@ public final class Z8 extends AsmWriter {
 	private void writeFunction(IRFunction function) throws IOException {
 		writeComment(function.toString());
 
+		final LSCallingConvention callingConvention = architecture.getCallingConvention(function.returnType(), function.varInfos().getArgumentTypes());
+		final List<Integer> nonvolatileRegistersToPushPop = getNonVolatileRegistersToPushPop(function, callingConvention);
+		final List<IRVarDef> localVars = function.varInfos().vars();
+		stackOffsets = new Z8StackOffsets(localVars, nonvolatileRegistersToPushPop.size(), architecture);
+		final int size = stackOffsets.getLocalVarsSize();
+		writeVarOffsetAsComments(localVars);
+		writeLabel(function.label());
+		writeFunctionProlog(size, nonvolatileRegistersToPushPop);
+
+		writeInstructions(function.instructions());
+
+		writeFunctionEpilog(size, nonvolatileRegistersToPushPop);
+	}
+
+	private List<Integer> getNonVolatileRegistersToPushPop(IRFunction function, LSCallingConvention callingConvention) {
+		final int maxReg = IRUtils.getMaxReg(function.instructions());
+		final List<Integer> nonVolatileRegistersToPushPop = new ArrayList<>();
+		for (int i = callingConvention.volatileRegisterCount(); i <= maxReg; i++) {
+			nonVolatileRegistersToPushPop.add(i);
+		}
+		return Collections.unmodifiableList(nonVolatileRegistersToPushPop);
+	}
+
+	private void writeVarOffsetAsComments(List<IRVarDef> localVars) throws IOException {
+		for (IRVarDef varDef : localVars) {
+			final IRVar var = varDef.var();
+			if (var.scope() == VariableScope.argument) {
+				writeComment("  sp+" + stackOffsets.getOffset(var) + ": arg " + var.name());
+			}
+			else {
+				Utils.assertTrue(var.scope() == VariableScope.function);
+				writeComment("  sp+" + stackOffsets.getOffset(var) + ": var " + var.name());
+			}
+		}
+	}
+
+	private void writeFunctionProlog(int size, List<Integer> pushedNonvolatileRegisters) throws IOException {
+		if (pushedNonvolatileRegisters.size() > 0) {
+			writeComment("save globbered non-volatile registers");
+			for (int reg : pushedNonvolatileRegisters) {
+				writeIndented("push " + getRegName(reg));
+			}
+		}
+		if (size > 0) {
+			writeComment("reserve space for local variables");
+			while (size-- > 0) {
+				writeIndented("decw SPH");
+			}
+		}
+	}
+
+	private void writeFunctionEpilog(int size, List<Integer> pushedNonvolatileRegisters) throws IOException {
+		if (size > 0) {
+			writeComment("free space for local variables");
+			while (size-- > 0) {
+				writeIndented("incw SPH");
+			}
+		}
+
+		if (pushedNonvolatileRegisters.size() > 0) {
+			writeComment("restore globbered non-volatile registers");
+			for (int i = pushedNonvolatileRegisters.size(); i-- > 0; ) {
+				final int reg = pushedNonvolatileRegisters.get(i);
+				writeIndented("pop " + getRegName(reg));
+			}
+		}
+
 		writeIndented("ret");
 	}
 
-	private void writeBinary(String op, IRBinary binary) throws IOException {
-		notYetImplemented();
+	private void writeBinary(String opLSB, String opXSB, IRBinary binary) throws IOException {
+		final IRVar target = binary.target();
+		final int targetIndex = target.index();
+		final IRVar right = binary.right();
+		final int sourceIndex = right.index();
+		final int typeSize = registerCount(target);
+		String op = opLSB;
+		for (int i = typeSize; i-- > 0; ) {
+			writeIndented(op + " " + getRegName(targetIndex + i) + ", " + getRegName(sourceIndex + i));
+			op = opXSB;
+		}
 	}
 
 	private void writeCompare(String command, IRCompare compare) throws IOException {
@@ -227,11 +461,31 @@ public final class Z8 extends AsmWriter {
 		notYetImplemented();
 	}
 
+	private void notYetImplemented() throws IOException {
+		writeIndented("not implemented");
+	}
+
+	private int getRegister(IRVar var) {
+		Utils.assertTrue(var.scope() == VariableScope.register);
+		return var.index();
+	}
+
+	private int registerCount(IRVar var) {
+		return architecture.registerCount(var.type());
+	}
+
+	private static String getRegName(int reg) {
+		if (reg < 16) {
+			return "r" + reg;
+		}
+		return "%" + Integer.toHexString(reg + FIRST_REG);
+	}
+
 	private static String encode(byte[] bytes) {
 		final StringBuilder buffer = new StringBuilder();
 		boolean stringIsOpen = false;
 		for (byte b : bytes) {
-			if (b >= 0x20 && b < 0x7f && b != '\'') {
+			if (b >= FIRST_REG && b < 0x7f && b != '\'') {
 				if (!stringIsOpen) {
 					if (buffer.length() > 0) {
 						buffer.append(", ");
@@ -267,7 +521,12 @@ public final class Z8 extends AsmWriter {
 		return "string_" + index;
 	}
 
-	private static void notYetImplemented() {
-		throw new UnsupportedOperationException("Not implemented yet");
+	private static int[] toBytes(int value, int byteCount) {
+		final int[] bytes = new int[byteCount];
+		for (int i = 0; i < byteCount; i++) {
+			bytes[byteCount - i - 1] = value & 0xFF;
+			value >>= 8;
+		}
+		return bytes;
 	}
 }

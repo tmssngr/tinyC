@@ -1,24 +1,25 @@
-format pe64 console
-include 'win64ax.inc'
+        .const RP  = %FD
+        .const SPH = %FE
+        .const SPL = %FF
 
-STD_IN_HANDLE = -10
-STD_OUT_HANDLE = -11
-STD_ERR_HANDLE = -12
-
-entry start
-
-section '.text' code readable executable
+        .org %E000
 
 start:
-        ; alignment
-        and rsp, -16
-        call init
+        push RP
+        srp  #%20
         call @main
-        mov rcx, 0
-        sub rsp, 0x20
-        call [ExitProcess]
+        pop  RP
+        ret
 
         ; void main
+@main:
+        ; const r0, 0
+        ld r0, #%00
+        ; 3:2 while true
+@while_1:
+        ; inc r0
+        inc r0
+        jp @while_1
         ret
 
 section '.data' data readable writeable

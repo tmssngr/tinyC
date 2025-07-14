@@ -31,6 +31,6 @@ public enum TargetArchitecture {
 	AsmWriter createAsmWriter(BufferedWriter writer) {
 		return this == WIN_X86_64
 				? new X86Win64(writer)
-				: new Z8(writer);
+				: new Z8(writer, (LSArchitecture.Z8)architecture);
 	}
 }

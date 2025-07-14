@@ -27,6 +27,16 @@ public class Utils {
 		return list.getLast();
 	}
 
+	public static String toHex2(int value) {
+		return toHex(value, 2);
+	}
+
+	public static String toHex(int value, int digits) {
+		final StringBuilder buffer = new StringBuilder(digits);
+		toHex(value, digits, buffer);
+		return buffer.toString();
+	}
+
 	public static void toHex(long value, int digits, StringBuilder buffer) {
 		if (digits < 1) {
 			return;
