@@ -94,7 +94,7 @@
 
 @main:
  Local variables
-	var 0: pos (Pos/2)
+	var 0: pos (u8/2)
 	var 1: x (u8*/8)
 	var 2: t.2 (u8/1)
 	var 3: t.3 (u8*/8)

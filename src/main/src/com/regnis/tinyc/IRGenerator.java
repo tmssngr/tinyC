@@ -98,11 +98,12 @@ public final class IRGenerator {
 		localVars = new ArrayList<>();
 		final Set<IRVar> localVarsCantBeRegister = new HashSet<>();
 		for (Variable variable : function.localVars()) {
-			final Type type = variable.type();
+			Type type = variable.type();
 			final boolean isArray = variable.isArray();
 			final int size = isArray
 					? getTypeSize(Objects.requireNonNull(type.toType())) * variable.arraySize()
 					: getTypeSize(type);
+			type = structToU8(type);
 			final IRVar var = new IRVar(variable.name(), variable.index(), variable.scope(), type);
 			localVars.add(new IRVarDef(var, size, isArray));
 			if (!variable.canBeRegister()) {
@@ -110,6 +111,13 @@ public final class IRGenerator {
 			}
 		}
 		return localVarsCantBeRegister;
+	}
+
+	private Type structToU8(Type type) {
+		if (types.get(type) != null) {
+			type = Type.U8;
+		}
+		return type;
 	}
 
 	private int getTypeSize(Type type) {
@@ -572,7 +580,9 @@ public final class IRGenerator {
 
 	@NotNull
 	private IRVar varAccessToVar(ExprVarAccess access) {
-		return new IRVar(access.varName(), access.index(), access.scope(), access.typeNotNull());
+		Type type = access.typeNotNull();
+		type = structToU8(type);
+		return new IRVar(access.varName(), access.index(), access.scope(), type);
 	}
 
 	private IRVar createTempVar(@NotNull Type type) {
