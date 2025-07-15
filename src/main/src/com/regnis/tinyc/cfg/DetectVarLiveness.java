@@ -112,6 +112,10 @@ public final class DetectVarLiveness {
 			uses(compare.left(), uses);
 			uses(compare.right(), uses);
 		}
+		case IRCompareConst compare -> {
+			defined(compare.target(), defines);
+			uses(compare.left(), uses);
+		}
 		case IRJump ignored -> {
 		}
 		case IRLiteral literal -> {
