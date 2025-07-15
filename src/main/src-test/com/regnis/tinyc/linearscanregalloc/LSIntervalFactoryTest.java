@@ -6,6 +6,7 @@ import com.regnis.tinyc.ir.*;
 
 import java.util.*;
 
+import org.jetbrains.annotations.*;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -14,6 +15,18 @@ import static org.junit.Assert.*;
  * @author Thomas Singer
  */
 public class LSIntervalFactoryTest {
+
+	private static final LSTypeRegisterCountProvider X86_PROVIDER = new LSTypeRegisterCountProvider() {
+		@Override
+		public int registerCount(@NotNull Type type) {
+			return 1;
+		}
+
+		@Override
+		public boolean canUseRegister(@NotNull Type type, int register) {
+			return true;
+		}
+	};
 
 	static void assertEqualIntervals(List<LSInterval> expected, List<LSInterval> actual) {
 		TestUtils.assertEquals(expected, actual,
@@ -41,9 +54,10 @@ public class LSIntervalFactoryTest {
 				new IRVarDef(c, 8),
 				new IRVarDef(d, 8)
 		), Set.of(), globalVarInfos);
-		final LSIntervalFactory intervals = new LSIntervalFactory(varInfos, (targetType, argTypes) -> {
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> {
 			throw new UnsupportedOperationException();
-		}, 4, false);
+		};
+		final LSIntervalFactory intervals = new LSIntervalFactory(varInfos, callingConventionProvider, X86_PROVIDER, 4, false);
 		intervals.addFunctionArgs(varInfos, List.of(1, 2));
 		assertEquals(List.of(), intervals.getInstructions());
 		assertEqualIntervals(List.of(), intervals.getVarIntervalsSorted());
@@ -165,11 +179,12 @@ public class LSIntervalFactoryTest {
 		final IRVarInfos varInfos = new IRVarInfos(List.of(
 				new IRVarDef(a, 8)
 		), Set.of(), globalVarInfos);
-		final LSIntervalFactory intervals = new LSIntervalFactory(varInfos, (targetType, argTypes) -> {
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> {
 			assertEquals(Type.VOID, targetType);
 			assertEquals(List.of(Type.I64), argTypes);
 			return new LSCallingConvention(List.of(), 4);
-		}, 5, false);
+		};
+		final LSIntervalFactory intervals = new LSIntervalFactory(varInfos, callingConventionProvider, X86_PROVIDER, 5, false);
 		intervals.addFunctionArgs(varInfos, List.of());
 		assertEquals(List.of(), intervals.getInstructions());
 		assertEqualIntervals(List.of(), intervals.getVarIntervalsSorted());

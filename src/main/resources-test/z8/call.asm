@@ -20,22 +20,22 @@ start:
         push r9
         push r10
         push r11
-        ; move r8, r0
+        ; move str{r8}, str{r0}
         ld r8, r0
         ld r9, r1
-        ; move r10, r2
+        ; move length{r10}, length{r2}
         ld r10, r2
         ; 13:2 while length > 0
         jp @while_1
 @while_1_body:
-        ; load r0, [r8]
+        ; load chr{r0}, [str{r8}]
         lde r0, rr8
-        ; call printChar[r0]
+        ; call printChar[chr{r0}]
         call printChar
-        ; dec r10
+        ; dec length{r10}
         dec r10
 @while_1:
-        ; gt r0, r10, 0
+        ; gt t.3{r0}, length{r10}, 0
         cp  r10, #%00
         jr  uge, .1
 .1:
@@ -44,7 +44,7 @@ start:
 .2:
         ld  r0, #%00
 .3:
-        ; branch r0, true, @while_1_body
+        ; branch t.3{r0}, true, @while_1_body
         or r0, r0
         jp nz, @while_1_body
         ; restore globbered non-volatile registers
@@ -77,46 +77,46 @@ start:
         decw SPH
         decw SPH
         decw SPH
-        ; const r8, 20
+        ; const pos{r8}, 20
         ld r8, #%14
         ; 24:2 while true
 @while_2:
-        ; dec r8
+        ; dec pos{r8}
         dec r8
-        ; const r9, 10
+        ; const t.6{r9}, 10
         ld r9, #%00
         ld r10, #%0a
-        ; move r11, r0
+        ; move t.5{r11}, number{r0}
         ld r11, r0
         ld r12, r1
-        ; mod r11, r11, r9
+        ; mod t.5{r11}, t.5{r11}, t.6{r9}
         not implemented
-        ; cast remainder(i64), r11(i16)
+        ; cast remainder(i64), t.5{r11}(i16)
         not implemented
-        ; const r9, 10
+        ; const t.7{r9}, 10
         ld r9, #%00
         ld r10, #%0a
-        ; div r0, r0, r9
+        ; div number{r0}, number{r0}, t.7{r9}
         not implemented
-        ; cast r9(u8), remainder(i64)
+        ; cast t.8{r9}(u8), remainder(i64)
         not implemented
-        ; const r10, 48
+        ; const t.9{r10}, 48
         ld r10, #%30
-        ; add r9, r9, r10
+        ; add digit{r9}, digit{r9}, t.9{r10}
         add r9, r10
-        ; cast r10(i16), r8(u8)
+        ; cast t.11{r10}(i16), pos{r8}(u8)
         not implemented
-        ; cast r10(u8*), r10(i16)
+        ; cast t.12{r10}(u8*), t.11{r10}(i16)
         not implemented
-        ; addrof r12, [buffer]
+        ; addrof t.10{r12}, [buffer]
         not implemented
-        ; add r12, r12, r10
+        ; add t.10{r12}, t.10{r12}, t.12{r10}
         add r13, r11
         adc r12, r10
-        ; store [r12], r9
+        ; store [t.10{r12}], digit{r9}
         lde rr12, r9
         ; 30:3 if number == 0
-        ; equals r9, r0, 0
+        ; equals t.13{r9}, number{r0}, 0
         cp  r0, #%00
         jr  nz, .4
         cp  r1, #%00
@@ -154,25 +154,25 @@ start:
 .4:
         ld  r9, #%00
 .5:
-        ; branch r9, false, @while_2
+        ; branch t.13{r9}, false, @while_2
         or r9, r9
         jp z, @while_2
-        ; cast r9(i16), r8(u8)
+        ; cast t.15{r9}(i16), pos{r8}(u8)
         not implemented
-        ; cast r10(u8*), r9(i16)
+        ; cast t.16{r10}(u8*), t.15{r9}(i16)
         not implemented
-        ; addrof r0, [buffer]
+        ; addrof t.14{r0}, [buffer]
         not implemented
-        ; add r0, r0, r10
+        ; add t.14{r0}, t.14{r0}, t.16{r10}
         add r1, r11
         adc r0, r10
-        ; const r9, 20
+        ; const t.18{r9}, 20
         ld r9, #%14
-        ; move r2, r9
+        ; move t.17{r2}, t.18{r9}
         ld r2, r9
-        ; sub r2, r2, r8
+        ; sub t.17{r2}, t.17{r2}, pos{r8}
         sub r2, r8
-        ; call printStringLength[r0, r2]
+        ; call printStringLength[t.14{r0}, t.17{r2}]
         call printStringLength
         ; free space for local variables
         incw SPH
@@ -202,11 +202,11 @@ start:
         push r9
         push r10
         push r11
-        ; move r8, r0
+        ; move number{r8}, number{r0}
         ld r8, r0
         ld r9, r1
         ; 38:2 if number < 0
-        ; lt r10, r8, 0
+        ; lt t.1{r10}, number{r8}, 0
         cp  r8, #%00
         jr  lt, .6
         jr  nz, .7
@@ -218,26 +218,26 @@ start:
 .7:
         ld  r10, #%00
 .8:
-        ; branch r10, false, @if_4_end
+        ; branch t.1{r10}, false, @if_4_end
         or r10, r10
         jp z, @if_4_end
-        ; const r0, 45
+        ; const t.2{r0}, 45
         ld r0, #%2d
-        ; call printChar[r0]
+        ; call printChar[t.2{r0}]
         call printChar
-        ; neg r8, r8
+        ; neg number{r8}, number{r8}
         com r8
         com r9
         incw r8
 @if_4_end:
-        ; move r0, r8
+        ; move number{r0}, number{r8}
         ld r0, r8
         ld r1, r9
-        ; call printUint[r0]
+        ; call printUint[number{r0}]
         call printUint
-        ; const r0, 10
+        ; const t.3{r0}, 10
         ld r0, #%0a
-        ; call printChar[r0]
+        ; call printChar[t.3{r0}]
         call printChar
         ; restore globbered non-volatile registers
         pop r11
@@ -255,40 +255,40 @@ start:
         push r11
         push r12
         ; begin initialize global variables
-        ; const r8, 0
+        ; const tmp.i{r8}, 0
         ld r8, #%00
         ; end initialize global variables
-        ; move i, r8
+        ; move i, tmp.i{r8}
         not implemented
-        ; call r0 = next[] -> u8
+        ; call t.0{r0} = next[] -> u8
         call next
-        ; move r8, r0
+        ; move t.0{r8}, t.0{r0}
         ld r8, r0
-        ; call r0 = next[] -> u8
+        ; call t.1{r0} = next[] -> u8
         call next
-        ; move r9, r0
+        ; move t.1{r9}, t.1{r0}
         ld r9, r0
-        ; call r0 = next[] -> u8
+        ; call t.2{r0} = next[] -> u8
         call next
-        ; move r10, r0
+        ; move t.2{r10}, t.2{r0}
         ld r10, r0
-        ; call r0 = next[] -> u8
+        ; call t.3{r0} = next[] -> u8
         call next
-        ; move r11, r0
+        ; move t.3{r11}, t.3{r0}
         ld r11, r0
-        ; call r0 = next[] -> u8
+        ; call t.4{r0} = next[] -> u8
         call next
-        ; move r4, r0
+        ; move t.4{r4}, t.4{r0}
         ld r4, r0
-        ; move r0, r8
+        ; move t.0{r0}, t.0{r8}
         ld r0, r8
-        ; move r1, r9
+        ; move t.1{r1}, t.1{r9}
         ld r1, r9
-        ; move r2, r10
+        ; move t.2{r2}, t.2{r10}
         ld r2, r10
-        ; move r3, r11
+        ; move t.3{r3}, t.3{r11}
         ld r3, r11
-        ; call doPrint[r0, r1, r2, r3, r4]
+        ; call doPrint[t.0{r0}, t.1{r1}, t.2{r2}, t.3{r3}, t.4{r4}]
         call doPrint
         ; restore globbered non-volatile registers
         pop r12
@@ -300,12 +300,12 @@ start:
 
         ; u8 next
 @next:
-        ; move r0, i
+        ; move tmp.i{r0}, i
         not implemented
-        ; inc r0
+        ; inc tmp.i{r0}
         inc r0
         ; 11:9 return i
-        ; move i, r0
+        ; move i, tmp.i{r0}
         not implemented
         ret
 
@@ -322,33 +322,33 @@ start:
         push r10
         push r11
         push r12
-        ; move r8, r1
+        ; move b{r8}, b{r1}
         ld r8, r1
-        ; move r9, r2
+        ; move c{r9}, c{r2}
         ld r9, r2
-        ; move r10, r3
+        ; move d{r10}, d{r3}
         ld r10, r3
-        ; move r11, r4
+        ; move e{r11}, e{r4}
         ld r11, r4
-        ; cast r0(i16), r0(u8)
+        ; cast t.5{r0}(i16), a{r0}(u8)
         not implemented
-        ; call printIntLf[r0]
+        ; call printIntLf[t.5{r0}]
         call printIntLf
-        ; cast r0(i16), r8(u8)
+        ; cast t.6{r0}(i16), b{r8}(u8)
         not implemented
-        ; call printIntLf[r0]
+        ; call printIntLf[t.6{r0}]
         call printIntLf
-        ; cast r0(i16), r9(u8)
+        ; cast t.7{r0}(i16), c{r9}(u8)
         not implemented
-        ; call printIntLf[r0]
+        ; call printIntLf[t.7{r0}]
         call printIntLf
-        ; cast r0(i16), r10(u8)
+        ; cast t.8{r0}(i16), d{r10}(u8)
         not implemented
-        ; call printIntLf[r0]
+        ; call printIntLf[t.8{r0}]
         call printIntLf
-        ; cast r0(i16), r11(u8)
+        ; cast t.9{r0}(i16), e{r11}(u8)
         not implemented
-        ; call printIntLf[r0]
+        ; call printIntLf[t.9{r0}]
         call printIntLf
         ; restore globbered non-volatile registers
         pop r12

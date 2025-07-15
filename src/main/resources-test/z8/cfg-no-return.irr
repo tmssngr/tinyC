@@ -1,0 +1,8 @@
+@main:
+	; 2 pc
+	const r0, 0
+	; 3:2 while true
+@while_1:
+	inc r0
+	jump @while_1
+

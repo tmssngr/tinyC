@@ -1,0 +1,147 @@
+@printString:
+ Local variables
+	arg 0: str (u8*/2)
+	var 1: chr (u8/1)
+	var 2: t.2 (bool/1)
+	; 19 pc
+	; 2:2 while true
+@while_1:
+	load chr, [str]
+	; 4:3 if chr == 0
+	equals t.2, chr, 0
+	branch t.2, false, @if_2_end
+	jump @while_1_break
+@if_2_end:
+	call printChar[chr]
+	jump @while_1
+@while_1_break:
+@printString_ret:
+
+@printNibble:
+ Local variables
+	arg 0: x (u8/1)
+	var 1: t.1 (u8/1)
+	var 2: t.2 (bool/1)
+	; 30 pc
+	const t.1, 15
+	and x, x, t.1
+	; 5:2 if x > 9
+	gt t.2, x, 9
+	branch t.2, false, @if_3_end
+	add x, 7
+@if_3_end:
+	add x, 48
+	call printChar[x]
+@printNibble_ret:
+
+@printHex2:
+ Local variables
+	arg 0: x (u8/1)
+	var 1: t.1 (u8/1)
+	var 2: t.2 (u8/1)
+	; 20 pc
+	const t.2, 4
+	move t.1, x
+	shiftright t.1, t.1, t.2
+	call printNibble[t.1]
+	call printNibble[x]
+@printHex2_ret:
+
+@main:
+ Local variables
+	var 0: i (u8/1)
+	var 1: i (u8/1)
+	var 2: t.2 (u8*/2)
+	var 3: t.3 (bool/1)
+	var 4: t.4 (bool/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (u8/1)
+	var 7: t.7 (u8/1)
+	var 8: t.8 (u8/1)
+	var 9: t.9 (bool/1)
+	var 10: t.10 (bool/1)
+	var 11: t.11 (u8/1)
+	var 12: t.12 (u8/1)
+	var 13: t.13 (bool/1)
+	var 14: t.14 (u8/1)
+	var 15: t.15 (u8/1)
+	var 16: t.16 (u8/1)
+	var 17: t.17 (bool/1)
+	var 18: t.18 (u8/1)
+	var 19: t.19 (u8/1)
+	var 20: t.20 (u8/1)
+	; 155 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const t.2, [string-0]
+	call printString[t.2]
+	const i, 0
+	; 19:2 for i < 16
+@for_4:
+	lt t.3, i, 16
+	branch t.3, false, @for_4_break
+	; 20:3 if i & 7 == 0
+	const t.6, 7
+	move t.5, i
+	and t.5, t.5, t.6
+	equals t.4, t.5, 0
+	branch t.4, false, @if_5_end
+	const t.7, 32
+	call printChar[t.7]
+@if_5_end:
+	call printNibble[i]
+@for_4_continue:
+	inc i
+	jump @for_4
+@for_4_break:
+	const t.8, 10
+	call printChar[t.8]
+	const i, 32
+	; 27:2 for i < 128
+@for_6:
+	lt t.9, i, 128
+	branch t.9, false, @for_6_break
+	; 28:3 if i & 15 == 0
+	const t.12, 15
+	move t.11, i
+	and t.11, t.11, t.12
+	equals t.10, t.11, 0
+	branch t.10, false, @if_7_end
+	call printHex2[i]
+@if_7_end:
+	; 31:3 if i & 7 == 0
+	const t.15, 7
+	move t.14, i
+	and t.14, t.14, t.15
+	equals t.13, t.14, 0
+	branch t.13, false, @if_8_end
+	const t.16, 32
+	call printChar[t.16]
+@if_8_end:
+	call printChar[i]
+	; 35:3 if i & 15 == 15
+	const t.19, 15
+	move t.18, i
+	and t.18, t.18, t.19
+	equals t.17, t.18, 15
+	branch t.17, false, @if_9_end
+	const t.20, 10
+	call printChar[t.20]
+@if_9_end:
+@for_6_continue:
+	inc i
+	jump @for_6
+@for_6_break:
+@main_ret:
+
+@printChar:
+	ld   r0, SPH
+	ld   r1, SPL
+	add  r1, 3
+	adc  r0, 0
+	ldc  r1, @rr0
+	ld   %15, r1
+	jp   %0818
+
+String literals
+	string lit 0 " x\0"
