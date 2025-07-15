@@ -27,41 +27,46 @@ public class IRGeneratorTest {
 				            void foo() {
 				              continue;
 				            }""");
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		assertEquals(new IRProgram(List.of(
-				             new IRFunction("get", "@get", Type.U8, new IRVarInfos(List.of(
-						             new IRVarDef(new IRVar("t.0", 0, VariableScope.function, Type.U8), 1)
-				             ), Set.of(), null), List.of(
-						             new IRComment("2:10 return 0"),
-						             new IRLiteral(tmp(0, Type.U8), 0, loc(1, 9)),
-						             new IRRetValue(tmp(0, Type.U8), loc(1, 2)),
-						             new IRJump("@get_ret"),
-						             new IRLabel("@get_ret")
-				             )),
-				             new IRFunction("foo", "@foo", Type.VOID, new IRVarInfos(List.of(
-						             new IRVarDef(new IRVar("chr", 0, VariableScope.function, Type.U8), 1),
-						             new IRVarDef(new IRVar("t.1", 1, VariableScope.function, Type.BOOL), 1),
-						             new IRVarDef(new IRVar("t.2", 2, VariableScope.function, Type.BOOL), 1)
-				             ), Set.of(), null), List.of(
-						             new IRComment("5:3 while true"),
-						             new IRLabel("@while_1"),
-						             new IRCall(var("chr", 0, Type.U8), Type.U8, "get", List.of(), loc(5, 13)),
-						             new IRComment("7:5 if chr > 97"),
-						             new IRCompareConst(tmp(1, Type.BOOL), IRCompareOp.Gt, var("chr", 0, Type.U8), 97, loc(6, 12)),
-						             new IRBranch(tmp(1, Type.BOOL), false, "@if_2_end",
-						                          "@if_2_then"),
-						             new IRJump("@while_1"),
-						             new IRLabel("@if_2_end"),
-						             new IRComment("10:5 if chr == 10"),
-						             new IRCompareConst(tmp(2, Type.BOOL), IRCompareOp.Equals, var("chr", 0, Type.U8), 10, loc(9, 12)),
-						             new IRBranch(tmp(2, Type.BOOL), false, "@if_3_end",
-						                          "@if_3_then"),
-						             new IRJump("@while_1_break"),
-						             new IRLabel("@if_3_end"),
-						             new IRJump("@while_1"),
-						             new IRLabel("@while_1_break"),
-						             new IRLabel("@foo_ret")
-				             ))
-		             ), List.of(), new IRVarInfos(List.of(), Set.of(), null), List.of()),
+				             new IRFunction("get", "@get", Type.U8,
+				                            new IRVarInfos(List.of(
+						                            new IRVarDef(new IRVar("t.0", 0, VariableScope.function, Type.U8), 1)
+				                            ), Set.of(), globalVarInfos),
+				                            List.of(
+						                            new IRComment("2:10 return 0"),
+						                            new IRLiteral(tmp(0, Type.U8), 0, loc(1, 9)),
+						                            new IRRetValue(tmp(0, Type.U8), loc(1, 2)),
+						                            new IRJump("@get_ret"),
+						                            new IRLabel("@get_ret")
+				                            )),
+				             new IRFunction("foo", "@foo", Type.VOID,
+				                            new IRVarInfos(List.of(
+						                            new IRVarDef(new IRVar("chr", 0, VariableScope.function, Type.U8), 1),
+						                            new IRVarDef(new IRVar("t.1", 1, VariableScope.function, Type.BOOL), 1),
+						                            new IRVarDef(new IRVar("t.2", 2, VariableScope.function, Type.BOOL), 1)
+				                            ), Set.of(), globalVarInfos),
+				                            List.of(
+						                            new IRComment("5:3 while true"),
+						                            new IRLabel("@while_1"),
+						                            new IRCall(var("chr", 0, Type.U8), Type.U8, "get", List.of(), loc(5, 13)),
+						                            new IRComment("7:5 if chr > 97"),
+						                            new IRCompareConst(tmp(1, Type.BOOL), IRCompareOp.Gt, var("chr", 0, Type.U8), 97, loc(6, 12)),
+						                            new IRBranch(tmp(1, Type.BOOL), false, "@if_2_end",
+						                                         "@if_2_then"),
+						                            new IRJump("@while_1"),
+						                            new IRLabel("@if_2_end"),
+						                            new IRComment("10:5 if chr == 10"),
+						                            new IRCompareConst(tmp(2, Type.BOOL), IRCompareOp.Equals, var("chr", 0, Type.U8), 10, loc(9, 12)),
+						                            new IRBranch(tmp(2, Type.BOOL), false, "@if_3_end",
+						                                         "@if_3_then"),
+						                            new IRJump("@while_1_break"),
+						                            new IRLabel("@if_3_end"),
+						                            new IRJump("@while_1"),
+						                            new IRLabel("@while_1_break"),
+						                            new IRLabel("@foo_ret")
+				                            ))
+		             ), List.of(), globalVarInfos, List.of()),
 		             convert("""
 				                     u8 get() {
 				                       return 0;
