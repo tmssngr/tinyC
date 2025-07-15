@@ -1,5 +1,8 @@
 package com.regnis.tinyc.ir;
 
+import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
+
 import java.util.*;
 
 import org.jetbrains.annotations.*;
@@ -14,9 +17,39 @@ public final class IRVarInfos implements IRCanBeRegister {
 	private final IRVarInfos parent;
 
 	public IRVarInfos(@NotNull List<IRVarDef> vars, @NotNull Set<IRVar> cantBeRegister, @Nullable IRVarInfos parent) {
-		this.vars = vars;
-		this.cantBeRegister = cantBeRegister;
+		this.vars = List.copyOf(vars);
+		this.cantBeRegister = Set.copyOf(cantBeRegister);
 		this.parent = parent;
+
+		int expectedIndex = 0;
+		if (parent == null) {
+			for (IRVarDef varDef : vars) {
+				final IRVar var = varDef.var();
+				Utils.assertTrue(expectedIndex == var.index());
+				expectedIndex++;
+
+				Utils.assertTrue(var.scope() == VariableScope.global);
+			}
+		}
+		else {
+			boolean expectLocalVar = false;
+			for (IRVarDef varDef : vars) {
+				final IRVar var = varDef.var();
+				Utils.assertTrue(expectedIndex == var.index());
+				expectedIndex++;
+
+				final VariableScope scope = var.scope();
+				if (expectLocalVar) {
+					Utils.assertTrue(scope == VariableScope.function);
+				}
+				else if (scope == VariableScope.function) {
+					expectLocalVar = true;
+				}
+				else {
+					Utils.assertTrue(scope == VariableScope.argument);
+				}
+			}
+		}
 	}
 
 	@Override
