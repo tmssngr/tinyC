@@ -13,7 +13,10 @@ public enum TargetArchitecture {
 
 	WIN_X86_64(Set.of("X86_64"),
 	           Type.I64,
-	           new LSArchitecture.Win_X86_64(4, 1, 2));
+	           new LSArchitecture.Win_X86_64(4, 1, 2)),
+	Z8(Set.of("Z8"),
+	   Type.I16,
+	   new LSArchitecture.Z8());
 
 	public final Type pointerIntType;
 	public final Set<String> defines;
@@ -26,6 +29,8 @@ public enum TargetArchitecture {
 	}
 
 	AsmWriter createAsmWriter(BufferedWriter writer) {
-		return new X86Win64(writer);
+		return this == WIN_X86_64
+				? new X86Win64(writer)
+				: new Z8(writer);
 	}
 }
