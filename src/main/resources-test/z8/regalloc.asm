@@ -84,7 +84,14 @@ start:
         ld r4, r6
 @while_2:
         ; gt r5, r2, 0
-        not implemented
+        cp  r2, #%00
+        jr  uge, .1
+.1:
+        ld  r5, #%ff
+        jr  .3
+.2:
+        ld  r5, #%00
+.3:
         ; branch r5, true, @while_2_body
         or r5, r5
         jp nz, @while_2_body

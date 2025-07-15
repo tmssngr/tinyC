@@ -21,6 +21,8 @@ public final class Z8 extends AsmWriter {
 	private final LSArchitecture.Z8 architecture;
 	private final int registerCount;
 
+	private int tempLabelIndex;
+
 	private Z8StackOffsets stackOffsets;
 
 	public Z8(@NotNull BufferedWriter writer, @NotNull LSArchitecture.Z8 architecture) {
@@ -57,7 +59,7 @@ public final class Z8 extends AsmWriter {
 		final IRVar var = addConst.var();
 		final int index = getRegister(var);
 		int offset = addConst.offset();
-		final int typeSize = registerCount(var);
+		final int typeSize = getRegisterCount(var);
 		if (offset > 0) {
 			if (offset == 1 && typeSize == 1) {
 				writeIndented("inc " + getRegName(index));
@@ -148,7 +150,7 @@ public final class Z8 extends AsmWriter {
 
 			if (arg.scope() == VariableScope.register) {
 				final int index = arg.index();
-				final int typeSize = registerCount(arg);
+				final int typeSize = getRegisterCount(arg);
 				for (int i = 0; i < typeSize; i++) {
 					writeIndented("push " + getRegName(index + i));
 				}
@@ -180,23 +182,75 @@ public final class Z8 extends AsmWriter {
 
 	@Override
 	protected void writeCompare(IRCompareConst compare) throws IOException {
-		final boolean signed = compare.left().type() != Type.U8;
-		switch (compare.op()) {
-		case Lt -> writeCompare(signed ? "setl" : "setb", compare); // setb (below) = setc (carry)
-		case LtEq -> writeCompare(signed ? "setle" : "setbe", compare);
-		case Equals -> writeCompare("sete", compare);
-		case NotEquals -> writeCompare("setne", compare);
-		case GtEq -> writeCompare(signed ? "setge" : "setae", compare); // setae (above or equal) = setnc (not carry)
-		case Gt -> writeCompare(signed ? "setg" : "seta", compare); // seta (above)
+		final int value = compare.value();
 
+		switch (compare.op()) {
+		case Lt -> writeCompare(compare.target(), compare.left(), "lt", "ult", value);
+		case LtEq -> writeCompare(compare.target(), compare.left(), "le", "ule", value);
+		case Equals, NotEquals -> {
+			final IRVar left = compare.left();
+			final int sourceRegister = getRegister(left);
+			final int targetRegister = getRegister(compare.target());
+			final String targetReg = getRegName(targetRegister);
+			final String label1 = createTempLabel();
+			if (value == 0 && registerCount == 1) {
+				final String sourceReg = getRegName(sourceRegister);
+				writeIndented("or  " + sourceReg + ", " + sourceReg);
+				writeIndented("ld  " + targetReg + ", #%" + Utils.toHex2(compare.op() == IRCompareOp.Equals ? 0 : -1));
+				writeIndented("jr  nz, " + label1);
+				writeIndented("com " + targetReg);
+				writeLabel(label1);
+			}
+			else {
+				final int[] bytes = toBytes(value, registerCount);
+				final String label2 = createTempLabel();
+				for (int i = 0; i < registerCount; i++) {
+					writeIndented("cp  " + getRegName(sourceRegister + i) + ", #%" + Utils.toHex2(bytes[i]));
+					writeIndented("jr  nz, " + label1);
+				}
+				writeIndented("ld  " + targetReg + ", #%" + Utils.toHex2(compare.op() == IRCompareOp.Equals ? -1 : 0));
+				writeIndented("jr  " + label2);
+				writeLabel(label1);
+				writeIndented("ld  " + targetReg + ", #%" + Utils.toHex2(compare.op() == IRCompareOp.Equals ? 0 : -1));
+				writeLabel(label2);
+			}
+		}
+		case GtEq -> writeCompare(compare.target(), compare.left(), "ge", "uge", value);
+		case Gt -> writeCompare(compare.target(), compare.left(), "gt", "uge", value);
 		default -> throw new UnsupportedOperationException(String.valueOf(compare));
 		}
+	}
+
+	private void writeCompare(IRVar target, IRVar left, String signedTrue, String unsignedTrue, int value) throws IOException {
+		final int registerCount = getRegisterCount(left);
+		final int sourceRegister = getRegister(left);
+
+		final int targetRegister = getRegister(target);
+		final boolean signed = left.type() != Type.U8;
+		final int[] bytes = toBytes(value, registerCount);
+		final String targetReg = getRegName(targetRegister);
+		final String labelTrue = createTempLabel();
+		final String labelFalse = createTempLabel();
+		final String labelEnd = createTempLabel();
+		for (int i = 0; i < registerCount; i++) {
+			if (i != 0) {
+				writeIndented("jr  nz, " + labelFalse);
+			}
+			writeIndented("cp  " + getRegName(sourceRegister + i) + ", #%" + Utils.toHex2(bytes[i]));
+			writeIndented("jr  " + (i == 0 && signed ? signedTrue : unsignedTrue) + ", " + labelTrue);
+		}
+		writeLabel(labelTrue);
+		writeIndented("ld  " + targetReg + ", #%" + Utils.toHex2(-1));
+		writeIndented("jr  " + labelEnd);
+		writeLabel(labelFalse);
+		writeIndented("ld  " + targetReg + ", #%" + Utils.toHex2(0));
+		writeLabel(labelEnd);
 	}
 
 	protected void writeMove(IRMove copy) throws IOException {
 		final IRVar source = copy.source();
 		final IRVar target = copy.target();
-		final int typeSize = registerCount(source);
+		final int typeSize = getRegisterCount(source);
 		if (source.scope() == VariableScope.register && target.scope() == VariableScope.register) {
 			final int sourceReg = getRegister(source);
 			final int targetReg = getRegister(target);
@@ -215,7 +269,7 @@ public final class Z8 extends AsmWriter {
 			return;
 		}
 		final int index = getRegister(target);
-		final int typeSize = registerCount(target);
+		final int typeSize = getRegisterCount(target);
 		final int value = literal.value();
 		final int[] bytes = toBytes(value, typeSize);
 
@@ -233,7 +287,7 @@ public final class Z8 extends AsmWriter {
 		Utils.assertTrue((addrIndex & 1) == 0);
 		final String addrReg = getRegName(addrIndex);
 
-		final int typeSize = registerCount(target);
+		final int typeSize = getRegisterCount(target);
 		for (int i = 0; i < typeSize; i++) {
 			if (i > 0) {
 				writeIndented("incw " + addrReg);
@@ -265,7 +319,7 @@ public final class Z8 extends AsmWriter {
 			final int sourceReg = getRegister(source);
 			final int targetReg = getRegister(target);
 			if (sourceReg == targetReg) {
-				final int registerCount = registerCount(target);
+				final int registerCount = getRegisterCount(target);
 				for (int i = 0; i < registerCount; i++) {
 					writeIndented("com " + getRegName(targetReg + i));
 				}
@@ -288,7 +342,7 @@ public final class Z8 extends AsmWriter {
 				}
 			}
 			else {
-				final int registerCount = registerCount(target);
+				final int registerCount = getRegisterCount(target);
 				for (int i = 0; i < registerCount; i++) {
 					writeIndented("ld " + getRegName(targetReg + i) + ", #%00");
 				}
@@ -306,7 +360,7 @@ public final class Z8 extends AsmWriter {
 		case Not -> {
 			final int sourceReg = getRegister(source);
 			final int targetReg = getRegister(target);
-			final int registerCount = registerCount(target);
+			final int registerCount = getRegisterCount(target);
 			if (sourceReg != targetReg) {
 				for (int i = 0; i < registerCount; i++) {
 					writeIndented("ld " + getRegName(targetReg + i) + ", " + getRegName(sourceReg + i));
@@ -445,7 +499,7 @@ public final class Z8 extends AsmWriter {
 		final int targetIndex = target.index();
 		final IRVar right = binary.right();
 		final int sourceIndex = right.index();
-		final int typeSize = registerCount(target);
+		final int typeSize = getRegisterCount(target);
 		String op = opLSB;
 		for (int i = typeSize; i-- > 0; ) {
 			writeIndented(op + " " + getRegName(targetIndex + i) + ", " + getRegName(sourceIndex + i));
@@ -470,8 +524,13 @@ public final class Z8 extends AsmWriter {
 		return var.index();
 	}
 
-	private int registerCount(IRVar var) {
+	private int getRegisterCount(IRVar var) {
 		return architecture.registerCount(var.type());
+	}
+
+	private String createTempLabel() {
+		tempLabelIndex++;
+		return "." + tempLabelIndex;
 	}
 
 	private static String getRegName(int reg) {

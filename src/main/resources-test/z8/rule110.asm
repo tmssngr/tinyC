@@ -34,7 +34,43 @@ start:
         lde r10, rr8
         ; 4:3 if chr == 0
         ; equals r0, r10, 0
-        not implemented
+        cp  r10, #%00
+        jr  nz, .1
+        cp  r11, #%00
+        jr  nz, .1
+        cp  r12, #%00
+        jr  nz, .1
+        cp  r13, #%00
+        jr  nz, .1
+        cp  r14, #%00
+        jr  nz, .1
+        cp  r15, #%00
+        jr  nz, .1
+        cp  %30, #%00
+        jr  nz, .1
+        cp  %31, #%00
+        jr  nz, .1
+        cp  %32, #%00
+        jr  nz, .1
+        cp  %33, #%00
+        jr  nz, .1
+        cp  %34, #%00
+        jr  nz, .1
+        cp  %35, #%00
+        jr  nz, .1
+        cp  %36, #%00
+        jr  nz, .1
+        cp  %37, #%00
+        jr  nz, .1
+        cp  %38, #%00
+        jr  nz, .1
+        cp  %39, #%00
+        jr  nz, .1
+        ld  r0, #%ff
+        jr  .2
+.1:
+        ld  r0, #%00
+.2:
         ; branch r0, false, @if_2_end
         or r0, r0
         jp z, @if_2_end
@@ -76,7 +112,43 @@ start:
         ; load r9, [r12]
         lde r9, rr12
         ; equals r9, r9, 0
-        not implemented
+        cp  r9, #%00
+        jr  nz, .3
+        cp  r10, #%00
+        jr  nz, .3
+        cp  r11, #%00
+        jr  nz, .3
+        cp  r12, #%00
+        jr  nz, .3
+        cp  r13, #%00
+        jr  nz, .3
+        cp  r14, #%00
+        jr  nz, .3
+        cp  r15, #%00
+        jr  nz, .3
+        cp  %30, #%00
+        jr  nz, .3
+        cp  %31, #%00
+        jr  nz, .3
+        cp  %32, #%00
+        jr  nz, .3
+        cp  %33, #%00
+        jr  nz, .3
+        cp  %34, #%00
+        jr  nz, .3
+        cp  %35, #%00
+        jr  nz, .3
+        cp  %36, #%00
+        jr  nz, .3
+        cp  %37, #%00
+        jr  nz, .3
+        cp  %38, #%00
+        jr  nz, .3
+        ld  r9, #%ff
+        jr  .4
+.3:
+        ld  r9, #%00
+.4:
         ; branch r9, true, @if_4_then
         or r9, r9
         jp nz, @if_4_then
@@ -95,7 +167,14 @@ start:
         inc r8
 @for_3:
         ; lt r9, r8, 30
-        not implemented
+        cp  r8, #%1e
+        jr  ult, .5
+.5:
+        ld  r9, #%ff
+        jr  .7
+.6:
+        ld  r9, #%00
+.7:
         ; branch r9, true, @for_3_body
         or r9, r9
         jp nz, @for_3_body
@@ -147,7 +226,14 @@ start:
         inc r8
 @for_5:
         ; lt r9, r8, 30
-        not implemented
+        cp  r8, #%1e
+        jr  ult, .8
+.8:
+        ld  r9, #%ff
+        jr  .10
+.9:
+        ld  r9, #%00
+.10:
         ; branch r9, true, @for_5_body
         or r9, r9
         jp nz, @for_5_body
@@ -262,7 +348,14 @@ start:
         inc r10
 @for_7:
         ; lt r11, r10, 29
-        not implemented
+        cp  r10, #%1d
+        jr  ult, .11
+.11:
+        ld  r11, #%ff
+        jr  .13
+.12:
+        ld  r11, #%00
+.13:
         ; branch r11, true, @for_7_body
         or r11, r11
         jp nz, @for_7_body
@@ -272,7 +365,14 @@ start:
         inc r8
 @for_6:
         ; lt r0, r8, 28
-        not implemented
+        cp  r8, #%1c
+        jr  ult, .14
+.14:
+        ld  r0, #%ff
+        jr  .16
+.15:
+        ld  r0, #%00
+.16:
         ; branch r0, true, @for_6_body
         or r0, r0
         jp nz, @for_6_body

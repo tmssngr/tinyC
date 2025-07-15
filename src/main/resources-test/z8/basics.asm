@@ -36,7 +36,14 @@ start:
         dec r10
 @while_1:
         ; gt r0, r10, 0
-        not implemented
+        cp  r10, #%00
+        jr  uge, .1
+.1:
+        ld  r0, #%ff
+        jr  .3
+.2:
+        ld  r0, #%00
+.3:
         ; branch r0, true, @while_1_body
         or r0, r0
         jp nz, @while_1_body
@@ -110,7 +117,43 @@ start:
         not implemented
         ; 30:3 if number == 0
         ; equals r9, r0, 0
-        not implemented
+        cp  r0, #%00
+        jr  nz, .4
+        cp  r1, #%00
+        jr  nz, .4
+        cp  r2, #%00
+        jr  nz, .4
+        cp  r3, #%00
+        jr  nz, .4
+        cp  r4, #%00
+        jr  nz, .4
+        cp  r5, #%00
+        jr  nz, .4
+        cp  r6, #%00
+        jr  nz, .4
+        cp  r7, #%00
+        jr  nz, .4
+        cp  r8, #%00
+        jr  nz, .4
+        cp  r9, #%00
+        jr  nz, .4
+        cp  r10, #%00
+        jr  nz, .4
+        cp  r11, #%00
+        jr  nz, .4
+        cp  r12, #%00
+        jr  nz, .4
+        cp  r13, #%00
+        jr  nz, .4
+        cp  r14, #%00
+        jr  nz, .4
+        cp  r15, #%00
+        jr  nz, .4
+        ld  r9, #%ff
+        jr  .5
+.4:
+        ld  r9, #%00
+.5:
         ; branch r9, false, @while_2
         or r9, r9
         jp z, @while_2

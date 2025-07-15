@@ -34,7 +34,43 @@ start:
         lde r10, rr8
         ; 4:3 if chr == 0
         ; equals r0, r10, 0
-        not implemented
+        cp  r10, #%00
+        jr  nz, .1
+        cp  r11, #%00
+        jr  nz, .1
+        cp  r12, #%00
+        jr  nz, .1
+        cp  r13, #%00
+        jr  nz, .1
+        cp  r14, #%00
+        jr  nz, .1
+        cp  r15, #%00
+        jr  nz, .1
+        cp  %30, #%00
+        jr  nz, .1
+        cp  %31, #%00
+        jr  nz, .1
+        cp  %32, #%00
+        jr  nz, .1
+        cp  %33, #%00
+        jr  nz, .1
+        cp  %34, #%00
+        jr  nz, .1
+        cp  %35, #%00
+        jr  nz, .1
+        cp  %36, #%00
+        jr  nz, .1
+        cp  %37, #%00
+        jr  nz, .1
+        cp  %38, #%00
+        jr  nz, .1
+        cp  %39, #%00
+        jr  nz, .1
+        ld  r0, #%ff
+        jr  .2
+.1:
+        ld  r0, #%00
+.2:
         ; branch r0, false, @if_2_end
         or r0, r0
         jp z, @if_2_end
@@ -70,7 +106,14 @@ start:
         dec r10
 @while_3:
         ; gt r0, r10, 0
-        not implemented
+        cp  r10, #%00
+        jr  uge, .3
+.3:
+        ld  r0, #%ff
+        jr  .5
+.4:
+        ld  r0, #%00
+.5:
         ; branch r0, true, @while_3_body
         or r0, r0
         jp nz, @while_3_body
@@ -144,7 +187,43 @@ start:
         not implemented
         ; 30:3 if number == 0
         ; equals r9, r0, 0
-        not implemented
+        cp  r0, #%00
+        jr  nz, .6
+        cp  r1, #%00
+        jr  nz, .6
+        cp  r2, #%00
+        jr  nz, .6
+        cp  r3, #%00
+        jr  nz, .6
+        cp  r4, #%00
+        jr  nz, .6
+        cp  r5, #%00
+        jr  nz, .6
+        cp  r6, #%00
+        jr  nz, .6
+        cp  r7, #%00
+        jr  nz, .6
+        cp  r8, #%00
+        jr  nz, .6
+        cp  r9, #%00
+        jr  nz, .6
+        cp  r10, #%00
+        jr  nz, .6
+        cp  r11, #%00
+        jr  nz, .6
+        cp  r12, #%00
+        jr  nz, .6
+        cp  r13, #%00
+        jr  nz, .6
+        cp  r14, #%00
+        jr  nz, .6
+        cp  r15, #%00
+        jr  nz, .6
+        ld  r9, #%ff
+        jr  .7
+.6:
+        ld  r9, #%00
+.7:
         ; branch r9, false, @while_4
         or r9, r9
         jp z, @while_4
@@ -198,7 +277,17 @@ start:
         ld r9, r1
         ; 38:2 if number < 0
         ; lt r10, r8, 0
-        not implemented
+        cp  r8, #%00
+        jr  lt, .8
+        jr  nz, .9
+        cp  r9, #%00
+        jr  ult, .8
+.8:
+        ld  r10, #%ff
+        jr  .10
+.9:
+        ld  r10, #%00
+.10:
         ; branch r10, false, @if_6_end
         or r10, r10
         jp z, @if_6_end
