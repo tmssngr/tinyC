@@ -28,6 +28,7 @@ public abstract class CleanupUnusedVariables {
 		case IRComment ignored -> {
 		}
 		case IRCompare compare -> readWrite(compare.target(), List.of(compare.left(), compare.right()));
+		case IRCompareConst compare -> readWrite(compare.target(), List.of(compare.left()));
 		case IRLabel ignored -> {
 		}
 		case IRLiteral literal -> write(literal.target());
