@@ -13,12 +13,15 @@ import org.jetbrains.annotations.*;
 public final class IRGenerator {
 
 	@NotNull
-	public static IRProgram convert(Program program) {
-		final IRGenerator generator = new IRGenerator();
+	public static IRProgram convert(@NotNull Program program, @NotNull Type pointerIntType) {
+		Utils.assertTrue(pointerIntType.isInt());
+
+		final IRGenerator generator = new IRGenerator(pointerIntType);
 		return generator.convertProgram(program);
 	}
 
 	private final Map<Type, TypeInfo> types = new HashMap<>();
+	private final int pointerSize;
 
 	private int labelIndex;
 
@@ -28,7 +31,8 @@ public final class IRGenerator {
 	private BreakContinueLabels breakContinueLabels;
 	private IRVarInfos globalVars;
 
-	private IRGenerator() {
+	private IRGenerator(Type pointerIntType) {
+		pointerSize = Type.getSize(pointerIntType);
 	}
 
 	@NotNull
@@ -126,7 +130,7 @@ public final class IRGenerator {
 			return typeInfo.size;
 		}
 		if (type.isPointer()) {
-			return 8;
+			return pointerSize;
 		}
 		return Type.getSize(type);
 	}

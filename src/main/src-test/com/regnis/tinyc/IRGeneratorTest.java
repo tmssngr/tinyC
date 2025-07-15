@@ -118,9 +118,10 @@ public class IRGeneratorTest {
 	@NotNull
 	private IRProgram convert(String input) {
 		final Program rawProgram = Parser.parse(input, Set.of());
-		final TypeChecker checker = new TypeChecker(Type.I64);
+		final Type pointerIntType = Type.I64;
+		final TypeChecker checker = new TypeChecker(pointerIntType);
 		final Program program = checker.check(rawProgram);
-		return IRGenerator.convert(program);
+		return IRGenerator.convert(program, pointerIntType);
 	}
 
 	@NotNull
