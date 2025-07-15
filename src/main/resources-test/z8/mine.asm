@@ -184,7 +184,7 @@ start:
         add r13, r11
         adc r12, r10
         ; store [r12], r9
-        not implemented
+        lde rr12, r9
         ; 30:3 if number == 0
         ; equals r9, r0, 0
         cp  r0, #%00
@@ -577,7 +577,7 @@ start:
         add r3, r1
         adc r2, r0
         ; store [r2], r8
-        not implemented
+        lde rr2, r8
         ; restore globbered non-volatile registers
         pop r9
         pop r8

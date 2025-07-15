@@ -114,7 +114,7 @@ start:
         add r13, r11
         adc r12, r10
         ; store [r12], r9
-        not implemented
+        lde rr12, r9
         ; 30:3 if number == 0
         ; equals r9, r0, 0
         cp  r0, #%00
@@ -270,7 +270,7 @@ start:
         add r13, r11
         adc r12, r10
         ; store [r12], r8
-        not implemented
+        lde rr12, r8
         ; const r8, 0
         ld r8, #%00
         ld r9, #%00
@@ -298,7 +298,7 @@ start:
         add r13, r11
         adc r12, r10
         ; store [r12], r8
-        not implemented
+        lde rr12, r8
         ; const r8, 1
         ld r8, #%00
         ld r9, #%01
@@ -327,7 +327,7 @@ start:
         add r13, r11
         adc r12, r10
         ; store [r12], r8
-        not implemented
+        lde rr12, r8
         ; const r8, 2
         ld r8, #%00
         ld r9, #%02

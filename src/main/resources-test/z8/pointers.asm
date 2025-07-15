@@ -114,7 +114,7 @@ start:
         add r13, r11
         adc r12, r10
         ; store [r12], r9
-        not implemented
+        lde rr12, r9
         ; 30:3 if number == 0
         ; equals r9, r0, 0
         cp  r0, #%00
@@ -307,7 +307,10 @@ start:
         sub r13, r15
         sbc r12, r14
         ; store [r10], r12
-        not implemented
+        lde rr10, r12
+        incw r10
+        lde rr10, r13
+        decw r10
         ; move r8, c
         not implemented
         ; move r0, r8

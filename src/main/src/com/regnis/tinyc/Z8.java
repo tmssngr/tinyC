@@ -300,7 +300,24 @@ public final class Z8 extends AsmWriter {
 	}
 
 	protected void writeMemStore(IRMemStore store) throws IOException {
-		notYetImplemented();
+		final IRVar value = store.value();
+		final int valueRegister = getRegister(value);
+
+		final IRVar addr = store.addr();
+		final int addrIndex = getRegister(addr);
+		Utils.assertTrue((addrIndex & 1) == 0);
+		final String addrReg = getRegName(addrIndex);
+
+		final int typeSize = getRegisterCount(value);
+		for (int i = 0; i < typeSize; i++) {
+			if (i > 0) {
+				writeIndented("incw " + addrReg);
+			}
+			writeIndented("lde r" + addrReg + ", " + getRegName(valueRegister + i));
+		}
+		for (int i = 1; i < typeSize; i++) {
+			writeIndented("decw " + addrReg);
+		}
 	}
 
 	protected void writeRetValue(IRRetValue retValue) throws IOException {

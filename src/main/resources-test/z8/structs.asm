@@ -114,7 +114,7 @@ start:
         add r13, r11
         adc r12, r10
         ; store [r12], r9
-        not implemented
+        lde rr12, r9
         ; 30:3 if number == 0
         ; equals r9, r0, 0
         cp  r0, #%00
@@ -264,7 +264,7 @@ start:
         ; addrof r10, pos
         not implemented
         ; store [r10], r9
-        not implemented
+        lde rr10, r9
         ; 10:14 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:10].x
         ; addrof r10, pos
         not implemented
@@ -280,7 +280,7 @@ start:
         ; inc r10
         incw r10
         ; store [r10], r9
-        not implemented
+        lde rr10, r9
         ; 11:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=11:13].x
         ; addrof r10, pos
         not implemented

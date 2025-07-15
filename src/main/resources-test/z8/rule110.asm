@@ -221,7 +221,7 @@ start:
         add r13, r11
         adc r12, r10
         ; store [r12], r9
-        not implemented
+        lde rr12, r9
         ; inc r8
         inc r8
 @for_5:
@@ -251,7 +251,7 @@ start:
         add r13, r11
         adc r12, r10
         ; store [r12], r8
-        not implemented
+        lde rr12, r8
         ; call printBoard[]
         call printBoard
         ; const r8, 0
@@ -343,7 +343,7 @@ start:
         add r15, r13
         adc r14, r12
         ; store [r14], r11
-        not implemented
+        lde rr14, r11
         ; inc r10
         inc r10
 @for_7:
