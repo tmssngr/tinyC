@@ -65,7 +65,7 @@ public class Compiler {
 
 		write(program, astSimpleFile);
 
-		IRProgram irProgram = IRGenerator.convert(program);
+		IRProgram irProgram = IRGenerator.convert(program, Type.I64);
 		irProgram = CleanupGlobalUnusedVariables.process(irProgram);
 		write(irProgram, irFile);
 
