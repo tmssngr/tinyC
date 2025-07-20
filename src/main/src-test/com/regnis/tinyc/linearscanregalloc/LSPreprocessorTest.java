@@ -7,7 +7,6 @@ import com.regnis.tinyc.ir.*;
 import java.util.*;
 import java.util.function.Function;
 
-import org.jetbrains.annotations.*;
 import org.junit.*;
 
 import static org.junit.Assert.assertEquals;
@@ -60,7 +59,7 @@ public class LSPreprocessorTest {
 		final IRVar varA = new IRVar("a", 0, VariableScope.global, Type.I16);
 		final IRVar varB = new IRVar("b", 0, VariableScope.function, Type.I16);
 		final IRVar varAddrA = new IRVar("addrA", 1, VariableScope.function, Type.pointer(Type.I16));
-		final IRVar varTempA = new IRVar(LSPreprocessorCachedVarLayer.PREFIX + "a", 2, VariableScope.function, Type.I16);
+		final IRVar varTempA = new IRVar(LSPreprocessorCachedVarLayer.TMP_PREFIX + "a", 2, VariableScope.function, Type.I16);
 
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(
 				new IRVarDef(varA, 2)

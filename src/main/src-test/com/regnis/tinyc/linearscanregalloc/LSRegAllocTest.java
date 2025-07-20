@@ -207,7 +207,7 @@ public class LSRegAllocTest {
 		final int rArg1 = 1;
 		final IRVar varGlobal = new IRVar("global", 0, VariableScope.global, Type.U8);
 		final IRVar varOne = new IRVar("one", 0, VariableScope.function, Type.U8);
-		final IRVar varLocalGlobal = new IRVar(LSPreprocessorCachedVarLayer.PREFIX + "global", 1, VariableScope.global, Type.U8);
+		final IRVar varLocalGlobal = new IRVar(LSPreprocessorCachedVarLayer.TMP_PREFIX + "global", 1, VariableScope.global, Type.U8);
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(
 				new IRVarDef(varGlobal, 1)
 		), Set.of(), null);

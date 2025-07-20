@@ -15,7 +15,7 @@ import org.jetbrains.annotations.*;
  */
 final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 
-	static final String PREFIX = "tmp.";
+	static final String TMP_PREFIX = "tmp.";
 
 	private final Map<IRVar, LSTempRegisterVars.LocalVar> globalToLocal = new LinkedHashMap<>();
 	private final LSTempRegisterVars tempRegisterVars;
@@ -179,7 +179,7 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 	private LSTempRegisterVars.LocalVar getLocal(IRVar var) {
 		LSTempRegisterVars.LocalVar local = globalToLocal.get(var);
 		if (local == null) {
-			final String name = PREFIX + var.name();
+			final String name = TMP_PREFIX + var.name();
 			local = tempRegisterVars.createVar(var, name);
 			globalToLocal.put(var, local);
 		}
