@@ -6,6 +6,7 @@ import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.*;
@@ -66,6 +67,7 @@ public final class LSRegAlloc {
 	private final int registerCount;
 	private final ControlFlowGraph cfg;
 	private final Map<String, LSIntervalFactory.Indices> blockToIndex;
+	private final boolean assertRegister;
 
 	private int pos;
 
@@ -75,6 +77,7 @@ public final class LSRegAlloc {
 		this.registerCount = registerCount;
 		this.cfg = cfg;
 		this.blockToIndex = blockToIndex;
+		assertRegister = false;
 	}
 
 	private void processInstructions(List<IRInstruction> instructions) {
@@ -96,36 +99,36 @@ public final class LSRegAlloc {
 		switch (instruction) {
 		case IRAddConst addConst -> {
 			IRVar var = addConst.var();
-			var = source(var);
+			var = sourceRegister(var);
 			add(new IRAddConst(var, addConst.offset()));
 		}
 		case IRAddrOf addrOf -> {
 			IRVar target = addrOf.target();
-			target = target(target);
+			target = targetRegister(target);
 			add(new IRAddrOf(target, addrOf.source(), addrOf.location()));
 		}
 		case IRAddrOfArray addrOfArray -> {
 			IRVar target = addrOfArray.addr();
-			target = target(target);
+			target = targetRegister(target);
 			add(new IRAddrOfArray(target, addrOfArray.array(), addrOfArray.location()));
 		}
 		case IRBinary binary -> {
 			if (binary.op() != IRBinary.Op.Mod) {
 				Utils.assertTrue(binary.left().equals(binary.target()));
 			}
-			final IRVar left = source(binary.left());
-			final IRVar right = source(binary.right());
-			final IRVar target = target(binary.target());
+			final IRVar left = sourceRegister(binary.left());
+			final IRVar right = sourceRegister(binary.right());
+			final IRVar target = targetRegister(binary.target());
 			add(new IRBinary(target, binary.op(), left, right, binary.location()));
 		}
 		case IRBranch branch -> {
-			final IRVar var = source(branch.conditionVar());
+			final IRVar var = sourceRegister(branch.conditionVar());
 			add(new IRBranch(var, branch.jumpOnTrue(), branch.target(), branch.nextLabel()));
 		}
 		case IRCall call -> {
 			IRVar target = call.target();
 			if (target != null) {
-				target = target(target);
+				target = targetRegister(target);
 			}
 			final List<IRVar> args = new ArrayList<>();
 			for (IRVar arg : call.args()) {
@@ -134,45 +137,49 @@ public final class LSRegAlloc {
 			add(new IRCall(target, call.type(), call.name(), args, call.location()));
 		}
 		case IRCast cast -> {
-			final IRVar source = source(cast.source());
-			final IRVar target = target(cast.target());
+			final IRVar source = sourceRegister(cast.source());
+			final IRVar target = targetRegister(cast.target());
 			add(new IRCast(target, source, cast.location()));
 		}
 		case IRComment ignored -> add(instruction);
 		case IRCompare compare -> {
 			IRVar target = compare.target();
-			target = target(target);
-			final IRVar left = source(compare.left());
-			final IRVar right = source(compare.right());
+			target = targetRegister(target);
+			final IRVar left = sourceRegister(compare.left());
+			final IRVar right = sourceRegister(compare.right());
 			add(new IRCompare(target, compare.op(), left, right, compare.location()));
 		}
 		case IRCompareConst compare -> {
 			IRVar target = compare.target();
-			target = target(target);
-			final IRVar left = source(compare.left());
+			target = targetRegister(target);
+			final IRVar left = sourceRegister(compare.left());
 			add(new IRCompareConst(target, compare.op(), left, compare.value(), compare.location()));
 		}
 		case IRJump ignored -> add(instruction);
 		case IRLabel ignored -> add(instruction);
 		case IRLiteral literal -> {
 			IRVar target = literal.target();
-			target = target(target);
+			target = targetRegister(target);
 			add(new IRLiteral(target, literal.value(), literal.location()));
 		}
 		case IRMemLoad load -> {
-			final IRVar addr = source(load.addr());
-			final IRVar target = target(load.target());
+			final IRVar addr = sourceRegister(load.addr());
+			final IRVar target = targetRegister(load.target());
 			add(new IRMemLoad(target, addr, load.location()));
 		}
 		case IRMemStore store -> {
-			final IRVar addr = source(store.addr());
-			final IRVar value = source(store.value());
+			final IRVar addr = sourceRegister(store.addr());
+			final IRVar value = sourceRegister(store.value());
 			add(new IRMemStore(addr, value, store.location()));
 		}
 		case IRMove move -> {
 			IRVar target = move.target();
 			target = target(target);
 			final IRVar source = source(move.source());
+			if (assertRegister) {
+				Utils.assertTrue(source.scope() == VariableScope.register
+				                 || target.scope() == VariableScope.register);
+			}
 			boolean skip = source.equals(target);
 			if (!skip
 			    && source.scope() == VariableScope.register
@@ -185,12 +192,12 @@ public final class LSRegAlloc {
 			}
 		}
 		case IRString string -> {
-			final IRVar target = target(string.target());
+			final IRVar target = targetRegister(string.target());
 			add(new IRString(target, string.stringIndex(), string.location()));
 		}
 		case IRUnary unary -> {
-			final IRVar source = source(unary.source());
-			final IRVar target = target(unary.target());
+			final IRVar source = sourceRegister(unary.source());
+			final IRVar target = targetRegister(unary.target());
 			add(new IRUnary(unary.op(), target, source));
 		}
 		default -> throw new UnsupportedOperationException(String.valueOf(instruction));
@@ -215,8 +222,24 @@ public final class LSRegAlloc {
 		}
 	}
 
+	private IRVar sourceRegister(IRVar source) {
+		final IRVar var = source(source);
+		if (assertRegister) {
+			Utils.assertTrue(var.scope() == VariableScope.register);
+		}
+		return var;
+	}
+
 	private IRVar source(IRVar source) {
 		return convertVar(source, pos);
+	}
+
+	private IRVar targetRegister(IRVar target) {
+		final IRVar var = target(target);
+		if (assertRegister) {
+			Utils.assertTrue(var.scope() == VariableScope.register);
+		}
+		return var;
 	}
 
 	private IRVar target(IRVar target) {
