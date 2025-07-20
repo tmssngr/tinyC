@@ -15,6 +15,8 @@ import org.jetbrains.annotations.*;
  */
 public final class LSRegAlloc {
 
+	private static final boolean DEBUG = false;
+
 	@NotNull
 	public static IRFunction process(@NotNull IRFunction function, @NotNull LSArchitecture architecture) {
 		return process(function, architecture.isX86(), architecture.registerCount(), architecture);
@@ -79,6 +81,11 @@ public final class LSRegAlloc {
 
 	private void processInstructions(List<IRInstruction> instructions) {
 		for (IRInstruction instruction : instructions) {
+			if (DEBUG
+			    && !(instruction instanceof IRComment)
+			    && !(instruction instanceof IRJump)) {
+				add(new IRComment(instruction.toString()));
+			}
 			processMoves();
 			processInstruction(instruction);
 			pos++;
