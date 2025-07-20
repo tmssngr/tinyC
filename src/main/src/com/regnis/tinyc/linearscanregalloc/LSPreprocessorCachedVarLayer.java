@@ -17,7 +17,7 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 
 	static final String TMP_PREFIX = "tmp.";
 
-	private final Map<IRVar, LSTempRegisterVars.LocalVar> globalToLocal = new LinkedHashMap<>();
+	private final Map<IRVar, LocalVar> globalToLocal = new LinkedHashMap<>();
 	private final LSTempRegisterVars tempRegisterVars;
 	private final IRCanBeRegister canBeRegister;
 
@@ -138,7 +138,7 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 	@NotNull
 	public Function<IRVar, IRVar> getLocalCopyToOriginal(@Nullable Function<IRVar, IRVar> parent) {
 		final Map<IRVar, IRVar> map = new HashMap<>();
-		for (Map.Entry<IRVar, LSTempRegisterVars.LocalVar> entry : globalToLocal.entrySet()) {
+		for (Map.Entry<IRVar, LocalVar> entry : globalToLocal.entrySet()) {
 			final IRVar prev = map.put(entry.getValue().var, entry.getKey());
 			Utils.assertTrue(prev == null);
 		}
@@ -162,13 +162,13 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 		});
 	}
 
-	private void foreach(BiConsumer<IRVar, LSTempRegisterVars.LocalVar> consumer) {
-		for (Map.Entry<IRVar, LSTempRegisterVars.LocalVar> entry : globalToLocal.entrySet()) {
+	private void foreach(BiConsumer<IRVar, LocalVar> consumer) {
+		for (Map.Entry<IRVar, LocalVar> entry : globalToLocal.entrySet()) {
 			consumer.accept(entry.getKey(), entry.getValue());
 		}
 	}
 
-	private void storeIfModified(LSTempRegisterVars.LocalVar local, IRVar global) {
+	private void storeIfModified(LocalVar local, IRVar global) {
 		if (local.modified) {
 			Utils.assertTrue(local.validLocally);
 			forward(new IRMove(global, local.var, Location.DUMMY));
@@ -176,11 +176,12 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 		}
 	}
 
-	private LSTempRegisterVars.LocalVar getLocal(IRVar var) {
-		LSTempRegisterVars.LocalVar local = globalToLocal.get(var);
+	private LocalVar getLocal(IRVar var) {
+		LocalVar local = globalToLocal.get(var);
 		if (local == null) {
 			final String name = TMP_PREFIX + var.name();
-			local = tempRegisterVars.createVar(var, name);
+			final IRVar localVar = tempRegisterVars.createVar(var, name);
+			local = new LocalVar(localVar);
 			globalToLocal.put(var, local);
 		}
 		return local;
@@ -195,7 +196,7 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 			return var;
 		}
 
-		final LSTempRegisterVars.LocalVar local = getLocal(var);
+		final LocalVar local = getLocal(var);
 		if (!local.validLocally) {
 			Utils.assertTrue(!local.modified);
 			forward(new IRMove(local.var, var, Location.DUMMY));
@@ -212,9 +213,21 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 			return var;
 		}
 
-		final LSTempRegisterVars.LocalVar local = getLocal(var);
+		final LocalVar local = getLocal(var);
 		local.validLocally = true;
 		local.modified = true;
 		return local.var;
+	}
+
+	public static final class LocalVar {
+		public final IRVar var;
+
+		public boolean validLocally;
+		public boolean modified;
+
+		private LocalVar(@NotNull IRVar var) {
+			Utils.assertTrue(var.scope() == VariableScope.function);
+			this.var = var;
+		}
 	}
 }

@@ -26,7 +26,7 @@ final class LSTempRegisterVars {
 		return new IRVarInfos(varDefs, varInfos.cantBeRegister(), varInfos.global());
 	}
 
-	public LocalVar createVar(@NotNull IRVar var, @NotNull String name) {
+	public IRVar createVar(@NotNull IRVar var, @NotNull String name) {
 		for (IRVarDef def : varDefs) {
 			Utils.assertTrue(!def.var().name().equals(name));
 		}
@@ -39,18 +39,6 @@ final class LSTempRegisterVars {
 		final int index = varDefs.size();
 		final IRVar localVar = new IRVar(name, index, VariableScope.function, var.type());
 		varDefs.add(new IRVarDef(localVar, size));
-		return new LocalVar(localVar);
-	}
-
-	public static final class LocalVar {
-		public final IRVar var;
-
-		public boolean validLocally;
-		public boolean modified;
-
-		private LocalVar(@NotNull IRVar var) {
-			Utils.assertTrue(var.scope() == VariableScope.function);
-			this.var = var;
-		}
+		return localVar;
 	}
 }
