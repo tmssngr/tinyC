@@ -16,10 +16,14 @@ import org.jetbrains.annotations.*;
 final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 
 	static final String TMP_PREFIX = "tmp.";
+	static final String REG_PREFIX = "r.";
 
 	private final Map<IRVar, LocalVar> globalToLocal = new LinkedHashMap<>();
 	private final LSTempRegisterVars tempRegisterVars;
 	private final IRCanBeRegister canBeRegister;
+
+	@Nullable private IRInstruction pendingMove;
+	private int regTempVarIndex;
 
 	public LSPreprocessorCachedVarLayer(@NotNull IRCanBeRegister canBeRegister, @NotNull LSTempRegisterVars tempRegisterVars, @NotNull LSPreprocessorLayer nextLayer) {
 		super(nextLayer);
@@ -31,60 +35,76 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 	public void process(@NotNull IRInstruction instruction) {
 		switch (instruction) {
 		case IRAddConst addConst -> {
-			final IRVar var = source(addConst.var());
+			final IRVar var = sourceTargetRegister(addConst.var());
 			forward(new IRAddConst(var, addConst.offset()));
+			forewardPendingTarget();
 		}
 		case IRAddrOf addr -> {
-			final IRVar target = target(addr.target());
+			final IRVar target = targetRegister(addr.target());
 			forward(new IRAddrOf(target, addr.source(), addr.location()));
+			forewardPendingTarget();
 		}
 		case IRAddrOfArray addr -> {
-			final IRVar target = target(addr.addr());
+			final IRVar target = targetRegister(addr.addr());
 			forward(new IRAddrOfArray(target, addr.array(), addr.location()));
+			forewardPendingTarget();
 		}
 		case IRBinary binary -> {
-			final IRVar left = source(binary.left());
-			final IRVar right = source(binary.right());
-			final IRVar target = target(binary.target());
-			forward(new IRBinary(target, binary.op(), left, right, binary.location()));
+			if (binary.left().equals(binary.target())) {
+				final IRVar right = sourceRegister(binary.right());
+				final IRVar leftTarget = sourceTargetRegister(binary.target());
+				forward(new IRBinary(leftTarget, binary.op(), leftTarget, right, binary.location()));
+				forewardPendingTarget();
+			}
+			else {
+				final IRVar left = sourceRegister(binary.left());
+				final IRVar right = sourceRegister(binary.right());
+				final IRVar target = targetRegister(binary.target());
+				forward(new IRBinary(target, binary.op(), left, right, binary.location()));
+				forewardPendingTarget();
+			}
 		}
 		case IRBranch branch -> {
 			storeAllModified();
-			final IRVar var = source(branch.conditionVar());
+			final IRVar var = sourceRegister(branch.conditionVar());
 			forward(new IRBranch(var, branch.jumpOnTrue(), branch.target(), branch.nextLabel()));
 		}
 		case IRCast cast -> {
-			final IRVar source = source(cast.source());
-			final IRVar target = target(cast.target());
+			final IRVar source = sourceRegister(cast.source());
+			final IRVar target = targetRegister(cast.target());
 			forward(new IRCast(target, source, cast.location()));
+			forewardPendingTarget();
 		}
 		case IRCall call -> {
 			storeAllModified();
 
 			final List<IRVar> args = new ArrayList<>();
 			for (IRVar arg : call.args()) {
-				args.add(source(arg));
+				args.add(sourceRegister(arg));
 			}
 
 			IRVar target = call.target();
 			if (target != null) {
-				target = target(target);
+				target = targetRegister(target);
 			}
 			forward(new IRCall(target, call.type(), call.name(), args, call.location()));
 
+			forewardPendingTarget();
 			invalidateAll();
 		}
 		case IRComment c -> forward(c);
 		case IRCompare compare -> {
-			final IRVar left = source(compare.left());
-			final IRVar right = source(compare.right());
-			final IRVar target = target(compare.target());
+			final IRVar left = sourceRegister(compare.left());
+			final IRVar right = sourceRegister(compare.right());
+			final IRVar target = targetRegister(compare.target());
 			forward(new IRCompare(target, compare.op(), left, right, compare.location()));
+			forewardPendingTarget();
 		}
 		case IRCompareConst compare -> {
-			final IRVar left = source(compare.left());
-			final IRVar target = target(compare.target());
+			final IRVar left = sourceRegister(compare.left());
+			final IRVar target = targetRegister(compare.target());
 			forward(new IRCompareConst(target, compare.op(), left, compare.value(), compare.location()));
+			forewardPendingTarget();
 		}
 		case IRJump jump -> {
 			storeAllModified();
@@ -92,37 +112,41 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 		}
 		case IRLabel label -> forward(label);
 		case IRLiteral literal -> {
-			final IRVar target = target(literal.target());
+			final IRVar target = targetRegister(literal.target());
 			forward(new IRLiteral(target, literal.value(), literal.location()));
+			forewardPendingTarget();
 		}
 		case IRMove move -> {
-			final IRVar source = source(move.source());
+			final IRVar source = source(move.source(), false);
 			final IRVar target = target(move.target());
 			forward(new IRMove(target, source, move.location()));
 		}
 		case IRString literal -> {
-			final IRVar target = target(literal.target());
+			final IRVar target = targetRegister(literal.target());
 			forward(new IRString(target, literal.stringIndex(), literal.location()));
+			forewardPendingTarget();
 		}
 		case IRUnary unary -> {
-			final IRVar source = source(unary.source());
-			final IRVar target = target(unary.target());
+			final IRVar source = sourceRegister(unary.source());
+			final IRVar target = targetRegister(unary.target());
 			forward(new IRUnary(unary.op(), target, source));
+			forewardPendingTarget();
 		}
 		case IRMemLoad load -> {
 			storeAllModified();
-			final IRVar source = source(load.addr());
-			final IRVar target = target(load.target());
+			final IRVar source = sourceRegister(load.addr());
+			final IRVar target = targetRegister(load.target());
 			forward(new IRMemLoad(target, source, load.location()));
+			forewardPendingTarget();
 		}
 		case IRMemStore store -> {
 			storeAllModified();
-			final IRVar addr = source(store.addr());
-			final IRVar value = source(store.value());
+			final IRVar addr = sourceRegister(store.addr());
+			final IRVar value = sourceRegister(store.value());
 			forward(new IRMemStore(addr, value, store.location()));
 		}
 		case IRRetValue retValue -> {
-			final IRVar source = source(retValue.var(), true);
+			final IRVar source = sourceRegister(retValue.var(), true);
 			forward(new IRRetValue(source, retValue.location()));
 		}
 		default -> throw new UnsupportedOperationException(String.valueOf(instruction));
@@ -187,8 +211,60 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 		return local;
 	}
 
-	private IRVar source(IRVar var) {
-		return source(var, false);
+	private IRVar sourceRegister(IRVar var) {
+		return sourceRegister(var, false);
+	}
+
+	private IRVar sourceRegister(IRVar var, boolean storeIfModified) {
+		final IRVar source = source(var, storeIfModified);
+		if (source.scope() == VariableScope.register) {
+			return source;
+		}
+
+		final IRVar registerTmpVar = getRegisterTmpVar(source);
+		forward(new IRMove(registerTmpVar, var, Location.DUMMY));
+		return registerTmpVar;
+	}
+
+	private IRVar targetRegister(IRVar var) {
+		final IRVar target = target(var);
+		if (target.scope() == VariableScope.register) {
+			return target;
+		}
+
+		final IRVar registerTmpVar = getRegisterTmpVar(target);
+		pendingMove = new IRMove(var, registerTmpVar, Location.DUMMY);
+		return registerTmpVar;
+	}
+
+	private IRVar sourceTargetRegister(IRVar var) {
+		if (var.scope() == VariableScope.global || !canBeRegister.canBeRegister(var)) {
+			final LocalVar local = getLocal(var);
+			if (!local.validLocally) {
+				Utils.assertTrue(!local.modified);
+				forward(new IRMove(local.var, var, Location.DUMMY));
+				local.validLocally = true;
+			}
+			local.modified = true;
+			pendingMove = new IRMove(local.var, var, Location.DUMMY);
+			return local.var;
+		}
+
+		if (var.scope() == VariableScope.register) {
+			return var;
+		}
+
+		final IRVar registerTmpVar = getRegisterTmpVar(var);
+		forward(new IRMove(registerTmpVar, var, Location.DUMMY));
+		pendingMove = new IRMove(var, registerTmpVar, Location.DUMMY);
+		return registerTmpVar;
+	}
+
+	private void forewardPendingTarget() {
+		if (pendingMove != null) {
+			forward(pendingMove);
+			pendingMove = null;
+		}
 	}
 
 	private IRVar source(IRVar var, boolean storeIfModified) {
@@ -217,6 +293,12 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 		local.validLocally = true;
 		local.modified = true;
 		return local.var;
+	}
+
+	private IRVar getRegisterTmpVar(IRVar var) {
+		final IRVar regVar = tempRegisterVars.createVar(var, REG_PREFIX + regTempVarIndex + "." + var.name());
+		regTempVarIndex++;
+		return regVar;
 	}
 
 	public static final class LocalVar {
