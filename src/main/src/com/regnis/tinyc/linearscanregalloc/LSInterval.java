@@ -225,7 +225,7 @@ final class LSInterval {
 			this.uses.removeLast();
 		}
 
-		return new LSInterval(var, register, lastRanges, subUses);
+		return new LSInterval(var, -1, lastRanges, subUses);
 	}
 
 	public int getFreeUntil(int pos) {
