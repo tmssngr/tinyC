@@ -65,7 +65,7 @@
 	call printChar[r1]
 
 @main:
-	; 36 pc
+	; 35 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const r7, 22
@@ -110,10 +110,9 @@
 	cast r1(i64), r0(i16)
 	call printIntLf[r1]
 	const r6, 1
-	move r0, r6
 	move r1, r7
-	shiftleft r0, r0, r1
-	cast r1(i64), r0(i16)
+	shiftleft r6, r6, r1
+	cast r1(i64), r6(i16)
 	call printIntLf[r1]
 
 @printStringLength:

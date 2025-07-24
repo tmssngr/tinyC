@@ -207,10 +207,10 @@ start:
         ; move ptrToSpace, tmp.ptrToSpace{r6}
         lea r11, [var_2]
         mov [r11], rbx
-        ; load t.5{r7}, [tmp.ptrToSpace{r6}]
-        mov r12w, [rbx]
-        ; cast t.4{r1}(i64), t.5{r7}(i16)
-        movzx rcx, r12w
+        ; load t.5{r6}, [tmp.ptrToSpace{r6}]
+        mov bx, [rbx]
+        ; cast t.4{r1}(i64), t.5{r6}(i16)
+        movzx rcx, bx
         ; call printIntLf[t.4{r1}]
         sub rsp, 20h; shadow space
         call @printIntLf
