@@ -275,14 +275,12 @@ start:
         add rsp, 20h
         ; const r6, 1
         mov bx, 1
-        ; move r0, r6
-        mov ax, bx
         ; move r1, r7
         mov cx, r12w
-        ; shiftleft r0, r0, r1
-        sal ax, cl
-        ; cast r1(i64), r0(i16)
-        movzx rcx, ax
+        ; shiftleft r6, r6, r1
+        sal bx, cl
+        ; cast r1(i64), r6(i16)
+        movzx rcx, bx
         ; call printIntLf[r1]
         sub rsp, 20h; shadow space
         call @printIntLf

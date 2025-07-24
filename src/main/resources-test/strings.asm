@@ -261,10 +261,10 @@ start:
         ; move r6, text
         lea r11, [var_0]
         mov rbx, [r11]
-        ; load r7, [r6]
-        mov r12b, [rbx]
-        ; cast r1(i64), r7(u8)
-        movzx rcx, r12b
+        ; load r6, [r6]
+        mov bl, [rbx]
+        ; cast r1(i64), r6(u8)
+        movzx rcx, bl
         ; call printIntLf[r1]
         sub rsp, 20h; shadow space
         call @printIntLf
