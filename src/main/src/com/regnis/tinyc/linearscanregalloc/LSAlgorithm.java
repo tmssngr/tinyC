@@ -35,8 +35,8 @@ final class LSAlgorithm {
 			final int from = current.getFrom();
 			Utils.assertTrue(from >= prevFrom);
 			prevFrom = from;
-			checkActiveForExpiredOrInactive(from);
-			checkInactiveForExpiredOrInactive(from);
+			makeActiveOrInactive(from, false, active, inactive);
+			makeActiveOrInactive(from, true, inactive, active);
 
 			if (!tryAllocateFree(current)) {
 				allocateBlockedReg(current);
@@ -52,8 +52,8 @@ final class LSAlgorithm {
 		return varToRegisters;
 	}
 
-	private void checkActiveForExpiredOrInactive(int pos) {
-		for (final Iterator<LSInterval> it = active.iterator(); it.hasNext(); ) {
+	private void makeActiveOrInactive(int pos, boolean makeActive, List<LSInterval> from, List<LSInterval> to) {
+		for (final Iterator<LSInterval> it = from.iterator(); it.hasNext(); ) {
 			final LSInterval interval = it.next();
 			final int lastTo = interval.getTo();
 			if (pos >= lastTo) {
@@ -62,26 +62,9 @@ final class LSAlgorithm {
 				continue;
 			}
 
-			if (!interval.contains(pos)) {
+			if (makeActive == interval.contains(pos)) {
 				it.remove();
-				inactive.add(interval);
-			}
-		}
-	}
-
-	private void checkInactiveForExpiredOrInactive(int position) {
-		for (final Iterator<LSInterval> it = inactive.iterator(); it.hasNext(); ) {
-			final LSInterval interval = it.next();
-			final int lastTo = interval.getTo();
-			if (position > lastTo) {
-				it.remove();
-				addToDone(interval);
-				continue;
-			}
-
-			if (interval.contains(position)) {
-				it.remove();
-				active.add(interval);
+				to.add(interval);
 			}
 		}
 	}

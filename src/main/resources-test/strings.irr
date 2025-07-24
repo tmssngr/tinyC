@@ -110,8 +110,8 @@
 	add r1, r1, r7
 	call printString[r1]
 	move r6, text
-	load r7, [r6]
-	cast r1(i64), r7(u8)
+	load r6, [r6]
+	cast r1(i64), r6(u8)
 	call printIntLf[r1]
 
 @printLength:
