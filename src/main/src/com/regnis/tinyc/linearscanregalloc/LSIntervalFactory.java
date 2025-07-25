@@ -22,7 +22,7 @@ final class LSIntervalFactory {
 	private final LSCallingConventionProvider callingConventionProvider;
 	private final boolean isX86;
 
-	private Indices indices;
+	private IndicesImpl indices;
 
 	public LSIntervalFactory(@NotNull IRCanBeRegister canBeRegister, @NotNull LSCallingConventionProvider callingConventionProvider, int registerCount, boolean isX86) {
 		this.canBeRegister = canBeRegister;
@@ -89,7 +89,7 @@ final class LSIntervalFactory {
 		liveBeforeSorted.sort(Comparator.comparing(IRVar::index));
 
 		final int index = getIndex();
-		indices = new Indices(index);
+		indices = new IndicesImpl(index);
 		blockToIndex.put(name, indices);
 
 		for (IRVar var : liveBeforeSorted) {
@@ -334,14 +334,25 @@ final class LSIntervalFactory {
 		return instructions.size() * 2;
 	}
 
-	public static final class Indices {
+	public interface Indices {
+		int start();
+
+		int end();
+	}
+
+	private static final class IndicesImpl implements Indices {
 		private final int start;
 
 		private int end;
 
-		public Indices(int start) {
+		public IndicesImpl(int start) {
 			this.start = start;
 			end = start;
+		}
+
+		@Override
+		public String toString() {
+			return "[" + start + "-" + end + ")";
 		}
 
 		public int start() {
