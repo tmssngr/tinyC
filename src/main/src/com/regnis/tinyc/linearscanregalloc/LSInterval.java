@@ -113,17 +113,25 @@ final class LSInterval {
 	}
 
 	@NotNull
-	public String rangesAsString(int max, Collection<LSIntervalFactory.Indices> blockStartIndices) {
+	public String rangesAsString(int max, Collection<LSIntervalFactory.Indices> blockIndices) {
+		for (LSIntervalFactory.Indices indices : blockIndices) {
+			max = Math.max(max, indices.end() + 1);
+		}
+		for (LSRange range : ranges) {
+			max = Math.max(max, range.to());
+		}
+
 		final StringBuilder buffer = new StringBuilder();
 		debugPositions(max, buffer);
 
-		for (LSIntervalFactory.Indices index : blockStartIndices) {
+		for (LSIntervalFactory.Indices index : blockIndices) {
 			buffer.setCharAt(index.start(), '|');
 		}
 
 		for (LSRange range : ranges) {
+			final char ch = var != null ? '=' : '#';
 			for (int i = Math.max(range.from(), 0); i < range.to(); i++) {
-				buffer.setCharAt(i, '=');
+				buffer.setCharAt(i, ch);
 			}
 		}
 		for (LSUse use : uses) {

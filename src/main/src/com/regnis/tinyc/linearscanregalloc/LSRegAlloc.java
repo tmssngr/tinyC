@@ -6,6 +6,7 @@ import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.*;
@@ -37,10 +38,11 @@ public final class LSRegAlloc {
 		}
 		intervalFactory.sortIntervals();
 		final Map<String, LSIntervalFactory.Indices> blockToIndex = intervalFactory.getBlockToIndex();
+		final List<LSIntervalFactory.Indices> blockBoundaries = intervalFactory.getBlockIndices();
 
 //		intervalFactory.debugPrint(function.name());
 
-		final LSAlgorithm algorithm = new LSAlgorithm(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount);
+		final LSAlgorithm algorithm = new LSAlgorithm(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), blockBoundaries, registerCount);
 		final Map<IRVar, LSVarRegisters> registerVarIntervals = algorithm.run();
 
 		final Function<IRVar, IRVar> localCopyToGlobalOriginal = preprocessorResult.localCopyToGlobalOriginal();

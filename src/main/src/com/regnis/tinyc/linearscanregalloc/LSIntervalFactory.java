@@ -231,6 +231,12 @@ final class LSIntervalFactory {
 		return Collections.unmodifiableMap(blockToIndex);
 	}
 
+	public List<Indices> getBlockIndices() {
+		final List<Indices> blockBoundaries = new ArrayList<>(blockToIndex.values());
+		blockBoundaries.sort(Comparator.comparingInt(Indices::start));
+		return Collections.unmodifiableList(blockBoundaries);
+	}
+
 	public void sortIntervals() {
 		// if two intervals start at the same position,
 		// the longer one should be before the shorter one
