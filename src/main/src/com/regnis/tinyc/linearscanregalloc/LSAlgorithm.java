@@ -17,12 +17,21 @@ final class LSAlgorithm {
 	private final Map<IRVar, LSVarRegisters> varToRegisters = new LinkedHashMap<>();
 	private final List<LSInterval> fixedIntervals;
 	private final List<LSInterval> unhandled;
+	private final List<LSIntervalFactory.Indices> blockBoundaries;
 	private final int registerCount;
 
-	public LSAlgorithm(@NotNull List<LSInterval> varIntervals, @NotNull List<LSInterval> fixedIntervals, int registerCount) {
+	private int _logMax;
+
+	public LSAlgorithm(@NotNull List<LSInterval> varIntervals, @NotNull List<LSInterval> fixedIntervals, @NotNull List<LSIntervalFactory.Indices> blockBoundaries, int registerCount) {
 		this.unhandled = new ArrayList<>(varIntervals);
 		this.fixedIntervals = fixedIntervals;
+		this.blockBoundaries = blockBoundaries;
 		this.registerCount = registerCount;
+
+		_logMax = 0;
+		for (LSInterval interval : unhandled) {
+			_logMax = Math.max(_logMax, interval.getTo());
+		}
 	}
 
 	@NotNull
@@ -37,6 +46,11 @@ final class LSAlgorithm {
 			prevFrom = from;
 			makeActiveOrInactive(from, false, active, inactive);
 			makeActiveOrInactive(from, true, inactive, active);
+			_log("Fixed:", fixedIntervals);
+			_log("Unhandled:", unhandled);
+			_log("Active:", active);
+			_log("Inactive:", inactive);
+			_log("Current:", current);
 
 			if (!tryAllocateFree(current)) {
 				allocateBlockedReg(current);
@@ -44,12 +58,44 @@ final class LSAlgorithm {
 
 			if (current.register() >= 0) {
 				active.add(current);
+				_log("Assigned:", current);
 			}
+			_log("");
 		}
 
 		active.forEach(this::addToDone);
 		inactive.forEach(this::addToDone);
 		return varToRegisters;
+	}
+
+	private void _log(String title, LSInterval current) {
+		_log(title);
+		_log(current);
+	}
+
+	private void _log(String title, List<LSInterval> intervals) {
+		_log(title);
+		for (LSInterval interval : intervals) {
+			_log(interval);
+		}
+	}
+
+	private void _log(LSInterval interval) {
+		final StringBuilder buffer = new StringBuilder();
+		buffer.append(interval.rangesAsString(_logMax, blockBoundaries));
+		final IRVar var = interval.varNullable();
+		if (var != null) {
+			buffer.append("  ");
+			buffer.append(var);
+			buffer.append(":");
+			buffer.append(var.type());
+		}
+		final int register = interval.register();
+		if (register >= 0) {
+			buffer.append("  r");
+			buffer.append(register);
+		}
+		_log(buffer.toString());
 	}
 
 	private void makeActiveOrInactive(int pos, boolean makeActive, List<LSInterval> from, List<LSInterval> to) {
@@ -73,6 +119,8 @@ final class LSAlgorithm {
 		final RegisterPositions registersFreeUntil = new RegisterPositions(registerCount);
 		prepareFreeUntil(current, registersFreeUntil);
 
+		registersFreeUntil.log("free until:");
+
 		final int currentTo = current.getTo();
 
 		final int registerHint = current.getRegisterHint();
@@ -87,12 +135,13 @@ final class LSAlgorithm {
 			}
 		}
 
+		current.setRegister(reg);
+
 		final int maxFreeUntil = registersFreeUntil.get(reg);
 		if (maxFreeUntil < currentTo) {
-			final LSInterval split = current.truncateAndSplit(maxFreeUntil);
+			final LSInterval split = truncateAndSplit(current, maxFreeUntil);
 			addToUnhandled(split);
 		}
-		current.setRegister(reg);
 		return true;
 	}
 
@@ -124,6 +173,9 @@ final class LSAlgorithm {
 		final int from = current.getFrom();
 		prepareUseAndBlockPos(from, registersUsedNext, registersBlockedNext);
 
+		registersUsedNext.log("used next:");
+		registersBlockedNext.log("blocked next:");
+
 		final int reg = Math.max(registersUsedNext.getMax(), 0);
 		final int maxUsedNext = registersUsedNext.get(reg);
 
@@ -132,7 +184,7 @@ final class LSAlgorithm {
 			// If the first use position of the current interval is found
 			// after the highest use_pos, it is better to spill current.
 			if (firstCurrentUse > from && firstCurrentUse < Integer.MAX_VALUE) {
-				final LSInterval split = current.truncateAndSplit(firstCurrentUse);
+				final LSInterval split = truncateAndSplit(current, firstCurrentUse);
 				addToUnhandled(split);
 			}
 			addToDone(current);
@@ -146,7 +198,7 @@ final class LSAlgorithm {
 		if (blockedNext <= current.getTo()) {// If the selected register has a block_pos somewhere in the middle of current,
 			// then the register is not available for the whole lifetime. So current is
 			// split before block_pos, and the split child is sorted into the unhandled list.
-			final LSInterval split = current.truncateAndSplit(blockedNext - 1);
+			final LSInterval split = truncateAndSplit(current, blockedNext - 1);
 			addToUnhandled(split);
 		}
 
@@ -186,15 +238,24 @@ final class LSAlgorithm {
 			// requiring a register, however, they must be reloaded again to a register later on.
 			// Therefore, they are split a second time before these use positions, and the second
 			// split children are sorted into the unhandled list.
-			final LSInterval split = interval.truncateAndSplit(from - 1);
+			final LSInterval split = truncateAndSplit(interval, from - 1);
 			final int nextUse = split.getUsedNext(0, -1);
 			if (nextUse < 0) {
 				continue;
 			}
 
-			final LSInterval secondSplit = split.truncateAndSplit(nextUse - 1);
+			final LSInterval secondSplit = truncateAndSplit(split, nextUse - 1);
 			addToUnhandled(secondSplit);
 		}
+	}
+
+	@NotNull
+	private LSInterval truncateAndSplit(LSInterval interval, int pos) {
+		_log("Split", interval);
+		final LSInterval split = interval.truncateAndSplit(pos);
+		_log("into", interval);
+		_log("and", split);
+		return split;
 	}
 
 	private void addToUnhandled(LSInterval split) {
@@ -205,6 +266,10 @@ final class LSAlgorithm {
 	private void addToDone(@NotNull LSInterval interval) {
 		final LSVarRegisters registers = varToRegisters.get(interval.var());
 		registers.add(interval, interval.uses());
+	}
+
+	private static void _log(String msg) {
+		System.out.println(msg);
 	}
 
 	private static final class RegisterPositions {
@@ -251,6 +316,20 @@ final class LSAlgorithm {
 				}
 			}
 			return maxReg;
+		}
+
+		public void log(String s) {
+			_log(s);
+			final StringBuilder buffer = new StringBuilder();
+			for (int i = 0; i < positions.length; i++) {
+				buffer.append(new Formatter().format("  r%02d", i));
+			}
+			_log(buffer.toString());
+			buffer.setLength(0);
+			for (final int position : positions) {
+				buffer.append(new Formatter().format("  %3d", Math.min(999, position)));
+			}
+			_log(buffer.toString());
 		}
 	}
 }
