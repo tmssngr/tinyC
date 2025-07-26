@@ -97,6 +97,11 @@ public class CompilerTest {
 	}
 
 	@Test
+	public void testFibonacci() throws IOException, InterruptedException {
+		compileAndRun("fibonacci.c");
+	}
+
+	@Test
 	public void testMine() throws IOException, InterruptedException {
 		final Path inputFile = absolutePath("mine.c");
 		Compiler.compile(inputFile);
