@@ -12,8 +12,8 @@ import org.jetbrains.annotations.*;
  */
 public final class DetectVarLiveness {
 
-	public static void process(ControlFlowGraph cfg, boolean alsoForGlobal) {
-		while (detect(cfg, alsoForGlobal)) {
+	public static void process(@NotNull ControlFlowGraph cfg, @NotNull Set<? extends IRVar> cantBeRegisterVars, boolean alsoForGlobal) {
+		while (detect(cfg, cantBeRegisterVars, alsoForGlobal)) {
 		}
 	}
 
@@ -43,7 +43,7 @@ public final class DetectVarLiveness {
 		                var -> add(var, alsoForGlobal, defines));
 	}
 
-	private static boolean detect(ControlFlowGraph cfg, boolean alsoForGlobal) {
+	private static boolean detect(ControlFlowGraph cfg, Set<? extends IRVar> cantBeRegisterVars, boolean alsoForGlobal) {
 		final Set<String> processed = new HashSet<>();
 
 		boolean changed = false;
@@ -58,7 +58,7 @@ public final class DetectVarLiveness {
 			}
 
 			final BasicBlock block = cfg.get(name);
-			final Set<IRVar> live = getLiveInFromAllNext(block, cfg);
+			final Set<IRVar> live = getLiveInFromAllNext(block, cfg, cantBeRegisterVars);
 			if (processBlock(block, live, alsoForGlobal)) {
 				changed = true;
 			}
@@ -68,8 +68,8 @@ public final class DetectVarLiveness {
 		return changed;
 	}
 
-	private static Set<IRVar> getLiveInFromAllNext(BasicBlock block, ControlFlowGraph cfg) {
-		final Set<IRVar> liveIn = new HashSet<>();
+	private static Set<IRVar> getLiveInFromAllNext(BasicBlock block, ControlFlowGraph cfg, Set<? extends IRVar> cantBeRegisterVars) {
+		final Set<IRVar> liveIn = new HashSet<>(cantBeRegisterVars);
 		for (String next : block.successors()) {
 			final BasicBlock nextBlock = cfg.get(next);
 			liveIn.addAll(nextBlock.getLiveBefore());

@@ -13,7 +13,7 @@ public class RemoveNotLiveResults {
 	public static Pair<IRFunction, ControlFlowGraph> run(IRFunction function) {
 		while (true) {
 			final ControlFlowGraph cfg = CfgGenerator.create(function.name(), function.instructions());
-			DetectVarLiveness.process(cfg, true);
+			DetectVarLiveness.process(cfg, function.varInfos().cantBeRegister(), true);
 
 			final RemoveNotLiveResults command = new RemoveNotLiveResults();
 			final List<BasicBlock> blocks = cfg.blocks();
