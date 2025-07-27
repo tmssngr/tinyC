@@ -7,7 +7,7 @@ digraph program {
 	}
 	subgraph fn_printChar {
 		BasicBlock_1_printChar [label="printChar",shape=box];
-		BasicBlock_1_printChar -> BasicBlock_1_printChar_ret;
+		BasicBlock_1_printChar -> BasicBlock_1_printChar_ret [label="(chr)"];
 		BasicBlock_1_printChar_ret [label="printChar_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_strlen {

@@ -25,7 +25,7 @@ public final class LSRegAlloc {
 	public static List<IRInstruction> process(@NotNull IRFunction function, boolean isX86, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider) {
 		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, isX86);
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), preprocessorResult.instructions());
-		DetectVarLiveness.process(cfg, false);
+		DetectVarLiveness.process(cfg, function.varInfos().cantBeRegister(), false);
 		final List<BasicBlock> blocks = cfg.blocks();
 
 		final IRVarInfos varInfos = preprocessorResult.varInfos();
@@ -46,7 +46,7 @@ public final class LSRegAlloc {
 		final Map<IRVar, LSVarRegisters> registerVarIntervals = algorithm.run();
 
 		final Function<IRVar, IRVar> localCopyToGlobalOriginal = preprocessorResult.localCopyToGlobalOriginal();
-		final LSRegAlloc regAlloc = new LSRegAlloc(registerVarIntervals, localCopyToGlobalOriginal, registerCount, cfg, blockToIndex);
+		final LSRegAlloc regAlloc = new LSRegAlloc(registerVarIntervals, localCopyToGlobalOriginal, registerCount, cfg, blockToIndex, varInfos);
 		regAlloc.determineMovesAtBlockEdges(blocks);
 		regAlloc.processInstructions(intervalFactory.getInstructions());
 
@@ -66,15 +66,17 @@ public final class LSRegAlloc {
 	private final int registerCount;
 	private final ControlFlowGraph cfg;
 	private final Map<String, LSIntervalFactory.Indices> blockToIndex;
+	private final IRCanBeRegister canBeRegister;
 
 	private int pos;
 
-	private LSRegAlloc(@NotNull Map<IRVar, LSVarRegisters> varToRegisters, Function<IRVar, IRVar> localCopyToOriginal, int registerCount, ControlFlowGraph cfg, Map<String, LSIntervalFactory.Indices> blockToIndex) {
+	private LSRegAlloc(@NotNull Map<IRVar, LSVarRegisters> varToRegisters, Function<IRVar, IRVar> localCopyToOriginal, int registerCount, ControlFlowGraph cfg, Map<String, LSIntervalFactory.Indices> blockToIndex, IRCanBeRegister canBeRegister) {
 		this.varToRegisters = varToRegisters;
 		this.localCopyToOriginal = localCopyToOriginal;
 		this.registerCount = registerCount;
 		this.cfg = cfg;
 		this.blockToIndex = blockToIndex;
+		this.canBeRegister = canBeRegister;
 	}
 
 	private void processInstructions(List<IRInstruction> instructions) {
@@ -268,6 +270,12 @@ public final class LSRegAlloc {
 			}
 
 			final LSVarRegisters registers = varToRegisters.get(var);
+			if (registers == null) {
+				Utils.assertTrue(!canBeRegister.canBeRegister(var));
+				continue;
+			}
+
+			Utils.assertTrue(canBeRegister.canBeRegister(var));
 			final int varInReg = registers.getRegisterOrState(blockIndex);
 			final int predecessorIndex = predecessorEndIndex + 1;
 			final int varOutReg = registers.getRegisterOrState(predecessorIndex);

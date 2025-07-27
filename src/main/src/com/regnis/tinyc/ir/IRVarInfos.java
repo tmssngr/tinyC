@@ -16,7 +16,7 @@ public final class IRVarInfos implements IRCanBeRegister {
 	private final Set<IRVar> cantBeRegister;
 	private final IRVarInfos parent;
 
-	public IRVarInfos(@NotNull List<IRVarDef> vars, @NotNull Set<IRVar> cantBeRegister, @Nullable IRVarInfos parent) {
+	public IRVarInfos(@NotNull List<IRVarDef> vars, @NotNull Set<? extends IRVar> cantBeRegister, @Nullable IRVarInfos parent) {
 		this.vars = List.copyOf(vars);
 		this.cantBeRegister = Set.copyOf(cantBeRegister);
 		this.parent = parent;
@@ -85,7 +85,7 @@ public final class IRVarInfos implements IRCanBeRegister {
 	}
 
 	@NotNull
-	public Set<IRVar> cantBeRegister() {
+	public Set<? extends IRVar> cantBeRegister() {
 		return cantBeRegister;
 	}
 
