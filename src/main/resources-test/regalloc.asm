@@ -225,7 +225,7 @@ start:
         sub rsp, 8
           call @registerHint
         add rsp, 24
-        ; call oneOrTwo = max[one, two] -> u8
+        ; call _ = max[one, two] -> u8
         lea rax, [rsp+0]
         mov bl, [rax]
         push rbx
@@ -235,20 +235,16 @@ start:
         sub rsp, 8
           call @max
         add rsp, 24
-        lea rbx, [rsp+2]
-        mov [rbx], al
         ; const t.4, 5
         mov al, 5
         lea rbx, [rsp+6]
         mov [rbx], al
-        ; call f5 = fibonacci[t.4] -> i16
+        ; call _ = fibonacci[t.4] -> i16
         lea rax, [rsp+6]
         mov bl, [rax]
         push rbx
           call @fibonacci
         add rsp, 8
-        lea rbx, [rsp+4]
-        mov [rbx], ax
         ; release space for local variables
         add rsp, 16
         ret
