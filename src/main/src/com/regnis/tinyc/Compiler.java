@@ -76,9 +76,9 @@ public class Compiler {
 				final DotWriter dotWriter = new DotWriter(writer);
 				dotWriter.begin();
 				for (IRFunction function : irProgram.functions()) {
-					final String name = function.name();
-					final ControlFlowGraph cfg = CfgGenerator.create(name, function.instructions());
-					DetectVarLiveness.process(cfg);
+					final Pair<IRFunction, ControlFlowGraph> result = RemoveNotLiveResults.run(function);
+					function = result.first();
+					final ControlFlowGraph cfg = result.second();
 					irWriter.write(cfg);
 					dotWriter.writeCfg(cfg);
 					final List<BasicBlock> blocks = cfg.blocks();
