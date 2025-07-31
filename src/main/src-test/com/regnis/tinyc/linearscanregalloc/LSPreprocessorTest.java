@@ -100,4 +100,47 @@ public class LSPreprocessorTest {
 		             result.varInfos().vars());
 		assertEquals(varA, originalVarMapping.apply(varTempA));
 	}
+
+	@Test
+	public void testPrintChar() {
+		final IRVar varChr = new IRVar("chr", 0, VariableScope.argument, Type.U8);
+		final IRVar varT1 = new IRVar("t.1", 1, VariableScope.function, Type.POINTER_U8);
+		final IRVar varT2 = new IRVar("t.2", 2, VariableScope.function, Type.I64);
+		final IRVar varTmpChr = new IRVar("tmp.chr", 3, VariableScope.function, Type.U8);
+
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(varChr), null);
+		final IRVarInfos localVarInfos = new IRVarInfos(List.of(
+				new IRVarDef(varChr, 1),
+				new IRVarDef(varT1, 8),
+				new IRVarDef(varT2, 8)
+		), Set.of(varChr), globalVarInfos);
+
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
+		final var result = LSPreprocessor.process(new IRFunction("printChar", "@printChar", Type.VOID, localVarInfos,
+		                                                         List.of(
+				                                                         new IRAddrOf(varT1, varChr, Location.DUMMY),
+				                                                         new IRLiteral(varT2, 1, Location.DUMMY),
+																		 new IRCall(null, Type.VOID, "printStringLength", List.of(varT1, varT2), Location.DUMMY),
+				                                                         new IRLabel("@printChar_ret")
+		                                                         )), callingConventionProvider, false);
+		final Function<IRVar, IRVar> originalVarMapping = result.localCopyToGlobalOriginal();
+		IRTestUtils.assertEqualsInstructions(List.of(
+				new IRMove(varTmpChr, varChr.asRegister(1), Location.DUMMY),
+				new IRAddrOf(varT1, varChr, Location.DUMMY),
+				new IRLiteral(varT2, 1, Location.DUMMY),
+				new IRMove(varChr, varTmpChr, Location.DUMMY),
+				new IRMove(varT1.asRegister(1), varT1, Location.DUMMY),
+				new IRMove(varT2.asRegister(2), varT2, Location.DUMMY),
+				new IRCall(null, Type.VOID, "printStringLength", List.of(varT1.asRegister(1), varT2.asRegister(2)), Location.DUMMY),
+				new IRLabel("@printChar_ret")
+		), result.instructions());
+		assertEquals(List.of(
+				             new IRVarDef(varChr, 1),
+				             new IRVarDef(varT1, 8),
+				             new IRVarDef(varT2, 8),
+				             new IRVarDef(varTmpChr, 1)
+		             ),
+		             result.varInfos().vars());
+		assertEquals(varChr, originalVarMapping.apply(varTmpChr));
+	}
 }
