@@ -17,6 +17,7 @@ final class LSVarRegisters {
 
 	private final List<RangeState> rangeStates = new ArrayList<>();
 	private final List<LSUse> uses = new ArrayList<>();
+	private final List<LSUse2> uses2 = new ArrayList<>();
 	private final List<Transition> transitions = new ArrayList<>();
 	public final IRVar var;
 
@@ -26,7 +27,7 @@ final class LSVarRegisters {
 
 	@Override
 	public String toString() {
-		return rangeStates + " " + uses + " " + transitions;
+		return rangeStates + " " + (uses.isEmpty() ? uses2 : uses) + " " + transitions;
 	}
 
 	public void add(@NotNull LSInterval interval, @NotNull List<LSUse> uses) {
@@ -49,6 +50,30 @@ final class LSVarRegisters {
 		}
 
 		this.uses.addAll(uses);
+	}
+
+	public void add(@NotNull LSInterval2 interval, @NotNull List<LSUse2> uses) {
+		final int register = interval.register();
+		Utils.assertTrue(register >= NOT_REGISTER);
+
+		final RangeState prevRangeState = rangeStates.isEmpty() ? null : rangeStates.getLast();
+
+		Utils.assertTrue(this.uses2.isEmpty() || uses.isEmpty() || this.uses2.getLast().pos() < uses.getFirst().pos());
+
+		if (prevRangeState != null && prevRangeState.reg() != register) {
+			possiblyAddTransition2(interval.getFrom(), prevRangeState.reg, register, uses);
+		}
+
+		int expectFrom = prevRangeState == null ? Integer.MIN_VALUE : prevRangeState.to();
+		for (LSRange2 range = interval.getFirstRange();
+		     range != null;
+		     range = range.next()) {
+			Utils.assertTrue(range.from() >= expectFrom);
+			rangeStates.add(new RangeState(range.from(), range.to(), register));
+			expectFrom = range.to();
+		}
+
+		this.uses2.addAll(uses);
 	}
 
 	public int getRegisterOrState(int pos) {
@@ -79,6 +104,17 @@ final class LSVarRegisters {
 		if (uses.size() > 0) {
 			final LSUse firstUse = uses.getFirst();
 			if (firstUse.pos() == fromPos && firstUse.isWrite()) {
+				return;
+			}
+		}
+
+		transitions.add(new Transition(fromPos, prevReg, register));
+	}
+
+	private void possiblyAddTransition2(int fromPos, int prevReg, int register, @NotNull List<LSUse2> uses) {
+		if (uses.size() > 0) {
+			final LSUse2 firstUse = uses.getFirst();
+			if (firstUse.pos() == fromPos && firstUse.write()) {
 				return;
 			}
 		}

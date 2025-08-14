@@ -30,6 +30,12 @@ public final class LSRegAlloc {
 		final IRVarInfos varInfos = preprocessorResult.varInfos();
 		final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(function.returnType(), varInfos.getArgumentTypes());
 
+		final LSIntervalFactory2 intervalFactory2 = new LSIntervalFactory2(varInfos, callingConventionProvider, registerCount, isX86);
+		intervalFactory2.handleBlocks(blocks);
+		final Map<String, LSIntervalFactory2.BlockIndices> blockToIndex2 = intervalFactory2.getBlockToIndex();
+		final LSAlgorithm2 algorithm2 = new LSAlgorithm2(intervalFactory2.getVarIntervalsSorted(), intervalFactory2.getFixedIntervals(), registerCount);
+		final Map<IRVar, LSVarRegisters> registerVarIntervals2 = algorithm2.run();
+
 		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, isX86);
 		intervalFactory.addFunctionArgs(varInfos, callingConvention.argRegisters());
 		for (BasicBlock block : blocks) {
