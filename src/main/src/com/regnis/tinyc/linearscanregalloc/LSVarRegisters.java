@@ -41,10 +41,10 @@ final class LSVarRegisters {
 			possiblyAddTransition(interval.getFrom(), prevRangeState.reg, register, uses);
 		}
 
-		int expectFrom = prevRangeState == null ? Integer.MIN_VALUE : prevRangeState.range.to();
+		int expectFrom = prevRangeState == null ? Integer.MIN_VALUE : prevRangeState.to();
 		for (LSRange range : interval.ranges()) {
 			Utils.assertTrue(range.from() >= expectFrom);
-			rangeStates.add(new RangeState(range, register));
+			rangeStates.add(new RangeState(range.from(), range.to(), register));
 			expectFrom = range.to();
 		}
 
@@ -53,7 +53,7 @@ final class LSVarRegisters {
 
 	public int getRegisterOrState(int pos) {
 		for (RangeState rangeState : rangeStates) {
-			if (rangeState.range.contains(pos, false)) {
+			if (rangeState.contains(pos)) {
 				return rangeState.reg;
 			}
 		}
@@ -89,10 +89,15 @@ final class LSVarRegisters {
 	private record Transition(int pos, int from, int to) {
 	}
 
-	private record RangeState(@NotNull LSRange range, int reg) {
+	private record RangeState(int from, int to, int reg) {
+		private boolean contains(int index) {
+			return index >= from && index < to;
+		}
+
+		@NotNull
 		@Override
 		public String toString() {
-			return range + ": " + reg;
+			return from + "-" + to + ": " + reg;
 		}
 	}
 }
