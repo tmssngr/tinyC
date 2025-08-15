@@ -31,10 +31,7 @@ public final class LSRegAlloc {
 		final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(function.returnType(), varInfos.getArgumentTypes());
 
 		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, isX86);
-		intervalFactory.addFunctionArgs(varInfos, callingConvention.argRegisters());
-		for (BasicBlock block : blocks) {
-			prepareBlock(block, intervalFactory);
-		}
+		intervalFactory.handleBlocks(varInfos, callingConvention, blocks);
 		final Map<String, LSIntervalFactory.Indices> blockToIndex = intervalFactory.getBlockToIndex();
 		final List<LSIntervalFactory.Indices> blockBoundaries = intervalFactory.getBlockIndices();
 
@@ -319,21 +316,5 @@ public final class LSRegAlloc {
 
 	private static IRVar deriveVar(IRVar var, int reg) {
 		return reg < 0 ? var : var.asRegister(reg);
-	}
-
-	private static void prepareBlock(BasicBlock block, LSIntervalFactory intervals) {
-		intervals.blockStart(block.name, block.getLiveBefore());
-
-		if (block.name.startsWith("@")) {
-			final Set<IRVar> live = block.getLiveBefore();
-			intervals.addInstruction(new IRLabel(block.name), live);
-		}
-
-		final List<IRInstruction> instructions = block.instructions();
-		for (int i = 0; i < instructions.size(); i++) {
-			final IRInstruction instruction = instructions.get(i);
-			final Set<IRVar> liveAfter = block.getLiveAfter(i);
-			intervals.addInstruction(instruction, liveAfter);
-		}
 	}
 }

@@ -2,6 +2,7 @@ package com.regnis.tinyc.linearscanregalloc;
 
 import com.regnis.tinyc.*;
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
@@ -95,6 +96,29 @@ final class LSIntervalFactory {
 			final int register = argRegisters.get(index);
 			final LSInterval interval = getRegisterInterval(register);
 			interval.startNewRange(-1);
+		}
+	}
+
+	public void handleBlocks(IRVarInfos varInfos, LSCallingConvention callingConvention, List<BasicBlock> blocks) {
+		addFunctionArgs(varInfos, callingConvention.argRegisters());
+		for (BasicBlock block : blocks) {
+			handleBlock(block);
+		}
+	}
+
+	private void handleBlock(BasicBlock block) {
+		blockStart(block.name, block.getLiveBefore());
+
+		if (block.name.startsWith("@")) {
+			final Set<IRVar> live = block.getLiveBefore();
+			addInstruction(new IRLabel(block.name), live);
+		}
+
+		final List<IRInstruction> instructions = block.instructions();
+		for (int i = 0; i < instructions.size(); i++) {
+			final IRInstruction instruction = instructions.get(i);
+			final Set<IRVar> liveAfter = block.getLiveAfter(i);
+			addInstruction(instruction, liveAfter);
 		}
 	}
 
