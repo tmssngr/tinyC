@@ -129,25 +129,43 @@ final class LSIntervalFactory {
 		}
 		case IRAddrOfArray addrOf -> handleTarget(addrOf.addr());
 		case IRBinary binary -> {
-			handleSource(binary.left());
-			handleSource(binary.right());
+			final IRVar left = binary.left();
+			final IRVar right = binary.right();
+			final IRVar target = binary.target();
+			handleSource(left);
+			handleSource(right);
 
 			final IRBinary.Op op = binary.op();
 			if (isX86) {
-				if (op == IRBinary.Op.Div || op == IRBinary.Op.Mod) {
+				switch (op) {
+				case Div -> {
 					// https://www.felixcloutier.com/x86/idiv
 					// (rdx rax) / %reg -> rax
+					final int index = getIndex();
+					final int rax = 0;
+					final int rdx = 2;
+					expectRegister(left, rax);
+					expectRegister(target, rax);
+					getRegisterInterval(rax).startNewRangeIfSmaller(index);
+					getRegisterInterval(rdx).startNewRangeIfSmaller(index);
+				}
+				case Mod -> {
+					// https://www.felixcloutier.com/x86/idiv
 					// (rdx rax) % %reg -> rdx
 					final int index = getIndex();
 					final int rax = 0;
 					final int rdx = 2;
+					expectRegister(left, rax);
+					expectRegister(target, rdx);
 					getRegisterInterval(rax).startNewRangeIfSmaller(index);
 					getRegisterInterval(rdx).startNewRangeIfSmaller(index);
 				}
-				if (op == IRBinary.Op.ShiftLeft || op == IRBinary.Op.ShiftRight) {
+				case ShiftLeft, ShiftRight -> {
 					final int index = getIndex();
 					final int rcx = 1;
+					expectRegister(right, rcx);
 					getRegisterInterval(rcx).startNewRangeIfSmaller(index);
+				}
 				}
 			}
 
@@ -170,8 +188,7 @@ final class LSIntervalFactory {
 
 			final IRVar target = call.target();
 			if (target != null) {
-				Utils.assertTrue(target.scope() == VariableScope.register);
-				Utils.assertTrue(target.index() == 0);
+				expectRegister(target, 0);
 				final LSInterval interval = getInterval(target);
 				interval.extendRange(index + 2);
 				interval.addUse(index + 1);
@@ -230,6 +247,11 @@ final class LSIntervalFactory {
 		    && indices != null) {
 			indices.setEnd(getIndex());
 		}
+	}
+
+	private void expectRegister(IRVar target, int expectedReg) {
+		Utils.assertTrue(target.scope() == VariableScope.register);
+		Utils.assertTrue(target.index() == expectedReg);
 	}
 
 	public void printVarIntervals(List<LSInterval> intervals) {
