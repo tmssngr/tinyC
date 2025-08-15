@@ -74,6 +74,10 @@ final class LSIntervalFactory {
 		return Collections.unmodifiableList(fixedIntervals);
 	}
 
+	public Map<String, Indices> getBlockToIndex() {
+		return Collections.unmodifiableMap(blockToIndex);
+	}
+
 	public void addFunctionArgs(@NotNull IRVarInfos varInfos, @NotNull List<Integer> argRegisters) {
 		Utils.assertTrue(instructions.isEmpty());
 
@@ -236,10 +240,6 @@ final class LSIntervalFactory {
 			final String rangesString = interval.rangesAsString(max, blockToIndex.values());
 			println(interval.getName(), rangesString);
 		}
-	}
-
-	public Map<String, Indices> getBlockToIndex() {
-		return Collections.unmodifiableMap(blockToIndex);
 	}
 
 	public List<Indices> getBlockIndices() {
