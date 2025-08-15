@@ -46,7 +46,7 @@ public class LSIntervalFactoryTest {
 		}, 4, false);
 		intervals.addFunctionArgs(varInfos, List.of(1, 2));
 		assertEquals(List.of(), intervals.getInstructions());
-		assertEqualIntervals(List.of(), intervals.getVarIntervals());
+		assertEqualIntervals(List.of(), intervals.getVarIntervalsSorted());
 		assertEqualIntervals(List.of(
 				LSInterval.testFixed(1,
 				                     List.of(new LSRange(-1, 0))
@@ -71,7 +71,7 @@ public class LSIntervalFactoryTest {
 				                   List.of(new LSRange(0, 1)),
 				                   List.of()
 				)
-		), intervals.getVarIntervals());
+		), intervals.getVarIntervalsSorted());
 		// remains the same
 		assertEqualIntervals(List.of(
 				LSInterval.testFixed(1,
@@ -103,7 +103,7 @@ public class LSIntervalFactoryTest {
 				                   List.of(new LSRange(1)),
 				                   List.of(LSUse.write(1))
 				)
-		), intervals.getVarIntervals());
+		), intervals.getVarIntervalsSorted());
 		assertEqualIntervals(List.of(
 				LSInterval.testFixed(1,
 				                     List.of(new LSRange(-1, 1))
@@ -141,7 +141,7 @@ public class LSIntervalFactoryTest {
 				                   List.of(new LSRange(3)),
 				                   List.of(LSUse.write(3))
 				)
-		), intervals.getVarIntervals());
+		), intervals.getVarIntervalsSorted());
 		assertEqualIntervals(List.of(
 				LSInterval.testFixed(1,
 				                     List.of(new LSRange(-1, 1))
@@ -172,7 +172,7 @@ public class LSIntervalFactoryTest {
 		}, 5, false);
 		intervals.addFunctionArgs(varInfos, List.of());
 		assertEquals(List.of(), intervals.getInstructions());
-		assertEqualIntervals(List.of(), intervals.getVarIntervals());
+		assertEqualIntervals(List.of(), intervals.getVarIntervalsSorted());
 		assertEqualIntervals(List.of(), intervals.getFixedIntervals());
 		assertEquals(List.of(), intervals.getInstructions());
 		assertTrue(intervals.getBlockToIndex().isEmpty());
@@ -191,7 +191,7 @@ public class LSIntervalFactoryTest {
 				                   List.of(new LSRange(1)),
 				                   List.of(LSUse.write(1))
 				)
-		), intervals.getVarIntervals());
+		), intervals.getVarIntervalsSorted());
 		assertEqualIntervals(List.of(), intervals.getFixedIntervals());
 
 		// ====================================================================
@@ -208,7 +208,7 @@ public class LSIntervalFactoryTest {
 				                   List.of(LSUse.write(1),
 				                           LSUse.read(2))
 				)
-		), intervals.getVarIntervals());
+		), intervals.getVarIntervalsSorted());
 		assertEqualIntervals(List.of(
 				LSInterval.testFixed(1,
 				                     List.of(new LSRange(3))
@@ -231,7 +231,7 @@ public class LSIntervalFactoryTest {
 				                   List.of(LSUse.write(1),
 				                           LSUse.read(2))
 				)
-		), intervals.getVarIntervals());
+		), intervals.getVarIntervalsSorted());
 		assertEqualIntervals(List.of(
 				LSInterval.testFixed(0,
 				                     List.of(new LSRange(4, 5))
