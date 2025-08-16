@@ -31,10 +31,16 @@ void printUint(i64 number) {
 void printStringLength(u8* str, i64 length) {
 }
 
+i64 unusedArgs(i16 a, bool b, i64 c, i64 d) {
+	return c;
+}
+
 void main() {
+	i64 c;
 	u8* onePtr;
 	u8* twoPtr;
 
+	c = unusedArgs(1, true, 2, 3);
 	printChar(zero);
 	onePtr = &one;
 	printChar(*onePtr);

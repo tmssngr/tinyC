@@ -17,9 +17,14 @@ digraph program {
 		BasicBlock_1_if_2_then -> BasicBlock_1_printUint_ret;
 		BasicBlock_1_printUint_ret [label="printUint_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
+	subgraph fn_unusedArgs {
+		BasicBlock_2_unusedArgs [label="unusedArgs",shape=box];
+		BasicBlock_2_unusedArgs -> BasicBlock_2_unusedArgs_ret;
+		BasicBlock_2_unusedArgs_ret [label="unusedArgs_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
 	subgraph fn_main {
-		BasicBlock_2_main [label="main",shape=box];
-		BasicBlock_2_main -> BasicBlock_2_main_ret;
-		BasicBlock_2_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+		BasicBlock_3_main [label="main",shape=box];
+		BasicBlock_3_main -> BasicBlock_3_main_ret;
+		BasicBlock_3_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 }
