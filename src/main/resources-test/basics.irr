@@ -47,18 +47,35 @@
 	cast r2(i64), r6(u8)
 	call printStringLength[r1, r2]
 
+@unusedArgs:
+ Local variables
+	arg 0: a (i16/2)
+	arg 1: b (bool/1)
+	arg 2: c (i64/8)
+	arg 3: d (i64/8)
+	; 1 pc
+	; 9:9 return c
+	move r0, r3
+
 @main:
-	; 33 pc
+	; 38 pc
 	; begin initialize global variables
-	const r1, 48
-	const r6, 49
-	const r7, 50
-	const r0, 34
+	const r6, 48
+	const r7, 49
+	const r0, 50
+	const r5, 34
 	; end initialize global variables
-	move zero, r1
-	move one, r6
-	move two, r7
-	move threeFour, r0
+	const r1, 1
+	const r2, 1
+	const r3, 2
+	const r4, 3
+	move zero, r6
+	move one, r7
+	move two, r0
+	move threeFour, r5
+	call _ = unusedArgs[r1, r2, r3, r4] -> i64
+	move r6, zero
+	move r1, r6
 	call printChar[r1]
 	addrof r6, one
 	load r1, [r6]
