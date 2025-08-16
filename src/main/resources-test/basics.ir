@@ -67,39 +67,61 @@
 	call printStringLength[t.13, t.16]
 @printUint_ret:
 
+@unusedArgs:
+ Local variables
+	arg 0: a (i16/2)
+	arg 1: b (bool/1)
+	arg 2: c (i64/8)
+	arg 3: d (i64/8)
+	; 4 pc
+	; 9:9 return c
+	ret c
+	jump @unusedArgs_ret
+@unusedArgs_ret:
+
 @main:
  Local variables
-	var 0: onePtr (u8*/8)
-	var 1: twoPtr (u8*/8)
-	var 2: t.2 (u8/1)
-	var 3: t.3 (u8/1)
-	var 4: t.4 (u8*/8)
+	var 0: c (i64/8)
+	var 1: onePtr (u8*/8)
+	var 2: twoPtr (u8*/8)
+	var 3: t.3 (i16/2)
+	var 4: t.4 (bool/1)
 	var 5: t.5 (i64/8)
-	var 6: t.6 (u8*/8)
-	var 7: t.7 (i64/8)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (u8/1)
 	var 8: t.8 (u8/1)
-	; 71 pc
+	var 9: t.9 (u8*/8)
+	var 10: t.10 (i64/8)
+	var 11: t.11 (u8*/8)
+	var 12: t.12 (i64/8)
+	var 13: t.13 (u8/1)
+	; 90 pc
 	; begin initialize global variables
 	const zero, 48
 	const one, 49
 	const two, 50
 	const threeFour, 34
 	; end initialize global variables
+	const t.3, 1
+	const t.4, 1
+	const t.5, 2
+	const t.6, 3
+	call c = unusedArgs[t.3, t.4, t.5, t.6] -> i64
 	call printChar[zero]
 	addrof onePtr, one
-	load t.2, [onePtr]
-	call printChar[t.2]
+	load t.7, [onePtr]
+	call printChar[t.7]
 	addrof twoPtr, two
-	const t.5, 0
-	cast t.6(u8*), t.5(i64)
-	move t.4, twoPtr
-	add t.4, t.4, t.6
-	load t.3, [t.4]
-	call printChar[t.3]
-	cast t.7(i64), threeFour(u8)
-	call printUint[t.7]
-	const t.8, 10
+	const t.10, 0
+	cast t.11(u8*), t.10(i64)
+	move t.9, twoPtr
+	add t.9, t.9, t.11
+	load t.8, [t.9]
 	call printChar[t.8]
+	cast t.12(i64), threeFour(u8)
+	call printUint[t.12]
+	const t.13, 10
+	call printChar[t.13]
 @main_ret:
 
 @printStringLength:

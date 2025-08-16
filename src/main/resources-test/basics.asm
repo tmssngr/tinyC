@@ -121,6 +121,19 @@ start:
         add rsp, 24
         ret
 
+        ; i64 unusedArgs
+        ;   rsp+16: arg a
+        ;   rsp+24: arg b
+        ;   rsp+32: arg c
+        ;   rsp+40: arg d
+@unusedArgs:
+        sub rsp, 8
+        ; 9:9 return c
+        ; move c{r0}, c{r3}
+        mov rax, r8
+        add rsp, 8
+        ret
+
         ; void main
 @main:
         sub rsp, 8
@@ -128,64 +141,81 @@ start:
         push rbx
         push r12
         ; begin initialize global variables
-        ; const tmp.zero{r1}, 48
-        mov cl, 48
-        ; const tmp.one{r6}, 49
-        mov bl, 49
-        ; const tmp.two{r7}, 50
-        mov r12b, 50
-        ; const tmp.threeFour{r0}, 34
-        mov al, 34
+        ; const tmp.zero{r6}, 48
+        mov bl, 48
+        ; const tmp.one{r7}, 49
+        mov r12b, 49
+        ; const tmp.two{r0}, 50
+        mov al, 50
+        ; const tmp.threeFour{r5}, 34
+        mov r10b, 34
         ; end initialize global variables
-        ; move zero, tmp.zero{r1}
+        ; const t.3{r1}, 1
+        mov cx, 1
+        ; const t.4{r2}, 1
+        mov dl, 1
+        ; const t.5{r3}, 2
+        mov r8, 2
+        ; const t.6{r4}, 3
+        mov r9, 3
+        ; move zero, tmp.zero{r6}
         lea r11, [var_0]
-        mov [r11], cl
-        ; move one, tmp.one{r6}
-        lea r11, [var_1]
         mov [r11], bl
-        ; move two, tmp.two{r7}
-        lea r11, [var_2]
+        ; move one, tmp.one{r7}
+        lea r11, [var_1]
         mov [r11], r12b
-        ; move threeFour, tmp.threeFour{r0}
-        lea r11, [var_3]
+        ; move two, tmp.two{r0}
+        lea r11, [var_2]
         mov [r11], al
+        ; move threeFour, tmp.threeFour{r5}
+        lea r11, [var_3]
+        mov [r11], r10b
+        ; call _ = unusedArgs[t.3{r1}, t.4{r2}, t.5{r3}, t.6{r4}] -> i64
+        sub rsp, 20h; shadow space
+        call @unusedArgs
+        add rsp, 20h
+        ; move tmp.zero{r6}, zero
+        lea r11, [var_0]
+        mov bl, [r11]
+        ; move tmp.zero{r1}, tmp.zero{r6}
+        mov cl, bl
         ; call printChar[tmp.zero{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
         ; addrof onePtr{r6}, one
         lea rbx, [var_1]
-        ; load t.2{r1}, [onePtr{r6}]
+        ; load t.7{r1}, [onePtr{r6}]
         mov cl, [rbx]
-        ; call printChar[t.2{r1}]
+        ; call printChar[t.7{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
         ; addrof twoPtr{r6}, two
         lea rbx, [var_2]
-        ; const t.5{r7}, 0
+        ; const t.10{r7}, 0
         mov r12, 0
-        ; cast t.6{r7}(u8*), t.5{r7}(i64)
-        ; add t.4{r6}, t.4{r6}, t.6{r7}
+        ; cast t.11{r7}(u8*), t.10{r7}(i64)
+        ; add t.9{r6}, t.9{r6}, t.11{r7}
         add rbx, r12
-        ; load t.3{r1}, [t.4{r6}]
+        ; load t.8{r1}, [t.9{r6}]
         mov cl, [rbx]
-        ; call printChar[t.3{r1}]
+        ; call printChar[t.8{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
         ; move tmp.threeFour{r6}, threeFour
         lea r11, [var_3]
         mov bl, [r11]
-        ; cast t.7{r1}(i64), tmp.threeFour{r6}(u8)
+        ; cast t.12{r1}(i64), tmp.threeFour{r6}(u8)
         movzx rcx, bl
-        ; call printUint[t.7{r1}]
+        ; call printUint[t.12{r1}]
         sub rsp, 20h; shadow space
         call @printUint
         add rsp, 20h
-        ; const t.8{r1}, 10
+        ; const t.13{r1}, 10
         mov cl, 10
-        ; call printChar[t.8{r1}]
+        ; call printChar[t.13{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
