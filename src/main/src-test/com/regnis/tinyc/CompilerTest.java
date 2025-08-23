@@ -102,6 +102,11 @@ public class CompilerTest {
 	}
 
 	@Test
+	public void testUnused() throws IOException, InterruptedException {
+		compileAndRun("unused.c");
+	}
+
+	@Test
 	public void testMine() throws IOException, InterruptedException {
 		final Path inputFile = absolutePath("mine.c");
 		Compiler.compile(inputFile);

@@ -1,0 +1,13 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_unusedArg {
+		BasicBlock_0_unusedArg [label="unusedArg",shape=box];
+		BasicBlock_0_unusedArg -> BasicBlock_0_unusedArg_ret;
+		BasicBlock_0_unusedArg_ret [label="unusedArg_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_1_main [label="main",shape=box];
+		BasicBlock_1_main -> BasicBlock_1_main_ret;
+		BasicBlock_1_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

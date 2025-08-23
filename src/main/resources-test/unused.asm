@@ -1,0 +1,85 @@
+format pe64 console
+include 'win64ax.inc'
+
+STD_IN_HANDLE = -10
+STD_OUT_HANDLE = -11
+STD_ERR_HANDLE = -12
+
+entry start
+
+section '.text' code readable executable
+
+start:
+        ; alignment
+        and rsp, -16
+        sub rsp, 8
+          call init
+        add rsp, 8
+          call @main
+        mov rcx, 0
+        sub rsp, 0x20
+          call [ExitProcess]
+
+        ; void unusedArg
+        ;   rsp+8: arg a
+@unusedArg:
+        ret
+
+        ; void main
+        ;   rsp+0: var t.0
+@main:
+        ; reserve space for local variables
+        sub rsp, 16
+        ; const t.0, 0
+        mov rax, 0
+        lea rbx, [rsp+0]
+        mov [rbx], rax
+        ; call unusedArg[t.0]
+        lea rax, [rsp+0]
+        mov rbx, [rax]
+        push rbx
+          call @unusedArg
+        add rsp, 8
+        ; release space for local variables
+        add rsp, 16
+        ret
+init:
+        sub rsp, 20h
+          mov rcx, STD_IN_HANDLE
+          call [GetStdHandle]
+          ; handle in rax, 0 if invalid
+          lea rcx, [hStdIn]
+          mov qword [rcx], rax
+
+          mov rcx, STD_OUT_HANDLE
+          call [GetStdHandle]
+          ; handle in rax, 0 if invalid
+          lea rcx, [hStdOut]
+          mov qword [rcx], rax
+
+          mov rcx, STD_ERR_HANDLE
+          call [GetStdHandle]
+          ; handle in rax, 0 if invalid
+          lea rcx, [hStdErr]
+          mov qword [rcx], rax
+        add rsp, 20h
+        ret
+
+section '.data' data readable writeable
+        hStdIn  rb 8
+        hStdOut rb 8
+        hStdErr rb 8
+
+section '.idata' import data readable writeable
+
+library kernel32,'KERNEL32.DLL',\
+        msvcrt,'MSVCRT.DLL'
+
+import kernel32,\
+       ExitProcess,'ExitProcess',\
+       GetStdHandle,'GetStdHandle',\
+       SetConsoleCursorPosition,'SetConsoleCursorPosition',\
+       WriteFile,'WriteFile'
+
+import msvcrt,\
+       _getch,'_getch'
