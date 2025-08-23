@@ -1,0 +1,14 @@
+@unusedArg:
+ Local variables
+	arg 0: a (i64/8)
+	; 0 pc
+@unusedArg_ret:
+
+@main:
+ Local variables
+	var 0: t.0 (i64/8)
+	; 5 pc
+	const t.0, 0
+	call unusedArg[t.0]
+@main_ret:
+
