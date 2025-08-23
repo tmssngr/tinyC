@@ -78,7 +78,8 @@ public class LSPreprocessorTest {
 				                                                         new IRLiteral(varB, 3, Location.DUMMY),
 				                                                         new IRMemStore(varAddrA, varB, Location.DUMMY),
 				                                                         new IRLiteral(varA, 4, Location.DUMMY),
-				                                                         new IRJump("label")
+				                                                         new IRJump("label"),
+				                                                         new IRLabel("label")
 		                                                         )), callingConventionProvider, false);
 		final Function<IRVar, IRVar> originalVarMapping = result.localCopyToGlobalOriginal();
 		IRTestUtils.assertEqualsInstructions(List.of(
@@ -90,7 +91,8 @@ public class LSPreprocessorTest {
 				new IRMemStore(varAddrA, varB, Location.DUMMY),
 				new IRLiteral(varTempA, 4, Location.DUMMY),
 				new IRMove(varA, varTempA, Location.DUMMY),
-				new IRJump("label")
+				new IRJump("label"),
+				new IRLabel("label")
 		), result.instructions());
 		assertEquals(List.of(
 				             new IRVarDef(varB, 2),
