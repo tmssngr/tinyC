@@ -94,24 +94,25 @@
 
 @main:
  Local variables
-	var 0: a (u8/1)
-	var 1: b (u8/1)
-	var 2: t.2 (bool/1)
+	var 0: a (i16/2)
+	var 1: t.1 (bool/1)
+	var 2: t.2 (i16/2)
 	var 3: t.3 (i64/8)
 	var 4: t.4 (i64/8)
-	; 31 pc
+	; 36 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const a, 1
-	const b, 2
-	; 6:2 if a > b
-	gt t.2, a, b
-	branch t.2, false, @if_4_else
-	cast t.3(i64), a(u8)
+	; 5:2 if a > 0
+	const t.2, 0
+	gt t.1, a, t.2
+	branch t.1, false, @if_4_else
+	cast t.3(i64), a(i16)
 	call printIntLf[t.3]
 	jump @if_4_end
 @if_4_else:
-	cast t.4(i64), b(u8)
+	neg a, a
+	cast t.4(i64), a(i16)
 	call printIntLf[t.4]
 @if_4_end:
 @main_ret:

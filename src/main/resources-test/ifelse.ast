@@ -37,15 +37,14 @@ void printStringLength(u8* str, i64 length) {
 }
 
 void main() {
-	u8 a;
-	u8 b;
+	i16 a;
 
 	a = 1;
-	b = 2;
-	if (a > b) {
+	if (a > 0) {
 		printIntLf((i64)a);
 	}
 	else {
-		printIntLf((i64)b);
+		a = -a;
+		printIntLf((i64)a);
 	}
 }
