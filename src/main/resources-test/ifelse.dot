@@ -31,7 +31,7 @@ digraph program {
 	}
 	subgraph fn_main {
 		BasicBlock_3_main [label="main",shape=hexagon];
-		BasicBlock_3_main -> BasicBlock_3_if_4_else [label="(b)"];
+		BasicBlock_3_main -> BasicBlock_3_if_4_else [label="(a)"];
 		BasicBlock_3_main -> BasicBlock_3_if_4_then [label="(a)"];
 		BasicBlock_3_if_4_else [label="if_4_else",shape=box];
 		BasicBlock_3_if_4_else -> BasicBlock_3_if_4_end;

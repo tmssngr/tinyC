@@ -303,45 +303,44 @@ start:
 
         ; void main
         ;   rsp+0: var a
-        ;   rsp+1: var b
-        ;   rsp+2: var t.2
-        ;   rsp+8: var t.3
-        ;   rsp+16: var t.4
+        ;   rsp+2: var t.1
+        ;   rsp+8: var t.2
+        ;   rsp+16: var t.3
 @main:
         ; reserve space for local variables
         sub rsp, 32
         ; begin initialize global variables
         ; end initialize global variables
         ; const a, 1
-        mov al, 1
+        mov ax, 1
         lea rbx, [rsp+0]
-        mov [rbx], al
-        ; const b, 2
-        mov al, 2
-        lea rbx, [rsp+1]
-        mov [rbx], al
-        ; 6:2 if a > b
-        ; gt t.2, a, b
+        mov [rbx], ax
+        ; 5:2 if a > 0
+        ; gt t.1, a, 0
         lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+1]
-        mov cl, [rax]
-        cmp bl, cl
-        seta bl
+        mov bx, [rax]
+        cmp bx, 0
+        setg bl
         lea rax, [rsp+2]
         mov [rax], bl
-        ; branch t.2, true, @if_4_then
+        ; branch t.1, true, @if_4_then
         lea rax, [rsp+2]
         mov bl, [rax]
         or bl, bl
         jnz @if_4_then
-        ; cast t.4(i64), b(u8)
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        movzx rbx, bl
+        ; neg a, a
+        lea rax, [rsp+0]
+        mov bx, [rax]
+        neg rbx
+        lea rax, [rsp+0]
+        mov [rax], bx
+        ; cast t.3(i64), a(i16)
+        lea rax, [rsp+0]
+        mov bx, [rax]
+        movzx rbx, bx
         lea rax, [rsp+16]
         mov [rax], rbx
-        ; call printIntLf[t.4]
+        ; call printIntLf[t.3]
         lea rax, [rsp+16]
         mov rbx, [rax]
         push rbx
@@ -349,13 +348,13 @@ start:
         add rsp, 8
         jmp @main_ret
 @if_4_then:
-        ; cast t.3(i64), a(u8)
+        ; cast t.2(i64), a(i16)
         lea rax, [rsp+0]
-        mov bl, [rax]
-        movzx rbx, bl
+        mov bx, [rax]
+        movzx rbx, bx
         lea rax, [rsp+8]
         mov [rax], rbx
-        ; call printIntLf[t.3]
+        ; call printIntLf[t.2]
         lea rax, [rsp+8]
         mov rbx, [rax]
         push rbx
