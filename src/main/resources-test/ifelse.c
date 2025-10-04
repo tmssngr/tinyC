@@ -1,12 +1,12 @@
 #include "io.h"
 
 void main() {
-	u8 a = 1;
-	u8 b = 2;
-	if (a > b) {
+	i16 a = 1;
+	if (a > 0) {
 		printIntLf(a);
 	}
 	else {
-		printIntLf(b);
+		a = -a;
+		printIntLf(a);
 	}
 }

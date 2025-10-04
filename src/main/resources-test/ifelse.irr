@@ -65,19 +65,19 @@
 	call printChar[r1]
 
 @main:
-	; 7 pc
+	; 8 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const r6, 1
-	const r7, 2
-	; 6:2 if a > b
-	gt r0, r6, r7
-	branch r0, true, @if_4_then
-	cast r1(i64), r7(u8)
+	; 5:2 if a > 0
+	gt r7, r6, 0
+	branch r7, true, @if_4_then
+	neg r6, r6
+	cast r1(i64), r6(i16)
 	call printIntLf[r1]
 	jump @main_ret
 @if_4_then:
-	cast r1(i64), r6(u8)
+	cast r1(i64), r6(i16)
 	call printIntLf[r1]
 @main_ret:
 

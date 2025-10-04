@@ -173,27 +173,27 @@ start:
         ; begin initialize global variables
         ; end initialize global variables
         ; const a{r6}, 1
-        mov bl, 1
-        ; const b{r7}, 2
-        mov r12b, 2
-        ; 6:2 if a > b
-        ; gt t.2{r0}, a{r6}, b{r7}
-        cmp bl, r12b
-        seta al
-        ; branch t.2{r0}, true, @if_4_then
-        or al, al
+        mov bx, 1
+        ; 5:2 if a > 0
+        ; gt t.1{r7}, a{r6}, 0
+        cmp bx, 0
+        setg r12b
+        ; branch t.1{r7}, true, @if_4_then
+        or r12b, r12b
         jnz @if_4_then
-        ; cast t.4{r1}(i64), b{r7}(u8)
-        movzx rcx, r12b
-        ; call printIntLf[t.4{r1}]
+        ; neg a{r6}, a{r6}
+        neg rbx
+        ; cast t.3{r1}(i64), a{r6}(i16)
+        movzx rcx, bx
+        ; call printIntLf[t.3{r1}]
         sub rsp, 20h; shadow space
         call @printIntLf
         add rsp, 20h
         jmp @main_ret
 @if_4_then:
-        ; cast t.3{r1}(i64), a{r6}(u8)
-        movzx rcx, bl
-        ; call printIntLf[t.3{r1}]
+        ; cast t.2{r1}(i64), a{r6}(i16)
+        movzx rcx, bx
+        ; call printIntLf[t.2{r1}]
         sub rsp, 20h; shadow space
         call @printIntLf
         add rsp, 20h
