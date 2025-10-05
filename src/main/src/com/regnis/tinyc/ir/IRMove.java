@@ -14,8 +14,14 @@ public record IRMove(@NotNull IRVar target, @NotNull IRVar source, @NotNull Loca
 		Utils.assertTrue(Objects.equals(target.type(), source.type()));
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
-		return "move " + target + ", " + source;
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
+		return "move " + target.toString(comment) + ", " + source.toString(comment);
 	}
 }

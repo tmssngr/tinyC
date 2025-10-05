@@ -21,13 +21,13 @@ start:
         ; u8 simple
 @simple:
         sub rsp, 8
-        ; const r1, 4
+        ; const four{r1}, 4
         mov cl, 4
-        ; const r2, 3
+        ; const three{r2}, 3
         mov dl, 3
-        ; move r0, r1
+        ; move one{r0}, four{r1}
         mov al, cl
-        ; sub r0, r0, r2
+        ; sub one{r0}, one{r0}, three{r2}
         sub al, dl
         ; 5:9 return one
         add rsp, 8
@@ -39,9 +39,9 @@ start:
 @registerHint:
         sub rsp, 8
         ; 9:11 return a + b
-        ; move r0, r1
+        ; move t.2{r0}, a{r1}
         mov al, cl
-        ; add r0, r0, r2
+        ; add t.2{r0}, t.2{r0}, b{r2}
         add al, dl
         add rsp, 8
         ret
@@ -52,19 +52,19 @@ start:
 @max:
         sub rsp, 8
         ; 13:2 if a < b
-        ; lt r3, r1, r2
+        ; lt t.2{r3}, a{r1}, b{r2}
         cmp cl, dl
         setb r8b
-        ; branch r3, true, @if_1_then
+        ; branch t.2{r3}, true, @if_1_then
         or r8b, r8b
         jnz @if_1_then
         ; 16:9 return a
-        ; move r0, r1
+        ; move a{r0}, a{r1}
         mov al, cl
         jmp @max_ret
 @if_1_then:
         ; 14:10 return b
-        ; move r0, r2
+        ; move b{r0}, b{r2}
         mov al, dl
 @max_ret:
         add rsp, 8
@@ -74,28 +74,28 @@ start:
         ;   rsp+16: arg i
 @fibonacci:
         sub rsp, 8
-        ; const r0, 0
+        ; const a{r0}, 0
         mov ax, 0
-        ; const r2, 1
+        ; const b{r2}, 1
         mov dx, 1
         ; 22:2 while i > 0
         jmp @while_2
 @while_2_body:
-        ; dec r1
+        ; dec i{r1}
         dec cl
-        ; move r3, r0
+        ; move c{r3}, a{r0}
         mov r8w, ax
-        ; add r3, r3, r2
+        ; add c{r3}, c{r3}, b{r2}
         add r8w, dx
-        ; move r0, r2
+        ; move a{r0}, b{r2}
         mov ax, dx
-        ; move r2, r3
+        ; move b{r2}, c{r3}
         mov dx, r8w
 @while_2:
-        ; gt r3, r1, 0
+        ; gt t.4{r3}, i{r1}, 0
         cmp cl, 0
         seta r8b
-        ; branch r3, true, @while_2_body
+        ; branch t.4{r3}, true, @while_2_body
         or r8b, r8b
         jnz @while_2_body
         ; 28:9 return a
@@ -108,33 +108,33 @@ start:
         ; save clobbered non-volatile registers
         push rbx
         push r12
-        ; call r0 = simple[] -> u8
+        ; call one{r0} = simple[] -> u8
         sub rsp, 20h; shadow space
         call @simple
         add rsp, 20h
-        ; move r6, r0
+        ; move one{r6}, one{r0}
         mov bl, al
-        ; const r7, 2
+        ; const two{r7}, 2
         mov r12b, 2
-        ; move r1, r6
+        ; move one{r1}, one{r6}
         mov cl, bl
-        ; move r2, r7
+        ; move two{r2}, two{r7}
         mov dl, r12b
-        ; call _ = registerHint[r1, r2] -> u8
+        ; call _ = registerHint[one{r1}, two{r2}] -> u8
         sub rsp, 20h; shadow space
         call @registerHint
         add rsp, 20h
-        ; move r1, r6
+        ; move one{r1}, one{r6}
         mov cl, bl
-        ; move r2, r7
+        ; move two{r2}, two{r7}
         mov dl, r12b
-        ; call _ = max[r1, r2] -> u8
+        ; call _ = max[one{r1}, two{r2}] -> u8
         sub rsp, 20h; shadow space
         call @max
         add rsp, 20h
-        ; const r1, 5
+        ; const t.4{r1}, 5
         mov cl, 5
-        ; call _ = fibonacci[r1] -> i16
+        ; call _ = fibonacci[t.4{r1}] -> i16
         sub rsp, 20h; shadow space
         call @fibonacci
         add rsp, 20h

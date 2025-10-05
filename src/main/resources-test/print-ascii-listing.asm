@@ -23,19 +23,19 @@ start:
 @printString:
         ; save clobbered non-volatile registers
         push rbx
-        ; move r6, r1
+        ; move str{r6}, str{r1}
         mov rbx, rcx
-        ; move r1, r6
+        ; move str{r1}, str{r6}
         mov rcx, rbx
-        ; call r0 = strlen[r1] -> i64
+        ; call length{r0} = strlen[str{r1}] -> i64
         sub rsp, 20h; shadow space
         call @strlen
         add rsp, 20h
-        ; move r1, r6
+        ; move str{r1}, str{r6}
         mov rcx, rbx
-        ; move r2, r0
+        ; move length{r2}, length{r0}
         mov rdx, rax
-        ; call printStringLength[r1, r2]
+        ; call printStringLength[str{r1}, length{r2}]
         sub rsp, 20h; shadow space
         call @printStringLength
         add rsp, 20h
@@ -48,16 +48,16 @@ start:
 @printChar:
         ; save clobbered non-volatile registers
         push rbx
-        ; addrof r6, chr
+        ; addrof t.1{r6}, chr
         lea rbx, [rsp+16]
-        ; const r2, 1
+        ; const t.2{r2}, 1
         mov rdx, 1
-        ; move chr, r1
+        ; move chr, tmp.chr{r1}
         lea r11, [rsp+16]
         mov [r11], cl
-        ; move r1, r6
+        ; move t.1{r1}, t.1{r6}
         mov rcx, rbx
-        ; call printStringLength[r1, r2]
+        ; call printStringLength[t.1{r1}, t.2{r2}]
         sub rsp, 20h; shadow space
         call @printStringLength
         add rsp, 20h
@@ -69,28 +69,28 @@ start:
         ;   rsp+16: arg str
 @strlen:
         sub rsp, 8
-        ; const r0, 0
+        ; const length{r0}, 0
         mov rax, 0
         ; 37:2 for *str != 0
         jmp @for_1
 @for_1_body:
-        ; inc r0
+        ; inc length{r0}
         inc rax
-        ; cast r2(i64), r1(u8*)
+        ; cast t.5{r2}(i64), str{r1}(u8*)
         mov rdx, rcx
-        ; const r3, 1
+        ; const t.6{r3}, 1
         mov r8, 1
-        ; add r2, r2, r3
+        ; add t.4{r2}, t.4{r2}, t.6{r3}
         add rdx, r8
-        ; cast r1(u8*), r2(i64)
+        ; cast str{r1}(u8*), t.4{r2}(i64)
         mov rcx, rdx
 @for_1:
-        ; load r2, [r1]
+        ; load t.3{r2}, [str{r1}]
         mov dl, [rcx]
-        ; notequals r2, r2, 0
+        ; notequals t.2{r2}, t.3{r2}, 0
         cmp dl, 0
         setne dl
-        ; branch r2, true, @for_1_body
+        ; branch t.2{r2}, true, @for_1_body
         or dl, dl
         jnz @for_1_body
         ; 40:9 return length
@@ -102,23 +102,23 @@ start:
 @printNibble:
         ; save clobbered non-volatile registers
         push rbx
-        ; const r6, 15
+        ; const t.1{r6}, 15
         mov bl, 15
-        ; and r1, r1, r6
+        ; and x{r1}, x{r1}, t.1{r6}
         and cl, bl
         ; 5:2 if x > 9
-        ; gt r6, r1, 9
+        ; gt t.2{r6}, x{r1}, 9
         cmp cl, 9
         seta bl
-        ; branch r6, false, @if_2_end
+        ; branch t.2{r6}, false, @if_2_end
         or bl, bl
         jz @if_2_end
-        ; add r1, 7
+        ; add x{r1}, 7
         add cl, 7
 @if_2_end:
-        ; add r1, 48
+        ; add x{r1}, 48
         add cl, 48
-        ; call printChar[r1]
+        ; call printChar[x{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
@@ -133,23 +133,23 @@ start:
         ; save clobbered non-volatile registers
         push rbx
         push r12
-        ; move r6, r1
+        ; move x{r6}, x{r1}
         mov bl, cl
-        ; const r1, 4
+        ; const t.2{r1}, 4
         mov cl, 4
-        ; move r7, r6
+        ; move t.1{r7}, x{r6}
         mov r12b, bl
-        ; shiftright r7, r7, r1
+        ; shiftright t.1{r7}, t.1{r7}, t.2{r1}
         shr r12b, cl
-        ; move r1, r7
+        ; move t.1{r1}, t.1{r7}
         mov cl, r12b
-        ; call printNibble[r1]
+        ; call printNibble[t.1{r1}]
         sub rsp, 20h; shadow space
         call @printNibble
         add rsp, 20h
-        ; move r1, r6
+        ; move x{r1}, x{r6}
         mov cl, bl
-        ; call printNibble[r1]
+        ; call printNibble[x{r1}]
         sub rsp, 20h; shadow space
         call @printNibble
         add rsp, 20h
@@ -167,136 +167,136 @@ start:
         push r12
         ; begin initialize global variables
         ; end initialize global variables
-        ; const r1, [string-0]
+        ; const t.2{r1}, [string-0]
         lea rcx, [string_0]
-        ; call printString[r1]
+        ; call printString[t.2{r1}]
         sub rsp, 20h; shadow space
         call @printString
         add rsp, 20h
-        ; const r6, 0
+        ; const i{r6}, 0
         mov bl, 0
         ; 19:2 for i < 16
         jmp @for_3
 @for_3_body:
         ; 20:3 if i & 7 == 0
-        ; const r7, 7
+        ; const t.6{r7}, 7
         mov r12b, 7
-        ; move r0, r6
+        ; move t.5{r0}, i{r6}
         mov al, bl
-        ; and r0, r0, r7
+        ; and t.5{r0}, t.5{r0}, t.6{r7}
         and al, r12b
-        ; equals r7, r0, 0
+        ; equals t.4{r7}, t.5{r0}, 0
         cmp al, 0
         sete r12b
-        ; branch r7, false, @if_4_end
+        ; branch t.4{r7}, false, @if_4_end
         or r12b, r12b
         jz @if_4_end
-        ; const r1, 32
+        ; const t.7{r1}, 32
         mov cl, 32
-        ; call printChar[r1]
+        ; call printChar[t.7{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
 @if_4_end:
-        ; move r1, r6
+        ; move i{r1}, i{r6}
         mov cl, bl
-        ; call printNibble[r1]
+        ; call printNibble[i{r1}]
         sub rsp, 20h; shadow space
         call @printNibble
         add rsp, 20h
-        ; inc r6
+        ; inc i{r6}
         inc bl
 @for_3:
-        ; lt r7, r6, 16
+        ; lt t.3{r7}, i{r6}, 16
         cmp bl, 16
         setb r12b
-        ; branch r7, true, @for_3_body
+        ; branch t.3{r7}, true, @for_3_body
         or r12b, r12b
         jnz @for_3_body
-        ; const r1, 10
+        ; const t.8{r1}, 10
         mov cl, 10
-        ; call printChar[r1]
+        ; call printChar[t.8{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
-        ; const r6, 32
+        ; const i{r6}, 32
         mov bl, 32
         ; 27:2 for i < 128
         jmp @for_5
 @for_5_body:
         ; 28:3 if i & 15 == 0
-        ; const r7, 15
+        ; const t.12{r7}, 15
         mov r12b, 15
-        ; move r0, r6
+        ; move t.11{r0}, i{r6}
         mov al, bl
-        ; and r0, r0, r7
+        ; and t.11{r0}, t.11{r0}, t.12{r7}
         and al, r12b
-        ; equals r7, r0, 0
+        ; equals t.10{r7}, t.11{r0}, 0
         cmp al, 0
         sete r12b
-        ; branch r7, false, @if_6_end
+        ; branch t.10{r7}, false, @if_6_end
         or r12b, r12b
         jz @if_6_end
-        ; move r1, r6
+        ; move i{r1}, i{r6}
         mov cl, bl
-        ; call printHex2[r1]
+        ; call printHex2[i{r1}]
         sub rsp, 20h; shadow space
         call @printHex2
         add rsp, 20h
 @if_6_end:
         ; 31:3 if i & 7 == 0
-        ; const r7, 7
+        ; const t.15{r7}, 7
         mov r12b, 7
-        ; move r0, r6
+        ; move t.14{r0}, i{r6}
         mov al, bl
-        ; and r0, r0, r7
+        ; and t.14{r0}, t.14{r0}, t.15{r7}
         and al, r12b
-        ; equals r7, r0, 0
+        ; equals t.13{r7}, t.14{r0}, 0
         cmp al, 0
         sete r12b
-        ; branch r7, false, @if_7_end
+        ; branch t.13{r7}, false, @if_7_end
         or r12b, r12b
         jz @if_7_end
-        ; const r1, 32
+        ; const t.16{r1}, 32
         mov cl, 32
-        ; call printChar[r1]
+        ; call printChar[t.16{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
 @if_7_end:
-        ; move r1, r6
+        ; move i{r1}, i{r6}
         mov cl, bl
-        ; call printChar[r1]
+        ; call printChar[i{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
         ; 35:3 if i & 15 == 15
-        ; const r7, 15
+        ; const t.19{r7}, 15
         mov r12b, 15
-        ; move r0, r6
+        ; move t.18{r0}, i{r6}
         mov al, bl
-        ; and r0, r0, r7
+        ; and t.18{r0}, t.18{r0}, t.19{r7}
         and al, r12b
-        ; equals r7, r0, 15
+        ; equals t.17{r7}, t.18{r0}, 15
         cmp al, 15
         sete r12b
-        ; branch r7, false, @for_5_continue
+        ; branch t.17{r7}, false, @for_5_continue
         or r12b, r12b
         jz @for_5_continue
-        ; const r1, 10
+        ; const t.20{r1}, 10
         mov cl, 10
-        ; call printChar[r1]
+        ; call printChar[t.20{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
 @for_5_continue:
-        ; inc r6
+        ; inc i{r6}
         inc bl
 @for_5:
-        ; lt r0, r6, 128
+        ; lt t.9{r0}, i{r6}, 128
         cmp bl, 128
         setb al
-        ; branch r0, true, @for_5_body
+        ; branch t.9{r0}, true, @for_5_body
         or al, al
         jnz @for_5_body
         ; restore clobbered non-volatile registers

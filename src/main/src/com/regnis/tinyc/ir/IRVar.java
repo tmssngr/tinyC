@@ -9,12 +9,27 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record IRVar(@NotNull String name, int index, @NotNull VariableScope scope, @NotNull Type type) {
+	@NotNull
 	@Override
 	public String toString() {
-		if (scope == VariableScope.register) {
-			return "r" + index;
+		return toString(false);
+	}
+
+	public String toString(boolean comment) {
+		final StringBuilder buffer = new StringBuilder();
+		if (!comment && scope == VariableScope.register) {
+			buffer.append("r");
+			buffer.append(index);
 		}
-		return name;
+		else {
+			buffer.append(name);
+			if (scope == VariableScope.register) {
+				buffer.append("{r");
+				buffer.append(index);
+				buffer.append("}");
+			}
+		}
+		return buffer.toString();
 	}
 
 	@NotNull
