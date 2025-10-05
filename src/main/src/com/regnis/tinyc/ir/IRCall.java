@@ -17,16 +17,30 @@ public record IRCall(@Nullable IRVar target, @NotNull Type type, @NotNull String
 		}
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
 		final StringBuilder buffer = new StringBuilder();
 		buffer.append("call ");
 		if (type != Type.VOID) {
-			buffer.append(target != null ? target.toString() : "_");
+			buffer.append(target != null ? target.toString(comment) : "_");
 			buffer.append(" = ");
 		}
 		buffer.append(name);
-		buffer.append(args);
+		buffer.append("[");
+		for (int i = 0; i < args.size(); i++) {
+			final IRVar arg = args.get(i);
+			if (i > 0) {
+				buffer.append(", ");
+			}
+			buffer.append(arg.toString(comment));
+		}
+		buffer.append("]");
 		if (type != Type.VOID) {
 			buffer.append(" -> ");
 			buffer.append(type);

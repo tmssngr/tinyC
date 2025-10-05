@@ -76,7 +76,7 @@ abstract class AsmWriter {
 		if (!(instruction instanceof IRComment)
 		    && !(instruction instanceof IRLabel)
 		    && !(instruction instanceof IRJump)) {
-			writeComment(String.valueOf(instruction));
+			writeComment(instruction.toString(true));
 		}
 
 		switch (instruction) {

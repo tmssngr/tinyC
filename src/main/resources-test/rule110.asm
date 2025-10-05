@@ -23,19 +23,19 @@ start:
 @printString:
         ; save clobbered non-volatile registers
         push rbx
-        ; move r6, r1
+        ; move str{r6}, str{r1}
         mov rbx, rcx
-        ; move r1, r6
+        ; move str{r1}, str{r6}
         mov rcx, rbx
-        ; call r0 = strlen[r1] -> i64
+        ; call length{r0} = strlen[str{r1}] -> i64
         sub rsp, 20h; shadow space
         call @strlen
         add rsp, 20h
-        ; move r1, r6
+        ; move str{r1}, str{r6}
         mov rcx, rbx
-        ; move r2, r0
+        ; move length{r2}, length{r0}
         mov rdx, rax
-        ; call printStringLength[r1, r2]
+        ; call printStringLength[str{r1}, length{r2}]
         sub rsp, 20h; shadow space
         call @printStringLength
         add rsp, 20h
@@ -48,16 +48,16 @@ start:
 @printChar:
         ; save clobbered non-volatile registers
         push rbx
-        ; addrof r6, chr
+        ; addrof t.1{r6}, chr
         lea rbx, [rsp+16]
-        ; const r2, 1
+        ; const t.2{r2}, 1
         mov rdx, 1
-        ; move chr, r1
+        ; move chr, tmp.chr{r1}
         lea r11, [rsp+16]
         mov [r11], cl
-        ; move r1, r6
+        ; move t.1{r1}, t.1{r6}
         mov rcx, rbx
-        ; call printStringLength[r1, r2]
+        ; call printStringLength[t.1{r1}, t.2{r2}]
         sub rsp, 20h; shadow space
         call @printStringLength
         add rsp, 20h
@@ -69,28 +69,28 @@ start:
         ;   rsp+16: arg str
 @strlen:
         sub rsp, 8
-        ; const r0, 0
+        ; const length{r0}, 0
         mov rax, 0
         ; 37:2 for *str != 0
         jmp @for_1
 @for_1_body:
-        ; inc r0
+        ; inc length{r0}
         inc rax
-        ; cast r2(i64), r1(u8*)
+        ; cast t.5{r2}(i64), str{r1}(u8*)
         mov rdx, rcx
-        ; const r3, 1
+        ; const t.6{r3}, 1
         mov r8, 1
-        ; add r2, r2, r3
+        ; add t.4{r2}, t.4{r2}, t.6{r3}
         add rdx, r8
-        ; cast r1(u8*), r2(i64)
+        ; cast str{r1}(u8*), t.4{r2}(i64)
         mov rcx, rdx
 @for_1:
-        ; load r2, [r1]
+        ; load t.3{r2}, [str{r1}]
         mov dl, [rcx]
-        ; notequals r2, r2, 0
+        ; notequals t.2{r2}, t.3{r2}, 0
         cmp dl, 0
         setne dl
-        ; branch r2, true, @for_1_body
+        ; branch t.2{r2}, true, @for_1_body
         or dl, dl
         jnz @for_1_body
         ; 40:9 return length
@@ -103,60 +103,60 @@ start:
         ; save clobbered non-volatile registers
         push rbx
         push r12
-        ; const r1, 124
+        ; const t.1{r1}, 124
         mov cl, 124
-        ; call printChar[r1]
+        ; call printChar[t.1{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
-        ; const r6, 0
+        ; const i{r6}, 0
         mov bl, 0
         ; 11:2 for i < 30
         jmp @for_2
 @for_2_body:
         ; 12:3 if [...] == 0
-        ; cast r7(i64), r6(u8)
+        ; cast t.6{r7}(i64), i{r6}(u8)
         movzx r12, bl
-        ; cast r7(u8*), r7(i64)
-        ; addrof r0, [board]
+        ; cast t.7{r7}(u8*), t.6{r7}(i64)
+        ; addrof t.5{r0}, [board]
         lea rax, [var_0]
-        ; add r0, r0, r7
+        ; add t.5{r0}, t.5{r0}, t.7{r7}
         add rax, r12
-        ; load r7, [r0]
+        ; load t.4{r7}, [t.5{r0}]
         mov r12b, [rax]
-        ; equals r7, r7, 0
+        ; equals t.3{r7}, t.4{r7}, 0
         cmp r12b, 0
         sete r12b
-        ; branch r7, true, @if_3_then
+        ; branch t.3{r7}, true, @if_3_then
         or r12b, r12b
         jnz @if_3_then
-        ; const r1, 42
+        ; const t.9{r1}, 42
         mov cl, 42
-        ; call printChar[r1]
+        ; call printChar[t.9{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
         jmp @for_2_continue
 @if_3_then:
-        ; const r1, 32
+        ; const t.8{r1}, 32
         mov cl, 32
-        ; call printChar[r1]
+        ; call printChar[t.8{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
 @for_2_continue:
-        ; inc r6
+        ; inc i{r6}
         inc bl
 @for_2:
-        ; lt r7, r6, 30
+        ; lt t.2{r7}, i{r6}, 30
         cmp bl, 30
         setb r12b
-        ; branch r7, true, @for_2_body
+        ; branch t.2{r7}, true, @for_2_body
         or r12b, r12b
         jnz @for_2_body
-        ; const r1, [string-0]
+        ; const t.10{r1}, [string-0]
         lea rcx, [string_0]
-        ; call printString[r1]
+        ; call printString[t.10{r1}]
         sub rsp, 20h; shadow space
         call @printString
         add rsp, 20h
@@ -174,150 +174,150 @@ start:
         push r12
         ; begin initialize global variables
         ; end initialize global variables
-        ; const r6, 0
+        ; const i{r6}, 0
         mov bl, 0
         ; 23:2 for i < 30
         jmp @for_4
 @for_4_body:
-        ; const r7, 0
+        ; const t.5{r7}, 0
         mov r12b, 0
-        ; cast r0(i64), r6(u8)
+        ; cast t.7{r0}(i64), i{r6}(u8)
         movzx rax, bl
-        ; cast r0(u8*), r0(i64)
-        ; addrof r1, [board]
+        ; cast t.8{r0}(u8*), t.7{r0}(i64)
+        ; addrof t.6{r1}, [board]
         lea rcx, [var_0]
-        ; add r1, r1, r0
+        ; add t.6{r1}, t.6{r1}, t.8{r0}
         add rcx, rax
-        ; store [r1], r7
+        ; store [t.6{r1}], t.5{r7}
         mov [rcx], r12b
-        ; inc r6
+        ; inc i{r6}
         inc bl
 @for_4:
-        ; lt r7, r6, 30
+        ; lt t.4{r7}, i{r6}, 30
         cmp bl, 30
         setb r12b
-        ; branch r7, true, @for_4_body
+        ; branch t.4{r7}, true, @for_4_body
         or r12b, r12b
         jnz @for_4_body
-        ; const r6, 1
+        ; const t.9{r6}, 1
         mov bl, 1
-        ; const r7, 29
+        ; const t.12{r7}, 29
         mov r12b, 29
-        ; cast r7(i64), r7(u8)
+        ; cast t.11{r7}(i64), t.12{r7}(u8)
         movzx r12, r12b
-        ; cast r7(u8*), r7(i64)
-        ; addrof r0, [board]
+        ; cast t.13{r7}(u8*), t.11{r7}(i64)
+        ; addrof t.10{r0}, [board]
         lea rax, [var_0]
-        ; add r0, r0, r7
+        ; add t.10{r0}, t.10{r0}, t.13{r7}
         add rax, r12
-        ; store [r0], r6
+        ; store [t.10{r0}], t.9{r6}
         mov [rax], bl
         ; call printBoard[]
         sub rsp, 20h; shadow space
         call @printBoard
         add rsp, 20h
-        ; const r6, 0
+        ; const i{r6}, 0
         mov bl, 0
         ; 30:2 for i < 28
         jmp @for_5
 @for_5_body:
-        ; const r7, 0
+        ; const t.18{r7}, 0
         mov r12, 0
-        ; cast r7(u8*), r7(i64)
-        ; addrof r0, [board]
+        ; cast t.19{r7}(u8*), t.18{r7}(i64)
+        ; addrof t.17{r0}, [board]
         lea rax, [var_0]
-        ; add r0, r0, r7
+        ; add t.17{r0}, t.17{r0}, t.19{r7}
         add rax, r12
-        ; load r7, [r0]
+        ; load t.16{r7}, [t.17{r0}]
         mov r12b, [rax]
-        ; const r1, 1
+        ; const t.20{r1}, 1
         mov cl, 1
-        ; shiftleft r7, r7, r1
+        ; shiftleft t.15{r7}, t.15{r7}, t.20{r1}
         shl r12b, cl
-        ; const r0, 1
+        ; const t.23{r0}, 1
         mov rax, 1
-        ; cast r0(u8*), r0(i64)
-        ; addrof r2, [board]
+        ; cast t.24{r0}(u8*), t.23{r0}(i64)
+        ; addrof t.22{r2}, [board]
         lea rdx, [var_0]
-        ; add r2, r2, r0
+        ; add t.22{r2}, t.22{r2}, t.24{r0}
         add rdx, rax
-        ; load r0, [r2]
+        ; load t.21{r0}, [t.22{r2}]
         mov al, [rdx]
-        ; or r7, r7, r0
+        ; or pattern{r7}, pattern{r7}, t.21{r0}
         or r12b, al
-        ; const r0, 1
+        ; const j{r0}, 1
         mov al, 1
         ; 32:3 for j < 29
         jmp @for_6
 @for_6_body:
-        ; const r1, 1
+        ; const t.28{r1}, 1
         mov cl, 1
-        ; move r2, r7
+        ; move t.27{r2}, pattern{r7}
         mov dl, r12b
-        ; shiftleft r2, r2, r1
+        ; shiftleft t.27{r2}, t.27{r2}, t.28{r1}
         shl dl, cl
-        ; const r3, 7
+        ; const t.29{r3}, 7
         mov r8b, 7
-        ; and r2, r2, r3
+        ; and t.26{r2}, t.26{r2}, t.29{r3}
         and dl, r8b
-        ; const r3, 1
+        ; const t.34{r3}, 1
         mov r8b, 1
-        ; move r4, r0
+        ; move t.33{r4}, j{r0}
         mov r9b, al
-        ; add r4, r4, r3
+        ; add t.33{r4}, t.33{r4}, t.34{r3}
         add r9b, r8b
-        ; cast r3(i64), r4(u8)
+        ; cast t.32{r3}(i64), t.33{r4}(u8)
         movzx r8, r9b
-        ; cast r3(u8*), r3(i64)
-        ; addrof r4, [board]
+        ; cast t.35{r3}(u8*), t.32{r3}(i64)
+        ; addrof t.31{r4}, [board]
         lea r9, [var_0]
-        ; add r4, r4, r3
+        ; add t.31{r4}, t.31{r4}, t.35{r3}
         add r9, r8
-        ; load r3, [r4]
+        ; load t.30{r3}, [t.31{r4}]
         mov r8b, [r9]
-        ; move r7, r2
+        ; move pattern{r7}, t.26{r2}
         mov r12b, dl
-        ; or r7, r7, r3
+        ; or pattern{r7}, pattern{r7}, t.30{r3}
         or r12b, r8b
-        ; const r2, 110
+        ; const t.38{r2}, 110
         mov dl, 110
-        ; move r1, r7
+        ; move pattern{r1}, pattern{r7}
         mov cl, r12b
-        ; shiftright r2, r2, r1
+        ; shiftright t.37{r2}, t.37{r2}, pattern{r1}
         shr dl, cl
-        ; const r1, 1
+        ; const t.39{r1}, 1
         mov cl, 1
-        ; and r2, r2, r1
+        ; and t.36{r2}, t.36{r2}, t.39{r1}
         and dl, cl
-        ; cast r1(i64), r0(u8)
+        ; cast t.41{r1}(i64), j{r0}(u8)
         movzx rcx, al
-        ; cast r1(u8*), r1(i64)
-        ; addrof r3, [board]
+        ; cast t.42{r1}(u8*), t.41{r1}(i64)
+        ; addrof t.40{r3}, [board]
         lea r8, [var_0]
-        ; add r3, r3, r1
+        ; add t.40{r3}, t.40{r3}, t.42{r1}
         add r8, rcx
-        ; store [r3], r2
+        ; store [t.40{r3}], t.36{r2}
         mov [r8], dl
-        ; inc r0
+        ; inc j{r0}
         inc al
 @for_6:
-        ; lt r1, r0, 29
+        ; lt t.25{r1}, j{r0}, 29
         cmp al, 29
         setb cl
-        ; branch r1, true, @for_6_body
+        ; branch t.25{r1}, true, @for_6_body
         or cl, cl
         jnz @for_6_body
         ; call printBoard[]
         sub rsp, 20h; shadow space
         call @printBoard
         add rsp, 20h
-        ; inc r6
+        ; inc i{r6}
         inc bl
 @for_5:
-        ; lt r0, r6, 28
+        ; lt t.14{r0}, i{r6}, 28
         cmp bl, 28
         setb al
-        ; branch r0, true, @for_5_body
+        ; branch t.14{r0}, true, @for_5_body
         or al, al
         jnz @for_5_body
         ; restore clobbered non-volatile registers

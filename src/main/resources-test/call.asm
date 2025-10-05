@@ -23,16 +23,16 @@ start:
 @printChar:
         ; save clobbered non-volatile registers
         push rbx
-        ; addrof r6, chr
+        ; addrof t.1{r6}, chr
         lea rbx, [rsp+16]
-        ; const r2, 1
+        ; const t.2{r2}, 1
         mov rdx, 1
-        ; move chr, r1
+        ; move chr, tmp.chr{r1}
         lea r11, [rsp+16]
         mov [r11], cl
-        ; move r1, r6
+        ; move t.1{r1}, t.1{r6}
         mov rcx, rbx
-        ; call printStringLength[r1, r2]
+        ; call printStringLength[t.1{r1}, t.2{r2}]
         sub rsp, 20h; shadow space
         call @printStringLength
         add rsp, 20h
@@ -48,70 +48,70 @@ start:
         ; save clobbered non-volatile registers
         push rbx
         push r12
-        ; move r6, r1
+        ; move number{r6}, number{r1}
         mov rbx, rcx
-        ; const r7, 20
+        ; const pos{r7}, 20
         mov r12b, 20
         ; 13:2 while true
 @while_1:
-        ; dec r7
+        ; dec pos{r7}
         dec r12b
-        ; const r3, 10
+        ; const t.5{r3}, 10
         mov r8, 10
-        ; move r4, r6
+        ; move remainder{r4}, number{r6}
         mov r9, rbx
-        ; move r0, r4
+        ; move remainder{r0}, remainder{r4}
         mov rax, r9
-        ; mod r2, r0, r3
+        ; mod remainder{r2}, remainder{r0}, t.5{r3}
         cqo
         idiv r8
-        ; move r4, r2
+        ; move remainder{r4}, remainder{r2}
         mov r9, rdx
-        ; const r3, 10
+        ; const t.6{r3}, 10
         mov r8, 10
-        ; move r0, r6
+        ; move number{r0}, number{r6}
         mov rax, rbx
-        ; div r0, r0, r3
+        ; div number{r0}, number{r0}, t.6{r3}
         cqo
         idiv r8
-        ; move r6, r0
+        ; move number{r6}, number{r0}
         mov rbx, rax
-        ; cast r0(u8), r4(i64)
+        ; cast t.7{r0}(u8), remainder{r4}(i64)
         mov al, r9b
-        ; const r3, 48
+        ; const t.8{r3}, 48
         mov r8b, 48
-        ; add r0, r0, r3
+        ; add digit{r0}, digit{r0}, t.8{r3}
         add al, r8b
-        ; cast r3(i64), r7(u8)
+        ; cast t.10{r3}(i64), pos{r7}(u8)
         movzx r8, r12b
-        ; cast r3(u8*), r3(i64)
-        ; addrof r4, [buffer]
+        ; cast t.11{r3}(u8*), t.10{r3}(i64)
+        ; addrof t.9{r4}, [buffer]
         lea r9, [rsp+20]
-        ; add r4, r4, r3
+        ; add t.9{r4}, t.9{r4}, t.11{r3}
         add r9, r8
-        ; store [r4], r0
+        ; store [t.9{r4}], digit{r0}
         mov [r9], al
         ; 19:3 if number == 0
-        ; equals r0, r6, 0
+        ; equals t.12{r0}, number{r6}, 0
         cmp rbx, 0
         sete al
-        ; branch r0, false, @while_1
+        ; branch t.12{r0}, false, @while_1
         or al, al
         jz @while_1
-        ; cast r6(i64), r7(u8)
+        ; cast t.14{r6}(i64), pos{r7}(u8)
         movzx rbx, r12b
-        ; cast r6(u8*), r6(i64)
-        ; addrof r1, [buffer]
+        ; cast t.15{r6}(u8*), t.14{r6}(i64)
+        ; addrof t.13{r1}, [buffer]
         lea rcx, [rsp+20]
-        ; add r1, r1, r6
+        ; add t.13{r1}, t.13{r1}, t.15{r6}
         add rcx, rbx
-        ; const r6, 20
+        ; const t.18{r6}, 20
         mov bl, 20
-        ; sub r6, r6, r7
+        ; sub t.17{r6}, t.17{r6}, pos{r7}
         sub bl, r12b
-        ; cast r2(i64), r6(u8)
+        ; cast t.16{r2}(i64), t.17{r6}(u8)
         movzx rdx, bl
-        ; call printStringLength[r1, r2]
+        ; call printStringLength[t.13{r1}, t.16{r2}]
         sub rsp, 20h; shadow space
         call @printStringLength
         add rsp, 20h
@@ -128,33 +128,33 @@ start:
         ; save clobbered non-volatile registers
         push rbx
         push r12
-        ; move r6, r1
+        ; move number{r6}, number{r1}
         mov rbx, rcx
         ; 27:2 if number < 0
-        ; lt r7, r6, 0
+        ; lt t.1{r7}, number{r6}, 0
         cmp rbx, 0
         setl r12b
-        ; branch r7, false, @if_3_end
+        ; branch t.1{r7}, false, @if_3_end
         or r12b, r12b
         jz @if_3_end
-        ; const r1, 45
+        ; const t.2{r1}, 45
         mov cl, 45
-        ; call printChar[r1]
+        ; call printChar[t.2{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
-        ; neg r6, r6
+        ; neg number{r6}, number{r6}
         neg rbx
 @if_3_end:
-        ; move r1, r6
+        ; move number{r1}, number{r6}
         mov rcx, rbx
-        ; call printUint[r1]
+        ; call printUint[number{r1}]
         sub rsp, 20h; shadow space
         call @printUint
         add rsp, 20h
-        ; const r1, 10
+        ; const t.3{r1}, 10
         mov cl, 10
-        ; call printChar[r1]
+        ; call printChar[t.3{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
@@ -173,55 +173,55 @@ start:
         push rbx
         push r12
         ; begin initialize global variables
-        ; const r6, 0
+        ; const tmp.i{r6}, 0
         mov bl, 0
         ; end initialize global variables
-        ; move i, r6
+        ; move i, tmp.i{r6}
         lea r11, [var_0]
         mov [r11], bl
-        ; call r0 = next[] -> u8
+        ; call t.0{r0} = next[] -> u8
         sub rsp, 20h; shadow space
         call @next
         add rsp, 20h
-        ; move r6, r0
+        ; move t.0{r6}, t.0{r0}
         mov bl, al
-        ; call r0 = next[] -> u8
+        ; call t.1{r0} = next[] -> u8
         sub rsp, 20h; shadow space
         call @next
         add rsp, 20h
-        ; move r7, r0
+        ; move t.1{r7}, t.1{r0}
         mov r12b, al
-        ; call r0 = next[] -> u8
+        ; call t.2{r0} = next[] -> u8
         sub rsp, 20h; shadow space
         call @next
         add rsp, 20h
-        ; move t.2, r0
+        ; move t.2, t.2{r0}
         lea r11, [rsp+16]
         mov [r11], al
-        ; call r0 = next[] -> u8
+        ; call t.3{r0} = next[] -> u8
         sub rsp, 20h; shadow space
         call @next
         add rsp, 20h
-        ; move t.3, r0
+        ; move t.3, t.3{r0}
         lea r11, [rsp+17]
         mov [r11], al
-        ; call r0 = next[] -> u8
+        ; call t.4{r0} = next[] -> u8
         sub rsp, 20h; shadow space
         call @next
         add rsp, 20h
-        ; move r1, r6
+        ; move t.0{r1}, t.0{r6}
         mov cl, bl
-        ; move r2, r7
+        ; move t.1{r2}, t.1{r7}
         mov dl, r12b
-        ; move r3, t.2
+        ; move t.2{r3}, t.2
         lea r11, [rsp+16]
         mov r8b, [r11]
-        ; move r4, t.3
+        ; move t.3{r4}, t.3
         lea r11, [rsp+17]
         mov r9b, [r11]
-        ; move r6, r0
+        ; move t.4{r6}, t.4{r0}
         mov bl, al
-        ; call doPrint[r1, r2, r3, r4, r6]
+        ; call doPrint[t.0{r1}, t.1{r2}, t.2{r3}, t.3{r4}, t.4{r6}]
         push rbx
         sub rsp, 20h; shadow space
         call @doPrint
@@ -235,13 +235,13 @@ start:
         ; u8 next
 @next:
         sub rsp, 8
-        ; move r0, i
+        ; move tmp.i{r0}, i
         lea r11, [var_0]
         mov al, [r11]
-        ; inc r0
+        ; inc tmp.i{r0}
         inc al
         ; 11:9 return i
-        ; move i, r0
+        ; move i, tmp.i{r0}
         lea r11, [var_0]
         mov [r11], al
         add rsp, 8
@@ -258,51 +258,51 @@ start:
         ; save clobbered non-volatile registers
         push rbx
         push r12
-        ; move r7, r2
+        ; move b{r7}, b{r2}
         mov r12b, dl
-        ; move r0, r3
+        ; move c{r0}, c{r3}
         mov al, r8b
-        ; move r2, r4
+        ; move d{r2}, d{r4}
         mov dl, r9b
-        ; cast r1(i64), r1(u8)
+        ; cast t.5{r1}(i64), a{r1}(u8)
         movzx rcx, cl
-        ; move c, r0
+        ; move c, c{r0}
         lea r11, [rsp+48]
         mov [r11], al
-        ; move d, r2
+        ; move d, d{r2}
         lea r11, [rsp+56]
         mov [r11], dl
-        ; call printIntLf[r1]
+        ; call printIntLf[t.5{r1}]
         sub rsp, 20h; shadow space
         call @printIntLf
         add rsp, 20h
-        ; cast r1(i64), r7(u8)
+        ; cast t.6{r1}(i64), b{r7}(u8)
         movzx rcx, r12b
-        ; call printIntLf[r1]
+        ; call printIntLf[t.6{r1}]
         sub rsp, 20h; shadow space
         call @printIntLf
         add rsp, 20h
-        ; move r7, c
+        ; move c{r7}, c
         lea r11, [rsp+48]
         mov r12b, [r11]
-        ; cast r1(i64), r7(u8)
+        ; cast t.7{r1}(i64), c{r7}(u8)
         movzx rcx, r12b
-        ; call printIntLf[r1]
+        ; call printIntLf[t.7{r1}]
         sub rsp, 20h; shadow space
         call @printIntLf
         add rsp, 20h
-        ; move r7, d
+        ; move d{r7}, d
         lea r11, [rsp+56]
         mov r12b, [r11]
-        ; cast r1(i64), r7(u8)
+        ; cast t.8{r1}(i64), d{r7}(u8)
         movzx rcx, r12b
-        ; call printIntLf[r1]
+        ; call printIntLf[t.8{r1}]
         sub rsp, 20h; shadow space
         call @printIntLf
         add rsp, 20h
-        ; cast r1(i64), r6(u8)
+        ; cast t.9{r1}(i64), e{r6}(u8)
         movzx rcx, bl
-        ; call printIntLf[r1]
+        ; call printIntLf[t.9{r1}]
         sub rsp, 20h; shadow space
         call @printIntLf
         add rsp, 20h

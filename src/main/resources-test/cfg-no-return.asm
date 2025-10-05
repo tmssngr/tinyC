@@ -21,11 +21,11 @@ start:
         ; void main
 @main:
         sub rsp, 8
-        ; const r0, 0
+        ; const i{r0}, 0
         mov al, 0
         ; 3:2 while true
 @while_1:
-        ; inc r0
+        ; inc i{r0}
         inc al
         jmp @while_1
         add rsp, 8

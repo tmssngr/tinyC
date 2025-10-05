@@ -8,8 +8,14 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record IRString(@NotNull IRVar target, int stringIndex, @NotNull Location location) implements IRInstruction {
+	@NotNull
 	@Override
 	public String toString() {
-		return "const " + target + ", [string-" + stringIndex + "]";
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
+		return "const " + target.toString(comment) + ", [string-" + stringIndex + "]";
 	}
 }

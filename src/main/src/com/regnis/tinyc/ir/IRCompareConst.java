@@ -16,8 +16,14 @@ public record IRCompareConst(@NotNull IRVar target, @NotNull IRCompareOp op, @No
 		Utils.assertTrue(Objects.equals(target.type(), Type.BOOL), String.valueOf(target.type()));
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
-		return op.toString().toLowerCase() + " " + target + ", " + left + ", " + value;
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
+		return op.toString().toLowerCase() + " " + target.toString(comment) + ", " + left.toString(comment) + ", " + value;
 	}
 }

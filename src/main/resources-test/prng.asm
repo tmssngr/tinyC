@@ -23,16 +23,16 @@ start:
 @printChar:
         ; save clobbered non-volatile registers
         push rbx
-        ; addrof r6, chr
+        ; addrof t.1{r6}, chr
         lea rbx, [rsp+16]
-        ; const r2, 1
+        ; const t.2{r2}, 1
         mov rdx, 1
-        ; move chr, r1
+        ; move chr, tmp.chr{r1}
         lea r11, [rsp+16]
         mov [r11], cl
-        ; move r1, r6
+        ; move t.1{r1}, t.1{r6}
         mov rcx, rbx
-        ; call printStringLength[r1, r2]
+        ; call printStringLength[t.1{r1}, t.2{r2}]
         sub rsp, 20h; shadow space
         call @printStringLength
         add rsp, 20h
@@ -48,70 +48,70 @@ start:
         ; save clobbered non-volatile registers
         push rbx
         push r12
-        ; move r6, r1
+        ; move number{r6}, number{r1}
         mov rbx, rcx
-        ; const r7, 20
+        ; const pos{r7}, 20
         mov r12b, 20
         ; 13:2 while true
 @while_1:
-        ; dec r7
+        ; dec pos{r7}
         dec r12b
-        ; const r3, 10
+        ; const t.5{r3}, 10
         mov r8, 10
-        ; move r4, r6
+        ; move remainder{r4}, number{r6}
         mov r9, rbx
-        ; move r0, r4
+        ; move remainder{r0}, remainder{r4}
         mov rax, r9
-        ; mod r2, r0, r3
+        ; mod remainder{r2}, remainder{r0}, t.5{r3}
         cqo
         idiv r8
-        ; move r4, r2
+        ; move remainder{r4}, remainder{r2}
         mov r9, rdx
-        ; const r3, 10
+        ; const t.6{r3}, 10
         mov r8, 10
-        ; move r0, r6
+        ; move number{r0}, number{r6}
         mov rax, rbx
-        ; div r0, r0, r3
+        ; div number{r0}, number{r0}, t.6{r3}
         cqo
         idiv r8
-        ; move r6, r0
+        ; move number{r6}, number{r0}
         mov rbx, rax
-        ; cast r0(u8), r4(i64)
+        ; cast t.7{r0}(u8), remainder{r4}(i64)
         mov al, r9b
-        ; const r3, 48
+        ; const t.8{r3}, 48
         mov r8b, 48
-        ; add r0, r0, r3
+        ; add digit{r0}, digit{r0}, t.8{r3}
         add al, r8b
-        ; cast r3(i64), r7(u8)
+        ; cast t.10{r3}(i64), pos{r7}(u8)
         movzx r8, r12b
-        ; cast r3(u8*), r3(i64)
-        ; addrof r4, [buffer]
+        ; cast t.11{r3}(u8*), t.10{r3}(i64)
+        ; addrof t.9{r4}, [buffer]
         lea r9, [rsp+20]
-        ; add r4, r4, r3
+        ; add t.9{r4}, t.9{r4}, t.11{r3}
         add r9, r8
-        ; store [r4], r0
+        ; store [t.9{r4}], digit{r0}
         mov [r9], al
         ; 19:3 if number == 0
-        ; equals r0, r6, 0
+        ; equals t.12{r0}, number{r6}, 0
         cmp rbx, 0
         sete al
-        ; branch r0, false, @while_1
+        ; branch t.12{r0}, false, @while_1
         or al, al
         jz @while_1
-        ; cast r6(i64), r7(u8)
+        ; cast t.14{r6}(i64), pos{r7}(u8)
         movzx rbx, r12b
-        ; cast r6(u8*), r6(i64)
-        ; addrof r1, [buffer]
+        ; cast t.15{r6}(u8*), t.14{r6}(i64)
+        ; addrof t.13{r1}, [buffer]
         lea rcx, [rsp+20]
-        ; add r1, r1, r6
+        ; add t.13{r1}, t.13{r1}, t.15{r6}
         add rcx, rbx
-        ; const r6, 20
+        ; const t.18{r6}, 20
         mov bl, 20
-        ; sub r6, r6, r7
+        ; sub t.17{r6}, t.17{r6}, pos{r7}
         sub bl, r12b
-        ; cast r2(i64), r6(u8)
+        ; cast t.16{r2}(i64), t.17{r6}(u8)
         movzx rdx, bl
-        ; call printStringLength[r1, r2]
+        ; call printStringLength[t.13{r1}, t.16{r2}]
         sub rsp, 20h; shadow space
         call @printStringLength
         add rsp, 20h
@@ -128,33 +128,33 @@ start:
         ; save clobbered non-volatile registers
         push rbx
         push r12
-        ; move r6, r1
+        ; move number{r6}, number{r1}
         mov rbx, rcx
         ; 27:2 if number < 0
-        ; lt r7, r6, 0
+        ; lt t.1{r7}, number{r6}, 0
         cmp rbx, 0
         setl r12b
-        ; branch r7, false, @if_3_end
+        ; branch t.1{r7}, false, @if_3_end
         or r12b, r12b
         jz @if_3_end
-        ; const r1, 45
+        ; const t.2{r1}, 45
         mov cl, 45
-        ; call printChar[r1]
+        ; call printChar[t.2{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
-        ; neg r6, r6
+        ; neg number{r6}, number{r6}
         neg rbx
 @if_3_end:
-        ; move r1, r6
+        ; move number{r1}, number{r6}
         mov rcx, rbx
-        ; call printUint[r1]
+        ; call printUint[number{r1}]
         sub rsp, 20h; shadow space
         call @printUint
         add rsp, 20h
-        ; const r1, 10
+        ; const t.3{r1}, 10
         mov cl, 10
-        ; call printChar[r1]
+        ; call printChar[t.3{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
@@ -168,9 +168,9 @@ start:
         ;   rsp+16: arg salt
 @initRandom:
         sub rsp, 8
-        ; move r0, r1
+        ; move tmp.__random__{r0}, salt{r1}
         mov eax, ecx
-        ; move __random__, r0
+        ; move __random__, tmp.__random__{r0}
         lea r11, [var_0]
         mov [r11], eax
         add rsp, 8
@@ -179,69 +179,69 @@ start:
         ; i32 random
 @random:
         sub rsp, 8
-        ; move r0, __random__
+        ; move tmp.__random__{r0}, __random__
         lea r11, [var_0]
         mov eax, [r11]
-        ; move r2, r0
+        ; move r{r2}, tmp.__random__{r0}
         mov edx, eax
-        ; const r3, 524287
+        ; const t.6{r3}, 524287
         mov r8d, 524287
-        ; move r4, r2
+        ; move t.5{r4}, r{r2}
         mov r9d, edx
-        ; and r4, r4, r3
+        ; and t.5{r4}, t.5{r4}, t.6{r3}
         and r9d, r8d
-        ; const r3, 48271
+        ; const t.7{r3}, 48271
         mov r8d, 48271
-        ; mul r4, r4, r3
+        ; mul b{r4}, b{r4}, t.7{r3}
         movsxd r9, r9d
         movsxd r8, r8d
         imul  r9, r8
-        ; const r1, 15
+        ; const t.9{r1}, 15
         mov ecx, 15
-        ; shiftright r2, r2, r1
+        ; shiftright t.8{r2}, t.8{r2}, t.9{r1}
         sar edx, cl
-        ; const r3, 48271
+        ; const t.10{r3}, 48271
         mov r8d, 48271
-        ; mul r2, r2, r3
+        ; mul c{r2}, c{r2}, t.10{r3}
         movsxd rdx, edx
         movsxd r8, r8d
         imul  rdx, r8
-        ; const r3, 65535
+        ; const t.12{r3}, 65535
         mov r8d, 65535
-        ; move r5, r2
+        ; move t.11{r5}, c{r2}
         mov r10d, edx
-        ; and r5, r5, r3
+        ; and t.11{r5}, t.11{r5}, t.12{r3}
         and r10d, r8d
-        ; const r1, 15
+        ; const t.13{r1}, 15
         mov ecx, 15
-        ; move r3, r5
+        ; move d{r3}, t.11{r5}
         mov r8d, r10d
-        ; shiftleft r3, r3, r1
+        ; shiftleft d{r3}, d{r3}, t.13{r1}
         sal r8d, cl
-        ; const r1, 16
+        ; const t.16{r1}, 16
         mov ecx, 16
-        ; shiftright r2, r2, r1
+        ; shiftright t.15{r2}, t.15{r2}, t.16{r1}
         sar edx, cl
-        ; add r2, r2, r4
+        ; add t.14{r2}, t.14{r2}, b{r4}
         add edx, r9d
-        ; add r2, r2, r3
+        ; add e{r2}, e{r2}, d{r3}
         add edx, r8d
-        ; const r3, 2147483647
+        ; const t.18{r3}, 2147483647
         mov r8d, 2147483647
-        ; move r4, r2
+        ; move t.17{r4}, e{r2}
         mov r9d, edx
-        ; and r4, r4, r3
+        ; and t.17{r4}, t.17{r4}, t.18{r3}
         and r9d, r8d
-        ; const r1, 31
+        ; const t.20{r1}, 31
         mov ecx, 31
-        ; shiftright r2, r2, r1
+        ; shiftright t.19{r2}, t.19{r2}, t.20{r1}
         sar edx, cl
-        ; move r0, r4
+        ; move tmp.__random__{r0}, t.17{r4}
         mov eax, r9d
-        ; add r0, r0, r2
+        ; add tmp.__random__{r0}, tmp.__random__{r0}, t.19{r2}
         add eax, edx
         ; 123:9 return __random__
-        ; move __random__, r0
+        ; move __random__, tmp.__random__{r0}
         lea r11, [var_0]
         mov [r11], eax
         add rsp, 8
@@ -251,11 +251,11 @@ start:
 @randomU8:
         sub rsp, 8
         ; 127:10 return (u8)
-        ; call r0 = random[] -> i32
+        ; call t.1{r0} = random[] -> i32
         sub rsp, 20h; shadow space
         call @random
         add rsp, 20h
-        ; cast r0(u8), r0(i32)
+        ; cast t.0{r0}(u8), t.1{r0}(i32)
         add rsp, 8
         ret
 
@@ -264,40 +264,40 @@ start:
         ; save clobbered non-volatile registers
         push rbx
         ; begin initialize global variables
-        ; const r6, 0
+        ; const tmp.__random__{r6}, 0
         mov ebx, 0
         ; end initialize global variables
-        ; const r1, 7439742
+        ; const t.2{r1}, 7439742
         mov ecx, 7439742
-        ; move __random__, r6
+        ; move __random__, tmp.__random__{r6}
         lea r11, [var_0]
         mov [r11], ebx
-        ; call initRandom[r1]
+        ; call initRandom[t.2{r1}]
         sub rsp, 20h; shadow space
         call @initRandom
         add rsp, 20h
-        ; const r6, 0
+        ; const i{r6}, 0
         mov bl, 0
         ; 5:2 for i < 50
         jmp @for_4
 @for_4_body:
-        ; call r0 = randomU8[] -> u8
+        ; call r{r0} = randomU8[] -> u8
         sub rsp, 20h; shadow space
         call @randomU8
         add rsp, 20h
-        ; cast r1(i64), r0(u8)
+        ; cast t.4{r1}(i64), r{r0}(u8)
         movzx rcx, al
-        ; call printIntLf[r1]
+        ; call printIntLf[t.4{r1}]
         sub rsp, 20h; shadow space
         call @printIntLf
         add rsp, 20h
-        ; inc r6
+        ; inc i{r6}
         inc bl
 @for_4:
-        ; lt r0, r6, 50
+        ; lt t.3{r0}, i{r6}, 50
         cmp bl, 50
         setb al
-        ; branch r0, true, @for_4_body
+        ; branch t.3{r0}, true, @for_4_body
         or al, al
         jnz @for_4_body
         ; restore clobbered non-volatile registers
