@@ -16,12 +16,12 @@ import org.jetbrains.annotations.*;
 public final class LSRegAlloc {
 
 	@NotNull
-	public static List<IRInstruction> process(@NotNull IRFunction function, @NotNull LSArchitecture architecture) {
+	public static IRFunction process(@NotNull IRFunction function, @NotNull LSArchitecture architecture) {
 		return process(function, architecture.isX86(), architecture.registerCount(), architecture);
 	}
 
 	@NotNull
-	public static List<IRInstruction> process(@NotNull IRFunction function, boolean isX86, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider) {
+	public static IRFunction process(@NotNull IRFunction function, boolean isX86, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider) {
 		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, isX86);
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), preprocessorResult.instructions());
 		DetectVarLiveness.process(cfg, function.varInfos().cantBeRegister(), false);
@@ -54,7 +54,7 @@ public final class LSRegAlloc {
 		System.out.println();
 */
 
-		return regAlloc.instructions;
+		return function.derive(regAlloc.instructions, preprocessorResult.varInfos());
 	}
 
 	private final List<IRInstruction> instructions = new ArrayList<>();
