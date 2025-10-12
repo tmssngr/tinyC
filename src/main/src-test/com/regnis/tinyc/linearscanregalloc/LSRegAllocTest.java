@@ -8,7 +8,7 @@ import java.util.*;
 
 import org.junit.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author Thomas Singer
@@ -42,13 +42,13 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider);
 		assertEquals(List.of(
 				new IRLiteral(varFour.asRegister(r1), 4, Location.DUMMY),
 				new IRLiteral(varThree.asRegister(r2), 3, Location.DUMMY),
 				new IRMove(varOne.asRegister(r0), varFour.asRegister(r1), Location.DUMMY),
 				new IRBinary(varOne.asRegister(r0), IRBinary.Op.Sub, varOne.asRegister(r0), varThree.asRegister(r2), Location.DUMMY)
-		), instructions);
+		), regAllocFunction.instructions());
 	}
 
 	@Test
@@ -74,11 +74,11 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider);
 		assertEquals(List.of(
 				new IRMove(varT2.asRegister(rRet), argA.asRegister(rArg1), Location.DUMMY),
 				new IRBinary(varT2.asRegister(rRet), IRBinary.Op.Add, varT2.asRegister(rRet), argB.asRegister(rArg2), Location.DUMMY)
-		), instructions);
+		), regAllocFunction.instructions());
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(1, 0);
-		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 2, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 2, callingConventionProvider);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varA.asRegister(rRet), 1, Location.DUMMY),
 				new IRMove(varA.asRegister(rArg1), varA.asRegister(rRet), Location.DUMMY),
@@ -111,7 +111,7 @@ public class LSRegAllocTest {
 				new IRMove(varA.asRegister(rArg1), varA, Location.DUMMY),
 				new IRBinary(varA.asRegister(rArg1), IRBinary.Op.Add, varA.asRegister(rArg1), varB.asRegister(rRet), Location.DUMMY),
 				new IRMove(varA.asRegister(rRet), varA.asRegister(rArg1), Location.DUMMY)
-		), instructions);
+		), regAllocFunction.instructions());
 	}
 
 	@Test
@@ -141,7 +141,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRCompare(varTmp.asRegister(rRet), IRCompareOp.Lt, varA.asRegister(rArg1), varB.asRegister(rArg2), Location.DUMMY),
 				new IRBranch(varTmp.asRegister(rRet), false, "@if_1_end", "@if_1_then"),
@@ -153,7 +153,7 @@ public class LSRegAllocTest {
 				new IRMove(varB.asRegister(rRet), varB.asRegister(rArg2), Location.DUMMY),
 				new IRJump("@ret"),
 				new IRLabel("@ret")
-		), instructions);
+		), regAllocFunction.instructions());
 	}
 
 	@Test
@@ -177,7 +177,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 5, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 5, callingConventionProvider);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRMove(varStr.asRegister(rNV1), varStr.asRegister(rArg1), Location.DUMMY),
 				// todo
@@ -186,7 +186,7 @@ public class LSRegAllocTest {
 				new IRMove(varStr.asRegister(rArg1), varStr.asRegister(rNV1), Location.DUMMY),
 				new IRMove(varLength.asRegister(rArg2), varLength.asRegister(rRet), Location.DUMMY),
 				new IRCall(null, Type.VOID, "printStringLength", List.of(varStr.asRegister(rArg1), varLength.asRegister(rArg2)), Location.DUMMY)
-		), instructions);
+		), regAllocFunction.instructions());
 	}
 
 	@Test
@@ -212,12 +212,12 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varOne.asRegister(rArg1), 1, Location.DUMMY),
 				new IRMove(varLocalGlobal.asRegister(rRet), varGlobal, Location.DUMMY),
 				new IRBinary(varLocalGlobal.asRegister(rRet), IRBinary.Op.Add, varLocalGlobal.asRegister(rRet), varOne.asRegister(rArg1), Location.DUMMY),
 				new IRMove(varGlobal, varLocalGlobal.asRegister(rRet), Location.DUMMY)
-		), instructions);
+		), regAllocFunction.instructions());
 	}
 }

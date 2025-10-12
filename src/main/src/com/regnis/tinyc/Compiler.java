@@ -84,8 +84,8 @@ public class Compiler {
 					final ControlFlowGraph cfg = result.second();
 					irWriter.write(cfg);
 					dotWriter.writeCfg(cfg);
-					final List<IRInstruction> instructions = LSRegAlloc.process(function, LSArchitecture.WIN_X86_64);
-					final List<IRInstruction> optimizedInstructions = IROptimizer.optimize(instructions);
+					function = LSRegAlloc.process(function, LSArchitecture.WIN_X86_64);
+					final List<IRInstruction> optimizedInstructions = IROptimizer.optimize(function.instructions());
 					final IRFunction optimizedFunction = CleanupLocalUnusedVariables.optimize(function.derive(optimizedInstructions));
 					functions.add(optimizedFunction);
 				}
