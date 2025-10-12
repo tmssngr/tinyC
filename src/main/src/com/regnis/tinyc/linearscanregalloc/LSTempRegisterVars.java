@@ -13,19 +13,22 @@ import org.jetbrains.annotations.*;
  */
 final class LSTempRegisterVars {
 
-	private final List<IRVarDef> varDefs;
 	private final IRVarInfos varInfos;
+	private final List<IRVarDef> varDefs;
+	private final Set<IRVar> cantBeRegister;
 
 	public LSTempRegisterVars(@NotNull IRVarInfos varInfos) {
-		varDefs = new ArrayList<>(varInfos.vars());
 		this.varInfos = varInfos;
+		varDefs = new ArrayList<>(varInfos.vars());
+		cantBeRegister = new HashSet<>(varInfos.cantBeRegister());
 	}
 
 	@NotNull
 	public IRVarInfos createVarInfos() {
-		return new IRVarInfos(varDefs, varInfos.cantBeRegister(), varInfos.global());
+		return new IRVarInfos(varDefs, cantBeRegister, varInfos.global());
 	}
 
+	@NotNull
 	public IRVar createVar(@NotNull IRVar var, @NotNull String name) {
 		for (IRVarDef def : varDefs) {
 			Utils.assertTrue(!def.var().name().equals(name));
@@ -40,5 +43,12 @@ final class LSTempRegisterVars {
 		final IRVar localVar = new IRVar(name, index, VariableScope.function, var.type());
 		varDefs.add(new IRVarDef(localVar, size));
 		return localVar;
+	}
+
+	@NotNull
+	public IRVar createStackArgVar(@NotNull IRVar var, @NotNull String name) {
+		final IRVar stackVar = createVar(var, name);
+		cantBeRegister.add(stackVar);
+		return stackVar;
 	}
 }

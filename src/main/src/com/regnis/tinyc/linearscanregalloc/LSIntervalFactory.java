@@ -272,7 +272,14 @@ final class LSIntervalFactory {
 			}
 
 			for (IRVar arg : call.args()) {
-				handleSource(arg, live);
+				if (arg.scope() == VariableScope.register) {
+					handleSource(arg, live);
+				}
+				else {
+					Utils.assertTrue(arg.scope() == VariableScope.function);
+					Utils.assertTrue(!canBeRegister.canBeRegister(arg));
+					live.add(arg);
+				}
 			}
 		}
 		case IRCast cast -> {
@@ -346,6 +353,8 @@ final class LSIntervalFactory {
 			if (!canBeRegister.canBeRegister(target)) {
 				Utils.assertTrue(source.scope() != VariableScope.global);
 				Utils.assertTrue(canBeRegister.canBeRegister(source));
+				live.remove(target);
+
 				handleSource(source, live);
 				return;
 			}

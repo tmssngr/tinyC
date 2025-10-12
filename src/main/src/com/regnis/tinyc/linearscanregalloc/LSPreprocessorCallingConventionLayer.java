@@ -1,7 +1,6 @@
 package com.regnis.tinyc.linearscanregalloc;
 
 import com.regnis.tinyc.*;
-import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
@@ -14,11 +13,15 @@ import org.jetbrains.annotations.*;
 final class LSPreprocessorCallingConventionLayer extends LSPreprocessorAbstractLayer {
 
 	private final IRVarInfos localVarInfos;
+	private final LSTempRegisterVars tempRegisterVars;
 	private final LSCallingConventionProvider callingConventionProvider;
 
-	public LSPreprocessorCallingConventionLayer(@NotNull IRVarInfos localVarInfos, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull LSPreprocessorLayer nextLayer) {
+	private int callIndex;
+
+	public LSPreprocessorCallingConventionLayer(@NotNull IRVarInfos localVarInfos, @NotNull LSTempRegisterVars tempRegisterVars, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull LSPreprocessorLayer nextLayer) {
 		super(nextLayer);
 		this.localVarInfos = localVarInfos;
+		this.tempRegisterVars = tempRegisterVars;
 		this.callingConventionProvider = callingConventionProvider;
 	}
 
@@ -26,11 +29,17 @@ final class LSPreprocessorCallingConventionLayer extends LSPreprocessorAbstractL
 	public void process(@NotNull IRInstruction instruction) {
 		switch (instruction) {
 		case IRCall call -> {
+			final List<IRVar> initialArgs = call.args();
 			final IRVar target = call.target();
+
+			final List<IRVar> args = new ArrayList<>();
+			final List<IRMove> registerMoves = new ArrayList<>();
+			final List<IRMove> stackMoves = new ArrayList<>();
+
 			final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(call.type(), call.getArgumentTypes());
 			final Iterator<Integer> argRegisters = callingConvention.argRegisters().iterator();
-			final List<IRVar> args = new ArrayList<>();
-			for (IRVar arg : call.args()) {
+			for (int i = 0; i < initialArgs.size(); i++) {
+				final IRVar arg = initialArgs.get(i);
 				if (argRegisters.hasNext()) {
 					final int argRegister = argRegisters.next();
 					final IRVar regArg = arg.asRegister(argRegister);
@@ -38,11 +47,19 @@ final class LSPreprocessorCallingConventionLayer extends LSPreprocessorAbstractL
 						throw new UnsupportedOperationException(String.valueOf(arg));
 					}
 
-					forward(new IRMove(regArg, arg, Location.DUMMY));
-					arg = regArg;
+					registerMoves.add(new IRMove(regArg, arg, Location.DUMMY));
+					args.add(regArg);
 				}
-				args.add(arg);
+				else {
+					final IRVar stackVar = tempRegisterVars.createStackArgVar(arg, "arg." + callIndex + "." + i);
+					stackMoves.add(new IRMove(stackVar, arg, Location.DUMMY));
+					args.add(stackVar);
+				}
 			}
+
+			stackMoves.forEach(this::forward);
+			registerMoves.forEach(this::forward);
+
 			final IRVar registerTarget = target != null
 					? target.asRegister(0)
 					: null;

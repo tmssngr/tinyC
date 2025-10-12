@@ -22,6 +22,8 @@ public class LSPreprocessorTest {
 		final IRVar b = new IRVar("b", 1, VariableScope.argument, Type.I16);
 		final IRVar c = new IRVar("c", 2, VariableScope.argument, Type.I16);
 		final IRVar d = new IRVar("d", 3, VariableScope.function, Type.I16);
+		final IRVar arg02 = new IRVar("arg.0.2", 4, VariableScope.function, Type.I16);
+		final IRVar arg03 = new IRVar("arg.0.3", 5, VariableScope.function, Type.I16);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		final var result = LSPreprocessor.process(new IRFunction("name", "label", Type.BOOL,
@@ -40,14 +42,16 @@ public class LSPreprocessorTest {
 				new IRMove(a, a.asRegister(1), Location.DUMMY),
 				new IRMove(b, b.asRegister(2), Location.DUMMY),
 				new IRBinary(d, IRBinary.Op.Add, a, b, Location.DUMMY),
+				new IRMove(arg02, b, Location.DUMMY),
+				new IRMove(arg03, a, Location.DUMMY),
 				new IRMove(d.asRegister(1), d, Location.DUMMY),
 				new IRMove(c.asRegister(2), c, Location.DUMMY),
 				new IRCall(c.asRegister(0), Type.I16, "sub",
 				           List.of(
 						           d.asRegister(1),
 						           c.asRegister(2),
-						           b,
-						           a
+						           arg02,
+						           arg03
 				           ), Location.DUMMY),
 				new IRMove(c, c.asRegister(0), Location.DUMMY),
 				new IRMove(c.asRegister(0), c, Location.DUMMY)

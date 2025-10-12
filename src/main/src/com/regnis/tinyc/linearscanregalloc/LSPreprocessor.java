@@ -19,12 +19,13 @@ public final class LSPreprocessor {
 	public static Result process(@NotNull IRFunction function, @NotNull LSCallingConventionProvider callingConventionProvider, boolean isX86) {
 		final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(function.returnType(), function.varInfos().getArgumentTypes());
 
+		final LSTempRegisterVars tempRegisterVars = new LSTempRegisterVars(function.varInfos());
+
 		final var resultLayer = new LSPreprocessorResultLayer();
-		LSPreprocessorLayer nextLayer = new LSPreprocessorCallingConventionLayer(function.varInfos(), callingConventionProvider, resultLayer);
+		LSPreprocessorLayer nextLayer = new LSPreprocessorCallingConventionLayer(function.varInfos(), tempRegisterVars, callingConventionProvider, resultLayer);
 		if (isX86) {
 			nextLayer = new LSPreprocessorX86OperationsLayer(nextLayer);
 		}
-		final LSTempRegisterVars tempRegisterVars = new LSTempRegisterVars(function.varInfos());
 		final var globalVarPreprocessor = new LSPreprocessorCachedVarLayer(function.varInfos(), tempRegisterVars, nextLayer);
 
 		final List<IRInstruction> instructions = function.instructions();
