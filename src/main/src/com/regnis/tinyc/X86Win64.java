@@ -142,18 +142,31 @@ public final class X86Win64 extends AsmWriter {
 	private void writeFunction(IRFunction function) throws IOException {
 		writeComment(function.toString());
 
-		final int nonvolatileRegistersToPushPop = getNonVolatileRegistersToPushPop(function.instructions());
+		final List<IRInstruction> instructions = function.instructions();
+		final int nonvolatileRegistersToPushPop = getNonVolatileRegistersToPushPop(instructions);
 		final List<IRVarDef> localVars = function.varInfos().vars();
-		stackOffsets = new X86StackOffsets(localVars, nonvolatileRegistersToPushPop);
-		final int size = stackOffsets.getRspOffset();
+		final List<List<IRVar>> callsArgs = getCallsWithStackArgs(instructions);
+		stackOffsets = new X86StackOffsets(localVars, callsArgs, nonvolatileRegistersToPushPop);
+		final int rspOffset = stackOffsets.getRspOffset();
+		final int callArgSpace = stackOffsets.getCallArgSpace();
 		writeVarOffsetAsComments(localVars);
 		writeLabel(function.label());
-		writeFunctionProlog(size, nonvolatileRegistersToPushPop);
+		writeFunctionProlog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
 
-		writeInstructions(function.instructions());
+		writeInstructions(instructions);
 
-		writeFunctionEpilog(size, nonvolatileRegistersToPushPop);
+		writeFunctionEpilog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
 		stackOffsets = X86StackOffsets.DUMMY;
+	}
+
+	private List<List<IRVar>> getCallsWithStackArgs(List<IRInstruction> instructions) {
+		final List<List<IRVar>> calls = new ArrayList<>();
+		instructions.forEach(instruction -> {
+			if (instruction instanceof IRCall call) {
+				calls.add(call.args());
+			}
+		});
+		return calls;
 	}
 
 	private int getNonVolatileRegistersToPushPop(List<IRInstruction> instructions) {
@@ -174,9 +187,9 @@ public final class X86Win64 extends AsmWriter {
 		}
 	}
 
-	private void writeFunctionProlog(int size, int pushedNonvolatileRegisterCount) throws IOException {
-		if (size > 0) {
-			writeIndented("sub rsp, " + size);
+	private void writeFunctionProlog(int rspOffset, int pushedNonvolatileRegisterCount, int callArgSpace) throws IOException {
+		if (rspOffset > 0) {
+			writeIndented("sub rsp, " + rspOffset);
 		}
 
 		if (pushedNonvolatileRegisterCount > 0) {
@@ -185,9 +198,17 @@ public final class X86Win64 extends AsmWriter {
 				writeIndented("push " + getRegName(FIRST_NON_VOLATILE_REGISTER + i));
 			}
 		}
+
+		if (callArgSpace > 0) {
+			writeIndented("sub rsp, " + callArgSpace);
+		}
 	}
 
-	private void writeFunctionEpilog(int size, int pushedNonvolatileRegisterCount) throws IOException {
+	private void writeFunctionEpilog(int rspOffset, int pushedNonvolatileRegisterCount, int callArgSpace) throws IOException {
+		if (callArgSpace > 0) {
+			writeIndented("add rsp, " + callArgSpace);
+		}
+
 		if (pushedNonvolatileRegisterCount > 0) {
 			writeComment("restore clobbered non-volatile registers");
 			for (int i = pushedNonvolatileRegisterCount; i-- > 0;) {
@@ -195,8 +216,8 @@ public final class X86Win64 extends AsmWriter {
 			}
 		}
 
-		if (size > 0) {
-			writeIndented("add rsp, " + size);
+		if (rspOffset > 0) {
+			writeIndented("add rsp, " + rspOffset);
 		}
 		writeIndented("ret");
 	}
@@ -341,44 +362,7 @@ public final class X86Win64 extends AsmWriter {
 			Utils.assertTrue(getRegisterVarRegisterIndex(target) == 0);
 		}
 
-		final List<IRVar> args = call.args();
-		final int alignmentOffset = args.size() > 4 ? (args.size() + 1) % 2 * 8 : 0;
-		if (alignmentOffset != 0) {
-			writeIndented("sub rsp, " + alignmentOffset + "; align RSP to 10h");
-		}
-
-		int pushOffset = 0;
-		final int prevRspOffset = rspOffset;
-		try {
-			// https://en.wikipedia.org/wiki/X86_calling_conventions#Microsoft_x64_calling_convention
-			// the 5th, 6th, ... arguments are pushed onto the stack (right to left).
-			// stack:
-			// (n)th arg
-			// (n-1)th arg
-			// ...
-			// 6th arg
-			// 5th arg
-			// 20h byte shadow space
-			// return address
-			for (int i = args.size(); i-- > 0; ) {
-				final IRVar arg = args.get(i);
-				if (i < 4) {
-					Utils.assertTrue(getRegisterVarRegisterIndex(arg) == i + 1);
-					continue;
-				}
-				final int argReg = loadVar(arg);
-				writeIndented("push " + getRegName(argReg));
-				this.rspOffset += 8;
-				pushOffset += 8;
-			}
-		}
-		finally {
-			this.rspOffset = prevRspOffset;
-		}
-
-		writeIndented("sub rsp, 20h; shadow space");
 		writeIndented("call @" + call.name());
-		writeIndented("add rsp, " + Integer.toHexString(0x20 + alignmentOffset + pushOffset) + "h");
 	}
 
 	protected void writeCast(IRCast cast) throws IOException {
