@@ -97,32 +97,41 @@ public final class LSRange {
 		return Integer.MAX_VALUE;
 	}
 
-	public static boolean contains(int pos, List<LSRange> ranges) {
+	public static boolean contains(int pos, List<LSRange> ranges, boolean allowTo) {
 		for (LSRange range : ranges) {
-			if (range.contains(pos, false)) {
+			if (range.contains(pos, allowTo)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private final int from;
+	public static int getIntersectionFreeUntil(List<LSRange> ranges, List<LSRange> otherRanges) {
+		final int intersection = getFirstIntersection(ranges, otherRanges);
+		if (intersection >= 0) {
+			return intersection;
+		}
+		final int from = otherRanges.getFirst().from();
+		return getFreeUntil(from, ranges);
+	}
 
-	private int to;
+	private final int to;
+
+	private int from;
 
 	public LSRange(int from) {
 		this(from, from + 1);
 	}
 
 	public LSRange(int from, int to) {
-		Utils.assertTrue(to > from);
+		Utils.assertTrue(to >= from);
 		this.from = from;
 		this.to = to;
 	}
 
 	@Override
 	public String toString() {
-		return "[" + from + "-" + to + ">";
+		return from + "-" + to;
 	}
 
 	public int from() {
@@ -131,11 +140,6 @@ public final class LSRange {
 
 	public int to() {
 		return to;
-	}
-
-	public void extend(int index) {
-		Utils.assertTrue(index >= to);
-		to = index;
 	}
 
 	public boolean contains(int index, boolean allowTo) {
@@ -149,5 +153,11 @@ public final class LSRange {
 			return true;
 		}
 		return allowTo;
+	}
+
+	public void setFrom(int from) {
+		Utils.assertTrue(from >= 0);
+		Utils.assertTrue(from <= this.to);
+		this.from = from;
 	}
 }

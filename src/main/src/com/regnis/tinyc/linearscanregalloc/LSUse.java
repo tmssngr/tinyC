@@ -2,24 +2,25 @@ package com.regnis.tinyc.linearscanregalloc;
 
 import com.regnis.tinyc.*;
 
+import org.jetbrains.annotations.*;
+
 /**
  * @author Thomas Singer
  */
-public record LSUse(int pos) {
+public record LSUse(int pos, boolean write) {
 	public static LSUse write(int pos) {
-		Utils.assertTrue((pos & 1) == 1);
-		return new LSUse(pos);
+		return new LSUse(pos, true);
 	}
 
 	public static LSUse read(int pos) {
-		Utils.assertTrue((pos & 1) == 0);
-		return new LSUse(pos);
+		return new LSUse(pos, false);
 	}
 
 	public LSUse {
 		Utils.assertTrue(pos >= 0);
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
@@ -29,10 +30,6 @@ public record LSUse(int pos) {
 	}
 
 	public char asChar() {
-		return isWrite() ? 'W' : 'R';
-	}
-
-	public boolean isWrite() {
-		return (pos & 1) != 0;
+		return write() ? 'W' : 'R';
 	}
 }

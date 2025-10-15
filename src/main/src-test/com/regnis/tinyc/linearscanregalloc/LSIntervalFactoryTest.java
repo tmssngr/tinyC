@@ -2,6 +2,7 @@ package com.regnis.tinyc.linearscanregalloc;
 
 import com.regnis.tinyc.*;
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
@@ -41,10 +42,53 @@ public class LSIntervalFactoryTest {
 				new IRVarDef(c, 8),
 				new IRVarDef(d, 8)
 		), Set.of(), globalVarInfos);
+		final LSIntervalFactory factory = new LSIntervalFactory(varInfos, (targetType, argTypes) -> {
+			throw new UnsupportedOperationException();
+		}, 4, false);
+
+		factory.handleBlocks(List.of(
+				new BasicBlock("start", List.of(
+						new IRMove(a, a.asRegister(1), Location.DUMMY),
+						new IRMove(b, b.asRegister(2), Location.DUMMY),
+						new IRMove(c, c.asRegister(3), Location.DUMMY),
+						new IRMove(d, d.asRegister(4), Location.DUMMY),
+
+						new IRMove(c.asRegister(0), c, Location.DUMMY),
+						new IRJump("@end")
+				), List.of(), List.of("@end")),
+				new BasicBlock("@end", List.of(
+				), List.of("start"), List.of())
+		));
+		assertEquals(List.of(), factory.getInstructions());
+		assertEqualIntervals(List.of(), factory.getVarIntervalsSorted());
+		assertEqualIntervals(List.of(
+				LSInterval.testFixed(1,
+				                     List.of(new LSRange(-1, 0))
+				),
+				LSInterval.testFixed(2,
+				                     List.of(new LSRange(-1, 0))
+				)
+		), factory.getFixedIntervals());
+	}
+
+	@Test
+	public void testFunctionArgs2() {
+		final IRVar a = new IRVar("a", 0, VariableScope.argument, Type.I16);
+		final IRVar b = new IRVar("b", 1, VariableScope.argument, Type.BOOL);
+		final IRVar c = new IRVar("c", 2, VariableScope.argument, Type.I64);
+		final IRVar d = new IRVar("d", 3, VariableScope.function, Type.I64);
+
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRVarInfos varInfos = new IRVarInfos(List.of(
+				new IRVarDef(a, 2),
+				new IRVarDef(b, 1),
+				new IRVarDef(c, 8),
+				new IRVarDef(d, 8)
+		), Set.of(), globalVarInfos);
 		final LSIntervalFactory intervals = new LSIntervalFactory(varInfos, (targetType, argTypes) -> {
 			throw new UnsupportedOperationException();
 		}, 4, false);
-		intervals.addFunctionArgs(varInfos, List.of(1, 2));
+//		intervals.addFunctionArgs(varInfos, List.of(1, 2));
 		assertEquals(List.of(), intervals.getInstructions());
 		assertEqualIntervals(List.of(), intervals.getVarIntervalsSorted());
 		assertEqualIntervals(List.of(
@@ -63,7 +107,7 @@ public class LSIntervalFactoryTest {
 				c
 		));
 		// ====================================================================
-		intervals.blockStart("start", live);
+//		intervals.blockStart("start", live);
 		// ====================================================================
 		assertEquals(List.of(), intervals.getInstructions());
 		assertEqualIntervals(List.of(
@@ -89,7 +133,7 @@ public class LSIntervalFactoryTest {
 
 		// ====================================================================
 		// 0
-		intervals.addInstruction(new IRMove(a, a.asRegister(1), Location.DUMMY), live);
+//		intervals.handleInstruction(new IRMove(a, a.asRegister(1), Location.DUMMY), live);
 		// ====================================================================
 		assertEquals(List.of(
 				new IRMove(a, a.asRegister(1), Location.DUMMY)
@@ -122,7 +166,7 @@ public class LSIntervalFactoryTest {
 
 		// ====================================================================
 		// 2
-		intervals.addInstruction(new IRMove(b, b.asRegister(2), Location.DUMMY), live);
+//		intervals.handleInstruction(new IRMove(b, b.asRegister(2), Location.DUMMY), live);
 		// ====================================================================
 		assertEquals(List.of(
 				new IRMove(a, a.asRegister(1), Location.DUMMY),
@@ -170,7 +214,7 @@ public class LSIntervalFactoryTest {
 			assertEquals(List.of(Type.I64), argTypes);
 			return new LSCallingConvention(List.of(), 4);
 		}, 5, false);
-		intervals.addFunctionArgs(varInfos, List.of());
+//		intervals.addFunctionArgs(varInfos, List.of());
 		assertEquals(List.of(), intervals.getInstructions());
 		assertEqualIntervals(List.of(), intervals.getVarIntervalsSorted());
 		assertEqualIntervals(List.of(), intervals.getFixedIntervals());
@@ -181,7 +225,7 @@ public class LSIntervalFactoryTest {
 		liveAfter.add(a);
 		// ====================================================================
 		// 0
-		intervals.addInstruction(new IRLiteral(a, 10, Location.DUMMY), liveAfter);
+//		intervals.handleInstruction(new IRLiteral(a, 10, Location.DUMMY), liveAfter);
 		// ====================================================================
 		assertEquals(List.of(
 				new IRLiteral(a, 10, Location.DUMMY)
@@ -196,7 +240,7 @@ public class LSIntervalFactoryTest {
 
 		// ====================================================================
 		// 2
-		intervals.addInstruction(new IRMove(a.asRegister(1), a, Location.DUMMY), liveAfter);
+//		intervals.handleInstruction(new IRMove(a.asRegister(1), a, Location.DUMMY), liveAfter);
 		// ====================================================================
 		assertEquals(List.of(
 				new IRLiteral(a, 10, Location.DUMMY),
@@ -218,7 +262,7 @@ public class LSIntervalFactoryTest {
 		liveAfter.remove(a);
 		// ====================================================================
 		// 4
-		intervals.addInstruction(new IRCall(null, Type.VOID, "foo", List.of(a.asRegister(1)), Location.DUMMY), liveAfter);
+//		intervals.handleInstruction(new IRCall(null, Type.VOID, "foo", List.of(a.asRegister(1)), Location.DUMMY), liveAfter);
 		// ====================================================================
 		assertEquals(List.of(
 				new IRLiteral(a, 10, Location.DUMMY),

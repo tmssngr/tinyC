@@ -20,19 +20,15 @@ public class LSAlgorithmTest {
 		// 0: a = 1
 		// 2: mov r0, a
 		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.I16);
-		final LSAlgorithm algorithm = new LSAlgorithm(List.of(
-				LSInterval.testVar(varA, List.of(new LSRange(1, 3)), List.of(LSUse.write(1),
-				                                                             LSUse.read(2)))
-		), List.of(), List.of(), 4);
+		final LSInterval interval = LSInterval.testVar(varA, List.of(new LSRange(0, 2)), List.of(LSUse.write(0),
+		                                                                                         LSUse.read(2)));
+		final LSAlgorithm algorithm = new LSAlgorithm(List.of(interval), List.of(), List.of(), 4);
 
-		final Map<IRVar, LSVarRegisters> result = algorithm.run();
-		assertEquals(1, result.size());
-		final LSVarRegisters registers = result.get(varA);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_LIVE, registers, 0, 1);
-		assertEqualsRegisterOrState(0, registers, 1, 3);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_LIVE, registers, 3, 10);
-
-		assertNoTransition(registers, 0, 20);
+		algorithm.run();
+		assertEquals(0, interval.getFrom());
+		assertEquals(2, interval.getTo());
+		assertEquals(0, interval.register());
+		assertNull(interval.getNextSplit());
 	}
 
 	@Test
@@ -47,38 +43,37 @@ public class LSAlgorithmTest {
 		// 14: @printString_ret:
 		final IRVar varStr = new IRVar("str", 0, VariableScope.function, Type.I16);
 		final IRVar varLength = new IRVar("length", 0, VariableScope.function, Type.I16);
+		final LSInterval iStr = LSInterval.testVar(varStr,
+		                                           List.of(new LSRange(0, 8)),
+		                                           List.of(LSUse.write(0),
+		                                                   LSUse.read(2),
+		                                                   LSUse.read(8)
+		                                           ));
+		final LSInterval iLength = LSInterval.testVar(varLength,
+		                                              List.of(new LSRange(6, 10)),
+		                                              List.of(LSUse.write(6),
+		                                                      LSUse.read(10)
+		                                              ));
 		final LSAlgorithm algorithm = new LSAlgorithm(List.of(
-				LSInterval.testVar(varStr,
-				                   List.of(new LSRange(1, 9)),
-				                   List.of(LSUse.write(1),
-				                           LSUse.read(2),
-				                           LSUse.read(8)
-				                   )),
-				LSInterval.testVar(varLength,
-				                   List.of(new LSRange(7, 11)),
-				                   List.of(LSUse.write(7),
-				                           LSUse.read(10)
-				                   ))
+				iStr,
+				iLength
 		), List.of(
 				LSInterval.testFixed(0, List.of(new LSRange(4, 6))),
 				LSInterval.testFixed(1, List.of(new LSRange(-1, 0), new LSRange(2, 5), new LSRange(8, 12))),
 				LSInterval.testFixed(2, List.of(new LSRange(4, 5), new LSRange(10, 13)))
 		), List.of(), 4);
 
-		final Map<IRVar, LSVarRegisters> result = algorithm.run();
-		assertEquals(2, result.size());
+		algorithm.run();
 
-		LSVarRegisters registers = result.get(varStr);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_LIVE, registers, 0, 1);
-		assertEqualsRegisterOrState(3, registers, 1, 9);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_LIVE, registers, 9, 20);
+		assertEquals(0, iStr.getFrom());
+		assertEquals(8, iStr.getTo());
+		assertEquals(3, iStr.register());
+		assertNull(iStr.getNextSplit());
 
-		registers = result.get(varLength);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_LIVE, registers, 0, 7);
-		assertEqualsRegisterOrState(0, registers, 7, 11);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_LIVE, registers, 11, 20);
-
-		assertNoTransition(registers, 0, 20);
+		assertEquals(6, iLength.getFrom());
+		assertEquals(10, iLength.getTo());
+		assertEquals(2, iLength.register());
+		assertNull(iLength.getNextSplit());
 	}
 
 	@Test
@@ -88,32 +83,36 @@ public class LSAlgorithmTest {
 		// 4: move r1, a
 		// 6: call bar
 		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.I16);
+		final LSInterval interval = LSInterval.testVar(varA,
+		                                               List.of(new LSRange(0, 4)),
+		                                               List.of(LSUse.write(0),
+		                                                       LSUse.read(4)
+		                                               ));
 		final LSAlgorithm algorithm = new LSAlgorithm(List.of(
-				LSInterval.testVar(varA,
-				                   List.of(new LSRange(1, 5)),
-				                   List.of(LSUse.write(1),
-				                           LSUse.read(4)
-				                   ))
+				interval
 		), List.of(
 				LSInterval.testFixed(0, List.of(new LSRange(2), new LSRange(6))),
-				LSInterval.testFixed(1, List.of(new LSRange(2), new LSRange(5, 7)))
+				LSInterval.testFixed(1, List.of(new LSRange(2), new LSRange(4, 7)))
 		), List.of(), 2);
 
-		final Map<IRVar, LSVarRegisters> result = algorithm.run();
-		assertEquals(1, result.size());
+		algorithm.run();
 
-		final LSVarRegisters registers = result.get(varA);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_LIVE, registers, 0, 1);
-		assertEqualsRegisterOrState(0, registers, 1, 2);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_REGISTER, registers, 2, 4);
-		assertEqualsRegisterOrState(1, registers, 4, 5);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_LIVE, registers, 5, 20);
+		assertEquals(0, interval.getFrom());
+		assertEquals(1, interval.getTo());
+		assertEquals(0, interval.register());
 
-		assertNoTransition(registers, 0, 2);
-		assertEquals(new Pair<>(varA.asRegister(0), varA), registers.getTransitionAt(2));
-		assertNoTransition(registers, 3, 4);
-		assertEquals(new Pair<>(varA, varA.asRegister(1)), registers.getTransitionAt(4));
-		assertNoTransition(registers, 5, 20);
+		LSInterval split = interval.getNextSplit();
+		assertNotNull(split);
+		assertEquals(1, split.getFrom());
+		assertEquals(3, split.getTo());
+		assertEquals(-1, split.register());
+
+		split = split.getNextSplit();
+		assertNotNull(split);
+		assertEquals(3, split.getFrom());
+		assertEquals(4, split.getTo());
+		assertEquals(1, split.register());
+		assertNull(split.getNextSplit());
 	}
 
 	@Test
@@ -126,45 +125,50 @@ public class LSAlgorithmTest {
 		// 10: move r0, a
 		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.I16);
 		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.I16);
+		final LSInterval iA = LSInterval.testVar(varA,
+		                                         List.of(new LSRange(0, 10)),
+		                                         List.of(LSUse.write(0),
+		                                                 LSUse.read(2),
+		                                                 LSUse.write(8),
+		                                                 LSUse.read(10)
+		                                         ));
+		final LSInterval iB = LSInterval.testVar(varB,
+		                                         List.of(new LSRange(6, 8)),
+		                                         List.of(LSUse.write(6),
+		                                                 LSUse.read(8)
+		                                         ));
 		final LSAlgorithm algorithm = new LSAlgorithm(List.of(
-				LSInterval.testVar(varA,
-				                   List.of(new LSRange(1, 9), new LSRange(9, 11)),
-				                   List.of(LSUse.write(1),
-				                           LSUse.read(2),
-				                           LSUse.read(8),
-				                           LSUse.write(9),
-				                           LSUse.read(10)
-				                   )),
-				LSInterval.testVar(varB,
-				                   List.of(new LSRange(7, 9)),
-				                   List.of(LSUse.write(7),
-				                           LSUse.read(8)
-				                   ))
+				iA,
+				iB
 		), List.of(
-				LSInterval.testFixed(0, List.of(new LSRange(4, 7), new LSRange(11, 12))),
-				LSInterval.testFixed(1, List.of(new LSRange(3, 5)))
+				LSInterval.testFixed(0, List.of(new LSRange(4, 6), new LSRange(10))),
+				LSInterval.testFixed(1, List.of(new LSRange(2, 5)))
 		), List.of(), 2);
 
-		final Map<IRVar, LSVarRegisters> result = algorithm.run();
-		assertEquals(2, result.size());
+		algorithm.run();
 
-		LSVarRegisters registers = result.get(varA);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_LIVE, registers, 0, 1);
-		assertEqualsRegisterOrState(0, registers, 1, 4);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_REGISTER, registers, 4, 8);
-		assertEqualsRegisterOrState(0, registers, 8, 11);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_LIVE, registers, 11, 20);
+		assertEquals(0, iA.getFrom());
+		assertEquals(3, iA.getTo());
+		assertEquals(1, iA.register());
 
-		assertNoTransition(registers, 0, 4);
-		assertEquals(new Pair<>(varA.asRegister(0), varA), registers.getTransitionAt(4));
-		assertNoTransition(registers, 5, 8);
-		assertEquals(new Pair<>(varA, varA.asRegister(0)), registers.getTransitionAt(8));
-		assertNoTransition(registers, 9, 20);
+		LSInterval split = iA.getNextSplit();
+		assertNotNull(split);
+		assertEquals(3, split.getFrom());
+		assertEquals(7, split.getTo());
+		assertEquals(-1, split.register());
 
-		registers = result.get(varB);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_LIVE, registers, 0, 7);
-		assertEqualsRegisterOrState(1, registers, 7, 9);
-		assertEqualsRegisterOrState(LSVarRegisters.NOT_LIVE, registers, 9, 20);
+		split = split.getNextSplit();
+		assertNotNull(split);
+		assertEquals(7, split.getFrom());
+		assertEquals(10, split.getTo());
+		assertEquals(0, split.register());
+		assertNull(split.getNextSplit());
+
+		// iB
+		assertEquals(6, iB.getFrom());
+		assertEquals(8, iB.getTo());
+		assertEquals(1, iB.register());
+		assertNull(iB.getNextSplit());
 	}
 
 	private void assertEqualsRegisterOrState(int expectedRegisterOrState, LSVarRegisters registers, int from, int to) {

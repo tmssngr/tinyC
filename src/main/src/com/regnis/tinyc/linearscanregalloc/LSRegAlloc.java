@@ -27,21 +27,26 @@ public final class LSRegAlloc {
 		DetectVarLiveness.process(cfg, function.varInfos().cantBeRegister(), false);
 		final List<BasicBlock> blocks = cfg.blocks();
 
+		IRInstruction.debugPrint(preprocessorResult.instructions());
+
 		final IRVarInfos varInfos = preprocessorResult.varInfos();
-		final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(function.returnType(), varInfos.getArgumentTypes());
 
 		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, isX86);
-		intervalFactory.handleBlocks(varInfos, callingConvention, blocks);
+		intervalFactory.handleBlocks(blocks);
 		final Map<String, LSIntervalFactory.Indices> blockToIndex = intervalFactory.getBlockToIndex();
 		final List<LSIntervalFactory.Indices> blockBoundaries = intervalFactory.getBlockIndices();
 
-//		intervalFactory.debugPrint(function.name());
+		intervalFactory.debugPrint(function.name());
 
-		final LSAlgorithm algorithm = new LSAlgorithm(intervalFactory.getVarIntervalsSorted(), intervalFactory.getFixedIntervals(), blockBoundaries, registerCount);
-		final Map<IRVar, LSVarRegisters> registerVarIntervals = algorithm.run();
+		final List<LSInterval> varIntervals = intervalFactory.getVarIntervalsSorted();
+		final LSAlgorithm algorithm = new LSAlgorithm(varIntervals, intervalFactory.getFixedIntervals(), blockBoundaries, registerCount);
+
+		algorithm.run();
+
+		intervalFactory.debugPrint(function.name());
 
 		final Function<IRVar, IRVar> localCopyToGlobalOriginal = preprocessorResult.localCopyToGlobalOriginal();
-		final LSRegAlloc regAlloc = new LSRegAlloc(registerVarIntervals, localCopyToGlobalOriginal, registerCount, cfg, blockToIndex, varInfos);
+		final LSRegAlloc regAlloc = new LSRegAlloc(varIntervals, localCopyToGlobalOriginal, registerCount, cfg, blockToIndex, varInfos);
 		regAlloc.determineMovesAtBlockEdges(blocks);
 		regAlloc.processInstructions(intervalFactory.getInstructions());
 
@@ -56,7 +61,7 @@ public final class LSRegAlloc {
 
 	private final List<IRInstruction> instructions = new ArrayList<>();
 	private final Map<Integer, List<IRMove>> indexToMoves = new HashMap<>();
-	private final Map<IRVar, LSVarRegisters> varToRegisters;
+	private final Map<IRVar, LSInterval> varToInterval;
 	private final Function<IRVar, IRVar> localCopyToOriginal;
 	private final int registerCount;
 	private final ControlFlowGraph cfg;
@@ -65,8 +70,11 @@ public final class LSRegAlloc {
 
 	private int pos;
 
-	private LSRegAlloc(@NotNull Map<IRVar, LSVarRegisters> varToRegisters, Function<IRVar, IRVar> localCopyToOriginal, int registerCount, ControlFlowGraph cfg, Map<String, LSIntervalFactory.Indices> blockToIndex, IRCanBeRegister canBeRegister) {
-		this.varToRegisters = varToRegisters;
+	private LSRegAlloc(@NotNull List<LSInterval> varIntervals, @NotNull Function<IRVar, IRVar> localCopyToOriginal, int registerCount, ControlFlowGraph cfg, Map<String, LSIntervalFactory.Indices> blockToIndex, IRCanBeRegister canBeRegister) {
+		this.varToInterval = new HashMap<>();
+		for (LSInterval interval : varIntervals) {
+			varToInterval.put(interval.var(), interval);
+		}
 		this.localCopyToOriginal = localCopyToOriginal;
 		this.registerCount = registerCount;
 		this.cfg = cfg;
@@ -88,36 +96,36 @@ public final class LSRegAlloc {
 		switch (instruction) {
 		case IRAddConst addConst -> {
 			IRVar var = addConst.var();
-			var = source(var);
+			var = sourceExpectReg(var);
 			add(new IRAddConst(var, addConst.offset()));
 		}
 		case IRAddrOf addrOf -> {
 			IRVar target = addrOf.target();
-			target = target(target);
+			target = targetExpectReg(target);
 			add(new IRAddrOf(target, addrOf.source(), addrOf.location()));
 		}
 		case IRAddrOfArray addrOfArray -> {
 			IRVar target = addrOfArray.addr();
-			target = target(target);
+			target = targetExpectReg(target);
 			add(new IRAddrOfArray(target, addrOfArray.array(), addrOfArray.location()));
 		}
 		case IRBinary binary -> {
 			if (binary.op() != IRBinary.Op.Mod) {
 				Utils.assertTrue(binary.left().equals(binary.target()));
 			}
-			final IRVar left = source(binary.left());
-			final IRVar right = source(binary.right());
-			final IRVar target = target(binary.target());
+			final IRVar left = sourceExpectReg(binary.left());
+			final IRVar right = sourceExpectReg(binary.right());
+			final IRVar target = targetExpectReg(binary.target());
 			add(new IRBinary(target, binary.op(), left, right, binary.location()));
 		}
 		case IRBranch branch -> {
-			final IRVar var = source(branch.conditionVar());
+			final IRVar var = sourceExpectReg(branch.conditionVar());
 			add(new IRBranch(var, branch.jumpOnTrue(), branch.target(), branch.nextLabel()));
 		}
 		case IRCall call -> {
 			IRVar target = call.target();
 			if (target != null) {
-				target = target(target);
+				target = targetExpectReg(target);
 			}
 			final List<IRVar> args = new ArrayList<>();
 			for (IRVar arg : call.args()) {
@@ -126,49 +134,54 @@ public final class LSRegAlloc {
 			add(new IRCall(target, call.type(), call.name(), args, call.location()));
 		}
 		case IRCast cast -> {
-			final IRVar source = source(cast.source());
-			final IRVar target = target(cast.target());
+			final IRVar source = sourceExpectReg(cast.source());
+			final IRVar target = targetExpectReg(cast.target());
 			add(new IRCast(target, source, cast.location()));
 		}
 		case IRComment ignored -> add(instruction);
 		case IRCompare compare -> {
 			IRVar target = compare.target();
-			target = target(target);
-			final IRVar left = source(compare.left());
-			final IRVar right = source(compare.right());
+			target = targetExpectReg(target);
+			final IRVar left = sourceExpectReg(compare.left());
+			final IRVar right = sourceExpectReg(compare.right());
 			add(new IRCompare(target, compare.op(), left, right, compare.location()));
 		}
 		case IRCompareConst compare -> {
 			IRVar target = compare.target();
-			target = target(target);
-			final IRVar left = source(compare.left());
+			target = targetExpectReg(target);
+			final IRVar left = sourceExpectReg(compare.left());
 			add(new IRCompareConst(target, compare.op(), left, compare.value(), compare.location()));
 		}
 		case IRJump ignored -> add(instruction);
 		case IRLabel ignored -> add(instruction);
 		case IRLiteral literal -> {
 			IRVar target = literal.target();
-			target = target(target);
+			target = targetExpectReg(target);
 			add(new IRLiteral(target, literal.value(), literal.location()));
 		}
 		case IRMemLoad load -> {
-			final IRVar addr = source(load.addr());
-			final IRVar target = target(load.target());
+			final IRVar addr = sourceExpectReg(load.addr());
+			final IRVar target = targetExpectReg(load.target());
 			add(new IRMemLoad(target, addr, load.location()));
 		}
 		case IRMemStore store -> {
-			final IRVar addr = source(store.addr());
-			final IRVar value = source(store.value());
+			final IRVar addr = sourceExpectReg(store.addr());
+			final IRVar value = sourceExpectReg(store.value());
 			add(new IRMemStore(addr, value, store.location()));
 		}
 		case IRMove move -> {
 			IRVar target = move.target();
 			target = target(target);
 			final IRVar source = source(move.source());
+
+			final boolean sourceIsReg = source.scope() == VariableScope.register;
+			final boolean targetIsReg = target.scope() == VariableScope.register;
+			Utils.assertTrue(sourceIsReg || targetIsReg);
+
 			boolean skip = source.equals(target);
 			if (!skip
-			    && source.scope() == VariableScope.register
-			    && target.scope() == VariableScope.register
+			    && sourceIsReg
+			    && targetIsReg
 			    && source.index() == target.index()) {
 				skip = true;
 			}
@@ -177,12 +190,12 @@ public final class LSRegAlloc {
 			}
 		}
 		case IRString string -> {
-			final IRVar target = target(string.target());
+			final IRVar target = targetExpectReg(string.target());
 			add(new IRString(target, string.stringIndex(), string.location()));
 		}
 		case IRUnary unary -> {
-			final IRVar source = source(unary.source());
-			final IRVar target = target(unary.target());
+			final IRVar source = sourceExpectReg(unary.source());
+			final IRVar target = targetExpectReg(unary.target());
 			add(new IRUnary(unary.op(), target, source));
 		}
 		default -> throw new UnsupportedOperationException(String.valueOf(instruction));
@@ -190,8 +203,9 @@ public final class LSRegAlloc {
 	}
 
 	private void processMoves() {
-		for (LSVarRegisters varRegisters : varToRegisters.values()) {
-			final Pair<IRVar, IRVar> transition = varRegisters.getTransitionAt(pos);
+		for (Map.Entry<IRVar, LSInterval> entry : varToInterval.entrySet()) {
+			final LSInterval interval = entry.getValue();
+			final Pair<IRVar, IRVar> transition = interval.getTransitionAt(pos);
 			if (transition != null) {
 				final IRVar from = transition.first();
 				final IRVar to = transition.second();
@@ -207,36 +221,49 @@ public final class LSRegAlloc {
 		}
 	}
 
+	private IRVar sourceExpectReg(IRVar source) {
+		final IRVar var = convertVar(source, pos, true, false);
+		Utils.assertTrue(var.scope() == VariableScope.register, var.name());
+		return var;
+	}
+
 	private IRVar source(IRVar source) {
-		return convertVar(source, pos);
+		return convertVar(source, pos, true, false);
+	}
+
+	private IRVar targetExpectReg(IRVar target) {
+		final IRVar var = convertVar(target, pos, false, true);
+		Utils.assertTrue(var.scope() == VariableScope.register, var.name());
+		return var;
 	}
 
 	private IRVar target(IRVar target) {
-		return convertVar(target, pos + 1);
+		return convertVar(target, pos, false, true);
 	}
 
-	private IRVar convertVar(IRVar var, int pos) {
+	private IRVar convertVar(IRVar var, int pos, boolean read, boolean write) {
 		if (var.scope() == VariableScope.register) {
 			return var;
 		}
 
-		final LSVarRegisters registers = varToRegisters.get(var);
-		if (registers == null) {
+		final LSInterval interval = varToInterval.get(var);
+		if (interval == null) {
 			return var;
 		}
 
-		final int registerOrState = registers.getRegisterOrState(pos);
-		Utils.assertTrue(registerOrState >= LSVarRegisters.NOT_REGISTER);
-		if (registerOrState == LSVarRegisters.NOT_REGISTER) {
+		final LSInterval subInterval = interval.getSubInterval(pos, read, write);
+		Utils.assertTrue(subInterval != null);
+		final int register = subInterval.register();
+		if (register < 0) {
 			final IRVar result = localCopyToOriginal.apply(var);
 			return result != null ? result : var;
 		}
-		return var.asRegister(registerOrState);
+		return var.asRegister(register);
 	}
 
 	private void add(IRInstruction instruction) {
 		instructions.add(instruction);
-//		System.out.println("\t" + instruction);
+		System.out.println("\t" + instruction);
 	}
 
 	private void determineMovesAtBlockEdges(List<BasicBlock> blocks) {
@@ -264,17 +291,25 @@ public final class LSRegAlloc {
 				continue;
 			}
 
-			final LSVarRegisters registers = varToRegisters.get(var);
-			if (registers == null) {
+			final LSInterval interval = varToInterval.get(var);
+			if (interval == null) {
 				Utils.assertTrue(!canBeRegister.canBeRegister(var));
 				continue;
 			}
 
 			Utils.assertTrue(canBeRegister.canBeRegister(var));
+			final Pair<IRVar, IRVar> transition = interval.getTransitionAt(blockIndex);
+			if (transition != null) {
+				final int from = transition.first().scope() == VariableScope.register ? transition.first().index() : -1;
+				final int to = transition.second().scope() == VariableScope.register ? transition.second().index() : -1;
+				transfers.add(new LSParallelMove.VarTransfer(var, from, to));
+			}
+/*
 			final int varInReg = registers.getRegisterOrState(blockIndex);
 			final int predecessorIndex = predecessorEndIndex + 1;
 			final int varOutReg = registers.getRegisterOrState(predecessorIndex);
 			transfers.add(new LSParallelMove.VarTransfer(var, varOutReg, varInReg));
+*/
 		}
 
 		if (transfers.isEmpty()) {

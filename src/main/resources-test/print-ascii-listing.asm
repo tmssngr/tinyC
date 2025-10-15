@@ -80,10 +80,11 @@ start:
         mov rdx, rcx
         ; const t.6{r3}, 1
         mov r8, 1
-        ; add t.4{r2}, t.4{r2}, t.6{r3}
-        add rdx, r8
-        ; cast str{r1}(u8*), t.4{r2}(i64)
+        ; move t.4{r1}, t.5{r2}
         mov rcx, rdx
+        ; add t.4{r1}, t.4{r1}, t.6{r3}
+        add rcx, r8
+        ; cast str{r1}(u8*), t.4{r1}(i64)
 @for_1:
         ; load t.3{r2}, [str{r1}]
         mov dl, [rcx]

@@ -2,6 +2,7 @@ package com.regnis.tinyc.linearscanregalloc;
 
 import com.regnis.tinyc.*;
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
@@ -26,18 +27,27 @@ public final class LSPreprocessor {
 		final LSTempRegisterVars tempRegisterVars = new LSTempRegisterVars(function.varInfos());
 		final var globalVarPreprocessor = new LSPreprocessorCachedVarLayer(function.varInfos(), tempRegisterVars, nextLayer);
 
-		storeRegisterArgsInVars(function.varInfos(), callingConvention.argRegisters(), globalVarPreprocessor);
-		LSPreprocessorLayer.process(globalVarPreprocessor, function.instructions());
+		final List<IRInstruction> instructions = function.instructions();
+		storeRegisterArgsInVars(function.varInfos(), callingConvention.argRegisters(), instructions, globalVarPreprocessor);
+		LSPreprocessorLayer.process(globalVarPreprocessor, instructions);
 
 		final IRVarInfos varInfos = tempRegisterVars.createVarInfos();
 		final Function<IRVar, IRVar> localCopyToGlobalOriginal = globalVarPreprocessor.getLocalCopyToOriginal(null);
 		return new Result(varInfos, resultLayer.instructions, localCopyToGlobalOriginal);
 	}
 
-	private static void storeRegisterArgsInVars(IRVarInfos varInfos, List<Integer> argRegisters, LSPreprocessorLayer layer) {
+	private static void storeRegisterArgsInVars(IRVarInfos varInfos, List<Integer> argRegisters, List<IRInstruction> instructions, LSPreprocessorLayer layer) {
+		final ControlFlowGraph cfg = CfgGenerator.create("name", instructions);
+		DetectVarLiveness.process(cfg, varInfos.cantBeRegister(), false);
+		final Set<IRVar> liveBefore = cfg.blocks().getFirst().getLiveBefore();
+
 		for (IRVarDef def : varInfos.vars()) {
 			final IRVar var = def.var();
 			if (var.scope() != VariableScope.argument) {
+				continue;
+			}
+
+			if (!liveBefore.contains(var)) {
 				continue;
 			}
 

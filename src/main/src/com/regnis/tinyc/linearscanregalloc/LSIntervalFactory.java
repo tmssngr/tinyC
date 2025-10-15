@@ -23,7 +23,8 @@ final class LSIntervalFactory {
 	private final LSCallingConventionProvider callingConventionProvider;
 	private final boolean isX86;
 
-	private IndicesImpl indices;
+	private int pos;
+	private int blockStart;
 
 	public LSIntervalFactory(@NotNull IRCanBeRegister canBeRegister, @NotNull LSCallingConventionProvider callingConventionProvider, int registerCount, boolean isX86) {
 		this.canBeRegister = canBeRegister;
@@ -35,12 +36,26 @@ final class LSIntervalFactory {
 
 	public void debugPrint(@NotNull String name) {
 		System.out.println(name);
+		printInstructions();
 
-		printFixedIntervals();
+		final int max = determineMaxPos();
+
+		printFixedIntervals(max);
 		System.out.println();
 
-		printVarIntervals(varIntervals);
+		printVarIntervals(max);
 		System.out.println();
+	}
+
+	private void printInstructions() {
+		int pos = 0;
+		for (IRInstruction instruction : instructions) {
+			System.out.printf("%03d %s %s\n",
+			                  pos,
+			                  instruction instanceof IRLabel ? "" : "    ",
+			                  instruction.toString());
+			pos += 2;
+		}
 	}
 
 	@NotNull
@@ -79,212 +94,33 @@ final class LSIntervalFactory {
 		return Collections.unmodifiableMap(blockToIndex);
 	}
 
-	public void addFunctionArgs(@NotNull IRVarInfos varInfos, @NotNull List<Integer> argRegisters) {
-		Utils.assertTrue(instructions.isEmpty());
+	public void handleBlocks(List<BasicBlock> blocks) {
+		record Block(String name, List<IRInstruction> instructions, Set<IRVar> liveAfter) {
+		}
 
-		for (IRVarDef varDef : varInfos.vars()) {
-			final IRVar var = varDef.var();
-			if (var.scope() != VariableScope.argument) {
-				continue;
-			}
+		final List<Block> blocksWithLabels = new ArrayList<>();
+		pos = 0;
+		blocks.forEach(block -> {
+			final String name = block.name;
+			final List<IRInstruction> instructions = getInstructionsWithLabel(name, block.instructions());
+			blocksWithLabels.add(new Block(name, instructions, block.getLiveAfter()));
+			pos += 2 * instructions.size();
+		});
 
-			final int index = var.index();
-			if (index >= argRegisters.size()) {
-				continue;
-			}
-
-			final int register = argRegisters.get(index);
-			final LSInterval interval = getRegisterInterval(register);
-			interval.startNewRange(-1);
+		for (Block block : blocksWithLabels.reversed()) {
+			handleBlock(block.name, block.instructions, block.liveAfter);
 		}
 	}
 
-	public void handleBlocks(IRVarInfos varInfos, LSCallingConvention callingConvention, List<BasicBlock> blocks) {
-		addFunctionArgs(varInfos, callingConvention.argRegisters());
-		for (BasicBlock block : blocks) {
-			handleBlock(block);
-		}
-	}
-
-	private void handleBlock(BasicBlock block) {
-		blockStart(block.name, block.getLiveBefore());
-
-		if (block.name.startsWith("@")) {
-			final Set<IRVar> live = block.getLiveBefore();
-			addInstruction(new IRLabel(block.name), live);
-		}
-
-		final List<IRInstruction> instructions = block.instructions();
-		for (int i = 0; i < instructions.size(); i++) {
-			final IRInstruction instruction = instructions.get(i);
-			final Set<IRVar> liveAfter = block.getLiveAfter(i);
-			addInstruction(instruction, liveAfter);
-		}
-	}
-
-	public void blockStart(String name, @NotNull Set<IRVar> liveBefore) {
-		// just to create predictable order
-		final List<IRVar> liveBeforeSorted = new ArrayList<>(liveBefore);
-		liveBeforeSorted.sort(Comparator.comparing(IRVar::index));
-
-		final int index = getIndex();
-		indices = new IndicesImpl(index);
-		blockToIndex.put(name, indices);
-
-		for (IRVar var : liveBeforeSorted) {
-			if (!canBeRegister(var)) {
-				continue;
-			}
-			final LSInterval interval = getInterval(var);
-			interval.extendRangeMaybeCreate(index);
-		}
-	}
-
-	public void addInstruction(@NotNull IRInstruction instruction, @NotNull Set<IRVar> liveAfter) {
-//		System.out.println(getIndex() + ":\t" + instruction);
-
-		switch (instruction) {
-		case IRAddConst addConst -> {
-			handleSource(addConst.var());
-			handleTarget(addConst.var());
-		}
-		case IRAddrOf addrOf -> {
-			handleTarget(addrOf.target());
-		}
-		case IRAddrOfArray addrOf -> handleTarget(addrOf.addr());
-		case IRBinary binary -> {
-			final IRVar left = binary.left();
-			final IRVar right = binary.right();
-			final IRVar target = binary.target();
-			handleSource(left);
-			handleSource(right);
-
-			final IRBinary.Op op = binary.op();
-			if (isX86) {
-				switch (op) {
-				case Div -> {
-					// https://www.felixcloutier.com/x86/idiv
-					// (rdx rax) / %reg -> rax
-					final int index = getIndex();
-					final int rax = 0;
-					final int rdx = 2;
-					expectRegister(left, rax);
-					expectRegister(target, rax);
-					getRegisterInterval(rax).startNewRangeIfSmaller(index);
-					getRegisterInterval(rdx).startNewRangeIfSmaller(index);
-				}
-				case Mod -> {
-					// https://www.felixcloutier.com/x86/idiv
-					// (rdx rax) % %reg -> rdx
-					final int index = getIndex();
-					final int rax = 0;
-					final int rdx = 2;
-					expectRegister(left, rax);
-					expectRegister(target, rdx);
-					getRegisterInterval(rax).startNewRangeIfSmaller(index);
-					getRegisterInterval(rdx).startNewRangeIfSmaller(index);
-				}
-				case ShiftLeft, ShiftRight -> {
-					final int index = getIndex();
-					final int rcx = 1;
-					expectRegister(right, rcx);
-					getRegisterInterval(rcx).startNewRangeIfSmaller(index);
-				}
-				}
-			}
-
-			handleTarget(binary.target());
-		}
-		case IRBranch branch -> handleSource(branch.conditionVar());
-		case IRCall call -> {
-			for (IRVar arg : call.args()) {
-				handleSource(arg);
-			}
-
-			final LSCallingConvention targetCallingConvention = callingConventionProvider.getCallingConvention(call.type(), call.getArgumentTypes());
-
-			final int index = getIndex();
-			for (int i = 0; i < targetCallingConvention.volatileRegisterCount(); i++) {
-				final LSInterval interval = getRegisterInterval(i);
-				// can already be larger by handleSource of args
-				interval.startNewRangeIfSmaller(index);
-			}
-
-			final IRVar target = call.target();
-			if (target != null) {
-				expectRegister(target, 0);
-				final LSInterval interval = getInterval(target);
-				interval.extendRange(index + 2);
-				interval.addUse(index + 1);
-			}
-		}
-		case IRCast cast -> {
-			handleSource(cast.source());
-			handleTarget(cast.target());
-		}
-		case IRComment ignored -> {
-		}
-		case IRCompare compare -> {
-			handleSource(compare.left());
-			handleSource(compare.right());
-			handleTarget(compare.target());
-		}
-		case IRCompareConst compare -> {
-			handleSource(compare.left());
-			handleTarget(compare.target());
-		}
-		case IRJump ignored -> {
-		}
-		case IRLabel ignored -> {
-		}
-		case IRLiteral literal -> handleTarget(literal.target());
-		case IRMemLoad load -> {
-			handleSource(load.addr());
-			handleTarget(load.target());
-		}
-		case IRMemStore store -> {
-			handleSource(store.addr());
-			handleSource(store.value());
-		}
-		case IRMove move -> {
-			final IRVar source = move.source();
-			handleSource(source);
-			final LSInterval interval = handleTarget(move.target());
-			if (interval != null && source.scope() == VariableScope.register) {
-				interval.setRegisterHint(source.index());
-			}
-		}
-		case IRString literal -> handleTarget(literal.target());
-		case IRUnary unary -> {
-			handleSource(unary.source());
-			handleTarget(unary.target());
-		}
-		default -> throw new UnsupportedOperationException(instruction.toString());
-		}
-
-		extendLiveRanges(liveAfter);
-
-		instructions.add(instruction);
-
-		if (!(instruction instanceof IRBranch)
-		    && !(instruction instanceof IRJump)
-		    && indices != null) {
-			indices.setEnd(getIndex());
-		}
-	}
-
-	private void expectRegister(IRVar target, int expectedReg) {
-		Utils.assertTrue(target.scope() == VariableScope.register);
-		Utils.assertTrue(target.index() == expectedReg);
-	}
-
-	public void printVarIntervals(List<LSInterval> intervals) {
-		final int max = getIndex();
-		intervals = new ArrayList<>(intervals);
+	public void printVarIntervals(int max) {
+		final List<LSInterval> intervals = new ArrayList<>(varIntervals);
 		intervals.sort(Comparator.comparingInt(LSInterval::getFrom));
 		for (LSInterval interval : intervals) {
-			final String rangesString = interval.rangesAsString(max, blockToIndex.values());
-			println(interval.getName(), rangesString);
+			while (interval != null) {
+				final String rangesString = interval.rangesAsString(max, blockToIndex.values());
+				println(interval.getName(), rangesString);
+				interval = interval.getNextSplit();
+			}
 		}
 	}
 
@@ -294,9 +130,190 @@ final class LSIntervalFactory {
 		return Collections.unmodifiableList(blockBoundaries);
 	}
 
-	private void printFixedIntervals() {
-		final int max = getIndex();
+	private int determineMaxPos() {
+		int max = 0;
+		for (LSInterval interval : fixedIntervals) {
+			if (interval != null) {
+				max = Math.max(interval.getTo(), max);
+			}
+		}
+		for (LSInterval interval : varIntervals) {
+			while (true) {
+				final LSInterval split = interval.getNextSplit();
+				if (split == null) {
+					break;
+				}
+				interval = split;
+			}
+			max = Math.max(interval.getTo(), max);
+		}
+		return max;
+	}
 
+	@NotNull
+	private List<IRInstruction> getInstructionsWithLabel(String name, List<IRInstruction> instructions) {
+		if (name.startsWith("@")) {
+			instructions = new ArrayList<>(instructions);
+			instructions.addFirst(new IRLabel(name));
+		}
+		return instructions;
+	}
+
+	private void handleBlock(String name, List<IRInstruction> instructions, Set<IRVar> liveAfter) {
+		final Set<IRVar> live = new HashSet<>(liveAfter);
+
+		blockStart = pos - 2 * instructions.size();
+		Utils.assertTrue(blockStart >= 0);
+
+		final List<IRVar> liveSorted = new ArrayList<>(live);
+		liveSorted.sort(Comparator.comparing(IRVar::scope).thenComparingInt(IRVar::index));
+		liveSorted.forEach(var -> {
+			if (canBeRegister.canBeRegister(var)) {
+				final LSInterval interval = getInterval(var);
+				interval.add(blockStart, pos);
+			}
+		});
+
+		int end = -1;
+		for (IRInstruction instruction : instructions.reversed()) {
+			if (!(instruction instanceof IRBranch)
+			    && !(instruction instanceof IRJump)
+			    && end < 0) {
+				end = pos;
+			}
+			pos -= 2;
+			handleInstruction(instruction, live);
+			this.instructions.addFirst(instruction);
+		}
+
+		Utils.assertTrue(blockStart == pos);
+
+		final IndicesImpl indices = new IndicesImpl(blockStart);
+		indices.setEnd(Math.max(end, 0));
+		blockToIndex.put(name, indices);
+	}
+
+	private void handleInstruction(@NotNull IRInstruction instruction, @NotNull Set<IRVar> live) {
+//		System.out.println(getIndex() + ":\t" + instruction);
+
+		switch (instruction) {
+		case IRAddConst addConst -> {
+			final IRVar var = addConst.var();
+			handleTarget(var, live);
+			handleSource(var, live);
+		}
+		case IRAddrOf addrOf -> handleTarget(addrOf.target(), live);
+		case IRAddrOfArray addrOf -> handleTarget(addrOf.addr(), live);
+		case IRBinary binary -> {
+			final IRVar left = binary.left();
+			final IRVar right = binary.right();
+			final IRVar target = binary.target();
+
+			if (isX86) {
+				final int rax = 0;
+				final int rcx = 1;
+				final int rdx = 2;
+				// https://www.felixcloutier.com/x86/idiv
+				switch (binary.op()) {
+				case Div -> {
+					// (rdx rax) / %reg -> rax
+					expectRegister(left, rax);
+					expectRegister(target, rax);
+
+					handleTarget(target, live);
+					getRegisterInterval(rdx).add(pos - 1, pos);
+
+					handleSource(left, live);
+					handleSource(right, live);
+					return;
+				}
+				case Mod -> {
+					// (rdx rax) % %reg -> rdx
+					expectRegister(left, rax);
+					expectRegister(target, rdx);
+
+					getRegisterInterval(rax).add(pos, pos + 1);
+
+					handleTarget(target, live);
+					final LSInterval rdxInterval = getRegisterInterval(rdx);
+					Utils.assertTrue(rdxInterval.getFrom() >= 0);
+					rdxInterval.truncateFirstRangeTo(pos - 1);
+
+					handleSource(left, live);
+					handleSource(right, live);
+					return;
+				}
+				case ShiftLeft, ShiftRight -> expectRegister(right, rcx);
+				}
+			}
+
+			handleTarget(target, live);
+			handleSource(left, live);
+			handleSource(right, live);
+		}
+		case IRBranch branch -> handleSource(branch.conditionVar(), live);
+		case IRCall call -> {
+			final IRVar target = call.target();
+			if (target != null) {
+				expectRegister(target, 0);
+				handleTarget(target, live);
+			}
+
+			final LSCallingConvention targetCallingConvention = callingConventionProvider.getCallingConvention(call.type(), call.getArgumentTypes());
+
+			for (int i = 0; i < targetCallingConvention.volatileRegisterCount(); i++) {
+				if (target != null && i == 0) {
+					// already handled above
+					continue;
+				}
+
+				final LSInterval interval = getRegisterInterval(i);
+				interval.add(pos, pos + 1);
+			}
+
+			for (IRVar arg : call.args()) {
+				handleSource(arg, live);
+			}
+		}
+		case IRCast cast -> {
+			handleTarget(cast.target(), live);
+			handleSource(cast.source(), live);
+		}
+		case IRComment ignored -> {
+		}
+		case IRCompare compare -> {
+			handleTarget(compare.target(), live);
+			handleSource(compare.left(), live);
+			handleSource(compare.right(), live);
+		}
+		case IRCompareConst compare -> {
+			handleTarget(compare.target(), live);
+			handleSource(compare.left(), live);
+		}
+		case IRJump ignored -> {
+		}
+		case IRLabel ignored -> {
+		}
+		case IRLiteral literal -> handleTarget(literal.target(), live);
+		case IRMemLoad load -> {
+			handleTarget(load.target(), live);
+			handleSource(load.addr(), live);
+		}
+		case IRMemStore store -> {
+			handleSource(store.addr(), live);
+			handleSource(store.value(), live);
+		}
+		case IRMove move -> handleMove(move.source(), move.target(), live);
+		case IRString literal -> handleTarget(literal.target(), live);
+		case IRUnary unary -> {
+			handleTarget(unary.target(), live);
+			handleSource(unary.source(), live);
+		}
+		default -> throw new UnsupportedOperationException(instruction.toString());
+		}
+	}
+
+	private void printFixedIntervals(int max) {
 		for (int reg = 0; reg < fixedIntervals.length; reg++) {
 			final LSInterval interval = fixedIntervals[reg];
 			if (interval == null) {
@@ -311,48 +328,79 @@ final class LSIntervalFactory {
 		System.out.printf("%14s %s\n", s1, s2);
 	}
 
-	private void extendLiveRanges(Set<IRVar> liveAfter) {
-		final int index = getIndex() + 2;
-		for (LSInterval interval : varIntervals) {
-			final IRVar var = interval.var();
-			if (liveAfter.contains(var)) {
-				interval.extendRange(index);
-			}
-		}
+	private void expectRegister(IRVar target, int expectedReg) {
+		Utils.assertTrue(target.scope() == VariableScope.register);
+		Utils.assertTrue(target.index() == expectedReg);
 	}
 
-	private void handleSource(@NotNull IRVar var) {
-		if (!canBeRegister(var)) {
+	private void handleMove(@NotNull IRVar source, @NotNull IRVar target, @NotNull Set<IRVar> live) {
+		if (target.scope() == VariableScope.global) {
+			Utils.assertTrue(source.scope() != VariableScope.global);
+			Utils.assertTrue(canBeRegister.canBeRegister(source));
+			handleSource(source, live);
 			return;
 		}
 
-		final LSInterval interval = getInterval(var);
-
-		final int index = getIndex();
-		interval.extendRange(index + 1);
-		interval.addUse(index);
-	}
-
-	@Nullable
-	private LSInterval handleTarget(@NotNull IRVar var) {
-		if (!canBeRegister(var)) {
-			return null;
+		if (target.scope() != VariableScope.register) {
+			Utils.assertTrue(live.contains(target));
+			if (!canBeRegister.canBeRegister(target)) {
+				Utils.assertTrue(source.scope() != VariableScope.global);
+				Utils.assertTrue(canBeRegister.canBeRegister(source));
+				handleSource(source, live);
+				return;
+			}
 		}
 
-		final LSInterval interval = getInterval(var);
+		final LSInterval interval = handleTarget(target, live);
+		if (source.scope() == VariableScope.global) {
+			return;
+		}
+		if (!canBeRegister.canBeRegister(source)) {
+			return;
+		}
 
-		final int index = getIndex() + 1;
-		interval.startNewRange(index);
-		interval.addUse(index);
+		if (source.scope() == VariableScope.register) {
+			interval.setRegisterHint(source.index());
+		}
+		final LSInterval sourceInterval = handleSource(source, live);
+		if (target.scope() == VariableScope.register) {
+			sourceInterval.setRegisterHint(target.index());
+		}
+	}
+
+	private LSInterval handleSource(@NotNull IRVar var, Set<IRVar> live) {
+		Utils.assertTrue(var.scope() != VariableScope.global);
+		if (var.scope() != VariableScope.register) {
+			live.add(var);
+		}
+		final LSInterval interval = getInterval(var);
+		if (pos > blockStart) {
+			interval.add(blockStart, pos);
+		}
+		interval.addReadUse(pos);
 		return interval;
 	}
 
-	private boolean canBeRegister(@NotNull IRVar var) {
-		if (var.type().isStruct()) {
-			return false;
+	@NotNull
+	private LSInterval handleTarget(@NotNull IRVar var, Set<IRVar> live) {
+		Utils.assertTrue(var.scope() != VariableScope.global);
+		if (var.scope() != VariableScope.register) {
+			Utils.assertTrue(canBeRegister.canBeRegister(var));
+			live.remove(var);
 		}
-		return var.scope() != VariableScope.global
-		       && canBeRegister.canBeRegister(var);
+
+		final LSInterval interval = getInterval(var);
+		// no range yet?
+		if (interval.getFrom() < 0) {
+			Utils.assertTrue(var.scope() == VariableScope.register);
+			Utils.assertTrue(var.index() == 0);
+			interval.add(pos, pos + 1);
+			return interval;
+		}
+
+		interval.truncateFirstRangeTo(pos);
+		interval.addWritePos(pos);
+		return interval;
 	}
 
 	@NotNull
@@ -378,10 +426,6 @@ final class LSIntervalFactory {
 			fixedIntervals[reg] = interval;
 		}
 		return interval;
-	}
-
-	private int getIndex() {
-		return instructions.size() * 2;
 	}
 
 	public interface Indices {

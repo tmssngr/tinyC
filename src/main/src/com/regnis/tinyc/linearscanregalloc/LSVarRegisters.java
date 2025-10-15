@@ -29,12 +29,13 @@ final class LSVarRegisters {
 		return rangeStates + " " + uses + " " + transitions;
 	}
 
-	public void add(@NotNull LSInterval interval, @NotNull List<LSUse> uses) {
+	public void add(@NotNull LSInterval interval) {
 		final int register = interval.register();
 		Utils.assertTrue(register >= NOT_REGISTER);
 
 		final RangeState prevRangeState = rangeStates.isEmpty() ? null : rangeStates.getLast();
 
+		final List<LSUse> uses = interval.uses();
 		Utils.assertTrue(this.uses.isEmpty() || uses.isEmpty() || this.uses.getLast().pos() < uses.getFirst().pos());
 
 		if (prevRangeState != null && prevRangeState.reg() != register) {
@@ -78,7 +79,7 @@ final class LSVarRegisters {
 	private void possiblyAddTransition(int fromPos, int prevReg, int register, @NotNull List<LSUse> uses) {
 		if (uses.size() > 0) {
 			final LSUse firstUse = uses.getFirst();
-			if (firstUse.pos() == fromPos && firstUse.isWrite()) {
+			if (firstUse.pos() == fromPos && firstUse.write()) {
 				return;
 			}
 		}

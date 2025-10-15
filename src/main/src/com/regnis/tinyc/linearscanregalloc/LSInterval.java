@@ -1,7 +1,6 @@
 package com.regnis.tinyc.linearscanregalloc;
 
 import com.regnis.tinyc.*;
-import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
@@ -33,9 +32,11 @@ final class LSInterval {
 	private final List<LSUse> uses = new ArrayList<>();
 	private final IRVar var;
 
-	private LSRange latestRange;
+	private LSRange lastRange;
 	private int register;
 	private int registerHint = -1;
+	private LSInterval parentSplit;
+	private LSInterval nextSplit;
 
 	public LSInterval(@NotNull IRVar var) {
 		this.var = var;
@@ -56,18 +57,33 @@ final class LSInterval {
 			allowRangeFrom = range.to();
 		}
 		for (LSUse use : uses) {
-			Utils.assertTrue(LSRange.contains(use.pos(), ranges));
+			Utils.assertTrue(LSRange.contains(use.pos(), ranges, true));
 		}
 		this.var = var;
 		this.register = register;
 		this.ranges.addAll(ranges);
-		this.latestRange = ranges.getLast();
+		this.lastRange = ranges.getLast();
 		this.uses.addAll(uses);
 	}
 
 	@Override
 	public String toString() {
 		return getName() + " " + ranges;
+	}
+
+	public String toDebugString() {
+		final StringBuilder buffer = new StringBuilder();
+		buffer.append(var());
+		buffer.append("' ");
+		buffer.append(getFrom());
+		buffer.append("...");
+		buffer.append(getTo());
+		if (registerHint >= 0) {
+			buffer.append(" (rh=");
+			buffer.append(registerHint);
+			buffer.append(")");
+		}
+		return buffer.toString();
 	}
 
 	@NotNull
@@ -140,69 +156,51 @@ final class LSInterval {
 
 		buffer.append("\t");
 		buffer.append(ranges);
-		buffer.append("; ");
-		buffer.append(uses);
+		if (uses.size() > 0) {
+			buffer.append("; ");
+			buffer.append(uses);
+		}
 		return buffer.toString();
 	}
 
-	public void addUse(int index) {
-		Utils.assertTrue(latestRange != null);
-		Utils.assertTrue(latestRange.contains(index, false));
+	public void add(int from, int to) {
+		Utils.assertTrue(from >= 0);
+		Utils.assertTrue(from < to);
 
-		if (isFixed()) {
-			return;
+		if (ranges.size() > 0) {
+			final LSRange firstRange = ranges.getFirst();
+			if (firstRange.from() == from) {
+				Utils.assertTrue(to <= firstRange.to());
+				return;
+			}
+
+			Utils.assertTrue(to <= firstRange.from());
+			if (to == firstRange.from()) {
+				firstRange.setFrom(from);
+				return;
+			}
 		}
 
-		if (uses.size() > 0) {
-			final LSUse lastUse = uses.getLast();
-			Utils.assertTrue(index > lastUse.pos());
-		}
-
-		uses.add(new LSUse(index));
-	}
-
-	public void extendRange(int index) {
-		if (latestRange == null) {
-			Utils.assertTrue(var != null);
-			Utils.assertTrue(var.scope() == VariableScope.global);
-			startNewRange(index - 1);
-		}
-		Objects.requireNonNull(latestRange).extend(index);
-	}
-
-	public void extendRangeMaybeCreate(int index) {
-		if (latestRange != null) {
-			latestRange.extend(index + 1);
-		}
-		else {
-			startNewRange(index);
-		}
-	}
-
-	public void startNewRange(int index) {
-		if (latestRange != null) {
-			Utils.assertTrue(index >= latestRange.to());
-		}
-		latestRange = new LSRange(index);
-		ranges.add(latestRange);
-	}
-
-	public void startNewRangeIfSmaller(int index) {
-		if (getTo() <= index) {
-			startNewRange(index);
+		final LSRange range = new LSRange(from, to);
+		ranges.addFirst(range);
+		if (lastRange == null) {
+			lastRange = range;
 		}
 	}
 
 	public int getFrom() {
+		if (ranges.isEmpty()) {
+			return -1;
+		}
 		return ranges.getFirst().from();
 	}
 
 	public int getTo() {
-		return latestRange != null ? latestRange.to() : -1;
+		return lastRange != null ? lastRange.to() : -1;
 	}
 
 	public boolean contains(int pos) {
-		return LSRange.contains(pos, ranges);
+		return LSRange.contains(pos, ranges, false);
 	}
 
 	public void setRegister(int register) {
@@ -211,20 +209,25 @@ final class LSInterval {
 
 	@NotNull
 	public LSInterval truncateAndSplit(int pos) {
+		Utils.assertTrue(var != null);
+		Utils.assertTrue(nextSplit == null);
+
 		final Pair<List<LSRange>, List<LSRange>> split = LSRange.split(pos, ranges);
 		final List<LSRange> firstRanges = split.first();
 		Utils.assertTrue(firstRanges.size() > 0);
 		final List<LSRange> lastRanges = split.second();
 		Utils.assertTrue(lastRanges.size() > 0);
 
+		final int actualSplitPos = lastRanges.getFirst().from();
+
 		this.ranges.clear();
 		this.ranges.addAll(firstRanges);
-		this.latestRange = firstRanges.getLast();
+		this.lastRange = firstRanges.getLast();
 
 		final List<LSUse> subUses = new ArrayList<>();
 		for (LSUse use : uses) {
 			final int usePos = use.pos();
-			if (usePos >= pos) {
+			if (usePos >= actualSplitPos) {
 				subUses.add(use);
 			}
 		}
@@ -233,7 +236,10 @@ final class LSInterval {
 			this.uses.removeLast();
 		}
 
-		return new LSInterval(var, -1, lastRanges, subUses);
+		final LSInterval splitOffInterval = new LSInterval(var, -1, lastRanges, subUses);
+		splitOffInterval.parentSplit = this;
+		nextSplit = splitOffInterval;
+		return splitOffInterval;
 	}
 
 	public int getFreeUntil(int pos) {
@@ -241,15 +247,51 @@ final class LSInterval {
 		return LSRange.getFreeUntil(pos, ranges);
 	}
 
-	public int getUsedNext(int pos, int notUsedValue) {
+	@Nullable
+	public LSUse getUsedNext(int pos) {
 		Utils.assertTrue(var != null);
 		for (LSUse use : uses) {
 			final int usePos = use.pos();
 			if (usePos >= pos) {
-				return usePos;
+				return use;
 			}
 		}
-		return notUsedValue;
+		return null;
+	}
+
+	public void truncateFirstRangeTo(int pos) {
+		Utils.assertTrue(pos >= 0);
+		Utils.assertTrue(ranges.size() > 0);
+		final LSRange firstRange = ranges.getFirst();
+		Utils.assertTrue(pos < firstRange.to());
+		firstRange.setFrom(pos);
+	}
+
+	public void addReadUse(int pos) {
+		Utils.assertTrue(pos >= 0);
+		if (var == null) {
+			return;
+		}
+		if (uses.size() > 0) {
+			final LSUse first = uses.getFirst();
+			if (first.pos() == pos) {
+				Utils.assertTrue(first.write());
+				return;
+			}
+			Utils.assertTrue(pos < first.pos());
+		}
+		uses.addFirst(new LSUse(pos, false));
+	}
+
+	public void addWritePos(int pos) {
+		Utils.assertTrue(pos >= 0);
+		if (var == null) {
+			return;
+		}
+		if (uses.size() > 0) {
+			Utils.assertTrue(pos < uses.getFirst().pos());
+		}
+		uses.addFirst(new LSUse(pos, true));
 	}
 
 	public int getRegisterHint() {
@@ -260,8 +302,79 @@ final class LSInterval {
 		this.registerHint = registerHint;
 	}
 
+	@Nullable
+	public LSUse getUseBefore(int end) {
+		LSUse prev = null;
+		for (LSUse use : uses) {
+			if (use.pos() >= end) {
+				break;
+			}
+			prev = use;
+		}
+		return prev;
+	}
+
+	@Nullable
+	public LSInterval getSubInterval(int pos, boolean read, boolean write) {
+		return getSubInterval(this, pos, read, write);
+	}
+
+	@Nullable
+	public Pair<IRVar, IRVar> getTransitionAt(int pos) {
+		Utils.assertTrue(var != null);
+
+		LSInterval prev = this;
+		for (LSInterval next = nextSplit; next != null; prev = next, next = prev.nextSplit) {
+			final int nextFrom = next.getFrom();
+			if (prev.getTo() < nextFrom) {
+				continue;
+			}
+			if (pos < nextFrom) {
+				break;
+			}
+			if (pos == nextFrom) {
+				final IRVar from = prev.register >= 0 ? prev.var().asRegister(prev.register) : prev.var();
+				final IRVar to = next.register >= 0 ? next.var().asRegister(next.register) : next.var();
+				return new Pair<>(from, to);
+			}
+		}
+		return null;
+	}
+
+	@Nullable
+	public LSInterval getNextSplit() {
+		return nextSplit;
+	}
+
+	public int getFreeUntil(LSInterval interval) {
+		return LSRange.getIntersectionFreeUntil(ranges, interval.ranges);
+	}
+
 	private boolean isFixed() {
 		return var == null;
+	}
+
+	@Nullable
+	private static LSInterval getSubInterval(LSInterval interval, int pos, boolean read, boolean write) {
+		for (; interval != null; interval = interval.nextSplit) {
+			final int from = interval.getFrom();
+			if (from == pos && write) {
+				return interval;
+			}
+			if (pos <= from) {
+				break;
+			}
+
+			final int to = interval.getTo();
+			if (pos < to) {
+				return interval;
+			}
+
+			if (read && pos == to) {
+				return interval;
+			}
+		}
+		return null;
 	}
 
 	private static void debugPositions(int max, StringBuilder buffer) {

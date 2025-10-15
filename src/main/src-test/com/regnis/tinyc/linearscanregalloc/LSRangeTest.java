@@ -43,6 +43,16 @@ public class LSRangeTest {
 	}
 
 	@Test
+	public void testGetIntersectionFreeUntil() {
+		assertEquals(12, LSRange.getIntersectionFreeUntil(List.of(new LSRange(2, 38)),
+		                                                  List.of(new LSRange(12, 16))));
+		assertEquals(20, LSRange.getIntersectionFreeUntil(List.of(new LSRange(0, 12), new LSRange(20, 34)),
+		                                                  List.of(new LSRange(12, 16))));
+		assertEquals(20, LSRange.getIntersectionFreeUntil(List.of(new LSRange(0, 12), new LSRange(20, 34)),
+		                                                  List.of(new LSRange(16, 20))));
+	}
+
+	@Test
 	public void testSplit() {
 		testSplit(List.of(), List.of(), 0, List.of());
 		testSplit(List.of(),
@@ -66,6 +76,23 @@ public class LSRangeTest {
 		          List.of(new LSRange(9, 10)),
 		          9,
 		          List.of(new LSRange(0, 5), new LSRange(8, 10)));
+
+		testSplit(List.of(new LSRange(0, 12)),
+		          List.of(new LSRange(20, 34)),
+		          12,
+		          List.of(new LSRange(0, 12), new LSRange(20, 34)));
+		testSplit(List.of(new LSRange(0, 12)),
+		          List.of(new LSRange(20, 34)),
+		          19,
+		          List.of(new LSRange(0, 12), new LSRange(20, 34)));
+		testSplit(List.of(new LSRange(0, 12)),
+		          List.of(new LSRange(20, 34)),
+		          20,
+		          List.of(new LSRange(0, 12), new LSRange(20, 34)));
+		testSplit(List.of(new LSRange(0, 12), new LSRange(20, 21)),
+		          List.of(new LSRange(21, 34)),
+		          21,
+		          List.of(new LSRange(0, 12), new LSRange(20, 34)));
 	}
 
 	@Test

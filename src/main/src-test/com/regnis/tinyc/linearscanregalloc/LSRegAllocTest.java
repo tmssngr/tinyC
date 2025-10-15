@@ -104,9 +104,8 @@ public class LSRegAllocTest {
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(1, 0);
 		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 2, callingConventionProvider);
 		IRTestUtils.assertEqualsInstructions(List.of(
-				new IRLiteral(varA.asRegister(rRet), 1, Location.DUMMY),
-				new IRMove(varA.asRegister(rArg1), varA.asRegister(rRet), Location.DUMMY),
-				new IRMove(varA, varA.asRegister(rRet), Location.DUMMY),
+				new IRLiteral(varA.asRegister(rArg1), 1, Location.DUMMY),
+				new IRMove(varA, varA.asRegister(rArg1), Location.DUMMY),
 				new IRCall(varB.asRegister(rRet), Type.U8, "foo", List.of(varA.asRegister(rArg1)), Location.DUMMY),
 				new IRMove(varA.asRegister(rArg1), varA, Location.DUMMY),
 				new IRBinary(varA.asRegister(rArg1), IRBinary.Op.Add, varA.asRegister(rArg1), varB.asRegister(rRet), Location.DUMMY),
@@ -218,6 +217,66 @@ public class LSRegAllocTest {
 				new IRMove(varLocalGlobal.asRegister(rRet), varGlobal, Location.DUMMY),
 				new IRBinary(varLocalGlobal.asRegister(rRet), IRBinary.Op.Add, varLocalGlobal.asRegister(rRet), varOne.asRegister(rArg1), Location.DUMMY),
 				new IRMove(varGlobal, varLocalGlobal.asRegister(rRet), Location.DUMMY)
+		), regAllocFunction.instructions());
+	}
+
+	@Test
+	public void testStackVar() {
+		final int r0 = 0;
+		final int r1 = 1;
+		final int r2 = 2;
+		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.U8);
+		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.U8);
+		final IRVar varC = new IRVar("c", 2, VariableScope.function, Type.U8);
+		final IRVar varT = new IRVar("t", 3, VariableScope.function, Type.U8);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRFunction function = new IRFunction(
+				"simple", "@simple", Type.U8,
+				new IRVarInfos(List.of(
+						new IRVarDef(varA, U8_SIZE),
+						new IRVarDef(varB, U8_SIZE),
+						new IRVarDef(varC, U8_SIZE),
+						new IRVarDef(varT, U8_SIZE)
+				), Set.of(), globalVarInfos),
+				List.of(
+						new IRLiteral(varA, 1, Location.DUMMY),
+						new IRLiteral(varB, 2, Location.DUMMY),
+						new IRLiteral(varC, 3, Location.DUMMY),
+						new IRCall(null, Type.VOID, "print", List.of(varA), Location.DUMMY),
+						new IRCall(null, Type.VOID, "print", List.of(varB), Location.DUMMY),
+						new IRMove(varT, varA, Location.DUMMY),
+						new IRBinary(varT, IRBinary.Op.Add, varT, varC, Location.DUMMY),
+						new IRCall(null, Type.VOID, "print", List.of(varT), Location.DUMMY),
+						new IRCall(null, Type.VOID, "print", List.of(varC), Location.DUMMY)
+				)
+		);
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider);
+		final IRVar varA0 = varA.asRegister(0);
+		final IRVar varA1 = varA.asRegister(1);
+		final IRVar varB0 = varB.asRegister(0);
+		final IRVar varB1 = varB.asRegister(1);
+		final IRVar varC0 = varC.asRegister(0);
+		final IRVar varC1 = varC.asRegister(1);
+		final IRVar varT1 = varT.asRegister(1);
+		assertEquals(List.of(
+				new IRLiteral(varA1, 1, Location.DUMMY),
+				new IRLiteral(varB0, 2, Location.DUMMY),
+				new IRMove(varB, varB0, Location.DUMMY),
+				new IRLiteral(varC0, 3, Location.DUMMY),
+				new IRMove(varC, varC0, Location.DUMMY),
+				new IRMove(varA, varA1, Location.DUMMY),
+				new IRCall(null, Type.VOID, "print", List.of(varA1), Location.DUMMY),
+				new IRMove(varB1, varB, Location.DUMMY),
+				new IRCall(null, Type.VOID, "print", List.of(varB1), Location.DUMMY),
+				new IRMove(varA0, varA, Location.DUMMY),
+				new IRMove(varT1, varA0, Location.DUMMY),
+				new IRMove(varC0, varC, Location.DUMMY),
+				new IRBinary(varT1, IRBinary.Op.Add, varT1, varC0, Location.DUMMY),
+				new IRMove(varC, varC0, Location.DUMMY),
+				new IRCall(null, Type.VOID, "print", List.of(varT1), Location.DUMMY),
+				new IRMove(varC1, varC, Location.DUMMY),
+				new IRCall(null, Type.VOID, "print", List.of(varC1), Location.DUMMY)
 		), regAllocFunction.instructions());
 	}
 }

@@ -80,10 +80,11 @@ start:
         mov rdx, rcx
         ; const t.6{r3}, 1
         mov r8, 1
-        ; add t.4{r2}, t.4{r2}, t.6{r3}
-        add rdx, r8
-        ; cast str{r1}(u8*), t.4{r2}(i64)
+        ; move t.4{r1}, t.5{r2}
         mov rcx, rdx
+        ; add t.4{r1}, t.4{r1}, t.6{r3}
+        add rcx, r8
+        ; cast str{r1}(u8*), t.4{r1}(i64)
 @for_1:
         ; load t.3{r2}, [str{r1}]
         mov dl, [rcx]
@@ -258,27 +259,27 @@ start:
         shl dl, cl
         ; const t.29{r3}, 7
         mov r8b, 7
-        ; and t.26{r2}, t.26{r2}, t.29{r3}
-        and dl, r8b
-        ; const t.34{r3}, 1
-        mov r8b, 1
-        ; move t.33{r4}, j{r0}
-        mov r9b, al
-        ; add t.33{r4}, t.33{r4}, t.34{r3}
-        add r9b, r8b
-        ; cast t.32{r3}(i64), t.33{r4}(u8)
-        movzx r8, r9b
-        ; cast t.35{r3}(u8*), t.32{r3}(i64)
-        ; addrof t.31{r4}, [board]
-        lea r9, [var_0]
-        ; add t.31{r4}, t.31{r4}, t.35{r3}
-        add r9, r8
-        ; load t.30{r3}, [t.31{r4}]
-        mov r8b, [r9]
-        ; move pattern{r7}, t.26{r2}
+        ; move t.26{r7}, t.27{r2}
         mov r12b, dl
-        ; or pattern{r7}, pattern{r7}, t.30{r3}
-        or r12b, r8b
+        ; and t.26{r7}, t.26{r7}, t.29{r3}
+        and r12b, r8b
+        ; const t.34{r2}, 1
+        mov dl, 1
+        ; move t.33{r3}, j{r0}
+        mov r8b, al
+        ; add t.33{r3}, t.33{r3}, t.34{r2}
+        add r8b, dl
+        ; cast t.32{r2}(i64), t.33{r3}(u8)
+        movzx rdx, r8b
+        ; cast t.35{r2}(u8*), t.32{r2}(i64)
+        ; addrof t.31{r3}, [board]
+        lea r8, [var_0]
+        ; add t.31{r3}, t.31{r3}, t.35{r2}
+        add r8, rdx
+        ; load t.30{r2}, [t.31{r3}]
+        mov dl, [r8]
+        ; or pattern{r7}, pattern{r7}, t.30{r2}
+        or r12b, dl
         ; const t.38{r2}, 110
         mov dl, 110
         ; move pattern{r1}, pattern{r7}

@@ -48,69 +48,67 @@ start:
         ; save clobbered non-volatile registers
         push rbx
         push r12
-        ; move number{r6}, number{r1}
-        mov rbx, rcx
-        ; const pos{r7}, 20
-        mov r12b, 20
+        ; const pos{r6}, 20
+        mov bl, 20
         ; 13:2 while true
 @while_1:
-        ; dec pos{r7}
-        dec r12b
-        ; const t.5{r3}, 10
-        mov r8, 10
-        ; move remainder{r4}, number{r6}
-        mov r9, rbx
-        ; move remainder{r0}, remainder{r4}
-        mov rax, r9
-        ; mod remainder{r2}, remainder{r0}, t.5{r3}
+        ; dec pos{r6}
+        dec bl
+        ; const t.5{r7}, 10
+        mov r12, 10
+        ; move remainder{r3}, number{r1}
+        mov r8, rcx
+        ; move remainder{r0}, remainder{r3}
+        mov rax, r8
+        ; mod remainder{r2}, remainder{r0}, t.5{r7}
         cqo
-        idiv r8
-        ; move remainder{r4}, remainder{r2}
-        mov r9, rdx
-        ; const t.6{r3}, 10
-        mov r8, 10
-        ; move number{r0}, number{r6}
-        mov rax, rbx
-        ; div number{r0}, number{r0}, t.6{r3}
+        idiv r12
+        ; move remainder{r3}, remainder{r2}
+        mov r8, rdx
+        ; const t.6{r7}, 10
+        mov r12, 10
+        ; move number{r0}, number{r1}
+        mov rax, rcx
+        ; div number{r0}, number{r0}, t.6{r7}
         cqo
-        idiv r8
-        ; move number{r6}, number{r0}
-        mov rbx, rax
-        ; cast t.7{r0}(u8), remainder{r4}(i64)
-        mov al, r9b
-        ; const t.8{r3}, 48
-        mov r8b, 48
-        ; add digit{r0}, digit{r0}, t.8{r3}
-        add al, r8b
-        ; cast t.10{r3}(i64), pos{r7}(u8)
-        movzx r8, r12b
-        ; cast t.11{r3}(u8*), t.10{r3}(i64)
-        ; addrof t.9{r4}, [buffer]
-        lea r9, [rsp+20]
-        ; add t.9{r4}, t.9{r4}, t.11{r3}
-        add r9, r8
-        ; store [t.9{r4}], digit{r0}
-        mov [r9], al
+        idiv r12
+        ; move number{r1}, number{r0}
+        mov rcx, rax
+        ; cast t.7{r7}(u8), remainder{r3}(i64)
+        mov r12b, r8b
+        ; const t.8{r0}, 48
+        mov al, 48
+        ; add digit{r7}, digit{r7}, t.8{r0}
+        add r12b, al
+        ; cast t.10{r0}(i64), pos{r6}(u8)
+        movzx rax, bl
+        ; cast t.11{r0}(u8*), t.10{r0}(i64)
+        ; addrof t.9{r3}, [buffer]
+        lea r8, [rsp+20]
+        ; add t.9{r3}, t.9{r3}, t.11{r0}
+        add r8, rax
+        ; store [t.9{r3}], digit{r7}
+        mov [r8], r12b
         ; 19:3 if number == 0
-        ; equals t.12{r0}, number{r6}, 0
-        cmp rbx, 0
-        sete al
-        ; branch t.12{r0}, false, @while_1
-        or al, al
+        ; equals t.12{r7}, number{r1}, 0
+        cmp rcx, 0
+        sete r12b
+        ; branch t.12{r7}, false, @while_1
+        or r12b, r12b
         jz @while_1
-        ; cast t.14{r6}(i64), pos{r7}(u8)
-        movzx rbx, r12b
-        ; cast t.15{r6}(u8*), t.14{r6}(i64)
+        ; cast t.14{r7}(i64), pos{r6}(u8)
+        movzx r12, bl
+        ; cast t.15{r7}(u8*), t.14{r7}(i64)
         ; addrof t.13{r1}, [buffer]
         lea rcx, [rsp+20]
-        ; add t.13{r1}, t.13{r1}, t.15{r6}
-        add rcx, rbx
-        ; const t.18{r6}, 20
-        mov bl, 20
-        ; sub t.17{r6}, t.17{r6}, pos{r7}
-        sub bl, r12b
-        ; cast t.16{r2}(i64), t.17{r6}(u8)
-        movzx rdx, bl
+        ; add t.13{r1}, t.13{r1}, t.15{r7}
+        add rcx, r12
+        ; const t.18{r7}, 20
+        mov r12b, 20
+        ; sub t.17{r7}, t.17{r7}, pos{r6}
+        sub r12b, bl
+        ; cast t.16{r2}(i64), t.17{r7}(u8)
+        movzx rdx, r12b
         ; call printStringLength[t.13{r1}, t.16{r2}]
         sub rsp, 20h; shadow space
         call @printStringLength
@@ -200,10 +198,11 @@ start:
         mov r12, rbx
         ; const t.3{r0}, 2
         mov rax, 2
-        ; add t.1{r7}, t.1{r7}, t.3{r0}
-        add r12, rax
-        ; cast tmp.ptrToSpace{r6}(i16*), t.1{r7}(i64)
+        ; move t.1{r6}, t.2{r7}
         mov rbx, r12
+        ; add t.1{r6}, t.1{r6}, t.3{r0}
+        add rbx, rax
+        ; cast tmp.ptrToSpace{r6}(i16*), t.1{r6}(i64)
         ; move ptrToSpace, tmp.ptrToSpace{r6}
         lea r11, [var_2]
         mov [r11], rbx

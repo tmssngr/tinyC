@@ -73,69 +73,67 @@ start:
         ; save clobbered non-volatile registers
         push rbx
         push r12
-        ; move number{r6}, number{r1}
-        mov rbx, rcx
-        ; const pos{r7}, 20
-        mov r12b, 20
+        ; const pos{r6}, 20
+        mov bl, 20
         ; 13:2 while true
 @while_1:
-        ; dec pos{r7}
-        dec r12b
-        ; const t.5{r3}, 10
-        mov r8, 10
-        ; move remainder{r4}, number{r6}
-        mov r9, rbx
-        ; move remainder{r0}, remainder{r4}
-        mov rax, r9
-        ; mod remainder{r2}, remainder{r0}, t.5{r3}
+        ; dec pos{r6}
+        dec bl
+        ; const t.5{r7}, 10
+        mov r12, 10
+        ; move remainder{r3}, number{r1}
+        mov r8, rcx
+        ; move remainder{r0}, remainder{r3}
+        mov rax, r8
+        ; mod remainder{r2}, remainder{r0}, t.5{r7}
         cqo
-        idiv r8
-        ; move remainder{r4}, remainder{r2}
-        mov r9, rdx
-        ; const t.6{r3}, 10
-        mov r8, 10
-        ; move number{r0}, number{r6}
-        mov rax, rbx
-        ; div number{r0}, number{r0}, t.6{r3}
+        idiv r12
+        ; move remainder{r3}, remainder{r2}
+        mov r8, rdx
+        ; const t.6{r7}, 10
+        mov r12, 10
+        ; move number{r0}, number{r1}
+        mov rax, rcx
+        ; div number{r0}, number{r0}, t.6{r7}
         cqo
-        idiv r8
-        ; move number{r6}, number{r0}
-        mov rbx, rax
-        ; cast t.7{r0}(u8), remainder{r4}(i64)
-        mov al, r9b
-        ; const t.8{r3}, 48
-        mov r8b, 48
-        ; add digit{r0}, digit{r0}, t.8{r3}
-        add al, r8b
-        ; cast t.10{r3}(i64), pos{r7}(u8)
-        movzx r8, r12b
-        ; cast t.11{r3}(u8*), t.10{r3}(i64)
-        ; addrof t.9{r4}, [buffer]
-        lea r9, [rsp+20]
-        ; add t.9{r4}, t.9{r4}, t.11{r3}
-        add r9, r8
-        ; store [t.9{r4}], digit{r0}
-        mov [r9], al
+        idiv r12
+        ; move number{r1}, number{r0}
+        mov rcx, rax
+        ; cast t.7{r7}(u8), remainder{r3}(i64)
+        mov r12b, r8b
+        ; const t.8{r0}, 48
+        mov al, 48
+        ; add digit{r7}, digit{r7}, t.8{r0}
+        add r12b, al
+        ; cast t.10{r0}(i64), pos{r6}(u8)
+        movzx rax, bl
+        ; cast t.11{r0}(u8*), t.10{r0}(i64)
+        ; addrof t.9{r3}, [buffer]
+        lea r8, [rsp+20]
+        ; add t.9{r3}, t.9{r3}, t.11{r0}
+        add r8, rax
+        ; store [t.9{r3}], digit{r7}
+        mov [r8], r12b
         ; 19:3 if number == 0
-        ; equals t.12{r0}, number{r6}, 0
-        cmp rbx, 0
-        sete al
-        ; branch t.12{r0}, false, @while_1
-        or al, al
+        ; equals t.12{r7}, number{r1}, 0
+        cmp rcx, 0
+        sete r12b
+        ; branch t.12{r7}, false, @while_1
+        or r12b, r12b
         jz @while_1
-        ; cast t.14{r6}(i64), pos{r7}(u8)
-        movzx rbx, r12b
-        ; cast t.15{r6}(u8*), t.14{r6}(i64)
+        ; cast t.14{r7}(i64), pos{r6}(u8)
+        movzx r12, bl
+        ; cast t.15{r7}(u8*), t.14{r7}(i64)
         ; addrof t.13{r1}, [buffer]
         lea rcx, [rsp+20]
-        ; add t.13{r1}, t.13{r1}, t.15{r6}
-        add rcx, rbx
-        ; const t.18{r6}, 20
-        mov bl, 20
-        ; sub t.17{r6}, t.17{r6}, pos{r7}
-        sub bl, r12b
-        ; cast t.16{r2}(i64), t.17{r6}(u8)
-        movzx rdx, bl
+        ; add t.13{r1}, t.13{r1}, t.15{r7}
+        add rcx, r12
+        ; const t.18{r7}, 20
+        mov r12b, 20
+        ; sub t.17{r7}, t.17{r7}, pos{r6}
+        sub r12b, bl
+        ; cast t.16{r2}(i64), t.17{r7}(u8)
+        movzx rdx, r12b
         ; call printStringLength[t.13{r1}, t.16{r2}]
         sub rsp, 20h; shadow space
         call @printStringLength
@@ -161,10 +159,11 @@ start:
         mov rdx, rcx
         ; const t.6{r3}, 1
         mov r8, 1
-        ; add t.4{r2}, t.4{r2}, t.6{r3}
-        add rdx, r8
-        ; cast str{r1}(u8*), t.4{r2}(i64)
+        ; move t.4{r1}, t.5{r2}
         mov rcx, rdx
+        ; add t.4{r1}, t.4{r1}, t.6{r3}
+        add rcx, r8
+        ; cast str{r1}(u8*), t.4{r1}(i64)
 @for_3:
         ; load t.3{r2}, [str{r1}]
         mov dl, [rcx]
@@ -242,16 +241,14 @@ start:
         add edx, r8d
         ; const t.18{r3}, 2147483647
         mov r8d, 2147483647
-        ; move t.17{r4}, e{r2}
-        mov r9d, edx
-        ; and t.17{r4}, t.17{r4}, t.18{r3}
-        and r9d, r8d
+        ; move t.17{r0}, e{r2}
+        mov eax, edx
+        ; and t.17{r0}, t.17{r0}, t.18{r3}
+        and eax, r8d
         ; const t.20{r1}, 31
         mov ecx, 31
         ; shiftright t.19{r2}, t.19{r2}, t.20{r1}
         sar edx, cl
-        ; move tmp.__random__{r0}, t.17{r4}
-        mov eax, r9d
         ; add tmp.__random__{r0}, tmp.__random__{r0}, t.19{r2}
         add eax, edx
         ; 123:9 return __random__
@@ -431,82 +428,53 @@ start:
         ; const dr{r3}, -1
         mov r8w, -1
         ; 45:2 for dr <= 1
-        ; move dr{r1}, dr{r3}
-        mov cx, r8w
         jmp @for_7
 @for_7_body:
-        ; move dr{r3}, dr{r1}
-        mov r8w, cx
-        ; move r{r4}, row{r6}
-        mov r9w, bx
-        ; add r{r4}, r{r4}, dr{r3}
-        add r9w, r8w
-        ; const dc{r5}, -1
-        mov r10w, -1
+        ; move r{r1}, row{r6}
+        mov cx, bx
+        ; add r{r1}, r{r1}, dr{r3}
+        add cx, r8w
+        ; const dc{r4}, -1
+        mov r9w, -1
         ; 47:3 for dc <= 1
+        jmp @for_8
+@for_8_body:
         ; move dr, dr{r3}
         lea r11, [rsp+18]
         mov [r11], r8w
-        ; move r, r{r4}
-        lea r11, [rsp+20]
-        mov [r11], r9w
-        ; move dc{r1}, dc{r5}
-        mov cx, r10w
-        jmp @for_8
-@for_8_body:
-        ; move dc{r5}, dc{r1}
-        mov r10w, cx
-        ; move dr{r3}, dr
-        lea r11, [rsp+18]
-        mov r8w, [r11]
-        ; move r{r4}, r
-        lea r11, [rsp+20]
-        mov r9w, [r11]
-        ; move c{r2}, column{r7}
-        mov dx, r12w
-        ; add c{r2}, c{r2}, dc{r5}
-        add dx, r10w
-        ; 49:4 if checkCellBounds([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=49:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=49:27]])
-        ; move r{r1}, r{r4}
-        mov cx, r9w
-        ; move c, c{r2}
-        lea r11, [rsp+24]
-        mov [r11], dx
         ; move count, count{r0}
         lea r11, [rsp+16]
         mov [r11], al
-        ; move dr, dr{r3}
-        lea r11, [rsp+18]
-        mov [r11], r8w
-        ; move r, r{r4}
-        lea r11, [rsp+20]
-        mov [r11], r9w
-        ; move dc, dc{r5}
+        ; move c{r2}, column{r7}
+        mov dx, r12w
+        ; add c{r2}, c{r2}, dc{r4}
+        add dx, r9w
+        ; move dc, dc{r4}
         lea r11, [rsp+22]
-        mov [r11], r10w
+        mov [r11], r9w
+        ; 49:4 if checkCellBounds([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=49:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=49:27]])
+        ; move r, r{r1}
+        lea r11, [rsp+20]
+        mov [r11], cx
+        ; move c, c{r2}
+        lea r11, [rsp+24]
+        mov [r11], dx
         ; call t.10{r0} = checkCellBounds[r{r1}, c{r2}] -> bool
         sub rsp, 20h; shadow space
         call @checkCellBounds
         add rsp, 20h
-        ; branch t.10{r0}, true, @if_9_then
+        ; branch t.10{r0}, false, @for_8_continue
         or al, al
-        jnz @if_9_then
-        ; move count{r0}, count
-        lea r11, [rsp+16]
-        mov al, [r11]
-        jmp @for_8_continue
-@if_9_then:
-        ; move r{r0}, r
+        jz @for_8_continue
+        ; move r{r1}, r
         lea r11, [rsp+20]
-        mov ax, [r11]
-        ; move r{r1}, r{r0}
-        mov cx, ax
+        mov cx, [r11]
+        ; move r, r{r1}
+        lea r11, [rsp+20]
+        mov [r11], cx
         ; move c{r2}, c
         lea r11, [rsp+24]
         mov dx, [r11]
-        ; move r, r{r0}
-        lea r11, [rsp+20]
-        mov [r11], ax
         ; call cell{r0} = getCell[r{r1}, c{r2}] -> u8
         sub rsp, 20h; shadow space
         call @getCell
@@ -518,14 +486,9 @@ start:
         sub rsp, 20h; shadow space
         call @isBomb
         add rsp, 20h
-        ; branch t.11{r0}, true, @if_10_then
+        ; branch t.11{r0}, false, @for_8_continue
         or al, al
-        jnz @if_10_then
-        ; move count{r0}, count
-        lea r11, [rsp+16]
-        mov al, [r11]
-        jmp @for_8_continue
-@if_10_then:
+        jz @for_8_continue
         ; move count{r0}, count
         lea r11, [rsp+16]
         mov al, [r11]
@@ -603,13 +566,17 @@ start:
         jmp @getSpacer_ret
 @if_13_then:
         ; 66:11 return 93
-        ; const t.10{r0}, 93
-        mov al, 93
+        ; const t.10{r1}, 93
+        mov cl, 93
+        ; move t.10{r0}, t.10{r1}
+        mov al, cl
         jmp @getSpacer_ret
 @if_11_end:
         ; 69:9 return 32
-        ; const t.11{r0}, 32
-        mov al, 32
+        ; const t.11{r1}, 32
+        mov cl, 32
+        ; move t.11{r0}, t.11{r1}
+        mov al, cl
 @getSpacer_ret:
         add rsp, 8
         ret
@@ -628,19 +595,17 @@ start:
         mov bl, cl
         ; move row{r7}, row{r2}
         mov r12w, dx
-        ; move column{r0}, column{r3}
-        mov ax, r8w
-        ; const chr{r2}, 46
-        mov dl, 46
+        ; move column, column{r3}
+        lea r11, [rsp+48]
+        mov [r11], r8w
+        ; const chr{r1}, 46
+        mov cl, 46
+        ; move chr, chr{r1}
+        lea r11, [rsp+16]
+        mov [r11], cl
         ; 74:2 if isOpen([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=74:13]])
         ; move cell{r1}, cell{r6}
         mov cl, bl
-        ; move column, column{r0}
-        lea r11, [rsp+48]
-        mov [r11], ax
-        ; move chr, chr{r2}
-        lea r11, [rsp+16]
-        mov [r11], dl
         ; call t.5{r0} = isOpen[cell{r1}] -> bool
         sub rsp, 20h; shadow space
         call @isOpen
@@ -655,9 +620,9 @@ start:
         sub rsp, 20h; shadow space
         call @isFlag
         add rsp, 20h
-        ; branch t.9{r0}, false, @no_critical_edge_13
+        ; branch t.9{r0}, false, @if_14_end
         or al, al
-        jz @no_critical_edge_13
+        jz @if_14_end
         jmp @if_17_then
 @if_14_then:
         ; 75:3 if isBomb([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=75:14]])
@@ -671,11 +636,6 @@ start:
         or al, al
         jz @if_15_else
         jmp @if_15_then
-@no_critical_edge_13:
-        ; move chr{r6}, chr
-        lea r11, [rsp+16]
-        mov bl, [r11]
-        jmp @if_14_end
 @if_17_then:
         ; const chr{r6}, 35
         mov bl, 35
@@ -748,42 +708,38 @@ start:
         sub rsp, 20h; shadow space
         call @setCursor
         add rsp, 20h
-        ; const row{r0}, 0
-        mov ax, 0
+        ; const row{r1}, 0
+        mov cx, 0
         ; 96:2 for row < 20
         jmp @for_18
 @for_18_body:
+        ; move row, row{r1}
+        lea r11, [rsp+16]
+        mov [r11], cx
         ; const t.10{r1}, 124
         mov cl, 124
-        ; move row, row{r0}
-        lea r11, [rsp+16]
-        mov [r11], ax
         ; call printChar[t.10{r1}]
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
-        ; const column{r0}, 0
-        mov ax, 0
+        ; const column{r2}, 0
+        mov dx, 0
         ; 98:3 for column < 40
         jmp @for_19
 @for_19_body:
-        ; move row{r5}, row
+        ; move row{r1}, row
         lea r11, [rsp+16]
-        mov r10w, [r11]
-        ; move row{r1}, row{r5}
-        mov cx, r10w
-        ; move column{r2}, column{r0}
-        mov dx, ax
+        mov cx, [r11]
+        ; move row, row{r1}
+        lea r11, [rsp+16]
+        mov [r11], cx
+        ; move column, column{r2}
+        lea r11, [rsp+18]
+        mov [r11], dx
         ; move rowCursor{r3}, rowCursor{r6}
         mov r8w, bx
         ; move columnCursor{r4}, columnCursor{r7}
         mov r9w, r12w
-        ; move row, row{r5}
-        lea r11, [rsp+16]
-        mov [r11], r10w
-        ; move column, column{r0}
-        lea r11, [rsp+18]
-        mov [r11], ax
         ; call spacer{r0} = getSpacer[row{r1}, column{r2}, rowCursor{r3}, columnCursor{r4}] -> u8
         sub rsp, 20h; shadow space
         call @getSpacer
@@ -794,44 +750,36 @@ start:
         sub rsp, 20h; shadow space
         call @printChar
         add rsp, 20h
-        ; move row{r0}, row
+        ; move row{r1}, row
         lea r11, [rsp+16]
-        mov ax, [r11]
-        ; move row{r1}, row{r0}
-        mov cx, ax
-        ; move column{r3}, column
-        lea r11, [rsp+18]
-        mov r8w, [r11]
-        ; move column{r2}, column{r3}
-        mov dx, r8w
-        ; move row, row{r0}
+        mov cx, [r11]
+        ; move row, row{r1}
         lea r11, [rsp+16]
-        mov [r11], ax
-        ; move column, column{r3}
+        mov [r11], cx
+        ; move column{r2}, column
         lea r11, [rsp+18]
-        mov [r11], r8w
+        mov dx, [r11]
+        ; move column, column{r2}
+        lea r11, [rsp+18]
+        mov [r11], dx
         ; call cell{r0} = getCell[row{r1}, column{r2}] -> u8
         sub rsp, 20h; shadow space
         call @getCell
         add rsp, 20h
         ; move cell{r1}, cell{r0}
         mov cl, al
-        ; move row{r0}, row
+        ; move row{r2}, row
         lea r11, [rsp+16]
-        mov ax, [r11]
-        ; move row{r2}, row{r0}
-        mov dx, ax
-        ; move column{r4}, column
-        lea r11, [rsp+18]
-        mov r9w, [r11]
-        ; move column{r3}, column{r4}
-        mov r8w, r9w
-        ; move row, row{r0}
+        mov dx, [r11]
+        ; move row, row{r2}
         lea r11, [rsp+16]
-        mov [r11], ax
-        ; move column, column{r4}
+        mov [r11], dx
+        ; move column{r3}, column
         lea r11, [rsp+18]
-        mov [r11], r9w
+        mov r8w, [r11]
+        ; move column, column{r3}
+        lea r11, [rsp+18]
+        mov [r11], r8w
         ; call printCell[cell{r1}, row{r2}, column{r3}]
         sub rsp, 20h; shadow space
         call @printCell
@@ -850,18 +798,16 @@ start:
         jnz @for_19_body
         ; const t.12{r2}, 40
         mov dx, 40
-        ; move row{r0}, row
+        ; move row{r1}, row
         lea r11, [rsp+16]
-        mov ax, [r11]
-        ; move row{r1}, row{r0}
-        mov cx, ax
+        mov cx, [r11]
+        ; move row, row{r1}
+        lea r11, [rsp+16]
+        mov [r11], cx
         ; move rowCursor{r3}, rowCursor{r6}
         mov r8w, bx
         ; move columnCursor{r4}, columnCursor{r7}
         mov r9w, r12w
-        ; move row, row{r0}
-        lea r11, [rsp+16]
-        mov [r11], ax
         ; call spacer{r0} = getSpacer[row{r1}, t.12{r2}, rowCursor{r3}, columnCursor{r4}] -> u8
         sub rsp, 20h; shadow space
         call @getSpacer
@@ -983,22 +929,16 @@ start:
         ; 136:2 for r < 20
         jmp @for_24
 @for_24_body:
-        ; const c{r0}, 0
-        mov ax, 0
+        ; const c{r2}, 0
+        mov dx, 0
         ; 137:3 for c < 40
-        ; move c{r1}, c{r0}
-        mov cx, ax
         jmp @for_25
 @for_25_body:
-        ; move c{r0}, c{r1}
-        mov ax, cx
         ; move r{r1}, r{r7}
         mov cx, r12w
-        ; move c{r2}, c{r0}
-        mov dx, ax
-        ; move c, c{r0}
+        ; move c, c{r2}
         lea r11, [rsp+16]
-        mov [r11], ax
+        mov [r11], dx
         ; call cell{r0} = getCell[r{r1}, c{r2}] -> u8
         sub rsp, 20h; shadow space
         call @getCell
@@ -1078,11 +1018,11 @@ start:
         add rsp, 20h
         ; cast bombDigits{r0}(i16), t.4{r0}(u8)
         movzx ax, al
-        ; const t.6{r1}, [string-1]
-        lea rcx, [string_1]
         ; move bombDigits, bombDigits{r0}
         lea r11, [rsp+16]
         mov [r11], ax
+        ; const t.6{r1}, [string-1]
+        lea rcx, [string_1]
         ; call printString[t.6{r1}]
         sub rsp, 20h; shadow space
         call @printString
@@ -1131,9 +1071,10 @@ start:
         jmp @abs_ret
 @if_27_then:
         ; 160:10 return -a
-        ; neg t.2{r0}, a{r1}
-        mov rax, rcx
-        neg rax
+        ; neg t.2{r1}, a{r1}
+        neg rcx
+        ; move t.2{r0}, t.2{r1}
+        mov ax, cx
 @abs_ret:
         add rsp, 8
         ret
@@ -1228,11 +1169,11 @@ start:
         idiv rcx
         ; move t.6{r3}, t.6{r2}
         mov r8d, edx
-        ; cast row{r0}(i16), t.6{r3}(i32)
-        mov ax, r8w
-        ; move row, row{r0}
+        ; cast row{r1}(i16), t.6{r3}(i32)
+        mov cx, r8w
+        ; move row, row{r1}
         lea r11, [rsp+18]
-        mov [r11], ax
+        mov [r11], cx
         ; call t.10{r0} = random[] -> i32
         sub rsp, 20h; shadow space
         call @random
@@ -1250,23 +1191,23 @@ start:
         idiv r8
         ; move t.9{r4}, t.9{r2}
         mov r9d, edx
-        ; cast column{r0}(i16), t.9{r4}(i32)
-        mov ax, r9w
+        ; cast column{r2}(i16), t.9{r4}(i32)
+        mov dx, r9w
+        ; move column, column{r2}
+        lea r11, [rsp+20]
+        mov [r11], dx
         ; 177:3 if abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=177:11], right=ExprVarAccess[varName=curr_r, index=0, scope=argument, type=i16, varIsArray=false, location=177:20], location=177:18]]) > 1 || abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_c, index=1, scope=argument, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1
         ; 178:4 logic or
-        ; move row{r2}, row
+        ; move row{r0}, row
         lea r11, [rsp+18]
-        mov dx, [r11]
-        ; move t.14{r1}, row{r2}
-        mov cx, dx
+        mov ax, [r11]
+        ; move t.14{r1}, row{r0}
+        mov cx, ax
+        ; move row, row{r0}
+        lea r11, [rsp+18]
+        mov [r11], ax
         ; sub t.14{r1}, t.14{r1}, curr_r{r6}
         sub cx, bx
-        ; move row, row{r2}
-        lea r11, [rsp+18]
-        mov [r11], dx
-        ; move column, column{r0}
-        lea r11, [rsp+20]
-        mov [r11], ax
         ; call t.13{r0} = abs[t.14{r1}] -> i16
         sub rsp, 20h; shadow space
         call @abs
@@ -1282,11 +1223,11 @@ start:
         mov ax, [r11]
         ; move t.16{r1}, column{r0}
         mov cx, ax
-        ; sub t.16{r1}, t.16{r1}, curr_c{r7}
-        sub cx, r12w
         ; move column, column{r0}
         lea r11, [rsp+20]
         mov [r11], ax
+        ; sub t.16{r1}, t.16{r1}, curr_c{r7}
+        sub cx, r12w
         ; call t.15{r0} = abs[t.16{r1}] -> i16
         sub rsp, 20h; shadow space
         call @abs
@@ -1366,67 +1307,47 @@ start:
         ; 189:2 for dr <= 1
         jmp @for_34
 @for_34_body:
-        ; move r{r3}, row{r6}
-        mov r8w, bx
-        ; add r{r3}, r{r3}, dr{r0}
-        add r8w, ax
-        ; const dc{r4}, -1
-        mov r9w, -1
+        ; move r{r1}, row{r6}
+        mov cx, bx
+        ; add r{r1}, r{r1}, dr{r0}
+        add cx, ax
+        ; const dc{r3}, -1
+        mov r8w, -1
         ; 191:3 for dc <= 1
-        ; move dr, dr{r0}
-        lea r11, [rsp+16]
-        mov [r11], ax
-        ; move r, r{r3}
-        lea r11, [rsp+18]
-        mov [r11], r8w
-        ; move dc{r0}, dc{r4}
-        mov ax, r9w
         jmp @for_35
 @for_35_body:
-        ; move dc{r4}, dc{r0}
-        mov r9w, ax
-        ; move dr{r0}, dr
-        lea r11, [rsp+16]
-        mov ax, [r11]
-        ; move r{r3}, r
-        lea r11, [rsp+18]
-        mov r8w, [r11]
         ; 192:4 if dr == 0 && dc == 0
         ; 192:16 logic and
-        ; equals t.11{r5}, dr{r0}, 0
+        ; equals t.11{r4}, dr{r0}, 0
         cmp ax, 0
-        sete r10b
-        ; branch t.11{r5}, false, @and_next_37
-        or r10b, r10b
+        sete r9b
+        ; branch t.11{r4}, false, @and_next_37
+        or r9b, r9b
         jz @and_next_37
-        ; equals t.11{r5}, dc{r4}, 0
-        cmp r9w, 0
-        sete r10b
+        ; equals t.11{r4}, dc{r3}, 0
+        cmp r8w, 0
+        sete r9b
 @and_next_37:
-        ; branch t.11{r5}, true, @if_36_then
-        or r10b, r10b
-        jnz @if_36_then
-        ; move c{r5}, column{r7}
-        mov r10w, r12w
-        ; add c{r5}, c{r5}, dc{r4}
-        add r10w, r9w
-        ; 197:4 if !checkCellBounds([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=197:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=197:28]])
-        ; move r{r1}, r{r3}
-        mov cx, r8w
-        ; move c{r2}, c{r5}
-        mov dx, r10w
+        ; branch t.11{r4}, true, @for_35_continue
+        or r9b, r9b
+        jnz @for_35_continue
         ; move dr, dr{r0}
         lea r11, [rsp+16]
         mov [r11], ax
-        ; move r, r{r3}
-        lea r11, [rsp+18]
-        mov [r11], r8w
-        ; move dc, dc{r4}
+        ; move c{r2}, column{r7}
+        mov dx, r12w
+        ; add c{r2}, c{r2}, dc{r3}
+        add dx, r8w
+        ; move dc, dc{r3}
         lea r11, [rsp+20]
-        mov [r11], r9w
-        ; move c, c{r5}
+        mov [r11], r8w
+        ; 197:4 if !checkCellBounds([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=197:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=197:28]])
+        ; move r, r{r1}
+        lea r11, [rsp+18]
+        mov [r11], cx
+        ; move c, c{r2}
         lea r11, [rsp+22]
-        mov [r11], r10w
+        mov [r11], dx
         ; call t.13{r0} = checkCellBounds[r{r1}, c{r2}] -> bool
         sub rsp, 20h; shadow space
         call @checkCellBounds
@@ -1434,38 +1355,21 @@ start:
         ; notlog t.12{r0}, t.13{r0}
         or al, al
         sete al
-        ; branch t.12{r0}, false, @if_38_end
+        ; branch t.12{r0}, true, @for_35_continue
         or al, al
-        jz @if_38_end
-        jmp @for_35_continue
-@if_36_then:
-        ; move dc, dc{r4}
-        lea r11, [rsp+20]
-        mov [r11], r9w
-        ; move dr, dr{r0}
-        lea r11, [rsp+16]
-        mov [r11], ax
-        ; move r, r{r3}
+        jnz @for_35_continue
+        ; move r{r1}, r
         lea r11, [rsp+18]
-        mov [r11], r8w
-        jmp @for_35_continue
-@if_38_end:
-        ; move r{r0}, r
+        mov cx, [r11]
+        ; move r, r{r1}
         lea r11, [rsp+18]
-        mov ax, [r11]
-        ; move r{r1}, r{r0}
-        mov cx, ax
-        ; move c{r3}, c
+        mov [r11], cx
+        ; move c{r2}, c
         lea r11, [rsp+22]
-        mov r8w, [r11]
-        ; move c{r2}, c{r3}
-        mov dx, r8w
-        ; move r, r{r0}
-        lea r11, [rsp+18]
-        mov [r11], ax
-        ; move c, c{r3}
+        mov dx, [r11]
+        ; move c, c{r2}
         lea r11, [rsp+22]
-        mov [r11], r8w
+        mov [r11], dx
         ; call cell{r0} = getCell[r{r1}, c{r2}] -> u8
         sub rsp, 20h; shadow space
         call @getCell
@@ -1492,37 +1396,31 @@ start:
         mov r8b, r9b
         ; or t.15{r3}, t.15{r3}, t.16{r0}
         or r8b, al
-        ; move r{r0}, r
+        ; move r{r1}, r
         lea r11, [rsp+18]
-        mov ax, [r11]
-        ; move r{r1}, r{r0}
-        mov cx, ax
-        ; move c{r4}, c
-        lea r11, [rsp+22]
-        mov r9w, [r11]
-        ; move c{r2}, c{r4}
-        mov dx, r9w
-        ; move r, r{r0}
+        mov cx, [r11]
+        ; move r, r{r1}
         lea r11, [rsp+18]
-        mov [r11], ax
-        ; move c, c{r4}
+        mov [r11], cx
+        ; move c{r2}, c
         lea r11, [rsp+22]
-        mov [r11], r9w
+        mov dx, [r11]
+        ; move c, c{r2}
+        lea r11, [rsp+22]
+        mov [r11], dx
         ; call setCell[r{r1}, c{r2}, t.15{r3}]
         sub rsp, 20h; shadow space
         call @setCell
         add rsp, 20h
-        ; move r{r0}, r
+        ; move r{r1}, r
         lea r11, [rsp+18]
-        mov ax, [r11]
-        ; move r{r1}, r{r0}
-        mov cx, ax
+        mov cx, [r11]
+        ; move r, r{r1}
+        lea r11, [rsp+18]
+        mov [r11], cx
         ; move c{r2}, c
         lea r11, [rsp+22]
         mov dx, [r11]
-        ; move r, r{r0}
-        lea r11, [rsp+18]
-        mov [r11], ax
         ; call maybeRevealAround[r{r1}, c{r2}]
         sub rsp, 20h; shadow space
         call @maybeRevealAround
@@ -1596,26 +1494,12 @@ start:
         ; cast curr_r{r0}(i16), t.8{r0}(u8)
         movzx ax, al
         ; 218:2 while true
-        ; move curr_r, curr_r{r0}
-        lea r11, [rsp+16]
-        mov [r11], ax
         jmp @while_40
-@no_critical_edge_40:
-        ; move curr_r{r0}, curr_r
-        lea r11, [rsp+16]
-        mov ax, [r11]
-        ; move curr_r, curr_r{r0}
-        lea r11, [rsp+16]
-        mov [r11], ax
-        jmp @if_41_end
 @if_41_then:
-        ; move curr_r{r0}, curr_r
-        lea r11, [rsp+16]
-        mov ax, [r11]
-        ; 221:4 if printLeft([])
         ; move curr_r, curr_r{r0}
         lea r11, [rsp+16]
         mov [r11], ax
+        ; 221:4 if printLeft([])
         ; call t.10{r0} = printLeft[] -> bool
         sub rsp, 20h; shadow space
         call @printLeft
@@ -1655,38 +1539,32 @@ start:
 @if_44_then:
         ; const t.16{r4}, 20
         mov r9w, 20
-        ; move curr_r{r5}, curr_r
+        ; move curr_r{r1}, curr_r
         lea r11, [rsp+16]
-        mov r10w, [r11]
-        ; move t.15{r1}, curr_r{r5}
-        mov cx, r10w
-        ; add t.15{r1}, t.15{r1}, t.16{r4}
-        add cx, r9w
+        mov cx, [r11]
+        ; move t.15{r5}, curr_r{r1}
+        mov r10w, cx
+        ; add t.15{r5}, t.15{r5}, t.16{r4}
+        add r10w, r9w
         ; const t.17{r4}, 1
         mov r9w, 1
+        ; move t.14{r1}, t.15{r5}
+        mov cx, r10w
         ; sub t.14{r1}, t.14{r1}, t.17{r4}
         sub cx, r9w
         ; const t.18{r4}, 20
         mov r9w, 20
-        ; move curr_r{r5}, t.14{r1}
-        mov r10w, cx
-        ; move curr_r{r0}, curr_r{r5}
-        mov ax, r10w
+        ; move curr_r{r0}, curr_r{r1}
+        mov ax, cx
         ; mod curr_r{r2}, curr_r{r0}, t.18{r4}
         movsx rax, ax
         movsx r9, r9w
         cqo
         idiv r9
-        ; move curr_r{r5}, curr_r{r2}
-        mov r10w, dx
-        ; move curr_r, curr_r{r5}
-        lea r11, [rsp+16]
-        mov [r11], r10w
+        ; move curr_r{r1}, curr_r{r2}
+        mov cx, dx
         jmp @while_40
 @if_45_else:
-        ; move curr_r{r5}, curr_r
-        lea r11, [rsp+16]
-        mov r10w, [r11]
         ; 241:8 if chr == 57419
         ; equals t.23{r4}, chr{r3}, 57419
         cmp r8w, 57419
@@ -1696,31 +1574,21 @@ start:
         jz @if_46_else
         jmp @if_46_then
 @if_45_then:
-        ; move curr_r{r5}, curr_r
-        lea r11, [rsp+16]
-        mov r10w, [r11]
         ; const t.21{r4}, 1
         mov r9w, 1
-        ; move t.20{r1}, curr_r{r5}
-        mov cx, r10w
         ; add t.20{r1}, t.20{r1}, t.21{r4}
         add cx, r9w
         ; const t.22{r4}, 20
         mov r9w, 20
-        ; move curr_r{r5}, t.20{r1}
-        mov r10w, cx
-        ; move curr_r{r0}, curr_r{r5}
-        mov ax, r10w
+        ; move curr_r{r0}, curr_r{r1}
+        mov ax, cx
         ; mod curr_r{r2}, curr_r{r0}, t.22{r4}
         movsx rax, ax
         movsx r9, r9w
         cqo
         idiv r9
-        ; move curr_r{r5}, curr_r{r2}
-        mov r10w, dx
-        ; move curr_r, curr_r{r5}
-        lea r11, [rsp+16]
-        mov [r11], r10w
+        ; move curr_r{r1}, curr_r{r2}
+        mov cx, dx
         jmp @while_40
 @if_46_else:
         ; 245:8 if chr == 57419
@@ -1734,18 +1602,18 @@ start:
 @if_46_then:
         ; const t.26{r4}, 40
         mov r9w, 40
-        ; move t.25{r1}, curr_c{r7}
-        mov cx, r12w
-        ; add t.25{r1}, t.25{r1}, t.26{r4}
-        add cx, r9w
+        ; move t.25{r5}, curr_c{r7}
+        mov r10w, r12w
+        ; add t.25{r5}, t.25{r5}, t.26{r4}
+        add r10w, r9w
         ; const t.27{r4}, 1
         mov r9w, 1
-        ; sub t.24{r1}, t.24{r1}, t.27{r4}
-        sub cx, r9w
+        ; move t.24{r7}, t.25{r5}
+        mov r12w, r10w
+        ; sub t.24{r7}, t.24{r7}, t.27{r4}
+        sub r12w, r9w
         ; const t.28{r4}, 40
         mov r9w, 40
-        ; move curr_c{r7}, t.24{r1}
-        mov r12w, cx
         ; move curr_c{r0}, curr_c{r7}
         mov ax, r12w
         ; mod curr_c{r2}, curr_c{r0}, t.28{r4}
@@ -1755,9 +1623,6 @@ start:
         idiv r9
         ; move curr_c{r7}, curr_c{r2}
         mov r12w, dx
-        ; move curr_r, curr_r{r5}
-        lea r11, [rsp+16]
-        mov [r11], r10w
         jmp @while_40
 @if_47_else:
         ; 249:8 if chr == 57421
@@ -1771,18 +1636,18 @@ start:
 @if_47_then:
         ; const t.32{r4}, 40
         mov r9w, 40
-        ; move t.31{r1}, curr_c{r7}
-        mov cx, r12w
-        ; add t.31{r1}, t.31{r1}, t.32{r4}
-        add cx, r9w
+        ; move t.31{r5}, curr_c{r7}
+        mov r10w, r12w
+        ; add t.31{r5}, t.31{r5}, t.32{r4}
+        add r10w, r9w
         ; const t.33{r4}, 1
         mov r9w, 1
-        ; sub t.30{r1}, t.30{r1}, t.33{r4}
-        sub cx, r9w
+        ; move t.30{r7}, t.31{r5}
+        mov r12w, r10w
+        ; sub t.30{r7}, t.30{r7}, t.33{r4}
+        sub r12w, r9w
         ; const t.34{r4}, 40
         mov r9w, 40
-        ; move curr_c{r7}, t.30{r1}
-        mov r12w, cx
         ; move curr_c{r0}, curr_c{r7}
         mov ax, r12w
         ; mod curr_c{r2}, curr_c{r0}, t.34{r4}
@@ -1792,9 +1657,6 @@ start:
         idiv r9
         ; move curr_c{r7}, curr_c{r2}
         mov r12w, dx
-        ; move curr_r, curr_r{r5}
-        lea r11, [rsp+16]
-        mov [r11], r10w
         jmp @while_40
 @if_48_else:
         ; 253:8 if chr == 32
@@ -1808,14 +1670,10 @@ start:
 @if_48_then:
         ; const t.37{r4}, 1
         mov r9w, 1
-        ; move t.36{r1}, curr_c{r7}
-        mov cx, r12w
-        ; add t.36{r1}, t.36{r1}, t.37{r4}
-        add cx, r9w
+        ; add t.36{r7}, t.36{r7}, t.37{r4}
+        add r12w, r9w
         ; const t.38{r4}, 40
         mov r9w, 40
-        ; move curr_c{r7}, t.36{r1}
-        mov r12w, cx
         ; move curr_c{r0}, curr_c{r7}
         mov ax, r12w
         ; mod curr_c{r2}, curr_c{r0}, t.38{r4}
@@ -1825,51 +1683,36 @@ start:
         idiv r9
         ; move curr_c{r7}, curr_c{r2}
         mov r12w, dx
-        ; move curr_r, curr_r{r5}
-        lea r11, [rsp+16]
-        mov [r11], r10w
         jmp @while_40
 @if_49_else:
         ; 262:8 if chr == 13
         ; equals t.44{r0}, chr{r3}, 13
         cmp r8w, 13
         sete al
-        ; branch t.44{r0}, false, @no_critical_edge_41
+        ; branch t.44{r0}, false, @while_40
         or al, al
-        jz @no_critical_edge_41
+        jz @while_40
         jmp @if_52_then
 @if_49_then:
         ; 254:4 if !needsInitialize
         ; notlog t.40{r0}, needsInitialize{r6}
         or bl, bl
         sete al
-        ; branch t.40{r0}, false, @no_critical_edge_44
+        ; branch t.40{r0}, false, @while_40
         or al, al
-        jz @no_critical_edge_44
+        jz @while_40
         jmp @if_50_then
-@no_critical_edge_41:
-        ; move curr_r, curr_r{r5}
-        lea r11, [rsp+16]
-        mov [r11], r10w
-        jmp @while_40
 @if_52_then:
-        ; branch needsInitialize{r6}, false, @no_critical_edge_42
+        ; branch needsInitialize{r6}, false, @if_53_end
         or bl, bl
-        jz @no_critical_edge_42
+        jz @if_53_end
         jmp @if_53_then
-@no_critical_edge_44:
-        ; move curr_r, curr_r{r5}
-        lea r11, [rsp+16]
-        mov [r11], r10w
-        jmp @while_40
 @if_50_then:
-        ; move curr_r{r1}, curr_r{r5}
-        mov cx, r10w
+        ; move curr_r, curr_r{r1}
+        lea r11, [rsp+16]
+        mov [r11], cx
         ; move curr_c{r2}, curr_c{r7}
         mov dx, r12w
-        ; move curr_r, curr_r{r5}
-        lea r11, [rsp+16]
-        mov [r11], r10w
         ; call cell{r0} = getCell[curr_r{r1}, curr_c{r2}] -> u8
         sub rsp, 20h; shadow space
         call @getCell
@@ -1891,27 +1734,17 @@ start:
         or al, al
         jz @while_40
         jmp @if_51_then
-@no_critical_edge_42:
-        ; move curr_r, curr_r{r5}
-        lea r11, [rsp+16]
-        mov [r11], r10w
-        jmp @if_53_end
 @if_53_then:
-        ; move curr_r, curr_r{r5}
-        lea r11, [rsp+16]
-        mov [r11], r10w
         ; const needsInitialize{r6}, 0
         mov bl, 0
-        ; move curr_r{r0}, curr_r
+        ; move curr_r{r1}, curr_r
         lea r11, [rsp+16]
-        mov ax, [r11]
-        ; move curr_r{r1}, curr_r{r0}
-        mov cx, ax
+        mov cx, [r11]
+        ; move curr_r, curr_r{r1}
+        lea r11, [rsp+16]
+        mov [r11], cx
         ; move curr_c{r2}, curr_c{r7}
         mov dx, r12w
-        ; move curr_r, curr_r{r0}
-        lea r11, [rsp+16]
-        mov [r11], ax
         ; call initField[curr_r{r1}, curr_c{r2}]
         sub rsp, 20h; shadow space
         call @initField
@@ -1925,32 +1758,28 @@ start:
         mov r8b, [r11]
         ; xor cell{r3}, cell{r3}, t.43{r0}
         xor r8b, al
-        ; move curr_r{r0}, curr_r
+        ; move curr_r{r1}, curr_r
         lea r11, [rsp+16]
-        mov ax, [r11]
-        ; move curr_r{r1}, curr_r{r0}
-        mov cx, ax
+        mov cx, [r11]
+        ; move curr_r, curr_r{r1}
+        lea r11, [rsp+16]
+        mov [r11], cx
         ; move curr_c{r2}, curr_c{r7}
         mov dx, r12w
-        ; move curr_r, curr_r{r0}
-        lea r11, [rsp+16]
-        mov [r11], ax
         ; call setCell[curr_r{r1}, curr_c{r2}, cell{r3}]
         sub rsp, 20h; shadow space
         call @setCell
         add rsp, 20h
         jmp @while_40
 @if_53_end:
-        ; move curr_r{r0}, curr_r
+        ; move curr_r{r1}, curr_r
         lea r11, [rsp+16]
-        mov ax, [r11]
-        ; move curr_r{r1}, curr_r{r0}
-        mov cx, ax
+        mov cx, [r11]
+        ; move curr_r, curr_r{r1}
+        lea r11, [rsp+16]
+        mov [r11], cx
         ; move curr_c{r2}, curr_c{r7}
         mov dx, r12w
-        ; move curr_r, curr_r{r0}
-        lea r11, [rsp+16]
-        mov [r11], ax
         ; call cell{r0} = getCell[curr_r{r1}, curr_c{r2}] -> u8
         sub rsp, 20h; shadow space
         call @getCell
@@ -1978,21 +1807,19 @@ start:
         mov r9b, [r11]
         ; move t.47{r3}, cell{r4}
         mov r8b, r9b
-        ; or t.47{r3}, t.47{r3}, t.48{r0}
-        or r8b, al
-        ; move curr_r{r0}, curr_r
-        lea r11, [rsp+16]
-        mov ax, [r11]
-        ; move curr_r{r1}, curr_r{r0}
-        mov cx, ax
-        ; move curr_c{r2}, curr_c{r7}
-        mov dx, r12w
-        ; move curr_r, curr_r{r0}
-        lea r11, [rsp+16]
-        mov [r11], ax
         ; move cell, cell{r4}
         lea r11, [rsp+19]
         mov [r11], r9b
+        ; or t.47{r3}, t.47{r3}, t.48{r0}
+        or r8b, al
+        ; move curr_r{r1}, curr_r
+        lea r11, [rsp+16]
+        mov cx, [r11]
+        ; move curr_r, curr_r{r1}
+        lea r11, [rsp+16]
+        mov [r11], cx
+        ; move curr_c{r2}, curr_c{r7}
+        mov dx, r12w
         ; call setCell[curr_r{r1}, curr_c{r2}, t.47{r3}]
         sub rsp, 20h; shadow space
         call @setCell
@@ -2009,31 +1836,27 @@ start:
         ; branch t.49{r0}, true, @if_55_then
         or al, al
         jnz @if_55_then
-        ; move curr_r{r0}, curr_r
+        ; move curr_r{r1}, curr_r
         lea r11, [rsp+16]
-        mov ax, [r11]
-        ; move curr_r{r1}, curr_r{r0}
-        mov cx, ax
+        mov cx, [r11]
+        ; move curr_r, curr_r{r1}
+        lea r11, [rsp+16]
+        mov [r11], cx
         ; move curr_c{r2}, curr_c{r7}
         mov dx, r12w
-        ; move curr_r, curr_r{r0}
-        lea r11, [rsp+16]
-        mov [r11], ax
         ; call maybeRevealAround[curr_r{r1}, curr_c{r2}]
         sub rsp, 20h; shadow space
         call @maybeRevealAround
         add rsp, 20h
 @while_40:
-        ; move curr_r{r0}, curr_r
+        ; move curr_r{r1}, curr_r
         lea r11, [rsp+16]
-        mov ax, [r11]
-        ; move curr_r{r1}, curr_r{r0}
-        mov cx, ax
+        mov cx, [r11]
+        ; move curr_r, curr_r{r1}
+        lea r11, [rsp+16]
+        mov [r11], cx
         ; move curr_c{r2}, curr_c{r7}
         mov dx, r12w
-        ; move curr_r, curr_r{r0}
-        lea r11, [rsp+16]
-        mov [r11], ax
         ; call printField[curr_r{r1}, curr_c{r2}]
         sub rsp, 20h; shadow space
         call @printField
@@ -2042,9 +1865,9 @@ start:
         ; notlog t.9{r0}, needsInitialize{r6}
         or bl, bl
         sete al
-        ; branch t.9{r0}, false, @no_critical_edge_40
+        ; branch t.9{r0}, false, @if_41_end
         or al, al
-        jz @no_critical_edge_40
+        jz @if_41_end
         jmp @if_41_then
 @if_42_then:
         ; const t.11{r1}, [string-2]
