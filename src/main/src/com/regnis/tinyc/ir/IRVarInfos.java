@@ -85,6 +85,45 @@ public final class IRVarInfos implements IRCanBeRegister {
 	}
 
 	@NotNull
+	public Set<IRVar> cantBeRegister() {
+		return cantBeRegister;
+	}
+
+	@NotNull
+	public IRVarInfos global() {
+		return parent != null ? parent : this;
+	}
+
+	public int size(@NotNull IRVar var) {
+		for (IRVarDef def : vars) {
+			if (def.var().equals(var)) {
+				return def.size();
+			}
+		}
+		throw new IllegalStateException("Unknown var " + var);
+	}
+
+	public List<Type> getArgumentTypes() {
+		final List<Type> types = new ArrayList<>();
+		int expectedIndex = 0;
+		for (IRVarDef varDef : vars) {
+			final IRVar var = varDef.var();
+			if (var.scope() != VariableScope.argument) {
+				continue;
+			}
+
+			if (var.index() != expectedIndex) {
+				throw new IllegalStateException();
+			}
+
+			types.add(var.type());
+
+			expectedIndex++;
+		}
+		return types;
+	}
+
+	@NotNull
 	public IRVarInfos derive(IRVarInfos newParent) {
 		return new IRVarInfos(vars, cantBeRegister, newParent);
 	}
