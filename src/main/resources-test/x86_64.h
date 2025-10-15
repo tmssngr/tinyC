@@ -43,8 +43,8 @@ i64 strlen(u8* str) {
 void printStringLength(u8* str, i64 length) asm {
 	// rsp+0    calling address
 	// rsp+8    nothing (offset to get rsp % 10 == 0)
-	// rsp+10h  length
-	// rsp+18h  str
+	// rcx      str
+	// rdx      length
 	// BOOL WriteFile(
 	//  [in]                HANDLE       hFile,                    rcx
 	//  [in]                LPCVOID      lpBuffer,                 rdx
@@ -54,10 +54,10 @@ void printStringLength(u8* str, i64 length) asm {
 	//);
 	"mov     rdi, rsp"
 	""
+	"mov     r8, rdx"
+	"mov     rdx, rcx"
 	"lea     rcx, [hStdOut]"
 	"mov     rcx, [rcx]"
-	"mov     rdx, [rdi+18h]"
-	"mov     r8, [rdi+10h]"
 	"xor     r9, r9"
 	"push    0"
 	"sub     rsp, 20h"
@@ -84,10 +84,8 @@ i16 getChar() asm {
 }
 
 void setCursor(i16 x, i16 y) asm {
-	// rsp+0    calling address
-	// rsp+8    nothing (offset to get rsp % 10 == 0)
-	// rsp+10h  y
-	// rsp+18h  x
+	// rcx      y
+	// rdx      x
 	// BOOL WINAPI SetConsoleCursorPosition(
 	//  _In_ HANDLE hConsoleOutput,            rcx
 	//  _In_ COORD  dwCursorPosition           rdx
@@ -96,17 +94,15 @@ void setCursor(i16 x, i16 y) asm {
 	//   SHORT X;
 	//   SHORT Y;
 	// } COORD, *PCOORD;
-	"mov     rdi, rsp"
-	"and     spl, 0xf0"
-	""
+	"sub     rsp, 28h"
+	"shl     rcx, 16"
+	"movsxd  rcx, ecx"
+	"movsx   rdx, dx"
+	"add     rdx, rcx"
 	"lea     rcx, [hStdOut]"
 	"mov     rcx, [rcx]"
-	"mov     dx, [rdi+10h]"
-	"shl     rdx, 16"
-	"mov     dx, [rdi+18h]"
-	"sub     rsp, 20h"
-	"  call   [SetConsoleCursorPosition]"
-	"mov     rsp, rdi"
+	"call   [SetConsoleCursorPosition]"
+	"add     rsp, 28h"
 	"ret"
 }
 

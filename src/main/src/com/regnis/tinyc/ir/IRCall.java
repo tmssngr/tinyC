@@ -33,4 +33,12 @@ public record IRCall(@Nullable IRVar target, @NotNull Type type, @NotNull String
 		}
 		return buffer.toString();
 	}
+
+	public List<Type> getArgumentTypes() {
+		final List<Type> types = new ArrayList<>();
+		for (IRVar arg : args) {
+			types.add(arg.type());
+		}
+		return types;
+	}
 }
