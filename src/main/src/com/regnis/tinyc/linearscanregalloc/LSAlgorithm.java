@@ -186,29 +186,13 @@ final class LSAlgorithm {
 
 	private int getIdealSplitPosition(LSInterval interval, int maxPos) {
 		final LSUse use = interval.getUseBefore(maxPos);
-
-		int blockStart = 0;
-		for (LSIntervalFactory.Indices boundary : blockBoundaries) {
-			final int start = boundary.start();
-			if (start > maxPos) {
-				break;
-			}
-
-			blockStart = start;
-		}
-
-		final boolean irrelevantBlockStart = blockStart <= interval.getFrom();
 		if (use == null) {
-			return irrelevantBlockStart
-					? maxPos
-					: blockStart;
+			return maxPos;
 		}
 
 		final int usePos = use.pos();
 		Utils.assertTrue(usePos < maxPos);
-		return irrelevantBlockStart
-				? usePos
-				: Math.max(blockStart, usePos);
+		return usePos;
 	}
 
 	/**
