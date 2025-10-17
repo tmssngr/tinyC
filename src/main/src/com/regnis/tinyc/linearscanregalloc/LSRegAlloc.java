@@ -48,6 +48,7 @@ public final class LSRegAlloc {
 		final Function<IRVar, IRVar> localCopyToGlobalOriginal = preprocessorResult.localCopyToGlobalOriginal();
 		final LSRegAlloc regAlloc = new LSRegAlloc(varIntervals, localCopyToGlobalOriginal, registerCount, cfg, blockToIndex, varInfos);
 		regAlloc.determineMovesAtBlockEdges(blocks);
+		regAlloc.processStackArguments();
 		regAlloc.processInstructions(intervalFactory.getInstructions());
 
 /*
@@ -80,6 +81,32 @@ public final class LSRegAlloc {
 		this.cfg = cfg;
 		this.blockToIndex = blockToIndex;
 		this.canBeRegister = canBeRegister;
+	}
+
+	private void processStackArguments() {
+		// Arguments which are passed on the stack, but an register has been assigned to them immediately
+		// need to load the variable into the register.
+		for (Map.Entry<IRVar, LSInterval> entry : varToInterval.entrySet()) {
+			final IRVar var = entry.getKey();
+			if (var.scope() != VariableScope.argument) {
+				continue;
+			}
+
+			final LSInterval interval = entry.getValue();
+			if (interval.getFrom() > 0) {
+				continue;
+			}
+
+			final LSUse nextUse = interval.getUsedNext(0);
+			if (nextUse == null || nextUse.pos() == 0) {
+				continue;
+			}
+
+			final int register = interval.register();
+			if (register >= 0) {
+				add(new IRMove(var.asRegister(register), var, Location.DUMMY));
+			}
+		}
 	}
 
 	private void processInstructions(List<IRInstruction> instructions) {
