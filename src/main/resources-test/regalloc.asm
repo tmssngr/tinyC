@@ -108,10 +108,9 @@ start:
         ; save clobbered non-volatile registers
         push rbx
         push r12
+        sub rsp, 32
         ; call one{r0} = simple[] -> u8
-        sub rsp, 20h; shadow space
         call @simple
-        add rsp, 20h
         ; move one{r6}, one{r0}
         mov bl, al
         ; const two{r7}, 2
@@ -121,23 +120,18 @@ start:
         ; move two{r2}, two{r7}
         mov dl, r12b
         ; call _ = registerHint[one{r1}, two{r2}] -> u8
-        sub rsp, 20h; shadow space
         call @registerHint
-        add rsp, 20h
         ; move one{r1}, one{r6}
         mov cl, bl
         ; move two{r2}, two{r7}
         mov dl, r12b
         ; call _ = max[one{r1}, two{r2}] -> u8
-        sub rsp, 20h; shadow space
         call @max
-        add rsp, 20h
         ; const t.4{r1}, 5
         mov cl, 5
         ; call _ = fibonacci[t.4{r1}] -> i16
-        sub rsp, 20h; shadow space
         call @fibonacci
-        add rsp, 20h
+        add rsp, 32
         ; restore clobbered non-volatile registers
         pop r12
         pop rbx

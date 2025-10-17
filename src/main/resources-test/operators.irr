@@ -23,39 +23,38 @@
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
-	; 26 pc
-	move r6, r1
-	const r7, 20
+	; 25 pc
+	const r6, 20
 	; 13:2 while true
 @while_1:
-	dec r7
-	const r3, 10
-	move r4, r6
-	move r0, r4
-	mod r2, r0, r3
-	move r4, r2
-	const r3, 10
-	move r0, r6
-	div r0, r0, r3
-	move r6, r0
-	cast r0(u8), r4(i64)
-	const r3, 48
-	add r0, r0, r3
-	cast r3(i64), r7(u8)
-	cast r3(u8*), r3(i64)
-	addrof r4, [buffer]
-	add r4, r4, r3
-	store [r4], r0
+	dec r6
+	const r7, 10
+	move r3, r1
+	move r0, r3
+	mod r2, r0, r7
+	move r3, r2
+	const r7, 10
+	move r0, r1
+	div r0, r0, r7
+	move r1, r0
+	cast r7(u8), r3(i64)
+	const r0, 48
+	add r7, r7, r0
+	cast r0(i64), r6(u8)
+	cast r0(u8*), r0(i64)
+	addrof r3, [buffer]
+	add r3, r3, r0
+	store [r3], r7
 	; 19:3 if number == 0
-	equals r0, r6, 0
-	branch r0, false, @while_1
-	cast r6(i64), r7(u8)
-	cast r6(u8*), r6(i64)
+	equals r7, r1, 0
+	branch r7, false, @while_1
+	cast r7(i64), r6(u8)
+	cast r7(u8*), r7(i64)
 	addrof r1, [buffer]
-	add r1, r1, r6
-	const r6, 20
-	sub r6, r6, r7
-	cast r2(i64), r6(u8)
+	add r1, r1, r7
+	const r7, 20
+	sub r7, r7, r6
+	cast r2(i64), r7(u8)
 	call printStringLength[r1, r2]
 
 @printIntLf:
@@ -78,7 +77,7 @@
 @strlen:
  Local variables
 	arg 0: str (u8*/8)
-	; 9 pc
+	; 10 pc
 	const r0, 0
 	; 37:2 for *str != 0
 	jump @for_4
@@ -86,8 +85,9 @@
 	inc r0
 	cast r2(i64), r1(u8*)
 	const r3, 1
-	add r2, r2, r3
-	cast r1(u8*), r2(i64)
+	move r1, r2
+	add r1, r1, r3
+	cast r1(u8*), r1(i64)
 @for_4:
 	load r2, [r1]
 	notequals r2, r2, 0
@@ -101,7 +101,7 @@
 	var 2: t (bool/1)
 	var 3: f (bool/1)
 	var 4: b1 (u8/1)
-	; 265 pc
+	; 212 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const r1, [string-0]
@@ -109,16 +109,16 @@
 	const r6, 0
 	const r7, 1
 	const r0, 2
-	const r2, 3
-	const r3, 1
-	const r4, 0
-	move r5, r6
-	and r5, r5, r6
-	cast r1(i64), r5(i16)
 	move c, r0
-	move d, r2
-	move t, r3
-	move f, r4
+	const r0, 3
+	move d, r0
+	const r0, 1
+	move t, r0
+	const r0, 0
+	move f, r0
+	move r0, r6
+	and r0, r0, r6
+	cast r1(i64), r0(i16)
 	call printIntLf[r1]
 	move r0, r6
 	and r0, r0, r7
@@ -159,8 +159,8 @@
 	move r0, r6
 	move r2, c
 	xor r0, r0, r2
-	cast r1(i64), r0(i16)
 	move c, r2
+	cast r1(i64), r0(i16)
 	call printIntLf[r1]
 	move r0, r7
 	xor r0, r0, r6
@@ -169,142 +169,114 @@
 	move r6, r7
 	move r0, c
 	xor r6, r6, r0
+	move c, r0
 	cast r1(i64), r6(i16)
-	move r6, r0
 	call printIntLf[r1]
 	const r1, [string-3]
 	call printString[r1]
 	; 26:15 logic and
-	move r0, f
-	move r2, r0
-	branch r2, false, @and_next_5
-	move r2, r0
+	move r6, f
+	move r0, r6
+	branch r0, false, @and_next_5
+	move r0, r6
 @and_next_5:
-	cast r1(i64), r2(bool)
-	move f, r0
+	cast r1(i64), r0(bool)
 	call printIntLf[r1]
 	; 27:15 logic and
-	move r0, f
-	move r2, r0
-	branch r2, true, @and_2nd_6
-	move r3, t
-	jump @and_next_6
-@and_2nd_6:
-	move r3, t
-	move r2, r3
+	move r0, r6
+	branch r0, false, @and_next_6
+	move r0, t
+	move t, r0
 @and_next_6:
-	cast r1(i64), r2(bool)
-	move t, r3
-	move f, r0
+	cast r1(i64), r0(bool)
 	call printIntLf[r1]
 	; 28:15 logic and
 	move r0, t
 	move r2, r0
-	branch r2, true, @and_2nd_7
-	move r3, f
-	jump @and_next_7
-@and_2nd_7:
-	move r3, f
-	move r2, r3
+	move t, r0
+	branch r2, false, @and_next_7
+	move r2, r6
 @and_next_7:
 	cast r1(i64), r2(bool)
-	move t, r0
-	move f, r3
 	call printIntLf[r1]
 	; 29:15 logic and
 	move r0, t
 	move r2, r0
 	branch r2, false, @and_next_8
 	move r2, r0
+	move t, r0
 @and_next_8:
 	cast r1(i64), r2(bool)
-	move t, r0
 	call printIntLf[r1]
 	const r1, [string-4]
 	call printString[r1]
 	; 31:15 logic or
-	move r0, f
-	move r2, r0
-	branch r2, true, @or_next_9
-	move r2, r0
+	move r0, r6
+	branch r0, true, @or_next_9
+	move r0, r6
 @or_next_9:
-	cast r1(i64), r2(bool)
-	move f, r0
+	cast r1(i64), r0(bool)
 	call printIntLf[r1]
 	; 32:15 logic or
-	move r0, f
-	move r2, r0
-	branch r2, false, @or_2nd_10
-	move r3, t
-	jump @or_next_10
-@or_2nd_10:
-	move r3, t
-	move r2, r3
+	move r0, r6
+	branch r0, true, @or_next_10
+	move r0, t
+	move t, r0
 @or_next_10:
-	cast r1(i64), r2(bool)
-	move t, r3
-	move f, r0
+	cast r1(i64), r0(bool)
 	call printIntLf[r1]
 	; 33:15 logic or
 	move r0, t
 	move r2, r0
-	branch r2, false, @or_2nd_11
-	move r3, f
-	jump @or_next_11
-@or_2nd_11:
-	move r3, f
-	move r2, r3
+	move t, r0
+	branch r2, true, @or_next_11
+	move r2, r6
 @or_next_11:
 	cast r1(i64), r2(bool)
-	move t, r0
-	move f, r3
 	call printIntLf[r1]
 	; 34:15 logic or
 	move r0, t
 	move r2, r0
 	branch r2, true, @or_next_12
 	move r2, r0
+	move t, r0
 @or_next_12:
 	cast r1(i64), r2(bool)
-	move t, r0
 	call printIntLf[r1]
 	const r1, [string-5]
 	call printString[r1]
-	move r0, f
-	notlog r0, r0
-	cast r1(i64), r0(bool)
+	notlog r6, r6
+	cast r1(i64), r6(bool)
 	call printIntLf[r1]
-	move r0, t
-	notlog r0, r0
-	cast r1(i64), r0(bool)
+	move r6, t
+	notlog r6, r6
+	cast r1(i64), r6(bool)
 	call printIntLf[r1]
 	const r1, [string-6]
 	call printString[r1]
-	const r0, 10
-	const r2, 6
-	const r3, 1
-	and r0, r0, r2
-	or r0, r0, r3
-	cast r1(i64), r0(u8)
-	move b1, r3
+	const r6, 10
+	const r0, 6
+	const r2, 1
+	and r6, r6, r0
+	or r6, r6, r2
+	move b1, r2
+	cast r1(i64), r6(u8)
 	call printIntLf[r1]
 	; 43:20 logic or
+	move r6, c
 	equals r0, r7, r6
-	branch r0, false, @or_2nd_13
-	move r2, d
-	jump @or_next_13
-@or_2nd_13:
-	move r2, d
-	lt r0, r6, r2
+	branch r0, true, @or_next_13
+	move r0, d
+	lt r0, r6, r0
+	move d, r0
 @or_next_13:
 	cast r1(i64), r0(bool)
-	move d, r2
 	call printIntLf[r1]
 	; 44:20 logic and
 	equals r0, r7, r6
 	branch r0, false, @and_next_14
-	move r2, d
-	lt r0, r6, r2
+	move r0, d
+	lt r0, r6, r0
 @and_next_14:
 	cast r1(i64), r0(bool)
 	call printIntLf[r1]

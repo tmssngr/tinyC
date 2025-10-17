@@ -28,12 +28,12 @@ start:
         ; void main
 @main:
         sub rsp, 8
+        sub rsp, 32
         ; const t.0{r1}, 0
         mov rcx, 0
         ; call unusedArg[t.0{r1}]
-        sub rsp, 20h; shadow space
         call @unusedArg
-        add rsp, 20h
+        add rsp, 32
         add rsp, 8
         ret
 init:

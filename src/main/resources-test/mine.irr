@@ -214,29 +214,29 @@
 	move r6, r1
 	move r7, r2
 	const r0, 0
-	const r3, -1
+	move count, r0
+	const r0, -1
 	; 45:2 for dr <= 1
 	jump @for_7
 @for_7_body:
 	move r1, r6
-	add r1, r1, r3
-	const r4, -1
+	add r1, r1, r0
+	move dr, r0
+	const r0, -1
 	; 47:3 for dc <= 1
 	jump @for_8
 @for_8_body:
-	move dr, r3
-	move count, r0
 	move r2, r7
-	add r2, r2, r4
-	move dc, r4
+	add r2, r2, r0
+	move dc, r0
 	; 49:4 if checkCellBounds([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=49:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=49:27]])
 	move r, r1
 	move c, r2
 	call r0 = checkCellBounds[r1, r2] -> bool
 	branch r0, false, @for_8_continue
 	move r1, r
-	move r, r1
 	move r2, c
+	move r, r1
 	call r0 = getCell[r1, r2] -> u8
 	; 51:5 if isBomb([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=51:16]])
 	move r1, r0
@@ -356,10 +356,10 @@
 	const r2, 0
 	call setCursor[r1, r2]
 	const r1, 0
+	move row, r1
 	; 96:2 for row < 20
 	jump @for_18
 @for_18_body:
-	move row, r1
 	const r1, 124
 	call printChar[r1]
 	const r2, 0
@@ -375,14 +375,14 @@
 	move r1, r0
 	call printChar[r1]
 	move r1, row
-	move row, r1
 	move r2, column
+	move row, r1
 	move column, r2
 	call r0 = getCell[r1, r2] -> u8
 	move r1, r0
 	move r2, row
-	move row, r2
 	move r3, column
+	move row, r2
 	move column, r3
 	call printCell[r1, r2, r3]
 	move r0, column
@@ -549,14 +549,15 @@
 	var 2: bombs (i16/2)
 	var 3: row (i16/2)
 	var 4: column (i16/2)
-	; 59 pc
+	var 5: t.12 (bool/1)
+	; 62 pc
 	move r6, r1
 	move r7, r2
 	const r0, 40
+	move bombs, r0
 	; 174:2 for bombs > 0
 	jump @for_30
 @for_30_body:
-	move bombs, r0
 	call r0 = random[] -> i32
 	const r1, 20
 	move r3, r0
@@ -582,6 +583,7 @@
 	call r0 = abs[r1] -> i16
 	gt r0, r0, 1
 	branch r0, true, @or_next_32
+	move t.12, r0
 	move r0, column
 	move r1, r0
 	move column, r0
@@ -632,11 +634,11 @@
 	; 192:4 if dr == 0 && dc == 0
 	; 192:16 logic and
 	equals r4, r0, 0
+	move dr, r0
 	branch r4, false, @and_next_37
 	equals r4, r3, 0
 @and_next_37:
 	branch r4, true, @for_35_continue
-	move dr, r0
 	move r2, r7
 	add r2, r2, r3
 	move dc, r3
@@ -647,8 +649,8 @@
 	notlog r0, r0
 	branch r0, true, @for_35_continue
 	move r1, r
-	move r, r1
 	move r2, c
+	move r, r1
 	move c, r2
 	call r0 = getCell[r1, r2] -> u8
 	; 202:4 if isOpen([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=202:15]])
@@ -661,13 +663,13 @@
 	move r3, r4
 	or r3, r3, r0
 	move r1, r
-	move r, r1
 	move r2, c
+	move r, r1
 	move c, r2
 	call setCell[r1, r2, r3]
 	move r1, r
-	move r, r1
 	move r2, c
+	move r, r1
 	call maybeRevealAround[r1, r2]
 @for_35_continue:
 	move r0, dc
@@ -700,10 +702,10 @@
 	cast r7(i16), r7(u8)
 	const r0, 10
 	cast r0(i16), r0(u8)
+	move curr_r, r0
 	; 218:2 while true
 	jump @while_40
 @if_41_then:
-	move curr_r, r0
 	; 221:4 if printLeft([])
 	call r0 = printLeft[] -> bool
 	branch r0, true, @if_42_then
