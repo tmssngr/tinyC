@@ -360,7 +360,7 @@ final class LSIntervalFactory {
 			}
 		}
 
-		final LSInterval interval = handleTarget(target, live);
+		final LSInterval targetInterval = handleTarget(target, live);
 		if (source.scope() == VariableScope.global) {
 			return;
 		}
@@ -369,7 +369,8 @@ final class LSIntervalFactory {
 		}
 
 		if (source.scope() == VariableScope.register) {
-			interval.setRegisterHint(source.index());
+			// this may overwrite an already set register hint
+			targetInterval.setRegisterHint(source.index());
 		}
 		final LSInterval sourceInterval = handleSource(source, live);
 		if (target.scope() == VariableScope.register) {
