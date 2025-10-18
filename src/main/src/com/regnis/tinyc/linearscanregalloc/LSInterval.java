@@ -333,12 +333,54 @@ final class LSInterval {
 				break;
 			}
 			if (pos == nextFrom) {
-				final IRVar from = prev.register >= 0 ? prev.var().asRegister(prev.register) : prev.var();
-				final IRVar to = next.register >= 0 ? next.var().asRegister(next.register) : next.var();
-				return new Pair<>(from, to);
+				return createTransition(prev, next);
 			}
 		}
 		return null;
+	}
+
+	@Nullable
+	public Pair<IRVar, IRVar> getTransitionFromTo(int from, int to) {
+		Utils.assertTrue(var != null);
+
+		// shortcut
+		if (nextSplit == null) {
+			Utils.assertTrue(isBetweenFromAndTo(from));
+			Utils.assertTrue(isBetweenFromAndTo(to));
+			return null;
+		}
+
+		final LSInterval fromInterval = getInterval(from);
+		final LSInterval toInterval = getInterval(to);
+		if (fromInterval.register == toInterval.register) {
+			return null;
+		}
+
+		return createTransition(fromInterval, toInterval);
+	}
+
+	@NotNull
+	private Pair<IRVar, IRVar> createTransition(LSInterval prev, LSInterval next) {
+		final IRVar from = prev.register >= 0 ? prev.var().asRegister(prev.register) : prev.var();
+		final IRVar to = next.register >= 0 ? next.var().asRegister(next.register) : next.var();
+		return new Pair<>(from, to);
+	}
+
+	private LSInterval getInterval(int pos) {
+		LSInterval interval = this;
+		while (interval != null) {
+			if (interval.isBetweenFromAndTo(pos)) {
+				return interval;
+			}
+
+			interval = interval.nextSplit;
+		}
+
+		throw new IllegalStateException("No interval found at " + pos);
+	}
+
+	private boolean isBetweenFromAndTo(int pos) {
+		return getFrom() <= pos && pos <= getTo();
 	}
 
 	@Nullable

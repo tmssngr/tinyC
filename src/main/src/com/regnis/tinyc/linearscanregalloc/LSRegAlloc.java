@@ -325,18 +325,12 @@ public final class LSRegAlloc {
 			}
 
 			Utils.assertTrue(canBeRegister.canBeRegister(var));
-			final Pair<IRVar, IRVar> transition = interval.getTransitionAt(blockIndex);
+			final Pair<IRVar, IRVar> transition = interval.getTransitionFromTo(predecessorEndIndex, blockIndex);
 			if (transition != null) {
 				final int from = transition.first().scope() == VariableScope.register ? transition.first().index() : -1;
 				final int to = transition.second().scope() == VariableScope.register ? transition.second().index() : -1;
 				transfers.add(new LSParallelMove.VarTransfer(var, from, to));
 			}
-/*
-			final int varInReg = registers.getRegisterOrState(blockIndex);
-			final int predecessorIndex = predecessorEndIndex + 1;
-			final int varOutReg = registers.getRegisterOrState(predecessorIndex);
-			transfers.add(new LSParallelMove.VarTransfer(var, varOutReg, varInReg));
-*/
 		}
 
 		if (transfers.isEmpty()) {
