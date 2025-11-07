@@ -101,7 +101,7 @@
 	var 2: t (bool/1)
 	var 3: f (bool/1)
 	var 4: b1 (u8/1)
-	; 212 pc
+	; 220 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const r1, [string-0]
@@ -202,7 +202,10 @@
 	; 29:15 logic and
 	move r0, t
 	move r2, r0
-	branch r2, false, @and_next_8
+	branch r2, true, @and_2nd_8
+	move t, r0
+	jump @and_next_8
+@and_2nd_8:
 	move r2, r0
 	move t, r0
 @and_next_8:
@@ -237,7 +240,10 @@
 	; 34:15 logic or
 	move r0, t
 	move r2, r0
-	branch r2, true, @or_next_12
+	branch r2, false, @or_2nd_12
+	move t, r0
+	jump @or_next_12
+@or_2nd_12:
 	move r2, r0
 	move t, r0
 @or_next_12:

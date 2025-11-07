@@ -434,9 +434,14 @@ start:
         mov al, [r11]
         ; move t.44{r2}, t{r0}
         mov dl, al
-        ; branch t.44{r2}, false, @and_next_8
+        ; branch t.44{r2}, true, @and_2nd_8
         or dl, dl
-        jz @and_next_8
+        jnz @and_2nd_8
+        ; move t, t{r0}
+        lea r11, [rsp+52]
+        mov [r11], al
+        jmp @and_next_8
+@and_2nd_8:
         ; move t.44{r2}, t{r0}
         mov dl, al
         ; move t, t{r0}
@@ -506,9 +511,14 @@ start:
         mov al, [r11]
         ; move t.53{r2}, t{r0}
         mov dl, al
-        ; branch t.53{r2}, true, @or_next_12
+        ; branch t.53{r2}, false, @or_2nd_12
         or dl, dl
-        jnz @or_next_12
+        jz @or_2nd_12
+        ; move t, t{r0}
+        lea r11, [rsp+52]
+        mov [r11], al
+        jmp @or_next_12
+@or_2nd_12:
         ; move t.53{r2}, t{r0}
         mov dl, al
         ; move t, t{r0}

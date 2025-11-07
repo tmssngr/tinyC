@@ -72,7 +72,7 @@ public final class LSRegAlloc {
 	private int pos;
 
 	private LSRegAlloc(@NotNull List<LSInterval> varIntervals, @NotNull Function<IRVar, IRVar> localCopyToOriginal, int registerCount, ControlFlowGraph cfg, Map<String, LSIntervalFactory.Indices> blockToIndex, IRCanBeRegister canBeRegister) {
-		this.varToInterval = new HashMap<>();
+		this.varToInterval = new LinkedHashMap<>();
 		for (LSInterval interval : varIntervals) {
 			varToInterval.put(interval.var(), interval);
 		}

@@ -210,22 +210,32 @@
 	var 4: r (i16/2)
 	var 5: dc (i16/2)
 	var 6: c (i16/2)
-	; 54 pc
+	; 84 pc
 	move r6, r1
 	move r7, r2
 	const r0, 0
 	move count, r0
 	const r0, -1
 	; 45:2 for dr <= 1
+	move r1, r0
+	move r0, count
 	jump @for_7
 @for_7_body:
+	move count, r0
+	move r0, r1
 	move r1, r6
 	add r1, r1, r0
 	move dr, r0
 	const r0, -1
 	; 47:3 for dc <= 1
+	move r, r1
+	move r1, r0
+	move r0, count
 	jump @for_8
 @for_8_body:
+	move count, r0
+	move r0, r1
+	move r1, r
 	move r2, r7
 	add r2, r2, r0
 	move dc, r0
@@ -233,15 +243,21 @@
 	move r, r1
 	move c, r2
 	call r0 = checkCellBounds[r1, r2] -> bool
-	branch r0, false, @for_8_continue
+	branch r0, true, @if_9_then
+	move r0, count
+	jump @for_8_continue
+@if_9_then:
 	move r1, r
-	move r2, c
 	move r, r1
+	move r2, c
 	call r0 = getCell[r1, r2] -> u8
 	; 51:5 if isBomb([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=51:16]])
 	move r1, r0
 	call r0 = isBomb[r1] -> bool
-	branch r0, false, @for_8_continue
+	branch r0, true, @if_10_then
+	move r0, count
+	jump @for_8_continue
+@if_10_then:
 	move r0, count
 	inc r0
 @for_8_continue:
@@ -297,7 +313,7 @@
 	arg 1: row (i16/2)
 	arg 2: column (i16/2)
 	var 3: chr (u8/1)
-	; 34 pc
+	; 38 pc
 	move r6, r1
 	move r7, r2
 	move column, r3
@@ -310,7 +326,7 @@
 	; 88:7 if isFlag([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=88:18]])
 	move r1, r6
 	call r0 = isFlag[r1] -> bool
-	branch r0, false, @if_14_end
+	branch r0, false, @no_critical_edge_13
 	jump @if_17_then
 @if_14_then:
 	; 75:3 if isBomb([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=75:14]])
@@ -318,6 +334,9 @@
 	call r0 = isBomb[r1] -> bool
 	branch r0, false, @if_15_else
 	jump @if_15_then
+@no_critical_edge_13:
+	move r6, chr
+	jump @if_14_end
 @if_17_then:
 	const r6, 35
 	jump @if_14_end
@@ -349,7 +368,7 @@
 	arg 1: columnCursor (i16/2)
 	var 2: row (i16/2)
 	var 3: column (i16/2)
-	; 75 pc
+	; 83 pc
 	move r6, r1
 	move r7, r2
 	const r1, 0
@@ -358,15 +377,19 @@
 	const r1, 0
 	move row, r1
 	; 96:2 for row < 20
+	move r0, row
 	jump @for_18
 @for_18_body:
+	move row, r0
 	const r1, 124
 	call printChar[r1]
 	const r2, 0
 	; 98:3 for column < 40
+	move r0, r2
 	jump @for_19
 @for_19_body:
 	move r1, row
+	move r2, r0
 	move row, r1
 	move column, r2
 	move r3, r6
@@ -375,14 +398,14 @@
 	move r1, r0
 	call printChar[r1]
 	move r1, row
-	move r2, column
 	move row, r1
+	move r2, column
 	move column, r2
 	call r0 = getCell[r1, r2] -> u8
 	move r1, r0
 	move r2, row
-	move r3, column
 	move row, r2
+	move r3, column
 	move column, r3
 	call printCell[r1, r2, r3]
 	move r0, column
@@ -446,7 +469,7 @@
 @getHiddenCount:
  Local variables
 	var 0: c (i16/2)
-	; 22 pc
+	; 24 pc
 	const r6, 0
 	const r7, 0
 	; 136:2 for r < 20
@@ -454,8 +477,10 @@
 @for_24_body:
 	const r2, 0
 	; 137:3 for c < 40
+	move r1, r2
 	jump @for_25
 @for_25_body:
+	move r2, r1
 	move r1, r7
 	move c, r2
 	call r0 = getCell[r1, r2] -> u8
@@ -550,14 +575,16 @@
 	var 3: row (i16/2)
 	var 4: column (i16/2)
 	var 5: t.12 (bool/1)
-	; 62 pc
+	; 76 pc
 	move r6, r1
 	move r7, r2
 	const r0, 40
 	move bombs, r0
 	; 174:2 for bombs > 0
+	move r0, bombs
 	jump @for_30
 @for_30_body:
+	move bombs, r0
 	call r0 = random[] -> i32
 	const r1, 20
 	move r3, r0
@@ -582,8 +609,14 @@
 	sub r1, r1, r6
 	call r0 = abs[r1] -> i16
 	gt r0, r0, 1
-	branch r0, true, @or_next_32
+	branch r0, true, @no_critical_edge_10
 	move t.12, r0
+	jump @or_2nd_32
+@no_critical_edge_10:
+	move t.12, r0
+	move r0, t.12
+	jump @or_next_32
+@or_2nd_32:
 	move r0, column
 	move r1, r0
 	move column, r0
@@ -612,7 +645,7 @@
 	var 4: dc (i16/2)
 	var 5: c (i16/2)
 	var 6: cell (u8/1)
-	; 91 pc
+	; 113 pc
 	move r6, r1
 	move r7, r2
 	; 185:2 if getBombCountAround([ExprVarAccess[varName=row, index=0, scope=argument, type=i16, varIsArray=false, location=185:25], ExprVarAccess[varName=column, index=1, scope=argument, type=i16, varIsArray=false, location=185:30]]) != 0
@@ -629,8 +662,14 @@
 	add r1, r1, r0
 	const r3, -1
 	; 191:3 for dc <= 1
+	move dr, r0
+	move r, r1
+	move r0, r3
 	jump @for_35
 @for_35_body:
+	move r3, r0
+	move r0, dr
+	move r1, r
 	; 192:4 if dr == 0 && dc == 0
 	; 192:16 logic and
 	equals r4, r0, 0
@@ -638,7 +677,7 @@
 	branch r4, false, @and_next_37
 	equals r4, r3, 0
 @and_next_37:
-	branch r4, true, @for_35_continue
+	branch r4, true, @if_36_then
 	move r2, r7
 	add r2, r2, r3
 	move dc, r3
@@ -647,10 +686,16 @@
 	move c, r2
 	call r0 = checkCellBounds[r1, r2] -> bool
 	notlog r0, r0
-	branch r0, true, @for_35_continue
-	move r1, r
-	move r2, c
+	branch r0, false, @if_38_end
+	jump @for_35_continue
+@if_36_then:
+	move dc, r3
 	move r, r1
+	jump @for_35_continue
+@if_38_end:
+	move r1, r
+	move r, r1
+	move r2, c
 	move c, r2
 	call r0 = getCell[r1, r2] -> u8
 	; 202:4 if isOpen([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=202:15]])
@@ -663,13 +708,13 @@
 	move r3, r4
 	or r3, r3, r0
 	move r1, r
-	move r2, c
 	move r, r1
+	move r2, c
 	move c, r2
 	call setCell[r1, r2, r3]
 	move r1, r
-	move r2, c
 	move r, r1
+	move r2, c
 	call maybeRevealAround[r1, r2]
 @for_35_continue:
 	move r0, dc
@@ -689,7 +734,7 @@
 	var 0: curr_r (i16/2)
 	var 1: cell (u8/1)
 	var 2: cell (u8/1)
-	; 179 pc
+	; 215 pc
 	; begin initialize global variables
 	const r6, 0
 	; end initialize global variables
@@ -734,19 +779,23 @@
 	move r0, r1
 	mod r2, r0, r4
 	move r1, r2
+	move curr_r, r1
 	jump @while_40
 @if_45_else:
+	move r1, curr_r
 	; 241:8 if chr == 57419
 	equals r4, r3, 57419
 	branch r4, false, @if_46_else
 	jump @if_46_then
 @if_45_then:
+	move r1, curr_r
 	const r4, 1
 	add r1, r1, r4
 	const r4, 20
 	move r0, r1
 	mod r2, r0, r4
 	move r1, r2
+	move curr_r, r1
 	jump @while_40
 @if_46_else:
 	; 245:8 if chr == 57419
@@ -764,6 +813,7 @@
 	move r0, r7
 	mod r2, r0, r4
 	move r7, r2
+	move curr_r, r1
 	jump @while_40
 @if_47_else:
 	; 249:8 if chr == 57421
@@ -781,6 +831,7 @@
 	move r0, r7
 	mod r2, r0, r4
 	move r7, r2
+	move curr_r, r1
 	jump @while_40
 @if_48_else:
 	; 253:8 if chr == 32
@@ -794,20 +845,27 @@
 	move r0, r7
 	mod r2, r0, r4
 	move r7, r2
+	move curr_r, r1
 	jump @while_40
 @if_49_else:
 	; 262:8 if chr == 13
 	equals r0, r3, 13
-	branch r0, false, @while_40
+	branch r0, false, @no_critical_edge_41
 	jump @if_52_then
 @if_49_then:
 	; 254:4 if !needsInitialize
 	notlog r0, r6
-	branch r0, false, @while_40
+	branch r0, false, @no_critical_edge_44
 	jump @if_50_then
+@no_critical_edge_41:
+	move curr_r, r1
+	jump @while_40
 @if_52_then:
-	branch r6, false, @if_53_end
+	branch r6, false, @no_critical_edge_42
 	jump @if_53_then
+@no_critical_edge_44:
+	move curr_r, r1
+	jump @while_40
 @if_50_then:
 	move curr_r, r1
 	move r2, r7
@@ -819,7 +877,11 @@
 	notlog r0, r0
 	branch r0, false, @while_40
 	jump @if_51_then
+@no_critical_edge_42:
+	move curr_r, r1
+	jump @if_53_end
 @if_53_then:
+	move curr_r, r1
 	const r6, 0
 	move r1, curr_r
 	move curr_r, r1
