@@ -12,7 +12,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public final class X86Win64 extends AsmWriter {
+public final class X86_64_AsmWriter extends AsmWriter {
 
 	private static final int FIRST_NON_VOLATILE_REGISTER = 6;
 
@@ -21,7 +21,7 @@ public final class X86Win64 extends AsmWriter {
 	private X86StackOffsets stackOffsets = X86StackOffsets.DUMMY;
 	private int rspOffset;
 
-	public X86Win64(@NotNull BufferedWriter writer) {
+	public X86_64_AsmWriter(@NotNull BufferedWriter writer) {
 		super(writer);
 	}
 

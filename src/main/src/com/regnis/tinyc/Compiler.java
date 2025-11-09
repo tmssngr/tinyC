@@ -104,7 +104,7 @@ public class Compiler {
 		write(irProgram, irRegFile);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
-			final X86Win64 output = new X86Win64(writer);
+			final X86_64_AsmWriter output = new X86_64_AsmWriter(writer);
 			output.write(irProgram);
 		}
 
