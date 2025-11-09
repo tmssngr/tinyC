@@ -12,13 +12,16 @@ import org.jetbrains.annotations.*;
  */
 final class X86StackOffsets {
 
-	public static final X86StackOffsets DUMMY = new X86StackOffsets(List.of(), List.of(), 0);
+	public static final X86StackOffsets DUMMY = new X86StackOffsets(List.of(), List.of(), 4, 0);
 
 	private final int[] localVarOffsets;
 	private final int rspOffset;
 	private final int callArgSpace;
+	private final int argCountInRegisters;
 
-	public X86StackOffsets(@NotNull List<IRVarDef> localVars, @NotNull List<List<IRVar>> callsArgs, int pushedNonvolatileRegisterCount) {
+	public X86StackOffsets(@NotNull List<IRVarDef> localVars, @NotNull List<List<IRVar>> callsArgs, int argCountInRegisters, int pushedNonvolatileRegisterCount) {
+		this.argCountInRegisters = argCountInRegisters;
+
 		checkLocalVars(localVars);
 
 		final Map<IRVar, Integer> stackArgToOffset = new HashMap<>();
@@ -121,12 +124,14 @@ final class X86StackOffsets {
 			int offset = 0x20;
 			for (int i = 0; i < callArgs.size(); i++) {
 				final IRVar var = callArgs.get(i);
-				if (i < 4) {
+				if (i < argCountInRegisters) {
 					Utils.assertTrue(var.scope() == VariableScope.register);
 					continue;
 				}
 
-				Utils.assertTrue(var.scope() == VariableScope.function);
+				if (!(var.scope() == VariableScope.function)) {
+					throw new IllegalStateException("");
+				}
 				Utils.assertTrue(!stackArgToOffset.containsKey(var), "each stack-arg var only is allowed to be used one time");
 				stackArgToOffset.put(var, offset);
 				// everything is 8 bytes large in X86_64

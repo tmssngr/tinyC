@@ -1,0 +1,121 @@
+@printChar:
+ Local variables
+	arg 0: chr (u8/1)
+	; 8 pc
+	addrof r8, chr
+	const r2, 1
+	move chr, r1
+	move r1, r8
+	call printStringLength[r1, r2]
+
+@printUint:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: buffer[] (u8*/20)
+	; 25 pc
+	const r8, 20
+	; 13:2 while true
+@while_1:
+	dec r8
+	const r9, 10
+	move r4, r1
+	move r0, r4
+	mod r3, r0, r9
+	move r4, r3
+	const r9, 10
+	move r0, r1
+	div r0, r0, r9
+	move r1, r0
+	cast r9(u8), r4(i64)
+	const r0, 48
+	add r9, r9, r0
+	cast r0(i64), r8(u8)
+	cast r0(u8*), r0(i64)
+	addrof r3, [buffer]
+	add r3, r3, r0
+	store [r3], r9
+	; 19:3 if number == 0
+	equals r9, r1, 0
+	branch r9, false, @while_1
+	cast r9(i64), r8(u8)
+	cast r9(u8*), r9(i64)
+	addrof r1, [buffer]
+	add r1, r1, r9
+	const r9, 20
+	sub r9, r9, r8
+	cast r2(i64), r9(u8)
+	call printStringLength[r1, r2]
+
+@printIntLf:
+ Local variables
+	arg 0: number (i64/8)
+	; 8 pc
+	move r8, r1
+	; 27:2 if number < 0
+	lt r9, r8, 0
+	branch r9, false, @if_3_end
+	const r1, 45
+	call printChar[r1]
+	neg r8, r8
+@if_3_end:
+	move r1, r8
+	call printUint[r1]
+	const r1, 10
+	call printChar[r1]
+
+@main:
+	; 32 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const r9, 22
+	cast r9(i16), r9(u8)
+	move r0, r9
+	mul r0, r0, r9
+	const r9, 1
+	add r0, r0, r9
+	cast r1(i64), r0(i16)
+	call printIntLf[r1]
+	const r9, 21
+	cast r9(i16), r9(u8)
+	cast r1(i64), r9(i16)
+	call printIntLf[r1]
+	cast r1(i64), r8(i16)
+	call printIntLf[r1]
+	const r8, 1000
+	const r9, 10
+	move r2, r8
+	move r0, r2
+	div r0, r0, r9
+	move r2, r0
+	cast r1(i64), r2(i16)
+	call printIntLf[r1]
+	const r9, 255
+	and r8, r8, r9
+	cast r1(i64), r8(i16)
+	call printIntLf[r1]
+	const r8, 10
+	const r9, 1
+	move r4, r9
+	shiftright r8, r8, r4
+	cast r1(i64), r8(i16)
+	call printIntLf[r1]
+	const r8, 9
+	const r9, 2
+	move r4, r9
+	shiftright r8, r8, r4
+	cast r1(i64), r8(i16)
+	call printIntLf[r1]
+	const r8, 1
+	move r4, r9
+	shiftleft r8, r8, r4
+	cast r1(i64), r8(i16)
+	call printIntLf[r1]
+
+@printStringLength:
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 1
+	mov rax, 1
+	syscall
+	ret
+

@@ -33,6 +33,31 @@ public abstract class X86Registers {
 		}
 	};
 
+	public static final X86Registers LINUX = new X86Registers(0, 4, 3) {
+		@Override
+		protected String getRegName(int reg, int size) {
+			return switch (reg) {
+				case 0 -> xRegName('a', size); // return
+				case 1 -> iRegName('d', size); // first arg
+				case 2 -> iRegName('s', size); // second arg
+				case 3 -> xRegName('d', size); // third arg
+				case 4 -> xRegName('c', size); // fourth arg
+				case 5 -> nRegName(8, size);   // fifth arg
+				case 6 -> nRegName(9, size);   // sixth arg
+				case 7 -> nRegName(10, size);
+//			case 8 -> getNRegName(11, size);
+				// non-volatile
+				case 8 -> xRegName('b', size);
+				case 9 -> nRegName(12, size);
+				case 10 -> nRegName(13, size);
+				case 11 -> nRegName(14, size);
+				case 12 -> nRegName(15, size);
+				case TMP_REG -> nRegName(11, size); // temp
+				default -> throw new IllegalStateException(String.valueOf(reg));
+			};
+		}
+	};
+
 	private final int rax;
 	private final int rcx;
 	private final int rdx;

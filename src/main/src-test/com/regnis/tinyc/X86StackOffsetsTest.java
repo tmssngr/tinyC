@@ -16,10 +16,10 @@ public class X86StackOffsetsTest {
 
 	@Test
 	public void testNoVars() {
-		X86StackOffsets offsets = new X86StackOffsets(List.of(), List.of(), 0);
+		X86StackOffsets offsets = new X86StackOffsets(List.of(), List.of(), 4, 0);
 		assertEquals(8, offsets.getRspOffset());
 
-		offsets = new X86StackOffsets(List.of(), List.of(), 1);
+		offsets = new X86StackOffsets(List.of(), List.of(), 4, 1);
 		assertEquals(0, offsets.getRspOffset());
 		assertEquals(0, offsets.getCallArgSpace());
 	}
@@ -31,7 +31,7 @@ public class X86StackOffsetsTest {
 
 		X86StackOffsets offsets = new X86StackOffsets(List.of(
 				new IRVarDef(a, 2)
-		), List.of(), 0);
+		), List.of(), 4, 0);
 		assertEquals(8, offsets.getRspOffset());
 		assertEquals(0, offsets.getCallArgSpace());
 		assertEquals(0, offsets.getOffset(a));
@@ -40,7 +40,7 @@ public class X86StackOffsetsTest {
 		offsets = new X86StackOffsets(List.of(
 				new IRVarDef(a, 2),
 				new IRVarDef(b, 2)
-		), List.of(), 0);
+		), List.of(), 4, 0);
 		assertEquals(8, offsets.getRspOffset());
 		assertEquals(0, offsets.getCallArgSpace());
 		assertEquals(0, offsets.getOffset(a));
@@ -54,7 +54,7 @@ public class X86StackOffsetsTest {
 
 		X86StackOffsets offsets = new X86StackOffsets(List.of(
 				new IRVarDef(a, 2)
-		), List.of(), 0);
+		), List.of(), 4, 0);
 		assertEquals(8, offsets.getRspOffset());
 		assertEquals(0, offsets.getCallArgSpace());
 		assertEquals(16, offsets.getOffset(a));
@@ -63,7 +63,7 @@ public class X86StackOffsetsTest {
 		offsets = new X86StackOffsets(List.of(
 				new IRVarDef(a, 2),
 				new IRVarDef(b, 2)
-		), List.of(), 0);
+		), List.of(), 4, 0);
 		assertEquals(8, offsets.getRspOffset());
 		assertEquals(0, offsets.getCallArgSpace());
 		assertEquals(16, offsets.getOffset(a));
@@ -86,7 +86,7 @@ public class X86StackOffsetsTest {
 						new IRVar("a", 0, VariableScope.register, Type.U8),
 						new IRVar("a", 0, VariableScope.register, Type.U8)
 				)
-		), 0);
+		), 4, 0);
 		assertEquals(8, offsets.getRspOffset());
 		assertEquals(0x20, offsets.getCallArgSpace());
 
@@ -108,7 +108,7 @@ public class X86StackOffsetsTest {
 						new IRVar("a", 0, VariableScope.register, Type.U8),
 						varB
 				)
-		), 0);
+		), 4, 0);
 		assertEquals(0, offsets.getRspOffset());
 		assertEquals(0x28, offsets.getCallArgSpace());
 		assertEquals(0x20, offsets.getOffset(varB));
@@ -132,7 +132,7 @@ public class X86StackOffsetsTest {
 						new IRVar("a", 0, VariableScope.register, Type.U8),
 						varB
 				)
-		), 0);
+		), 4, 0);
 		assertEquals(16, offsets.getRspOffset());
 		assertEquals(0x28, offsets.getCallArgSpace());
 		assertEquals(0x20, offsets.getOffset(varB));

@@ -7,6 +7,7 @@ import com.regnis.tinyc.linearscanregalloc.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.nio.file.attribute.*;
 import java.util.*;
 
 import org.jetbrains.annotations.*;
@@ -37,15 +38,38 @@ public class Compiler {
 
 	@NotNull
 	public static Path compile(@NotNull Path inputFile) throws IOException, InterruptedException {
-		final String subdir = "windows/";
-		return compile(inputFile, subdir);
+		final String subdirWin = "windows/";
+		final String subdirLinux = "linux/";
+		final Path asmFileWin = compile(inputFile, subdirWin, TargetArchitecture.WIN_X86_64);
+		final Path asmFileLinux = compile(inputFile, subdirLinux, TargetArchitecture.LINUX_X86_64);
+		final Path asmFile;
+		final Path exeFile;
+		if (Utils.IS_WINDOWS) {
+			asmFile = asmFileWin;
+			exeFile = useExtension(inputFile, subdirWin, ".exe");
+		}
+		else {
+			asmFile = asmFileLinux;
+			exeFile = useExtension(inputFile, subdirLinux, ".bin");
+		}
+		Files.deleteIfExists(exeFile);
+		if (!launchFasm(asmFile, exeFile)) {
+			throw new IOException("Failed to compile");
+		}
+
+		if (!Utils.IS_WINDOWS) {
+			final Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(exeFile);
+			permissions.add(PosixFilePermission.OWNER_EXECUTE);
+			Files.setPosixFilePermissions(exeFile, permissions);
+		}
+		return exeFile;
 	}
 
 	@NotNull
-	private static Path compile(@NotNull Path inputFile, String subdir) throws IOException, InterruptedException {
-		final Program parsedProgram = Parser.parse(inputFile, Set.of("X86_64"));
+	private static Path compile(@NotNull Path inputFile, String subdir, TargetArchitecture architecture) throws IOException, InterruptedException {
+		final Program parsedProgram = Parser.parse(inputFile, architecture.defines);
 
-		final TypeChecker checker = new TypeChecker(Type.I64);
+		final TypeChecker checker = new TypeChecker(architecture.pointerIntType);
 		final Program typedProgram = checker.check(parsedProgram);
 
 		Program program = UnusedFunctionRemover.removeUnusedFunctions(typedProgram);
@@ -58,7 +82,6 @@ public class Compiler {
 		final Path svgFile = useExtension(inputFile, subdir, ".svg");
 		final Path cfgFile = useExtension(inputFile, subdir, ".cfg");
 		final Path asmFile = useExtension(inputFile, subdir, ".asm");
-		final Path exeFile = useExtension(inputFile, subdir, ".exe");
 		Files.deleteIfExists(astFile);
 		Files.deleteIfExists(irFile);
 		Files.deleteIfExists(irRegFile);
@@ -66,7 +89,6 @@ public class Compiler {
 		Files.deleteIfExists(svgFile);
 		Files.deleteIfExists(cfgFile);
 		Files.deleteIfExists(asmFile);
-		Files.deleteIfExists(exeFile);
 
 		write(program, astFile);
 
@@ -74,7 +96,7 @@ public class Compiler {
 
 		write(program, astSimpleFile);
 
-		IRProgram irProgram = IRGenerator.convert(program, Type.I64);
+		IRProgram irProgram = IRGenerator.convert(program, architecture.pointerIntType);
 		irProgram = CleanupGlobalUnusedVariables.process(irProgram);
 		write(irProgram, irFile);
 
@@ -90,7 +112,7 @@ public class Compiler {
 					final ControlFlowGraph cfg = result.second();
 					irWriter.write(cfg);
 					dotWriter.writeCfg(cfg);
-					function = LSRegAlloc.process(function, LSArchitecture.WIN_X86_64);
+					function = LSRegAlloc.process(function, architecture.architecture);
 					final List<IRInstruction> optimizedInstructions = IROptimizer.optimize(function.instructions());
 					final IRFunction optimizedFunction = CleanupLocalUnusedVariables.optimize(function.derive(optimizedInstructions));
 					functions.add(optimizedFunction);
@@ -104,14 +126,11 @@ public class Compiler {
 		write(irProgram, irRegFile);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
-			final X86_64_AsmWriter output = new X86_64_AsmWriter(writer);
+			final AsmWriter output = architecture.createAsmWriter(writer);
 			output.write(irProgram);
 		}
 
-		if (!launchFasm(asmFile)) {
-			throw new IOException("Failed to compile");
-		}
-		return exeFile;
+		return asmFile;
 	}
 
 	private static Path useExtension(Path path, String subdir, String extension) throws IOException {
@@ -155,16 +174,28 @@ public class Compiler {
 		execute(processBuilder);
 	}
 
-	private static boolean launchFasm(Path asmFile) throws IOException, InterruptedException {
-		final Path fasmDir = Path.of(System.getProperty("user.home"), "Apps/fasm");
+	private static boolean launchFasm(Path asmFile, Path exeFile) throws IOException, InterruptedException {
+		String fasmName = "fasm";
+		if (Utils.IS_WINDOWS) {
+			fasmName += ".exe";
+		}
+		final String fasmHomeString = System.getenv("FASM_HOME");
+		Path fasmHome = null;
+		if (fasmHomeString != null) {
+			fasmHome = Paths.get(fasmHomeString);
+			fasmName = fasmHome.resolve(fasmName).toString();
+		}
 		final ProcessBuilder processBuilder = new ProcessBuilder(List.of(
-				fasmDir.resolve("FASM.EXE").toString(),
-				asmFile.toString()
+				fasmName,
+				asmFile.toString(),
+				exeFile.toString()
 		));
 		processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
 		processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
-		processBuilder.environment().put("INCLUDE",
-		                                 fasmDir.resolve("INCLUDE").toString());
+		if (fasmHome != null) {
+			processBuilder.environment().put("INCLUDE",
+			                                 fasmHome.resolve("INCLUDE").toString());
+		}
 		final int result = execute(processBuilder);
 		if (result == 0) {
 			return true;

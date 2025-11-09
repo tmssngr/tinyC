@@ -17,7 +17,7 @@ public final class LSRegAlloc {
 
 	@NotNull
 	public static IRFunction process(@NotNull IRFunction function, @NotNull LSArchitecture architecture) {
-		return process(function, X86Registers.WINDOWS, architecture.registerCount(), architecture);
+		return process(function, architecture instanceof LSArchitecture.X86_64 x86_64 ? x86_64.getRegisters() : null, architecture.registerCount(), architecture);
 	}
 
 	@NotNull

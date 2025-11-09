@@ -1,0 +1,9 @@
+@unusedArg:
+ Local variables
+	arg 0: a (i64/8)
+
+@main:
+	; 1 pc
+	const r1, 0
+	call unusedArg[r1]
+

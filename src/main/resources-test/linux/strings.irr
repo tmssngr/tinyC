@@ -1,0 +1,149 @@
+@printString:
+ Local variables
+	arg 0: str (u8*/8)
+	; 6 pc
+	move r8, r1
+	move r1, r8
+	call r0 = strlen[r1] -> i64
+	move r1, r8
+	move r2, r0
+	call printStringLength[r1, r2]
+
+@printChar:
+ Local variables
+	arg 0: chr (u8/1)
+	; 8 pc
+	addrof r8, chr
+	const r2, 1
+	move chr, r1
+	move r1, r8
+	call printStringLength[r1, r2]
+
+@printUint:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: buffer[] (u8*/20)
+	; 25 pc
+	const r8, 20
+	; 13:2 while true
+@while_1:
+	dec r8
+	const r9, 10
+	move r4, r1
+	move r0, r4
+	mod r3, r0, r9
+	move r4, r3
+	const r9, 10
+	move r0, r1
+	div r0, r0, r9
+	move r1, r0
+	cast r9(u8), r4(i64)
+	const r0, 48
+	add r9, r9, r0
+	cast r0(i64), r8(u8)
+	cast r0(u8*), r0(i64)
+	addrof r3, [buffer]
+	add r3, r3, r0
+	store [r3], r9
+	; 19:3 if number == 0
+	equals r9, r1, 0
+	branch r9, false, @while_1
+	cast r9(i64), r8(u8)
+	cast r9(u8*), r9(i64)
+	addrof r1, [buffer]
+	add r1, r1, r9
+	const r9, 20
+	sub r9, r9, r8
+	cast r2(i64), r9(u8)
+	call printStringLength[r1, r2]
+
+@printIntLf:
+ Local variables
+	arg 0: number (i64/8)
+	; 8 pc
+	move r8, r1
+	; 27:2 if number < 0
+	lt r9, r8, 0
+	branch r9, false, @if_3_end
+	const r1, 45
+	call printChar[r1]
+	neg r8, r8
+@if_3_end:
+	move r1, r8
+	call printUint[r1]
+	const r1, 10
+	call printChar[r1]
+
+@strlen:
+ Local variables
+	arg 0: str (u8*/8)
+	; 10 pc
+	const r0, 0
+	; 37:2 for *str != 0
+	jump @for_4
+@for_4_body:
+	inc r0
+	cast r2(i64), r1(u8*)
+	const r3, 1
+	move r1, r2
+	add r1, r1, r3
+	cast r1(u8*), r1(i64)
+@for_4:
+	load r2, [r1]
+	notequals r2, r2, 0
+	branch r2, true, @for_4_body
+	; 40:9 return length
+
+@main:
+	; 21 pc
+	; begin initialize global variables
+	const r8, [string-0]
+	; end initialize global variables
+	move text, r8
+	move r1, r8
+	call printString[r1]
+	call printLength[]
+	const r9, 1
+	cast r9(u8*), r9(i64)
+	move r8, text
+	move r1, r8
+	add r1, r1, r9
+	call printString[r1]
+	move r8, text
+	load r8, [r8]
+	cast r1(i64), r8(u8)
+	call printIntLf[r1]
+
+@printLength:
+	; 15 pc
+	const r8, 0
+	move r9, text
+	; 16:2 for *ptr != 0
+	jump @for_5
+@for_5_body:
+	inc r8
+	cast r0(i64), r9(u8*)
+	const r2, 1
+	move r9, r0
+	add r9, r9, r2
+	cast r9(u8*), r9(i64)
+@for_5:
+	load r0, [r9]
+	notequals r0, r0, 0
+	branch r0, true, @for_5_body
+	cast r1(i64), r8(i16)
+	call printIntLf[r1]
+
+@printStringLength:
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 1
+	mov rax, 1
+	syscall
+	ret
+
+Global variables
+	0: text (u8*/8)
+
+String literals
+	string lit 0 "hello world\n\0"
