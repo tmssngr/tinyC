@@ -17,12 +17,12 @@ public final class LSRegAlloc {
 
 	@NotNull
 	public static IRFunction process(@NotNull IRFunction function, @NotNull LSArchitecture architecture) {
-		return process(function, architecture.isX86(), architecture.registerCount(), architecture);
+		return process(function, X86Registers.WINDOWS, architecture.registerCount(), architecture);
 	}
 
 	@NotNull
-	public static IRFunction process(@NotNull IRFunction function, boolean isX86, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider) {
-		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, isX86);
+	public static IRFunction process(@NotNull IRFunction function, @Nullable X86Registers x86Registers, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider) {
+		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, x86Registers);
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), preprocessorResult.instructions());
 		DetectVarLiveness.process(cfg, function.varInfos().cantBeRegister(), false);
 		final List<BasicBlock> blocks = cfg.blocks();
@@ -31,7 +31,7 @@ public final class LSRegAlloc {
 
 		final IRVarInfos varInfos = preprocessorResult.varInfos();
 
-		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, isX86);
+		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, x86Registers);
 		intervalFactory.handleBlocks(blocks);
 		final Map<String, LSIntervalFactory.Indices> blockToIndex = intervalFactory.getBlockToIndex();
 		final List<LSIntervalFactory.Indices> blockBoundaries = intervalFactory.getBlockIndices();

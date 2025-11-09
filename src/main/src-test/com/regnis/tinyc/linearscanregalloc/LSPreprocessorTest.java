@@ -37,7 +37,7 @@ public class LSPreprocessorTest {
 				                                                         new IRBinary(d, IRBinary.Op.Add, a, b, Location.DUMMY),
 				                                                         new IRCall(c, Type.I16, "sub", List.of(d, c, b, a), Location.DUMMY),
 				                                                         new IRRetValue(c, Location.DUMMY)
-		                                                         )), callingConventionProvider, false);
+		                                                         )), callingConventionProvider, null);
 		assertEquals(List.of(
 				new IRMove(a, a.asRegister(1), Location.DUMMY),
 				new IRMove(b, b.asRegister(2), Location.DUMMY),
@@ -84,7 +84,7 @@ public class LSPreprocessorTest {
 				                                                         new IRLiteral(varA, 4, Location.DUMMY),
 				                                                         new IRJump("label"),
 				                                                         new IRLabel("label")
-		                                                         )), callingConventionProvider, false);
+		                                                         )), callingConventionProvider, null);
 		final Function<IRVar, IRVar> originalVarMapping = result.localCopyToGlobalOriginal();
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varTempA, 1, Location.DUMMY),
@@ -128,7 +128,7 @@ public class LSPreprocessorTest {
 				                                                         new IRLiteral(varT2, 1, Location.DUMMY),
 																		 new IRCall(null, Type.VOID, "printStringLength", List.of(varT1, varT2), Location.DUMMY),
 				                                                         new IRLabel("@printChar_ret")
-		                                                         )), callingConventionProvider, false);
+		                                                         )), callingConventionProvider, null);
 		final Function<IRVar, IRVar> originalVarMapping = result.localCopyToGlobalOriginal();
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRMove(varTmpChr, varChr.asRegister(1), Location.DUMMY),

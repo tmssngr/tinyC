@@ -9,8 +9,11 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 final class LSPreprocessorX86OperationsLayer extends LSPreprocessorAbstractLayer {
-	public LSPreprocessorX86OperationsLayer(@NotNull LSPreprocessorLayer nextLayer) {
+	private final X86Registers registers;
+
+	public LSPreprocessorX86OperationsLayer(@NotNull X86Registers registers, @NotNull LSPreprocessorLayer nextLayer) {
 		super(nextLayer);
+		this.registers = registers;
 	}
 
 	@Override
@@ -24,7 +27,7 @@ final class LSPreprocessorX86OperationsLayer extends LSPreprocessorAbstractLayer
 			if (op == IRBinary.Op.Div) {
 				final IRVar left = binary.left();
 				Utils.assertTrue(left.equals(binary.target()));
-				final IRVar rax = left.asRegister(0);
+				final IRVar rax = left.asRegister(registers.rax());
 				forward(new IRMove(rax, left, Location.DUMMY));
 				forward(new IRBinary(rax, op, rax, binary.right(), Location.DUMMY));
 				forward(new IRMove(left, rax, Location.DUMMY));
@@ -34,8 +37,8 @@ final class LSPreprocessorX86OperationsLayer extends LSPreprocessorAbstractLayer
 			if (op == IRBinary.Op.Mod) {
 				final IRVar left = binary.left();
 				Utils.assertTrue(left.equals(binary.target()));
-				final IRVar rax = left.asRegister(0);
-				final IRVar rdx = left.asRegister(2);
+				final IRVar rax = left.asRegister(registers.rax());
+				final IRVar rdx = left.asRegister(registers.rdx());
 				forward(new IRMove(rax, left, Location.DUMMY));
 				forward(new IRBinary(rdx, op, rax, binary.right(), Location.DUMMY));
 				forward(new IRMove(left, rdx, Location.DUMMY));
@@ -49,7 +52,7 @@ final class LSPreprocessorX86OperationsLayer extends LSPreprocessorAbstractLayer
 				final IRVar left = binary.left();
 				Utils.assertTrue(left.equals(binary.target()));
 				final IRVar right = binary.right();
-				final IRVar rcx = right.asRegister(1);
+				final IRVar rcx = right.asRegister(registers.rcx());
 				forward(new IRMove(rcx, right, Location.DUMMY));
 				forward(new IRBinary(binary.target(), op, left, rcx, Location.DUMMY));
 				return;

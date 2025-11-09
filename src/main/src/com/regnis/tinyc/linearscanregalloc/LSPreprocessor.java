@@ -16,15 +16,15 @@ import org.jetbrains.annotations.*;
 public final class LSPreprocessor {
 
 	@NotNull
-	public static Result process(@NotNull IRFunction function, @NotNull LSCallingConventionProvider callingConventionProvider, boolean isX86) {
+	public static Result process(@NotNull IRFunction function, @NotNull LSCallingConventionProvider callingConventionProvider, @Nullable X86Registers x86Registers) {
 		final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(function.returnType(), function.varInfos().getArgumentTypes());
 
 		final LSTempRegisterVars tempRegisterVars = new LSTempRegisterVars(function.varInfos());
 
 		final var resultLayer = new LSPreprocessorResultLayer();
 		LSPreprocessorLayer nextLayer = new LSPreprocessorCallingConventionLayer(function.varInfos(), tempRegisterVars, callingConventionProvider, resultLayer);
-		if (isX86) {
-			nextLayer = new LSPreprocessorX86OperationsLayer(nextLayer);
+		if (x86Registers != null) {
+			nextLayer = new LSPreprocessorX86OperationsLayer(x86Registers, nextLayer);
 		}
 		final var globalVarPreprocessor = new LSPreprocessorCachedVarLayer(function.varInfos(), tempRegisterVars, nextLayer);
 

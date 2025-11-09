@@ -19,17 +19,17 @@ final class LSIntervalFactory {
 	private final List<LSInterval> varIntervals = new ArrayList<>();
 	private final Map<IRVar, LSInterval> varToInterval = new HashMap<>();
 	private final LSInterval[] fixedIntervals;
+	private final X86Registers x86Registers;
 	private final IRCanBeRegister canBeRegister;
 	private final LSCallingConventionProvider callingConventionProvider;
-	private final boolean isX86;
 
 	private int pos;
 	private int blockStart;
 
-	public LSIntervalFactory(@NotNull IRCanBeRegister canBeRegister, @NotNull LSCallingConventionProvider callingConventionProvider, int registerCount, boolean isX86) {
+	public LSIntervalFactory(@NotNull IRCanBeRegister canBeRegister, @NotNull LSCallingConventionProvider callingConventionProvider, int registerCount, @Nullable X86Registers x86Registers) {
 		this.canBeRegister = canBeRegister;
 		this.callingConventionProvider = callingConventionProvider;
-		this.isX86 = isX86;
+		this.x86Registers = x86Registers;
 
 		fixedIntervals = new LSInterval[registerCount];
 	}
@@ -209,10 +209,10 @@ final class LSIntervalFactory {
 			final IRVar right = binary.right();
 			final IRVar target = binary.target();
 
-			if (isX86) {
-				final int rax = 0;
-				final int rcx = 1;
-				final int rdx = 2;
+			if (x86Registers != null) {
+				final int rax = x86Registers.rax();
+				final int rcx = x86Registers.rcx();
+				final int rdx = x86Registers.rdx();
 				// https://www.felixcloutier.com/x86/idiv
 				switch (binary.op()) {
 				case Div -> {
