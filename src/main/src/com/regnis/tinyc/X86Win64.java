@@ -48,180 +48,6 @@ public final class X86Win64 extends AsmWriter {
 		writePostamble(program.varInfos().vars(), program.stringLiterals());
 	}
 
-	private void writePreample() throws IOException {
-		writeLines("""
-				           format pe64 console
-				           include 'win64ax.inc'
-
-				           STD_IN_HANDLE = -10
-				           STD_OUT_HANDLE = -11
-				           STD_ERR_HANDLE = -12
-
-				           entry start
-
-				           section '.text' code readable executable
-
-				           start:""");
-		writeComment("alignment");
-		writeIndented("and rsp, -16");
-		writeIndented("call init");
-		writeIndented("call @main");
-		writeIndented("mov rcx, 0");
-		writeIndented("sub rsp, 0x20");
-		writeIndented("call [ExitProcess]");
-		writeNL();
-	}
-
-	private void writeInit() throws IOException {
-		writeLabel("init");
-		// 8 to compensate for the return address; 20h for the shadow space
-		writeIndented("""
-				              sub rsp, 28h
-				                mov rcx, STD_IN_HANDLE
-				                call [GetStdHandle]
-				                ; handle in rax, 0 if invalid
-				                lea rcx, [hStdIn]
-				                mov qword [rcx], rax
-
-				                mov rcx, STD_OUT_HANDLE
-				                call [GetStdHandle]
-				                ; handle in rax, 0 if invalid
-				                lea rcx, [hStdOut]
-				                mov qword [rcx], rax
-
-				                mov rcx, STD_ERR_HANDLE
-				                call [GetStdHandle]
-				                ; handle in rax, 0 if invalid
-				                lea rcx, [hStdErr]
-				                mov qword [rcx], rax
-				              add rsp, 28h
-				              ret
-				              """);
-	}
-
-	private void writePostamble(List<IRVarDef> globalVariables, List<IRStringLiteral> stringLiterals) throws IOException {
-		writeNL();
-
-		writeLines("section '.data' data readable writeable");
-		writeIndented("""
-				              hStdIn  rb 8
-				              hStdOut rb 8
-				              hStdErr rb 8""");
-		for (IRVarDef variable : globalVariables) {
-			writeComment("variable " + variable.getString());
-			writeIndented(getGlobalVarName(variable.var().index()) + " rb " + variable.size());
-		}
-		writeNL();
-
-		if (stringLiterals.size() > 0) {
-			writeLines("section '.data' data readable");
-			for (IRStringLiteral literal : stringLiterals) {
-				final String encoded = encode((literal.text()).getBytes(StandardCharsets.UTF_8));
-				writeIndented(getStringLiteralName(literal.index()) + " db " + encoded);
-			}
-			writeNL();
-		}
-
-		writeLines("""
-				           section '.idata' import data readable writeable
-
-				           library kernel32,'KERNEL32.DLL',\\
-				                   msvcrt,'MSVCRT.DLL'
-
-				           import kernel32,\\
-				                  ExitProcess,'ExitProcess',\\
-				                  GetStdHandle,'GetStdHandle',\\
-				                  SetConsoleCursorPosition,'SetConsoleCursorPosition',\\
-				                  WriteFile,'WriteFile'
-
-				           import msvcrt,\\
-				                  _getch,'_getch'
-				           """);
-	}
-
-	private void writeFunction(IRFunction function) throws IOException {
-		writeComment(function.toString());
-
-		final List<IRInstruction> instructions = function.instructions();
-		final int nonvolatileRegistersToPushPop = getNonVolatileRegistersToPushPop(instructions);
-		final List<IRVarDef> localVars = function.varInfos().vars();
-		final List<List<IRVar>> callsArgs = getCallsWithStackArgs(instructions);
-		stackOffsets = new X86StackOffsets(localVars, callsArgs, nonvolatileRegistersToPushPop);
-		final int rspOffset = stackOffsets.getRspOffset();
-		final int callArgSpace = stackOffsets.getCallArgSpace();
-		writeVarOffsetAsComments(localVars);
-		writeLabel(function.label());
-		writeFunctionProlog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
-
-		writeInstructions(instructions);
-
-		writeFunctionEpilog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
-		stackOffsets = X86StackOffsets.DUMMY;
-	}
-
-	private List<List<IRVar>> getCallsWithStackArgs(List<IRInstruction> instructions) {
-		final List<List<IRVar>> calls = new ArrayList<>();
-		instructions.forEach(instruction -> {
-			if (instruction instanceof IRCall call) {
-				calls.add(call.args());
-			}
-		});
-		return calls;
-	}
-
-	private int getNonVolatileRegistersToPushPop(List<IRInstruction> instructions) {
-		final int maxReg = IRUtils.getMaxReg(instructions);
-		return Math.max(0, maxReg - FIRST_NON_VOLATILE_REGISTER);
-	}
-
-	private void writeVarOffsetAsComments(List<IRVarDef> localVars) throws IOException {
-		for (IRVarDef varDef : localVars) {
-			final IRVar var = varDef.var();
-			if (var.scope() == VariableScope.argument) {
-				writeComment("  rsp+" + stackOffsets.getOffset(var) + ": arg " + var.name());
-			}
-			else {
-				Utils.assertTrue(var.scope() == VariableScope.function);
-				writeComment("  rsp+" + stackOffsets.getOffset(var) + ": var " + var.name());
-			}
-		}
-	}
-
-	private void writeFunctionProlog(int rspOffset, int pushedNonvolatileRegisterCount, int callArgSpace) throws IOException {
-		if (rspOffset > 0) {
-			writeIndented("sub rsp, " + rspOffset);
-		}
-
-		if (pushedNonvolatileRegisterCount > 0) {
-			writeComment("save clobbered non-volatile registers");
-			for (int i = 0; i < pushedNonvolatileRegisterCount; i++) {
-				writeIndented("push " + getRegName(FIRST_NON_VOLATILE_REGISTER + i));
-			}
-		}
-
-		if (callArgSpace > 0) {
-			writeIndented("sub rsp, " + callArgSpace);
-		}
-	}
-
-	private void writeFunctionEpilog(int rspOffset, int pushedNonvolatileRegisterCount, int callArgSpace) throws IOException {
-		if (callArgSpace > 0) {
-			writeIndented("add rsp, " + callArgSpace);
-		}
-
-		if (pushedNonvolatileRegisterCount > 0) {
-			writeComment("restore clobbered non-volatile registers");
-			for (int i = pushedNonvolatileRegisterCount; i-- > 0;) {
-				writeIndented("pop " + getRegName(FIRST_NON_VOLATILE_REGISTER + i));
-			}
-		}
-
-		if (rspOffset > 0) {
-			writeIndented("add rsp, " + rspOffset);
-		}
-		writeIndented("ret");
-	}
-
 	protected void writeAddConst(IRAddConst addConst) throws IOException {
 		final IRVar var = addConst.var();
 		int offset = addConst.offset();
@@ -480,6 +306,184 @@ public final class X86Win64 extends AsmWriter {
 		}
 	}
 
+	protected void writeJump(IRJump jump) throws IOException {
+		writeIndented("jmp " + jump.label());
+	}
+
+	private void writePreample() throws IOException {
+		writeLines("""
+				           format pe64 console
+				           include 'win64ax.inc'
+
+				           STD_IN_HANDLE = -10
+				           STD_OUT_HANDLE = -11
+				           STD_ERR_HANDLE = -12
+
+				           entry start
+
+				           section '.text' code readable executable
+
+				           start:""");
+		writeComment("alignment");
+		writeIndented("and rsp, -16");
+		writeIndented("call init");
+		writeIndented("call @main");
+		writeIndented("mov rcx, 0");
+		writeIndented("sub rsp, 0x20");
+		writeIndented("call [ExitProcess]");
+		writeNL();
+	}
+
+	private void writeInit() throws IOException {
+		writeLabel("init");
+		// 8 to compensate for the return address; 20h for the shadow space
+		writeIndented("""
+				              sub rsp, 28h
+				                mov rcx, STD_IN_HANDLE
+				                call [GetStdHandle]
+				                ; handle in rax, 0 if invalid
+				                lea rcx, [hStdIn]
+				                mov qword [rcx], rax
+
+				                mov rcx, STD_OUT_HANDLE
+				                call [GetStdHandle]
+				                ; handle in rax, 0 if invalid
+				                lea rcx, [hStdOut]
+				                mov qword [rcx], rax
+
+				                mov rcx, STD_ERR_HANDLE
+				                call [GetStdHandle]
+				                ; handle in rax, 0 if invalid
+				                lea rcx, [hStdErr]
+				                mov qword [rcx], rax
+				              add rsp, 28h
+				              ret
+				              """);
+	}
+
+	private void writePostamble(List<IRVarDef> globalVariables, List<IRStringLiteral> stringLiterals) throws IOException {
+		writeNL();
+
+		writeLines("section '.data' data readable writeable");
+		writeIndented("""
+				              hStdIn  rb 8
+				              hStdOut rb 8
+				              hStdErr rb 8""");
+		for (IRVarDef variable : globalVariables) {
+			writeComment("variable " + variable.getString());
+			writeIndented(getGlobalVarName(variable.var().index()) + " rb " + variable.size());
+		}
+		writeNL();
+
+		if (stringLiterals.size() > 0) {
+			writeLines("section '.data' data readable");
+			for (IRStringLiteral literal : stringLiterals) {
+				final String encoded = encode((literal.text()).getBytes(StandardCharsets.UTF_8));
+				writeIndented(getStringLiteralName(literal.index()) + " db " + encoded);
+			}
+			writeNL();
+		}
+
+		writeLines("""
+				           section '.idata' import data readable writeable
+
+				           library kernel32,'KERNEL32.DLL',\\
+				                   msvcrt,'MSVCRT.DLL'
+
+				           import kernel32,\\
+				                  ExitProcess,'ExitProcess',\\
+				                  GetStdHandle,'GetStdHandle',\\
+				                  SetConsoleCursorPosition,'SetConsoleCursorPosition',\\
+				                  WriteFile,'WriteFile'
+
+				           import msvcrt,\\
+				                  _getch,'_getch'
+				           """);
+	}
+
+	private void writeFunction(IRFunction function) throws IOException {
+		writeComment(function.toString());
+
+		final List<IRInstruction> instructions = function.instructions();
+		final int nonvolatileRegistersToPushPop = getNonVolatileRegistersToPushPop(instructions);
+		final List<IRVarDef> localVars = function.varInfos().vars();
+		final List<List<IRVar>> callsArgs = getCallsWithStackArgs(instructions);
+		stackOffsets = new X86StackOffsets(localVars, callsArgs, nonvolatileRegistersToPushPop);
+		final int rspOffset = stackOffsets.getRspOffset();
+		final int callArgSpace = stackOffsets.getCallArgSpace();
+		writeVarOffsetAsComments(localVars);
+		writeLabel(function.label());
+		writeFunctionProlog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
+
+		writeInstructions(instructions);
+
+		writeFunctionEpilog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
+		stackOffsets = X86StackOffsets.DUMMY;
+	}
+
+	private List<List<IRVar>> getCallsWithStackArgs(List<IRInstruction> instructions) {
+		final List<List<IRVar>> calls = new ArrayList<>();
+		instructions.forEach(instruction -> {
+			if (instruction instanceof IRCall call) {
+				calls.add(call.args());
+			}
+		});
+		return calls;
+	}
+
+	private int getNonVolatileRegistersToPushPop(List<IRInstruction> instructions) {
+		final int maxReg = IRUtils.getMaxReg(instructions);
+		return Math.max(0, maxReg - FIRST_NON_VOLATILE_REGISTER);
+	}
+
+	private void writeVarOffsetAsComments(List<IRVarDef> localVars) throws IOException {
+		for (IRVarDef varDef : localVars) {
+			final IRVar var = varDef.var();
+			if (var.scope() == VariableScope.argument) {
+				writeComment("  rsp+" + stackOffsets.getOffset(var) + ": arg " + var.name());
+			}
+			else {
+				Utils.assertTrue(var.scope() == VariableScope.function);
+				writeComment("  rsp+" + stackOffsets.getOffset(var) + ": var " + var.name());
+			}
+		}
+	}
+
+	private void writeFunctionProlog(int rspOffset, int pushedNonvolatileRegisterCount, int callArgSpace) throws IOException {
+		if (rspOffset > 0) {
+			writeIndented("sub rsp, " + rspOffset);
+		}
+
+		if (pushedNonvolatileRegisterCount > 0) {
+			writeComment("save clobbered non-volatile registers");
+			for (int i = 0; i < pushedNonvolatileRegisterCount; i++) {
+				writeIndented("push " + getRegName(FIRST_NON_VOLATILE_REGISTER + i));
+			}
+		}
+
+		if (callArgSpace > 0) {
+			writeIndented("sub rsp, " + callArgSpace);
+		}
+	}
+
+	private void writeFunctionEpilog(int rspOffset, int pushedNonvolatileRegisterCount, int callArgSpace) throws IOException {
+		if (callArgSpace > 0) {
+			writeIndented("add rsp, " + callArgSpace);
+		}
+
+		if (pushedNonvolatileRegisterCount > 0) {
+			writeComment("restore clobbered non-volatile registers");
+			for (int i = pushedNonvolatileRegisterCount; i-- > 0; ) {
+				writeIndented("pop " + getRegName(FIRST_NON_VOLATILE_REGISTER + i));
+			}
+		}
+
+		if (rspOffset > 0) {
+			writeIndented("add rsp, " + rspOffset);
+		}
+		writeIndented("ret");
+	}
+
 	private void writeBinary(String op, IRBinary binary) throws IOException {
 		final IRVar left = binary.left();
 		final IRVar target = binary.target();
@@ -551,10 +555,6 @@ public final class X86Win64 extends AsmWriter {
 		}
 		default -> throw new UnsupportedOperationException(String.valueOf(var.scope()));
 		}
-	}
-
-	protected void writeJump(IRJump jump) throws IOException {
-		writeIndented("jmp " + jump.label());
 	}
 
 	@NotNull
