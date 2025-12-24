@@ -17,15 +17,12 @@ final class X86StackOffsets {
 	private final int[] localVarOffsets;
 	private final int rspOffset;
 	private final int callArgSpace;
-	private final int argCountInRegisters;
 
 	public X86StackOffsets(@NotNull List<IRVarDef> localVars, @NotNull List<List<IRVar>> callsArgs, int argCountInRegisters, int pushedNonvolatileRegisterCount) {
-		this.argCountInRegisters = argCountInRegisters;
-
 		checkLocalVars(localVars);
 
 		final Map<IRVar, Integer> stackArgToOffset = new HashMap<>();
-		callArgSpace = determineSpaceForCallArgs(callsArgs, stackArgToOffset);
+		callArgSpace = determineSpaceForCallArgs(callsArgs, argCountInRegisters, stackArgToOffset);
 
 		//  8h 6th argument
 		//  8h 5th argument
@@ -114,7 +111,7 @@ final class X86StackOffsets {
 		}
 	}
 
-	private int determineSpaceForCallArgs(List<List<IRVar>> callsArgs, Map<IRVar, Integer> stackArgToOffset) {
+	private int determineSpaceForCallArgs(List<List<IRVar>> callsArgs, int argCountInRegisters, Map<IRVar, Integer> stackArgToOffset) {
 		// For simplicity we modify the stackoffset only at the begin of a function,
 		// not for each call it performs. The longest call argument list defines how
 		// much space is reserved. This is not the most space-efficient solution, but
@@ -129,7 +126,7 @@ final class X86StackOffsets {
 					continue;
 				}
 
-				if (!(var.scope() == VariableScope.function)) {
+				if (var.scope() != VariableScope.function) {
 					throw new IllegalStateException("");
 				}
 				Utils.assertTrue(!stackArgToOffset.containsKey(var), "each stack-arg var only is allowed to be used one time");
