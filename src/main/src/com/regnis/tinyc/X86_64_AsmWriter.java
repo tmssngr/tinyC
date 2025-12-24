@@ -14,16 +14,17 @@ import org.jetbrains.annotations.*;
  */
 public abstract class X86_64_AsmWriter extends AsmWriter {
 
+	@NotNull
+	protected abstract X86StackOffsets createX86StackOffsets(List<IRVarDef> localVars, List<List<IRVar>> callsArgs, int nonvolatileRegistersToPushPop);
+
 	private static final int FIRST_NON_VOLATILE_REGISTER = 6;
 
-	private final int argCountInRegisters;
 	private final X86Registers registers;
 
 	private X86StackOffsets stackOffsets;
 
-	protected X86_64_AsmWriter(@NotNull BufferedWriter writer, int argCountInRegisters, @NotNull X86Registers registers) {
+	protected X86_64_AsmWriter(@NotNull BufferedWriter writer, @NotNull X86Registers registers) {
 		super(writer);
-		this.argCountInRegisters = argCountInRegisters;
 		this.registers = registers;
 	}
 
@@ -329,7 +330,7 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 		final int nonvolatileRegistersToPushPop = getNonVolatileRegistersToPushPop(instructions);
 		final List<IRVarDef> localVars = function.varInfos().vars();
 		final List<List<IRVar>> callsArgs = getCallsWithStackArgs(instructions);
-		stackOffsets = new X86StackOffsets(localVars, callsArgs, argCountInRegisters, nonvolatileRegistersToPushPop);
+		stackOffsets = createX86StackOffsets(localVars, callsArgs, nonvolatileRegistersToPushPop);
 		final int rspOffset = stackOffsets.getRspOffset();
 		final int callArgSpace = stackOffsets.getCallArgSpace();
 		writeVarOffsetAsComments(localVars);

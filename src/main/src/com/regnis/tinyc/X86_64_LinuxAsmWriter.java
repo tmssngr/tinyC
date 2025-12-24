@@ -12,8 +12,11 @@ import org.jetbrains.annotations.*;
  */
 public final class X86_64_LinuxAsmWriter extends X86_64_AsmWriter {
 
+	private final int argCountInRegisters;
+
 	public X86_64_LinuxAsmWriter(@NotNull BufferedWriter writer, int argCountInRegisters, @NotNull X86Registers registers) {
-		super(writer, argCountInRegisters, registers);
+		super(writer, registers);
+		this.argCountInRegisters = argCountInRegisters;
 	}
 
 	public void write(@NotNull IRProgram program) throws IOException {
@@ -22,6 +25,12 @@ public final class X86_64_LinuxAsmWriter extends X86_64_AsmWriter {
 		super.write(program);
 
 		writePostamble(program.varInfos().vars(), program.stringLiterals());
+	}
+
+	@NotNull
+	@Override
+	protected X86StackOffsets createX86StackOffsets(List<IRVarDef> localVars, List<List<IRVar>> callsArgs, int nonvolatileRegistersToPushPop) {
+		return new X86StackOffsets(localVars, callsArgs, argCountInRegisters, nonvolatileRegistersToPushPop);
 	}
 
 	private void writePreample() throws IOException {
