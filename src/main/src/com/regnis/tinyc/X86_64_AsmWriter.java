@@ -19,8 +19,7 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 	private final int argCountInRegisters;
 	private final X86Registers registers;
 
-	private X86StackOffsets stackOffsets = X86StackOffsets.DUMMY;
-	private int rspOffset;
+	private X86StackOffsets stackOffsets;
 
 	protected X86_64_AsmWriter(@NotNull BufferedWriter writer, int argCountInRegisters, @NotNull X86Registers registers) {
 		super(writer);
@@ -340,7 +339,7 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 		writeInstructions(instructions);
 
 		writeFunctionEpilog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
-		stackOffsets = X86StackOffsets.DUMMY;
+		stackOffsets = null;
 	}
 
 	private List<List<IRVar>> getCallsWithStackArgs(List<IRInstruction> instructions) {
@@ -459,7 +458,7 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 		switch (var.scope()) {
 		case global -> writeIndented("lea " + addrReg + ", [" + getGlobalVarName(var.index()) + "]");
 		case function, argument -> {
-			final int offset = stackOffsets.getOffset(var) + rspOffset;
+			final int offset = stackOffsets.getOffset(var);
 			writeIndented("lea " + addrReg + ", [rsp+" + offset + "]");
 		}
 		default -> throw new UnsupportedOperationException(String.valueOf(var.scope()));

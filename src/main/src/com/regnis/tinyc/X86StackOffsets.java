@@ -12,8 +12,6 @@ import org.jetbrains.annotations.*;
  */
 final class X86StackOffsets {
 
-	public static final X86StackOffsets DUMMY = new X86StackOffsets(List.of(), List.of(), 4, 0);
-
 	private final int[] localVarOffsets;
 	private final int rspOffset;
 	private final int callArgSpace;
