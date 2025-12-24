@@ -32,7 +32,7 @@ public final class X86_64_WindowsAsmWriter extends X86_64_AsmWriter {
 	@NotNull
 	@Override
 	protected X86StackOffsets createX86StackOffsets(List<IRVarDef> localVars, List<List<IRVar>> callsArgs, int nonvolatileRegistersToPushPop) {
-		return new X86StackOffsets(localVars, callsArgs, argCountInRegisters, nonvolatileRegistersToPushPop);
+		return X86StackOffsets.createWindowsInstance(localVars, callsArgs, argCountInRegisters, nonvolatileRegistersToPushPop);
 	}
 
 	private void writePreample() throws IOException {
