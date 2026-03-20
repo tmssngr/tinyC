@@ -1,0 +1,67 @@
+package com.regnis.tinyc;
+
+import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.ir.*;
+
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+
+import org.junit.*;
+
+/**
+ * @author Thomas Singer
+ */
+public final class AsmWriterTest {
+
+	@Test
+	public void testEmpty() throws IOException {
+		write("empty", new IRProgram(List.of(), List.of(),
+		                             new IRVarInfos(List.of(), Set.of(), null),
+		                             List.of()));
+	}
+
+	@Test
+	public void testFunction() throws IOException {
+		final IRVarInfos globalVarInfo = new IRVarInfos(List.of(), Set.of(), null);
+		final IRVar varA = new IRVar("a", 0, VariableScope.parameter, Type.I16);
+		final IRVar varB = new IRVar("b", 1, VariableScope.parameter, Type.I32);
+		final IRVar varC = new IRVar("c", 2, VariableScope.parameter, Type.pointer(Type.VOID));
+		final IRVar varD = new IRVar("d", 3, VariableScope.parameter, Type.I64);
+		final IRVar varE = new IRVar("e", 4, VariableScope.parameter, Type.I64);
+		final IRVar varF = new IRVar("f", 5, VariableScope.parameter, Type.I64);
+		final IRVar varG = new IRVar("g", 6, VariableScope.parameter, Type.I64);
+		final IRVar varTemp = new IRVar("temp", 7, VariableScope.parameter, Type.I64);
+		write("function", new IRProgram(
+				List.of(
+						new IRFunction("fn", "@fn", Type.I64,
+						               new IRVarInfos(List.of(
+											   new IRVarDef(varA, 2),
+											   new IRVarDef(varB, 4),
+											   new IRVarDef(varC, 8),
+											   new IRVarDef(varD, 8),
+											   new IRVarDef(varE, 8),
+											   new IRVarDef(varF, 8),
+											   new IRVarDef(varG, 8),
+											   new IRVarDef(varTemp, 8)
+						               ), Set.of(), globalVarInfo),
+						               List.of(
+											   new IRLiteral(varA.asRegister(0), 10),
+											   new IRLiteral(varB.asRegister(1), 20),
+											   new IRAddrOf(varC.asRegister(2), varC),
+											   new IRMemLoad(varD.asRegister(3), varC.asRegister(2))
+						               ))
+				),
+				List.of(), globalVarInfo, List.of()));
+	}
+
+	private void write(String name, IRProgram program) throws IOException {
+		final Path dir = Path.of("src/main/resources-test/asmwriter").resolve("x86win64");
+		Files.createDirectories(dir);
+		final Path asmFile = dir.resolve(name + ".asm");
+		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
+			final X86Win64 output = new X86Win64(writer);
+			output.write(program);
+		}
+	}
+}
