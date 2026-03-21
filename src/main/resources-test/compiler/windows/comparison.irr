@@ -132,11 +132,11 @@
 	move c, r0
 	move d, r2
 	call printIntLf@bool[r1]
-	move r2, c
-	move r0, d
-	lt r1, r0, r2
-	move c, r2
-	move d, r0
+	move r0, c
+	move r2, d
+	lt r1, r2, r0
+	move c, r0
+	move d, r2
 	call printIntLf@bool[r1]
 	const r1, [string-2]
 	call printString@@u8[r1]
@@ -152,11 +152,11 @@
 	move c, r0
 	move d, r2
 	call printIntLf@bool[r1]
-	move r2, c
-	move r0, d
-	lteq r1, r0, r2
-	move c, r2
-	move d, r0
+	move r0, c
+	move r2, d
+	lteq r1, r2, r0
+	move c, r0
+	move d, r2
 	call printIntLf@bool[r1]
 	const r1, [string-4]
 	call printString@@u8[r1]
@@ -184,11 +184,11 @@
 	move c, r0
 	move d, r2
 	call printIntLf@bool[r1]
-	move r2, c
-	move r0, d
-	gteq r1, r0, r2
-	move c, r2
-	move d, r0
+	move r0, c
+	move r2, d
+	gteq r1, r2, r0
+	move c, r0
+	move d, r2
 	call printIntLf@bool[r1]
 	const r1, [string-8]
 	call printString@@u8[r1]

@@ -42,10 +42,10 @@ final class LSAlgorithm {
 			prevFrom = from;
 			makeActiveOrInactive(from, false, active, inactive);
 			makeActiveOrInactive(from, true, inactive, active);
+			_log("Unhandled:", unhandled);
 			_log("Fixed:", fixedIntervals);
 			_log("Active:", active);
 			_log("Inactive:", inactive);
-			_log("Unhandled:", unhandled);
 			_log("Current '" + current.toDebugString() + ":", current);
 
 			if (!tryAllocateFree(current)) {
@@ -131,9 +131,18 @@ final class LSAlgorithm {
 			return true;
 		}
 
-		if (maxFreeUntil == current.getFrom() + 1) {
-			// we can't do anything with this too-short interval
-			return false;
+		final LSUse firstUse = current.getUsedNext(0);
+		if (firstUse == null) {
+			addToDone(current);
+			return true;
+		}
+
+		final int firstUsePos = firstUse.pos();
+		if (firstUsePos > maxFreeUntil) {
+			final LSInterval splitStartingWithUse = truncateAndSplit(current, firstUsePos - 1);
+			addToDone(current);
+			addToUnhandled(splitStartingWithUse);
+			return true;
 		}
 
 		final int splitPos = getIdealSplitPosition(current, maxFreeUntil);
@@ -141,21 +150,12 @@ final class LSAlgorithm {
 		Utils.assertTrue(reg >= 0);
 		current.setRegister(reg);
 		final LSInterval split = truncateAndSplit(current, splitPos + 1);
-		final LSUse firstUse = split.getUsedNext(0);
-		if (firstUse == null) {
+		if (firstUsePos > splitPos + 1) {
 			addToDone(split);
 			return true;
 		}
 
-		final int firstUsePos = firstUse.pos();
-		if (firstUsePos == split.getFrom()) {
-			addToUnhandled(split);
-			return true;
-		}
-
-		final LSInterval splitStartingWithUse = truncateAndSplit(split, firstUsePos - 1);
-		addToDone(split);
-		addToUnhandled(splitStartingWithUse);
+		addToUnhandled(split);
 		return true;
 	}
 

@@ -1,0 +1,190 @@
+@printChar@u8:
+ Local variables
+	arg 0: chr (u8/1)
+	var 1: t.1 (u8*/8)
+	var 2: t.2 (u8/1)
+	; 12 pc
+	addrof t.1, chr
+	const t.2, 1
+	call printStringLength@@u8@u8[t.1, t.2]
+@printChar@u8_ret:
+
+@printUint@i64:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: buffer[] (u8*/20)
+	var 2: pos (u8/1)
+	var 3: remainder (i64/8)
+	var 4: digit (u8/1)
+	var 5: t.5 (i64/8)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (u8/1)
+	var 8: t.8 (u8/1)
+	var 9: t.9 (u8*/8)
+	var 10: t.10 (i64/8)
+	var 11: t.11 (u8*/8)
+	var 12: t.12 (bool/1)
+	var 13: t.13 (u8*/8)
+	var 14: t.14 (i64/8)
+	var 15: t.15 (u8*/8)
+	var 16: t.16 (u8/1)
+	var 17: t.17 (u8/1)
+	; 124 pc
+	const pos, 20
+	; 25:2 while true
+@while_1:
+	dec pos
+	const t.5, 10
+	move remainder, number
+	mod remainder, remainder, t.5
+	const t.6, 10
+	div number, number, t.6
+	cast t.7(u8), remainder(i64)
+	const t.8, 48
+	move digit, t.7
+	add digit, digit, t.8
+	cast t.10(i64), pos(u8)
+	cast t.11(u8*), t.10(i64)
+	addrof t.9, [buffer]
+	add t.9, t.9, t.11
+	store [t.9], digit
+	; 31:3 if number == 0
+	equals t.12, number, 0
+	branch t.12, false, @if_2_end
+	jump @while_1_break
+@if_2_end:
+	jump @while_1
+@while_1_break:
+	cast t.14(i64), pos(u8)
+	cast t.15(u8*), t.14(i64)
+	addrof t.13, [buffer]
+	add t.13, t.13, t.15
+	const t.17, 20
+	move t.16, t.17
+	sub t.16, t.16, pos
+	call printStringLength@@u8@u8[t.13, t.16]
+@printUint@i64_ret:
+
+@printIntLf@i16:
+ Local variables
+	arg 0: number (i16/2)
+	var 1: t.1 (i64/8)
+	; 8 pc
+	cast t.1(i64), number(i16)
+	call printIntLf@i64[t.1]
+@printIntLf@i16_ret:
+
+@printIntLf@i64:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: t.1 (bool/1)
+	var 2: t.2 (u8/1)
+	var 3: t.3 (u8/1)
+	; 26 pc
+	; 51:2 if number < 0
+	lt t.1, number, 0
+	branch t.1, false, @if_3_end
+	const t.2, 45
+	call printChar@u8[t.2]
+	neg number, number
+@if_3_end:
+	call printUint@i64[number]
+	const t.3, 10
+	call printChar@u8[t.3]
+@printIntLf@i64_ret:
+
+@printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	var 2: t.2 (i64/8)
+	; 10 pc
+	cast t.2(i64), length(u8)
+	call printStringLength@@u8@i64[str, t.2]
+@printStringLength@@u8@u8_ret:
+
+@printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
+ Local variables
+	arg 0: a (i16/2)
+	arg 1: b (i16/2)
+	arg 2: c (i16/2)
+	arg 3: d (i16/2)
+	arg 4: e (i16/2)
+	arg 5: f (i16/2)
+	arg 6: g (i16/2)
+	arg 7: h (i16/2)
+	var 8: t.8 (i16/2)
+	var 9: t.9 (i16/2)
+	var 10: t.10 (i16/2)
+	var 11: t.11 (i16/2)
+	var 12: t.12 (i16/2)
+	var 13: t.13 (i16/2)
+	var 14: t.14 (i16/2)
+	; 112 pc
+	call printIntLf@i16[a]
+	call printIntLf@i16[b]
+	call printIntLf@i16[c]
+	call printIntLf@i16[d]
+	call printIntLf@i16[e]
+	call printIntLf@i16[f]
+	call printIntLf@i16[g]
+	call printIntLf@i16[h]
+	; 17:35 return a + b + c + d + e + f + g + h
+	move t.14, a
+	add t.14, t.14, b
+	move t.13, t.14
+	add t.13, t.13, c
+	move t.12, t.13
+	add t.12, t.12, d
+	move t.11, t.12
+	add t.11, t.11, e
+	move t.10, t.11
+	add t.10, t.10, f
+	move t.9, t.10
+	add t.9, t.9, g
+	move t.8, t.9
+	add t.8, t.8, h
+	ret t.8
+	jump @printAndSum@i16@i16@i16@i16@i16@i16@i16@i16_ret
+@printAndSum@i16@i16@i16@i16@i16@i16@i16@i16_ret:
+
+@main:
+ Local variables
+	var 0: sum (i16/2)
+	var 1: t.1 (i16/2)
+	var 2: t.2 (i16/2)
+	var 3: t.3 (i16/2)
+	var 4: t.4 (i16/2)
+	var 5: t.5 (i16/2)
+	var 6: t.6 (i16/2)
+	var 7: t.7 (i16/2)
+	var 8: t.8 (i16/2)
+	; 38 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const t.1, 1
+	const t.2, 2
+	const t.3, 3
+	const t.4, 4
+	const t.5, 5
+	const t.6, 6
+	const t.7, 7
+	const t.8, 8
+	call sum = printAndSum@i16@i16@i16@i16@i16@i16@i16@i16[t.1, t.2, t.3, t.4, t.5, t.6, t.7, t.8] -> i16
+	call printIntLf@i16[sum]
+@main_ret:
+
+@printStringLength@@u8@i64:
+	mov     rdi, rsp
+	
+	mov     r8, rdx
+	mov     rdx, rcx
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
