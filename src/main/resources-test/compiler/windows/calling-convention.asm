@@ -1,0 +1,420 @@
+format pe64 console
+include 'win64ax.inc'
+
+STD_IN_HANDLE = -10
+STD_OUT_HANDLE = -11
+STD_ERR_HANDLE = -12
+
+entry start
+
+section '.text' code readable executable
+
+start:
+        ; alignment
+        and rsp, -16
+        call init
+        call @main
+        mov rcx, 0
+        sub rsp, 0x20
+        call [ExitProcess]
+
+        ; void printChar@u8
+        ;   rsp+48: arg chr
+@printChar@u8:
+        ; save clobbered non-volatile registers
+        push rbx
+        sub rsp, 32
+        ; addrof t.1{r6}, chr
+        lea rbx, [rsp+48]
+        ; const t.2{r2}, 1
+        mov dl, 1
+        ; move chr, tmp.chr{r1}
+        lea r11, [rsp+48]
+        mov [r11], cl
+        ; move t.1{r1}, t.1{r6}
+        mov rcx, rbx
+        ; call printStringLength@@u8@u8[t.1{r1}, t.2{r2}]
+        call @printStringLength@@u8@u8
+        add rsp, 32
+        ; restore clobbered non-volatile registers
+        pop rbx
+        ret
+
+        ; void printUint@i64
+        ;   rsp+96: arg number
+        ;   rsp+60: var buffer
+@printUint@i64:
+        sub rsp, 40
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
+        sub rsp, 32
+        ; const pos{r6}, 20
+        mov bl, 20
+        ; 25:2 while true
+@while_1:
+        ; dec pos{r6}
+        dec bl
+        ; const t.5{r7}, 10
+        mov r12, 10
+        ; move remainder{r3}, number{r1}
+        mov r8, rcx
+        ; move remainder{r0}, remainder{r3}
+        mov rax, r8
+        ; mod remainder{r2}, remainder{r0}, t.5{r7}
+        cqo
+        idiv r12
+        ; move remainder{r3}, remainder{r2}
+        mov r8, rdx
+        ; const t.6{r7}, 10
+        mov r12, 10
+        ; move number{r0}, number{r1}
+        mov rax, rcx
+        ; div number{r0}, number{r0}, t.6{r7}
+        cqo
+        idiv r12
+        ; move number{r1}, number{r0}
+        mov rcx, rax
+        ; cast t.7{r7}(u8), remainder{r3}(i64)
+        mov r12b, r8b
+        ; const t.8{r0}, 48
+        mov al, 48
+        ; add digit{r7}, digit{r7}, t.8{r0}
+        add r12b, al
+        ; cast t.10{r0}(i64), pos{r6}(u8)
+        movzx rax, bl
+        ; cast t.11{r0}(u8*), t.10{r0}(i64)
+        ; addrof t.9{r3}, [buffer]
+        lea r8, [rsp+60]
+        ; add t.9{r3}, t.9{r3}, t.11{r0}
+        add r8, rax
+        ; store [t.9{r3}], digit{r7}
+        mov [r8], r12b
+        ; 31:3 if number == 0
+        ; equals t.12{r7}, number{r1}, 0
+        cmp rcx, 0
+        sete r12b
+        ; branch t.12{r7}, false, @while_1
+        or r12b, r12b
+        jz @while_1
+        ; cast t.14{r7}(i64), pos{r6}(u8)
+        movzx r12, bl
+        ; cast t.15{r7}(u8*), t.14{r7}(i64)
+        ; addrof t.13{r1}, [buffer]
+        lea rcx, [rsp+60]
+        ; add t.13{r1}, t.13{r1}, t.15{r7}
+        add rcx, r12
+        ; const t.17{r7}, 20
+        mov r12b, 20
+        ; move t.16{r2}, t.17{r7}
+        mov dl, r12b
+        ; sub t.16{r2}, t.16{r2}, pos{r6}
+        sub dl, bl
+        ; call printStringLength@@u8@u8[t.13{r1}, t.16{r2}]
+        call @printStringLength@@u8@u8
+        add rsp, 32
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
+        add rsp, 40
+        ret
+
+        ; void printIntLf@i16
+        ;   rsp+48: arg number
+@printIntLf@i16:
+        sub rsp, 8
+        sub rsp, 32
+        ; cast t.1{r1}(i64), number{r1}(i16)
+        movzx rcx, cx
+        ; call printIntLf@i64[t.1{r1}]
+        call @printIntLf@i64
+        add rsp, 32
+        add rsp, 8
+        ret
+
+        ; void printIntLf@i64
+        ;   rsp+64: arg number
+@printIntLf@i64:
+        sub rsp, 8
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
+        sub rsp, 32
+        ; move number{r6}, number{r1}
+        mov rbx, rcx
+        ; 51:2 if number < 0
+        ; lt t.1{r7}, number{r6}, 0
+        cmp rbx, 0
+        setl r12b
+        ; branch t.1{r7}, false, @if_3_end
+        or r12b, r12b
+        jz @if_3_end
+        ; const t.2{r1}, 45
+        mov cl, 45
+        ; call printChar@u8[t.2{r1}]
+        call @printChar@u8
+        ; neg number{r6}, number{r6}
+        neg rbx
+@if_3_end:
+        ; move number{r1}, number{r6}
+        mov rcx, rbx
+        ; call printUint@i64[number{r1}]
+        call @printUint@i64
+        ; const t.3{r1}, 10
+        mov cl, 10
+        ; call printChar@u8[t.3{r1}]
+        call @printChar@u8
+        add rsp, 32
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
+        add rsp, 8
+        ret
+
+        ; void printStringLength@@u8@u8
+        ;   rsp+48: arg str
+        ;   rsp+56: arg length
+@printStringLength@@u8@u8:
+        sub rsp, 8
+        sub rsp, 32
+        ; cast t.2{r2}(i64), length{r2}(u8)
+        movzx rdx, dl
+        ; call printStringLength@@u8@i64[str{r1}, t.2{r2}]
+        call @printStringLength@@u8@i64
+        add rsp, 32
+        add rsp, 8
+        ret
+
+        ; i16 printAndSum@i16@i16@i16@i16@i16@i16@i16@i16
+        ;   rsp+64: arg a
+        ;   rsp+72: arg b
+        ;   rsp+80: arg c
+        ;   rsp+88: arg d
+        ;   rsp+96: arg e
+        ;   rsp+104: arg f
+        ;   rsp+112: arg g
+        ;   rsp+120: arg h
+@printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
+        sub rsp, 8
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
+        sub rsp, 32
+        ; move h{r6}, h
+        lea r11, [rsp+120]
+        mov bx, [r11]
+        ; move g{r7}, g
+        lea r11, [rsp+112]
+        mov r12w, [r11]
+        ; move b, b{r2}
+        lea r11, [rsp+72]
+        mov [r11], dx
+        ; move c, c{r3}
+        lea r11, [rsp+80]
+        mov [r11], r8w
+        ; move d, d{r4}
+        lea r11, [rsp+88]
+        mov [r11], r9w
+        ; move a, a{r1}
+        lea r11, [rsp+64]
+        mov [r11], cx
+        ; call printIntLf@i16[a{r1}]
+        call @printIntLf@i16
+        ; move b{r1}, b
+        lea r11, [rsp+72]
+        mov cx, [r11]
+        ; move b, b{r1}
+        lea r11, [rsp+72]
+        mov [r11], cx
+        ; call printIntLf@i16[b{r1}]
+        call @printIntLf@i16
+        ; move c{r1}, c
+        lea r11, [rsp+80]
+        mov cx, [r11]
+        ; move c, c{r1}
+        lea r11, [rsp+80]
+        mov [r11], cx
+        ; call printIntLf@i16[c{r1}]
+        call @printIntLf@i16
+        ; move d{r1}, d
+        lea r11, [rsp+88]
+        mov cx, [r11]
+        ; move d, d{r1}
+        lea r11, [rsp+88]
+        mov [r11], cx
+        ; call printIntLf@i16[d{r1}]
+        call @printIntLf@i16
+        ; move e{r1}, e
+        lea r11, [rsp+96]
+        mov cx, [r11]
+        ; move e, e{r1}
+        lea r11, [rsp+96]
+        mov [r11], cx
+        ; call printIntLf@i16[e{r1}]
+        call @printIntLf@i16
+        ; move f{r1}, f
+        lea r11, [rsp+104]
+        mov cx, [r11]
+        ; move f, f{r1}
+        lea r11, [rsp+104]
+        mov [r11], cx
+        ; call printIntLf@i16[f{r1}]
+        call @printIntLf@i16
+        ; move g{r1}, g{r7}
+        mov cx, r12w
+        ; call printIntLf@i16[g{r1}]
+        call @printIntLf@i16
+        ; move h{r1}, h{r6}
+        mov cx, bx
+        ; call printIntLf@i16[h{r1}]
+        call @printIntLf@i16
+        ; 17:35 return a + b + c + d + e + f + g + h
+        ; move a{r1}, a
+        lea r11, [rsp+64]
+        mov cx, [r11]
+        ; move b{r2}, b
+        lea r11, [rsp+72]
+        mov dx, [r11]
+        ; add t.14{r1}, t.14{r1}, b{r2}
+        add cx, dx
+        ; move c{r2}, c
+        lea r11, [rsp+80]
+        mov dx, [r11]
+        ; add t.13{r1}, t.13{r1}, c{r2}
+        add cx, dx
+        ; move d{r2}, d
+        lea r11, [rsp+88]
+        mov dx, [r11]
+        ; add t.12{r1}, t.12{r1}, d{r2}
+        add cx, dx
+        ; move e{r2}, e
+        lea r11, [rsp+96]
+        mov dx, [r11]
+        ; add t.11{r1}, t.11{r1}, e{r2}
+        add cx, dx
+        ; move f{r2}, f
+        lea r11, [rsp+104]
+        mov dx, [r11]
+        ; add t.10{r1}, t.10{r1}, f{r2}
+        add cx, dx
+        ; add t.9{r1}, t.9{r1}, g{r7}
+        add cx, r12w
+        ; move t.8{r0}, t.9{r1}
+        mov ax, cx
+        ; add t.8{r0}, t.8{r0}, h{r6}
+        add ax, bx
+        add rsp, 32
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
+        add rsp, 8
+        ret
+
+        ; void main
+        ;   rsp+32: var arg.0.4
+        ;   rsp+40: var arg.0.5
+        ;   rsp+48: var arg.0.6
+        ;   rsp+56: var arg.0.7
+@main:
+        sub rsp, 8
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
+        sub rsp, 64
+        ; begin initialize global variables
+        ; end initialize global variables
+        ; const t.1{r1}, 1
+        mov cx, 1
+        ; const t.2{r2}, 2
+        mov dx, 2
+        ; const t.3{r3}, 3
+        mov r8w, 3
+        ; const t.4{r4}, 4
+        mov r9w, 4
+        ; const t.5{r6}, 5
+        mov bx, 5
+        ; const t.6{r7}, 6
+        mov r12w, 6
+        ; const t.7{r0}, 7
+        mov ax, 7
+        ; const t.8{r5}, 8
+        mov r10w, 8
+        ; move arg.0.4, t.5{r6}
+        lea r11, [rsp+32]
+        mov [r11], bx
+        ; move arg.0.5, t.6{r7}
+        lea r11, [rsp+40]
+        mov [r11], r12w
+        ; move arg.0.6, t.7{r0}
+        lea r11, [rsp+48]
+        mov [r11], ax
+        ; move arg.0.7, t.8{r5}
+        lea r11, [rsp+56]
+        mov [r11], r10w
+        ; call sum{r0} = printAndSum@i16@i16@i16@i16@i16@i16@i16@i16[t.1{r1}, t.2{r2}, t.3{r3}, t.4{r4}, arg.0.4, arg.0.5, arg.0.6, arg.0.7] -> i16
+        call @printAndSum@i16@i16@i16@i16@i16@i16@i16@i16
+        ; move sum{r1}, sum{r0}
+        mov cx, ax
+        ; call printIntLf@i16[sum{r1}]
+        call @printIntLf@i16
+        add rsp, 64
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
+        add rsp, 8
+        ret
+
+        ; void printStringLength@@u8@i64
+@printStringLength@@u8@i64:
+        mov     rdi, rsp
+
+        mov     r8, rdx
+        mov     rdx, rcx
+        lea     rcx, [hStdOut]
+        mov     rcx, [rcx]
+        xor     r9, r9
+        push    0
+        sub     rsp, 20h
+          call    [WriteFile]
+        mov     rsp, rdi
+        ret
+init:
+        sub rsp, 28h
+          mov rcx, STD_IN_HANDLE
+          call [GetStdHandle]
+          ; handle in rax, 0 if invalid
+          lea rcx, [hStdIn]
+          mov qword [rcx], rax
+
+          mov rcx, STD_OUT_HANDLE
+          call [GetStdHandle]
+          ; handle in rax, 0 if invalid
+          lea rcx, [hStdOut]
+          mov qword [rcx], rax
+
+          mov rcx, STD_ERR_HANDLE
+          call [GetStdHandle]
+          ; handle in rax, 0 if invalid
+          lea rcx, [hStdErr]
+          mov qword [rcx], rax
+        add rsp, 28h
+        ret
+
+section '.data' data readable writeable
+        hStdIn  rb 8
+        hStdOut rb 8
+        hStdErr rb 8
+
+section '.idata' import data readable writeable
+
+library kernel32,'KERNEL32.DLL',\
+        msvcrt,'MSVCRT.DLL'
+
+import kernel32,\
+       ExitProcess,'ExitProcess',\
+       GetStdHandle,'GetStdHandle',\
+       SetConsoleCursorPosition,'SetConsoleCursorPosition',\
+       WriteFile,'WriteFile'
+
+import msvcrt,\
+       _getch,'_getch'

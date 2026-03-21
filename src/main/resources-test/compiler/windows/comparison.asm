@@ -289,21 +289,21 @@ start:
         mov [r11], dl
         ; call printIntLf@bool[t.8{r1}]
         call @printIntLf@bool
-        ; move c{r2}, c
+        ; move c{r0}, c
         lea r11, [rsp+48]
-        mov dl, [r11]
-        ; move d{r0}, d
-        lea r11, [rsp+49]
         mov al, [r11]
-        ; lt t.9{r1}, d{r0}, c{r2}
-        cmp al, dl
-        setb cl
-        ; move c, c{r2}
-        lea r11, [rsp+48]
-        mov [r11], dl
-        ; move d, d{r0}
+        ; move d{r2}, d
         lea r11, [rsp+49]
+        mov dl, [r11]
+        ; lt t.9{r1}, d{r2}, c{r0}
+        cmp dl, al
+        setb cl
+        ; move c, c{r0}
+        lea r11, [rsp+48]
         mov [r11], al
+        ; move d, d{r2}
+        lea r11, [rsp+49]
+        mov [r11], dl
         ; call printIntLf@bool[t.9{r1}]
         call @printIntLf@bool
         ; const t.10{r1}, [string-2]
@@ -341,21 +341,21 @@ start:
         mov [r11], dl
         ; call printIntLf@bool[t.14{r1}]
         call @printIntLf@bool
-        ; move c{r2}, c
+        ; move c{r0}, c
         lea r11, [rsp+48]
-        mov dl, [r11]
-        ; move d{r0}, d
-        lea r11, [rsp+49]
         mov al, [r11]
-        ; lteq t.15{r1}, d{r0}, c{r2}
-        cmp al, dl
-        setbe cl
-        ; move c, c{r2}
-        lea r11, [rsp+48]
-        mov [r11], dl
-        ; move d, d{r0}
+        ; move d{r2}, d
         lea r11, [rsp+49]
+        mov dl, [r11]
+        ; lteq t.15{r1}, d{r2}, c{r0}
+        cmp dl, al
+        setbe cl
+        ; move c, c{r0}
+        lea r11, [rsp+48]
         mov [r11], al
+        ; move d, d{r2}
+        lea r11, [rsp+49]
+        mov [r11], dl
         ; call printIntLf@bool[t.15{r1}]
         call @printIntLf@bool
         ; const t.16{r1}, [string-4]
@@ -421,21 +421,21 @@ start:
         mov [r11], dl
         ; call printIntLf@bool[t.26{r1}]
         call @printIntLf@bool
-        ; move c{r2}, c
+        ; move c{r0}, c
         lea r11, [rsp+48]
-        mov dl, [r11]
-        ; move d{r0}, d
-        lea r11, [rsp+49]
         mov al, [r11]
-        ; gteq t.27{r1}, d{r0}, c{r2}
-        cmp al, dl
-        setae cl
-        ; move c, c{r2}
-        lea r11, [rsp+48]
-        mov [r11], dl
-        ; move d, d{r0}
+        ; move d{r2}, d
         lea r11, [rsp+49]
+        mov dl, [r11]
+        ; gteq t.27{r1}, d{r2}, c{r0}
+        cmp dl, al
+        setae cl
+        ; move c, c{r0}
+        lea r11, [rsp+48]
         mov [r11], al
+        ; move d, d{r2}
+        lea r11, [rsp+49]
+        mov [r11], dl
         ; call printIntLf@bool[t.27{r1}]
         call @printIntLf@bool
         ; const t.28{r1}, [string-8]
