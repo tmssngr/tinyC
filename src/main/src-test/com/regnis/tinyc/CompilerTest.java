@@ -107,6 +107,11 @@ public class CompilerTest {
 	}
 
 	@Test
+	public void testCallingConvention() throws IOException, InterruptedException {
+		compileAndRun("calling-convention.c");
+	}
+
+	@Test
 	public void testMine() throws IOException, InterruptedException {
 		final Path inputFile = absolutePath("mine.c");
 		Compiler.compile(inputFile);
