@@ -1,0 +1,59 @@
+i32 __random__;
+u8 zero;
+u8 one;
+u8 two;
+u8 threeFour;
+
+void printChar@u8(u8 chr) {
+	printStringLength@@u8@u8(&chr, 1);
+}
+
+void printUint@u8(u8 number) {
+	printUint@i64((i64)number);
+}
+
+void printUint@i64(i64 number) {
+	u8* buffer[20];
+	u8 pos;
+	i64 remainder;
+	u8 digit;
+
+	pos = 20;
+	while (true) {
+		pos = pos - 1;
+		remainder = number % 10;
+		number = number / 10;
+		digit = ((u8)remainder) + 48;
+		buffer[(i64)pos] = digit;
+		if (number == 0) {
+			break;
+		}
+	}
+	printStringLength@@u8@u8(&buffer[(i64)pos], 20 - pos);
+}
+
+void printStringLength@@u8@u8(u8* str, u8 length) {
+	printStringLength@@u8@i64(str, (i64)length);
+}
+
+void printStringLength@@u8@i64(u8* str, i64 length) {
+}
+
+i64 unusedArgs@u8@bool@u8@u8(u8 a, bool b, u8 c, u8 d) {
+	return (i64)c;
+}
+
+void main() {
+	i64 c;
+	u8* onePtr;
+	u8* twoPtr;
+
+	c = unusedArgs@u8@bool@u8@u8(1, true, 2, 3);
+	printChar@u8(zero);
+	onePtr = &one;
+	printChar@u8(*onePtr);
+	twoPtr = &two;
+	printChar@u8(twoPtr[0]);
+	printUint@u8(threeFour);
+	printChar@u8(10);
+}

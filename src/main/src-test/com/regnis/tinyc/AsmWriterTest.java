@@ -56,11 +56,16 @@ public final class AsmWriterTest {
 	}
 
 	private void write(String name, IRProgram program) throws IOException {
-		final Path dir = Path.of("src/main/resources-test/asmwriter").resolve("x86win64");
+		write(name, program, "x86win64", TargetArchitecture.WIN_X86_64);
+		write(name, program, "x86linux64", TargetArchitecture.LINUX_X86_64);
+	}
+
+	private void write(String name, IRProgram program, String subdir, TargetArchitecture architecture) throws IOException {
+		final Path dir = Path.of("src/main/resources-test/asmwriter").resolve(subdir);
 		Files.createDirectories(dir);
 		final Path asmFile = dir.resolve(name + ".asm");
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
-			final X86Win64 output = new X86Win64(writer);
+			final AsmWriter output = architecture.createAsmWriter(writer);
 			output.write(program);
 		}
 	}

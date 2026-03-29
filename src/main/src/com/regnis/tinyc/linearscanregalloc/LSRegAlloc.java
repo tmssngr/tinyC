@@ -19,12 +19,12 @@ public final class LSRegAlloc {
 
 	@NotNull
 	public static IRFunction process(@NotNull IRFunction function, @NotNull LSArchitecture architecture, @NotNull Type pointerIntType) {
-		return process(function, architecture.isX86(), architecture.registerCount(), architecture, pointerIntType);
+		return process(function, architecture instanceof LSArchitecture.X86_64 x86_64 ? x86_64.getRegisters() : null, architecture.registerCount(), architecture.getCallingConventionProvider(), pointerIntType);
 	}
 
 	@NotNull
-	public static IRFunction process(@NotNull IRFunction function, boolean isX86, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull Type pointerIntType) {
-		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, isX86, pointerIntType);
+	public static IRFunction process(@NotNull IRFunction function, @Nullable X86Registers x86Registers, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull Type pointerIntType) {
+		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, x86Registers, pointerIntType);
 		IRVarInfos varInfos = preprocessorResult.first();
 		final List<IRInstruction> instructions = preprocessorResult.second();
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), instructions);
@@ -33,7 +33,7 @@ public final class LSRegAlloc {
 
 		LSIntervalFactory.printInstructions(instructions);
 
-		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, isX86);
+		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, x86Registers);
 		intervalFactory.handleBlocks(blocks);
 		final Map<String, LSIntervalFactory.Indices> blockToIndex = intervalFactory.getBlockToIndex();
 		final List<LSIntervalFactory.Indices> blockBoundaries = intervalFactory.getBlockIndices();

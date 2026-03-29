@@ -42,7 +42,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, null, 3, callingConventionProvider, Type.I64);
 		assertEquals(List.of(
 				new IRLiteral(varFour.asRegister(r1), 4),
 				new IRLiteral(varThree.asRegister(r2), 3),
@@ -74,7 +74,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, null, 3, callingConventionProvider, Type.I64);
 		assertEquals(List.of(
 				new IRMove(varT2.asRegister(rRet), argA.asRegister(rArg1)),
 				new IRBinary(varT2.asRegister(rRet), IRBinary.Op.Add, varT2.asRegister(rRet), argB.asRegister(rArg2))
@@ -104,7 +104,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(1, 1);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, null, 3, callingConventionProvider, Type.I64);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varA.asRegister(rArg1), 1),
 				new IRAddrOf(varMVA.asRegister(rSpill), varA),
@@ -145,7 +145,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, null, 3, callingConventionProvider, Type.I64);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRCompare(varTmp.asRegister(rRet), IRCompare.Op.Lt, varA.asRegister(rArg1), varB.asRegister(rArg2)),
 				new IRBranch(varTmp.asRegister(rRet), false, "@if_1_end", "@if_1_then"),
@@ -181,7 +181,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 5, callingConventionProvider, Type.I64);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, null, 5, callingConventionProvider, Type.I64);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRMove(varStr.asRegister(rNV1), varStr.asRegister(rArg1)),
 				// todo
@@ -218,7 +218,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, null, 3, callingConventionProvider, Type.I64);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varOne.asRegister(rArg1), 1),
 				new IRAddrOf(varMVA.asRegister(rSpill), varGlobal),
@@ -258,7 +258,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, null, 3, callingConventionProvider, Type.I64);
 		final IRVar varA0 = varA.asRegister(0);
 		final IRVar varA1 = varA.asRegister(1);
 		final IRVar varB0 = varB.asRegister(0);

@@ -12,17 +12,11 @@ import org.jetbrains.annotations.*;
  */
 final class X86StackOffsets {
 
-	public static final X86StackOffsets DUMMY = new X86StackOffsets(List.of(), List.of(), 0);
-
-	private final int[] localVarOffsets;
-	private final int rspOffset;
-	private final int callArgSpace;
-
-	public X86StackOffsets(@NotNull List<IRVarDef> localVars, @NotNull List<List<IRVar>> callsArgs, int pushedNonvolatileRegisterCount) {
+	public static X86StackOffsets createWindowsInstance(@NotNull List<IRVarDef> localVars, @NotNull List<List<IRVar>> callsArgs, int argCountInRegisters, int pushedNonvolatileRegisterCount) {
 		checkLocalVars(localVars);
 
 		final Map<IRVar, Integer> stackArgToOffset = new HashMap<>();
-		callArgSpace = determineSpaceForCallArgs(callsArgs, stackArgToOffset);
+		final int callArgSpace = determineSpaceForCallArgs(callsArgs, argCountInRegisters, true, stackArgToOffset);
 
 		//  8h 6th argument
 		//  8h 5th argument
@@ -38,8 +32,7 @@ final class X86StackOffsets {
 		// -- aligned to 10h
 
 		final int localVarAreaBegin = callArgSpace + pushedNonvolatileRegisterCount * 8;
-
-		localVarOffsets = new int[localVars.size()];
+		final int[] localVarOffsets = new int[localVars.size()];
 		int offset = localVarAreaBegin;
 		// local vars
 		for (IRVarDef def : localVars) {
@@ -77,7 +70,90 @@ final class X86StackOffsets {
 			localVarOffsets[index] = argStartOffset + index * 8;
 		}
 
-		rspOffset = argStartOffset - localVarAreaBegin - returnAddressSize;
+		final int rspOffset = argStartOffset - localVarAreaBegin - returnAddressSize;
+		return new X86StackOffsets(callArgSpace, localVarOffsets, rspOffset);
+	}
+
+	public static X86StackOffsets createLinuxInstance(@NotNull List<IRVarDef> localVars, @NotNull List<List<IRVar>> callsArgs, int argCountInRegisters, int pushedNonvolatileRegisterCount) {
+		checkLocalVars(localVars);
+
+		final Map<IRVar, Integer> stackArgToOffset = new HashMap<>();
+		final int callArgSpace = determineSpaceForCallArgs(callsArgs, argCountInRegisters, false, stackArgToOffset);
+
+		//  8h 8th argument
+		//  8h 7th argument
+		// -- aligned to 10h
+		//  8h return address
+		//                                                                                     -,
+		//     free space for alignment                                                          > rspOffset
+		//     local vars                                                                       |
+		//                                                                                     -'
+		//     pushed clobbered non-volatile regs
+		//     space for call arguments passed on stack                                            callArgSpace
+		// -- aligned to 10h
+
+		final int localVarAreaBegin = callArgSpace + pushedNonvolatileRegisterCount * 8;
+		final int[] localVarOffsets = new int[localVars.size()];
+		int offset = localVarAreaBegin;
+		// local vars
+		for (IRVarDef def : localVars) {
+			final IRVar var = def.var();
+			final int index = var.index();
+			if (var.scope() == VariableScope.function) {
+				final Integer stackArgOffset = stackArgToOffset.get(var);
+				if (stackArgOffset != null) {
+					localVarOffsets[index] = stackArgOffset;
+					continue;
+				}
+			}
+			else if (var.scope() == VariableScope.parameter) {
+				if (index >= argCountInRegisters) {
+					continue;
+				}
+			}
+			else {
+				continue;
+			}
+
+			Utils.assertTrue(stackArgToOffset.get(var) == null);
+
+			final int varSize = def.size();
+			offset = alignTo(offset, varSize);
+			localVarOffsets[index] = offset;
+			offset += varSize;
+		}
+
+		final int returnAddressSize = 8;
+		final int argStartOffset = alignTo16(offset + returnAddressSize);
+		int nextStackArgOffset = argStartOffset;
+		// argument offsets
+		for (IRVarDef def : localVars) {
+			final IRVar var = def.var();
+			final VariableScope scope = var.scope();
+			if (scope != VariableScope.parameter) {
+				Utils.assertTrue(scope == VariableScope.function);
+				break;
+			}
+
+			final int index = var.index();
+			if (index >= argCountInRegisters) {
+				localVarOffsets[index] = nextStackArgOffset;
+				nextStackArgOffset += 8;
+			}
+		}
+
+		final int rspOffset = argStartOffset - localVarAreaBegin - returnAddressSize;
+		return new X86StackOffsets(callArgSpace, localVarOffsets, rspOffset);
+	}
+
+	private final int[] localVarOffsets;
+	private final int rspOffset;
+	private final int callArgSpace;
+
+	private X86StackOffsets(int callArgSpace, int[] localVarOffsets, int rspOffset) {
+		this.localVarOffsets = localVarOffsets;
+		this.callArgSpace = callArgSpace;
+		this.rspOffset = rspOffset;
 	}
 
 	public int getOffset(@NotNull IRVar var) {
@@ -94,7 +170,7 @@ final class X86StackOffsets {
 		return callArgSpace;
 	}
 
-	private void checkLocalVars(@NotNull List<IRVarDef> localVars) {
+	private static void checkLocalVars(@NotNull List<IRVarDef> localVars) {
 		int expectedIndex = 0;
 		boolean expectLocalVar = false;
 		for (IRVarDef def : localVars) {
@@ -111,22 +187,24 @@ final class X86StackOffsets {
 		}
 	}
 
-	private int determineSpaceForCallArgs(List<List<IRVar>> callsArgs, Map<IRVar, Integer> stackArgToOffset) {
+	private static int determineSpaceForCallArgs(List<List<IRVar>> callsArgs, int argCountInRegisters, boolean isWindows, Map<IRVar, Integer> stackArgToOffset) {
 		// For simplicity we modify the stackoffset only at the begin of a function,
 		// not for each call it performs. The longest call argument list defines how
 		// much space is reserved. This is not the most space-efficient solution, but
 		// for X86 this does not matter.
 		int maxOffset = 0;
 		for (List<IRVar> callArgs : callsArgs) {
-			int offset = 0x20;
+			int offset = isWindows ? 0x20 : 0;
 			for (int i = 0; i < callArgs.size(); i++) {
 				final IRVar var = callArgs.get(i);
-				if (i < 4) {
+				if (i < argCountInRegisters) {
 					Utils.assertTrue(var.scope() == VariableScope.register);
 					continue;
 				}
 
-				Utils.assertTrue(var.scope() == VariableScope.function);
+				if (var.scope() != VariableScope.function) {
+					throw new IllegalStateException("");
+				}
 				Utils.assertTrue(!stackArgToOffset.containsKey(var), "each stack-arg var only is allowed to be used one time");
 				stackArgToOffset.put(var, offset);
 				// everything is 8 bytes large in X86_64

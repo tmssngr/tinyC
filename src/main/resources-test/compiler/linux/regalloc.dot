@@ -1,0 +1,40 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_simple {
+		BasicBlock_0_simple [label="simple",shape=box];
+		BasicBlock_0_simple -> BasicBlock_0_simple_ret;
+		BasicBlock_0_simple_ret [label="simple_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_registerHint@u8@u8 {
+		BasicBlock_1_registerHintu8u8 [label="registerHintu8u8",shape=box];
+		BasicBlock_1_registerHintu8u8 -> BasicBlock_1_registerHintu8u8_ret;
+		BasicBlock_1_registerHintu8u8_ret [label="registerHintu8u8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_max@u8@u8 {
+		BasicBlock_2_maxu8u8 [label="maxu8u8",shape=hexagon];
+		BasicBlock_2_maxu8u8 -> BasicBlock_2_if_1_end [label="(a)"];
+		BasicBlock_2_maxu8u8 -> BasicBlock_2_if_1_then [label="(b)"];
+		BasicBlock_2_if_1_end [label="if_1_end",shape=box];
+		BasicBlock_2_if_1_end -> BasicBlock_2_maxu8u8_ret;
+		BasicBlock_2_if_1_then [label="if_1_then",shape=box];
+		BasicBlock_2_if_1_then -> BasicBlock_2_maxu8u8_ret;
+		BasicBlock_2_maxu8u8_ret [label="maxu8u8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_fibonacci@u8 {
+		BasicBlock_3_fibonacciu8 [label="fibonacciu8",shape=box];
+		BasicBlock_3_fibonacciu8 -> BasicBlock_3_while_2 [label="(a,b,i)"];
+		BasicBlock_3_while_2_body [label="while_2_body",shape=box];
+		BasicBlock_3_while_2_body -> BasicBlock_3_while_2 [label="(a,b,i)"];
+		BasicBlock_3_while_2 [label="while_2",shape=hexagon];
+		BasicBlock_3_while_2 -> BasicBlock_3_while_2_break [label="(a)"];
+		BasicBlock_3_while_2 -> BasicBlock_3_while_2_body [label="(a,b,i)"];
+		BasicBlock_3_while_2_break [label="while_2_break",shape=box];
+		BasicBlock_3_while_2_break -> BasicBlock_3_fibonacciu8_ret;
+		BasicBlock_3_fibonacciu8_ret [label="fibonacciu8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_4_main [label="main",shape=box];
+		BasicBlock_4_main -> BasicBlock_4_main_ret;
+		BasicBlock_4_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

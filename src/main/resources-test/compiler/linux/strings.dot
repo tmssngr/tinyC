@@ -1,0 +1,81 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printString@@u8 {
+		BasicBlock_0_printStringu8 [label="printStringu8",shape=box];
+		BasicBlock_0_printStringu8 -> BasicBlock_0_printStringu8_ret;
+		BasicBlock_0_printStringu8_ret [label="printStringu8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printChar@u8 {
+		BasicBlock_1_printCharu8 [label="printCharu8",shape=box];
+		BasicBlock_1_printCharu8 -> BasicBlock_1_printCharu8_ret [label="(chr)"];
+		BasicBlock_1_printCharu8_ret [label="printCharu8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printUint@i64 {
+		BasicBlock_2_printUinti64 [label="printUinti64",shape=box];
+		BasicBlock_2_printUinti64 -> BasicBlock_2_while_1 [label="(buffer,number,pos)"];
+		BasicBlock_2_no_critical_edge_4 [label="no_critical_edge_4",shape=box];
+		BasicBlock_2_no_critical_edge_4 -> BasicBlock_2_while_1 [label="(buffer,number,pos)"];
+		BasicBlock_2_while_1 [label="while_1",shape=hexagon];
+		BasicBlock_2_while_1 -> BasicBlock_2_no_critical_edge_4 [label="(buffer,number,pos)"];
+		BasicBlock_2_while_1 -> BasicBlock_2_while_1_break [label="(buffer,pos)"];
+		BasicBlock_2_while_1_break [label="while_1_break",shape=box];
+		BasicBlock_2_while_1_break -> BasicBlock_2_printUinti64_ret [label="(buffer)"];
+		BasicBlock_2_printUinti64_ret [label="printUinti64_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf@u8 {
+		BasicBlock_3_printIntLfu8 [label="printIntLfu8",shape=box];
+		BasicBlock_3_printIntLfu8 -> BasicBlock_3_printIntLfu8_ret;
+		BasicBlock_3_printIntLfu8_ret [label="printIntLfu8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf@i16 {
+		BasicBlock_4_printIntLfi16 [label="printIntLfi16",shape=box];
+		BasicBlock_4_printIntLfi16 -> BasicBlock_4_printIntLfi16_ret;
+		BasicBlock_4_printIntLfi16_ret [label="printIntLfi16_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf@i64 {
+		BasicBlock_5_printIntLfi64 [label="printIntLfi64",shape=hexagon];
+		BasicBlock_5_printIntLfi64 -> BasicBlock_5_no_critical_edge_4 [label="(number)"];
+		BasicBlock_5_printIntLfi64 -> BasicBlock_5_if_3_then [label="(number)"];
+		BasicBlock_5_no_critical_edge_4 [label="no_critical_edge_4",shape=box];
+		BasicBlock_5_no_critical_edge_4 -> BasicBlock_5_if_3_end [label="(number)"];
+		BasicBlock_5_if_3_then [label="if_3_then",shape=box];
+		BasicBlock_5_if_3_then -> BasicBlock_5_if_3_end [label="(number)"];
+		BasicBlock_5_if_3_end [label="if_3_end",shape=box];
+		BasicBlock_5_if_3_end -> BasicBlock_5_printIntLfi64_ret;
+		BasicBlock_5_printIntLfi64_ret [label="printIntLfi64_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_strlen@@u8 {
+		BasicBlock_6_strlenu8 [label="strlenu8",shape=box];
+		BasicBlock_6_strlenu8 -> BasicBlock_6_for_4 [label="(length,str)"];
+		BasicBlock_6_for_4_body [label="for_4_body",shape=box];
+		BasicBlock_6_for_4_body -> BasicBlock_6_for_4 [label="(length,str)"];
+		BasicBlock_6_for_4 [label="for_4",shape=hexagon];
+		BasicBlock_6_for_4 -> BasicBlock_6_for_4_break [label="(length)"];
+		BasicBlock_6_for_4 -> BasicBlock_6_for_4_body [label="(length,str)"];
+		BasicBlock_6_for_4_break [label="for_4_break",shape=box];
+		BasicBlock_6_for_4_break -> BasicBlock_6_strlenu8_ret;
+		BasicBlock_6_strlenu8_ret [label="strlenu8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printStringLength@@u8@u8 {
+		BasicBlock_7_printStringLengthu8u8 [label="printStringLengthu8u8",shape=box];
+		BasicBlock_7_printStringLengthu8u8 -> BasicBlock_7_printStringLengthu8u8_ret;
+		BasicBlock_7_printStringLengthu8u8_ret [label="printStringLengthu8u8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_8_main [label="main",shape=box];
+		BasicBlock_8_main -> BasicBlock_8_main_ret;
+		BasicBlock_8_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printLength {
+		BasicBlock_9_printLength [label="printLength",shape=box];
+		BasicBlock_9_printLength -> BasicBlock_9_for_5 [label="(length,ptr)"];
+		BasicBlock_9_for_5_body [label="for_5_body",shape=box];
+		BasicBlock_9_for_5_body -> BasicBlock_9_for_5 [label="(length,ptr)"];
+		BasicBlock_9_for_5 [label="for_5",shape=hexagon];
+		BasicBlock_9_for_5 -> BasicBlock_9_for_5_break [label="(length)"];
+		BasicBlock_9_for_5 -> BasicBlock_9_for_5_body [label="(length,ptr)"];
+		BasicBlock_9_for_5_break [label="for_5_break",shape=box];
+		BasicBlock_9_for_5_break -> BasicBlock_9_printLength_ret;
+		BasicBlock_9_printLength_ret [label="printLength_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

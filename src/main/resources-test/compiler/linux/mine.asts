@@ -1,0 +1,402 @@
+i32 __random__;
+u8* field[800];
+
+void printString@@u8(u8* str) {
+	i64 length;
+
+	length = strlen@@u8(str);
+	printStringLength@@u8@i64(str, length);
+}
+
+void printChar@u8(u8 chr) {
+	printStringLength@@u8@u8(&chr, 1);
+}
+
+void printUint@i16(i16 number) {
+	printUint@i64((i64)number);
+}
+
+void printUint@i64(i64 number) {
+	u8* buffer[20];
+	u8 pos;
+	i64 remainder;
+	u8 digit;
+
+	pos = 20;
+	while (true) {
+		pos = pos - 1;
+		remainder = number % 10;
+		number = number / 10;
+		digit = ((u8)remainder) + 48;
+		buffer[(i64)pos] = digit;
+		if (number == 0) {
+			break;
+		}
+	}
+	printStringLength@@u8@u8(&buffer[(i64)pos], 20 - pos);
+}
+
+i64 strlen@@u8(u8* str) {
+	i64 length;
+
+	length = 0;
+	for (; (*str) != 0; str = str + 1) {
+		length = length + 1;
+	}
+	return length;
+}
+
+void printStringLength@@u8@u8(u8* str, u8 length) {
+	printStringLength@@u8@i64(str, (i64)length);
+}
+
+void printStringLength@@u8@i64(u8* str, i64 length) {
+}
+
+i16 getChar() {
+}
+
+void setCursor@i16@i16(i16 x, i16 y) {
+}
+
+void initRandom@i32(i32 salt) {
+	__random__ = salt;
+}
+
+i32 random() {
+	i32 r;
+	i32 b;
+	i32 c;
+	i32 d;
+	i32 e;
+
+	r = __random__;
+	b = (r & 524287) * 48271;
+	c = (r >> 15) * 48271;
+	d = (c & 65535) << 15;
+	e = ((c >> 16) + b) + d;
+	__random__ = (e & 2147483647) + (e >> 31);
+	return __random__;
+}
+
+i16 rowColumnToCell@i16@i16(i16 row, i16 column) {
+	return (row * 40) + column;
+}
+
+u8 getCell@i16@i16(i16 row, i16 column) {
+	return field[(i64)(rowColumnToCell@i16@i16(row, column))];
+}
+
+bool isBomb@u8(u8 cell) {
+	return (cell & 1) != 0;
+}
+
+bool isOpen@u8(u8 cell) {
+	return (cell & 2) != 0;
+}
+
+bool isFlag@u8(u8 cell) {
+	return (cell & 4) != 0;
+}
+
+bool checkCellBounds@i16@i16(i16 row, i16 column) {
+	return (((row >= 0) && (row < 20)) && (column >= 0)) && (column < 40);
+}
+
+void setCell@i16@i16@u8(i16 row, i16 column, u8 cell) {
+	field[(i64)(rowColumnToCell@i16@i16(row, column))] = cell;
+}
+
+u8 getBombCountAround@i16@i16(i16 row, i16 column) {
+	u8 count;
+	i16 dr;
+	i16 r;
+	i16 dc;
+	i16 c;
+	u8 cell;
+
+	count = 0;
+	dr = -1;
+	for (; dr <= 1; dr = dr + 1) {
+		r = row + dr;
+		dc = -1;
+		for (; dc <= 1; dc = dc + 1) {
+			c = column + dc;
+			if (checkCellBounds@i16@i16(r, c)) {
+				cell = getCell@i16@i16(r, c);
+				if (isBomb@u8(cell)) {
+					count = count + 1;
+				}
+			}
+		}
+	}
+	return count;
+}
+
+u8 getSpacer@i16@i16@i16@i16(i16 row, i16 column, i16 rowCursor, i16 columnCursor) {
+	if (rowCursor == row) {
+		if (columnCursor == column) {
+			return 91;
+		}
+		if (columnCursor == (column - 1)) {
+			return 93;
+		}
+	}
+	return 32;
+}
+
+void printCell@u8@i16@i16(u8 cell, i16 row, i16 column) {
+	u8 chr;
+	u8 count;
+
+	chr = 46;
+	if (isOpen@u8(cell)) {
+		if (isBomb@u8(cell)) {
+			chr = 42;
+		}
+		else {
+			count = getBombCountAround@i16@i16(row, column);
+			if (count > 0) {
+				chr = count + 48;
+			}
+			else {
+				chr = 32;
+			}
+		}
+	}
+	else {
+		if (isFlag@u8(cell)) {
+			chr = 35;
+		}
+	}
+	printChar@u8(chr);
+}
+
+void printField@i16@i16(i16 rowCursor, i16 columnCursor) {
+	i16 row;
+	i16 column;
+	u8 spacer;
+	u8 cell;
+	u8 spacer;
+
+	setCursor@i16@i16(0, 0);
+	row = 0;
+	for (; row < 20; row = row + 1) {
+		printChar@u8(124);
+		column = 0;
+		for (; column < 40; column = column + 1) {
+			spacer = getSpacer@i16@i16@i16@i16(row, column, rowCursor, columnCursor);
+			printChar@u8(spacer);
+			cell = getCell@i16@i16(row, column);
+			printCell@u8@i16@i16(cell, row, column);
+		}
+		spacer = getSpacer@i16@i16@i16@i16(row, 40, rowCursor, columnCursor);
+		printChar@u8(spacer);
+		printString@@u8("|\n");
+	}
+}
+
+void printSpaces@i16(i16 i) {
+	for (; i > 0; i = i - 1) {
+		printChar@u8(48);
+	}
+}
+
+u8 getDigitCount@i16(i16 value) {
+	u8 count;
+
+	count = 0;
+	if (value < 0) {
+		count = 1;
+		value = -value;
+	}
+	while (true) {
+		count = count + 1;
+		value = value / 10;
+		if (value == 0) {
+			break;
+		}
+	}
+	return count;
+}
+
+i16 getHiddenCount() {
+	i16 count;
+	i16 r;
+	i16 c;
+	u8 cell;
+
+	count = 0;
+	r = 0;
+	for (; r < 20; r = r + 1) {
+		c = 0;
+		for (; c < 40; c = c + 1) {
+			cell = getCell@i16@i16(r, c);
+			if ((cell & 6) == 0) {
+				count = count + 1;
+			}
+		}
+	}
+	return count;
+}
+
+bool printLeft() {
+	i16 count;
+	i16 leftDigits;
+	i16 bombDigits;
+
+	count = getHiddenCount();
+	leftDigits = (i16)(getDigitCount@i16(count));
+	bombDigits = (i16)(getDigitCount@i16(40));
+	printString@@u8("Left: ");
+	printSpaces@i16(bombDigits - leftDigits);
+	printUint@i16(count);
+	return count == 0;
+}
+
+i16 abs@i16(i16 a) {
+	if (a < 0) {
+		return -a;
+	}
+	return a;
+}
+
+void clearField() {
+	i16 r;
+	i16 c;
+
+	r = 0;
+	for (; r < 20; r = r + 1) {
+		c = 0;
+		for (; c < 40; c = c + 1) {
+			setCell@i16@i16@u8(r, c, 0);
+		}
+	}
+}
+
+void initField@i16@i16(i16 curr_r, i16 curr_c) {
+	i16 bombs;
+	i16 row;
+	i16 column;
+
+	bombs = 40;
+	for (; bombs > 0; bombs = bombs - 1) {
+		row = (i16)((random()) % 20);
+		column = (i16)((random()) % 40);
+		if (((abs@i16(row - curr_r)) > 1) || ((abs@i16(column - curr_c)) > 1)) {
+			setCell@i16@i16@u8(row, column, 1);
+		}
+	}
+}
+
+void maybeRevealAround@i16@i16(i16 row, i16 column) {
+	i16 dr;
+	i16 r;
+	i16 dc;
+	i16 c;
+	u8 cell;
+
+	if ((getBombCountAround@i16@i16(row, column)) != 0) {
+		return;
+	}
+	dr = -1;
+	for (; dr <= 1; dr = dr + 1) {
+		r = row + dr;
+		dc = -1;
+		for (; dc <= 1; dc = dc + 1) {
+			if ((dr == 0) && (dc == 0)) {
+				continue;
+			}
+			c = column + dc;
+			if (!(checkCellBounds@i16@i16(r, c))) {
+				continue;
+			}
+			cell = getCell@i16@i16(r, c);
+			if (isOpen@u8(cell)) {
+				continue;
+			}
+			setCell@i16@i16@u8(r, c, cell | 2);
+			maybeRevealAround@i16@i16(r, c);
+		}
+	}
+}
+
+void main() {
+	bool needsInitialize;
+	i16 curr_c;
+	i16 curr_r;
+	i16 chr;
+	u8 cell;
+	u8 cell;
+
+	initRandom@i32(7439742);
+	needsInitialize = true;
+	clearField();
+	curr_c = 20;
+	curr_r = 10;
+	while (true) {
+		printField@i16@i16(curr_r, curr_c);
+		if (!needsInitialize) {
+			if (printLeft()) {
+				printString@@u8(" You've cleaned the field!");
+				break;
+			}
+		}
+		chr = getChar();
+		if (chr == 27) {
+			break;
+		}
+		if (chr == -8120) {
+			curr_r = ((curr_r + 20) - 1) % 20;
+		}
+		else {
+			if (chr == -8112) {
+				curr_r = (curr_r + 1) % 20;
+			}
+			else {
+				if (chr == -8117) {
+					curr_c = ((curr_c + 40) - 1) % 40;
+				}
+				else {
+					if (chr == -8117) {
+						curr_c = ((curr_c + 40) - 1) % 40;
+					}
+					else {
+						if (chr == -8115) {
+							curr_c = (curr_c + 1) % 40;
+						}
+						else {
+							if (chr == 32) {
+								if (!needsInitialize) {
+									cell = getCell@i16@i16(curr_r, curr_c);
+									if (!(isOpen@u8(cell))) {
+										cell = cell ^ 4;
+										setCell@i16@i16@u8(curr_r, curr_c, cell);
+									}
+								}
+							}
+							else {
+								if (chr == 13) {
+									if (needsInitialize) {
+										needsInitialize = false;
+										initField@i16@i16(curr_r, curr_c);
+									}
+									cell = getCell@i16@i16(curr_r, curr_c);
+									if (!(isOpen@u8(cell))) {
+										setCell@i16@i16@u8(curr_r, curr_c, cell | 2);
+									}
+									if (isBomb@u8(cell)) {
+										printField@i16@i16(curr_r, curr_c);
+										printString@@u8("boom! you've lost");
+										break;
+									}
+									maybeRevealAround@i16@i16(curr_r, curr_c);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

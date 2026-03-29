@@ -1,0 +1,172 @@
+@printString@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	; 6 pc
+	move r8, r1
+	move r1, r8
+	call r0 = strlen@@u8[r1] -> i64
+	move r1, r8
+	move r2, r0
+	call printStringLength@@u8@i64[r1, r2]
+
+@printChar@u8:
+ Local variables
+	arg 0: chr (u8/1)
+	; 9 pc
+	addrof r9, chr
+	store [r9], r1
+	addrof r1, chr
+	const r2, 1
+	call printStringLength@@u8@u8[r1, r2]
+
+@strlen@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	; 7 pc
+	const r0, 0
+	; 57:2 for *str != 0
+	jump @for_1
+@for_1_body:
+	const r2, 1
+	add r0, r0, r2
+	const r2, 1
+	add r1, r1, r2
+@for_1:
+	load r2, [r1]
+	const r3, 0
+	notequals r2, r2, r3
+	branch r2, true, @for_1_body, @for_1_break
+	; 60:9 return length
+
+@printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	; 2 pc
+	cast r2(i64), r2(u8)
+	call printStringLength@@u8@i64[r1, r2]
+
+@printBoard:
+	; 17 pc
+	const r1, 124
+	call printChar@u8[r1]
+	const r8, 0
+	; 11:2 for i < 30
+	jump @for_2
+@for_2_body:
+	; 12:3 if [...] == 0
+	cast r9(i64), r8(u8)
+	addrof r0, [board]
+	add r0, r0, r9
+	load r9, [r0]
+	const r0, 0
+	equals r9, r9, r0
+	branch r9, true, @if_3_then, @if_3_else
+	const r1, 42
+	call printChar@u8[r1]
+	jump @for_2_continue
+@if_3_then:
+	const r1, 32
+	call printChar@u8[r1]
+@for_2_continue:
+	const r9, 1
+	add r8, r8, r9
+@for_2:
+	const r9, 30
+	lt r9, r8, r9
+	branch r9, true, @for_2_body, @for_2_break
+	const r1, [string-0]
+	call printString@@u8[r1]
+
+@main:
+	; 51 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const r8, 0
+	; 23:2 for i < 30
+	jump @for_4
+@for_4_body:
+	const r9, 0
+	cast r0(i64), r8(u8)
+	addrof r1, [board]
+	add r1, r1, r0
+	store [r1], r9
+	const r9, 1
+	add r8, r8, r9
+@for_4:
+	const r9, 30
+	lt r9, r8, r9
+	branch r9, true, @for_4_body, @for_4_break
+	const r8, 1
+	const r9, 29
+	addrof r0, [board]
+	add r0, r0, r9
+	store [r0], r8
+	call printBoard[]
+	const r8, 0
+	; 30:2 for i < 28
+	jump @for_5
+@for_5_body:
+	const r9, 0
+	addrof r0, [board]
+	add r0, r0, r9
+	load r9, [r0]
+	const r4, 1
+	shiftleft r9, r9, r4
+	const r0, 1
+	addrof r1, [board]
+	add r1, r1, r0
+	load r0, [r1]
+	or r9, r9, r0
+	const r0, 1
+	; 32:3 for j < 29
+	jump @for_6
+@for_6_body:
+	const r4, 1
+	shiftleft r9, r9, r4
+	const r1, 7
+	and r9, r9, r1
+	const r1, 1
+	move r2, r0
+	add r2, r2, r1
+	cast r1(i64), r2(u8)
+	addrof r2, [board]
+	add r2, r2, r1
+	load r1, [r2]
+	or r9, r9, r1
+	const r1, 110
+	move r4, r9
+	shiftright r1, r1, r4
+	const r2, 1
+	and r1, r1, r2
+	cast r2(i64), r0(u8)
+	addrof r3, [board]
+	add r3, r3, r2
+	store [r3], r1
+	const r1, 1
+	add r0, r0, r1
+@for_6:
+	const r1, 29
+	lt r1, r0, r1
+	branch r1, true, @for_6_body, @for_6_break
+	call printBoard[]
+	const r0, 1
+	add r8, r8, r0
+@for_5:
+	const r0, 28
+	lt r0, r8, r0
+	branch r0, true, @for_5_body, @main_ret
+
+@printStringLength@@u8@i64:
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 1
+	mov rax, 1
+	syscall
+	ret
+
+Global variables
+	0: board[] (u8*/240)
+
+String literals
+	string lit 0 "|\n\0"
