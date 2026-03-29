@@ -1,0 +1,165 @@
+@printChar@u8:
+ Local variables
+	arg 0: chr (u8/1)
+	var 1: t.1 (u8*/8)
+	var 2: t.2 (u8/1)
+	; 12 pc
+	addrof t.1, chr
+	const t.2, 1
+	call printStringLength@@u8@u8[t.1, t.2]
+@printChar@u8_ret:
+
+@printUint@i64:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: buffer[] (u8*/20)
+	var 2: pos (u8/1)
+	var 3: remainder (i64/8)
+	var 4: digit (u8/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (u8/1)
+	var 9: t.9 (u8/1)
+	var 10: t.10 (u8*/8)
+	var 11: t.11 (i64/8)
+	var 12: t.12 (bool/1)
+	var 13: t.13 (i64/8)
+	var 14: t.14 (u8*/8)
+	var 15: t.15 (i64/8)
+	var 16: t.16 (u8/1)
+	var 17: t.17 (u8/1)
+	; 120 pc
+	const pos, 20
+	; 21:2 while true
+@while_1:
+	const t.5, 1
+	sub pos, pos, t.5
+	const t.6, 10
+	move remainder, number
+	mod remainder, remainder, t.6
+	const t.7, 10
+	div number, number, t.7
+	cast t.8(u8), remainder(i64)
+	const t.9, 48
+	move digit, t.8
+	add digit, digit, t.9
+	cast t.11(i64), pos(u8)
+	addrof t.10, [buffer]
+	add t.10, t.10, t.11
+	store [t.10], digit
+	; 27:3 if number == 0
+	const t.13, 0
+	equals t.12, number, t.13
+	branch t.12, false, @while_1, @while_1_break
+@while_1_break:
+	cast t.15(i64), pos(u8)
+	addrof t.14, [buffer]
+	add t.14, t.14, t.15
+	const t.17, 20
+	move t.16, t.17
+	sub t.16, t.16, pos
+	call printStringLength@@u8@u8[t.14, t.16]
+@printUint@i64_ret:
+
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+	var 1: t.1 (i64/8)
+	; 8 pc
+	cast t.1(i64), number(u8)
+	call printIntLf@i64[t.1]
+@printIntLf@u8_ret:
+
+@printIntLf@i64:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: t.1 (bool/1)
+	var 2: t.2 (i64/8)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	; 30 pc
+	; 47:2 if number < 0
+	const t.2, 0
+	lt t.1, number, t.2
+	branch t.1, false, @if_3_end, @if_3_then
+@if_3_then:
+	const t.3, 45
+	call printChar@u8[t.3]
+	neg number, number
+@if_3_end:
+	call printUint@i64[number]
+	const t.4, 10
+	call printChar@u8[t.4]
+@printIntLf@i64_ret:
+
+@printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	var 2: t.2 (i64/8)
+	; 10 pc
+	cast t.2(i64), length(u8)
+	call printStringLength@@u8@i64[str, t.2]
+@printStringLength@@u8@u8_ret:
+
+@main:
+ Local variables
+	var 0: pos (u8/2)
+	var 1: x (u8*/8)
+	var 2: t.2 (u8/1)
+	var 3: t.3 (u8*/8)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (u8*/8)
+	var 7: t.7 (u8/1)
+	var 8: t.8 (u8*/8)
+	var 9: t.9 (i64/8)
+	var 10: t.10 (u8/1)
+	var 11: t.11 (u8*/8)
+	var 12: t.12 (u8/1)
+	var 13: t.13 (u8*/8)
+	var 14: t.14 (i64/8)
+	var 15: t.15 (u8/1)
+	; 109 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const t.2, 1
+	; 9:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=9:2].x
+	addrof t.3, pos
+	store [t.3], t.2
+	; 10:14 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:10].x
+	addrof t.6, pos
+	load t.5, [t.6]
+	const t.7, 1
+	move t.4, t.5
+	add t.4, t.4, t.7
+	; 10:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:2].y
+	addrof t.8, pos
+	const t.9, 1
+	add t.8, t.8, t.9
+	store [t.8], t.4
+	; 11:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=11:13].x
+	addrof t.11, pos
+	load t.10, [t.11]
+	call printIntLf@u8[t.10]
+	; 12:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=12:13].y
+	addrof t.13, pos
+	const t.14, 1
+	add t.13, t.13, t.14
+	load t.12, [t.13]
+	call printIntLf@u8[t.12]
+	; 13:15 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=13:11].x
+	addrof x, pos
+	load t.15, [x]
+	call printIntLf@u8[t.15]
+@main_ret:
+
+@printStringLength@@u8@i64:
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 1
+	mov rax, 1
+	syscall
+	ret
+

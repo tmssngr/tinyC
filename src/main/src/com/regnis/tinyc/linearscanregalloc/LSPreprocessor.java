@@ -15,15 +15,15 @@ import org.jetbrains.annotations.*;
 public final class LSPreprocessor {
 
 	@NotNull
-	public static Pair<IRVarInfos, List<IRInstruction>> process(@NotNull IRFunction function, @NotNull LSCallingConventionProvider callingConventionProvider, boolean isX86, Type pointerIntType) {
+	public static Pair<IRVarInfos, List<IRInstruction>> process(@NotNull IRFunction function, @NotNull LSCallingConventionProvider callingConventionProvider, @Nullable X86Registers x86Registers, @NotNull Type pointerIntType) {
 		final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(function.returnType(), function.varInfos().getArgumentTypes());
 
 		final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(function.varInfos(), pointerIntType);
 
 		final var resultLayer = new LSPreprocessorResultLayer();
 		LSPreprocessorLayer nextLayer = new LSPreprocessorCallingConventionLayer(function.varInfos(), tempVarFactory, callingConventionProvider, resultLayer);
-		if (isX86) {
-			nextLayer = new LSPreprocessorX86OperationsLayer(nextLayer);
+		if (x86Registers != null) {
+			nextLayer = new LSPreprocessorX86OperationsLayer(x86Registers, nextLayer);
 		}
 
 		// storing register parameters on the stack is done before the global var handler

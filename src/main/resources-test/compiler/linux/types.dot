@@ -1,0 +1,54 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printChar@u8 {
+		BasicBlock_0_printCharu8 [label="printCharu8",shape=box];
+		BasicBlock_0_printCharu8 -> BasicBlock_0_printCharu8_ret [label="(chr)"];
+		BasicBlock_0_printCharu8_ret [label="printCharu8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printUint@i64 {
+		BasicBlock_1_printUinti64 [label="printUinti64",shape=box];
+		BasicBlock_1_printUinti64 -> BasicBlock_1_while_1 [label="(buffer,number,pos)"];
+		BasicBlock_1_no_critical_edge_4 [label="no_critical_edge_4",shape=box];
+		BasicBlock_1_no_critical_edge_4 -> BasicBlock_1_while_1 [label="(buffer,number,pos)"];
+		BasicBlock_1_while_1 [label="while_1",shape=hexagon];
+		BasicBlock_1_while_1 -> BasicBlock_1_no_critical_edge_4 [label="(buffer,number,pos)"];
+		BasicBlock_1_while_1 -> BasicBlock_1_while_1_break [label="(buffer,pos)"];
+		BasicBlock_1_while_1_break [label="while_1_break",shape=box];
+		BasicBlock_1_while_1_break -> BasicBlock_1_printUinti64_ret [label="(buffer)"];
+		BasicBlock_1_printUinti64_ret [label="printUinti64_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf@u8 {
+		BasicBlock_2_printIntLfu8 [label="printIntLfu8",shape=box];
+		BasicBlock_2_printIntLfu8 -> BasicBlock_2_printIntLfu8_ret;
+		BasicBlock_2_printIntLfu8_ret [label="printIntLfu8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf@i64 {
+		BasicBlock_3_printIntLfi64 [label="printIntLfi64",shape=hexagon];
+		BasicBlock_3_printIntLfi64 -> BasicBlock_3_no_critical_edge_4 [label="(number)"];
+		BasicBlock_3_printIntLfi64 -> BasicBlock_3_if_3_then [label="(number)"];
+		BasicBlock_3_no_critical_edge_4 [label="no_critical_edge_4",shape=box];
+		BasicBlock_3_no_critical_edge_4 -> BasicBlock_3_if_3_end [label="(number)"];
+		BasicBlock_3_if_3_then [label="if_3_then",shape=box];
+		BasicBlock_3_if_3_then -> BasicBlock_3_if_3_end [label="(number)"];
+		BasicBlock_3_if_3_end [label="if_3_end",shape=box];
+		BasicBlock_3_if_3_end -> BasicBlock_3_printIntLfi64_ret;
+		BasicBlock_3_printIntLfi64_ret [label="printIntLfi64_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printStringLength@@u8@u8 {
+		BasicBlock_4_printStringLengthu8u8 [label="printStringLengthu8u8",shape=box];
+		BasicBlock_4_printStringLengthu8u8 -> BasicBlock_4_printStringLengthu8u8_ret;
+		BasicBlock_4_printStringLengthu8u8_ret [label="printStringLengthu8u8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_5_main [label="main",shape=box];
+		BasicBlock_5_main -> BasicBlock_5_for_4 [label="(i)"];
+		BasicBlock_5_for_4_body [label="for_4_body",shape=box];
+		BasicBlock_5_for_4_body -> BasicBlock_5_for_4 [label="(i)"];
+		BasicBlock_5_for_4 [label="for_4",shape=hexagon];
+		BasicBlock_5_for_4 -> BasicBlock_5_for_4_break;
+		BasicBlock_5_for_4 -> BasicBlock_5_for_4_body [label="(i)"];
+		BasicBlock_5_for_4_break [label="for_4_break",shape=box];
+		BasicBlock_5_for_4_break -> BasicBlock_5_main_ret;
+		BasicBlock_5_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

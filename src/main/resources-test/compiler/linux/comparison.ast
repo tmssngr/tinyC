@@ -1,0 +1,104 @@
+i32 __random__;
+
+void printString@@u8(u8* str) {
+	i64 length;
+
+	length = strlen@@u8(str);
+	printStringLength@@u8@i64(str, length);
+}
+
+void printChar@u8(u8 chr) {
+	printStringLength@@u8@u8(&chr, 1);
+}
+
+void printUint@i64(i64 number) {
+	u8* buffer[20];
+	u8 pos;
+	i64 remainder;
+	u8 digit;
+
+	pos = 20;
+	while (true) {
+		pos = pos - 1;
+		remainder = number % 10;
+		number = number / 10;
+		digit = ((u8)remainder) + 48;
+		buffer[(i64)pos] = digit;
+		if (number == 0) {
+			break;
+		}
+	}
+	printStringLength@@u8@u8(&buffer[(i64)pos], 20 - pos);
+}
+
+void printIntLf@bool(bool number) {
+	printIntLf@i64((i64)number);
+}
+
+void printIntLf@i64(i64 number) {
+	if (number < 0) {
+		printChar@u8(45);
+		number = -number;
+	}
+	printUint@i64(number);
+	printChar@u8(10);
+}
+
+i64 strlen@@u8(u8* str) {
+	i64 length;
+
+	length = 0;
+	for (; (*str) != 0; str = str + 1) {
+		length = length + 1;
+	}
+	return length;
+}
+
+void printStringLength@@u8@u8(u8* str, u8 length) {
+	printStringLength@@u8@i64(str, (i64)length);
+}
+
+void printStringLength@@u8@i64(u8* str, i64 length) {
+}
+
+void main() {
+	i16 a;
+	i16 b;
+	u8 c;
+	u8 d;
+
+	printString@@u8("< (signed)\n");
+	a = 1;
+	b = 2;
+	printIntLf@bool(a < b);
+	printIntLf@bool(b < a);
+	printString@@u8("< (unsigned)\n");
+	c = 0;
+	d = 128;
+	printIntLf@bool(c < d);
+	printIntLf@bool(d < c);
+	printString@@u8("<= (signed)\n");
+	printIntLf@bool(a <= b);
+	printIntLf@bool(b <= a);
+	printString@@u8("<= (unsigned)\n");
+	printIntLf@bool(c <= d);
+	printIntLf@bool(d <= c);
+	printString@@u8("==\n");
+	printIntLf@bool(a == b);
+	printIntLf@bool(b == a);
+	printString@@u8("!=\n");
+	printIntLf@bool(a != b);
+	printIntLf@bool(b != a);
+	printString@@u8(">= (signed)\n");
+	printIntLf@bool(a >= b);
+	printIntLf@bool(b >= a);
+	printString@@u8(">= (unsigned)\n");
+	printIntLf@bool(c >= d);
+	printIntLf@bool(d >= c);
+	printString@@u8("> (signed)\n");
+	printIntLf@bool(a > b);
+	printIntLf@bool(b > a);
+	printString@@u8("> (unsigned)\n");
+	printIntLf@bool(c > d);
+	printIntLf@bool(d > c);
+}
