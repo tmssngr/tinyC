@@ -336,10 +336,10 @@ public class TypeCheckerTest {
 				                                                ),
 				                                                List.of(), loc(5, 0)),
 				                         Function.typedInstance("prInt", "void", Type.VOID, List.of(
-						                                                new Function.Arg("i64", Type.I64, "x", loc(10, 11))
+						                                                new Function.Parameter("i64", Type.I64, "x", loc(10, 11))
 				                                                ),
 				                                                List.of(
-						                                                new Variable("x", 0, VariableScope.argument, Type.I64, 0, true, loc(10, 11))
+						                                                new Variable("x", 0, VariableScope.parameter, Type.I64, 0, true, loc(10, 11))
 				                                                ),
 				                                                List.of(), List.of(), loc(10, 0))
 		                         ),
@@ -405,10 +405,10 @@ public class TypeCheckerTest {
 				                                                ),
 				                                                List.of(), loc(0, 0)),
 				                         Function.typedInstance("prInt", "void", Type.VOID, List.of(
-						                                                new Function.Arg("i64", Type.I64, "x", loc(12, 11))
+						                                                new Function.Parameter("i64", Type.I64, "x", loc(12, 11))
 				                                                ),
 				                                                List.of(
-						                                                new Variable("x", 0, VariableScope.argument, Type.I64, 0, true, loc(12, 11))
+						                                                new Variable("x", 0, VariableScope.parameter, Type.I64, 0, true, loc(12, 11))
 				                                                ),
 				                                                List.of(), List.of(), loc(12, 0))
 		                         ),

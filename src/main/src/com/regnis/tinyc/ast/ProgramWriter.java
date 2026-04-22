@@ -40,13 +40,13 @@ public final class ProgramWriter {
 		write(function.name());
 		write("(");
 		boolean addComma = false;
-		for (Function.Arg arg : function.args()) {
+		for (Function.Parameter parameter : function.parameters()) {
 			if (addComma) {
 				write(", ");
 			}
-			write(arg.typeNotNull().toString());
+			write(parameter.typeNotNull().toString());
 			write(" ");
-			write(arg.name());
+			write(parameter.name());
 			addComma = true;
 		}
 		writeln(") {");
@@ -58,7 +58,7 @@ public final class ProgramWriter {
 	private void writeVariables(String indentation, List<Variable> variables) throws IOException {
 		boolean printed = false;
 		for (Variable variable : variables) {
-			if (variable.scope() == VariableScope.argument) {
+			if (variable.scope() == VariableScope.parameter) {
 				continue;
 			}
 

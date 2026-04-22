@@ -63,13 +63,13 @@ public final class Parser {
 				final String typeString = getTypeString(type);
 				final String name = consumeIdentifier();
 				if (isConsume(TokenType.L_PAREN)) {
-					final List<Function.Arg> args = new ArrayList<>();
+					final List<Function.Parameter> args = new ArrayList<>();
 					while (!isConsume(TokenType.R_PAREN)) {
 						final Location argLocation = getLocation();
 						final String identifier = consumeIdentifier();
 						final String argType = getTypeString(identifier);
 						final String argName = consumeIdentifier();
-						args.add(new Function.Arg(argType, argName, argLocation));
+						args.add(new Function.Parameter(argType, argName, argLocation));
 						if (token != TokenType.R_PAREN) {
 							consume(TokenType.COMMA);
 						}

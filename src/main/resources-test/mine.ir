@@ -449,10 +449,10 @@
 	var 10: t.10 (bool/1)
 	; 71 pc
 	const chr, 46
-	; 74:2 if isOpen([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=74:13]])
+	; 74:2 if isOpen([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=74:13]])
 	call t.5 = isOpen[cell] -> bool
 	branch t.5, false, @if_14_else
-	; 75:3 if isBomb([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=75:14]])
+	; 75:3 if isBomb([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=75:14]])
 	call t.6 = isBomb[cell] -> bool
 	branch t.6, false, @if_15_else
 	const chr, 42
@@ -473,7 +473,7 @@
 @if_15_end:
 	jump @if_14_end
 @if_14_else:
-	; 88:7 if isFlag([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=88:18]])
+	; 88:7 if isFlag([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=88:18]])
 	call t.10 = isFlag[cell] -> bool
 	branch t.10, false, @if_17_end
 	const chr, 35
@@ -792,7 +792,7 @@
 	move t.10, t.11
 	mod t.10, t.10, t.12
 	cast column(i16), t.10(i32)
-	; 177:3 if abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=177:11], right=ExprVarAccess[varName=curr_r, index=0, scope=argument, type=i16, varIsArray=false, location=177:20], location=177:18]]) > 1 || abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_c, index=1, scope=argument, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1
+	; 177:3 if abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=177:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=177:20], location=177:18]]) > 1 || abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1
 	; 178:4 logic or
 	move t.15, row
 	sub t.15, t.15, curr_r
@@ -844,7 +844,7 @@
 	var 22: t.22 (i16/2)
 	var 23: t.23 (i16/2)
 	; 175 pc
-	; 185:2 if getBombCountAround([ExprVarAccess[varName=row, index=0, scope=argument, type=i16, varIsArray=false, location=185:25], ExprVarAccess[varName=column, index=1, scope=argument, type=i16, varIsArray=false, location=185:30]]) != 0
+	; 185:2 if getBombCountAround([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=185:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=185:30]]) != 0
 	call t.8 = getBombCountAround[row, column] -> u8
 	const t.9, 0
 	notequals t.7, t.8, t.9

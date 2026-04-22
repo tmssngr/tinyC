@@ -88,7 +88,7 @@ public final class IRWriter extends TextWriter {
 			writeln(" Local variables");
 			for (IRVarDef varDef : localVars) {
 				writeIndentation();
-				write(varDef.var().scope() == VariableScope.argument ? "arg " : "var ");
+				write(varDef.var().scope() == VariableScope.parameter ? "arg " : "var ");
 				writeln(varDef.getString());
 			}
 		}
