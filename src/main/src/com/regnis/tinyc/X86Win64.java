@@ -162,7 +162,7 @@ public final class X86Win64 extends AsmWriter {
 		int offset = 0;
 		int i = 0;
 		for (IRVarDef var : localVars) {
-			if (var.var().scope() == VariableScope.argument) {
+			if (var.var().scope() == VariableScope.parameter) {
 				argCount++;
 			}
 			else {
@@ -184,7 +184,7 @@ public final class X86Win64 extends AsmWriter {
 		i = 0;
 		for (IRVarDef var : localVars) {
 			final VariableScope scope = var.var().scope();
-			if (scope != VariableScope.argument) {
+			if (scope != VariableScope.parameter) {
 				Utils.assertTrue(scope == VariableScope.function);
 				break;
 			}
@@ -200,7 +200,7 @@ public final class X86Win64 extends AsmWriter {
 	private void writeVarOffsets(List<IRVarDef> localVars) throws IOException {
 		for (IRVarDef varDef : localVars) {
 			final IRVar var = varDef.var();
-			if (var.scope() == VariableScope.argument) {
+			if (var.scope() == VariableScope.parameter) {
 				writeComment("  rsp+" + localVarOffsets[var.index()] + ": arg " + var.name());
 			}
 			else {

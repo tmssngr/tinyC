@@ -409,7 +409,7 @@ public class ParserTest {
 						                                                                  loc(2, 4))
 				                                                        ),
 				                                                        loc(0, 0)),
-				                                Function.createInstance("fooBar", "void", List.of(new Function.Arg("u8", "a", loc(4, 12))),
+				                                Function.createInstance("fooBar", "void", List.of(new Function.Parameter("u8", "a", loc(4, 12))),
 				                                                        List.of(),
 				                                                        loc(4, 0))
 		                                ),
@@ -671,7 +671,7 @@ public class ParserTest {
 		assertEquals(new Program(List.of(),
 		                         List.of(),
 		                         List.of(
-				                         new Function("print", "void", null, List.of(new Function.Arg("i64", "a", loc(1, 11))),
+				                         new Function("print", "void", null, List.of(new Function.Parameter("i64", "a", loc(1, 11))),
 				                                      List.of(),
 				                                      List.of(),
 				                                      List.of(), loc(1, 0))
@@ -683,7 +683,7 @@ public class ParserTest {
 		assertEquals(new Program(List.of(),
 		                         List.of(),
 		                         List.of(
-				                         new Function("print", "void", null, List.of(new Function.Arg("i16", "a", loc(5, 11))),
+				                         new Function("print", "void", null, List.of(new Function.Parameter("i16", "a", loc(5, 11))),
 				                                      List.of(),
 				                                      List.of(),
 				                                      List.of(), loc(5, 0))
@@ -767,7 +767,7 @@ public class ParserTest {
 		Assert.assertEquals(expectedFunction.name(), currentFunction.name());
 		Assert.assertEquals(expectedFunction.typeString(), currentFunction.typeString());
 		Assert.assertEquals(expectedFunction.returnType(), currentFunction.returnType());
-		Assert.assertEquals(expectedFunction.args(), currentFunction.args());
+		Assert.assertEquals(expectedFunction.parameters(), currentFunction.parameters());
 		Assert.assertEquals(expectedFunction.localVars(), currentFunction.localVars());
 		Assert.assertEquals(expectedFunction.location(), currentFunction.location());
 		assertEquals(expectedFunction.statements(), currentFunction.statements());

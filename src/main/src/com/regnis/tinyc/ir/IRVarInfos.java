@@ -46,7 +46,7 @@ public final class IRVarInfos implements IRCanBeRegister {
 					expectLocalVar = true;
 				}
 				else {
-					Utils.assertTrue(scope == VariableScope.argument);
+					Utils.assertTrue(scope == VariableScope.parameter);
 				}
 			}
 		}

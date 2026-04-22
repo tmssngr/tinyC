@@ -40,7 +40,7 @@ public class ArithmeticSimplifier {
 		}
 
 		final List<Statement> statements = simplify(function.statements());
-		return new Function(function.name(), function.typeString(), function.returnTypeNotNull(), function.args(), function.localVars(), statements, List.of(), function.location());
+		return new Function(function.name(), function.typeString(), function.returnTypeNotNull(), function.parameters(), function.localVars(), statements, List.of(), function.location());
 	}
 
 	@NotNull

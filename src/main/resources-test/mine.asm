@@ -1242,7 +1242,7 @@ start:
         mov al, 46
         lea rbx, [rsp+0]
         mov [rbx], al
-        ; 74:2 if isOpen([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=74:13]])
+        ; 74:2 if isOpen([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=74:13]])
         ; call t.5 = isOpen[cell] -> bool
         lea rax, [rsp+40]
         mov bl, [rax]
@@ -1256,7 +1256,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @if_14_then
-        ; 88:7 if isFlag([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=88:18]])
+        ; 88:7 if isFlag([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=88:18]])
         ; call t.9 = isFlag[cell] -> bool
         lea rax, [rsp+40]
         mov bl, [rax]
@@ -1272,7 +1272,7 @@ start:
         jz @if_14_end
         jmp @if_17_then
 @if_14_then:
-        ; 75:3 if isBomb([ExprVarAccess[varName=cell, index=0, scope=argument, type=u8, varIsArray=false, location=75:14]])
+        ; 75:3 if isBomb([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=75:14]])
         ; call t.6 = isBomb[cell] -> bool
         lea rax, [rsp+40]
         mov bl, [rax]
@@ -2125,7 +2125,7 @@ start:
         mov ebx, [rax]
         lea rax, [rsp+4]
         mov [rax], bx
-        ; 177:3 if abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=177:11], right=ExprVarAccess[varName=curr_r, index=0, scope=argument, type=i16, varIsArray=false, location=177:20], location=177:18]]) > 1 || abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_c, index=1, scope=argument, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1
+        ; 177:3 if abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=177:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=177:20], location=177:18]]) > 1 || abs([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1
         ; 178:4 logic or
         ; move t.14, row
         lea rax, [rsp+2]
@@ -2255,7 +2255,7 @@ start:
 @maybeRevealAround:
         ; reserve space for local variables
         sub rsp, 32
-        ; 185:2 if getBombCountAround([ExprVarAccess[varName=row, index=0, scope=argument, type=i16, varIsArray=false, location=185:25], ExprVarAccess[varName=column, index=1, scope=argument, type=i16, varIsArray=false, location=185:30]]) != 0
+        ; 185:2 if getBombCountAround([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=185:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=185:30]]) != 0
         ; call t.8 = getBombCountAround[row, column] -> u8
         lea rax, [rsp+56]
         mov bx, [rax]

@@ -106,15 +106,15 @@ public final class TypeChecker {
 		checkNoSymbolNamed(name, location);
 
 		final Type returnType = getType(function.typeString(), location);
-		final List<Function.Arg> args = new ArrayList<>();
-		final List<Type> argTypes = new ArrayList<>();
-		for (Function.Arg arg : function.args()) {
-			final Type argType = getType(arg.typeString(), arg.location());
-			args.add(new Function.Arg(arg.typeString(), argType, arg.name(), arg.location()));
-			argTypes.add(argType);
+		final List<Function.Parameter> parameters = new ArrayList<>();
+		final List<Type> parameterTypes = new ArrayList<>();
+		for (Function.Parameter parameter : function.parameters()) {
+			final Type argType = getType(parameter.typeString(), parameter.location());
+			parameters.add(new Function.Parameter(parameter.typeString(), argType, parameter.name(), parameter.location()));
+			parameterTypes.add(argType);
 		}
-		globalSymbols.put(name, new Func(returnType, argTypes, location));
-		return new Function(name, function.typeString(), returnType, args, List.of(), function.statements(), function.asmLines(), location);
+		globalSymbols.put(name, new Func(returnType, parameterTypes, location));
+		return new Function(name, function.typeString(), returnType, parameters, List.of(), function.statements(), function.asmLines(), location);
 	}
 
 	@NotNull
@@ -132,13 +132,13 @@ public final class TypeChecker {
 		if (function.asmLines().size() > 0) {
 			Utils.assertTrue(function.localVars().isEmpty());
 			Utils.assertTrue(function.statements().isEmpty());
-			return new Function(function.name(), function.typeString(), function.returnTypeNotNull(), function.args(), List.of(), List.of(), function.asmLines(), function.location());
+			return new Function(function.name(), function.typeString(), function.returnTypeNotNull(), function.parameters(), List.of(), List.of(), function.asmLines(), function.location());
 		}
 
 		expectedReturnType = function.returnType();
 		localVars = new LocalVars();
 		try {
-			for (Function.Arg arg : function.args()) {
+			for (Function.Parameter arg : function.parameters()) {
 				localVars.addArg(arg.name(), arg.typeNotNull(), arg.location());
 			}
 
@@ -148,7 +148,7 @@ public final class TypeChecker {
 					throw new SyntaxException(Messages.functionMustReturnType(expectedReturnType), function.location());
 				}
 			}
-			return Function.typedInstance(function.name(), function.typeString(), function.returnTypeNotNull(), function.args(), localVars.toList(), statements, List.of(), function.location());
+			return Function.typedInstance(function.name(), function.typeString(), function.returnTypeNotNull(), function.parameters(), localVars.toList(), statements, List.of(), function.location());
 		}
 		finally {
 			localVars = null;
@@ -480,15 +480,15 @@ public final class TypeChecker {
 		if (!(symbol instanceof Func function)) {
 			throw new SyntaxException(Messages.undeclaredFunction(name), location);
 		}
-		if (function.argTypes().size() != argExpressions.size()) {
-			throw new SyntaxException(Messages.functionNeedsXArgumentsButGotY(name, function.argTypes().size(), argExpressions.size()), location);
+		if (function.parameterTypes().size() != argExpressions.size()) {
+			throw new SyntaxException(Messages.functionNeedsXArgumentsButGotY(name, function.parameterTypes().size(), argExpressions.size()), location);
 		}
 
 		final List<Expression> expressions = new ArrayList<>();
-		final Iterator<Type> methodArgIt = function.argTypes().iterator();
+		final Iterator<Type> parameterTypesIt = function.parameterTypes().iterator();
 		final Iterator<Expression> argExprIt = argExpressions.iterator();
-		while (methodArgIt.hasNext()) {
-			final Type expectedType = methodArgIt.next();
+		while (parameterTypesIt.hasNext()) {
+			final Type expectedType = parameterTypesIt.next();
 			final Expression argExpr = argExprIt.next();
 			Expression expression = processExpression(argExpr);
 			expression = autoCastTo(expectedType, expression, location);
@@ -702,10 +702,10 @@ public final class TypeChecker {
 		Location location();
 	}
 
-	public record Func(@NotNull Type returnType, @NotNull List<Type> argTypes, @NotNull Location location) implements Symbol {
-		public Func(Type returnType, List<Type> argTypes, Location location) {
+	public record Func(@NotNull Type returnType, @NotNull List<Type> parameterTypes, @NotNull Location location) implements Symbol {
+		public Func(Type returnType, List<Type> parameterTypes, Location location) {
 			this.returnType = returnType;
-			this.argTypes = List.copyOf(argTypes);
+			this.parameterTypes = List.copyOf(parameterTypes);
 			this.location = location;
 		}
 	}
@@ -771,7 +771,7 @@ public final class TypeChecker {
 			if (nameToVariable.containsKey(name)) {
 				throw new SyntaxException(Messages.duplicateArgumentName(name), location);
 			}
-			add(new Var(name, vars.size(), VariableScope.argument, type, 0, location));
+			add(new Var(name, vars.size(), VariableScope.parameter, type, 0, location));
 		}
 
 		@Nullable
