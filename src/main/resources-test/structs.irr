@@ -1,0 +1,127 @@
+@printChar@u8:
+ Local variables
+	arg 0: chr (u8/1)
+	; 8 pc
+	addrof r6, chr
+	const r2, 1
+	move chr, r1
+	move r1, r6
+	call printStringLength@@u8@u8[r1, r2]
+
+@printUint@i64:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: buffer[] (u8*/20)
+	; 25 pc
+	const r6, 20
+	; 25:2 while true
+@while_1:
+	dec r6
+	const r7, 10
+	move r3, r1
+	move r0, r3
+	mod r2, r0, r7
+	move r3, r2
+	const r7, 10
+	move r0, r1
+	div r0, r0, r7
+	move r1, r0
+	cast r7(u8), r3(i64)
+	const r0, 48
+	add r7, r7, r0
+	cast r0(i64), r6(u8)
+	cast r0(u8*), r0(i64)
+	addrof r3, [buffer]
+	add r3, r3, r0
+	store [r3], r7
+	; 31:3 if number == 0
+	equals r7, r1, 0
+	branch r7, false, @while_1
+	cast r7(i64), r6(u8)
+	cast r7(u8*), r7(i64)
+	addrof r1, [buffer]
+	add r1, r1, r7
+	const r7, 20
+	move r2, r7
+	sub r2, r2, r6
+	call printStringLength@@u8@u8[r1, r2]
+
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+	; 2 pc
+	cast r1(i64), r1(u8)
+	call printIntLf@i64[r1]
+
+@printIntLf@i64:
+ Local variables
+	arg 0: number (i64/8)
+	; 8 pc
+	move r6, r1
+	; 51:2 if number < 0
+	lt r7, r6, 0
+	branch r7, false, @if_3_end
+	const r1, 45
+	call printChar@u8[r1]
+	neg r6, r6
+@if_3_end:
+	move r1, r6
+	call printUint@i64[r1]
+	const r1, 10
+	call printChar@u8[r1]
+
+@printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	; 2 pc
+	cast r2(i64), r2(u8)
+	call printStringLength@@u8@i64[r1, r2]
+
+@main:
+ Local variables
+	var 0: pos (u8/2)
+	; 36 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const r6, 1
+	; 9:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=9:2].x
+	addrof r7, pos
+	store [r7], r6
+	; 10:14 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:10].x
+	addrof r6, pos
+	load r6, [r6]
+	const r7, 1
+	add r6, r6, r7
+	; 10:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:2].y
+	addrof r7, pos
+	inc r7
+	store [r7], r6
+	; 11:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=11:13].x
+	addrof r6, pos
+	load r1, [r6]
+	call printIntLf@u8[r1]
+	; 12:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=12:13].y
+	addrof r6, pos
+	inc r6
+	load r1, [r6]
+	call printIntLf@u8[r1]
+	; 13:15 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=13:11].x
+	addrof r6, pos
+	load r1, [r6]
+	call printIntLf@u8[r1]
+
+@printStringLength@@u8@i64:
+	mov     rdi, rsp
+	
+	mov     r8, rdx
+	mov     rdx, rcx
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
