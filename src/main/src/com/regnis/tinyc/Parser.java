@@ -196,12 +196,12 @@ public final class Parser {
 			switch (unary.op()) {
 			case Com -> {
 				if (expr instanceof ExprIntLiteral literal) {
-					return new ExprIntLiteral(~literal.value(), literal.location());
+					return ExprIntLiteral.autoType(~literal.value(), literal.location());
 				}
 			}
 			case Neg -> {
 				if (expr instanceof ExprIntLiteral literal) {
-					return new ExprIntLiteral(-literal.value(), literal.location());
+					return ExprIntLiteral.autoType(-literal.value(), literal.location());
 				}
 			}
 			case NotLog -> {
@@ -219,28 +219,28 @@ public final class Parser {
 			    && right instanceof ExprIntLiteral rightLit) {
 				switch (binary.op()) {
 				case Add -> {
-					return new ExprIntLiteral(leftLit.value() + rightLit.value(), binary.location());
+					return ExprIntLiteral.autoType(leftLit.value() + rightLit.value(), binary.location());
 				}
 				case Sub -> {
-					return new ExprIntLiteral(leftLit.value() - rightLit.value(), binary.location());
+					return ExprIntLiteral.autoType(leftLit.value() - rightLit.value(), binary.location());
 				}
 				case Multiply -> {
-					return new ExprIntLiteral(leftLit.value() * rightLit.value(), binary.location());
+					return ExprIntLiteral.autoType(leftLit.value() * rightLit.value(), binary.location());
 				}
 				case Divide -> {
-					return new ExprIntLiteral(leftLit.value() / rightLit.value(), binary.location());
+					return ExprIntLiteral.autoType(leftLit.value() / rightLit.value(), binary.location());
 				}
 				case Mod -> {
-					return new ExprIntLiteral(leftLit.value() % rightLit.value(), binary.location());
+					return ExprIntLiteral.autoType(leftLit.value() % rightLit.value(), binary.location());
 				}
 				case And -> {
-					return new ExprIntLiteral(leftLit.value() & rightLit.value(), binary.location());
+					return ExprIntLiteral.autoType(leftLit.value() & rightLit.value(), binary.location());
 				}
 				case Or -> {
-					return new ExprIntLiteral(leftLit.value() | rightLit.value(), binary.location());
+					return ExprIntLiteral.autoType(leftLit.value() | rightLit.value(), binary.location());
 				}
 				case Xor -> {
-					return new ExprIntLiteral(leftLit.value() ^ rightLit.value(), binary.location());
+					return ExprIntLiteral.autoType(leftLit.value() ^ rightLit.value(), binary.location());
 				}
 				case Lt -> {
 					return new ExprBoolLiteral(leftLit.value() < rightLit.value(), binary.location());
@@ -476,7 +476,7 @@ public final class Parser {
 		consume(TokenType.SEMI);
 		final Expression condition;
 		if (isConsume(TokenType.SEMI)) {
-			condition = new ExprIntLiteral(1, location);
+			condition = ExprIntLiteral.autoType(1, location);
 		}
 		else {
 			condition = getExpression();
@@ -613,7 +613,7 @@ public final class Parser {
 	@Nullable
 	private Expression getExpressionPrimary(Location location) {
 		return switch (token) {
-			case INT_LITERAL -> new ExprIntLiteral(consumeIntValue(), location);
+			case INT_LITERAL -> ExprIntLiteral.autoType(consumeIntValue(), location);
 			case TRUE, FALSE -> {
 				final boolean value = token == TokenType.TRUE;
 				consume();
@@ -666,7 +666,7 @@ public final class Parser {
 				return new ExprBoolLiteral(literal.value(), location);
 			}
 			if (constantExpression instanceof ExprIntLiteral literal) {
-				return new ExprIntLiteral(literal.value(), location);
+				return ExprIntLiteral.autoType(literal.value(), location);
 			}
 			throw new IllegalStateException(String.valueOf(constantExpression));
 		}

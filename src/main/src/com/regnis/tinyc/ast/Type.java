@@ -1,37 +1,27 @@
 package com.regnis.tinyc.ast;
 
 import com.regnis.tinyc.*;
-import jdk.jshell.execution.*;
 
 import org.jetbrains.annotations.*;
 
 /**
  * @author Thomas Singer
  */
-public record Type(@NotNull String name, @Nullable Type toType, @NotNull Category category) {
-	public static final Type VOID = new Type("void", null, Category.Other);
-	public static final Type BOOL = new Type("bool", null, Category.Other);
-	public static final Type U8 = new Type("u8", null, Category.Integer);
-	public static final Type I16 = new Type("i16", null, Category.Integer);
-	public static final Type I32 = new Type("i32", null, Category.Integer);
-	public static final Type I64 = new Type("i64", null, Category.Integer);
+public record Type(@NotNull String name, @Nullable Type toType, @NotNull Category category, long min, long max) {
+	public static final Type VOID = createOtherType("void");
+	public static final Type BOOL = createOtherType("bool");
+	public static final Type U8 = createIntegerType("u8", 0, 0xFF);
+	public static final Type I16 = createIntegerType("i16", -32768, 0x7fff);
+	public static final Type I32 = createIntegerType("i32", Integer.MIN_VALUE, Integer.MAX_VALUE);
+	public static final Type I64 = createIntegerType("i64", Long.MIN_VALUE, Long.MAX_VALUE);
 	public static final Type POINTER_U8 = Type.pointer(Type.U8);
 
-	public Type {
-		if (category == Category.Pointer) {
-			Utils.assertTrue(toType != null);
-		}
-		else {
-			Utils.assertTrue(toType == null);
-		}
-	}
-
 	public static Type pointer(@NotNull Type toType) {
-		return new Type(toType.name + "*", toType, Category.Pointer);
+		return new Type(toType.name + "*", toType, Category.Pointer, 0, 0);
 	}
 
 	public static Type struct(@NotNull String name) {
-		return new Type(name, null, Category.Struct);
+		return new Type(name, null, Category.Struct, 0, 0);
 	}
 
 	public static int getSize(@NotNull Type type) {
@@ -66,6 +56,16 @@ public record Type(@NotNull String name, @Nullable Type toType, @NotNull Categor
 		};
 	}
 
+	public Type {
+		if (category == Category.Pointer) {
+			Utils.assertTrue(toType != null);
+		}
+		else {
+			Utils.assertTrue(toType == null);
+		}
+	}
+
+	@NotNull
 	@Override
 	public String toString() {
 		return name;
@@ -81,6 +81,16 @@ public record Type(@NotNull String name, @Nullable Type toType, @NotNull Categor
 
 	public boolean isStruct() {
 		return category == Category.Struct;
+	}
+
+	@NotNull
+	private static Type createOtherType(String name) {
+		return new Type(name, null, Category.Other, 0, 0);
+	}
+
+	@NotNull
+	private static Type createIntegerType(String name, long min, long max) {
+		return new Type(name, null, Category.Integer, min, max);
 	}
 
 	private enum Category {

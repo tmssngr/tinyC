@@ -522,7 +522,7 @@ public final class TypeChecker {
 					right = autoCastTo(pointerIntType, right, rightLocation);
 					if (size > 1) {
 						right = new ExprBinary(ExprBinary.Op.Multiply, pointerIntType, right,
-						                       autoCastTo(pointerIntType, new ExprIntLiteral(size, rightLocation),
+						                       autoCastTo(pointerIntType, ExprIntLiteral.autoType(size, rightLocation),
 						                                  rightLocation),
 						                       rightLocation);
 					}

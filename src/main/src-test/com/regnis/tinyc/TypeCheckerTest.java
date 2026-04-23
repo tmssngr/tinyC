@@ -384,7 +384,7 @@ public class TypeCheckerTest {
 						                                                       loc(1, 2)),
 						                                                new StmtIf(new ExprBinary(ExprBinary.Op.Gt, Type.BOOL,
 						                                                                          new ExprVarAccess("a", 0, VariableScope.function, Type.U8, false, loc(2, 6)),
-						                                                                          new ExprIntLiteral(0, loc(2, 10)),
+						                                                                          ExprIntLiteral.autoType(0, loc(2, 10)),
 						                                                                          loc(2, 8)),
 						                                                           List.of(
 								                                                           assign("b", 1, VariableScope.function, Type.U8,
