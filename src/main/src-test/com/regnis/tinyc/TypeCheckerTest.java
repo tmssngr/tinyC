@@ -25,6 +25,15 @@ public class TypeCheckerTest {
 	}
 
 	@Test
+	public void testVarDeclaration() {
+		testIllegal(Messages.undeclaredVariable("a"), 1, 9,
+		            """
+				            void main() {
+				              u8 a = a;
+				            }""");
+	}
+
+	@Test
 	public void testAutoCast() {
 		testStatement("sint16 = uint8;");
 		testIllegalStatement(Messages.needExplicitCast(Type.I16, Type.U8), 6,

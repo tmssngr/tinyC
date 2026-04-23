@@ -205,13 +205,16 @@ public final class TypeChecker {
 	}
 
 	private void processVarDeclaration(StmtVarDeclaration declaration) {
+		Expression expression = declaration.expression();
+		if (expression != null) {
+			expression = processExpression(expression);
+		}
+
 		final String varName = declaration.varName();
 		final Location location = declaration.location();
 		final Type type = getType(declaration.typeString(), location);
 		final Var var = addVar(varName, type, 0, location);
-		Expression expression = declaration.expression();
 		if (expression != null) {
-			expression = processExpression(expression);
 			expression = autoCastTo(type, expression, location);
 			addAssignment(var, expression, location);
 		}
