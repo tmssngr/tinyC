@@ -350,10 +350,9 @@ start:
         ;   rsp+168: var t.24
         ;   rsp+176: var t.25
         ;   rsp+184: var t.26
-        ;   rsp+192: var t.27
 @main:
         ; reserve space for local variables
-        sub rsp, 208
+        sub rsp, 192
         ; begin initialize global variables
         ; end initialize global variables
         ; const chr, 32
@@ -502,29 +501,23 @@ start:
         add bl, cl
         lea rax, [rsp+96]
         mov [rax], bl
-        ; const t.22, 2
-        mov al, 2
-        lea rbx, [rsp+152]
-        mov [rbx], al
-        ; cast t.21(i64), t.22(u8)
-        lea rax, [rsp+152]
-        mov bl, [rax]
-        movzx rbx, bl
-        lea rax, [rsp+144]
-        mov [rax], rbx
-        ; cast t.23(u8*), t.21(i64)
+        ; const t.21, 2
+        mov rax, 2
+        lea rbx, [rsp+144]
+        mov [rbx], rax
+        ; cast t.22(u8*), t.21(i64)
         lea rax, [rsp+144]
         mov rbx, [rax]
-        lea rax, [rsp+160]
+        lea rax, [rsp+152]
         mov [rax], rbx
         ; addrof t.20, [chars]
         lea rax, [var_0]
         lea rbx, [rsp+136]
         mov [rbx], rax
-        ; add t.20, t.20, t.23
+        ; add t.20, t.20, t.22
         lea rax, [rsp+136]
         mov rbx, [rax]
-        lea rax, [rsp+160]
+        lea rax, [rsp+152]
         mov rcx, [rax]
         add rbx, rcx
         lea rax, [rsp+136]
@@ -535,47 +528,47 @@ start:
         lea rax, [rsp+96]
         mov cl, [rax]
         mov [rbx], cl
-        ; const t.25, 2
+        ; const t.24, 2
         mov rax, 2
-        lea rbx, [rsp+176]
-        mov [rbx], rax
-        ; cast t.26(u8*), t.25(i64)
-        lea rax, [rsp+176]
-        mov rbx, [rax]
-        lea rax, [rsp+184]
-        mov [rax], rbx
-        ; addrof t.24, [chars]
-        lea rax, [var_0]
         lea rbx, [rsp+168]
         mov [rbx], rax
-        ; add t.24, t.24, t.26
+        ; cast t.25(u8*), t.24(i64)
         lea rax, [rsp+168]
         mov rbx, [rax]
-        lea rax, [rsp+184]
+        lea rax, [rsp+176]
+        mov [rax], rbx
+        ; addrof t.23, [chars]
+        lea rax, [var_0]
+        lea rbx, [rsp+160]
+        mov [rbx], rax
+        ; add t.23, t.23, t.25
+        lea rax, [rsp+160]
+        mov rbx, [rax]
+        lea rax, [rsp+176]
         mov rcx, [rax]
         add rbx, rcx
-        lea rax, [rsp+168]
+        lea rax, [rsp+160]
         mov [rax], rbx
-        ; load result, [t.24]
-        lea rax, [rsp+168]
+        ; load result, [t.23]
+        lea rax, [rsp+160]
         mov rbx, [rax]
         mov al, [rbx]
         lea rbx, [rsp+1]
         mov [rbx], al
-        ; cast t.27(i64), result(u8)
+        ; cast t.26(i64), result(u8)
         lea rax, [rsp+1]
         mov bl, [rax]
         movzx rbx, bl
-        lea rax, [rsp+192]
+        lea rax, [rsp+184]
         mov [rax], rbx
-        ; call printIntLf[t.27]
-        lea rax, [rsp+192]
+        ; call printIntLf[t.26]
+        lea rax, [rsp+184]
         mov rbx, [rax]
         push rbx
           call @printIntLf
         add rsp, 8
         ; release space for local variables
-        add rsp, 208
+        add rsp, 192
         ret
 
         ; void printStringLength

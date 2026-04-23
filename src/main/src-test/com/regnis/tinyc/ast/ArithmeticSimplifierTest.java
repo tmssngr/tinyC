@@ -38,6 +38,19 @@ public class ArithmeticSimplifierTest {
 	}
 
 	@Test
+	public void testCast() {
+		testCase(0, Type.U8, 0, Type.U8);
+		testCase(0, Type.I16, 0, Type.U8);
+		testCase(0, Type.I32, 0, Type.U8);
+		testCase(0, Type.I64, 0, Type.U8);
+
+		testCase(1, Type.I16, 1, Type.U8);
+		testCase(0, Type.U8, 256, Type.I16);
+		testCase(255, Type.U8, -1, Type.I16);
+		testCase(-15536, Type.I16, 50000, Type.I32);
+	}
+
+	@Test
 	public void testBinaryAddOrXor() {
 		for (ExprBinary.Op op : List.of(ExprBinary.Op.Add, ExprBinary.Op.Or, ExprBinary.Op.Xor)) {
 			testSwapped(variable("a"), op, variable("a"), 0);
@@ -252,6 +265,15 @@ public class ArithmeticSimplifierTest {
 		                                                          literal(0),
 		                                                          a,
 		                                                          loc(3, 4))));
+	}
+
+	private static void testCase(int expectedValue, Type castType, int inputValue, Type inputType) {
+		final Location loc = loc(2, 3);
+		assertEquals(new ExprIntLiteral(expectedValue, castType, loc),
+		             ArithmeticSimplifier.simplify(new ExprCast(castType.toString(),
+		                                                        new ExprIntLiteral(inputValue, inputType, loc),
+		                                                        castType, loc))
+		);
 	}
 
 	private static void testSwapped(Expression expectedResult, ExprBinary.Op op, ExprVarAccess expression, int literal) {

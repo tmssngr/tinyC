@@ -116,13 +116,12 @@
 	var 19: t.19 (u8/1)
 	var 20: t.20 (u8*/8)
 	var 21: t.21 (i64/8)
-	var 22: t.22 (u8/1)
+	var 22: t.22 (u8*/8)
 	var 23: t.23 (u8*/8)
-	var 24: t.24 (u8*/8)
-	var 25: t.25 (i64/8)
-	var 26: t.26 (u8*/8)
-	var 27: t.27 (i64/8)
-	; 181 pc
+	var 24: t.24 (i64/8)
+	var 25: t.25 (u8*/8)
+	var 26: t.26 (i64/8)
+	; 176 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const chr, 32
@@ -152,19 +151,18 @@
 	const t.19, 2
 	move t.14, t.15
 	add t.14, t.14, t.19
-	const t.22, 2
-	cast t.21(i64), t.22(u8)
-	cast t.23(u8*), t.21(i64)
+	const t.21, 2
+	cast t.22(u8*), t.21(i64)
 	addrof t.20, [chars]
-	add t.20, t.20, t.23
+	add t.20, t.20, t.22
 	store [t.20], t.14
-	const t.25, 2
-	cast t.26(u8*), t.25(i64)
-	addrof t.24, [chars]
-	add t.24, t.24, t.26
-	load result, [t.24]
-	cast t.27(i64), result(u8)
-	call printIntLf[t.27]
+	const t.24, 2
+	cast t.25(u8*), t.24(i64)
+	addrof t.23, [chars]
+	add t.23, t.23, t.25
+	load result, [t.23]
+	cast t.26(i64), result(u8)
+	call printIntLf[t.26]
 @main_ret:
 
 @printStringLength:

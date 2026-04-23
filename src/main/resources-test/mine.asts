@@ -324,8 +324,8 @@ void main() {
 	initRandom(7439742);
 	needsInitialize = true;
 	clearField();
-	curr_c = (i16)20;
-	curr_r = (i16)10;
+	curr_c = 20;
+	curr_r = 10;
 	while (true) {
 		printField(curr_r, curr_c);
 		if (!needsInitialize) {
