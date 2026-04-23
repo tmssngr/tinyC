@@ -56,6 +56,24 @@ public record Type(@NotNull String name, @Nullable Type toType, @NotNull Categor
 		};
 	}
 
+	@NotNull
+	public static Type integerTypeFor(int value) {
+		final Type type;
+		if (U8.min() <= value && value <= U8.max()) {
+			type = U8;
+		}
+		else if (I16.min() <= value && value <= I16.max()) {
+			type = I16;
+		}
+		else if (I32.min() <= value && value <= I32.max()) {
+			type = I32;
+		}
+		else {
+			type = I64;
+		}
+		return type;
+	}
+
 	public Type {
 		if (category == Category.Pointer) {
 			Utils.assertTrue(toType != null);

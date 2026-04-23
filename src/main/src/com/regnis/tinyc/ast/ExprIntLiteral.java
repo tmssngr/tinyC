@@ -12,9 +12,8 @@ import org.jetbrains.annotations.*;
 public record ExprIntLiteral(int value, @Nullable Type type, @NotNull Location location) implements Expression {
 
 	public static ExprIntLiteral autoType(int value, @NotNull Location location) {
-		return new ExprIntLiteral(value, value >= 0 && value < 256
-				? Type.U8
-				: Type.I16, location);
+		final Type type = Type.integerTypeFor(value);
+		return new ExprIntLiteral(value, type, location);
 	}
 
 	@NotNull
