@@ -23,7 +23,7 @@ public class ArithmeticSimplifier {
 	static Expression simplify(Expression expression) {
 		return switch (expression) {
 			case ExprUnary unary -> simplify(unary);
-			case ExprCast unary -> new ExprCast(unary.typeString(), simplify(unary.expression()), unary.type(), unary.location());
+			case ExprCast unary -> simplify(unary);
 			case ExprBinary binary -> simplify(binary);
 			case ExprFuncCall call -> simplify(call);
 			case ExprArrayAccess access -> simplify(access);
@@ -269,5 +269,24 @@ public class ArithmeticSimplifier {
 		}
 
 		return new ExprUnary(unary.op(), expression, unary.typeNotNull(), location);
+	}
+
+	@NotNull
+	private static Expression simplify(ExprCast cast) {
+		final Expression expression = simplify(cast.expression());
+		final Type type = cast.typeNotNull();
+		final Location location = cast.location();
+		if (expression instanceof ExprIntLiteral literal) {
+			Utils.assertTrue(type.isInt());
+			int value = literal.value();
+			if (type == Type.U8) {
+				value &= 0xFF;
+			}
+			else if (type == Type.I16) {
+				value = (value & 0x8000) != 0 ? value | 0xFFFF_0000 : value;
+			}
+			return new ExprIntLiteral(value, type, location);
+		}
+		return new ExprCast(cast.typeString(), expression, type, location);
 	}
 }

@@ -43,11 +43,11 @@ void main() {
 	i16 a;
 	i16 b;
 
-	foo = (i16)22;
+	foo = 22;
 	bar = foo * foo;
 	foo = 1;
 	printIntLf((i64)(bar + foo));
-	foo = (i16)21;
+	foo = 21;
 	printIntLf((i64)foo);
 	printIntLf((i64)bazz);
 	a = 1000;

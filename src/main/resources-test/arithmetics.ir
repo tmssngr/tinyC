@@ -93,69 +93,65 @@
 	var 2: bazz (i16/2)
 	var 3: a (i16/2)
 	var 4: b (i16/2)
-	var 5: t.5 (u8/1)
-	var 6: t.6 (i64/8)
-	var 7: t.7 (i16/2)
-	var 8: t.8 (u8/1)
+	var 5: t.5 (i64/8)
+	var 6: t.6 (i16/2)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (i64/8)
 	var 9: t.9 (i64/8)
-	var 10: t.10 (i64/8)
+	var 10: t.10 (i16/2)
 	var 11: t.11 (i64/8)
 	var 12: t.12 (i16/2)
-	var 13: t.13 (i64/8)
-	var 14: t.14 (i16/2)
+	var 13: t.13 (i16/2)
+	var 14: t.14 (i64/8)
 	var 15: t.15 (i16/2)
 	var 16: t.16 (i64/8)
 	var 17: t.17 (i16/2)
 	var 18: t.18 (i64/8)
 	var 19: t.19 (i16/2)
-	var 20: t.20 (i64/8)
-	var 21: t.21 (i16/2)
-	; 180 pc
+	; 170 pc
 	; begin initialize global variables
 	; end initialize global variables
-	const t.5, 22
-	cast foo(i16), t.5(u8)
+	const foo, 22
 	move bar, foo
 	mul bar, bar, foo
 	const foo, 1
-	move t.7, bar
-	add t.7, t.7, foo
-	cast t.6(i64), t.7(i16)
-	call printIntLf[t.6]
-	const t.8, 21
-	cast foo(i16), t.8(u8)
-	cast t.9(i64), foo(i16)
-	call printIntLf[t.9]
-	cast t.10(i64), bazz(i16)
-	call printIntLf[t.10]
+	move t.6, bar
+	add t.6, t.6, foo
+	cast t.5(i64), t.6(i16)
+	call printIntLf[t.5]
+	const foo, 21
+	cast t.7(i64), foo(i16)
+	call printIntLf[t.7]
+	cast t.8(i64), bazz(i16)
+	call printIntLf[t.8]
 	const a, 1000
 	const b, 10
+	move t.10, a
+	div t.10, t.10, b
+	cast t.9(i64), t.10(i16)
+	call printIntLf[t.9]
+	const t.13, 255
 	move t.12, a
-	div t.12, t.12, b
+	and t.12, t.12, t.13
 	cast t.11(i64), t.12(i16)
 	call printIntLf[t.11]
-	const t.15, 255
-	move t.14, a
-	and t.14, t.14, t.15
-	cast t.13(i64), t.14(i16)
-	call printIntLf[t.13]
 	const a, 10
 	const b, 1
+	move t.15, a
+	shiftright t.15, t.15, b
+	cast t.14(i64), t.15(i16)
+	call printIntLf[t.14]
+	const a, 9
+	const b, 2
 	move t.17, a
 	shiftright t.17, t.17, b
 	cast t.16(i64), t.17(i16)
 	call printIntLf[t.16]
-	const a, 9
-	const b, 2
+	const a, 1
 	move t.19, a
-	shiftright t.19, t.19, b
+	shiftleft t.19, t.19, b
 	cast t.18(i64), t.19(i16)
 	call printIntLf[t.18]
-	const a, 1
-	move t.21, a
-	shiftleft t.21, t.21, b
-	cast t.20(i64), t.21(i16)
-	call printIntLf[t.20]
 @main_ret:
 
 @printStringLength:

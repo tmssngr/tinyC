@@ -44,7 +44,7 @@ void main() {
 	chr = 32;
 	chars[0] = chr;
 	chars[1] = chars[0] + 1;
-	chars[(i64)2] = chars[1] + 2;
+	chars[2] = chars[1] + 2;
 	result = chars[2];
 	printIntLf((i64)result);
 }

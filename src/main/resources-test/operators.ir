@@ -195,12 +195,11 @@
 	var 65: t.65 (i64/8)
 	var 66: t.66 (bool/1)
 	var 67: t.67 (i64/8)
-	var 68: t.68 (i16/2)
-	var 69: t.69 (i64/8)
-	var 70: t.70 (i16/2)
-	var 71: t.71 (i64/8)
-	var 72: t.72 (u8/1)
-	; 612 pc
+	var 68: t.68 (i64/8)
+	var 69: t.69 (i16/2)
+	var 70: t.70 (i64/8)
+	var 71: t.71 (u8/1)
+	; 607 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const t.9, [string-0]
@@ -356,15 +355,14 @@
 @and_next_14:
 	cast t.65(i64), t.66(bool)
 	call printIntLf[t.65]
-	const t.68, -1
-	cast t.67(i64), t.68(i16)
+	const t.67, -1
 	call printIntLf[t.67]
-	neg t.70, b
-	cast t.69(i64), t.70(i16)
-	call printIntLf[t.69]
-	not t.72, b1
-	cast t.71(i64), t.72(u8)
-	call printIntLf[t.71]
+	neg t.69, b
+	cast t.68(i64), t.69(i16)
+	call printIntLf[t.68]
+	not t.71, b1
+	cast t.70(i64), t.71(u8)
+	call printIntLf[t.70]
 @main_ret:
 
 @printStringLength:

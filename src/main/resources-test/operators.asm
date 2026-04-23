@@ -481,10 +481,9 @@ start:
         ;   rsp+488: var t.69
         ;   rsp+496: var t.70
         ;   rsp+504: var t.71
-        ;   rsp+512: var t.72
 @main:
         ; reserve space for local variables
-        sub rsp, 528
+        sub rsp, 512
         ; begin initialize global variables
         ; end initialize global variables
         ; const t.9, [string-0]
@@ -1275,60 +1274,54 @@ start:
         push rbx
           call @printIntLf
         add rsp, 8
-        ; const t.68, -1
-        mov ax, -1
-        lea rbx, [rsp+480]
-        mov [rbx], ax
-        ; cast t.67(i64), t.68(i16)
-        lea rax, [rsp+480]
-        mov bx, [rax]
-        movzx rbx, bx
-        lea rax, [rsp+472]
-        mov [rax], rbx
+        ; const t.67, -1
+        mov rax, -1
+        lea rbx, [rsp+472]
+        mov [rbx], rax
         ; call printIntLf[t.67]
         lea rax, [rsp+472]
         mov rbx, [rax]
         push rbx
           call @printIntLf
         add rsp, 8
-        ; neg t.70, b
+        ; neg t.69, b
         lea rax, [rsp+2]
         mov bx, [rax]
         neg rbx
-        lea rax, [rsp+496]
+        lea rax, [rsp+488]
         mov [rax], bx
-        ; cast t.69(i64), t.70(i16)
-        lea rax, [rsp+496]
+        ; cast t.68(i64), t.69(i16)
+        lea rax, [rsp+488]
         mov bx, [rax]
         movzx rbx, bx
-        lea rax, [rsp+488]
+        lea rax, [rsp+480]
         mov [rax], rbx
-        ; call printIntLf[t.69]
-        lea rax, [rsp+488]
+        ; call printIntLf[t.68]
+        lea rax, [rsp+480]
         mov rbx, [rax]
         push rbx
           call @printIntLf
         add rsp, 8
-        ; not t.72, b1
+        ; not t.71, b1
         lea rax, [rsp+12]
         mov bl, [rax]
         not rbx
-        lea rax, [rsp+512]
+        lea rax, [rsp+504]
         mov [rax], bl
-        ; cast t.71(i64), t.72(u8)
-        lea rax, [rsp+512]
+        ; cast t.70(i64), t.71(u8)
+        lea rax, [rsp+504]
         mov bl, [rax]
         movzx rbx, bl
-        lea rax, [rsp+504]
+        lea rax, [rsp+496]
         mov [rax], rbx
-        ; call printIntLf[t.71]
-        lea rax, [rsp+504]
+        ; call printIntLf[t.70]
+        lea rax, [rsp+496]
         mov rbx, [rax]
         push rbx
           call @printIntLf
         add rsp, 8
         ; release space for local variables
-        add rsp, 528
+        add rsp, 512
         ret
 
         ; void printStringLength
