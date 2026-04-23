@@ -105,7 +105,7 @@ void main() {
 	printIntLf((i64)((b10 & b6) | b1));
 	printIntLf((i64)((b == c) || (c < d)));
 	printIntLf((i64)((b == c) && (c < d)));
-	printIntLf((i64)(-1));
+	printIntLf(-1);
 	printIntLf((i64)(-b));
 	printIntLf((i64)(~b1));
 }

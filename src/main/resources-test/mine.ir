@@ -661,34 +661,32 @@
 @printLeft:
  Local variables
 	var 0: count (i16/2)
-	var 1: leftDigits (i16/2)
-	var 2: bombDigits (i16/2)
-	var 3: t.3 (u8/1)
-	var 4: t.4 (u8/1)
+	var 1: leftDigits (u8/1)
+	var 2: bombDigits (u8/1)
+	var 3: t.3 (i16/2)
+	var 4: t.4 (u8*/8)
 	var 5: t.5 (i16/2)
-	var 6: t.6 (u8*/8)
-	var 7: t.7 (i16/2)
-	var 8: t.8 (i64/8)
-	var 9: t.9 (bool/1)
-	var 10: t.10 (i16/2)
-	; 67 pc
+	var 6: t.6 (u8/1)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (bool/1)
+	var 9: t.9 (i16/2)
+	; 62 pc
 	call count = getHiddenCount[] -> i16
-	call t.3 = getDigitCount[count] -> u8
-	cast leftDigits(i16), t.3(u8)
-	const t.5, 40
-	call t.4 = getDigitCount[t.5] -> u8
-	cast bombDigits(i16), t.4(u8)
-	const t.6, [string-1]
-	call printString[t.6]
-	move t.7, bombDigits
-	sub t.7, t.7, leftDigits
-	call printSpaces[t.7]
-	cast t.8(i64), count(i16)
-	call printUint[t.8]
+	call leftDigits = getDigitCount[count] -> u8
+	const t.3, 40
+	call bombDigits = getDigitCount[t.3] -> u8
+	const t.4, [string-1]
+	call printString[t.4]
+	move t.6, bombDigits
+	sub t.6, t.6, leftDigits
+	cast t.5(i16), t.6(u8)
+	call printSpaces[t.5]
+	cast t.7(i64), count(i16)
+	call printUint[t.7]
 	; 155:15 return count == 0
-	const t.10, 0
-	equals t.9, count, t.10
-	ret t.9
+	const t.9, 0
+	equals t.8, count, t.9
+	ret t.8
 	jump @printLeft_ret
 @printLeft_ret:
 
@@ -911,63 +909,79 @@
 @main:
  Local variables
 	var 0: needsInitialize (bool/1)
-	var 1: curr_c (i16/2)
-	var 2: curr_r (i16/2)
+	var 1: curr_c (u8/1)
+	var 2: curr_r (u8/1)
 	var 3: chr (i16/2)
 	var 4: cell (u8/1)
 	var 5: cell (u8/1)
 	var 6: t.6 (i32/4)
-	var 7: t.7 (bool/1)
-	var 8: t.8 (bool/1)
-	var 9: t.9 (u8*/8)
+	var 7: t.7 (i16/2)
+	var 8: t.8 (i16/2)
+	var 9: t.9 (bool/1)
 	var 10: t.10 (bool/1)
-	var 11: t.11 (i16/2)
+	var 11: t.11 (u8*/8)
 	var 12: t.12 (bool/1)
 	var 13: t.13 (i16/2)
-	var 14: t.14 (i16/2)
+	var 14: t.14 (bool/1)
 	var 15: t.15 (i16/2)
-	var 16: t.16 (i16/2)
-	var 17: t.17 (i16/2)
-	var 18: t.18 (i16/2)
-	var 19: t.19 (bool/1)
-	var 20: t.20 (i16/2)
-	var 21: t.21 (i16/2)
+	var 16: t.16 (u8/1)
+	var 17: t.17 (u8/1)
+	var 18: t.18 (u8/1)
+	var 19: t.19 (u8/1)
+	var 20: t.20 (u8/1)
+	var 21: t.21 (bool/1)
 	var 22: t.22 (i16/2)
-	var 23: t.23 (i16/2)
-	var 24: t.24 (bool/1)
-	var 25: t.25 (i16/2)
-	var 26: t.26 (i16/2)
+	var 23: t.23 (u8/1)
+	var 24: t.24 (u8/1)
+	var 25: t.25 (u8/1)
+	var 26: t.26 (bool/1)
 	var 27: t.27 (i16/2)
-	var 28: t.28 (i16/2)
-	var 29: t.29 (i16/2)
-	var 30: t.30 (i16/2)
-	var 31: t.31 (bool/1)
-	var 32: t.32 (i16/2)
-	var 33: t.33 (i16/2)
+	var 28: t.28 (u8/1)
+	var 29: t.29 (u8/1)
+	var 30: t.30 (u8/1)
+	var 31: t.31 (u8/1)
+	var 32: t.32 (u8/1)
+	var 33: t.33 (bool/1)
 	var 34: t.34 (i16/2)
-	var 35: t.35 (i16/2)
-	var 36: t.36 (i16/2)
-	var 37: t.37 (i16/2)
-	var 38: t.38 (bool/1)
-	var 39: t.39 (i16/2)
-	var 40: t.40 (i16/2)
+	var 35: t.35 (u8/1)
+	var 36: t.36 (u8/1)
+	var 37: t.37 (u8/1)
+	var 38: t.38 (u8/1)
+	var 39: t.39 (u8/1)
+	var 40: t.40 (bool/1)
 	var 41: t.41 (i16/2)
-	var 42: t.42 (i16/2)
-	var 43: t.43 (bool/1)
-	var 44: t.44 (i16/2)
+	var 42: t.42 (u8/1)
+	var 43: t.43 (u8/1)
+	var 44: t.44 (u8/1)
 	var 45: t.45 (bool/1)
-	var 46: t.46 (bool/1)
+	var 46: t.46 (i16/2)
 	var 47: t.47 (bool/1)
-	var 48: t.48 (u8/1)
-	var 49: t.49 (bool/1)
-	var 50: t.50 (i16/2)
+	var 48: t.48 (i16/2)
+	var 49: t.49 (i16/2)
+	var 50: t.50 (bool/1)
 	var 51: t.51 (bool/1)
-	var 52: t.52 (bool/1)
-	var 53: t.53 (u8/1)
-	var 54: t.54 (u8/1)
+	var 52: t.52 (u8/1)
+	var 53: t.53 (i16/2)
+	var 54: t.54 (i16/2)
 	var 55: t.55 (bool/1)
-	var 56: t.56 (u8*/8)
-	; 449 pc
+	var 56: t.56 (i16/2)
+	var 57: t.57 (i16/2)
+	var 58: t.58 (i16/2)
+	var 59: t.59 (i16/2)
+	var 60: t.60 (i16/2)
+	var 61: t.61 (bool/1)
+	var 62: t.62 (bool/1)
+	var 63: t.63 (i16/2)
+	var 64: t.64 (i16/2)
+	var 65: t.65 (u8/1)
+	var 66: t.66 (u8/1)
+	var 67: t.67 (bool/1)
+	var 68: t.68 (i16/2)
+	var 69: t.69 (i16/2)
+	var 70: t.70 (u8*/8)
+	var 71: t.71 (i16/2)
+	var 72: t.72 (i16/2)
+	; 529 pc
 	; begin initialize global variables
 	const __random__, 0
 	; end initialize global variables
@@ -979,141 +993,157 @@
 	const curr_r, 10
 	; 218:2 while true
 @while_40:
-	call printField[curr_r, curr_c]
+	cast t.7(i16), curr_r(u8)
+	cast t.8(i16), curr_c(u8)
+	call printField[t.7, t.8]
 	; 220:3 if !needsInitialize
-	notlog t.7, needsInitialize
-	branch t.7, false, @if_41_end
+	notlog t.9, needsInitialize
+	branch t.9, false, @if_41_end
 	; 221:4 if printLeft([])
-	call t.8 = printLeft[] -> bool
-	branch t.8, false, @if_42_end
-	const t.9, [string-2]
-	call printString[t.9]
+	call t.10 = printLeft[] -> bool
+	branch t.10, false, @if_42_end
+	const t.11, [string-2]
+	call printString[t.11]
 	jump @while_40_break
 @if_42_end:
 @if_41_end:
 	call chr = getChar[] -> i16
 	; 228:3 if chr == 27
-	const t.11, 27
-	equals t.10, chr, t.11
-	branch t.10, false, @if_43_end
+	const t.13, 27
+	equals t.12, chr, t.13
+	branch t.12, false, @if_43_end
 	jump @while_40_break
 @if_43_end:
 	; 233:3 if chr == -8120
-	const t.13, -8120
-	equals t.12, chr, t.13
-	branch t.12, false, @if_44_else
-	const t.16, 20
-	move t.15, curr_r
-	add t.15, t.15, t.16
-	const t.17, 1
-	move t.14, t.15
-	sub t.14, t.14, t.17
+	const t.15, -8120
+	equals t.14, chr, t.15
+	branch t.14, false, @if_44_else
 	const t.18, 20
-	move curr_r, t.14
-	mod curr_r, curr_r, t.18
+	move t.17, curr_r
+	add t.17, t.17, t.18
+	const t.19, 1
+	move t.16, t.17
+	sub t.16, t.16, t.19
+	const t.20, 20
+	move curr_r, t.16
+	mod curr_r, curr_r, t.20
 	jump @if_44_end
 @if_44_else:
 	; 237:8 if chr == -8112
-	const t.20, -8112
-	equals t.19, chr, t.20
-	branch t.19, false, @if_45_else
-	const t.22, 1
-	move t.21, curr_r
-	add t.21, t.21, t.22
-	const t.23, 20
-	move curr_r, t.21
-	mod curr_r, curr_r, t.23
+	const t.22, -8112
+	equals t.21, chr, t.22
+	branch t.21, false, @if_45_else
+	const t.24, 1
+	move t.23, curr_r
+	add t.23, t.23, t.24
+	const t.25, 20
+	move curr_r, t.23
+	mod curr_r, curr_r, t.25
 	jump @if_45_end
 @if_45_else:
 	; 241:8 if chr == -8117
-	const t.25, -8117
-	equals t.24, chr, t.25
-	branch t.24, false, @if_46_else
-	const t.28, 40
-	move t.27, curr_c
-	add t.27, t.27, t.28
-	const t.29, 1
-	move t.26, t.27
-	sub t.26, t.26, t.29
+	const t.27, -8117
+	equals t.26, chr, t.27
+	branch t.26, false, @if_46_else
 	const t.30, 40
-	move curr_c, t.26
-	mod curr_c, curr_c, t.30
+	move t.29, curr_c
+	add t.29, t.29, t.30
+	const t.31, 1
+	move t.28, t.29
+	sub t.28, t.28, t.31
+	const t.32, 40
+	move curr_c, t.28
+	mod curr_c, curr_c, t.32
 	jump @if_46_end
 @if_46_else:
 	; 245:8 if chr == -8117
-	const t.32, -8117
-	equals t.31, chr, t.32
-	branch t.31, false, @if_47_else
-	const t.35, 40
-	move t.34, curr_c
-	add t.34, t.34, t.35
-	const t.36, 1
-	move t.33, t.34
-	sub t.33, t.33, t.36
+	const t.34, -8117
+	equals t.33, chr, t.34
+	branch t.33, false, @if_47_else
 	const t.37, 40
-	move curr_c, t.33
-	mod curr_c, curr_c, t.37
+	move t.36, curr_c
+	add t.36, t.36, t.37
+	const t.38, 1
+	move t.35, t.36
+	sub t.35, t.35, t.38
+	const t.39, 40
+	move curr_c, t.35
+	mod curr_c, curr_c, t.39
 	jump @if_47_end
 @if_47_else:
 	; 249:8 if chr == -8115
-	const t.39, -8115
-	equals t.38, chr, t.39
-	branch t.38, false, @if_48_else
-	const t.41, 1
-	move t.40, curr_c
-	add t.40, t.40, t.41
-	const t.42, 40
-	move curr_c, t.40
-	mod curr_c, curr_c, t.42
+	const t.41, -8115
+	equals t.40, chr, t.41
+	branch t.40, false, @if_48_else
+	const t.43, 1
+	move t.42, curr_c
+	add t.42, t.42, t.43
+	const t.44, 40
+	move curr_c, t.42
+	mod curr_c, curr_c, t.44
 	jump @if_48_end
 @if_48_else:
 	; 253:8 if chr == 32
-	const t.44, 32
-	equals t.43, chr, t.44
-	branch t.43, false, @if_49_else
+	const t.46, 32
+	equals t.45, chr, t.46
+	branch t.45, false, @if_49_else
 	; 254:4 if !needsInitialize
-	notlog t.45, needsInitialize
-	branch t.45, false, @if_50_end
-	call cell = getCell[curr_r, curr_c] -> u8
+	notlog t.47, needsInitialize
+	branch t.47, false, @if_50_end
+	cast t.48(i16), curr_r(u8)
+	cast t.49(i16), curr_c(u8)
+	call cell = getCell[t.48, t.49] -> u8
 	; 256:5 if !isOpen([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=256:17]])
-	call t.47 = isOpen[cell] -> bool
-	notlog t.46, t.47
-	branch t.46, false, @if_51_end
-	const t.48, 4
-	xor cell, cell, t.48
-	call setCell[curr_r, curr_c, cell]
+	call t.51 = isOpen[cell] -> bool
+	notlog t.50, t.51
+	branch t.50, false, @if_51_end
+	const t.52, 4
+	xor cell, cell, t.52
+	cast t.53(i16), curr_r(u8)
+	cast t.54(i16), curr_c(u8)
+	call setCell[t.53, t.54, cell]
 @if_51_end:
 @if_50_end:
 	jump @if_49_end
 @if_49_else:
 	; 262:8 if chr == 13
-	const t.50, 13
-	equals t.49, chr, t.50
-	branch t.49, false, @if_52_end
+	const t.56, 13
+	equals t.55, chr, t.56
+	branch t.55, false, @if_52_end
 	; 263:4 if needsInitialize
 	branch needsInitialize, false, @if_53_end
 	const needsInitialize, 0
-	call initField[curr_r, curr_c]
+	cast t.57(i16), curr_r(u8)
+	cast t.58(i16), curr_c(u8)
+	call initField[t.57, t.58]
 @if_53_end:
-	call cell = getCell[curr_r, curr_c] -> u8
+	cast t.59(i16), curr_r(u8)
+	cast t.60(i16), curr_c(u8)
+	call cell = getCell[t.59, t.60] -> u8
 	; 268:4 if !isOpen([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=268:16]])
-	call t.52 = isOpen[cell] -> bool
-	notlog t.51, t.52
-	branch t.51, false, @if_54_end
-	const t.54, 2
-	move t.53, cell
-	or t.53, t.53, t.54
-	call setCell[curr_r, curr_c, t.53]
+	call t.62 = isOpen[cell] -> bool
+	notlog t.61, t.62
+	branch t.61, false, @if_54_end
+	cast t.63(i16), curr_r(u8)
+	cast t.64(i16), curr_c(u8)
+	const t.66, 2
+	move t.65, cell
+	or t.65, t.65, t.66
+	call setCell[t.63, t.64, t.65]
 @if_54_end:
 	; 271:4 if isBomb([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=271:15]])
-	call t.55 = isBomb[cell] -> bool
-	branch t.55, false, @if_55_end
-	call printField[curr_r, curr_c]
-	const t.56, [string-3]
-	call printString[t.56]
+	call t.67 = isBomb[cell] -> bool
+	branch t.67, false, @if_55_end
+	cast t.68(i16), curr_r(u8)
+	cast t.69(i16), curr_c(u8)
+	call printField[t.68, t.69]
+	const t.70, [string-3]
+	call printString[t.70]
 	jump @while_40_break
 @if_55_end:
-	call maybeRevealAround[curr_r, curr_c]
+	cast t.71(i16), curr_r(u8)
+	cast t.72(i16), curr_c(u8)
+	call maybeRevealAround[t.71, t.72]
 @if_52_end:
 @if_49_end:
 @if_48_end:

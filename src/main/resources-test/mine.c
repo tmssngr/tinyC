@@ -147,8 +147,8 @@ i16 getHiddenCount() {
 bool printLeft() {
 	i16 count = getHiddenCount();
 
-	i16 leftDigits = getDigitCount(count);
-	i16 bombDigits = getDigitCount(bombCount);
+	u8 leftDigits = getDigitCount(count);
+	u8 bombDigits = getDigitCount(bombCount);
 	printString("Left: ");
 	printSpaces(bombDigits - leftDigits);
 	printUint(count);
@@ -213,8 +213,8 @@ void main() {
 	initRandom(7439742);
 	bool needsInitialize = true;
 	clearField();
-	i16 curr_c = width / 2;
-	i16 curr_r = height / 2;
+	u8 curr_c = width / 2;
+	u8 curr_r = height / 2;
 	while (true) {
 		printField(curr_r, curr_c);
 		if (!needsInitialize) {

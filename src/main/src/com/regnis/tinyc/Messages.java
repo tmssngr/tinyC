@@ -25,7 +25,7 @@ public class Messages {
 
 	@NotNull
 	public static String needExplicitCast(Type type1, Type type2) {
-		return "Need explicit cast from " + type1 + " to " + type2;
+		return "Got " + type1 + " but expected " + type2 + " - need explicit cast (" + type2 + ")";
 	}
 
 	@NotNull

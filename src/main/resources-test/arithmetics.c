@@ -1,7 +1,7 @@
 #include "io.h"
 
 void main() {
-    i16 foo = 4 * 3 + 2*5;
+    i16 foo = (i16)(4 * 3 + 2*5);
     i16 bar = foo * foo;
     foo = 1;
     printIntLf(bar + foo);
