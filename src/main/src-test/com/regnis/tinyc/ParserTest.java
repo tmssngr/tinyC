@@ -135,10 +135,10 @@ public class ParserTest {
 
 		assertEquals(assignStmt(new ExprVarAccess("foo", locS(0, 0)),
 		                        new ExprBinary(ExprBinary.Op.Multiply,
-		                                       new ExprIntLiteral(2, locS(0, 6)),
+		                                       ExprIntLiteral.autoType(2, locS(0, 6)),
 		                                       new ExprBinary(ExprBinary.Op.Add,
 		                                                      new ExprVarAccess("bar", locS(0, 11)),
-		                                                      new ExprIntLiteral(1, locS(0, 17)),
+		                                                      ExprIntLiteral.autoType(1, locS(0, 17)),
 		                                                      locS(0, 15)),
 		                                       locS(0, 8)),
 		                        locS(0, 4)),
@@ -154,7 +154,7 @@ public class ParserTest {
 		assertEquals(assignStmt(new ExprUnary(ExprUnary.Op.Deref,
 		                                      new ExprBinary(ExprBinary.Op.Add,
 		                                                     new ExprVarAccess("foo", locS(0, 2)),
-		                                                     new ExprIntLiteral(2, locS(0, 8)),
+		                                                     ExprIntLiteral.autoType(2, locS(0, 8)),
 		                                                     locS(0, 6)),
 		                                      locS(0, 0)),
 		                        new ExprVarAccess("bar", locS(0, 13)),
@@ -373,7 +373,7 @@ public class ParserTest {
 		assertEquals(new StmtCompound(List.of(
 				             new StmtVarDeclaration("u8", "i", intLit(5, locS(1, 7)),
 				                                    locS(1, 0)),
-				             new StmtLoop(new ExprIntLiteral(1, locS(2, 0)),
+				             new StmtLoop(ExprIntLiteral.autoType(1, locS(2, 0)),
 				                          List.of(
 						                          printStmt(new ExprVarAccess("i", locS(3, 8)),
 						                                    locS(3, 2)),
@@ -433,7 +433,7 @@ public class ParserTest {
 						                                                                        loc(1, 4)),
 						                                                 new StmtIf(new ExprBinary(ExprBinary.Op.Equals,
 						                                                                           new ExprVarAccess("i", loc(2, 8)),
-						                                                                           new ExprIntLiteral(0, loc(2, 13)),
+						                                                                           ExprIntLiteral.autoType(0, loc(2, 13)),
 						                                                                           loc(2, 10)),
 						                                                            List.of(
 								                                                            new StmtReturn(null, loc(3, 8))
@@ -446,7 +446,7 @@ public class ParserTest {
 				                                                 loc(0, 0)),
 				                         Function.createInstance("one", "u8", List.of(),
 				                                                 List.of(
-						                                                 new StmtReturn(new ExprIntLiteral(1, loc(7, 10)),
+						                                                 new StmtReturn(ExprIntLiteral.autoType(1, loc(7, 10)),
 						                                                                loc(7, 3))
 				                                                 ),
 				                                                 loc(6, 0))
@@ -483,7 +483,7 @@ public class ParserTest {
 		                        new ExprArrayAccess(new ExprVarAccess("buffer", locS(0, 12)),
 		                                            new ExprBinary(ExprBinary.Op.Add,
 		                                                           new ExprVarAccess("i", locS(0, 19)),
-		                                                           new ExprIntLiteral(1, locS(0, 23)),
+		                                                           ExprIntLiteral.autoType(1, locS(0, 23)),
 		                                                           locS(0, 21))),
 		                        locS(0, 10)),
 		             parseStatement("buffer[i] = buffer[i + 1];"));
@@ -540,11 +540,11 @@ public class ParserTest {
 				                                                 List.of(
 						                                                 new StmtArrayDeclaration("Foo", "foos", 10, loc(3, 2)),
 						                                                 assignStmt(new ExprMemberAccess(new ExprArrayAccess(new ExprVarAccess("foos", loc(4, 2)),
-						                                                                                                     new ExprIntLiteral(0, loc(4, 7))),
+						                                                                                                     ExprIntLiteral.autoType(0, loc(4, 7))),
 						                                                                                 "x",
 						                                                                                 null,
 						                                                                                 loc(4, 10)),
-						                                                            new ExprIntLiteral(1, loc(4, 14)),
+						                                                            ExprIntLiteral.autoType(1, loc(4, 14)),
 						                                                            loc(4, 12))
 				                                                 ),
 				                                                 loc(2, 0)
@@ -586,7 +586,7 @@ public class ParserTest {
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
 				                         Function.createInstance("zero", "i64", List.of(), List.of(
-						                                                 new StmtReturn(new ExprIntLiteral(0, loc(3, 9)),
+						                                                 new StmtReturn(ExprIntLiteral.autoType(0, loc(3, 9)),
 						                                                                loc(3, 2)
 						                                                 )
 				                                                 ),
@@ -760,7 +760,7 @@ public class ParserTest {
 	}
 
 	private static ExprIntLiteral intLit(int value, Location location) {
-		return new ExprIntLiteral(value, location);
+		return ExprIntLiteral.autoType(value, location);
 	}
 
 	private static void assertEquals(@NotNull Function expectedFunction, @NotNull Function currentFunction) {
