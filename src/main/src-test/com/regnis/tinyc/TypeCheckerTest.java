@@ -34,10 +34,74 @@ public class TypeCheckerTest {
 	}
 
 	@Test
+	public void testLiterals() {
+		checkType("""
+				          void main() {
+				            u8 a = 255;
+				          }""");
+		testIllegal(Messages.integerLiteralDoesNotFit(256, Type.U8), 1, 9,
+		            """
+				            void main() {
+				              u8 a = 256;
+				            }""");
+		testIllegal(Messages.integerLiteralDoesNotFit(-1, Type.U8), 1, 9,
+		            """
+				            void main() {
+				              u8 a = -1;
+				            }""");
+
+		checkType("""
+				          void foo(u8 a) {
+				          }
+				          void main() {
+				            foo(255);
+				          }""");
+		testIllegal(Messages.integerLiteralDoesNotFit(256, Type.U8), 3, 6,
+		            """
+				             void foo(u8 a) {
+				             }
+				             void main() {
+				               foo(256);
+				             }""");
+		testIllegal(Messages.integerLiteralDoesNotFit(-1, Type.U8), 3, 6,
+		            """
+				             void foo(u8 a) {
+				             }
+				             void main() {
+				               foo(-1);
+				             }""");
+	}
+
+	@Test
 	public void testAutoCast() {
-		testStatement("sint16 = uint8;");
-		testIllegalStatement(Messages.needExplicitCast(Type.I16, Type.U8), 6,
-		                     "uint8 = sint16;");
+		checkType("""
+				          void main() {
+				            i16 dr = -1;
+				          }""");
+		checkType("""
+				          void foo(i16 a) {
+				          }
+				          void main() {
+				            foo(-1);
+				          }""");
+		checkType("""
+				          void foo(i16 a) {
+				          }
+				          void main() {
+				            foo(1);
+				          }""");
+		testIllegal(Messages.needExplicitCast(Type.U8, Type.I16), 2, 10,
+		            """
+				             void main() {
+				               u8 a = 1;
+				               i16 b = a;
+				             }""");
+		testIllegal(Messages.needExplicitCast(Type.I16, Type.U8), 2, 9,
+		            """
+				             void main() {
+				               i16 a = 1;
+				               u8 b = a;
+				             }""");
 	}
 
 	@Test
@@ -131,7 +195,7 @@ public class TypeCheckerTest {
 		                     "u8  diff = ptr1 - ptr2;");
 		testIllegalStatement(Messages.operationNotSupportedForTypes(ExprBinary.Op.Sub, Type.U8, Type.pointer(Type.U8)), 13,
 		                     "u8  diff = 1 - ptr2;");
-		testIllegalStatement(Messages.cantCastFromTo(Type.pointer(Type.U8), Type.U8), 0,
+		testIllegalStatement(Messages.needExplicitCast(Type.pointer(Type.U8), Type.U8), 16,
 		                     "u8  prev = ptr1 - 1;");
 		testIllegalStatement(Messages.operationNotSupportedForTypes(ExprBinary.Op.Multiply, Type.pointer(Type.U8), Type.U8), 16,
 		                     "u8* prev = ptr1 * 1;");

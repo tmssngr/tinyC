@@ -234,14 +234,14 @@ i16 getHiddenCount() {
 
 bool printLeft() {
 	i16 count;
-	i16 leftDigits;
-	i16 bombDigits;
+	u8 leftDigits;
+	u8 bombDigits;
 
 	count = getHiddenCount();
-	leftDigits = (i16)(getDigitCount(count));
-	bombDigits = (i16)(getDigitCount(40));
+	leftDigits = getDigitCount(count);
+	bombDigits = getDigitCount(40);
 	printString("Left: ");
-	printSpaces(bombDigits - leftDigits);
+	printSpaces((i16)(bombDigits - leftDigits));
 	printUint((i64)count);
 	return count == 0;
 }
@@ -315,8 +315,8 @@ void maybeRevealAround(i16 row, i16 column) {
 
 void main() {
 	bool needsInitialize;
-	i16 curr_c;
-	i16 curr_r;
+	u8 curr_c;
+	u8 curr_r;
 	i16 chr;
 	u8 cell;
 	u8 cell;
@@ -327,7 +327,7 @@ void main() {
 	curr_c = 20;
 	curr_r = 10;
 	while (true) {
-		printField(curr_r, curr_c);
+		printField((i16)curr_r, (i16)curr_c);
 		if (!needsInitialize) {
 			if (printLeft()) {
 				printString(" You've cleaned the field!");
@@ -360,10 +360,10 @@ void main() {
 						else {
 							if (chr == 32) {
 								if (!needsInitialize) {
-									cell = getCell(curr_r, curr_c);
+									cell = getCell((i16)curr_r, (i16)curr_c);
 									if (!(isOpen(cell))) {
 										cell = cell ^ 4;
-										setCell(curr_r, curr_c, cell);
+										setCell((i16)curr_r, (i16)curr_c, cell);
 									}
 								}
 							}
@@ -371,18 +371,18 @@ void main() {
 								if (chr == 13) {
 									if (needsInitialize) {
 										needsInitialize = false;
-										initField(curr_r, curr_c);
+										initField((i16)curr_r, (i16)curr_c);
 									}
-									cell = getCell(curr_r, curr_c);
+									cell = getCell((i16)curr_r, (i16)curr_c);
 									if (!(isOpen(cell))) {
-										setCell(curr_r, curr_c, cell | 2);
+										setCell((i16)curr_r, (i16)curr_c, cell | 2);
 									}
 									if (isBomb(cell)) {
-										printField(curr_r, curr_c);
+										printField((i16)curr_r, (i16)curr_c);
 										printString("boom! you've lost");
 										break;
 									}
-									maybeRevealAround(curr_r, curr_c);
+									maybeRevealAround((i16)curr_r, (i16)curr_c);
 								}
 							}
 						}

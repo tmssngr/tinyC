@@ -216,7 +216,7 @@ public final class TypeChecker {
 		final Type type = getType(declaration.typeString(), location);
 		final Var var = addVar(varName, type, 0, location);
 		if (expression != null) {
-			expression = autoCastTo(type, expression, location);
+			expression = simpleCast(type, expression, location);
 			addAssignment(var, expression, location);
 		}
 	}
@@ -286,6 +286,28 @@ public final class TypeChecker {
 	}
 
 	@NotNull
+	private Expression simpleCast(Type expectedType, Expression expression, Location location) {
+		final Type type = expression.typeNotNull();
+		if (expectedType.equals(type)) {
+			return expression;
+		}
+
+		if (expression instanceof ExprIntLiteral literal) {
+			final int value = literal.value();
+			if (value < expectedType.min() || value > expectedType.max()) {
+				throw new SyntaxException(Messages.integerLiteralDoesNotFit(value, expectedType), literal.location());
+			}
+			return new ExprIntLiteral(value, expectedType, literal.location());
+		}
+
+		if (expectedType.isInt()) {
+			throw new SyntaxException(Messages.needExplicitCast(type, expectedType), expression.location());
+		}
+
+		throw new SyntaxException(Messages.cantCastFromTo(type, expectedType), location);
+	}
+
+	@NotNull
 	private Expression autoCastTo(Type type, Expression expression, Location location) {
 		final Type expressionType = expression.typeNotNull();
 		if (type.equals(expressionType)) {
@@ -296,14 +318,18 @@ public final class TypeChecker {
 			throw new SyntaxException(Messages.cantCastFromTo(expressionType, type), location);
 		}
 
+		if (expression instanceof ExprIntLiteral literal) {
+			final int value = literal.value();
+			if (value < type.min() || value > type.max()) {
+				throw new SyntaxException(Messages.integerLiteralDoesNotFit(value, type), literal.location());
+			}
+			return new ExprIntLiteral(value, type, literal.location());
+		}
+
 		final int expectedSize = getTypeSize(type);
 		final int actualSize = getTypeSize(expressionType);
 		if (actualSize >= expectedSize) {
 			throw new SyntaxException(Messages.needExplicitCast(expressionType, type), location);
-		}
-
-		if (expression instanceof ExprIntLiteral literal) {
-			return new ExprIntLiteral(literal.value(), type, literal.location());
 		}
 
 		return ExprCast.autocast(expression, type);
@@ -429,7 +455,7 @@ public final class TypeChecker {
 	private Expression processUnary(ExprUnary unary) {
 		final ExprUnary.Op op = unary.op();
 		final Location location = unary.location();
-		Expression expression = processExpression(unary.expression());
+		final Expression expression = processExpression(unary.expression());
 		final Type expressionType = expression.typeNotNull();
 		Type type = expressionType;
 		switch (op) {
@@ -458,9 +484,8 @@ public final class TypeChecker {
 			if (!type.isInt()) {
 				throw new SyntaxException(Messages.expectedIntegerExpression(), expression.location());
 			}
-			if (type == Type.U8) {
-				type = Type.I16;
-				expression = autoCastTo(type, expression, expression.location());
+			if (expression instanceof ExprIntLiteral literal) {
+				return ExprIntLiteral.autoType(-literal.value(), location);
 			}
 		}
 		case Com -> {
