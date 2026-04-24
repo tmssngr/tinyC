@@ -139,6 +139,7 @@ public final class Lexer {
 		if (isConsume('\'')) {
 			final String text = detectStringOrChar('\'');
 			intValue = text.charAt(0);
+			this.text = "";
 			return TokenType.INT_LITERAL;
 		}
 		if (isConsume('&')) {
@@ -173,12 +174,14 @@ public final class Lexer {
 		       && !isWhitespace()
 		       && !isLineBreak()
 		);
-		text = buffer.toString();
+		text = "";
+		final String text = buffer.toString();
 
 		if (detectInt(text)) {
 			return TokenType.INT_LITERAL;
 		}
 
+		this.text = text;
 		return switch (text) {
 			case "true" -> TokenType.TRUE;
 			case "false" -> TokenType.FALSE;
@@ -213,35 +216,71 @@ public final class Lexer {
 	}
 
 	private boolean detectInt(String text) {
-		try {
-			intValue = Integer.parseInt(text);
-			return true;
-		}
-		catch (NumberFormatException ignored) {
-		}
-
 		if (text.startsWith("0b")) {
-			final String possibleNumberString = text.substring(2).replace("_", "");
-			try {
-				intValue = Integer.parseInt(possibleNumberString, 2);
+			text = text.substring(2);
+			if (detectInt(text, 2,
+			              c -> c >= '0' && c <= '1')) {
 				return true;
 			}
-			catch (NumberFormatException ignored) {
-				throw new InvalidTokenException("Invalid number", location);
-			}
+			throw new InvalidTokenException("Invalid number", location);
 		}
 
 		if (text.startsWith("0x")) {
-			final String possibleNumberString = text.substring(2);
-			try {
-				intValue = Integer.parseInt(possibleNumberString,
-				                            16);
+			text = text.substring(2);
+			if (detectInt(text, 16,
+			              c -> {
+				              if (c >= '0' && c <= '9') {
+					              return true;
+				              }
+				              if (c >= 'A' && c <= 'F') {
+					              return true;
+				              }
+				              return c >= 'a' && c <= 'f';
+			              })) {
 				return true;
 			}
-			catch (NumberFormatException ignored) {
-			}
+			throw new InvalidTokenException("Invalid number", location);
 		}
-		return false;
+
+		return detectInt(text, 10,
+		                 c -> c >= '0' && c <= '9');
+	}
+
+	private boolean detectInt(String text, int radix, ValidCharPredicate charChecker) {
+		final StringBuilder buffer = new StringBuilder();
+		boolean lastWasUnderscore = false;
+		for (int i = 0; i < text.length(); i++) {
+			final char c = text.charAt(i);
+			if (charChecker.isValid(c)) {
+				buffer.append(c);
+				lastWasUnderscore = false;
+				continue;
+			}
+			if (c == '_') {
+				if (buffer.isEmpty()) {
+					return false;
+				}
+
+				lastWasUnderscore = true;
+				continue;
+			}
+			if (lastWasUnderscore || buffer.isEmpty()) {
+				return false;
+			}
+			this.text = text.substring(i);
+			break;
+		}
+		if (lastWasUnderscore) {
+			return false;
+		}
+
+		try {
+			intValue = Integer.parseInt(buffer.toString(), radix);
+			return true;
+		}
+		catch (NumberFormatException e) {
+			return false;
+		}
 	}
 
 	private String detectWhitespace() {
@@ -427,5 +466,9 @@ public final class Lexer {
 
 	private static boolean isInInterval(int chr, char from, char to) {
 		return from <= chr && chr <= to;
+	}
+
+	private interface ValidCharPredicate {
+		boolean isValid(char chr);
 	}
 }

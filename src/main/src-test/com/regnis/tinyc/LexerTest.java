@@ -31,6 +31,45 @@ public class LexerTest {
 	}
 
 	@Test
+	public void testLiterals() {
+		//               012345678901234567890123456789
+		new LexerTester("1 2_3 0b10 0x20 0xCafe 10i16 '0'") {
+			@Override
+			protected void test() {
+				assertIntLiteral(1);
+				assertText("");
+				assertLocation(0, 0);
+
+				assertIntLiteral(23);
+				assertText("");
+				assertLocation(0, 2);
+
+				assertIntLiteral(2);
+				assertText("");
+				assertLocation(0, 6);
+
+				assertIntLiteral(0x20);
+				assertText("");
+				assertLocation(0, 11);
+
+				assertIntLiteral(0xCafe);
+				assertText("");
+				assertLocation(0, 16);
+
+				assertIntLiteral(10);
+				assertText("i16");
+				assertLocation(0, 23);
+
+				assertIntLiteral('0');
+				assertText("");
+				assertLocation(0, 29);
+
+				assertEof();
+			}
+		}.test();
+	}
+
+	@Test
 	public void textIdentifiers() {
 		//               012345678901234567890
 		new LexerTester("const BOARD_CAP = 30;") {
@@ -334,9 +373,13 @@ public class LexerTest {
 			assertEquals(type, next);
 		}
 
+		public void assertText(String expected) {
+			assertEquals(expected, lexer.getText());
+		}
+
 		public void assertText(TokenType type, String expected) {
 			assertType(type);
-			assertEquals(expected, lexer.getText());
+			assertText(expected);
 		}
 
 		private void assertValue(TokenType type, int expected) {

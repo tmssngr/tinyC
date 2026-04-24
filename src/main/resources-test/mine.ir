@@ -891,8 +891,8 @@
 	branch t.10, false, @if_43_end
 	jump @while_40_break
 @if_43_end:
-	; 233:3 if chr == 57416
-	equals t.11, chr, 57416
+	; 233:3 if chr == -8120
+	equals t.11, chr, -8120
 	branch t.11, false, @if_44_else
 	const t.14, 20
 	move t.13, curr_r
@@ -905,8 +905,8 @@
 	mod curr_r, curr_r, t.16
 	jump @if_44_end
 @if_44_else:
-	; 237:8 if chr == 57424
-	equals t.17, chr, 57424
+	; 237:8 if chr == -8112
+	equals t.17, chr, -8112
 	branch t.17, false, @if_45_else
 	const t.19, 1
 	move t.18, curr_r
@@ -916,8 +916,8 @@
 	mod curr_r, curr_r, t.20
 	jump @if_45_end
 @if_45_else:
-	; 241:8 if chr == 57419
-	equals t.21, chr, 57419
+	; 241:8 if chr == -8117
+	equals t.21, chr, -8117
 	branch t.21, false, @if_46_else
 	const t.24, 40
 	move t.23, curr_c
@@ -930,8 +930,8 @@
 	mod curr_c, curr_c, t.26
 	jump @if_46_end
 @if_46_else:
-	; 245:8 if chr == 57419
-	equals t.27, chr, 57419
+	; 245:8 if chr == -8117
+	equals t.27, chr, -8117
 	branch t.27, false, @if_47_else
 	const t.30, 40
 	move t.29, curr_c
@@ -944,8 +944,8 @@
 	mod curr_c, curr_c, t.32
 	jump @if_47_end
 @if_47_else:
-	; 249:8 if chr == 57421
-	equals t.33, chr, 57421
+	; 249:8 if chr == -8115
+	equals t.33, chr, -8115
 	branch t.33, false, @if_48_else
 	const t.35, 1
 	move t.34, curr_c

@@ -2601,11 +2601,11 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @main_ret
-        ; 233:3 if chr == 57416
-        ; equals t.11, chr, 57416
+        ; 233:3 if chr == -8120
+        ; equals t.11, chr, -8120
         lea rax, [rsp+6]
         mov bx, [rax]
-        cmp bx, 57416
+        cmp bx, -8120
         sete bl
         lea rax, [rsp+33]
         mov [rax], bl
@@ -2614,11 +2614,11 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @if_44_then
-        ; 237:8 if chr == 57424
-        ; equals t.17, chr, 57424
+        ; 237:8 if chr == -8112
+        ; equals t.17, chr, -8112
         lea rax, [rsp+6]
         mov bx, [rax]
-        cmp bx, 57424
+        cmp bx, -8112
         sete bl
         lea rax, [rsp+44]
         mov [rax], bl
@@ -2686,11 +2686,11 @@ start:
         mov [rdx], bx
         jmp @while_40
 @if_45_else:
-        ; 241:8 if chr == 57419
-        ; equals t.21, chr, 57419
+        ; 241:8 if chr == -8117
+        ; equals t.21, chr, -8117
         lea rax, [rsp+6]
         mov bx, [rax]
-        cmp bx, 57419
+        cmp bx, -8117
         sete bl
         lea rax, [rsp+52]
         mov [rax], bl
@@ -2741,11 +2741,11 @@ start:
         mov [rdx], bx
         jmp @while_40
 @if_46_else:
-        ; 245:8 if chr == 57419
-        ; equals t.27, chr, 57419
+        ; 245:8 if chr == -8117
+        ; equals t.27, chr, -8117
         lea rax, [rsp+6]
         mov bx, [rax]
-        cmp bx, 57419
+        cmp bx, -8117
         sete bl
         lea rax, [rsp+64]
         mov [rax], bl
@@ -2813,11 +2813,11 @@ start:
         mov [rdx], bx
         jmp @while_40
 @if_47_else:
-        ; 249:8 if chr == 57421
-        ; equals t.33, chr, 57421
+        ; 249:8 if chr == -8115
+        ; equals t.33, chr, -8115
         lea rax, [rsp+6]
         mov bx, [rax]
-        cmp bx, 57421
+        cmp bx, -8115
         sete bl
         lea rax, [rsp+76]
         mov [rax], bl

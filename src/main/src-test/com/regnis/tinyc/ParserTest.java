@@ -638,6 +638,23 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testTypedLiterals() {
+		assertEquals(new StmtVarDeclaration("u8", "foo", new ExprIntLiteral(1, Type.U8, locS(0, 9)),
+		                                    locS(0, 0)),
+		             parseStatement("u8 foo = 1;"));
+		assertEquals(new StmtVarDeclaration("u8", "foo", new ExprIntLiteral(1, Type.I16, locS(0, 9)),
+		                                    locS(0, 0)),
+		             parseStatement("u8 foo = 1i16;"));
+		assertEquals(new StmtVarDeclaration("u8", "foo", new ExprIntLiteral(1, Type.I16, locS(0, 9)),
+		                                    locS(0, 0)),
+		             parseStatement("u8 foo = 1i16;"));
+		testIllegal(Messages.integerLiteralDoesNotFit(256, Type.U8), loc(0, 9),
+		            "u8 foo = 256u8");
+		testIllegal(Messages.integerLiteralDoesNotFit(32768, Type.I16), loc(0, 10),
+		            "i16 foo = 32768i16");
+	}
+
+	@Test
 	public void testFailures() {
 		testIllegal(Messages.expectedRootElement(), loc(0, 0),
 		            "&");
