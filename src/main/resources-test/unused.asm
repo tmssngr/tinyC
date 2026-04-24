@@ -20,9 +20,9 @@ start:
         sub rsp, 0x20
           call [ExitProcess]
 
-        ; void unusedArg
+        ; void unusedArg@u8
         ;   rsp+8: arg a
-@unusedArg:
+@unusedArg@u8:
         ret
 
         ; void main
@@ -31,14 +31,14 @@ start:
         ; reserve space for local variables
         sub rsp, 16
         ; const t.0, 0
-        mov rax, 0
+        mov al, 0
         lea rbx, [rsp+0]
-        mov [rbx], rax
-        ; call unusedArg[t.0]
+        mov [rbx], al
+        ; call unusedArg@u8[t.0]
         lea rax, [rsp+0]
-        mov rbx, [rax]
+        mov bl, [rax]
         push rbx
-          call @unusedArg
+          call @unusedArg@u8
         add rsp, 8
         ; release space for local variables
         add rsp, 16

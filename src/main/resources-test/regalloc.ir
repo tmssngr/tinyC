@@ -13,7 +13,7 @@
 	jump @simple_ret
 @simple_ret:
 
-@registerHint:
+@registerHint@u8@u8:
  Local variables
 	arg 0: a (u8/1)
 	arg 1: b (u8/1)
@@ -23,10 +23,10 @@
 	move t.2, a
 	add t.2, t.2, b
 	ret t.2
-	jump @registerHint_ret
-@registerHint_ret:
+	jump @registerHint@u8@u8_ret
+@registerHint@u8@u8_ret:
 
-@max:
+@max@u8@u8:
  Local variables
 	arg 0: a (u8/1)
 	arg 1: b (u8/1)
@@ -37,14 +37,14 @@
 	branch t.2, false, @if_1_end
 	; 14:10 return b
 	ret b
-	jump @max_ret
+	jump @max@u8@u8_ret
 @if_1_end:
 	; 16:9 return a
 	ret a
-	jump @max_ret
-@max_ret:
+	jump @max@u8@u8_ret
+@max@u8@u8_ret:
 
-@fibonacci:
+@fibonacci@u8:
  Local variables
 	arg 0: i (u8/1)
 	var 1: a (i16/2)
@@ -67,8 +67,8 @@
 @while_2_break:
 	; 28:9 return a
 	ret a
-	jump @fibonacci_ret
-@fibonacci_ret:
+	jump @fibonacci@u8_ret
+@fibonacci@u8_ret:
 
 @main:
  Local variables
@@ -80,9 +80,9 @@
 	; 24 pc
 	call one = simple[] -> u8
 	const two, 2
-	call _ = registerHint[one, two] -> u8
-	call oneOrTwo = max[one, two] -> u8
+	call _ = registerHint@u8@u8[one, two] -> u8
+	call oneOrTwo = max@u8@u8[one, two] -> u8
 	const t.4, 5
-	call f5 = fibonacci[t.4] -> i16
+	call f5 = fibonacci@u8[t.4] -> i16
 @main_ret:
 

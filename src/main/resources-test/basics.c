@@ -5,7 +5,7 @@ u8 one = '1';
 u8 two = '2';
 u8 threeFour = 34;
 
-i64 unusedArgs(i16 a, bool b, i64 c, i64 d) {
+i64 unusedArgs(u8 a, bool b, u8 c, u8 d) {
 	return c;
 }
 

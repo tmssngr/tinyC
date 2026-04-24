@@ -3,11 +3,11 @@ i16 space;
 i16 next;
 i16* ptrToSpace;
 
-void printChar(u8 chr) {
-	printStringLength(&chr, 1);
+void printChar@u8(u8 chr) {
+	printStringLength@@u8@u8(&chr, 1);
 }
 
-void printUint(i64 number) {
+void printUint@i64(i64 number) {
 	u8* buffer[20];
 	u8 pos;
 	i64 remainder;
@@ -24,23 +24,31 @@ void printUint(i64 number) {
 			break;
 		}
 	}
-	printStringLength(&buffer[(i64)pos], (i64)(20 - pos));
+	printStringLength@@u8@u8(&buffer[(i64)pos], 20 - pos);
 }
 
-void printIntLf(i64 number) {
+void printIntLf@i16(i16 number) {
+	printIntLf@i64((i64)number);
+}
+
+void printIntLf@i64(i64 number) {
 	if (number < 0) {
-		printChar(45);
+		printChar@u8(45);
 		number = -number;
 	}
-	printUint(number);
-	printChar(10);
+	printUint@i64(number);
+	printChar@u8(10);
 }
 
-void printStringLength(u8* str, i64 length) {
+void printStringLength@@u8@u8(u8* str, u8 length) {
+	printStringLength@@u8@i64(str, (i64)length);
+}
+
+void printStringLength@@u8@i64(u8* str, i64 length) {
 }
 
 void main() {
-	printIntLf((i64)next);
+	printIntLf@i16(next);
 	ptrToSpace = (i16*)(((i64)ptrToSpace) + (1 * 2));
-	printIntLf((i64)(*ptrToSpace));
+	printIntLf@i16(*ptrToSpace);
 }

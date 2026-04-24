@@ -1,6 +1,6 @@
-void unusedArg(i64 a) {
+void unusedArg@u8(u8 a) {
 }
 
 void main() {
-	unusedArg(0);
+	unusedArg@u8(0);
 }

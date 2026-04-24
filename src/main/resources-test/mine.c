@@ -92,7 +92,7 @@ void printCell(u8 cell, i16 row, i16 column) {
 }
 
 void printField(i16 rowCursor, i16 columnCursor) {
-	setCursor(0, 0);
+	setCursor(0i16, 0i16);
 	for (i16 row = 0; row < height; row = row + 1) {
 		printChar('|');
 		for (i16 column = 0; column < width; column = column + 1) {
@@ -147,8 +147,8 @@ i16 getHiddenCount() {
 bool printLeft() {
 	i16 count = getHiddenCount();
 
-	u8 leftDigits = getDigitCount(count);
-	u8 bombDigits = getDigitCount(bombCount);
+	i16 leftDigits = (i16)getDigitCount(count);
+	i16 bombDigits = (i16)getDigitCount(bombCount);
 	printString("Left: ");
 	printSpaces(bombDigits - leftDigits);
 	printUint(count);
@@ -213,8 +213,8 @@ void main() {
 	initRandom(7439742);
 	bool needsInitialize = true;
 	clearField();
-	u8 curr_c = width / 2;
-	u8 curr_r = height / 2;
+	i16 curr_c = (i16)(width / 2);
+	i16 curr_r = (i16)(height / 2);
 	while (true) {
 		printField(curr_r, curr_c);
 		if (!needsInitialize) {

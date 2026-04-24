@@ -1,15 +1,15 @@
-@printChar:
+@printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
-	var 2: t.2 (i64/8)
+	var 2: t.2 (u8/1)
 	; 12 pc
 	addrof t.1, chr
 	const t.2, 1
-	call printStringLength[t.1, t.2]
-@printChar_ret:
+	call printStringLength@@u8@u8[t.1, t.2]
+@printChar@u8_ret:
 
-@printUint:
+@printUint@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
@@ -27,12 +27,11 @@
 	var 13: t.13 (u8*/8)
 	var 14: t.14 (i64/8)
 	var 15: t.15 (u8*/8)
-	var 16: t.16 (i64/8)
+	var 16: t.16 (u8/1)
 	var 17: t.17 (u8/1)
-	var 18: t.18 (u8/1)
-	; 129 pc
+	; 124 pc
 	const pos, 20
-	; 13:2 while true
+	; 25:2 while true
 @while_1:
 	dec pos
 	const t.5, 10
@@ -49,7 +48,7 @@
 	addrof t.9, [buffer]
 	add t.9, t.9, t.11
 	store [t.9], digit
-	; 19:3 if number == 0
+	; 31:3 if number == 0
 	equals t.12, number, 0
 	branch t.12, false, @if_2_end
 	jump @while_1_break
@@ -60,38 +59,56 @@
 	cast t.15(u8*), t.14(i64)
 	addrof t.13, [buffer]
 	add t.13, t.13, t.15
-	const t.18, 20
-	move t.17, t.18
-	sub t.17, t.17, pos
-	cast t.16(i64), t.17(u8)
-	call printStringLength[t.13, t.16]
-@printUint_ret:
+	const t.17, 20
+	move t.16, t.17
+	sub t.16, t.16, pos
+	call printStringLength@@u8@u8[t.13, t.16]
+@printUint@i64_ret:
 
-@printIntLf:
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+	var 1: t.1 (i64/8)
+	; 8 pc
+	cast t.1(i64), number(u8)
+	call printIntLf@i64[t.1]
+@printIntLf@u8_ret:
+
+@printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: t.1 (bool/1)
 	var 2: t.2 (u8/1)
 	var 3: t.3 (u8/1)
 	; 26 pc
-	; 27:2 if number < 0
+	; 51:2 if number < 0
 	lt t.1, number, 0
 	branch t.1, false, @if_3_end
 	const t.2, 45
-	call printChar[t.2]
+	call printChar@u8[t.2]
 	neg number, number
 @if_3_end:
-	call printUint[number]
+	call printUint@i64[number]
 	const t.3, 10
-	call printChar[t.3]
-@printIntLf_ret:
+	call printChar@u8[t.3]
+@printIntLf@i64_ret:
 
-@initRandom:
+@printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	var 2: t.2 (i64/8)
+	; 10 pc
+	cast t.2(i64), length(u8)
+	call printStringLength@@u8@i64[str, t.2]
+@printStringLength@@u8@u8_ret:
+
+@initRandom@i32:
  Local variables
 	arg 0: salt (i32/4)
 	; 5 pc
 	move __random__, salt
-@initRandom_ret:
+@initRandom@i32_ret:
 
 @random:
  Local variables
@@ -151,7 +168,7 @@
 	shiftright t.19, t.19, t.20
 	move __random__, t.17
 	add __random__, __random__, t.19
-	; 127:9 return __random__
+	; 155:9 return __random__
 	ret __random__
 	jump @random_ret
 @random_ret:
@@ -161,7 +178,7 @@
 	var 0: t.0 (u8/1)
 	var 1: t.1 (i32/4)
 	; 12 pc
-	; 131:10 return (u8)
+	; 159:10 return (u8)
 	call t.1 = random[] -> i32
 	cast t.0(u8), t.1(i32)
 	ret t.0
@@ -174,28 +191,26 @@
 	var 1: r (u8/1)
 	var 2: t.2 (i32/4)
 	var 3: t.3 (bool/1)
-	var 4: t.4 (i64/8)
-	; 34 pc
+	; 29 pc
 	; begin initialize global variables
 	const __random__, 0
 	; end initialize global variables
 	const t.2, 7439742
-	call initRandom[t.2]
+	call initRandom@i32[t.2]
 	const i, 0
 	; 5:2 for i < 50
 @for_4:
 	lt t.3, i, 50
 	branch t.3, false, @for_4_break
 	call r = randomU8[] -> u8
-	cast t.4(i64), r(u8)
-	call printIntLf[t.4]
+	call printIntLf@u8[r]
 @for_4_continue:
 	inc i
 	jump @for_4
 @for_4_break:
 @main_ret:
 
-@printStringLength:
+@printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
 	lea     rcx, [hStdOut]

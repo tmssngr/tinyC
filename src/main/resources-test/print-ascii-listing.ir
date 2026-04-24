@@ -1,24 +1,24 @@
-@printString:
+@printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
 	; 10 pc
-	call length = strlen[str] -> i64
-	call printStringLength[str, length]
-@printString_ret:
+	call length = strlen@@u8[str] -> i64
+	call printStringLength@@u8@i64[str, length]
+@printString@@u8_ret:
 
-@printChar:
+@printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
-	var 2: t.2 (i64/8)
+	var 2: t.2 (u8/1)
 	; 12 pc
 	addrof t.1, chr
 	const t.2, 1
-	call printStringLength[t.1, t.2]
-@printChar_ret:
+	call printStringLength@@u8@u8[t.1, t.2]
+@printChar@u8_ret:
 
-@strlen:
+@strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
@@ -29,7 +29,7 @@
 	var 6: t.6 (i64/8)
 	; 50 pc
 	const length, 0
-	; 37:2 for *str != 0
+	; 61:2 for *str != 0
 @for_1:
 	load t.3, [str]
 	notequals t.2, t.3, 0
@@ -43,12 +43,22 @@
 	cast str(u8*), t.4(i64)
 	jump @for_1
 @for_1_break:
-	; 40:9 return length
+	; 64:9 return length
 	ret length
-	jump @strlen_ret
-@strlen_ret:
+	jump @strlen@@u8_ret
+@strlen@@u8_ret:
 
-@printNibble:
+@printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	var 2: t.2 (i64/8)
+	; 10 pc
+	cast t.2(i64), length(u8)
+	call printStringLength@@u8@i64[str, t.2]
+@printStringLength@@u8@u8_ret:
+
+@printNibble@u8:
  Local variables
 	arg 0: x (u8/1)
 	var 1: t.1 (u8/1)
@@ -62,10 +72,10 @@
 	add x, 7
 @if_2_end:
 	add x, 48
-	call printChar[x]
-@printNibble_ret:
+	call printChar@u8[x]
+@printNibble@u8_ret:
 
-@printHex2:
+@printHex2@u8:
  Local variables
 	arg 0: x (u8/1)
 	var 1: t.1 (u8/1)
@@ -74,9 +84,9 @@
 	const t.2, 4
 	move t.1, x
 	shiftright t.1, t.1, t.2
-	call printNibble[t.1]
-	call printNibble[x]
-@printHex2_ret:
+	call printNibble@u8[t.1]
+	call printNibble@u8[x]
+@printHex2@u8_ret:
 
 @main:
  Local variables
@@ -105,7 +115,7 @@
 	; begin initialize global variables
 	; end initialize global variables
 	const t.2, [string-0]
-	call printString[t.2]
+	call printString@@u8[t.2]
 	const i, 0
 	; 19:2 for i < 16
 @for_3:
@@ -118,15 +128,15 @@
 	equals t.4, t.5, 0
 	branch t.4, false, @if_4_end
 	const t.7, 32
-	call printChar[t.7]
+	call printChar@u8[t.7]
 @if_4_end:
-	call printNibble[i]
+	call printNibble@u8[i]
 @for_3_continue:
 	inc i
 	jump @for_3
 @for_3_break:
 	const t.8, 10
-	call printChar[t.8]
+	call printChar@u8[t.8]
 	const i, 32
 	; 27:2 for i < 128
 @for_5:
@@ -138,7 +148,7 @@
 	and t.11, t.11, t.12
 	equals t.10, t.11, 0
 	branch t.10, false, @if_6_end
-	call printHex2[i]
+	call printHex2@u8[i]
 @if_6_end:
 	; 31:3 if i & 7 == 0
 	const t.15, 7
@@ -147,9 +157,9 @@
 	equals t.13, t.14, 0
 	branch t.13, false, @if_7_end
 	const t.16, 32
-	call printChar[t.16]
+	call printChar@u8[t.16]
 @if_7_end:
-	call printChar[i]
+	call printChar@u8[i]
 	; 35:3 if i & 15 == 15
 	const t.19, 15
 	move t.18, i
@@ -157,7 +167,7 @@
 	equals t.17, t.18, 15
 	branch t.17, false, @if_8_end
 	const t.20, 10
-	call printChar[t.20]
+	call printChar@u8[t.20]
 @if_8_end:
 @for_5_continue:
 	inc i
@@ -165,7 +175,7 @@
 @for_5_break:
 @main_ret:
 
-@printStringLength:
+@printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
 	lea     rcx, [hStdOut]

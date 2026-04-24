@@ -1,18 +1,18 @@
 i32 __random__;
 u8* text;
 
-void printString(u8* str) {
+void printString@@u8(u8* str) {
 	i64 length;
 
-	length = strlen(str);
-	printStringLength(str, length);
+	length = strlen@@u8(str);
+	printStringLength@@u8@i64(str, length);
 }
 
-void printChar(u8 chr) {
-	printStringLength(&chr, 1);
+void printChar@u8(u8 chr) {
+	printStringLength@@u8@u8(&chr, 1);
 }
 
-void printUint(i64 number) {
+void printUint@i64(i64 number) {
 	u8* buffer[20];
 	u8 pos;
 	i64 remainder;
@@ -29,19 +29,27 @@ void printUint(i64 number) {
 			break;
 		}
 	}
-	printStringLength(&buffer[(i64)pos], (i64)(20 - pos));
+	printStringLength@@u8@u8(&buffer[(i64)pos], 20 - pos);
 }
 
-void printIntLf(i64 number) {
+void printIntLf@u8(u8 number) {
+	printIntLf@i64((i64)number);
+}
+
+void printIntLf@i16(i16 number) {
+	printIntLf@i64((i64)number);
+}
+
+void printIntLf@i64(i64 number) {
 	if (number < 0) {
-		printChar(45);
+		printChar@u8(45);
 		number = -number;
 	}
-	printUint(number);
-	printChar(10);
+	printUint@i64(number);
+	printChar@u8(10);
 }
 
-i64 strlen(u8* str) {
+i64 strlen@@u8(u8* str) {
 	i64 length;
 
 	length = 0;
@@ -51,19 +59,23 @@ i64 strlen(u8* str) {
 	return length;
 }
 
-void printStringLength(u8* str, i64 length) {
+void printStringLength@@u8@u8(u8* str, u8 length) {
+	printStringLength@@u8@i64(str, (i64)length);
+}
+
+void printStringLength@@u8@i64(u8* str, i64 length) {
 }
 
 void main() {
 	u8* second;
 	u8 chr;
 
-	printString(text);
+	printString@@u8(text);
 	printLength();
 	second = &text[1];
-	printString(second);
+	printString@@u8(second);
 	chr = *text;
-	printIntLf((i64)chr);
+	printIntLf@u8(chr);
 }
 
 void printLength() {
@@ -75,5 +87,5 @@ void printLength() {
 	for (; (*ptr) != 0; ptr = (u8*)(((i64)ptr) + 1)) {
 		length = length + 1;
 	}
-	printIntLf((i64)length);
+	printIntLf@i16(length);
 }

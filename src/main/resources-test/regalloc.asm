@@ -57,11 +57,11 @@ start:
         add rsp, 16
         ret
 
-        ; u8 registerHint
+        ; u8 registerHint@u8@u8
         ;   rsp+40: arg a
         ;   rsp+32: arg b
         ;   rsp+0: var t.2
-@registerHint:
+@registerHint@u8@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; 9:11 return a + b
@@ -86,11 +86,11 @@ start:
         add rsp, 16
         ret
 
-        ; u8 max
+        ; u8 max@u8@u8
         ;   rsp+40: arg a
         ;   rsp+32: arg b
         ;   rsp+0: var t.2
-@max:
+@max@u8@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; 13:2 if a < b
@@ -113,25 +113,25 @@ start:
         lea rax, [rsp+40]
         mov bl, [rax]
         mov rax, rbx
-        jmp @max_ret
+        jmp @max@u8@u8_ret
 @if_1_then:
         ; 14:10 return b
         ; ret b
         lea rax, [rsp+32]
         mov bl, [rax]
         mov rax, rbx
-@max_ret:
+@max@u8@u8_ret:
         ; release space for local variables
         add rsp, 16
         ret
 
-        ; i16 fibonacci
+        ; i16 fibonacci@u8
         ;   rsp+24: arg i
         ;   rsp+0: var a
         ;   rsp+2: var b
         ;   rsp+4: var c
         ;   rsp+6: var t.4
-@fibonacci:
+@fibonacci@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; const a, 0
@@ -215,7 +215,7 @@ start:
         mov al, 2
         lea rbx, [rsp+1]
         mov [rbx], al
-        ; call _ = registerHint[one, two] -> u8
+        ; call _ = registerHint@u8@u8[one, two] -> u8
         lea rax, [rsp+0]
         mov bl, [rax]
         push rbx
@@ -223,9 +223,9 @@ start:
         mov bl, [rax]
         push rbx
         sub rsp, 8
-          call @registerHint
+          call @registerHint@u8@u8
         add rsp, 24
-        ; call _ = max[one, two] -> u8
+        ; call _ = max@u8@u8[one, two] -> u8
         lea rax, [rsp+0]
         mov bl, [rax]
         push rbx
@@ -233,17 +233,17 @@ start:
         mov bl, [rax]
         push rbx
         sub rsp, 8
-          call @max
+          call @max@u8@u8
         add rsp, 24
         ; const t.4, 5
         mov al, 5
         lea rbx, [rsp+6]
         mov [rbx], al
-        ; call _ = fibonacci[t.4] -> i16
+        ; call _ = fibonacci@u8[t.4] -> i16
         lea rax, [rsp+6]
         mov bl, [rax]
         push rbx
-          call @fibonacci
+          call @fibonacci@u8
         add rsp, 8
         ; release space for local variables
         add rsp, 16
