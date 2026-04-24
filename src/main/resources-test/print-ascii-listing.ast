@@ -1,17 +1,17 @@
 i32 __random__;
 
-void printString(u8* str) {
+void printString@@u8(u8* str) {
 	i64 length;
 
-	length = strlen(str);
-	printStringLength(str, length);
+	length = strlen@@u8(str);
+	printStringLength@@u8@i64(str, length);
 }
 
-void printChar(u8 chr) {
-	printStringLength(&chr, 1);
+void printChar@u8(u8 chr) {
+	printStringLength@@u8@u8(&chr, 1);
 }
 
-i64 strlen(u8* str) {
+i64 strlen@@u8(u8* str) {
 	i64 length;
 
 	length = 0;
@@ -21,47 +21,51 @@ i64 strlen(u8* str) {
 	return length;
 }
 
-void printStringLength(u8* str, i64 length) {
+void printStringLength@@u8@u8(u8* str, u8 length) {
+	printStringLength@@u8@i64(str, (i64)length);
 }
 
-void printNibble(u8 x) {
+void printStringLength@@u8@i64(u8* str, i64 length) {
+}
+
+void printNibble@u8(u8 x) {
 	x = x & 15;
 	if (x > 9) {
 		x = x + ((65 - 57) - 1);
 	}
 	x = x + 48;
-	printChar(x);
+	printChar@u8(x);
 }
 
-void printHex2(u8 x) {
-	printNibble(x / 16);
-	printNibble(x);
+void printHex2@u8(u8 x) {
+	printNibble@u8(x / 16);
+	printNibble@u8(x);
 }
 
 void main() {
 	u8 i;
 	u8 i;
 
-	printString(" x");
+	printString@@u8(" x");
 	i = 0;
 	for (; i < 16; i = i + 1) {
 		if ((i & 7) == 0) {
-			printChar(32);
+			printChar@u8(32);
 		}
-		printNibble(i);
+		printNibble@u8(i);
 	}
-	printChar(10);
+	printChar@u8(10);
 	i = 32;
 	for (; i < 128; i = i + 1) {
 		if ((i & 15) == 0) {
-			printHex2(i);
+			printHex2@u8(i);
 		}
 		if ((i & 7) == 0) {
-			printChar(32);
+			printChar@u8(32);
 		}
-		printChar(i);
+		printChar@u8(i);
 		if ((i & 15) == 15) {
-			printChar(10);
+			printChar@u8(10);
 		}
 	}
 }

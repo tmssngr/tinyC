@@ -1,24 +1,24 @@
-@printString:
+@printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
 	; 10 pc
-	call length = strlen[str] -> i64
-	call printStringLength[str, length]
-@printString_ret:
+	call length = strlen@@u8[str] -> i64
+	call printStringLength@@u8@i64[str, length]
+@printString@@u8_ret:
 
-@printChar:
+@printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
-	var 2: t.2 (i64/8)
+	var 2: t.2 (u8/1)
 	; 12 pc
 	addrof t.1, chr
 	const t.2, 1
-	call printStringLength[t.1, t.2]
-@printChar_ret:
+	call printStringLength@@u8@u8[t.1, t.2]
+@printChar@u8_ret:
 
-@strlen:
+@strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
@@ -31,7 +31,7 @@
 	var 8: t.8 (i64/8)
 	; 58 pc
 	const length, 0
-	; 37:2 for *str != 0
+	; 61:2 for *str != 0
 @for_1:
 	load t.3, [str]
 	const t.4, 0
@@ -47,10 +47,20 @@
 	cast str(u8*), t.6(i64)
 	jump @for_1
 @for_1_break:
-	; 40:9 return length
+	; 64:9 return length
 	ret length
-	jump @strlen_ret
-@strlen_ret:
+	jump @strlen@@u8_ret
+@strlen@@u8_ret:
+
+@printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	var 2: t.2 (i64/8)
+	; 10 pc
+	cast t.2(i64), length(u8)
+	call printStringLength@@u8@i64[str, t.2]
+@printStringLength@@u8@u8_ret:
 
 @printBoard:
  Local variables
@@ -70,7 +80,7 @@
 	var 13: t.13 (u8*/8)
 	; 84 pc
 	const t.1, 124
-	call printChar[t.1]
+	call printChar@u8[t.1]
 	const i, 0
 	; 11:2 for i < 30
 @for_2:
@@ -87,11 +97,11 @@
 	equals t.4, t.5, t.9
 	branch t.4, false, @if_3_else
 	const t.10, 32
-	call printChar[t.10]
+	call printChar@u8[t.10]
 	jump @if_3_end
 @if_3_else:
 	const t.11, 42
-	call printChar[t.11]
+	call printChar@u8[t.11]
 @if_3_end:
 @for_2_continue:
 	const t.12, 1
@@ -99,7 +109,7 @@
 	jump @for_2
 @for_2_break:
 	const t.13, [string-0]
-	call printString[t.13]
+	call printString@@u8[t.13]
 @printBoard_ret:
 
 @main:
@@ -246,7 +256,7 @@
 @for_5_break:
 @main_ret:
 
-@printStringLength:
+@printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
 	lea     rcx, [hStdOut]

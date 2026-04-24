@@ -20,21 +20,21 @@ start:
         sub rsp, 0x20
           call [ExitProcess]
 
-        ; void printString
+        ; void printString@@u8
         ;   rsp+24: arg str
         ;   rsp+0: var length
-@printString:
+@printString@@u8:
         ; reserve space for local variables
         sub rsp, 16
-        ; call length = strlen[str] -> i64
+        ; call length = strlen@@u8[str] -> i64
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
-          call @strlen
+          call @strlen@@u8
         add rsp, 8
         lea rbx, [rsp+0]
         mov [rbx], rax
-        ; call printStringLength[str, length]
+        ; call printStringLength@@u8@i64[str, length]
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -42,17 +42,17 @@ start:
         mov rbx, [rax]
         push rbx
         sub rsp, 8
-          call @printStringLength
+          call @printStringLength@@u8@i64
         add rsp, 24
         ; release space for local variables
         add rsp, 16
         ret
 
-        ; void printChar
+        ; void printChar@u8
         ;   rsp+24: arg chr
         ;   rsp+0: var t.1
         ;   rsp+8: var t.2
-@printChar:
+@printChar@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; addrof t.1, chr
@@ -60,24 +60,24 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], rax
         ; const t.2, 1
-        mov rax, 1
+        mov al, 1
         lea rbx, [rsp+8]
-        mov [rbx], rax
-        ; call printStringLength[t.1, t.2]
+        mov [rbx], al
+        ; call printStringLength@@u8@u8[t.1, t.2]
         lea rax, [rsp+0]
         mov rbx, [rax]
         push rbx
         lea rax, [rsp+16]
-        mov rbx, [rax]
+        mov bl, [rax]
         push rbx
         sub rsp, 8
-          call @printStringLength
+          call @printStringLength@@u8@u8
         add rsp, 24
         ; release space for local variables
         add rsp, 16
         ret
 
-        ; i64 strlen
+        ; i64 strlen@@u8
         ;   rsp+56: arg str
         ;   rsp+0: var length
         ;   rsp+8: var t.2
@@ -87,14 +87,14 @@ start:
         ;   rsp+24: var t.6
         ;   rsp+32: var t.7
         ;   rsp+40: var t.8
-@strlen:
+@strlen@@u8:
         ; reserve space for local variables
         sub rsp, 48
         ; const length, 0
         mov rax, 0
         lea rbx, [rsp+0]
         mov [rbx], rax
-        ; 37:2 for *str != 0
+        ; 61:2 for *str != 0
         jmp @for_1
 @for_1_body:
         ; const t.5, 1
@@ -161,7 +161,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @for_1_body
-        ; 40:9 return length
+        ; 64:9 return length
         ; ret length
         lea rax, [rsp+0]
         mov rbx, [rax]
@@ -170,14 +170,41 @@ start:
         add rsp, 48
         ret
 
-        ; void printNibble
+        ; void printStringLength@@u8@u8
+        ;   rsp+40: arg str
+        ;   rsp+32: arg length
+        ;   rsp+0: var t.2
+@printStringLength@@u8@u8:
+        ; reserve space for local variables
+        sub rsp, 16
+        ; cast t.2(i64), length(u8)
+        lea rax, [rsp+32]
+        mov bl, [rax]
+        movzx rbx, bl
+        lea rax, [rsp+0]
+        mov [rax], rbx
+        ; call printStringLength@@u8@i64[str, t.2]
+        lea rax, [rsp+40]
+        mov rbx, [rax]
+        push rbx
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        push rbx
+        sub rsp, 8
+          call @printStringLength@@u8@i64
+        add rsp, 24
+        ; release space for local variables
+        add rsp, 16
+        ret
+
+        ; void printNibble@u8
         ;   rsp+24: arg x
         ;   rsp+0: var t.1
         ;   rsp+1: var t.2
         ;   rsp+2: var t.3
         ;   rsp+3: var t.4
         ;   rsp+4: var t.5
-@printNibble:
+@printNibble@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; const t.1, 15
@@ -236,21 +263,21 @@ start:
         add bl, cl
         lea rax, [rsp+24]
         mov [rax], bl
-        ; call printChar[x]
+        ; call printChar@u8[x]
         lea rax, [rsp+24]
         mov bl, [rax]
         push rbx
-          call @printChar
+          call @printChar@u8
         add rsp, 8
         ; release space for local variables
         add rsp, 16
         ret
 
-        ; void printHex2
+        ; void printHex2@u8
         ;   rsp+24: arg x
         ;   rsp+0: var t.1
         ;   rsp+1: var t.2
-@printHex2:
+@printHex2@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; const t.2, 4
@@ -270,17 +297,17 @@ start:
         shr bl, cl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; call printNibble[t.1]
+        ; call printNibble@u8[t.1]
         lea rax, [rsp+0]
         mov bl, [rax]
         push rbx
-          call @printNibble
+          call @printNibble@u8
         add rsp, 8
-        ; call printNibble[x]
+        ; call printNibble@u8[x]
         lea rax, [rsp+24]
         mov bl, [rax]
         push rbx
-          call @printNibble
+          call @printNibble@u8
         add rsp, 8
         ; release space for local variables
         add rsp, 16
@@ -325,11 +352,11 @@ start:
         lea rax, [string_0]
         lea rbx, [rsp+8]
         mov [rbx], rax
-        ; call printString[t.2]
+        ; call printString@@u8[t.2]
         lea rax, [rsp+8]
         mov rbx, [rax]
         push rbx
-          call @printString
+          call @printString@@u8
         add rsp, 8
         ; const i, 0
         mov al, 0
@@ -378,18 +405,18 @@ start:
         mov al, 32
         lea rbx, [rsp+22]
         mov [rbx], al
-        ; call printChar[t.9]
+        ; call printChar@u8[t.9]
         lea rax, [rsp+22]
         mov bl, [rax]
         push rbx
-          call @printChar
+          call @printChar@u8
         add rsp, 8
 @if_4_end:
-        ; call printNibble[i]
+        ; call printNibble@u8[i]
         lea rax, [rsp+0]
         mov bl, [rax]
         push rbx
-          call @printNibble
+          call @printNibble@u8
         add rsp, 8
         ; const t.10, 1
         mov al, 1
@@ -426,11 +453,11 @@ start:
         mov al, 10
         lea rbx, [rsp+24]
         mov [rbx], al
-        ; call printChar[t.11]
+        ; call printChar@u8[t.11]
         lea rax, [rsp+24]
         mov bl, [rax]
         push rbx
-          call @printChar
+          call @printChar@u8
         add rsp, 8
         ; const i, 32
         mov al, 32
@@ -475,11 +502,11 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_6_end
-        ; call printHex2[i]
+        ; call printHex2@u8[i]
         lea rax, [rsp+1]
         mov bl, [rax]
         push rbx
-          call @printHex2
+          call @printHex2@u8
         add rsp, 8
 @if_6_end:
         ; 31:3 if i & 7 == 0
@@ -522,18 +549,18 @@ start:
         mov al, 32
         lea rbx, [rsp+35]
         mov [rbx], al
-        ; call printChar[t.22]
+        ; call printChar@u8[t.22]
         lea rax, [rsp+35]
         mov bl, [rax]
         push rbx
-          call @printChar
+          call @printChar@u8
         add rsp, 8
 @if_7_end:
-        ; call printChar[i]
+        ; call printChar@u8[i]
         lea rax, [rsp+1]
         mov bl, [rax]
         push rbx
-          call @printChar
+          call @printChar@u8
         add rsp, 8
         ; 35:3 if i & 15 == 15
         ; const t.25, 15
@@ -575,11 +602,11 @@ start:
         mov al, 10
         lea rbx, [rsp+40]
         mov [rbx], al
-        ; call printChar[t.27]
+        ; call printChar@u8[t.27]
         lea rax, [rsp+40]
         mov bl, [rax]
         push rbx
-          call @printChar
+          call @printChar@u8
         add rsp, 8
 @for_5_continue:
         ; const t.28, 1
@@ -617,8 +644,8 @@ start:
         add rsp, 48
         ret
 
-        ; void printStringLength
-@printStringLength:
+        ; void printStringLength@@u8@i64
+@printStringLength@@u8@i64:
         mov     rdi, rsp
 
         lea     rcx, [hStdOut]

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.*;
 public final class TypeChecker {
 
 	private final Map<String, Var> nameToGlobalVar = new HashMap<>();
-	private final Map<String, Func> nameToFunc = new HashMap<>();
+	private final Map<String, List<Func>> nameToFunctions = new HashMap<>();
 	private final Map<String, TypeDef> typeDefs = new HashMap<>();
 	private final List<Var> globalVars = new ArrayList<>();
 	private final Map<String, StringLiteral> stringLiteralMap = new HashMap<>();
@@ -104,7 +104,6 @@ public final class TypeChecker {
 	private Function determineDeclarationTypes(Function function) {
 		final String name = function.name();
 		final Location location = function.location();
-		checkNoSymbolNamed(name, location);
 
 		final Type returnType = getType(function.typeString(), location);
 		final List<Function.Parameter> parameters = new ArrayList<>();
@@ -114,8 +113,36 @@ public final class TypeChecker {
 			parameters.add(new Function.Parameter(parameter.typeString(), argType, parameter.name(), parameter.location()));
 			parameterTypes.add(argType);
 		}
-		nameToFunc.put(name, new Func(returnType, parameterTypes, location));
-		return new Function(name, function.typeString(), returnType, parameters, List.of(), function.statements(), function.asmLines(), location);
+
+		final List<Func> funcs = nameToFunctions.computeIfAbsent(name, k -> new ArrayList<>());
+		for (Func func : funcs) {
+			final List<Type> existingFuncParameterTypes = func.parameterTypes;
+			if (existingFuncParameterTypes.equals(parameterTypes)) {
+				throw new SyntaxException(Messages.functionAlreadDeclaredAt(name, func.location), location);
+			}
+		}
+
+		funcs.add(new Func(returnType, parameterTypes, location));
+		final String canonicalName = canonicalFunctionName(name, parameterTypes);
+		return new Function(canonicalName, function.typeString(), returnType, parameters, List.of(), function.statements(), function.asmLines(), location);
+	}
+
+	private String canonicalFunctionName(String name, List<Type> types) {
+		Utils.assertTrue(name.indexOf('@') < 0);
+		final StringBuilder buffer = new StringBuilder();
+		buffer.append(name);
+		for (Type type : types) {
+			buffer.append("@");
+			while (type.isPointer()) {
+				buffer.append("@");
+				type = type.toType();
+				assert type != null;
+			}
+			final String typeString = type.toString();
+			Utils.assertTrue(typeString.indexOf('@') < 0);
+			buffer.append(typeString);
+		}
+		return buffer.toString();
 	}
 
 	@NotNull
@@ -505,26 +532,54 @@ public final class TypeChecker {
 
 	@NotNull
 	private ExprFuncCall processFuncCall(String name, List<Expression> argExpressions, Location location) {
-		final Func function = nameToFunc.get(name);
-		if (function == null) {
-			throw new SyntaxException(Messages.undeclaredFunction(name), location);
-		}
-
-		if (function.parameterTypes().size() != argExpressions.size()) {
-			throw new SyntaxException(Messages.functionNeedsXArgumentsButGotY(name, function.parameterTypes().size(), argExpressions.size()), location);
-		}
-
 		final List<Expression> expressions = new ArrayList<>();
-		final Iterator<Type> parameterTypesIt = function.parameterTypes().iterator();
-		final Iterator<Expression> argExprIt = argExpressions.iterator();
-		while (parameterTypesIt.hasNext()) {
-			final Type expectedType = parameterTypesIt.next();
-			final Expression argExpr = argExprIt.next();
-			Expression expression = processExpression(argExpr);
-			expression = autoCastTo(expectedType, expression, location);
+		final List<Type> argTypes = new ArrayList<>();
+		for (Expression argExpr : argExpressions) {
+			final Expression expression = processExpression(argExpr);
 			expressions.add(expression);
+			argTypes.add(expression.typeNotNull());
 		}
-		return new ExprFuncCall(name, function.returnType(), expressions, location);
+
+		final List<Func> funcs = nameToFunctions.get(name);
+		List<List<Type>> alternatives = List.of();
+		if (funcs == null) {
+			throw new SyntaxException(Messages.undeclaredFunction(name, argTypes, alternatives), location);
+		}
+
+		if (funcs.size() == 1) {
+			final Func func = funcs.getFirst();
+			final List<Type> parameterTypes = func.parameterTypes();
+			if (expressions.size() == parameterTypes.size()) {
+				for (int i = 0; i < expressions.size(); i++) {
+					final Type type = parameterTypes.get(i);
+					final Expression expression = expressions.get(i);
+					if (expression instanceof ExprCast cast) {
+						final Type castType = cast.typeNotNull();
+						if (castType.equals(expression.typeNotNull())) {
+							// todo should later become a warning
+							throw new SyntaxException(Messages.redundantCast(castType), expression.location());
+						}
+					}
+					final Expression castExpression = simpleCast(type, expression, expression.location());
+					expressions.set(i, castExpression);
+				}
+				final String canonicalName = canonicalFunctionName(name, func.parameterTypes);
+				return new ExprFuncCall(canonicalName, func.returnType(), expressions, location);
+			}
+		}
+
+		alternatives = new ArrayList<>();
+		for (Func func : funcs) {
+			if (func.parameterTypes.equals(argTypes)) {
+				Utils.assertTrue(func.parameterTypes().size() == argExpressions.size());
+				final String canonicalName = canonicalFunctionName(name, argTypes);
+				return new ExprFuncCall(canonicalName, func.returnType(), expressions, location);
+			}
+
+			alternatives.add(func.parameterTypes);
+		}
+
+		throw new SyntaxException(Messages.undeclaredFunction(name, argTypes, alternatives), location);
 	}
 
 	@NotNull
@@ -636,21 +691,13 @@ public final class TypeChecker {
 		return new ExprVarAccess(name, var.index, var.scope, var.type, false, location);
 	}
 
-	private void checkNoSymbolNamed(String name, Location location) {
-		final Func existingFunction = nameToFunc.get(name);
-		if (existingFunction != null) {
-			throw new SyntaxException(Messages.functionAlreadDeclaredAt(name, existingFunction.location()), location);
-		}
-		final Var existingVar = nameToGlobalVar.get(name);
-		if (existingVar != null) {
-			throw new SyntaxException(Messages.variableAlreadyDeclaredAt(name, existingVar.location()), location);
-		}
-	}
-
 	@NotNull
 	private Var addVar(@Nullable String varName, Type type, int arraySize, Location location) {
 		if (varName != null) {
-			checkNoSymbolNamed(varName, location);
+			final Var existingVar = nameToGlobalVar.get(varName);
+			if (existingVar != null) {
+				throw new SyntaxException(Messages.variableAlreadyDeclaredAt(varName, existingVar.location()), location);
+			}
 		}
 		if (localVars == null) {
 			return addGlobalVariable(varName, type, arraySize, location);

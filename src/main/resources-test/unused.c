@@ -1,4 +1,4 @@
-void unusedArg(i64 a) {
+void unusedArg(u8 a) {
 }
 
 void main() {

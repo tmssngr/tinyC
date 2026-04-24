@@ -2,6 +2,8 @@ package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
 
+import java.util.*;
+
 import org.jetbrains.annotations.*;
 
 /**
@@ -59,13 +61,18 @@ public class Messages {
 	}
 
 	@NotNull
-	public static String undeclaredFunction(String name) {
-		return "Undeclared function '" + name + "'";
-	}
-
-	@NotNull
-	public static String functionNeedsXArgumentsButGotY(String name, int x, int y) {
-		return "Function '" + name + "' needs " + x + " arguments, but got " + y;
+	public static String undeclaredFunction(String name, List<Type> argTypes, List<List<Type>> alternatives) {
+		final StringBuilder buffer = new StringBuilder();
+		buffer.append("Undeclared function ");
+		functionWithType(name, argTypes, buffer);
+		if (alternatives.size() > 0) {
+			buffer.append(" but found ");
+			for (List<Type> alternative : alternatives) {
+				buffer.append("\n  ");
+				functionWithType(name, alternative, buffer);
+			}
+		}
+		return buffer.toString();
 	}
 
 	@NotNull
@@ -201,5 +208,19 @@ public class Messages {
 	@NotNull
 	public static String redundantCast(Type type) {
 		return "The cast to " + type + " is redundant";
+	}
+
+	private static void functionWithType(String name, List<Type> argTypes, StringBuilder buffer) {
+		buffer.append(name);
+		buffer.append("(");
+		boolean addSeparator = false;
+		for (Type type : argTypes) {
+			if (addSeparator) {
+				buffer.append(", ");
+			}
+			buffer.append(type.toString());
+			addSeparator = true;
+		}
+		buffer.append(")");
 	}
 }

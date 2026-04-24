@@ -7,6 +7,18 @@ void printChar(u8 chr) {
 	printStringLength(&chr, 1);
 }
 
+void printUint(u8 number) {
+	printUint((i64)number);
+}
+
+void printUint(i16 number) {
+	printUint((i64)number);
+}
+
+void printUint(i32 number) {
+	printUint((i64)number);
+}
+
 void printUint(i64 number) {
 	u8 buffer[20];
 	u8 pos = 20;
@@ -21,6 +33,18 @@ void printUint(i64 number) {
 		}
 	}
 	printStringLength(&buffer[pos], 20 - pos);
+}
+
+void printIntLf(bool number) {
+	printIntLf((i64)number);
+}
+
+void printIntLf(u8 number) {
+	printIntLf((i64)number);
+}
+
+void printIntLf(i16 number) {
+	printIntLf((i64)number);
 }
 
 void printIntLf(i64 number) {
@@ -38,6 +62,10 @@ i64 strlen(u8* str) {
 		length = length + 1;
 	}
 	return length;
+}
+
+void printStringLength(u8* str, u8 length) {
+	printStringLength(str, (i64)length);
 }
 
 void printStringLength(u8* str, i64 length) asm {

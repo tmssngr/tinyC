@@ -9,18 +9,18 @@ u8 simple() {
 	return one;
 }
 
-u8 registerHint(u8 a, u8 b) {
+u8 registerHint@u8@u8(u8 a, u8 b) {
 	return a + b;
 }
 
-u8 max(u8 a, u8 b) {
+u8 max@u8@u8(u8 a, u8 b) {
 	if (a < b) {
 		return b;
 	}
 	return a;
 }
 
-i16 fibonacci(u8 i) {
+i16 fibonacci@u8(u8 i) {
 	i16 a;
 	i16 b;
 	i16 c;
@@ -44,7 +44,7 @@ void main() {
 
 	one = simple();
 	two = 2;
-	registerHint(one, two);
-	oneOrTwo = max(one, two);
-	f5 = fibonacci(5);
+	registerHint@u8@u8(one, two);
+	oneOrTwo = max@u8@u8(one, two);
+	f5 = fibonacci@u8(5);
 }

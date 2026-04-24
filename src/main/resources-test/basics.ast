@@ -4,11 +4,15 @@ u8 one;
 u8 two;
 u8 threeFour;
 
-void printChar(u8 chr) {
-	printStringLength(&chr, 1);
+void printChar@u8(u8 chr) {
+	printStringLength@@u8@u8(&chr, 1);
 }
 
-void printUint(i64 number) {
+void printUint@u8(u8 number) {
+	printUint@i64((i64)number);
+}
+
+void printUint@i64(i64 number) {
 	u8* buffer[20];
 	u8 pos;
 	i64 remainder;
@@ -25,14 +29,18 @@ void printUint(i64 number) {
 			break;
 		}
 	}
-	printStringLength(&buffer[(i64)pos], (i64)(20 - pos));
+	printStringLength@@u8@u8(&buffer[(i64)pos], 20 - pos);
 }
 
-void printStringLength(u8* str, i64 length) {
+void printStringLength@@u8@u8(u8* str, u8 length) {
+	printStringLength@@u8@i64(str, (i64)length);
 }
 
-i64 unusedArgs(i16 a, bool b, i64 c, i64 d) {
-	return c;
+void printStringLength@@u8@i64(u8* str, i64 length) {
+}
+
+i64 unusedArgs@u8@bool@u8@u8(u8 a, bool b, u8 c, u8 d) {
+	return (i64)c;
 }
 
 void main() {
@@ -40,12 +48,12 @@ void main() {
 	u8* onePtr;
 	u8* twoPtr;
 
-	c = unusedArgs(1, true, 2, 3);
-	printChar(zero);
+	c = unusedArgs@u8@bool@u8@u8(1, true, 2, 3);
+	printChar@u8(zero);
 	onePtr = &one;
-	printChar(*onePtr);
+	printChar@u8(*onePtr);
 	twoPtr = &two;
-	printChar(twoPtr[0]);
-	printUint((i64)threeFour);
-	printChar(10);
+	printChar@u8(twoPtr[0]);
+	printUint@u8(threeFour);
+	printChar@u8(10);
 }
