@@ -2958,9 +2958,9 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @main_ret
-        ; 233:3 if chr == 57416
-        ; const t.13, 57416
-        mov ax, 57416
+        ; 233:3 if chr == -8120
+        ; const t.13, -8120
+        mov ax, -8120
         lea rbx, [rsp+38]
         mov [rbx], ax
         ; equals t.12, chr, t.13
@@ -2977,9 +2977,9 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @if_44_then
-        ; 237:8 if chr == 57424
-        ; const t.20, 57424
-        mov ax, 57424
+        ; 237:8 if chr == -8112
+        ; const t.20, -8112
+        mov ax, -8112
         lea rbx, [rsp+52]
         mov [rbx], ax
         ; equals t.19, chr, t.20
@@ -3055,9 +3055,9 @@ start:
         mov [rdx], bx
         jmp @while_40
 @if_45_else:
-        ; 241:8 if chr == 57419
-        ; const t.25, 57419
-        mov ax, 57419
+        ; 241:8 if chr == -8117
+        ; const t.25, -8117
+        mov ax, -8117
         lea rbx, [rsp+62]
         mov [rbx], ax
         ; equals t.24, chr, t.25
@@ -3116,9 +3116,9 @@ start:
         mov [rdx], bx
         jmp @while_40
 @if_46_else:
-        ; 245:8 if chr == 57419
-        ; const t.32, 57419
-        mov ax, 57419
+        ; 245:8 if chr == -8117
+        ; const t.32, -8117
+        mov ax, -8117
         lea rbx, [rsp+76]
         mov [rbx], ax
         ; equals t.31, chr, t.32
@@ -3194,9 +3194,9 @@ start:
         mov [rdx], bx
         jmp @while_40
 @if_47_else:
-        ; 249:8 if chr == 57421
-        ; const t.39, 57421
-        mov ax, 57421
+        ; 249:8 if chr == -8115
+        ; const t.39, -8115
+        mov ax, -8115
         lea rbx, [rsp+90]
         mov [rbx], ax
         ; equals t.38, chr, t.39

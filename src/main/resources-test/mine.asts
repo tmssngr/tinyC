@@ -338,23 +338,23 @@ void main() {
 		if (chr == 27) {
 			break;
 		}
-		if (chr == 57416) {
+		if (chr == -8120) {
 			curr_r = ((curr_r + 20) - 1) % 20;
 		}
 		else {
-			if (chr == 57424) {
+			if (chr == -8112) {
 				curr_r = (curr_r + 1) % 20;
 			}
 			else {
-				if (chr == 57419) {
+				if (chr == -8117) {
 					curr_c = ((curr_c + 40) - 1) % 40;
 				}
 				else {
-					if (chr == 57419) {
+					if (chr == -8117) {
 						curr_c = ((curr_c + 40) - 1) % 40;
 					}
 					else {
-						if (chr == 57421) {
+						if (chr == -8115) {
 							curr_c = (curr_c + 1) % 40;
 						}
 						else {
