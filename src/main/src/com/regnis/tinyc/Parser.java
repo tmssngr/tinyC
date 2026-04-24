@@ -613,7 +613,22 @@ public final class Parser {
 	@Nullable
 	private Expression getExpressionPrimary(Location location) {
 		return switch (token) {
-			case INT_LITERAL -> ExprIntLiteral.autoType(consumeIntValue(), location);
+			case INT_LITERAL -> {
+				final String text = getText();
+				final int value = consumeIntValue();
+				if (text.isEmpty()) {
+					yield ExprIntLiteral.autoType(value, location);
+				}
+
+				final Type type = Type.getIntType(text);
+				if (type == null) {
+					throw new SyntaxException(Messages.noValidTypeSuffix(text), location);
+				}
+				if (value < type.min() || value > type.max()) {
+					throw new SyntaxException(Messages.integerLiteralDoesNotFit(value, type), location);
+				}
+				yield new ExprIntLiteral(value, type, location);
+			}
 			case TRUE, FALSE -> {
 				final boolean value = token == TokenType.TRUE;
 				consume();

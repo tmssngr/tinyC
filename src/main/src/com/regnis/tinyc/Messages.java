@@ -29,6 +29,11 @@ public class Messages {
 	}
 
 	@NotNull
+	public static String integerLiteralDoesNotFit(int value, Type type) {
+		return "The number literal " + value + " does not fit into type " + type + " which covers values between " + type.min() + " and " + type.max();
+	}
+
+	@NotNull
 	public static String functionAlreadDeclaredAt(String name, Location location) {
 		return "Function '" + name + "' has already been declared at " + location;
 	}
@@ -186,5 +191,10 @@ public class Messages {
 	@NotNull
 	public static String unclosedIfdef() {
 		return "unclosed #ifdef";
+	}
+
+	@NotNull
+	public static String noValidTypeSuffix(String text) {
+		return "'" + text + "' is no valid type suffix for integer literals";
 	}
 }

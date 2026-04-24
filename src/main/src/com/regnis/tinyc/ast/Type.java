@@ -44,14 +44,25 @@ public record Type(@NotNull String name, @Nullable Type toType, @NotNull Categor
 	}
 
 	@Nullable
-	public static Type getDefaultType(@NotNull String type) {
+	public static Type getIntType(@NotNull String type) {
 		return switch (type) {
-			case "void" -> VOID;
-			case "bool" -> BOOL;
 			case "u8" -> U8;
 			case "i16" -> I16;
 			case "i32" -> I32;
 			case "i64" -> I64;
+			default -> null;
+		};
+	}
+
+	@Nullable
+	public static Type getDefaultType(@NotNull String type) {
+		final Type intType = getIntType(type);
+		if (intType != null) {
+			return intType;
+		}
+		return switch (type) {
+			case "void" -> VOID;
+			case "bool" -> BOOL;
 			default -> null;
 		};
 	}
