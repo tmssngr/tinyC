@@ -39,7 +39,6 @@ public class ArithmeticSimplifierTest {
 
 	@Test
 	public void testCast() {
-		testCase(0, Type.U8, 0, Type.U8);
 		testCase(0, Type.I16, 0, Type.U8);
 		testCase(0, Type.I32, 0, Type.U8);
 		testCase(0, Type.I64, 0, Type.U8);
@@ -48,6 +47,18 @@ public class ArithmeticSimplifierTest {
 		testCase(0, Type.U8, 256, Type.I16);
 		testCase(255, Type.U8, -1, Type.I16);
 		testCase(-15536, Type.I16, 50000, Type.I32);
+
+		final Location loc = loc(2, 3);
+		try {
+			ArithmeticSimplifier.simplify(new ExprCast(Type.U8.toString(),
+			                                           new ExprIntLiteral(0, Type.U8, loc),
+			                                           Type.U8, loc));
+			Assert.fail();
+		}
+		catch (SyntaxException ex) {
+			assertEquals(Messages.redundantCast(Type.U8), ex.getMessage());
+			assertEquals(loc, ex.location);
+		}
 	}
 
 	@Test

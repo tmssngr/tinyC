@@ -276,6 +276,10 @@ public class ArithmeticSimplifier {
 		final Expression expression = simplify(cast.expression());
 		final Type type = cast.typeNotNull();
 		final Location location = cast.location();
+		if (type.equals(expression.typeNotNull())) {
+			// todo should later become a warning
+			throw new SyntaxException(Messages.redundantCast(type), location);
+		}
 		if (expression instanceof ExprIntLiteral literal) {
 			Utils.assertTrue(type.isInt());
 			int value = literal.value();
