@@ -11,7 +11,8 @@ import org.jetbrains.annotations.*;
  */
 public final class TypeChecker {
 
-	private final Map<String, Symbol> globalSymbols = new HashMap<>();
+	private final Map<String, Var> nameToGlobalVar = new HashMap<>();
+	private final Map<String, Func> nameToFunc = new HashMap<>();
 	private final Map<String, TypeDef> typeDefs = new HashMap<>();
 	private final List<Var> globalVars = new ArrayList<>();
 	private final Map<String, StringLiteral> stringLiteralMap = new HashMap<>();
@@ -113,7 +114,7 @@ public final class TypeChecker {
 			parameters.add(new Function.Parameter(parameter.typeString(), argType, parameter.name(), parameter.location()));
 			parameterTypes.add(argType);
 		}
-		globalSymbols.put(name, new Func(returnType, parameterTypes, location));
+		nameToFunc.put(name, new Func(returnType, parameterTypes, location));
 		return new Function(name, function.typeString(), returnType, parameters, List.of(), function.statements(), function.asmLines(), location);
 	}
 
@@ -479,10 +480,11 @@ public final class TypeChecker {
 
 	@NotNull
 	private ExprFuncCall processFuncCall(String name, List<Expression> argExpressions, Location location) {
-		final Symbol symbol = globalSymbols.get(name);
-		if (!(symbol instanceof Func function)) {
+		final Func function = nameToFunc.get(name);
+		if (function == null) {
 			throw new SyntaxException(Messages.undeclaredFunction(name), location);
 		}
+
 		if (function.parameterTypes().size() != argExpressions.size()) {
 			throw new SyntaxException(Messages.functionNeedsXArgumentsButGotY(name, function.parameterTypes().size(), argExpressions.size()), location);
 		}
@@ -610,14 +612,14 @@ public final class TypeChecker {
 	}
 
 	private void checkNoSymbolNamed(String name, Location location) {
-		final Symbol existingSymbol = globalSymbols.get(name);
-		if (existingSymbol instanceof Func) {
-			throw new SyntaxException(Messages.functionAlreadDeclaredAt(name, existingSymbol.location()), location);
+		final Func existingFunction = nameToFunc.get(name);
+		if (existingFunction != null) {
+			throw new SyntaxException(Messages.functionAlreadDeclaredAt(name, existingFunction.location()), location);
 		}
-		if (existingSymbol instanceof Var) {
-			throw new SyntaxException(Messages.variableAlreadyDeclaredAt(name, existingSymbol.location()), location);
+		final Var existingVar = nameToGlobalVar.get(name);
+		if (existingVar != null) {
+			throw new SyntaxException(Messages.variableAlreadyDeclaredAt(name, existingVar.location()), location);
 		}
-		Utils.assertTrue(existingSymbol == null);
 	}
 
 	@NotNull
@@ -636,7 +638,7 @@ public final class TypeChecker {
 	private Var addGlobalVariable(@Nullable String varName, Type type, int arraySize, Location location) {
 		varName = getTempVarName(varName, globalVars);
 		final Var var = new Var(varName, globalVars.size(), VariableScope.global, type, arraySize, location);
-		globalSymbols.put(varName, var);
+		nameToGlobalVar.put(varName, var);
 		globalVars.add(var);
 		return var;
 	}
@@ -649,11 +651,11 @@ public final class TypeChecker {
 				return localVar;
 			}
 		}
-		final Symbol symbol = globalSymbols.get(name);
-		if (symbol instanceof Var var) {
-			return var;
+		final Var globalVar = nameToGlobalVar.get(name);
+		if (globalVar == null) {
+			throw new SyntaxException(Messages.undeclaredVariable(name), location);
 		}
-		throw new SyntaxException(Messages.undeclaredVariable(name), location);
+		return globalVar;
 	}
 
 	@NotNull
@@ -700,12 +702,7 @@ public final class TypeChecker {
 		return globalVariables;
 	}
 
-	public interface Symbol {
-		@NotNull
-		Location location();
-	}
-
-	public record Func(@NotNull Type returnType, @NotNull List<Type> parameterTypes, @NotNull Location location) implements Symbol {
+	public record Func(@NotNull Type returnType, @NotNull List<Type> parameterTypes, @NotNull Location location) {
 		public Func(Type returnType, List<Type> parameterTypes, Location location) {
 			this.returnType = returnType;
 			this.parameterTypes = List.copyOf(parameterTypes);
@@ -713,7 +710,7 @@ public final class TypeChecker {
 		}
 	}
 
-	private static final class Var implements Symbol {
+	private static final class Var {
 		@NotNull private final String name;
 		private final int index;
 		@NotNull private final VariableScope scope;
@@ -733,7 +730,6 @@ public final class TypeChecker {
 			canBeRegister = arraySize == 0;
 		}
 
-		@Override
 		@NotNull
 		public Location location() {
 			return location;
