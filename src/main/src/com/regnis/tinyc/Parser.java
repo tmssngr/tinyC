@@ -105,6 +105,7 @@ public final class Parser {
 			}
 			else if (isConsume(TokenType.TYPEDEF)) {
 				final String typeName = consumeIdentifier();
+				consume(TokenType.STRUCT);
 				consume(TokenType.L_PAREN);
 				final List<TypeDef.Part> parts = new ArrayList<>();
 				do {
