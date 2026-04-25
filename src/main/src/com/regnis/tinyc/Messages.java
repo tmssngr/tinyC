@@ -197,4 +197,9 @@ public class Messages {
 	public static String noValidTypeSuffix(String text) {
 		return "'" + text + "' is no valid type suffix for integer literals";
 	}
+
+	@NotNull
+	public static String redundantCast(Type type) {
+		return "The cast to " + type + " is redundant";
+	}
 }
