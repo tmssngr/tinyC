@@ -1,8 +1,8 @@
 #include "io.h"
 
-typedef Pos (u8 x, u8 y);
+typedef Pos struct (u8 x, u8 y);
 
-typedef ListEntry(u8 value, ListEntry* next);
+typedef ListEntry struct (u8 value, ListEntry* next);
 
 void main() {
 	Pos pos;

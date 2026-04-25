@@ -531,8 +531,8 @@ public class ParserTest {
 	public void testStruct() {
 		assertEquals(new Program(List.of(
 				             new TypeDef("Foo", null, List.of(
-						             new TypeDef.Part("x", "u8", null, loc(0, 13)),
-						             new TypeDef.Part("y", "u8", null, loc(0, 19))
+						             new TypeDef.Part("x", "u8", null, loc(0, 20)),
+						             new TypeDef.Part("y", "u8", null, loc(0, 26))
 				             ), loc(0, 0))
 		             ), List.of(),
 		                         List.of(
@@ -554,7 +554,7 @@ public class ParserTest {
 		                         List.of()
 		             ),
 		             parseProgram("""
-				                          typedef Foo (u8 x, u8 y);
+				                          typedef Foo struct (u8 x, u8 y);
 
 				                          void bla() {
 				                            Foo foos[10];

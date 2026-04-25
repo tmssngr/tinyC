@@ -442,19 +442,19 @@ public class TypeCheckerTest {
 	@Test
 	public void testMemberAccess() {
 		testIllegal(Messages.cantRedefineDefaultTypes(), 0, 0,
-		            "typedef u8 (u8 x);");
-		testIllegal(Messages.memberAlreadyDefinedAt("x", loc(0, 13)), 0, 19,
-		            "typedef Foo (u8 x, u8 x);");
+		            "typedef u8 struct (u8 x);");
+		testIllegal(Messages.memberAlreadyDefinedAt("x", loc(0, 20)), 0, 26,
+		            "typedef Foo struct (u8 x, u8 x);");
 		testIllegal(Messages.typeAlreadyDefined("Foo", loc(0, 0)), 1, 0,
 		            """
-				            typedef Foo (u8 x);
-				            typedef Foo (u8 y);
+				            typedef Foo struct (u8 x);
+				            typedef Foo struct (u8 y);
 				            """);
 		testIllegal(Messages.unknownType("Foo"), 0, 0,
 		            "Foo foo = 1;");
 		testIllegal(Messages.structDoesNotHaveMember("Foo", "y"), 4, 10,
 		            """
-				            typedef Foo (u8 x);
+				            typedef Foo struct (u8 x);
 
 				            void bla() {
 				              Foo foos[10];
@@ -462,8 +462,8 @@ public class TypeCheckerTest {
 				            }""");
 		assertEquals(new Program(List.of(
 				             new TypeDef("Foo", Type.struct("Foo"), List.of(
-						             new TypeDef.Part("x", "u8", Type.U8, loc(0, 13)),
-						             new TypeDef.Part("y", "u8", Type.U8, loc(0, 19))
+						             new TypeDef.Part("x", "u8", Type.U8, loc(0, 20)),
+						             new TypeDef.Part("y", "u8", Type.U8, loc(0, 26))
 				             ), loc(0, 0))
 		             ),
 		                         List.of(),
@@ -490,7 +490,7 @@ public class TypeCheckerTest {
 		                         List.of()
 		             ),
 		             checkType("""
-				                       typedef Foo (u8 x, u8 y);
+				                       typedef Foo struct (u8 x, u8 y);
 
 				                       void bla() {
 				                         Foo foos[10];

@@ -193,6 +193,7 @@ public final class Lexer {
 			case "break" -> TokenType.BREAK;
 			case "continue" -> TokenType.CONTINUE;
 			case "typedef" -> TokenType.TYPEDEF;
+			case "struct" -> TokenType.STRUCT;
 			case "#include" -> TokenType.INCLUDE;
 			case "#ifdef" -> TokenType.IFDEF;
 			case "#end" -> TokenType.END;
