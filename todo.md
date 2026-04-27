@@ -3,6 +3,11 @@
 - structs
 - implement some API already in language (printString, printUint, printChar)
 - ability to define API as ASM which is tunneled through to the ASM output literally
+- function overloading
+  - if overloaded, the arguments needs to match exactly the parameter types
+  - if not overloaded, the arguments are auto-casted
+- register allocation
+- x86_64 calling convention
 
 # Pending features
 - labeled (nested) loops (break/continue with label)
@@ -10,15 +15,13 @@
 	- unions
 - array initialization (size derived from count of expressions), e.g. `u8 s[] = { 1, 2, 3 };`
 - switch statement
-- `++var` and `var++`
+- `++var` or `var++` (maybe only as statements)
 - `+=` and derivates
 - null pointer
 - sizeof
 - static local variables (global variable only visible inside specific method)
 - ternary operator
 - pointer to functions
-- spill registers
-- x86_64 calling convention
 - optimizations
 	- pre-calculate constants, e.g. `foo = 4 * 5 + 1;`
 - nice-to-have features
