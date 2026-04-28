@@ -10,6 +10,20 @@
 - x86_64 calling convention
 
 # Pending features
+- replace compare-IR + branch-IR with compare-branch-IR (might remove a lot boolean temporaries)
+- register allocation:
+  - replace variable access (move) with
+    ```
+    addrof addr, <var>
+    load <value>, addr
+    ```
+    or
+    ```
+    addrof addr, <var>
+    store addr, <value>
+    ```
+- local variable numbering (remove common subexpressions)
+
 - labeled (nested) loops (break/continue with label)
 - composites
 	- unions
