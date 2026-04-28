@@ -70,8 +70,7 @@ public class CfgGeneratorTest {
 
 				new BasicBlock("loop", List.of(
 						new IRCall(cond, Type.BOOL, "getSomething", List.of(), Location.DUMMY),
-						new IRBranch(cond, false, "@no_critical_edge_3", ""),
-						new IRJump("break")
+						new IRBranch(cond, false, "@no_critical_edge_3", "break")
 				), List.of("start", "@no_critical_edge_3"), List.of("@no_critical_edge_3", "break")),
 
 				new BasicBlock("break", List.of(

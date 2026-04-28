@@ -170,7 +170,7 @@ public final class Cfg {
 		final BasicBlock newBlock = new BasicBlock(name, List.of(new IRJump(to)), List.of(from), List.of(to));
 		add(newBlock);
 		final BasicBlock fromBlock = get(from);
-		fromBlock.replaceJump(to, name);
+		fromBlock.replaceJumpTarget(to, name);
 		fromBlock.replaceSuccessor(to, name);
 		get(to).replacePredecessor(from, name);
 	}

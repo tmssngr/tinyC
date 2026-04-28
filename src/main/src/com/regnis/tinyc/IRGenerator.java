@@ -226,11 +226,13 @@ public final class IRGenerator {
 		if (elseStatements.isEmpty()) {
 			write(new IRBranch(conditionVar, false, labelEnd,
 			                   labelThen));
+			writeLabel(labelThen);
 			writeStatements(thenStatements);
 		}
 		else {
 			write(new IRBranch(conditionVar, false, labelElse,
 			                   labelThen));
+			writeLabel(labelThen);
 			writeStatements(thenStatements);
 			write(new IRJump(labelEnd));
 
@@ -254,7 +256,7 @@ public final class IRGenerator {
 		final int labelIndex = nextLabelIndex();
 		final String label = "@" + loopName + "_" + labelIndex;
 		final String bodyLabel = "@" + loopName + "_" + labelIndex + "_body";
-		final String continueLabel = iteration.isEmpty() ? label : "@" + loopName + "_" + labelIndex + "_continue";
+		final String continueLabel = "@" + loopName + "_" + labelIndex + "_continue";
 		final String breakLabel = "@" + loopName + "_" + labelIndex + "_break";
 
 		final Expression condition = loop.condition();
@@ -266,6 +268,7 @@ public final class IRGenerator {
 			final IRVar conditionVar = writeExpression(condition);
 			write(new IRBranch(conditionVar, false, breakLabel,
 			                   bodyLabel));
+			writeLabel(bodyLabel);
 		}
 
 		final BreakContinueLabels prevBreakContinueLabels = this.breakContinueLabels;
@@ -277,10 +280,8 @@ public final class IRGenerator {
 			breakContinueLabels = prevBreakContinueLabels;
 		}
 
-		if (iteration.size() > 0) {
-			writeLabel(continueLabel);
-			writeStatements(iteration);
-		}
+		writeLabel(continueLabel);
+		writeStatements(iteration);
 		write(new IRJump(label));
 
 		writeLabel(breakLabel);
@@ -490,6 +491,7 @@ public final class IRGenerator {
 			writeExpression(var, binary.left());
 			write(new IRBranch(var, false, nextLabel,
 			                   secondLabel));
+			writeLabel(secondLabel);
 			writeExpression(var, binary.right());
 			writeLabel(nextLabel);
 		}
@@ -502,6 +504,7 @@ public final class IRGenerator {
 			writeExpression(var, binary.left());
 			write(new IRBranch(var, true, nextLabel,
 			                   secondLabel));
+			writeLabel(secondLabel);
 			writeExpression(var, binary.right());
 			writeLabel(nextLabel);
 		}

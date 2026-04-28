@@ -114,7 +114,7 @@ public class Compiler {
 			}
 			instructions.addAll(block.instructions());
 		}
-
+		IRFunction.checkInstructions(instructions);
 		return IROptimizer.optimize(instructions);
 	}
 

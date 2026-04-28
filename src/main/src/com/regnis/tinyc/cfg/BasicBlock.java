@@ -26,15 +26,13 @@ public final class BasicBlock {
 	                  @NotNull List<IRInstruction> instructions,
 	                  @NotNull List<String> predecessors,
 	                  @NotNull List<String> successors) {
-		checkInstructions(instructions);
-
 		if (instructions != TEST_DUMMY_INSTRUCTIONS) {
+			checkInstructions(instructions, successors.isEmpty());
 			if (successors.size() == 1) {
 				Utils.assertTrue(instructions.getLast() instanceof IRJump);
 			}
 			else if (successors.size() == 2) {
-				Utils.assertTrue(instructions.get(instructions.size() - 2) instanceof IRBranch);
-				Utils.assertTrue(instructions.getLast() instanceof IRJump);
+				Utils.assertTrue(instructions.getLast() instanceof IRBranch);
 			}
 			else {
 				Utils.assertTrue(successors.isEmpty());
@@ -162,47 +160,44 @@ public final class BasicBlock {
 		printLiveness(getLiveAfter());
 	}
 
-	public void replaceJump(String from, String to) {
-		for (int i = instructions.length - 1; i >= 0; i--) {
-			final IRInstruction instruction = instructions[i];
-			if (instruction instanceof IRJump(String target)) {
-				if (target.equals(from)) {
-					instructions[i] = new IRJump(to);
-				}
+	public void replaceJumpTarget(String from, String to) {
+		final int lastIndex = instructions.length - 1;
+		final IRInstruction instruction = instructions[lastIndex];
+		if (instruction instanceof IRJump(String target)) {
+			if (target.equals(from)) {
+				instructions[lastIndex] = new IRJump(to);
 			}
-			else if (instruction instanceof IRBranch branch) {
-				if (branch.target().equals(from)) {
-					instructions[i] = new IRBranch(branch.conditionVar(), branch.jumpOnTrue(), to, "");
-				}
+		}
+		else if (instruction instanceof IRBranch branch) {
+			final String target = branch.target();
+			final String nextLabel = branch.nextLabel();
+			Utils.assertTrue(!nextLabel.equals(from));
+			if (target.equals(from)) {
+				instructions[lastIndex] = new IRBranch(branch.conditionVar(), branch.jumpOnTrue(), to, nextLabel);
 			}
-			else {
-				break;
-			}
+		}
+		else {
+			throw new IllegalStateException("Unexpected instruction " + instruction);
 		}
 	}
 
-	private void checkInstructions(@NotNull List<IRInstruction> instructions) {
-		boolean mustBeJump = false;
+	private void checkInstructions(@NotNull List<IRInstruction> instructions, boolean isLast) {
+		boolean noFurtherInstructionsAllowed = false;
 		for (IRInstruction instruction : instructions) {
-			if (mustBeJump) {
-				if (!(instruction instanceof IRJump)) {
-					throw new IllegalStateException("expected jump");
-				}
+			if (noFurtherInstructionsAllowed) {
+				throw new IllegalStateException("there must not be anything after branch/jump");
 			}
 
 			if (instruction instanceof IRLabel) {
 				throw new IllegalStateException("labels are not allowed");
 			}
-			if (instruction instanceof IRBranch) {
-				mustBeJump = true;
-			}
-			else if (instruction instanceof IRJump) {
-				Utils.assertTrue(instruction == instructions.getLast());
-				mustBeJump = false;
+
+			if (instruction instanceof IRBranch || instruction instanceof IRJump) {
+				noFurtherInstructionsAllowed = true;
 			}
 		}
-		if (mustBeJump) {
-			throw new IllegalStateException("missing jump");
+		if (!noFurtherInstructionsAllowed && !isLast) {
+			throw new IllegalStateException("did not end with branch/jump");
 		}
 	}
 

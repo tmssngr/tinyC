@@ -20,6 +20,7 @@ public class IROptimizer {
 
 			removeObsoleteLabels(instructions);
 
+			IRFunction.checkInstructions(instructions);
 			if (initialInstructions.equals(instructions)) {
 				return instructions;
 			}
@@ -144,6 +145,7 @@ public class IROptimizer {
 			}
 			else if (instruction instanceof IRBranch branch) {
 				targets.add(branch.target());
+				targets.add(branch.nextLabel());
 			}
 		}
 
