@@ -1,6 +1,7 @@
 package com.regnis.tinyc;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -13,8 +14,12 @@ public class Utils {
 	}
 
 	public static void assertTrue(boolean value, String msg) {
+		assertTrue(value, () -> msg);
+	}
+
+	public static void assertTrue(boolean value, Supplier<String> msgSupplier) {
 		if (!value) {
-			throw new IllegalStateException(msg);
+			throw new IllegalStateException(msgSupplier.get());
 		}
 	}
 
