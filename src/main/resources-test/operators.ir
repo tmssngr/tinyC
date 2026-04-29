@@ -60,6 +60,7 @@
 	; 31:3 if number == 0
 	equals t.12, number, 0
 	branch t.12, false, @if_2_end, @if_2_then
+@if_2_then:
 	jump @while_1_break
 @if_2_end:
 	jump @while_1
@@ -111,6 +112,7 @@
 	; 51:2 if number < 0
 	lt t.1, number, 0
 	branch t.1, false, @if_3_end, @if_3_then
+@if_3_then:
 	const t.2, 45
 	call printChar@u8[t.2]
 	neg number, number
@@ -136,6 +138,7 @@
 	load t.3, [str]
 	notequals t.2, t.3, 0
 	branch t.2, false, @for_4_break, @for_4_body
+@for_4_body:
 	inc length
 @for_4_continue:
 	cast t.5(i64), str(u8*)
@@ -263,24 +266,28 @@
 	; 26:15 logic and
 	move t.25, f
 	branch t.25, false, @and_next_5, @and_2nd_5
+@and_2nd_5:
 	move t.25, f
 @and_next_5:
 	call printIntLf@bool[t.25]
 	; 27:15 logic and
 	move t.26, f
 	branch t.26, false, @and_next_6, @and_2nd_6
+@and_2nd_6:
 	move t.26, t
 @and_next_6:
 	call printIntLf@bool[t.26]
 	; 28:15 logic and
 	move t.27, t
 	branch t.27, false, @and_next_7, @and_2nd_7
+@and_2nd_7:
 	move t.27, f
 @and_next_7:
 	call printIntLf@bool[t.27]
 	; 29:15 logic and
 	move t.28, t
 	branch t.28, false, @and_next_8, @and_2nd_8
+@and_2nd_8:
 	move t.28, t
 @and_next_8:
 	call printIntLf@bool[t.28]
@@ -289,24 +296,28 @@
 	; 31:15 logic or
 	move t.30, f
 	branch t.30, true, @or_next_9, @or_2nd_9
+@or_2nd_9:
 	move t.30, f
 @or_next_9:
 	call printIntLf@bool[t.30]
 	; 32:15 logic or
 	move t.31, f
 	branch t.31, true, @or_next_10, @or_2nd_10
+@or_2nd_10:
 	move t.31, t
 @or_next_10:
 	call printIntLf@bool[t.31]
 	; 33:15 logic or
 	move t.32, t
 	branch t.32, true, @or_next_11, @or_2nd_11
+@or_2nd_11:
 	move t.32, f
 @or_next_11:
 	call printIntLf@bool[t.32]
 	; 34:15 logic or
 	move t.33, t
 	branch t.33, true, @or_next_12, @or_2nd_12
+@or_2nd_12:
 	move t.33, t
 @or_next_12:
 	call printIntLf@bool[t.33]
@@ -329,12 +340,14 @@
 	; 43:20 logic or
 	equals t.40, b, c
 	branch t.40, true, @or_next_13, @or_2nd_13
+@or_2nd_13:
 	lt t.40, c, d
 @or_next_13:
 	call printIntLf@bool[t.40]
 	; 44:20 logic and
 	equals t.41, b, c
 	branch t.41, false, @and_next_14, @and_2nd_14
+@and_2nd_14:
 	lt t.41, c, d
 @and_next_14:
 	call printIntLf@bool[t.41]

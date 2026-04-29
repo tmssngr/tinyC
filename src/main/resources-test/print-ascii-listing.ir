@@ -34,6 +34,7 @@
 	load t.3, [str]
 	notequals t.2, t.3, 0
 	branch t.2, false, @for_1_break, @for_1_body
+@for_1_body:
 	inc length
 @for_1_continue:
 	cast t.5(i64), str(u8*)
@@ -69,6 +70,7 @@
 	; 5:2 if x > 9
 	gt t.2, x, 9
 	branch t.2, false, @if_2_end, @if_2_then
+@if_2_then:
 	add x, 7
 @if_2_end:
 	add x, 48
@@ -121,12 +123,14 @@
 @for_3:
 	lt t.3, i, 16
 	branch t.3, false, @for_3_break, @for_3_body
+@for_3_body:
 	; 20:3 if i & 7 == 0
 	const t.6, 7
 	move t.5, i
 	and t.5, t.5, t.6
 	equals t.4, t.5, 0
 	branch t.4, false, @if_4_end, @if_4_then
+@if_4_then:
 	const t.7, 32
 	call printChar@u8[t.7]
 @if_4_end:
@@ -142,12 +146,14 @@
 @for_5:
 	lt t.9, i, 128
 	branch t.9, false, @for_5_break, @for_5_body
+@for_5_body:
 	; 28:3 if i & 15 == 0
 	const t.12, 15
 	move t.11, i
 	and t.11, t.11, t.12
 	equals t.10, t.11, 0
 	branch t.10, false, @if_6_end, @if_6_then
+@if_6_then:
 	call printHex2@u8[i]
 @if_6_end:
 	; 31:3 if i & 7 == 0
@@ -156,6 +162,7 @@
 	and t.14, t.14, t.15
 	equals t.13, t.14, 0
 	branch t.13, false, @if_7_end, @if_7_then
+@if_7_then:
 	const t.16, 32
 	call printChar@u8[t.16]
 @if_7_end:
@@ -166,6 +173,7 @@
 	and t.18, t.18, t.19
 	equals t.17, t.18, 15
 	branch t.17, false, @if_8_end, @if_8_then
+@if_8_then:
 	const t.20, 10
 	call printChar@u8[t.20]
 @if_8_end:

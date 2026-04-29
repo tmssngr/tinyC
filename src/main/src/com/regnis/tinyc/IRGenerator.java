@@ -226,11 +226,13 @@ public final class IRGenerator {
 		if (elseStatements.isEmpty()) {
 			write(new IRBranch(conditionVar, false, labelEnd,
 			                   labelThen));
+			writeLabel(labelThen);
 			writeStatements(thenStatements);
 		}
 		else {
 			write(new IRBranch(conditionVar, false, labelElse,
 			                   labelThen));
+			writeLabel(labelThen);
 			writeStatements(thenStatements);
 			write(new IRJump(labelEnd));
 
@@ -266,6 +268,7 @@ public final class IRGenerator {
 			final IRVar conditionVar = writeExpression(condition);
 			write(new IRBranch(conditionVar, false, breakLabel,
 			                   bodyLabel));
+			writeLabel(bodyLabel);
 		}
 
 		final BreakContinueLabels prevBreakContinueLabels = this.breakContinueLabels;
@@ -490,6 +493,7 @@ public final class IRGenerator {
 			writeExpression(var, binary.left());
 			write(new IRBranch(var, false, nextLabel,
 			                   secondLabel));
+			writeLabel(secondLabel);
 			writeExpression(var, binary.right());
 			writeLabel(nextLabel);
 		}
@@ -502,6 +506,7 @@ public final class IRGenerator {
 			writeExpression(var, binary.left());
 			write(new IRBranch(var, true, nextLabel,
 			                   secondLabel));
+			writeLabel(secondLabel);
 			writeExpression(var, binary.right());
 			writeLabel(nextLabel);
 		}

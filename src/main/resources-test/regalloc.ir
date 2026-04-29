@@ -35,6 +35,7 @@
 	; 13:2 if a < b
 	lt t.2, a, b
 	branch t.2, false, @if_1_end, @if_1_then
+@if_1_then:
 	; 14:10 return b
 	ret b
 	jump @max@u8@u8_ret
@@ -58,6 +59,7 @@
 @while_2:
 	gt t.4, i, 0
 	branch t.4, false, @while_2_break, @while_2_body
+@while_2_body:
 	dec i
 	move c, a
 	add c, c, b
