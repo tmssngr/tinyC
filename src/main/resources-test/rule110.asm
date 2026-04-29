@@ -142,7 +142,7 @@ start:
         setne bl
         lea rax, [rsp+8]
         mov [rax], bl
-        ; branch t.2, true, @for_1_body
+        ; branch t.2, true, @for_1_body, @for_1_break
         lea rax, [rsp+8]
         mov bl, [rax]
         or bl, bl
@@ -252,7 +252,7 @@ start:
         sete bl
         lea rax, [rsp+3]
         mov [rax], bl
-        ; branch t.3, true, @if_3_then
+        ; branch t.3, true, @if_3_then, @if_3_else
         lea rax, [rsp+3]
         mov bl, [rax]
         or bl, bl
@@ -294,7 +294,7 @@ start:
         setb bl
         lea rax, [rsp+2]
         mov [rax], bl
-        ; branch t.2, true, @for_2_body
+        ; branch t.2, true, @for_2_body, @for_2_break
         lea rax, [rsp+2]
         mov bl, [rax]
         or bl, bl
@@ -415,7 +415,7 @@ start:
         setb bl
         lea rax, [rsp+4]
         mov [rax], bl
-        ; branch t.4, true, @for_4_body
+        ; branch t.4, true, @for_4_body, @for_4_break
         lea rax, [rsp+4]
         mov bl, [rax]
         or bl, bl
@@ -723,7 +723,7 @@ start:
         setb bl
         lea rax, [rsp+128]
         mov [rax], bl
-        ; branch t.24, true, @for_6_body
+        ; branch t.24, true, @for_6_body, @for_6_break
         lea rax, [rsp+128]
         mov bl, [rax]
         or bl, bl
@@ -746,7 +746,7 @@ start:
         setb bl
         lea rax, [rsp+64]
         mov [rax], bl
-        ; branch t.13, true, @for_5_body
+        ; branch t.13, true, @for_5_body, @main_ret
         lea rax, [rsp+64]
         mov bl, [rax]
         or bl, bl

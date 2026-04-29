@@ -33,7 +33,7 @@
 @for_1:
 	load t.3, [str]
 	notequals t.2, t.3, 0
-	branch t.2, false, @for_1_break
+	branch t.2, false, @for_1_break, @for_1_body
 	inc length
 @for_1_continue:
 	cast t.5(i64), str(u8*)
@@ -78,7 +78,7 @@
 	; 11:2 for i < 30
 @for_2:
 	lt t.2, i, 30
-	branch t.2, false, @for_2_break
+	branch t.2, false, @for_2_break, @for_2_body
 	; 12:3 if [...] == 0
 	cast t.6(i64), i(u8)
 	cast t.7(u8*), t.6(i64)
@@ -86,7 +86,7 @@
 	add t.5, t.5, t.7
 	load t.4, [t.5]
 	equals t.3, t.4, 0
-	branch t.3, false, @if_3_else
+	branch t.3, false, @if_3_else, @if_3_then
 	const t.8, 32
 	call printChar@u8[t.8]
 	jump @if_3_end
@@ -153,7 +153,7 @@
 	; 23:2 for i < 30
 @for_4:
 	lt t.4, i, 30
-	branch t.4, false, @for_4_break
+	branch t.4, false, @for_4_break, @for_4_body
 	const t.5, 0
 	cast t.7(i64), i(u8)
 	cast t.8(u8*), t.7(i64)
@@ -175,7 +175,7 @@
 	; 30:2 for i < 28
 @for_5:
 	lt t.13, i, 28
-	branch t.13, false, @for_5_break
+	branch t.13, false, @for_5_break, @for_5_body
 	const t.17, 0
 	cast t.18(u8*), t.17(i64)
 	addrof t.16, [board]
@@ -195,7 +195,7 @@
 	; 32:3 for j < 29
 @for_6:
 	lt t.24, j, 29
-	branch t.24, false, @for_6_break
+	branch t.24, false, @for_6_break, @for_6_body
 	const t.27, 1
 	move t.26, pattern
 	shiftleft t.26, t.26, t.27

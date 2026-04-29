@@ -103,7 +103,7 @@ start:
         setb bl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; branch t.2, true, @if_1_then
+        ; branch t.2, true, @if_1_then, @if_1_end
         lea rax, [rsp+0]
         mov bl, [rax]
         or bl, bl
@@ -182,7 +182,7 @@ start:
         seta bl
         lea rax, [rsp+6]
         mov [rax], bl
-        ; branch t.4, true, @while_2_body
+        ; branch t.4, true, @while_2_body, @while_2_break
         lea rax, [rsp+6]
         mov bl, [rax]
         or bl, bl

@@ -671,7 +671,7 @@ start:
         setb bl
         lea rax, [rsp+8]
         mov [rax], bl
-        ; branch t.3, true, @for_4_body
+        ; branch t.3, true, @for_4_body, @main_ret
         lea rax, [rsp+8]
         mov bl, [rax]
         or bl, bl

@@ -59,7 +59,7 @@
 	store [t.9], digit
 	; 31:3 if number == 0
 	equals t.12, number, 0
-	branch t.12, false, @if_2_end
+	branch t.12, false, @if_2_end, @if_2_then
 	jump @while_1_break
 @if_2_end:
 	jump @while_1
@@ -101,7 +101,7 @@
 	; 26 pc
 	; 51:2 if number < 0
 	lt t.1, number, 0
-	branch t.1, false, @if_3_end
+	branch t.1, false, @if_3_end, @if_3_then
 	const t.2, 45
 	call printChar@u8[t.2]
 	neg number, number
@@ -126,7 +126,7 @@
 @for_4:
 	load t.3, [str]
 	notequals t.2, t.3, 0
-	branch t.2, false, @for_4_break
+	branch t.2, false, @for_4_break, @for_4_body
 	inc length
 @for_4_continue:
 	cast t.5(i64), str(u8*)
@@ -188,7 +188,7 @@
 @for_5:
 	load t.3, [ptr]
 	notequals t.2, t.3, 0
-	branch t.2, false, @for_5_break
+	branch t.2, false, @for_5_break, @for_5_body
 	inc length
 @for_5_continue:
 	cast t.5(i64), ptr(u8*)
