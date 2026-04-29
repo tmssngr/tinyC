@@ -205,7 +205,7 @@ start:
         sete bl
         lea rax, [rsp+88]
         mov [rax], bl
-        ; branch t.12, false, @while_1
+        ; branch t.12, false, @while_1, @while_1_break
         lea rax, [rsp+88]
         mov bl, [rax]
         or bl, bl
@@ -302,7 +302,7 @@ start:
         setl bl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; branch t.1, false, @if_3_end
+        ; branch t.1, false, @if_3_end, @if_3_then
         lea rax, [rsp+0]
         mov bl, [rax]
         or bl, bl

@@ -145,7 +145,7 @@
 	; 27:2 for i < 128
 @for_5:
 	lt t.9, i, 128
-	branch t.9, false, @for_5_break, @for_5_body
+	branch t.9, false, @main_ret, @for_5_body
 @for_5_body:
 	; 28:3 if i & 15 == 0
 	const t.12, 15
@@ -172,15 +172,13 @@
 	move t.18, i
 	and t.18, t.18, t.19
 	equals t.17, t.18, 15
-	branch t.17, false, @if_8_end, @if_8_then
+	branch t.17, false, @for_5_continue, @if_8_then
 @if_8_then:
 	const t.20, 10
 	call printChar@u8[t.20]
-@if_8_end:
 @for_5_continue:
 	inc i
 	jump @for_5
-@for_5_break:
 @main_ret:
 
 @printStringLength@@u8@i64:

@@ -67,6 +67,7 @@ public class Compiler {
 
 		IRProgram irProgram = IRGenerator.convert(program, Type.I64);
 		irProgram = CleanupGlobalUnusedVariables.process(irProgram);
+		irProgram = IROptimizer.branchAndLabelOptimizations(irProgram);
 		write(irProgram, irFile);
 
 		final List<IRFunction> functions = new ArrayList<>();

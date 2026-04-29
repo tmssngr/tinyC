@@ -13,13 +13,13 @@ digraph program {
 	subgraph fn_printUint@i64 {
 		BasicBlock_2_printUinti64 [label="printUinti64",shape=box];
 		BasicBlock_2_printUinti64 -> BasicBlock_2_while_1 [label="(number,pos)"];
-		BasicBlock_2_if_2_end [label="if_2_end",shape=box];
-		BasicBlock_2_if_2_end -> BasicBlock_2_while_1 [label="(number,pos)"];
+		BasicBlock_2_no_critical_edge_4 [label="no_critical_edge_4",shape=box];
+		BasicBlock_2_no_critical_edge_4 -> BasicBlock_2_while_1 [label="(number,pos)"];
 		BasicBlock_2_while_1 [label="while_1",shape=hexagon];
-		BasicBlock_2_while_1 -> BasicBlock_2_if_2_end [label="(number,pos)"];
-		BasicBlock_2_while_1 -> BasicBlock_2_if_2_then [label="(pos)"];
-		BasicBlock_2_if_2_then [label="if_2_then",shape=box];
-		BasicBlock_2_if_2_then -> BasicBlock_2_printUinti64_ret;
+		BasicBlock_2_while_1 -> BasicBlock_2_no_critical_edge_4 [label="(number,pos)"];
+		BasicBlock_2_while_1 -> BasicBlock_2_while_1_break [label="(pos)"];
+		BasicBlock_2_while_1_break [label="while_1_break",shape=box];
+		BasicBlock_2_while_1_break -> BasicBlock_2_printUinti64_ret;
 		BasicBlock_2_printUinti64_ret [label="printUinti64_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printIntLf@bool {

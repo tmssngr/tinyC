@@ -92,11 +92,10 @@
 @if_3_then:
 	const t.8, 32
 	call printChar@u8[t.8]
-	jump @if_3_end
+	jump @for_2_continue
 @if_3_else:
 	const t.9, 42
 	call printChar@u8[t.9]
-@if_3_end:
 @for_2_continue:
 	inc i
 	jump @for_2
@@ -179,7 +178,7 @@
 	; 30:2 for i < 28
 @for_5:
 	lt t.13, i, 28
-	branch t.13, false, @for_5_break, @for_5_body
+	branch t.13, false, @main_ret, @for_5_body
 @for_5_body:
 	const t.17, 0
 	cast t.18(u8*), t.17(i64)
@@ -237,7 +236,6 @@
 @for_5_continue:
 	inc i
 	jump @for_5
-@for_5_break:
 @main_ret:
 
 @printStringLength@@u8@i64:

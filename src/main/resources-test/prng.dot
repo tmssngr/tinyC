@@ -8,13 +8,13 @@ digraph program {
 	subgraph fn_printUint@i64 {
 		BasicBlock_1_printUinti64 [label="printUinti64",shape=box];
 		BasicBlock_1_printUinti64 -> BasicBlock_1_while_1 [label="(number,pos)"];
-		BasicBlock_1_if_2_end [label="if_2_end",shape=box];
-		BasicBlock_1_if_2_end -> BasicBlock_1_while_1 [label="(number,pos)"];
+		BasicBlock_1_no_critical_edge_4 [label="no_critical_edge_4",shape=box];
+		BasicBlock_1_no_critical_edge_4 -> BasicBlock_1_while_1 [label="(number,pos)"];
 		BasicBlock_1_while_1 [label="while_1",shape=hexagon];
-		BasicBlock_1_while_1 -> BasicBlock_1_if_2_end [label="(number,pos)"];
-		BasicBlock_1_while_1 -> BasicBlock_1_if_2_then [label="(pos)"];
-		BasicBlock_1_if_2_then [label="if_2_then",shape=box];
-		BasicBlock_1_if_2_then -> BasicBlock_1_printUinti64_ret;
+		BasicBlock_1_while_1 -> BasicBlock_1_no_critical_edge_4 [label="(number,pos)"];
+		BasicBlock_1_while_1 -> BasicBlock_1_while_1_break [label="(pos)"];
+		BasicBlock_1_while_1_break [label="while_1_break",shape=box];
+		BasicBlock_1_while_1_break -> BasicBlock_1_printUinti64_ret;
 		BasicBlock_1_printUinti64_ret [label="printUinti64_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printIntLf@u8 {
@@ -60,10 +60,8 @@ digraph program {
 		BasicBlock_8_for_4_body [label="for_4_body",shape=box];
 		BasicBlock_8_for_4_body -> BasicBlock_8_for_4 [label="(i)"];
 		BasicBlock_8_for_4 [label="for_4",shape=hexagon];
-		BasicBlock_8_for_4 -> BasicBlock_8_for_4_break;
+		BasicBlock_8_for_4 -> BasicBlock_8_main_ret;
 		BasicBlock_8_for_4 -> BasicBlock_8_for_4_body [label="(i)"];
-		BasicBlock_8_for_4_break [label="for_4_break",shape=box];
-		BasicBlock_8_for_4_break -> BasicBlock_8_main_ret;
 		BasicBlock_8_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 }

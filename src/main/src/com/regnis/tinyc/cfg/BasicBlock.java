@@ -172,7 +172,7 @@ public final class BasicBlock {
 			}
 			else if (instruction instanceof IRBranch branch) {
 				if (branch.target().equals(from)) {
-					instructions[i] = new IRBranch(branch.conditionVar(), branch.jumpOnTrue(), to, "");
+					instructions[i] = new IRBranch(branch.conditionVar(), branch.jumpOnTrue(), to, branch.nextLabel());
 				}
 			}
 			else {

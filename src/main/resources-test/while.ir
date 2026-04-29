@@ -29,7 +29,7 @@
 	var 15: t.15 (u8*/8)
 	var 16: t.16 (u8/1)
 	var 17: t.17 (u8/1)
-	; 124 pc
+	; 122 pc
 	const pos, 20
 	; 25:2 while true
 @while_1:
@@ -50,11 +50,7 @@
 	store [t.9], digit
 	; 31:3 if number == 0
 	equals t.12, number, 0
-	branch t.12, false, @if_2_end, @if_2_then
-@if_2_then:
-	jump @while_1_break
-@if_2_end:
-	jump @while_1
+	branch t.12, false, @while_1, @while_1_break
 @while_1_break:
 	cast t.14(i64), pos(u8)
 	cast t.15(u8*), t.14(i64)
@@ -110,7 +106,7 @@
 	var 0: i (u8/1)
 	var 1: t.1 (bool/1)
 	var 2: t.2 (bool/1)
-	; 40 pc
+	; 35 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const i, 5
@@ -129,19 +125,11 @@
 	inc i
 	; 13:3 if i < 5
 	lt t.2, i, 5
-	branch t.2, false, @if_6_end, @if_6_then
-@if_6_then:
-	jump @while_5
-@if_6_end:
-	jump @while_5_break
-	jump @while_5
+	branch t.2, true, @while_5, @while_5_break
 @while_5_break:
 	; 19:2 while true
 @while_7:
 	; 20:3 return
-	jump @main_ret
-	jump @while_7
-@while_7_break:
 @main_ret:
 
 @printStringLength@@u8@i64:

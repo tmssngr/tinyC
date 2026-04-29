@@ -210,7 +210,7 @@ start:
         seta bl
         lea rax, [rsp+1]
         mov [rax], bl
-        ; branch t.2, false, @if_2_end
+        ; branch t.2, false, @if_2_end, @if_2_then
         lea rax, [rsp+1]
         mov bl, [rax]
         or bl, bl
@@ -347,7 +347,7 @@ start:
         sete bl
         lea rax, [rsp+17]
         mov [rax], bl
-        ; branch t.4, false, @if_4_end
+        ; branch t.4, false, @if_4_end, @if_4_then
         lea rax, [rsp+17]
         mov bl, [rax]
         or bl, bl
@@ -430,7 +430,7 @@ start:
         sete bl
         lea rax, [rsp+23]
         mov [rax], bl
-        ; branch t.10, false, @if_6_end
+        ; branch t.10, false, @if_6_end, @if_6_then
         lea rax, [rsp+23]
         mov bl, [rax]
         or bl, bl
@@ -467,7 +467,7 @@ start:
         sete bl
         lea rax, [rsp+26]
         mov [rax], bl
-        ; branch t.13, false, @if_7_end
+        ; branch t.13, false, @if_7_end, @if_7_then
         lea rax, [rsp+26]
         mov bl, [rax]
         or bl, bl
@@ -514,7 +514,7 @@ start:
         sete bl
         lea rax, [rsp+30]
         mov [rax], bl
-        ; branch t.17, false, @for_5_continue
+        ; branch t.17, false, @for_5_continue, @if_8_then
         lea rax, [rsp+30]
         mov bl, [rax]
         or bl, bl

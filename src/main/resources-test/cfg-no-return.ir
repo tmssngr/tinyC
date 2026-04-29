@@ -7,6 +7,5 @@
 @while_1:
 	inc i
 	jump @while_1
-@while_1_break:
 @main_ret:
 
