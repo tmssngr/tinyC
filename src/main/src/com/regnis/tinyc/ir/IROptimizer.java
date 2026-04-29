@@ -110,7 +110,7 @@ public class IROptimizer {
 				Utils.assertTrue(!skipJump);
 				final String newTarget = getNewTarget(branch.target(), oldToNewTarget);
 				if (newTarget != null) {
-					instruction = new IRBranch(branch.conditionVar(), branch.jumpOnTrue(), newTarget, "");
+					instruction = new IRBranch(branch.conditionVar(), branch.jumpOnTrue(), newTarget, branch.nextLabel());
 				}
 			}
 			default -> Utils.assertTrue(!skipJump);
