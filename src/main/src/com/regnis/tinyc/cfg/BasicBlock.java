@@ -165,8 +165,8 @@ public final class BasicBlock {
 	public void replaceJump(String from, String to) {
 		for (int i = instructions.length - 1; i >= 0; i--) {
 			final IRInstruction instruction = instructions[i];
-			if (instruction instanceof IRJump jump) {
-				if (jump.label().equals(from)) {
+			if (instruction instanceof IRJump(String target)) {
+				if (target.equals(from)) {
 					instructions[i] = new IRJump(to);
 				}
 			}
