@@ -432,7 +432,7 @@ start:
         setl bl
         lea rax, [rsp+4]
         mov [rax], bl
-        ; branch t.2, true, @while_4_body
+        ; branch t.2, true, @while_4_body, @main_ret
         lea rax, [rsp+4]
         mov bl, [rax]
         or bl, bl

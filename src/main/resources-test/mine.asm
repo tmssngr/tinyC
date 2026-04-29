@@ -379,7 +379,7 @@ start:
         setne bl
         lea rax, [rsp+8]
         mov [rax], bl
-        ; branch t.2, true, @for_3_body
+        ; branch t.2, true, @for_3_body, @for_3_break
         lea rax, [rsp+8]
         mov bl, [rax]
         or bl, bl
@@ -1217,7 +1217,7 @@ start:
         setle bl
         lea rax, [rsp+14]
         mov [rax], bl
-        ; branch t.10, true, @for_8_body
+        ; branch t.10, true, @for_8_body, @for_8_break
         lea rax, [rsp+14]
         mov bl, [rax]
         or bl, bl
@@ -1248,7 +1248,7 @@ start:
         setle bl
         lea rax, [rsp+11]
         mov [rax], bl
-        ; branch t.8, true, @for_7_body
+        ; branch t.8, true, @for_7_body, @for_7_break
         lea rax, [rsp+11]
         mov bl, [rax]
         or bl, bl
@@ -1303,7 +1303,7 @@ start:
         sete bl
         lea rax, [rsp+1]
         mov [rax], bl
-        ; branch t.5, true, @if_12_then
+        ; branch t.5, true, @if_12_then, @if_12_end
         lea rax, [rsp+1]
         mov bl, [rax]
         or bl, bl
@@ -1406,7 +1406,7 @@ start:
         add rsp, 8
         lea rbx, [rsp+2]
         mov [rbx], al
-        ; branch t.5, true, @if_14_then
+        ; branch t.5, true, @if_14_then, @if_14_else
         lea rax, [rsp+2]
         mov bl, [rax]
         or bl, bl
@@ -1436,7 +1436,7 @@ start:
         add rsp, 8
         lea rbx, [rsp+3]
         mov [rbx], al
-        ; branch t.6, false, @if_15_else
+        ; branch t.6, false, @if_15_else, @if_15_then
         lea rax, [rsp+3]
         mov bl, [rax]
         or bl, bl
@@ -1475,7 +1475,7 @@ start:
         seta bl
         lea rax, [rsp+4]
         mov [rax], bl
-        ; branch t.7, false, @if_16_else
+        ; branch t.7, false, @if_16_else, @if_16_then
         lea rax, [rsp+4]
         mov bl, [rax]
         or bl, bl
@@ -1660,7 +1660,7 @@ start:
         setl bl
         lea rax, [rsp+17]
         mov [rax], bl
-        ; branch t.12, true, @for_19_body
+        ; branch t.12, true, @for_19_body, @for_19_break
         lea rax, [rsp+17]
         mov bl, [rax]
         or bl, bl
@@ -1729,7 +1729,7 @@ start:
         setl bl
         lea rax, [rsp+12]
         mov [rax], bl
-        ; branch t.9, true, @for_18_body
+        ; branch t.9, true, @for_18_body, @printField@i16@i16_ret
         lea rax, [rsp+12]
         mov bl, [rax]
         or bl, bl
@@ -1785,7 +1785,7 @@ start:
         setg bl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; branch t.1, true, @for_20_body
+        ; branch t.1, true, @for_20_body, @printSpaces@i16_ret
         lea rax, [rsp+0]
         mov bl, [rax]
         or bl, bl
@@ -2020,7 +2020,7 @@ start:
         setl bl
         lea rax, [rsp+10]
         mov [rax], bl
-        ; branch t.6, true, @for_25_body
+        ; branch t.6, true, @for_25_body, @for_25_break
         lea rax, [rsp+10]
         mov bl, [rax]
         or bl, bl
@@ -2051,7 +2051,7 @@ start:
         setl bl
         lea rax, [rsp+7]
         mov [rax], bl
-        ; branch t.4, true, @for_24_body
+        ; branch t.4, true, @for_24_body, @for_24_break
         lea rax, [rsp+7]
         mov bl, [rax]
         or bl, bl
@@ -2196,7 +2196,7 @@ start:
         setl bl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; branch t.1, true, @if_27_then
+        ; branch t.1, true, @if_27_then, @if_27_end
         lea rax, [rsp+0]
         mov bl, [rax]
         or bl, bl
@@ -2293,7 +2293,7 @@ start:
         setl bl
         lea rax, [rsp+8]
         mov [rax], bl
-        ; branch t.4, true, @for_29_body
+        ; branch t.4, true, @for_29_body, @for_29_break
         lea rax, [rsp+8]
         mov bl, [rax]
         or bl, bl
@@ -2324,7 +2324,7 @@ start:
         setl bl
         lea rax, [rsp+4]
         mov [rax], bl
-        ; branch t.2, true, @for_28_body
+        ; branch t.2, true, @for_28_body, @clearField_ret
         lea rax, [rsp+4]
         mov bl, [rax]
         or bl, bl
@@ -2554,7 +2554,7 @@ start:
         setg bl
         lea rax, [rsp+6]
         mov [rax], bl
-        ; branch t.5, true, @for_30_body
+        ; branch t.5, true, @for_30_body, @initField@i16@i16_ret
         lea rax, [rsp+6]
         mov bl, [rax]
         or bl, bl
@@ -2617,7 +2617,7 @@ start:
         setne bl
         lea rax, [rsp+9]
         mov [rax], bl
-        ; branch t.7, true, @maybeRevealAround@i16@i16_ret
+        ; branch t.7, true, @maybeRevealAround@i16@i16_ret, @if_33_end
         lea rax, [rsp+9]
         mov bl, [rax]
         or bl, bl
@@ -2683,7 +2683,7 @@ start:
         lea rax, [rsp+20]
         mov [rax], bl
 @and_next_37:
-        ; branch t.14, true, @for_35_continue
+        ; branch t.14, true, @for_35_continue, @if_36_end
         lea rax, [rsp+20]
         mov bl, [rax]
         or bl, bl
@@ -2721,7 +2721,7 @@ start:
         sete bl
         lea rax, [rsp+26]
         mov [rax], bl
-        ; branch t.17, true, @for_35_continue
+        ; branch t.17, true, @for_35_continue, @if_38_end
         lea rax, [rsp+26]
         mov bl, [rax]
         or bl, bl
@@ -2747,7 +2747,7 @@ start:
         add rsp, 8
         lea rbx, [rsp+28]
         mov [rbx], al
-        ; branch t.19, true, @for_35_continue
+        ; branch t.19, true, @for_35_continue, @if_39_end
         lea rax, [rsp+28]
         mov bl, [rax]
         or bl, bl
@@ -2818,7 +2818,7 @@ start:
         setle bl
         lea rax, [rsp+16]
         mov [rax], bl
-        ; branch t.12, true, @for_35_body
+        ; branch t.12, true, @for_35_body, @for_35_break
         lea rax, [rsp+16]
         mov bl, [rax]
         or bl, bl
@@ -2849,7 +2849,7 @@ start:
         setle bl
         lea rax, [rsp+12]
         mov [rax], bl
-        ; branch t.10, true, @for_34_body
+        ; branch t.10, true, @for_34_body, @maybeRevealAround@i16@i16_ret
         lea rax, [rsp+12]
         mov bl, [rax]
         or bl, bl
@@ -2962,7 +2962,7 @@ start:
         add rsp, 8
         lea rbx, [rsp+17]
         mov [rbx], al
-        ; branch t.8, true, @if_42_then
+        ; branch t.8, true, @if_42_then, @if_41_end
         lea rax, [rsp+17]
         mov bl, [rax]
         or bl, bl
@@ -2988,7 +2988,7 @@ start:
         sete bl
         lea rax, [rsp+32]
         mov [rax], bl
-        ; branch t.10, true, @main_ret
+        ; branch t.10, true, @main_ret, @if_43_end
         lea rax, [rsp+32]
         mov bl, [rax]
         or bl, bl
@@ -3007,7 +3007,7 @@ start:
         sete bl
         lea rax, [rsp+36]
         mov [rax], bl
-        ; branch t.12, true, @if_44_then
+        ; branch t.12, true, @if_44_then, @if_44_else
         lea rax, [rsp+36]
         mov bl, [rax]
         or bl, bl
@@ -3026,7 +3026,7 @@ start:
         sete bl
         lea rax, [rsp+50]
         mov [rax], bl
-        ; branch t.19, false, @if_45_else
+        ; branch t.19, false, @if_45_else, @if_45_then
         lea rax, [rsp+50]
         mov bl, [rax]
         or bl, bl
@@ -3104,7 +3104,7 @@ start:
         sete bl
         lea rax, [rsp+60]
         mov [rax], bl
-        ; branch t.24, false, @if_46_else
+        ; branch t.24, false, @if_46_else, @if_46_then
         lea rax, [rsp+60]
         mov bl, [rax]
         or bl, bl
@@ -3165,7 +3165,7 @@ start:
         sete bl
         lea rax, [rsp+74]
         mov [rax], bl
-        ; branch t.31, false, @if_47_else
+        ; branch t.31, false, @if_47_else, @if_47_then
         lea rax, [rsp+74]
         mov bl, [rax]
         or bl, bl
@@ -3243,7 +3243,7 @@ start:
         sete bl
         lea rax, [rsp+88]
         mov [rax], bl
-        ; branch t.38, false, @if_48_else
+        ; branch t.38, false, @if_48_else, @if_48_then
         lea rax, [rsp+88]
         mov bl, [rax]
         or bl, bl
@@ -3321,7 +3321,7 @@ start:
         sete bl
         lea rax, [rsp+98]
         mov [rax], bl
-        ; branch t.43, false, @if_49_else
+        ; branch t.43, false, @if_49_else, @if_49_then
         lea rax, [rsp+98]
         mov bl, [rax]
         or bl, bl
@@ -3560,7 +3560,7 @@ start:
         add rsp, 8
         lea rbx, [rsp+114]
         mov [rbx], al
-        ; branch t.55, true, @if_55_then
+        ; branch t.55, true, @if_55_then, @if_55_end
         lea rax, [rsp+114]
         mov bl, [rax]
         or bl, bl

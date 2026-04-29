@@ -54,7 +54,7 @@
 	; 31:3 if number == 0
 	const t.14, 0
 	equals t.13, number, t.14
-	branch t.13, false, @if_2_end
+	branch t.13, false, @if_2_end, @if_2_then
 	jump @while_1_break
 @if_2_end:
 	jump @while_1
@@ -89,7 +89,7 @@
 	; 51:2 if number < 0
 	const t.2, 0
 	lt t.1, number, t.2
-	branch t.1, false, @if_3_end
+	branch t.1, false, @if_3_end, @if_3_then
 	const t.3, 45
 	call printChar@u8[t.3]
 	neg number, number
@@ -126,7 +126,7 @@
 @while_4:
 	const t.2, 0
 	gt t.1, i, t.2
-	branch t.1, false, @while_4_break
+	branch t.1, false, @while_4_break, @while_4_body
 	call printIntLf@u8[i]
 	const t.3, 1
 	sub i, i, t.3
@@ -140,7 +140,7 @@
 	; 13:3 if i < 5
 	const t.6, 5
 	lt t.5, i, t.6
-	branch t.5, false, @if_6_end
+	branch t.5, false, @if_6_end, @if_6_then
 	jump @while_5
 @if_6_end:
 	jump @while_5_break

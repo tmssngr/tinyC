@@ -391,7 +391,7 @@ start:
         setg bl
         lea rax, [rsp+2]
         mov [rax], bl
-        ; branch t.1, true, @if_4_then
+        ; branch t.1, true, @if_4_then, @if_4_else
         lea rax, [rsp+2]
         mov bl, [rax]
         or bl, bl

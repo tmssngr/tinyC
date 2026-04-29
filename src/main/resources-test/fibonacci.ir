@@ -54,7 +54,7 @@
 	; 31:3 if number == 0
 	const t.14, 0
 	equals t.13, number, t.14
-	branch t.13, false, @if_2_end
+	branch t.13, false, @if_2_end, @if_2_then
 	jump @while_1_break
 @if_2_end:
 	jump @while_1
@@ -89,7 +89,7 @@
 	; 51:2 if number < 0
 	const t.2, 0
 	lt t.1, number, t.2
-	branch t.1, false, @if_3_end
+	branch t.1, false, @if_3_end, @if_3_then
 	const t.3, 45
 	call printChar@u8[t.3]
 	neg number, number
@@ -125,7 +125,7 @@
 @while_4:
 	const t.3, 1000
 	lt t.2, b, t.3
-	branch t.2, false, @while_4_break
+	branch t.2, false, @while_4_break, @while_4_body
 	add b, b, a
 	move t.4, b
 	sub t.4, t.4, a

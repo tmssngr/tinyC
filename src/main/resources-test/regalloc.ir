@@ -34,7 +34,7 @@
 	; 18 pc
 	; 13:2 if a < b
 	lt t.2, a, b
-	branch t.2, false, @if_1_end
+	branch t.2, false, @if_1_end, @if_1_then
 	; 14:10 return b
 	ret b
 	jump @max@u8@u8_ret
@@ -60,7 +60,7 @@
 @while_2:
 	const t.5, 0
 	gt t.4, i, t.5
-	branch t.4, false, @while_2_break
+	branch t.4, false, @while_2_break, @while_2_body
 	const t.6, 1
 	sub i, i, t.6
 	move c, a

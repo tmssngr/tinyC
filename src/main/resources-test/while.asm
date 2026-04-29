@@ -416,7 +416,7 @@ start:
         seta bl
         lea rax, [rsp+1]
         mov [rax], bl
-        ; branch t.1, true, @while_4_body
+        ; branch t.1, true, @while_4_body, @while_5
         lea rax, [rsp+1]
         mov bl, [rax]
         or bl, bl
@@ -454,7 +454,7 @@ start:
         setb bl
         lea rax, [rsp+5]
         mov [rax], bl
-        ; branch t.5, true, @while_5
+        ; branch t.5, true, @while_5, @main_ret
         lea rax, [rsp+5]
         mov bl, [rax]
         or bl, bl

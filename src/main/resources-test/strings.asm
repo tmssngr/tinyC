@@ -466,7 +466,7 @@ start:
         setne bl
         lea rax, [rsp+8]
         mov [rax], bl
-        ; branch t.2, true, @for_4_body
+        ; branch t.2, true, @for_4_body, @for_4_break
         lea rax, [rsp+8]
         mov bl, [rax]
         or bl, bl
@@ -659,7 +659,7 @@ start:
         setne bl
         lea rax, [rsp+16]
         mov [rax], bl
-        ; branch t.2, true, @for_5_body
+        ; branch t.2, true, @for_5_body, @for_5_break
         lea rax, [rsp+16]
         mov bl, [rax]
         or bl, bl
