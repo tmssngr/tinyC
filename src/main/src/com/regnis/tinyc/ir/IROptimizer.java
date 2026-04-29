@@ -32,9 +32,9 @@ public class IROptimizer {
 		new Peephole2Optimization<>(instructions) {
 			@Override
 			protected void handle(IRInstruction item1, IRInstruction item2) {
-				if (item1 instanceof IRJump jump
-				    && item2 instanceof IRLabel label
-				    && Objects.equals(jump.label(), label.label())) {
+				if (item1 instanceof IRJump(String jumpTarget)
+				    && item2 instanceof IRLabel(String label)
+				    && Objects.equals(jumpTarget, label)) {
 					remove();
 				}
 			}
@@ -46,12 +46,12 @@ public class IROptimizer {
 			@Override
 			protected void handle(IRInstruction item1, IRInstruction item2, IRInstruction item3) {
 				if (item1 instanceof IRBranch branch
-				    && item2 instanceof IRJump jump
-				    && item3 instanceof IRLabel label
-				    && Objects.equals(branch.target(), label.label())) {
+				    && item2 instanceof IRJump(String jumpTarget)
+				    && item3 instanceof IRLabel(String label)
+				    && Objects.equals(branch.target(), label)) {
 					remove();
 					remove();
-					insert(new IRBranch(branch.conditionVar(), !branch.jumpOnTrue(), jump.label(), branch.target()));
+					insert(new IRBranch(branch.conditionVar(), !branch.jumpOnTrue(), jumpTarget, branch.target()));
 				}
 			}
 		}.process();
@@ -63,17 +63,17 @@ public class IROptimizer {
 		new Peephole2Optimization<>(instructions) {
 			@Override
 			protected void handle(IRInstruction item1, IRInstruction item2) {
-				if (item1 instanceof IRLabel label
-				    && item2 instanceof IRJump jump) {
-					final String prev = oldToNewTarget.put(label.label(), jump.label());
+				if (item1 instanceof IRLabel(String label)
+				    && item2 instanceof IRJump(String jumpTarget)) {
+					final String prev = oldToNewTarget.put(label, jumpTarget);
 					Utils.assertTrue(prev == null);
-					obsoleteLabels.add(label.label());
+					obsoleteLabels.add(label);
 				}
-				else if (item1 instanceof IRLabel label1
-				         && item2 instanceof IRLabel label2) {
-					final String prev = oldToNewTarget.put(label1.label(), label2.label());
+				else if (item1 instanceof IRLabel(String label1)
+				         && item2 instanceof IRLabel(String label2)) {
+					final String prev = oldToNewTarget.put(label1, label2);
 					Utils.assertTrue(prev == null);
-					obsoleteLabels.add(label1.label());
+					obsoleteLabels.add(label1);
 				}
 			}
 		}.process();
@@ -86,21 +86,21 @@ public class IROptimizer {
 		boolean skipJump = false;
 		for (IRInstruction instruction : instructions) {
 			switch (instruction) {
-			case IRLabel label -> {
-				if (obsoleteLabels.contains(label.label())) {
+			case IRLabel(String label) -> {
+				if (obsoleteLabels.contains(label)) {
 					skipJump = true;
 					continue;
 				}
 
 				skipJump = false;
 			}
-			case IRJump jump -> {
+			case IRJump(String target) -> {
 				if (skipJump) {
 					skipJump = false;
 					continue;
 				}
 
-				final String newTarget = getNewTarget(jump.label(), oldToNewTarget);
+				final String newTarget = getNewTarget(target, oldToNewTarget);
 				if (newTarget != null) {
 					instruction = new IRJump(newTarget);
 				}
@@ -139,8 +139,8 @@ public class IROptimizer {
 	private static void removeObsoleteLabels(List<IRInstruction> instructions) {
 		final Set<String> targets = new HashSet<>();
 		for (IRInstruction instruction : instructions) {
-			if (instruction instanceof IRJump jump) {
-				targets.add(jump.label());
+			if (instruction instanceof IRJump(String jumpTarget)) {
+				targets.add(jumpTarget);
 			}
 			else if (instruction instanceof IRBranch branch) {
 				targets.add(branch.target());
@@ -149,8 +149,8 @@ public class IROptimizer {
 
 		for (final Iterator<IRInstruction> it = instructions.iterator(); it.hasNext(); ) {
 			final IRInstruction instruction = it.next();
-			if (instruction instanceof IRLabel label) {
-				if (!targets.contains(label.label())) {
+			if (instruction instanceof IRLabel(String label)) {
+				if (!targets.contains(label)) {
 					it.remove();
 				}
 			}
