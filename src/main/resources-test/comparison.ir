@@ -40,7 +40,7 @@
 	var 17: t.17 (u8*/8)
 	var 18: t.18 (u8/1)
 	var 19: t.19 (u8/1)
-	; 132 pc
+	; 130 pc
 	const pos, 20
 	; 25:2 while true
 @while_1:
@@ -63,11 +63,7 @@
 	; 31:3 if number == 0
 	const t.14, 0
 	equals t.13, number, t.14
-	branch t.13, false, @if_2_end, @if_2_then
-@if_2_then:
-	jump @while_1_break
-@if_2_end:
-	jump @while_1
+	branch t.13, false, @while_1, @while_1_break
 @while_1_break:
 	cast t.16(i64), pos(u8)
 	cast t.17(u8*), t.16(i64)

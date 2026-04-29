@@ -34,11 +34,9 @@ digraph program {
 		BasicBlock_4_for_2_body -> BasicBlock_4_if_3_else [label="(i)"];
 		BasicBlock_4_for_2_body -> BasicBlock_4_if_3_then [label="(i)"];
 		BasicBlock_4_if_3_else [label="if_3_else",shape=box];
-		BasicBlock_4_if_3_else -> BasicBlock_4_if_3_end [label="(i)"];
+		BasicBlock_4_if_3_else -> BasicBlock_4_for_2_continue [label="(i)"];
 		BasicBlock_4_if_3_then [label="if_3_then",shape=box];
-		BasicBlock_4_if_3_then -> BasicBlock_4_if_3_end [label="(i)"];
-		BasicBlock_4_if_3_end [label="if_3_end",shape=box];
-		BasicBlock_4_if_3_end -> BasicBlock_4_for_2_continue [label="(i)"];
+		BasicBlock_4_if_3_then -> BasicBlock_4_for_2_continue [label="(i)"];
 		BasicBlock_4_for_2_continue [label="for_2_continue",shape=box];
 		BasicBlock_4_for_2_continue -> BasicBlock_4_for_2 [label="(i)"];
 		BasicBlock_4_for_2 [label="for_2",shape=hexagon];
@@ -68,10 +66,8 @@ digraph program {
 		BasicBlock_5_for_6_break [label="for_6_break",shape=box];
 		BasicBlock_5_for_6_break -> BasicBlock_5_for_5 [label="(i)"];
 		BasicBlock_5_for_5 [label="for_5",shape=hexagon];
-		BasicBlock_5_for_5 -> BasicBlock_5_for_5_break;
+		BasicBlock_5_for_5 -> BasicBlock_5_main_ret;
 		BasicBlock_5_for_5 -> BasicBlock_5_for_5_body [label="(i)"];
-		BasicBlock_5_for_5_break [label="for_5_break",shape=box];
-		BasicBlock_5_for_5_break -> BasicBlock_5_main_ret;
 		BasicBlock_5_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 }

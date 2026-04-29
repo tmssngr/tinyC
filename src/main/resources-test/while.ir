@@ -31,7 +31,7 @@
 	var 17: t.17 (u8*/8)
 	var 18: t.18 (u8/1)
 	var 19: t.19 (u8/1)
-	; 132 pc
+	; 130 pc
 	const pos, 20
 	; 25:2 while true
 @while_1:
@@ -54,11 +54,7 @@
 	; 31:3 if number == 0
 	const t.14, 0
 	equals t.13, number, t.14
-	branch t.13, false, @if_2_end, @if_2_then
-@if_2_then:
-	jump @while_1_break
-@if_2_end:
-	jump @while_1
+	branch t.13, false, @while_1, @while_1_break
 @while_1_break:
 	cast t.16(i64), pos(u8)
 	cast t.17(u8*), t.16(i64)
@@ -120,7 +116,7 @@
 	var 4: t.4 (u8/1)
 	var 5: t.5 (bool/1)
 	var 6: t.6 (u8/1)
-	; 56 pc
+	; 51 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const i, 5
@@ -143,19 +139,11 @@
 	; 13:3 if i < 5
 	const t.6, 5
 	lt t.5, i, t.6
-	branch t.5, false, @if_6_end, @if_6_then
-@if_6_then:
-	jump @while_5
-@if_6_end:
-	jump @while_5_break
-	jump @while_5
+	branch t.5, true, @while_5, @while_5_break
 @while_5_break:
 	; 19:2 while true
 @while_7:
 	; 20:3 return
-	jump @main_ret
-	jump @while_7
-@while_7_break:
 @main_ret:
 
 @printStringLength@@u8@i64:

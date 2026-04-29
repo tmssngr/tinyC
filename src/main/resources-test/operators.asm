@@ -219,7 +219,7 @@ start:
         sete bl
         lea rax, [rsp+88]
         mov [rax], bl
-        ; branch t.13, false, @while_1
+        ; branch t.13, false, @while_1, @while_1_break
         lea rax, [rsp+88]
         mov bl, [rax]
         or bl, bl
@@ -367,7 +367,7 @@ start:
         setl bl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; branch t.1, false, @if_3_end
+        ; branch t.1, false, @if_3_end, @if_3_then
         lea rax, [rsp+0]
         mov bl, [rax]
         or bl, bl
@@ -878,7 +878,7 @@ start:
         mov bl, [rax]
         lea rax, [rsp+72]
         mov [rax], bl
-        ; branch t.25, false, @and_next_5
+        ; branch t.25, false, @and_next_5, @and_2nd_5
         lea rax, [rsp+72]
         mov bl, [rax]
         or bl, bl
@@ -901,7 +901,7 @@ start:
         mov bl, [rax]
         lea rax, [rsp+73]
         mov [rax], bl
-        ; branch t.26, false, @and_next_6
+        ; branch t.26, false, @and_next_6, @and_2nd_6
         lea rax, [rsp+73]
         mov bl, [rax]
         or bl, bl
@@ -924,7 +924,7 @@ start:
         mov bl, [rax]
         lea rax, [rsp+74]
         mov [rax], bl
-        ; branch t.27, false, @and_next_7
+        ; branch t.27, false, @and_next_7, @and_2nd_7
         lea rax, [rsp+74]
         mov bl, [rax]
         or bl, bl
@@ -947,7 +947,7 @@ start:
         mov bl, [rax]
         lea rax, [rsp+75]
         mov [rax], bl
-        ; branch t.28, false, @and_next_8
+        ; branch t.28, false, @and_next_8, @and_2nd_8
         lea rax, [rsp+75]
         mov bl, [rax]
         or bl, bl
@@ -980,7 +980,7 @@ start:
         mov bl, [rax]
         lea rax, [rsp+88]
         mov [rax], bl
-        ; branch t.30, true, @or_next_9
+        ; branch t.30, true, @or_next_9, @or_2nd_9
         lea rax, [rsp+88]
         mov bl, [rax]
         or bl, bl
@@ -1003,7 +1003,7 @@ start:
         mov bl, [rax]
         lea rax, [rsp+89]
         mov [rax], bl
-        ; branch t.31, true, @or_next_10
+        ; branch t.31, true, @or_next_10, @or_2nd_10
         lea rax, [rsp+89]
         mov bl, [rax]
         or bl, bl
@@ -1026,7 +1026,7 @@ start:
         mov bl, [rax]
         lea rax, [rsp+90]
         mov [rax], bl
-        ; branch t.32, true, @or_next_11
+        ; branch t.32, true, @or_next_11, @or_2nd_11
         lea rax, [rsp+90]
         mov bl, [rax]
         or bl, bl
@@ -1049,7 +1049,7 @@ start:
         mov bl, [rax]
         lea rax, [rsp+91]
         mov [rax], bl
-        ; branch t.33, true, @or_next_12
+        ; branch t.33, true, @or_next_12, @or_2nd_12
         lea rax, [rsp+91]
         mov bl, [rax]
         or bl, bl
@@ -1166,7 +1166,7 @@ start:
         sete bl
         lea rax, [rsp+122]
         mov [rax], bl
-        ; branch t.40, true, @or_next_13
+        ; branch t.40, true, @or_next_13, @or_2nd_13
         lea rax, [rsp+122]
         mov bl, [rax]
         or bl, bl
@@ -1197,7 +1197,7 @@ start:
         sete bl
         lea rax, [rsp+123]
         mov [rax], bl
-        ; branch t.41, false, @and_next_14
+        ; branch t.41, false, @and_next_14, @and_2nd_14
         lea rax, [rsp+123]
         mov bl, [rax]
         or bl, bl

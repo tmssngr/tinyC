@@ -213,7 +213,7 @@ start:
         sete bl
         lea rax, [rsp+88]
         mov [rax], bl
-        ; branch t.13, false, @while_1
+        ; branch t.13, false, @while_1, @while_1_break
         lea rax, [rsp+88]
         mov bl, [rax]
         or bl, bl
