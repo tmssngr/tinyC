@@ -25,18 +25,18 @@ public class LSPreprocessorTest {
 		final IRVar arg03 = new IRVar("arg.0.3", 5, VariableScope.function, Type.I16);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
-		final var result = LSPreprocessor.process(new IRFunction("name", "label", Type.BOOL,
-		                                                         new IRVarInfos(List.of(
-				                                                         new IRVarDef(a, 2),
-				                                                         new IRVarDef(b, 2),
-				                                                         new IRVarDef(c, 2),
-				                                                         new IRVarDef(d, 2)
-		                                                         ), Set.of(), globalVarInfos),
-		                                                         List.of(
-				                                                         new IRBinary(d, IRBinary.Op.Add, a, b, Location.DUMMY),
-				                                                         new IRCall(c, Type.I16, "sub", List.of(d, c, b, a), Location.DUMMY),
-				                                                         new IRRetValue(c, Location.DUMMY)
-		                                                         )), callingConventionProvider, false);
+		final var result = LSPreprocessor.process(
+				List.of(
+						new IRBinary(d, IRBinary.Op.Add, a, b, Location.DUMMY),
+						new IRCall(c, Type.I16, "sub", List.of(d, c, b, a), Location.DUMMY),
+						new IRRetValue(c, Location.DUMMY)
+				), new IRVarInfos(List.of(
+						new IRVarDef(a, 2),
+						new IRVarDef(b, 2),
+						new IRVarDef(c, 2),
+						new IRVarDef(d, 2)
+				), Set.of(), globalVarInfos),
+				Type.BOOL, callingConventionProvider, false);
 		assertEquals(List.of(
 				new IRMove(a, a.asRegister(1), Location.DUMMY),
 				new IRMove(b, b.asRegister(2), Location.DUMMY),
@@ -73,17 +73,18 @@ public class LSPreprocessorTest {
 		), Set.of(), globalVarInfos);
 
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final var result = LSPreprocessor.process(new IRFunction("name", "label", Type.VOID, localVarInfos,
-		                                                         List.of(
-				                                                         new IRLiteral(varA, 1, Location.DUMMY),
-				                                                         new IRAddrOf(varAddrA, varA, Location.DUMMY),
-				                                                         new IRLiteral(varA, 2, Location.DUMMY),
-				                                                         new IRLiteral(varB, 3, Location.DUMMY),
-				                                                         new IRMemStore(varAddrA, varB, Location.DUMMY),
-				                                                         new IRLiteral(varA, 4, Location.DUMMY),
-				                                                         new IRJump("label"),
-				                                                         new IRLabel("label")
-		                                                         )), callingConventionProvider, false);
+		final var result = LSPreprocessor.process(
+				List.of(
+						new IRLiteral(varA, 1, Location.DUMMY),
+						new IRAddrOf(varAddrA, varA, Location.DUMMY),
+						new IRLiteral(varA, 2, Location.DUMMY),
+						new IRLiteral(varB, 3, Location.DUMMY),
+						new IRMemStore(varAddrA, varB, Location.DUMMY),
+						new IRLiteral(varA, 4, Location.DUMMY),
+						new IRJump("label"),
+						new IRLabel("label")
+				),
+				localVarInfos, Type.VOID, callingConventionProvider, false);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varTempA, 1, Location.DUMMY),
 				new IRAddrOf(varAddrA, varA, Location.DUMMY),
@@ -112,20 +113,20 @@ public class LSPreprocessorTest {
 		final IRVar varTmpChr = new IRVar("tmp.chr", 3, VariableScope.function, Type.U8);
 
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(varChr), null);
-		final IRVarInfos localVarInfos = new IRVarInfos(List.of(
-				new IRVarDef(varChr, 1),
-				new IRVarDef(varT1, 8),
-				new IRVarDef(varT2, 8)
-		), Set.of(varChr), globalVarInfos);
 
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final var result = LSPreprocessor.process(new IRFunction("printChar", "@printChar", Type.VOID, localVarInfos,
-		                                                         List.of(
-				                                                         new IRAddrOf(varT1, varChr, Location.DUMMY),
-				                                                         new IRLiteral(varT2, 1, Location.DUMMY),
-																		 new IRCall(null, Type.VOID, "printStringLength", List.of(varT1, varT2), Location.DUMMY),
-				                                                         new IRLabel("@printChar_ret")
-		                                                         )), callingConventionProvider, false);
+		final var result = LSPreprocessor.process(
+				List.of(
+						new IRAddrOf(varT1, varChr, Location.DUMMY),
+						new IRLiteral(varT2, 1, Location.DUMMY),
+						new IRCall(null, Type.VOID, "printStringLength", List.of(varT1, varT2), Location.DUMMY),
+						new IRLabel("@printChar_ret")
+				), new IRVarInfos(List.of(
+						new IRVarDef(varChr, 1),
+						new IRVarDef(varT1, 8),
+						new IRVarDef(varT2, 8)
+				), Set.of(varChr), globalVarInfos),
+				Type.VOID, callingConventionProvider, false);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRMove(varTmpChr, varChr.asRegister(1), Location.DUMMY),
 				new IRAddrOf(varT1, varChr, Location.DUMMY),

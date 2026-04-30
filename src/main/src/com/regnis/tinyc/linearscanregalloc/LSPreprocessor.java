@@ -15,24 +15,23 @@ import org.jetbrains.annotations.*;
 public final class LSPreprocessor {
 
 	@NotNull
-	public static Result process(@NotNull IRFunction function, @NotNull LSCallingConventionProvider callingConventionProvider, boolean isX86) {
-		final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(function.returnType(), function.varInfos().getArgumentTypes());
+	public static Result process(List<IRInstruction> instructions, IRVarInfos varInfos, Type returnType, @NotNull LSCallingConventionProvider callingConventionProvider, boolean isX86) {
+		final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(returnType, varInfos.getArgumentTypes());
 
-		final LSTempRegisterVars tempRegisterVars = new LSTempRegisterVars(function.varInfos());
+		final LSTempRegisterVars tempRegisterVars = new LSTempRegisterVars(varInfos);
 
 		final var resultLayer = new LSPreprocessorResultLayer();
-		LSPreprocessorLayer nextLayer = new LSPreprocessorCallingConventionLayer(function.varInfos(), tempRegisterVars, callingConventionProvider, resultLayer);
+		LSPreprocessorLayer nextLayer = new LSPreprocessorCallingConventionLayer(varInfos, tempRegisterVars, callingConventionProvider, resultLayer);
 		if (isX86) {
 			nextLayer = new LSPreprocessorX86OperationsLayer(nextLayer);
 		}
-		final var globalVarPreprocessor = new LSPreprocessorCachedVarLayer(function.varInfos(), tempRegisterVars, nextLayer);
+		final var globalVarPreprocessor = new LSPreprocessorCachedVarLayer(varInfos, tempRegisterVars, nextLayer);
 
-		final List<IRInstruction> instructions = function.instructions();
-		storeRegisterArgsInVars(function.varInfos(), callingConvention.argRegisters(), instructions, globalVarPreprocessor);
+		storeRegisterArgsInVars(varInfos, callingConvention.argRegisters(), instructions, globalVarPreprocessor);
 		LSPreprocessorLayer.process(globalVarPreprocessor, instructions);
 
-		final IRVarInfos varInfos = tempRegisterVars.createVarInfos();
-		return new Result(varInfos, resultLayer.instructions);
+		final IRVarInfos derivedVarInfos = tempRegisterVars.createVarInfos();
+		return new Result(derivedVarInfos, resultLayer.instructions);
 	}
 
 	private static void storeRegisterArgsInVars(IRVarInfos varInfos, List<Integer> argRegisters, List<IRInstruction> instructions, LSPreprocessorLayer layer) {

@@ -21,7 +21,7 @@ public final class LSRegAlloc {
 
 	@NotNull
 	public static IRFunction process(@NotNull IRFunction function, boolean isX86, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider) {
-		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, isX86);
+		final var preprocessorResult = LSPreprocessor.process(function.instructions(), function.varInfos(), function.returnType(), callingConventionProvider, isX86);
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), preprocessorResult.instructions());
 		DetectVarLiveness.process(cfg, function.varInfos().cantBeRegister(), false);
 		final List<BasicBlock> blocks = cfg.blocks();
