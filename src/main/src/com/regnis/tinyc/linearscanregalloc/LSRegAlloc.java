@@ -40,29 +40,43 @@ public final class LSRegAlloc {
 		final List<LSInstructions.Indices> blockBoundaries = lsInstructions.getBlockIndices();
 
 		intervalFactory.debugPrint(function.name());
+		final IRVar stackAccessHelperVar = new IRVar("stackHelper", 10000, VariableScope.function, Type.pointer(Type.VOID));
+		final List<Integer> stackAccessHelperUses = new ArrayList<>();
 
-		final List<LSInterval> varIntervals = new ArrayList<>(intervalFactory.getVarIntervals());
-		LSInterval.sortIntervals(varIntervals);
-		final LSAlgorithm algorithm = new LSAlgorithm(varIntervals, intervalFactory.getFixedIntervals(), blockBoundaries, registerCount);
+		while (true) {
+			try {
+				final List<LSInterval> varIntervals = new ArrayList<>(intervalFactory.getVarIntervals());
+				if (stackAccessHelperUses.size() > 0) {
+					varIntervals.add(createIntervalForStackAccessHelper(stackAccessHelperVar, stackAccessHelperUses));
+				}
+				LSInterval.sortIntervals(varIntervals);
+				final LSAlgorithm algorithm = new LSAlgorithm(varIntervals, intervalFactory.getFixedIntervals(), blockBoundaries, registerCount);
 
-		algorithm.run();
+				algorithm.run();
 
-		intervalFactory.debugPrint(function.name());
+				intervalFactory.debugPrint(function.name());
 
-		final LSRegAlloc regAlloc = new LSRegAlloc(varIntervals, registerCount, cfg, blockToIndex, varInfos);
-		regAlloc.determineMovesAtBlockEdges(blocks);
-		regAlloc.processStackArguments();
-		regAlloc.processInstructions(instructions);
+				final LSRegAlloc regAlloc = new LSRegAlloc(stackAccessHelperVar, varIntervals, registerCount, cfg, blockToIndex, varInfos);
+				regAlloc.determineMovesAtBlockEdges(blocks);
+				regAlloc.processStackArguments();
+				regAlloc.processInstructions(instructions);
 
 		System.out.println("\n" + function.name() + ":");
 		LSIntervalFactory.printInstructions(regAlloc.instructions);
 		System.out.println();
 
-		return function.derive(regAlloc.instructions, varInfos);
+				return function.derive(regAlloc.instructions, varInfos);
+			}
+			catch (NeedsHelperRegisterException ex) {
+				final int pos = ex.pos;
+				stackAccessHelperUses.add(pos);
+			}
+		}
 	}
 
 	private final List<IRInstruction> instructions = new ArrayList<>();
 	private final Map<Integer, List<IRMove>> indexToMoves = new HashMap<>();
+	private final IRVar stackAccessHelperVar;
 	private final Map<IRVar, LSInterval> varToInterval;
 	private final int registerCount;
 	private final ControlFlowGraph cfg;
@@ -71,7 +85,8 @@ public final class LSRegAlloc {
 
 	private int pos;
 
-	private LSRegAlloc(@NotNull List<LSInterval> varIntervals, int registerCount, ControlFlowGraph cfg, Map<String, LSInstructions.Indices> blockToIndex, IRCanBeRegister canBeRegister) {
+	private LSRegAlloc(IRVar stackAccessHelperVar, @NotNull List<LSInterval> varIntervals, int registerCount, ControlFlowGraph cfg, Map<String, LSInstructions.Indices> blockToIndex, IRCanBeRegister canBeRegister) {
+		this.stackAccessHelperVar = stackAccessHelperVar;
 		this.varToInterval = new LinkedHashMap<>();
 		for (LSInterval interval : varIntervals) {
 			varToInterval.put(interval.var(), interval);
@@ -82,7 +97,7 @@ public final class LSRegAlloc {
 		this.canBeRegister = canBeRegister;
 	}
 
-	private void processStackArguments() {
+	private void processStackArguments() throws NeedsHelperRegisterException {
 		// Arguments which are passed on the stack, but an register has been assigned to them immediately
 		// need to load the variable into the register.
 		for (Map.Entry<IRVar, LSInterval> entry : varToInterval.entrySet()) {
@@ -108,7 +123,7 @@ public final class LSRegAlloc {
 		}
 	}
 
-	private void processInstructions(List<IRInstruction> instructions) {
+	private void processInstructions(List<IRInstruction> instructions) throws NeedsHelperRegisterException {
 		for (IRInstruction instruction : instructions) {
 			processMoves();
 			processInstruction(instruction);
@@ -118,7 +133,7 @@ public final class LSRegAlloc {
 		}
 	}
 
-	private void processInstruction(IRInstruction instruction) {
+	private void processInstruction(IRInstruction instruction) throws NeedsHelperRegisterException {
 		switch (instruction) {
 		case IRAddConst addConst -> {
 			IRVar var = addConst.var();
@@ -199,20 +214,32 @@ public final class LSRegAlloc {
 			IRVar target = move.target();
 			target = target(target);
 			final IRVar source = source(move.source());
+			if (source.equals(target)) {
+				return;
+			}
 
 			final boolean sourceIsReg = source.scope() == VariableScope.register;
 			final boolean targetIsReg = target.scope() == VariableScope.register;
 			Utils.assertTrue(sourceIsReg || targetIsReg);
 
-			boolean skip = source.equals(target);
-			if (!skip
-			    && sourceIsReg
-			    && targetIsReg
-			    && source.index() == target.index()) {
-				skip = true;
+			if (sourceIsReg && targetIsReg) {
+				if (source.index() != target.index()) {
+					add(new IRMove(target, source, move.location()));
+				}
 			}
-			if (!skip) {
-				add(new IRMove(target, source, move.location()));
+			else {
+				final LSInterval helperInterval = varToInterval.get(stackAccessHelperVar);
+				final LSInterval subInterval = helperInterval != null ? helperInterval.getSubInterval(pos, false, true) : null;
+				if (subInterval == null) {
+					throw new NeedsHelperRegisterException(pos);
+				}
+				final int register = subInterval.register();
+				Utils.assertTrue(register >= 0);
+				if (sourceIsReg) {
+					final IRVar addressVar = stackAccessHelperVar.asRegister(register);
+					add(new IRAddrOf(addressVar, target, move.location()));
+					add(new IRMemStore(addressVar, source, move.location()));
+				}
 			}
 		}
 		case IRString string -> {
@@ -366,7 +393,26 @@ public final class LSRegAlloc {
 		indexToMoves.put(moveIndex, moves);
 	}
 
+	private static LSInterval createIntervalForStackAccessHelper(IRVar var, List<Integer> useBegins) {
+		final List<LSRange> ranges = new ArrayList<>();
+		final List<LSUse> uses = new ArrayList<>();
+		for (int useBegin : useBegins) {
+			ranges.add(new LSRange(useBegin));
+			uses.add(LSUse.write(useBegin));
+			uses.add(LSUse.read(useBegin + 1));
+		}
+		return LSInterval.testVar(var, ranges, uses);
+	}
+
 	private static IRVar deriveVar(IRVar var, int reg) {
 		return reg < 0 ? var : var.asRegister(reg);
+	}
+
+	private static class NeedsHelperRegisterException extends Exception {
+		public final int pos;
+
+		public NeedsHelperRegisterException(int pos) {
+			this.pos = pos;
+		}
 	}
 }
