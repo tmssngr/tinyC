@@ -126,8 +126,8 @@ final class LSInterval {
 	}
 
 	@NotNull
-	public String rangesAsString(int max, Collection<LSIntervalFactory.Indices> blockIndices) {
-		for (LSIntervalFactory.Indices indices : blockIndices) {
+	public String rangesAsString(int max, Collection<LSInstructions.Indices> blockIndices) {
+		for (LSInstructions.Indices indices : blockIndices) {
 			max = Math.max(max, indices.end() + 1);
 		}
 		for (LSRange range : ranges) {
@@ -137,7 +137,7 @@ final class LSInterval {
 		final StringBuilder buffer = new StringBuilder();
 		debugPositions(max, buffer);
 
-		for (LSIntervalFactory.Indices index : blockIndices) {
+		for (LSInstructions.Indices index : blockIndices) {
 			buffer.setCharAt(index.start(), '|');
 		}
 

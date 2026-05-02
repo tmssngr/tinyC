@@ -30,10 +30,14 @@ public final class LSRegAlloc {
 
 		final IRVarInfos varInfos = preprocessorResult.varInfos();
 
-		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, isX86);
-		intervalFactory.handleBlocks(blocks);
-		final Map<String, LSIntervalFactory.Indices> blockToIndex = intervalFactory.getBlockToIndex();
-		final List<LSIntervalFactory.Indices> blockBoundaries = intervalFactory.getBlockIndices();
+		final LSInstructions lsInstructions = new LSInstructions();
+		lsInstructions.handleBlocks(blocks);
+		final List<IRInstruction> instructions = lsInstructions.getInstructions();
+
+		final LSIntervalFactory intervalFactory = new LSIntervalFactory(lsInstructions, varInfos, callingConventionProvider, registerCount, isX86);
+		intervalFactory.handleInstructions(instructions);
+		final Map<String, LSInstructions.Indices> blockToIndex = lsInstructions.getBlockToIndex();
+		final List<LSInstructions.Indices> blockBoundaries = lsInstructions.getBlockIndices();
 
 		intervalFactory.debugPrint(function.name());
 
@@ -47,13 +51,13 @@ public final class LSRegAlloc {
 		final LSRegAlloc regAlloc = new LSRegAlloc(varIntervals, registerCount, cfg, blockToIndex, varInfos);
 		regAlloc.determineMovesAtBlockEdges(blocks);
 		regAlloc.processStackArguments();
-		regAlloc.processInstructions(intervalFactory.getInstructions());
+		regAlloc.processInstructions(instructions);
 
 		System.out.println("\n" + function.name() + ":");
 		LSIntervalFactory.printInstructions(regAlloc.instructions);
 		System.out.println();
 
-		return function.derive(regAlloc.instructions, preprocessorResult.varInfos());
+		return function.derive(regAlloc.instructions, varInfos);
 	}
 
 	private final List<IRInstruction> instructions = new ArrayList<>();
@@ -61,12 +65,12 @@ public final class LSRegAlloc {
 	private final Map<IRVar, LSInterval> varToInterval;
 	private final int registerCount;
 	private final ControlFlowGraph cfg;
-	private final Map<String, LSIntervalFactory.Indices> blockToIndex;
+	private final Map<String, LSInstructions.Indices> blockToIndex;
 	private final IRCanBeRegister canBeRegister;
 
 	private int pos;
 
-	private LSRegAlloc(@NotNull List<LSInterval> varIntervals, int registerCount, ControlFlowGraph cfg, Map<String, LSIntervalFactory.Indices> blockToIndex, IRCanBeRegister canBeRegister) {
+	private LSRegAlloc(@NotNull List<LSInterval> varIntervals, int registerCount, ControlFlowGraph cfg, Map<String, LSInstructions.Indices> blockToIndex, IRCanBeRegister canBeRegister) {
 		this.varToInterval = new LinkedHashMap<>();
 		for (LSInterval interval : varIntervals) {
 			varToInterval.put(interval.var(), interval);

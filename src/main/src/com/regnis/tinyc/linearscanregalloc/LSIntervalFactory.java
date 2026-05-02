@@ -2,7 +2,6 @@ package com.regnis.tinyc.linearscanregalloc;
 
 import com.regnis.tinyc.*;
 import com.regnis.tinyc.ast.*;
-import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
@@ -25,11 +24,10 @@ final class LSIntervalFactory {
 		}
 	}
 
-	private final List<IRInstruction> instructions = new ArrayList<>();
-	private final Map<String, Indices> blockToIndex = new HashMap<>();
 	private final List<LSInterval> varIntervals = new ArrayList<>();
 	private final Map<IRVar, LSInterval> varToInterval = new HashMap<>();
 	private final LSInterval[] fixedIntervals;
+	private final LSInstructions lsInstructions;
 	private final IRCanBeRegister canBeRegister;
 	private final LSCallingConventionProvider callingConventionProvider;
 	private final boolean isX86;
@@ -37,7 +35,8 @@ final class LSIntervalFactory {
 	private int pos;
 	private int blockStart;
 
-	public LSIntervalFactory(@NotNull IRCanBeRegister canBeRegister, @NotNull LSCallingConventionProvider callingConventionProvider, int registerCount, boolean isX86) {
+	public LSIntervalFactory(@NotNull LSInstructions lsInstructions, @NotNull IRCanBeRegister canBeRegister, @NotNull LSCallingConventionProvider callingConventionProvider, int registerCount, boolean isX86) {
+		this.lsInstructions = lsInstructions;
 		this.canBeRegister = canBeRegister;
 		this.callingConventionProvider = callingConventionProvider;
 		this.isX86 = isX86;
@@ -47,7 +46,6 @@ final class LSIntervalFactory {
 
 	public void debugPrint(@NotNull String name) {
 		System.out.println(name);
-		printInstructions(instructions);
 
 		final int max = determineMaxPos();
 
@@ -56,11 +54,6 @@ final class LSIntervalFactory {
 
 		printVarIntervals(max);
 		System.out.println();
-	}
-
-	@NotNull
-	public List<IRInstruction> getInstructions() {
-		return Collections.unmodifiableList(instructions);
 	}
 
 	@NotNull
@@ -90,44 +83,41 @@ final class LSIntervalFactory {
 		return Collections.unmodifiableList(fixedIntervals);
 	}
 
-	public Map<String, Indices> getBlockToIndex() {
-		return Collections.unmodifiableMap(blockToIndex);
-	}
-
-	public void handleBlocks(List<BasicBlock> blocks) {
-		record Block(String name, List<IRInstruction> instructions, Set<IRVar> liveAfter) {
-		}
-
-		final List<Block> blocksWithLabels = new ArrayList<>();
-		pos = 0;
-		blocks.forEach(block -> {
-			final String name = block.name;
-			final List<IRInstruction> instructions = getInstructionsWithLabel(name, block.instructions());
-			blocksWithLabels.add(new Block(name, instructions, block.getLiveAfter()));
-			pos += 2 * instructions.size();
-		});
-
-		for (Block block : blocksWithLabels.reversed()) {
-			handleBlock(block.name, block.instructions, block.liveAfter);
-		}
-	}
-
 	public void printVarIntervals(int max) {
+		final List<LSInstructions.Indices> indices = lsInstructions.getBlockIndices();
 		final List<LSInterval> intervals = new ArrayList<>(varIntervals);
 		intervals.sort(Comparator.comparingInt(LSInterval::getFrom));
 		for (LSInterval interval : intervals) {
 			while (interval != null) {
-				final String rangesString = interval.rangesAsString(max, blockToIndex.values());
+				final String rangesString = interval.rangesAsString(max, indices);
 				println(interval.getName(), rangesString);
 				interval = interval.getNextSplit();
 			}
 		}
 	}
 
-	public List<Indices> getBlockIndices() {
-		final List<Indices> blockBoundaries = new ArrayList<>(blockToIndex.values());
-		blockBoundaries.sort(Comparator.comparingInt(Indices::start));
-		return Collections.unmodifiableList(blockBoundaries);
+	public void handleInstructions(@NotNull List<IRInstruction> instructions) {
+		final Set<IRVar> live = new HashSet<>();
+		boolean blockBoundary = true;
+		for (int i = instructions.size(); i-- > 0; ) {
+			pos = 2 * i;
+			if (blockBoundary) {
+				final var result = lsInstructions.getLiveVarsAndBlockStartAt(pos);
+				final List<IRVar> liveVars = result.first();
+				blockStart = result.second();
+				liveVars.forEach(var -> {
+					if (canBeRegister.canBeRegister(var)) {
+						final LSInterval interval = getInterval(var);
+						interval.add(blockStart, pos);
+					}
+				});
+				live.addAll(liveVars);
+			}
+
+			final IRInstruction instruction = instructions.get(i);
+			handleInstruction(instruction, live);
+			blockBoundary = instruction instanceof IRLabel;
+		}
 	}
 
 	private int determineMaxPos() {
@@ -148,49 +138,6 @@ final class LSIntervalFactory {
 			max = Math.max(interval.getTo(), max);
 		}
 		return max;
-	}
-
-	@NotNull
-	private List<IRInstruction> getInstructionsWithLabel(String name, List<IRInstruction> instructions) {
-		if (name.startsWith("@")) {
-			instructions = new ArrayList<>(instructions);
-			instructions.addFirst(new IRLabel(name));
-		}
-		return instructions;
-	}
-
-	private void handleBlock(String name, List<IRInstruction> instructions, Set<IRVar> liveAfter) {
-		final Set<IRVar> live = new HashSet<>(liveAfter);
-
-		blockStart = pos - 2 * instructions.size();
-		Utils.assertTrue(blockStart >= 0);
-
-		final List<IRVar> liveSorted = new ArrayList<>(live);
-		liveSorted.sort(Comparator.comparing(IRVar::scope).thenComparingInt(IRVar::index));
-		liveSorted.forEach(var -> {
-			if (canBeRegister.canBeRegister(var)) {
-				final LSInterval interval = getInterval(var);
-				interval.add(blockStart, pos);
-			}
-		});
-
-		int end = -1;
-		for (IRInstruction instruction : instructions.reversed()) {
-			if (!(instruction instanceof IRBranch)
-			    && !(instruction instanceof IRJump)
-			    && end < 0) {
-				end = pos;
-			}
-			pos -= 2;
-			handleInstruction(instruction, live);
-			this.instructions.addFirst(instruction);
-		}
-
-		Utils.assertTrue(blockStart == pos);
-
-		final IndicesImpl indices = new IndicesImpl(blockStart);
-		indices.setEnd(Math.max(end, 0));
-		blockToIndex.put(name, indices);
 	}
 
 	private void handleInstruction(@NotNull IRInstruction instruction, @NotNull Set<IRVar> live) {
@@ -321,12 +268,13 @@ final class LSIntervalFactory {
 	}
 
 	private void printFixedIntervals(int max) {
+		final List<LSInstructions.Indices> indices = lsInstructions.getBlockIndices();
 		for (int reg = 0; reg < fixedIntervals.length; reg++) {
 			final LSInterval interval = fixedIntervals[reg];
 			if (interval == null) {
 				continue;
 			}
-			final String rangesString = interval.rangesAsString(max, blockToIndex.values());
+			final String rangesString = interval.rangesAsString(max, indices);
 			println("r" + reg, rangesString);
 		}
 	}

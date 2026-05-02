@@ -16,12 +16,12 @@ final class LSAlgorithm {
 	private final List<LSInterval> inactive = new ArrayList<>();
 	private final List<LSInterval> fixedIntervals;
 	private final List<LSInterval> unhandled;
-	private final List<LSIntervalFactory.Indices> blockBoundaries;
+	private final List<LSInstructions.Indices> blockBoundaries;
 	private final int registerCount;
 
 	private int _logMax;
 
-	public LSAlgorithm(@NotNull List<LSInterval> varIntervals, @NotNull List<LSInterval> fixedIntervals, @NotNull List<LSIntervalFactory.Indices> blockBoundaries, int registerCount) {
+	public LSAlgorithm(@NotNull List<LSInterval> varIntervals, @NotNull List<LSInterval> fixedIntervals, @NotNull List<LSInstructions.Indices> blockBoundaries, int registerCount) {
 		this.unhandled = new ArrayList<>(varIntervals);
 		this.fixedIntervals = fixedIntervals;
 		this.blockBoundaries = blockBoundaries;
