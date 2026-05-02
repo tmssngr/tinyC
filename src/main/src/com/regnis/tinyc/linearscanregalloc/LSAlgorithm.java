@@ -38,7 +38,7 @@ final class LSAlgorithm {
 		while (unhandled.size() > 0) {
 			final LSInterval current = unhandled.removeFirst();
 			final int from = current.getFrom();
-			Utils.assertTrue(from >= prevFrom);
+			Utils.assertTrue(from >= prevFrom, "prevFrom: " + prevFrom + ", from: " + from);
 			prevFrom = from;
 			makeActiveOrInactive(from, false, active, inactive);
 			makeActiveOrInactive(from, true, inactive, active);
@@ -219,7 +219,37 @@ final class LSAlgorithm {
 			return;
 		}
 
-		throw new IllegalStateException();
+		registersUsedNext.log("used next:");
+		reg = Math.max(registersUsedNext.getMax(), 0);
+		final List<LSInterval> activeAndInactive = new ArrayList<>();
+		activeAndInactive.addAll(active);
+		activeAndInactive.addAll(inactive);
+		for (LSInterval interval : activeAndInactive) {
+			if (interval.register() != reg) {
+				continue;
+			}
+
+			final LSUse lastUse = interval.getUseBefore(from);
+			if (lastUse != null && lastUse.write()) {
+				final LSInterval split = truncateAndSplit(interval, lastUse.pos() + 1);
+				final LSUse firstUse = split.getUsedNext(0);
+				if (firstUse != null && !firstUse.write()) {
+					final LSInterval secondSplit = truncateAndSplit(split, firstUse.pos() - 1);
+					addToUnhandled(secondSplit);
+					addToDone(split);
+				}
+				else {
+					throw new UnsupportedOperationException();
+				}
+				addToDone(interval);
+
+				current.setRegister(reg);
+				return;
+			}
+			break;
+		}
+
+		throw new UnsupportedOperationException();
 /*
 		registersUsedNext.log("used next:");
 
@@ -267,7 +297,10 @@ final class LSAlgorithm {
 		}
 
 		for (LSInterval interval : active) {
-			registersUsedNext.setMinPos(0, interval);
+			final LSUse usedNext = interval.getUsedNext(from);
+			if (usedNext != null) {
+				registersUsedNext.setMinPos(usedNext.pos(), interval);
+			}
 		}
 
 		for (LSInterval interval : inactive) {

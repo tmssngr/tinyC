@@ -45,6 +45,10 @@ final class LSIntervalFactory {
 	}
 
 	public void debugPrint(@NotNull String name) {
+		debugPrint(name, varIntervals);
+	}
+
+	public void debugPrint(@NotNull String name, List<LSInterval> varIntervals) {
 		System.out.println(name);
 
 		final int max = determineMaxPos();
@@ -52,7 +56,7 @@ final class LSIntervalFactory {
 		printFixedIntervals(max);
 		System.out.println();
 
-		printVarIntervals(max);
+		printVarIntervals(max, varIntervals);
 		System.out.println();
 	}
 
@@ -70,19 +74,6 @@ final class LSIntervalFactory {
 			}
 		}
 		return Collections.unmodifiableList(fixedIntervals);
-	}
-
-	public void printVarIntervals(int max) {
-		final List<LSInstructions.Indices> indices = lsInstructions.getBlockIndices();
-		final List<LSInterval> intervals = new ArrayList<>(varIntervals);
-		intervals.sort(Comparator.comparingInt(LSInterval::getFrom));
-		for (LSInterval interval : intervals) {
-			while (interval != null) {
-				final String rangesString = interval.rangesAsString(max, indices);
-				println(interval.getName(), rangesString);
-				interval = interval.getNextSplit();
-			}
-		}
 	}
 
 	public void handleInstructions(@NotNull List<IRInstruction> instructions) {
@@ -106,6 +97,19 @@ final class LSIntervalFactory {
 			final IRInstruction instruction = instructions.get(i);
 			handleInstruction(instruction, live);
 			blockBoundary = instruction instanceof IRLabel;
+		}
+	}
+
+	private void printVarIntervals(int max, List<LSInterval> varIntervals) {
+		final List<LSInstructions.Indices> indices = lsInstructions.getBlockIndices();
+		final List<LSInterval> intervals = new ArrayList<>(varIntervals);
+		intervals.sort(Comparator.comparingInt(LSInterval::getFrom));
+		for (LSInterval interval : intervals) {
+			while (interval != null) {
+				final String rangesString = interval.rangesAsString(max, indices);
+				println(interval.getName(), rangesString);
+				interval = interval.getNextSplit();
+			}
 		}
 	}
 

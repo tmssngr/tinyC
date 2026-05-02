@@ -29,6 +29,12 @@ final class LSInterval {
 		});
 	}
 
+	public static void clone(List<LSInterval> originals, List<LSInterval> result) {
+		for (LSInterval original : originals) {
+			result.add(new LSInterval(original));
+		}
+	}
+
 	static LSInterval testVar(@NotNull IRVar var, @NotNull List<LSRange> ranges, @NotNull List<LSUse> uses) {
 		return testVar(var, -1, ranges, uses);
 	}
@@ -58,6 +64,16 @@ final class LSInterval {
 		Utils.assertTrue(register >= 0);
 		this.register = register;
 		var = null;
+	}
+
+	private LSInterval(@NotNull LSInterval interval) {
+		ranges.addAll(interval.ranges);
+
+		uses.addAll(interval.uses);
+		var = interval.var;
+		register = interval.register;
+		registerHint = interval.registerHint;
+		Utils.assertTrue(interval.nextSplit == null);
 	}
 
 	private LSInterval(@Nullable IRVar var, int register, @NotNull List<LSRange> ranges, @NotNull List<LSUse> uses) {
@@ -367,6 +383,15 @@ final class LSInterval {
 		return createTransition(fromInterval.register, toInterval.register, var);
 	}
 
+	@Nullable
+	public LSInterval getNextSplit() {
+		return nextSplit;
+	}
+
+	public int getFreeUntil(LSInterval interval) {
+		return LSRange.getIntersectionFreeUntil(ranges, interval.ranges);
+	}
+
 	@NotNull
 	private Pair<IRVar, IRVar> createTransition(int registerFrom, int registerTo, @NotNull IRVar var) {
 		Utils.assertTrue(registerFrom != registerTo);
@@ -391,15 +416,6 @@ final class LSInterval {
 
 	private boolean isBetweenFromAndTo(int pos) {
 		return getFrom() <= pos && pos <= getTo();
-	}
-
-	@Nullable
-	public LSInterval getNextSplit() {
-		return nextSplit;
-	}
-
-	public int getFreeUntil(LSInterval interval) {
-		return LSRange.getIntersectionFreeUntil(ranges, interval.ranges);
 	}
 
 	private boolean isFixed() {
@@ -434,7 +450,7 @@ final class LSInterval {
 			buffer.append(i % 10 == 0
 					              ? ':'
 					              : i % 2 == 0
-							              ? '.'
+					                ? '.'
 							              : ' ');
 		}
 	}

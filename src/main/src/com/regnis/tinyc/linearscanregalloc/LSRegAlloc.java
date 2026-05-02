@@ -40,21 +40,22 @@ public final class LSRegAlloc {
 		final List<LSInstructions.Indices> blockBoundaries = lsInstructions.getBlockIndices();
 
 		intervalFactory.debugPrint(function.name());
+		LSIntervalFactory.printInstructions(instructions);
 		final IRVar stackAccessHelperVar = new IRVar("stackHelper", 10000, VariableScope.function, Type.pointer(Type.VOID));
 		final List<Integer> stackAccessHelperUses = new ArrayList<>();
 
 		while (true) {
 			try {
-				final List<LSInterval> varIntervals = new ArrayList<>(intervalFactory.getVarIntervals());
+				final List<LSInterval> varIntervals = new ArrayList<>();
+				LSInterval.clone(intervalFactory.getVarIntervals(), varIntervals);
 				if (stackAccessHelperUses.size() > 0) {
 					varIntervals.add(createIntervalForStackAccessHelper(stackAccessHelperVar, stackAccessHelperUses));
 				}
 				LSInterval.sortIntervals(varIntervals);
 				final LSAlgorithm algorithm = new LSAlgorithm(varIntervals, intervalFactory.getFixedIntervals(), blockBoundaries, registerCount);
-
 				algorithm.run();
 
-				intervalFactory.debugPrint(function.name());
+				intervalFactory.debugPrint(function.name(), varIntervals);
 
 				final LSRegAlloc regAlloc = new LSRegAlloc(stackAccessHelperVar, varIntervals, registerCount, cfg, blockToIndex, varInfos);
 				regAlloc.determineMovesAtBlockEdges(blocks);
@@ -69,6 +70,14 @@ public final class LSRegAlloc {
 			}
 			catch (NeedsHelperRegisterException ex) {
 				final int pos = ex.pos;
+				Utils.assertTrue(pos >= 0);
+				while (stackAccessHelperUses.size() > 0) {
+					final int lastUse = stackAccessHelperUses.getLast();
+					if (lastUse <= pos) {
+						break;
+					}
+					stackAccessHelperUses.removeLast();
+				}
 				stackAccessHelperUses.add(pos);
 			}
 		}
@@ -210,38 +219,7 @@ public final class LSRegAlloc {
 			final IRVar value = sourceExpectReg(store.value());
 			add(new IRMemStore(addr, value, store.location()));
 		}
-		case IRMove move -> {
-			IRVar target = move.target();
-			target = target(target);
-			final IRVar source = source(move.source());
-			if (source.equals(target)) {
-				return;
-			}
-
-			final boolean sourceIsReg = source.scope() == VariableScope.register;
-			final boolean targetIsReg = target.scope() == VariableScope.register;
-			Utils.assertTrue(sourceIsReg || targetIsReg);
-
-			if (sourceIsReg && targetIsReg) {
-				if (source.index() != target.index()) {
-					add(new IRMove(target, source, move.location()));
-				}
-			}
-			else {
-				final LSInterval helperInterval = varToInterval.get(stackAccessHelperVar);
-				final LSInterval subInterval = helperInterval != null ? helperInterval.getSubInterval(pos, false, true) : null;
-				if (subInterval == null) {
-					throw new NeedsHelperRegisterException(pos);
-				}
-				final int register = subInterval.register();
-				Utils.assertTrue(register >= 0);
-				if (sourceIsReg) {
-					final IRVar addressVar = stackAccessHelperVar.asRegister(register);
-					add(new IRAddrOf(addressVar, target, move.location()));
-					add(new IRMemStore(addressVar, source, move.location()));
-				}
-			}
-		}
+		case IRMove move -> processMove(move);
 		case IRString string -> {
 			final IRVar target = targetExpectReg(string.target());
 			add(new IRString(target, string.stringIndex(), string.location()));
@@ -255,7 +233,53 @@ public final class LSRegAlloc {
 		}
 	}
 
-	private void processMoves() {
+	private void processMove(IRMove move) throws NeedsHelperRegisterException {
+		IRVar target = move.target();
+		target = target(target);
+		final IRVar source = source(move.source());
+		if (source.equals(target)) {
+			return;
+		}
+
+		final boolean sourceIsReg = source.scope() == VariableScope.register;
+		final boolean targetIsReg = target.scope() == VariableScope.register;
+		Utils.assertTrue(sourceIsReg || targetIsReg);
+
+		if (sourceIsReg && targetIsReg) {
+			if (source.index() == target.index()) {
+				return;
+			}
+
+			add(move);
+			return;
+		}
+
+		final LSInterval helperInterval = varToInterval.get(stackAccessHelperVar);
+		if (sourceIsReg) {
+			final LSInterval subInterval = helperInterval != null ? helperInterval.getSubInterval(pos, true, false) : null;
+			if (subInterval == null) {
+				throw new NeedsHelperRegisterException(pos - 1);
+			}
+			final int register = subInterval.register();
+			Utils.assertTrue(register >= 0);
+			final IRVar addressVar = stackAccessHelperVar.asRegister(register);
+			add(new IRAddrOf(addressVar, target, move.location()));
+			add(new IRMemStore(addressVar, source, move.location()));
+		}
+		else {
+			final LSInterval subInterval = helperInterval != null ? helperInterval.getSubInterval(pos, false, true) : null;
+			if (subInterval == null) {
+				throw new NeedsHelperRegisterException(pos);
+			}
+			final int register = subInterval.register();
+			Utils.assertTrue(register >= 0);
+			final IRVar addressVar = stackAccessHelperVar.asRegister(register);
+			add(new IRAddrOf(addressVar, source, move.location()));
+			add(new IRMemLoad(target, addressVar, move.location()));
+		}
+	}
+
+	private void processMoves() throws NeedsHelperRegisterException {
 		for (Map.Entry<IRVar, LSInterval> entry : varToInterval.entrySet()) {
 			final IRVar var = entry.getKey();
 			final LSInterval interval = entry.getValue();
@@ -263,7 +287,7 @@ public final class LSRegAlloc {
 			if (transition != null) {
 				final IRVar from = transition.first();
 				final IRVar to = transition.second();
-				add(new IRMove(to, from, Location.DUMMY));
+				processMove(new IRMove(to, from, Location.DUMMY));
 			}
 		}
 

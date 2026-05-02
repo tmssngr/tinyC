@@ -234,13 +234,13 @@ public final class X86Win64 extends AsmWriter {
 		}
 	}
 
-	protected void writeMove(IRMove copy) throws IOException {
-		final IRVar source = copy.source();
-		final IRVar target = copy.target();
+	protected void writeMove(IRMove move) throws IOException {
+		final IRVar source = move.source();
+		final IRVar target = move.target();
 		final int addrReg = TMP_REG;
 		if (source.scope() == VariableScope.register) {
 			if (target.scope() == VariableScope.register) {
-				writeIndented("mov " + getRegName(target) + ", " + getRegName(copy.source()));
+				writeIndented("mov " + getRegName(target) + ", " + getRegName(move.source()));
 				return;
 			}
 
@@ -249,7 +249,7 @@ public final class X86Win64 extends AsmWriter {
 			return;
 		}
 
-		Utils.assertTrue(target.scope() == VariableScope.register);
+		Utils.assertTrue(target.scope() == VariableScope.register, move.toString(true));
 		addrOf(addrReg, source);
 		writeIndented("mov " + getRegName(target) + ", [" + getRegName(addrReg) + "]");
 	}
