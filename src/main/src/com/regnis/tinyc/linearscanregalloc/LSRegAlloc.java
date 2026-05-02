@@ -41,7 +41,8 @@ public final class LSRegAlloc {
 
 		intervalFactory.debugPrint(function.name());
 
-		final List<LSInterval> varIntervals = intervalFactory.getVarIntervalsSorted();
+		final List<LSInterval> varIntervals = new ArrayList<>(intervalFactory.getVarIntervals());
+		LSInterval.sortIntervals(varIntervals);
 		final LSAlgorithm algorithm = new LSAlgorithm(varIntervals, intervalFactory.getFixedIntervals(), blockBoundaries, registerCount);
 
 		algorithm.run();

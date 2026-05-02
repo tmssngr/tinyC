@@ -57,19 +57,8 @@ final class LSIntervalFactory {
 	}
 
 	@NotNull
-	public List<LSInterval> getVarIntervalsSorted() {
-		final List<LSInterval> varIntervals = new ArrayList<>(this.varIntervals);
-		// if two intervals start at the same position,
-		// the longer one should be before the shorter one
-		varIntervals.sort((o1, o2) -> {
-			int result = o1.getFrom() - o2.getFrom();
-			if (result == 0) {
-				// flipped
-				result = o2.getTo() - o1.getTo();
-			}
-			return result;
-		});
-		return Collections.unmodifiableList(varIntervals);
+	public List<LSInterval> getVarIntervals() {
+		return Collections.unmodifiableList(this.varIntervals);
 	}
 
 	@NotNull

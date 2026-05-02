@@ -16,6 +16,19 @@ final class LSInterval {
 		return LSRange.getFirstIntersection(interval1.ranges, interval2.ranges);
 	}
 
+	public static void sortIntervals(List<LSInterval> varIntervals) {
+		// if two intervals start at the same position,
+		// the longer one should be before the shorter one
+		varIntervals.sort((o1, o2) -> {
+			int result = o1.getFrom() - o2.getFrom();
+			if (result == 0) {
+				// flipped
+				result = o2.getTo() - o1.getTo();
+			}
+			return result;
+		});
+	}
+
 	static LSInterval testVar(@NotNull IRVar var, @NotNull List<LSRange> ranges, @NotNull List<LSUse> uses) {
 		return testVar(var, -1, ranges, uses);
 	}
