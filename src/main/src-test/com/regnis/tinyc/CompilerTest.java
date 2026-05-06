@@ -130,6 +130,6 @@ public class CompilerTest {
 
 	@NotNull
 	private Path absolutePath(String fileName) {
-		return Path.of("src/main/resources-test", fileName);
+		return Path.of("src/main/resources-test/compiler", fileName);
 	}
 }
