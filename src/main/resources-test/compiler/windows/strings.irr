@@ -1,0 +1,219 @@
+@printString@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	var 1: length (i64/8)
+	; 10 pc
+	call length = strlen@@u8[str] -> i64
+	call printStringLength@@u8@i64[str, length]
+
+@printChar@u8:
+ Local variables
+	arg 0: chr (u8/1)
+	var 1: t.1 (u8*/8)
+	var 2: t.2 (u8/1)
+	; 12 pc
+	addrof t.1, chr
+	const t.2, 1
+	call printStringLength@@u8@u8[t.1, t.2]
+
+@printUint@i64:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: buffer[] (u8*/20)
+	var 2: pos (u8/1)
+	var 3: remainder (i64/8)
+	var 4: digit (u8/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (u8/1)
+	var 9: t.9 (u8/1)
+	var 10: t.10 (u8*/8)
+	var 11: t.11 (i64/8)
+	var 12: t.12 (u8*/8)
+	var 13: t.13 (bool/1)
+	var 14: t.14 (i64/8)
+	var 15: t.15 (u8*/8)
+	var 16: t.16 (i64/8)
+	var 17: t.17 (u8*/8)
+	var 18: t.18 (u8/1)
+	var 19: t.19 (u8/1)
+	; 130 pc
+	const pos, 20
+	; 25:2 while true
+@while_1:
+	const t.5, 1
+	sub pos, pos, t.5
+	const t.6, 10
+	move remainder, number
+	mod remainder, remainder, t.6
+	const t.7, 10
+	div number, number, t.7
+	cast t.8(u8), remainder(i64)
+	const t.9, 48
+	move digit, t.8
+	add digit, digit, t.9
+	cast t.11(i64), pos(u8)
+	cast t.12(u8*), t.11(i64)
+	addrof t.10, [buffer]
+	add t.10, t.10, t.12
+	store [t.10], digit
+	; 31:3 if number == 0
+	const t.14, 0
+	equals t.13, number, t.14
+	branch t.13, false, @while_1, @while_1_break
+	cast t.16(i64), pos(u8)
+	cast t.17(u8*), t.16(i64)
+	addrof t.15, [buffer]
+	add t.15, t.15, t.17
+	const t.19, 20
+	move t.18, t.19
+	sub t.18, t.18, pos
+	call printStringLength@@u8@u8[t.15, t.18]
+
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+	var 1: t.1 (i64/8)
+	; 8 pc
+	cast t.1(i64), number(u8)
+	call printIntLf@i64[t.1]
+
+@printIntLf@i16:
+ Local variables
+	arg 0: number (i16/2)
+	var 1: t.1 (i64/8)
+	; 8 pc
+	cast t.1(i64), number(i16)
+	call printIntLf@i64[t.1]
+
+@printIntLf@i64:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: t.1 (bool/1)
+	var 2: t.2 (i64/8)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	; 30 pc
+	; 51:2 if number < 0
+	const t.2, 0
+	lt t.1, number, t.2
+	branch t.1, false, @if_3_end, @if_3_then
+	const t.3, 45
+	call printChar@u8[t.3]
+	neg number, number
+@if_3_end:
+	call printUint@i64[number]
+	const t.4, 10
+	call printChar@u8[t.4]
+
+@strlen@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	var 1: length (i64/8)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (i64/8)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (i64/8)
+	; 57 pc
+	const length, 0
+	; 61:2 for *str != 0
+	jump @for_4
+@for_4_body:
+	const t.5, 1
+	add length, length, t.5
+	cast t.7(i64), str(u8*)
+	const t.8, 1
+	move t.6, t.7
+	add t.6, t.6, t.8
+	cast str(u8*), t.6(i64)
+@for_4:
+	load t.3, [str]
+	const t.4, 0
+	notequals t.2, t.3, t.4
+	branch t.2, true, @for_4_body, @for_4_break
+	; 64:9 return length
+	ret length
+
+@printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	var 2: t.2 (i64/8)
+	; 10 pc
+	cast t.2(i64), length(u8)
+	call printStringLength@@u8@i64[str, t.2]
+
+@main:
+ Local variables
+	var 0: second (u8*/8)
+	var 1: chr (u8/1)
+	var 2: t.2 (i64/8)
+	var 3: t.3 (u8*/8)
+	; 38 pc
+	; begin initialize global variables
+	const text, [string-0]
+	; end initialize global variables
+	call printString@@u8[text]
+	call printLength[]
+	const t.2, 1
+	cast t.3(u8*), t.2(i64)
+	move second, text
+	add second, second, t.3
+	call printString@@u8[second]
+	load chr, [text]
+	call printIntLf@u8[chr]
+
+@printLength:
+ Local variables
+	var 0: length (i16/2)
+	var 1: ptr (u8*/8)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (i16/2)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (i64/8)
+	; 62 pc
+	const length, 0
+	move ptr, text
+	; 16:2 for *ptr != 0
+	jump @for_5
+@for_5_body:
+	const t.5, 1
+	add length, length, t.5
+	cast t.7(i64), ptr(u8*)
+	const t.8, 1
+	move t.6, t.7
+	add t.6, t.6, t.8
+	cast ptr(u8*), t.6(i64)
+@for_5:
+	load t.3, [ptr]
+	const t.4, 0
+	notequals t.2, t.3, t.4
+	branch t.2, true, @for_5_body, @for_5_break
+	call printIntLf@i16[length]
+
+@printStringLength@@u8@i64:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
+Global variables
+	0: text (u8*/8)
+
+String literals
+	string lit 0 "hello world\n\0"

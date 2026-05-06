@@ -52,6 +52,7 @@ public class Compiler {
 		final Path astFile = useExtension(inputFile, subdir, ".ast");
 		final Path astSimpleFile = useExtension(inputFile, subdir, ".asts");
 		final Path irFile = useExtension(inputFile, subdir, ".ir");
+		final Path irRegFile = useExtension(inputFile, subdir, ".irr");
 		final Path dotFile = useExtension(inputFile, subdir, ".dot");
 		final Path svgFile = useExtension(inputFile, subdir, ".svg");
 		final Path cfgFile = useExtension(inputFile, subdir, ".cfg");
@@ -59,6 +60,7 @@ public class Compiler {
 		final Path exeFile = useExtension(inputFile, subdir, ".exe");
 		Files.deleteIfExists(astFile);
 		Files.deleteIfExists(irFile);
+		Files.deleteIfExists(irRegFile);
 		Files.deleteIfExists(dotFile);
 		Files.deleteIfExists(svgFile);
 		Files.deleteIfExists(cfgFile);
@@ -100,6 +102,7 @@ public class Compiler {
 		launchGraphViz(dotFile, svgFile);
 
 		irProgram = irProgram.derive(functions);
+		write(irProgram, irRegFile);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
 			final X86Win64 output = new X86Win64(writer);

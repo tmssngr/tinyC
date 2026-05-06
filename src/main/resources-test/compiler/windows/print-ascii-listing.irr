@@ -1,0 +1,208 @@
+@printString@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	var 1: length (i64/8)
+	; 10 pc
+	call length = strlen@@u8[str] -> i64
+	call printStringLength@@u8@i64[str, length]
+
+@printChar@u8:
+ Local variables
+	arg 0: chr (u8/1)
+	var 1: t.1 (u8*/8)
+	var 2: t.2 (u8/1)
+	; 12 pc
+	addrof t.1, chr
+	const t.2, 1
+	call printStringLength@@u8@u8[t.1, t.2]
+
+@strlen@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	var 1: length (i64/8)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (i64/8)
+	var 6: t.6 (i64/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (i64/8)
+	; 57 pc
+	const length, 0
+	; 61:2 for *str != 0
+	jump @for_1
+@for_1_body:
+	const t.5, 1
+	add length, length, t.5
+	cast t.7(i64), str(u8*)
+	const t.8, 1
+	move t.6, t.7
+	add t.6, t.6, t.8
+	cast str(u8*), t.6(i64)
+@for_1:
+	load t.3, [str]
+	const t.4, 0
+	notequals t.2, t.3, t.4
+	branch t.2, true, @for_1_body, @for_1_break
+	; 64:9 return length
+	ret length
+
+@printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	var 2: t.2 (i64/8)
+	; 10 pc
+	cast t.2(i64), length(u8)
+	call printStringLength@@u8@i64[str, t.2]
+
+@printNibble@u8:
+ Local variables
+	arg 0: x (u8/1)
+	var 1: t.1 (u8/1)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (u8/1)
+	; 42 pc
+	const t.1, 15
+	and x, x, t.1
+	; 5:2 if x > 9
+	const t.3, 9
+	gt t.2, x, t.3
+	branch t.2, false, @if_2_end, @if_2_then
+	const t.4, 7
+	add x, x, t.4
+@if_2_end:
+	const t.5, 48
+	add x, x, t.5
+	call printChar@u8[x]
+
+@printHex2@u8:
+ Local variables
+	arg 0: x (u8/1)
+	var 1: t.1 (u8/1)
+	var 2: t.2 (u8/1)
+	; 20 pc
+	const t.2, 4
+	move t.1, x
+	shiftright t.1, t.1, t.2
+	call printNibble@u8[t.1]
+	call printNibble@u8[x]
+
+@main:
+ Local variables
+	var 0: i (u8/1)
+	var 1: i (u8/1)
+	var 2: t.2 (u8*/8)
+	var 3: t.3 (bool/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (bool/1)
+	var 6: t.6 (u8/1)
+	var 7: t.7 (u8/1)
+	var 8: t.8 (u8/1)
+	var 9: t.9 (u8/1)
+	var 10: t.10 (u8/1)
+	var 11: t.11 (u8/1)
+	var 12: t.12 (bool/1)
+	var 13: t.13 (u8/1)
+	var 14: t.14 (bool/1)
+	var 15: t.15 (u8/1)
+	var 16: t.16 (u8/1)
+	var 17: t.17 (u8/1)
+	var 18: t.18 (bool/1)
+	var 19: t.19 (u8/1)
+	var 20: t.20 (u8/1)
+	var 21: t.21 (u8/1)
+	var 22: t.22 (u8/1)
+	var 23: t.23 (bool/1)
+	var 24: t.24 (u8/1)
+	var 25: t.25 (u8/1)
+	var 26: t.26 (u8/1)
+	var 27: t.27 (u8/1)
+	var 28: t.28 (u8/1)
+	; 187 pc
+	; begin initialize global variables
+	; end initialize global variables
+	const t.2, [string-0]
+	call printString@@u8[t.2]
+	const i, 0
+	; 19:2 for i < 16
+	jump @for_3
+@for_3_body:
+	; 20:3 if i & 7 == 0
+	const t.7, 7
+	move t.6, i
+	and t.6, t.6, t.7
+	const t.8, 0
+	equals t.5, t.6, t.8
+	branch t.5, false, @if_4_end, @if_4_then
+	const t.9, 32
+	call printChar@u8[t.9]
+@if_4_end:
+	call printNibble@u8[i]
+	const t.10, 1
+	add i, i, t.10
+@for_3:
+	const t.4, 16
+	lt t.3, i, t.4
+	branch t.3, true, @for_3_body, @for_3_break
+	const t.11, 10
+	call printChar@u8[t.11]
+	const i, 32
+	; 27:2 for i < 128
+	jump @for_5
+@for_5_body:
+	; 28:3 if i & 15 == 0
+	const t.16, 15
+	move t.15, i
+	and t.15, t.15, t.16
+	const t.17, 0
+	equals t.14, t.15, t.17
+	branch t.14, false, @if_6_end, @if_6_then
+	call printHex2@u8[i]
+@if_6_end:
+	; 31:3 if i & 7 == 0
+	const t.20, 7
+	move t.19, i
+	and t.19, t.19, t.20
+	const t.21, 0
+	equals t.18, t.19, t.21
+	branch t.18, false, @if_7_end, @if_7_then
+	const t.22, 32
+	call printChar@u8[t.22]
+@if_7_end:
+	call printChar@u8[i]
+	; 35:3 if i & 15 == 15
+	const t.25, 15
+	move t.24, i
+	and t.24, t.24, t.25
+	const t.26, 15
+	equals t.23, t.24, t.26
+	branch t.23, false, @for_5_continue, @if_8_then
+	const t.27, 10
+	call printChar@u8[t.27]
+@for_5_continue:
+	const t.28, 1
+	add i, i, t.28
+@for_5:
+	const t.13, 128
+	lt t.12, i, t.13
+	branch t.12, true, @for_5_body, @main_ret
+
+@printStringLength@@u8@i64:
+	mov     rdi, rsp
+	
+	lea     rcx, [hStdOut]
+	mov     rcx, [rcx]
+	mov     rdx, [rdi+18h]
+	mov     r8, [rdi+10h]
+	xor     r9, r9
+	push    0
+	sub     rsp, 20h
+	  call    [WriteFile]
+	mov     rsp, rdi
+	ret
+
+String literals
+	string lit 0 " x\0"
