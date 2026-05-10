@@ -5,8 +5,6 @@ import java.util.*;
 import org.jetbrains.annotations.*;
 
 /**
- * No record because of additional field `nameToBlock`.
- *
  * @author Thomas Singer
  */
 public final class ControlFlowGraph {
@@ -16,18 +14,6 @@ public final class ControlFlowGraph {
 
 	public ControlFlowGraph(@NotNull Cfg cfg) {
 		this.cfg = cfg;
-
-		blocks = getSorted();
-	}
-
-	@Deprecated
-	public ControlFlowGraph(@NotNull String name, Map<String, BasicBlock> blockMap) {
-		cfg = new Cfg(name);
-		for (Map.Entry<String, BasicBlock> entry : blockMap.entrySet()) {
-			cfg.add(entry.getValue());
-		}
-
-		cfg.check();
 
 		blocks = getSorted();
 	}
