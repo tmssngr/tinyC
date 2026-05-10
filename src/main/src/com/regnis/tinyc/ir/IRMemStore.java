@@ -12,8 +12,14 @@ public record IRMemStore(@NotNull IRVar addr, @NotNull IRVar value, @NotNull Loc
 		Utils.assertTrue(addr.type().isPointer());
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
-		return "store [" + addr + "], " + value;
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
+		return "store [" + addr.toString(comment) + "], " + value.toString(comment);
 	}
 }

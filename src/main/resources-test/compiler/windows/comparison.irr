@@ -1,245 +1,217 @@
 @printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	var 1: length (i64/8)
-	; 10 pc
-	call length = strlen@@u8[str] -> i64
-	call printStringLength@@u8@i64[str, length]
+	; 6 pc
+	move r6, r1
+	move r1, r6
+	call r0 = strlen@@u8[r1] -> i64
+	move r1, r6
+	move r2, r0
+	call printStringLength@@u8@i64[r1, r2]
 
 @printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	var 1: t.1 (u8*/8)
-	var 2: t.2 (u8/1)
-	; 12 pc
-	addrof t.1, chr
-	const t.2, 1
-	call printStringLength@@u8@u8[t.1, t.2]
+	; 8 pc
+	addrof r6, chr
+	const r2, 1
+	move chr, r1
+	move r1, r6
+	call printStringLength@@u8@u8[r1, r2]
 
 @printUint@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
-	var 2: pos (u8/1)
-	var 3: remainder (i64/8)
-	var 4: digit (u8/1)
-	var 5: t.5 (i64/8)
-	var 6: t.6 (i64/8)
-	var 7: t.7 (u8/1)
-	var 8: t.8 (u8/1)
-	var 9: t.9 (u8*/8)
-	var 10: t.10 (i64/8)
-	var 11: t.11 (u8*/8)
-	var 12: t.12 (bool/1)
-	var 13: t.13 (u8*/8)
-	var 14: t.14 (i64/8)
-	var 15: t.15 (u8*/8)
-	var 16: t.16 (u8/1)
-	var 17: t.17 (u8/1)
-	; 122 pc
-	const pos, 20
+	; 25 pc
+	const r6, 20
 	; 25:2 while true
 @while_1:
-	dec pos
-	const t.5, 10
-	move remainder, number
-	mod remainder, remainder, t.5
-	const t.6, 10
-	div number, number, t.6
-	cast t.7(u8), remainder(i64)
-	const t.8, 48
-	move digit, t.7
-	add digit, digit, t.8
-	cast t.10(i64), pos(u8)
-	cast t.11(u8*), t.10(i64)
-	addrof t.9, [buffer]
-	add t.9, t.9, t.11
-	store [t.9], digit
+	dec r6
+	const r7, 10
+	move r3, r1
+	move r0, r3
+	mod r2, r0, r7
+	move r3, r2
+	const r7, 10
+	move r0, r1
+	div r0, r0, r7
+	move r1, r0
+	cast r7(u8), r3(i64)
+	const r0, 48
+	add r7, r7, r0
+	cast r0(i64), r6(u8)
+	cast r0(u8*), r0(i64)
+	addrof r3, [buffer]
+	add r3, r3, r0
+	store [r3], r7
 	; 31:3 if number == 0
-	equals t.12, number, 0
-	branch t.12, false, @while_1, @while_1_break
-	cast t.14(i64), pos(u8)
-	cast t.15(u8*), t.14(i64)
-	addrof t.13, [buffer]
-	add t.13, t.13, t.15
-	const t.17, 20
-	move t.16, t.17
-	sub t.16, t.16, pos
-	call printStringLength@@u8@u8[t.13, t.16]
+	equals r7, r1, 0
+	branch r7, false, @while_1, @while_1_break
+	cast r7(i64), r6(u8)
+	cast r7(u8*), r7(i64)
+	addrof r1, [buffer]
+	add r1, r1, r7
+	const r7, 20
+	move r2, r7
+	sub r2, r2, r6
+	call printStringLength@@u8@u8[r1, r2]
 
 @printIntLf@bool:
  Local variables
 	arg 0: number (bool/1)
-	var 1: t.1 (i64/8)
-	; 8 pc
-	cast t.1(i64), number(bool)
-	call printIntLf@i64[t.1]
+	; 2 pc
+	cast r1(i64), r1(bool)
+	call printIntLf@i64[r1]
 
 @printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
-	var 1: t.1 (bool/1)
-	var 2: t.2 (u8/1)
-	var 3: t.3 (u8/1)
-	; 26 pc
+	; 8 pc
+	move r6, r1
 	; 51:2 if number < 0
-	lt t.1, number, 0
-	branch t.1, false, @if_3_end, @if_3_then
-	const t.2, 45
-	call printChar@u8[t.2]
-	neg number, number
+	lt r7, r6, 0
+	branch r7, false, @if_3_end, @if_3_then
+	const r1, 45
+	call printChar@u8[r1]
+	neg r6, r6
 @if_3_end:
-	call printUint@i64[number]
-	const t.3, 10
-	call printChar@u8[t.3]
+	move r1, r6
+	call printUint@i64[r1]
+	const r1, 10
+	call printChar@u8[r1]
 
 @strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	var 1: length (i64/8)
-	var 2: t.2 (bool/1)
-	var 3: t.3 (u8/1)
-	var 4: t.4 (i64/8)
-	var 5: t.5 (i64/8)
-	var 6: t.6 (i64/8)
-	; 49 pc
-	const length, 0
+	; 10 pc
+	const r0, 0
 	; 61:2 for *str != 0
 	jump @for_4
 @for_4_body:
-	inc length
-	cast t.5(i64), str(u8*)
-	const t.6, 1
-	move t.4, t.5
-	add t.4, t.4, t.6
-	cast str(u8*), t.4(i64)
+	inc r0
+	cast r2(i64), r1(u8*)
+	const r3, 1
+	move r1, r2
+	add r1, r1, r3
+	cast r1(u8*), r1(i64)
 @for_4:
-	load t.3, [str]
-	notequals t.2, t.3, 0
-	branch t.2, true, @for_4_body, @for_4_break
+	load r2, [r1]
+	notequals r2, r2, 0
+	branch r2, true, @for_4_body, @for_4_break
 	; 64:9 return length
-	ret length
 
 @printStringLength@@u8@u8:
  Local variables
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
-	var 2: t.2 (i64/8)
-	; 10 pc
-	cast t.2(i64), length(u8)
-	call printStringLength@@u8@i64[str, t.2]
+	; 2 pc
+	cast r2(i64), r2(u8)
+	call printStringLength@@u8@i64[r1, r2]
 
 @main:
  Local variables
-	var 0: a (i16/2)
-	var 1: b (i16/2)
-	var 2: c (u8/1)
-	var 3: d (u8/1)
-	var 4: t.4 (u8*/8)
-	var 5: t.5 (bool/1)
-	var 6: t.6 (bool/1)
-	var 7: t.7 (u8*/8)
-	var 8: t.8 (bool/1)
-	var 9: t.9 (bool/1)
-	var 10: t.10 (u8*/8)
-	var 11: t.11 (bool/1)
-	var 12: t.12 (bool/1)
-	var 13: t.13 (u8*/8)
-	var 14: t.14 (bool/1)
-	var 15: t.15 (bool/1)
-	var 16: t.16 (u8*/8)
-	var 17: t.17 (bool/1)
-	var 18: t.18 (bool/1)
-	var 19: t.19 (u8*/8)
-	var 20: t.20 (bool/1)
-	var 21: t.21 (bool/1)
-	var 22: t.22 (u8*/8)
-	var 23: t.23 (bool/1)
-	var 24: t.24 (bool/1)
-	var 25: t.25 (u8*/8)
-	var 26: t.26 (bool/1)
-	var 27: t.27 (bool/1)
-	var 28: t.28 (u8*/8)
-	var 29: t.29 (bool/1)
-	var 30: t.30 (bool/1)
-	var 31: t.31 (u8*/8)
-	var 32: t.32 (bool/1)
-	var 33: t.33 (bool/1)
-	; 268 pc
+	var 0: c (u8/1)
+	var 1: d (u8/1)
+	; 132 pc
 	; begin initialize global variables
 	; end initialize global variables
-	const t.4, [string-0]
-	call printString@@u8[t.4]
-	const a, 1
-	const b, 2
-	lt t.5, a, b
-	call printIntLf@bool[t.5]
-	lt t.6, b, a
-	call printIntLf@bool[t.6]
-	const t.7, [string-1]
-	call printString@@u8[t.7]
-	const c, 0
-	const d, 128
-	lt t.8, c, d
-	call printIntLf@bool[t.8]
-	lt t.9, d, c
-	call printIntLf@bool[t.9]
-	const t.10, [string-2]
-	call printString@@u8[t.10]
-	lteq t.11, a, b
-	call printIntLf@bool[t.11]
-	lteq t.12, b, a
-	call printIntLf@bool[t.12]
-	const t.13, [string-3]
-	call printString@@u8[t.13]
-	lteq t.14, c, d
-	call printIntLf@bool[t.14]
-	lteq t.15, d, c
-	call printIntLf@bool[t.15]
-	const t.16, [string-4]
-	call printString@@u8[t.16]
-	equals t.17, a, b
-	call printIntLf@bool[t.17]
-	equals t.18, b, a
-	call printIntLf@bool[t.18]
-	const t.19, [string-5]
-	call printString@@u8[t.19]
-	notequals t.20, a, b
-	call printIntLf@bool[t.20]
-	notequals t.21, b, a
-	call printIntLf@bool[t.21]
-	const t.22, [string-6]
-	call printString@@u8[t.22]
-	gteq t.23, a, b
-	call printIntLf@bool[t.23]
-	gteq t.24, b, a
-	call printIntLf@bool[t.24]
-	const t.25, [string-7]
-	call printString@@u8[t.25]
-	gteq t.26, c, d
-	call printIntLf@bool[t.26]
-	gteq t.27, d, c
-	call printIntLf@bool[t.27]
-	const t.28, [string-8]
-	call printString@@u8[t.28]
-	gt t.29, a, b
-	call printIntLf@bool[t.29]
-	gt t.30, b, a
-	call printIntLf@bool[t.30]
-	const t.31, [string-9]
-	call printString@@u8[t.31]
-	gt t.32, c, d
-	call printIntLf@bool[t.32]
-	gt t.33, d, c
-	call printIntLf@bool[t.33]
+	const r1, [string-0]
+	call printString@@u8[r1]
+	const r6, 1
+	const r7, 2
+	lt r1, r6, r7
+	call printIntLf@bool[r1]
+	lt r1, r7, r6
+	call printIntLf@bool[r1]
+	const r1, [string-1]
+	call printString@@u8[r1]
+	const r0, 0
+	const r2, 128
+	lt r1, r0, r2
+	move c, r0
+	move d, r2
+	call printIntLf@bool[r1]
+	move r2, c
+	move r0, d
+	lt r1, r0, r2
+	move c, r2
+	move d, r0
+	call printIntLf@bool[r1]
+	const r1, [string-2]
+	call printString@@u8[r1]
+	lteq r1, r6, r7
+	call printIntLf@bool[r1]
+	lteq r1, r7, r6
+	call printIntLf@bool[r1]
+	const r1, [string-3]
+	call printString@@u8[r1]
+	move r0, c
+	move r2, d
+	lteq r1, r0, r2
+	move c, r0
+	move d, r2
+	call printIntLf@bool[r1]
+	move r2, c
+	move r0, d
+	lteq r1, r0, r2
+	move c, r2
+	move d, r0
+	call printIntLf@bool[r1]
+	const r1, [string-4]
+	call printString@@u8[r1]
+	equals r1, r6, r7
+	call printIntLf@bool[r1]
+	equals r1, r7, r6
+	call printIntLf@bool[r1]
+	const r1, [string-5]
+	call printString@@u8[r1]
+	notequals r1, r6, r7
+	call printIntLf@bool[r1]
+	notequals r1, r7, r6
+	call printIntLf@bool[r1]
+	const r1, [string-6]
+	call printString@@u8[r1]
+	gteq r1, r6, r7
+	call printIntLf@bool[r1]
+	gteq r1, r7, r6
+	call printIntLf@bool[r1]
+	const r1, [string-7]
+	call printString@@u8[r1]
+	move r0, c
+	move r2, d
+	gteq r1, r0, r2
+	move c, r0
+	move d, r2
+	call printIntLf@bool[r1]
+	move r2, c
+	move r0, d
+	gteq r1, r0, r2
+	move c, r2
+	move d, r0
+	call printIntLf@bool[r1]
+	const r1, [string-8]
+	call printString@@u8[r1]
+	gt r1, r6, r7
+	call printIntLf@bool[r1]
+	gt r1, r7, r6
+	call printIntLf@bool[r1]
+	const r1, [string-9]
+	call printString@@u8[r1]
+	move r6, c
+	move r7, d
+	gt r1, r6, r7
+	call printIntLf@bool[r1]
+	gt r1, r7, r6
+	call printIntLf@bool[r1]
 
 @printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
+	mov     r8, rdx
+	mov     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
 	xor     r9, r9
 	push    0
 	sub     rsp, 20h

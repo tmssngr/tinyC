@@ -16,9 +16,14 @@ public record IRBranch(@NotNull IRVar conditionVar, boolean jumpOnTrue, @NotNull
 	@NotNull
 	@Override
 	public String toString() {
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
 		final StringBuilder buffer = new StringBuilder();
 		buffer.append("branch ");
-		buffer.append(conditionVar);
+		buffer.append(conditionVar.toString(comment));
 		buffer.append(", ");
 		buffer.append(jumpOnTrue);
 		buffer.append(", ");

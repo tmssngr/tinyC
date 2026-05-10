@@ -17,7 +17,22 @@ public record IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar lef
 
 	@Override
 	public String toString() {
-		return op.toString().toLowerCase() + " " + target + ", " + left + ", " + right;
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
+		final StringBuilder builder = new StringBuilder();
+		builder.append(op.toString().toLowerCase());
+		builder.append(" ");
+		builder.append(target.toString(comment));
+//		if (!Objects.equals(target, left)) {
+			builder.append(", ");
+			builder.append(left.toString(comment));
+//		}
+		builder.append(", ");
+		builder.append(right.toString(comment));
+		return builder.toString();
 	}
 
 	public enum Op {
