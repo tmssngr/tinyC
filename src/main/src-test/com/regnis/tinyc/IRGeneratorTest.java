@@ -28,6 +28,22 @@ public class IRGeneratorTest {
 				              continue;
 				            }""");
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+
+		final IRProgram program = convert("""
+				                                  u8 get() {
+				                                    return 0;
+				                                  }
+				                                  void foo() {
+				                                    while (true) {
+				                                      u8 chr = get();
+				                                      if (chr > 'a') {
+				                                        continue;
+				                                      }
+				                                      if (chr == '\\n') {
+				                                        break;
+				                                      }
+				                                    }
+				                                  }""");
 		assertEquals(new IRProgram(List.of(
 				             new IRFunction("get", "@get", Type.U8, new IRVarInfos(List.of(
 						             new IRVarDef(new IRVar("t.0", 0, VariableScope.function, Type.U8), 1)
@@ -53,6 +69,7 @@ public class IRGeneratorTest {
 						             new IRCompare(tmp(1, Type.BOOL), IRCompare.Op.Gt, var("chr", 0, Type.U8), tmp(2, Type.U8), loc(6, 12)),
 						             new IRBranch(tmp(1, Type.BOOL), false, "@if_2_end",
 						                          "@if_2_then"),
+						             new IRLabel("@if_2_then"),
 						             new IRJump("@while_1"),
 						             new IRLabel("@if_2_end"),
 						             new IRComment("10:5 if chr == 10"),
@@ -60,6 +77,7 @@ public class IRGeneratorTest {
 						             new IRCompare(tmp(3, Type.BOOL), IRCompare.Op.Equals, var("chr", 0, Type.U8), tmp(4, Type.U8), loc(9, 12)),
 						             new IRBranch(tmp(3, Type.BOOL), false, "@if_3_end",
 						                          "@if_3_then"),
+						             new IRLabel("@if_3_then"),
 						             new IRJump("@while_1_break"),
 						             new IRLabel("@if_3_end"),
 						             new IRJump("@while_1"),
@@ -67,21 +85,7 @@ public class IRGeneratorTest {
 						             new IRLabel("@foo_ret")
 				             ))
 		             ), List.of(), globalVarInfos, List.of()),
-		             convert("""
-				                     u8 get() {
-				                       return 0;
-				                     }
-				                     void foo() {
-				                       while (true) {
-				                         u8 chr = get();
-				                         if (chr > 'a') {
-				                           continue;
-				                         }
-				                         if (chr == '\\n') {
-				                           break;
-				                         }
-				                       }
-				                     }"""));
+		             program);
 	}
 
 	private void assertEquals(IRProgram expected, IRProgram actual) {

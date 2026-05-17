@@ -57,7 +57,8 @@ public class CfgGeneratorTest {
 		final ControlFlowGraph cfg = CfgGenerator.create("start", List.of(
 				new IRLabel("loop"),
 				new IRCall(cond, Type.BOOL, "getSomething", List.of(), Location.DUMMY),
-				new IRBranch(cond, false, "loop", "break")
+				new IRBranch(cond, false, "loop", "break"),
+				new IRLabel("break")
 		));
 		assertEqualsBlocks(List.of(
 				new BasicBlock("start", List.of(

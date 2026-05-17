@@ -52,7 +52,7 @@ public class CfgGenerator {
 			add(branch);
 			add(new IRJump(branch.nextLabel()));
 			addBlock(List.of(branch.target(), branch.nextLabel()));
-			blockName = branch.nextLabel();
+			blockName = null;
 		}
 		case IRJump jump -> {
 			if (blockName != null) {
