@@ -30,6 +30,8 @@ abstract class AsmWriter {
 
 	protected abstract void writeCompare(IRCompare compare) throws IOException;
 
+	protected abstract void writeCompare(IRCompareConst compare) throws IOException;
+
 	protected abstract void writeJump(IRJump jump) throws IOException;
 
 	protected abstract void writeLiteral(IRLiteral literal) throws IOException;
@@ -87,6 +89,7 @@ abstract class AsmWriter {
 		case IRCast cast -> writeCast(cast);
 		case IRComment comment -> writeComment(comment.comment());
 		case IRCompare compare -> writeCompare(compare);
+		case IRCompareConst compare -> writeCompare(compare);
 		case IRJump jump -> writeJump(jump);
 		case IRLabel label -> writeLabel(label.label());
 		case IRLiteral literal -> writeLiteral(literal);

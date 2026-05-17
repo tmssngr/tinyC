@@ -33,6 +33,7 @@ public abstract class IRVarReplacer {
 			case IRCast cast -> new IRCast(replace(cast.target()), replace(cast.source()), cast.location());
 			case IRComment ignored -> instruction;
 			case IRCompare compare -> new IRCompare(replace(compare.target()), compare.op(), replace(compare.left()), replace(compare.right()), compare.location());
+			case IRCompareConst compare -> new IRCompareConst(replace(compare.target()), compare.op(), replace(compare.left()), compare.value(), compare.location());
 			case IRLabel ignored -> instruction;
 			case IRJump ignored -> instruction;
 			case IRLiteral literal -> new IRLiteral(replace(literal.target()), literal.value(), literal.location());

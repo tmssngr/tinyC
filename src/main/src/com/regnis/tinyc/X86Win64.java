@@ -434,6 +434,20 @@ public final class X86Win64 extends AsmWriter {
 		}
 	}
 
+	protected void writeCompare(IRCompareConst compare) throws IOException {
+		final boolean signed = compare.left().type() != Type.U8;
+		switch (compare.op()) {
+		case Lt -> writeCompare(signed ? "setl" : "setb", compare); // setb (below) = setc (carry)
+		case LtEq -> writeCompare(signed ? "setle" : "setbe", compare);
+		case Equals -> writeCompare("sete", compare);
+		case NotEquals -> writeCompare("setne", compare);
+		case GtEq -> writeCompare(signed ? "setge" : "setae", compare); // setae (above or equal) = setnc (not carry)
+		case Gt -> writeCompare(signed ? "setg" : "seta", compare); // seta (above)
+
+		default -> throw new UnsupportedOperationException(String.valueOf(compare));
+		}
+	}
+
 	protected void writeMove(IRMove copy) throws IOException {
 		final int valueReg = loadVar(copy.source());
 		storeVar(copy.target(), valueReg);
@@ -525,6 +539,15 @@ public final class X86Win64 extends AsmWriter {
 		writeIndented(command + " " + getRegName(leftReg, 1));
 		storeVar(compare.target(), leftReg);
 		free(rightReg);
+		free(leftReg);
+	}
+
+	private void writeCompare(String command, IRCompareConst compare) throws IOException {
+		final int leftReg = loadVar(compare.left());
+		final String leftRegName = getRegName(leftReg, compare.left());
+		writeIndented("cmp " + leftRegName + ", " + compare.value());
+		writeIndented(command + " " + getRegName(leftReg, 1));
+		storeVar(compare.target(), leftReg);
 		free(leftReg);
 	}
 

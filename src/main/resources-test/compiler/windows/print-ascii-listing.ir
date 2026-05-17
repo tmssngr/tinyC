@@ -24,26 +24,24 @@
 	var 1: length (i64/8)
 	var 2: t.2 (bool/1)
 	var 3: t.3 (u8/1)
-	var 4: t.4 (u8/1)
+	var 4: t.4 (i64/8)
 	var 5: t.5 (i64/8)
 	var 6: t.6 (i64/8)
-	var 7: t.7 (i64/8)
-	; 54 pc
+	; 50 pc
 	const length, 0
 	; 61:2 for *str != 0
 @for_1:
 	load t.3, [str]
-	const t.4, 0
-	notequals t.2, t.3, t.4
+	notequals t.2, t.3, 0
 	branch t.2, false, @for_1_break, @for_1_body
 @for_1_body:
 	inc length
 @for_1_continue:
-	cast t.6(i64), str(u8*)
-	const t.7, 1
-	move t.5, t.6
-	add t.5, t.5, t.7
-	cast str(u8*), t.5(i64)
+	cast t.5(i64), str(u8*)
+	const t.6, 1
+	move t.4, t.5
+	add t.4, t.4, t.6
+	cast str(u8*), t.4(i64)
 	jump @for_1
 @for_1_break:
 	; 64:9 return length
@@ -66,13 +64,11 @@
 	arg 0: x (u8/1)
 	var 1: t.1 (u8/1)
 	var 2: t.2 (bool/1)
-	var 3: t.3 (u8/1)
-	; 34 pc
+	; 30 pc
 	const t.1, 15
 	and x, x, t.1
 	; 5:2 if x > 9
-	const t.3, 9
-	gt t.2, x, t.3
+	gt t.2, x, 9
 	branch t.2, false, @if_2_end, @if_2_then
 @if_2_then:
 	add x, 7
@@ -100,14 +96,14 @@
 	var 1: i (u8/1)
 	var 2: t.2 (u8*/8)
 	var 3: t.3 (bool/1)
-	var 4: t.4 (u8/1)
-	var 5: t.5 (bool/1)
+	var 4: t.4 (bool/1)
+	var 5: t.5 (u8/1)
 	var 6: t.6 (u8/1)
 	var 7: t.7 (u8/1)
 	var 8: t.8 (u8/1)
-	var 9: t.9 (u8/1)
-	var 10: t.10 (u8/1)
-	var 11: t.11 (bool/1)
+	var 9: t.9 (bool/1)
+	var 10: t.10 (bool/1)
+	var 11: t.11 (u8/1)
 	var 12: t.12 (u8/1)
 	var 13: t.13 (bool/1)
 	var 14: t.14 (u8/1)
@@ -117,13 +113,7 @@
 	var 18: t.18 (u8/1)
 	var 19: t.19 (u8/1)
 	var 20: t.20 (u8/1)
-	var 21: t.21 (u8/1)
-	var 22: t.22 (bool/1)
-	var 23: t.23 (u8/1)
-	var 24: t.24 (u8/1)
-	var 25: t.25 (u8/1)
-	var 26: t.26 (u8/1)
-	; 179 pc
+	; 155 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const t.2, [string-0]
@@ -131,67 +121,61 @@
 	const i, 0
 	; 19:2 for i < 16
 @for_3:
-	const t.4, 16
-	lt t.3, i, t.4
+	lt t.3, i, 16
 	branch t.3, false, @for_3_break, @for_3_body
 @for_3_body:
 	; 20:3 if i & 7 == 0
-	const t.7, 7
-	move t.6, i
-	and t.6, t.6, t.7
-	const t.8, 0
-	equals t.5, t.6, t.8
-	branch t.5, false, @if_4_end, @if_4_then
+	const t.6, 7
+	move t.5, i
+	and t.5, t.5, t.6
+	equals t.4, t.5, 0
+	branch t.4, false, @if_4_end, @if_4_then
 @if_4_then:
-	const t.9, 32
-	call printChar@u8[t.9]
+	const t.7, 32
+	call printChar@u8[t.7]
 @if_4_end:
 	call printNibble@u8[i]
 @for_3_continue:
 	inc i
 	jump @for_3
 @for_3_break:
-	const t.10, 10
-	call printChar@u8[t.10]
+	const t.8, 10
+	call printChar@u8[t.8]
 	const i, 32
 	; 27:2 for i < 128
 @for_5:
-	const t.12, 128
-	lt t.11, i, t.12
-	branch t.11, false, @main_ret, @for_5_body
+	lt t.9, i, 128
+	branch t.9, false, @main_ret, @for_5_body
 @for_5_body:
 	; 28:3 if i & 15 == 0
-	const t.15, 15
-	move t.14, i
-	and t.14, t.14, t.15
-	const t.16, 0
-	equals t.13, t.14, t.16
-	branch t.13, false, @if_6_end, @if_6_then
+	const t.12, 15
+	move t.11, i
+	and t.11, t.11, t.12
+	equals t.10, t.11, 0
+	branch t.10, false, @if_6_end, @if_6_then
 @if_6_then:
 	call printHex2@u8[i]
 @if_6_end:
 	; 31:3 if i & 7 == 0
-	const t.19, 7
-	move t.18, i
-	and t.18, t.18, t.19
-	const t.20, 0
-	equals t.17, t.18, t.20
-	branch t.17, false, @if_7_end, @if_7_then
+	const t.15, 7
+	move t.14, i
+	and t.14, t.14, t.15
+	equals t.13, t.14, 0
+	branch t.13, false, @if_7_end, @if_7_then
 @if_7_then:
-	const t.21, 32
-	call printChar@u8[t.21]
+	const t.16, 32
+	call printChar@u8[t.16]
 @if_7_end:
 	call printChar@u8[i]
 	; 35:3 if i & 15 == 15
-	const t.24, 15
-	move t.23, i
-	and t.23, t.23, t.24
-	const t.25, 15
-	equals t.22, t.23, t.25
-	branch t.22, false, @for_5_continue, @if_8_then
+	const t.19, 15
+	move t.18, i
+	and t.18, t.18, t.19
+	equals t.17, t.18, 15
+	branch t.17, false, @for_5_continue, @if_8_then
 @if_8_then:
-	const t.26, 10
-	call printChar@u8[t.26]
+	const t.20, 10
+	call printChar@u8[t.20]
 @for_5_continue:
 	inc i
 	jump @for_5

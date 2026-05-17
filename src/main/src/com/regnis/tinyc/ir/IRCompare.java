@@ -10,7 +10,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRCompare(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar left, @NotNull IRVar right, @NotNull Location location) implements IRInstruction {
+public record IRCompare(@NotNull IRVar target, @NotNull IRCompareOp op, @NotNull IRVar left, @NotNull IRVar right, @NotNull Location location) implements IRInstruction {
 	public IRCompare {
 		Utils.assertTrue(Objects.equals(left.type(), right.type()), left.type() + " vs. " + right.type());
 		Utils.assertTrue(Objects.equals(target.type(), Type.BOOL), String.valueOf(target.type()));
@@ -19,9 +19,5 @@ public record IRCompare(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar le
 	@Override
 	public String toString() {
 		return op.toString().toLowerCase() + " " + target + ", " + left + ", " + right;
-	}
-
-	public enum Op {
-		Lt, LtEq, Equals, NotEquals, GtEq, Gt;
 	}
 }

@@ -72,7 +72,7 @@ start:
         ret
 
         ; void printUint@i64
-        ;   rsp+152: arg number
+        ;   rsp+136: arg number
         ;   rsp+0: var buffer
         ;   rsp+20: var pos
         ;   rsp+24: var remainder
@@ -89,11 +89,10 @@ start:
         ;   rsp+104: var t.14
         ;   rsp+112: var t.15
         ;   rsp+120: var t.16
-        ;   rsp+128: var t.17
-        ;   rsp+129: var t.18
+        ;   rsp+121: var t.17
 @printUint@i64:
         ; reserve space for local variables
-        sub rsp, 144
+        sub rsp, 128
         ; const pos, 20
         mov al, 20
         lea rbx, [rsp+20]
@@ -111,7 +110,7 @@ start:
         lea rbx, [rsp+40]
         mov [rbx], rax
         ; move remainder, number
-        lea rax, [rsp+152]
+        lea rax, [rsp+136]
         mov rbx, [rax]
         lea rax, [rsp+24]
         mov [rax], rbx
@@ -131,7 +130,7 @@ start:
         lea rbx, [rsp+48]
         mov [rbx], rax
         ; div number, number, t.6
-        lea rax, [rsp+152]
+        lea rax, [rsp+136]
         mov rbx, [rax]
         lea rax, [rsp+48]
         mov rcx, [rax]
@@ -139,7 +138,7 @@ start:
         cqo
         idiv rcx
         mov rbx, rax
-        lea rdx, [rsp+152]
+        lea rdx, [rsp+136]
         mov [rdx], rbx
         ; cast t.7(u8), remainder(i64)
         lea rax, [rsp+24]
@@ -193,16 +192,10 @@ start:
         mov cl, [rax]
         mov [rbx], cl
         ; 31:3 if number == 0
-        ; const t.13, 0
-        mov rax, 0
-        lea rbx, [rsp+96]
-        mov [rbx], rax
-        ; equals t.12, number, t.13
-        lea rax, [rsp+152]
+        ; equals t.12, number, 0
+        lea rax, [rsp+136]
         mov rbx, [rax]
-        lea rax, [rsp+96]
-        mov rcx, [rax]
-        cmp rbx, rcx
+        cmp rbx, 0
         sete bl
         lea rax, [rsp+88]
         mov [rax], bl
@@ -211,58 +204,58 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @while_1
-        ; cast t.15(i64), pos(u8)
+        ; cast t.14(i64), pos(u8)
         lea rax, [rsp+20]
         mov bl, [rax]
         movzx rbx, bl
-        lea rax, [rsp+112]
+        lea rax, [rsp+104]
         mov [rax], rbx
-        ; cast t.16(u8*), t.15(i64)
-        lea rax, [rsp+112]
-        mov rbx, [rax]
-        lea rax, [rsp+120]
-        mov [rax], rbx
-        ; addrof t.14, [buffer]
-        lea rax, [rsp+0]
-        lea rbx, [rsp+104]
-        mov [rbx], rax
-        ; add t.14, t.14, t.16
+        ; cast t.15(u8*), t.14(i64)
         lea rax, [rsp+104]
         mov rbx, [rax]
-        lea rax, [rsp+120]
+        lea rax, [rsp+112]
+        mov [rax], rbx
+        ; addrof t.13, [buffer]
+        lea rax, [rsp+0]
+        lea rbx, [rsp+96]
+        mov [rbx], rax
+        ; add t.13, t.13, t.15
+        lea rax, [rsp+96]
+        mov rbx, [rax]
+        lea rax, [rsp+112]
         mov rcx, [rax]
         add rbx, rcx
-        lea rax, [rsp+104]
+        lea rax, [rsp+96]
         mov [rax], rbx
-        ; const t.18, 20
+        ; const t.17, 20
         mov al, 20
-        lea rbx, [rsp+129]
+        lea rbx, [rsp+121]
         mov [rbx], al
-        ; move t.17, t.18
-        lea rax, [rsp+129]
+        ; move t.16, t.17
+        lea rax, [rsp+121]
         mov bl, [rax]
-        lea rax, [rsp+128]
+        lea rax, [rsp+120]
         mov [rax], bl
-        ; sub t.17, t.17, pos
-        lea rax, [rsp+128]
+        ; sub t.16, t.16, pos
+        lea rax, [rsp+120]
         mov bl, [rax]
         lea rax, [rsp+20]
         mov cl, [rax]
         sub bl, cl
-        lea rax, [rsp+128]
+        lea rax, [rsp+120]
         mov [rax], bl
-        ; call printStringLength@@u8@u8[t.14, t.17]
-        lea rax, [rsp+104]
+        ; call printStringLength@@u8@u8[t.13, t.16]
+        lea rax, [rsp+96]
         mov rbx, [rax]
         push rbx
-        lea rax, [rsp+136]
+        lea rax, [rsp+128]
         mov bl, [rax]
         push rbx
         sub rsp, 8
           call @printStringLength@@u8@u8
         add rsp, 24
         ; release space for local variables
-        add rsp, 144
+        add rsp, 128
         ret
 
         ; void printStringLength@@u8@u8
