@@ -16,7 +16,7 @@ public final class IRVarInfos implements IRCanBeRegister {
 	private final Set<IRVar> cantBeRegister;
 	private final IRVarInfos parent;
 
-	public IRVarInfos(@NotNull List<IRVarDef> vars, @NotNull Set<IRVar> cantBeRegister, @Nullable IRVarInfos parent) {
+	public IRVarInfos(@NotNull List<IRVarDef> vars, @NotNull Set<? extends IRVar> cantBeRegister, @Nullable IRVarInfos parent) {
 		this.vars = List.copyOf(vars);
 		this.cantBeRegister = Set.copyOf(cantBeRegister);
 		this.parent = parent;
@@ -82,6 +82,25 @@ public final class IRVarInfos implements IRCanBeRegister {
 	@NotNull
 	public List<IRVarDef> vars() {
 		return vars;
+	}
+
+	@NotNull
+	public Set<? extends IRVar> cantBeRegister() {
+		return cantBeRegister;
+	}
+
+	@NotNull
+	public IRVarInfos global() {
+		return parent != null ? parent : this;
+	}
+
+	public int size(@NotNull IRVar var) {
+		for (IRVarDef def : vars) {
+			if (def.var().equals(var)) {
+				return def.size();
+			}
+		}
+		throw new IllegalStateException("Unknown var " + var);
 	}
 
 	@NotNull
