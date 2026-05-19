@@ -21,7 +21,7 @@ public final class IRGenerator {
 	}
 
 	private final Map<Type, TypeInfo> types = new HashMap<>();
-	private final int pointerSize;
+	private final Type pointerIntType;
 
 	private int labelIndex;
 
@@ -32,7 +32,7 @@ public final class IRGenerator {
 	private IRVarInfos globalVars;
 
 	private IRGenerator(Type pointerIntType) {
-		pointerSize = Type.getSize(pointerIntType);
+		this.pointerIntType = pointerIntType;
 	}
 
 	@NotNull
@@ -129,10 +129,7 @@ public final class IRGenerator {
 		if (typeInfo != null) {
 			return typeInfo.size;
 		}
-		if (type.isPointer()) {
-			return pointerSize;
-		}
-		return Type.getSize(type);
+		return Type.getSize(type, pointerIntType);
 	}
 
 	private void writeInit(List<Statement> declarations) {
