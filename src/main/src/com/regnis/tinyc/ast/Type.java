@@ -24,7 +24,11 @@ public record Type(@NotNull String name, @Nullable Type toType, @NotNull Categor
 		return new Type(name, null, Category.Struct, 0, 0);
 	}
 
-	public static int getSize(@NotNull Type type) {
+	public static int getSize(@NotNull Type type, @NotNull Type pointerIntType) {
+		if (type.isPointer()) {
+			type = pointerIntType;
+		}
+
 		if (type == VOID) {
 			return 0;
 		}

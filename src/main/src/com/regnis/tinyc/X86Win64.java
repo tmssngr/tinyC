@@ -600,10 +600,7 @@ public final class X86Win64 extends AsmWriter {
 	}
 
 	private static int getTypeSize(Type type) {
-		if (type.isPointer()) {
-			return 8;
-		}
-		return Type.getSize(type);
+		return Type.getSize(type, Type.I64);
 	}
 
 	private static String encode(byte[] bytes) {

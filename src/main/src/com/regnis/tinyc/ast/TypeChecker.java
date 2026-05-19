@@ -363,10 +363,7 @@ public final class TypeChecker {
 	}
 
 	private int getTypeSize(Type type) {
-		if (type.isPointer()) {
-			type = pointerIntType;
-		}
-		return Type.getSize(type);
+		return Type.getSize(type, pointerIntType);
 	}
 
 	@NotNull
