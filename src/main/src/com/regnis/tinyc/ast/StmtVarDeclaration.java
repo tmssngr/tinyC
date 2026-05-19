@@ -15,6 +15,7 @@ public record StmtVarDeclaration(@NotNull String typeString, @NotNull String var
 		this(typeString, varName, 0, null, null, expression, location);
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
 		return typeString + " " + varName + " = " + expression;

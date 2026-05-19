@@ -12,6 +12,7 @@ public record IRMemLoad(@NotNull IRVar target, @NotNull IRVar addr, @NotNull Loc
 		Utils.assertTrue(addr.type().isPointer());
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
 		return "load " + target + ", [" + addr + "]";

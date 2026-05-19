@@ -18,6 +18,7 @@ public record StmtArrayDeclaration(@NotNull String typeString, @NotNull String v
 		this(typeString, varName, 0, null, null, size, location);
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
 		return typeString + " " + varName + "[" + size + "]";

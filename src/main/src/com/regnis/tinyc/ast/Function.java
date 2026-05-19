@@ -23,6 +23,7 @@ public record Function(@NotNull String name, @NotNull String typeString, @Nullab
 		return new Function(name, typeString, null, parameters, List.of(), List.of(), asmLines, location);
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
 		return typeString + " " + name;

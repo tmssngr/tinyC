@@ -14,6 +14,7 @@ public record IRAddrOf(@NotNull IRVar target, @NotNull IRVar source, @NotNull Lo
 		// e.g. pointer to structs will be turned into a pointer to a struct member (with the help of an offset)
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
 		return "addrof " + target + ", " + source;

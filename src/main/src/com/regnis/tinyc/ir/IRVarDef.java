@@ -10,6 +10,7 @@ public record IRVarDef(@NotNull IRVar var, int size, boolean isArray) {
 		this(var, size, false);
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
 		final StringBuilder buffer = new StringBuilder();

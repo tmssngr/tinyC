@@ -11,6 +11,7 @@ import org.jetbrains.annotations.*;
  */
 public record IRAsmFunction(@NotNull String name, @NotNull String label, @NotNull Type returnType, @NotNull List<String> asmLines) {
 
+	@NotNull
 	@Override
 	public String toString() {
 		return returnType + " " + name;

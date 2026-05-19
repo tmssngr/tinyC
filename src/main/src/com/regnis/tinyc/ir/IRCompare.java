@@ -16,6 +16,7 @@ public record IRCompare(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar le
 		Utils.assertTrue(Objects.equals(target.type(), Type.BOOL), String.valueOf(target.type()));
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
 		return op.toString().toLowerCase() + " " + target + ", " + left + ", " + right;

@@ -15,6 +15,7 @@ public record IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar lef
 		Utils.assertTrue(Objects.equals(target.type(), right.type()), target.type() + " vs. " + right.type());
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
 		return op.toString().toLowerCase() + " " + target + ", " + left + ", " + right;

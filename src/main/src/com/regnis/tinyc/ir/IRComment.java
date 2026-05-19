@@ -6,6 +6,7 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record IRComment(@NotNull String comment) implements IRInstruction {
+	@NotNull
 	@Override
 	public String toString() {
 		return "; " + comment;

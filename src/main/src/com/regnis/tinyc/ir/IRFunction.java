@@ -11,6 +11,7 @@ import org.jetbrains.annotations.*;
  */
 public record IRFunction(@NotNull String name, @NotNull String label, @NotNull Type returnType, @NotNull IRVarInfos varInfos, @NotNull List<IRInstruction> instructions) {
 
+	@NotNull
 	@Override
 	public String toString() {
 		return returnType + " " + name;
