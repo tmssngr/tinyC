@@ -17,6 +17,7 @@ public record IRCall(@Nullable IRVar target, @NotNull Type type, @NotNull String
 		}
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
 		final StringBuilder buffer = new StringBuilder();

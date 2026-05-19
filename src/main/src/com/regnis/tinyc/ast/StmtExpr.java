@@ -7,6 +7,7 @@ import org.jetbrains.annotations.*;
  */
 public record StmtExpr(@NotNull Expression expression) implements Statement {
 
+	@NotNull
 	@Override
 	public String toString() {
 		return expression.toString();

@@ -14,6 +14,7 @@ public record IRUnary(@NotNull Op op, @NotNull IRVar target, @NotNull IRVar sour
 		Utils.assertTrue(Objects.equals(target.type(), source.type()));
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
 		return op.toString().toLowerCase() + " " + target + ", " + source;
