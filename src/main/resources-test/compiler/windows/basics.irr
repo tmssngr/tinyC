@@ -1,8 +1,9 @@
 @printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 7 pc
-	move chr, r1
+	; 9 pc
+	addrof r7, chr
+	store [r7], r1
 	addrof r1, chr
 	const r2, 1
 	call printStringLength@@u8@u8[r1, r2]
@@ -22,33 +23,33 @@
 	const r6, 20
 	; 25:2 while true
 @while_1:
-	const r7, 1
-	sub r6, r6, r7
-	const r7, 10
-	move r3, r1
-	move r0, r3
-	mod r2, r0, r7
-	move r3, r2
-	const r7, 10
+	const r3, 1
+	sub r6, r6, r3
+	const r3, 10
+	move r4, r1
+	move r0, r4
+	mod r2, r0, r3
+	move r4, r2
+	const r3, 10
 	move r0, r1
-	div r0, r0, r7
+	div r0, r0, r3
 	move r1, r0
-	cast r7(u8), r3(i64)
-	const r0, 48
-	add r7, r7, r0
-	cast r0(i64), r6(u8)
-	addrof r3, [buffer]
-	add r3, r3, r0
-	store [r3], r7
+	cast r0(u8), r4(i64)
+	const r3, 48
+	add r0, r0, r3
+	cast r3(i64), r6(u8)
+	addrof r4, [buffer]
+	add r4, r4, r3
+	store [r4], r0
 	; 31:3 if number == 0
-	const r7, 0
-	equals r7, r1, r7
-	branch r7, false, @while_1, @while_1_break
-	cast r7(i64), r6(u8)
+	const r0, 0
+	equals r0, r1, r0
+	branch r0, false, @while_1, @while_1_break
+	cast r0(i64), r6(u8)
 	addrof r1, [buffer]
-	add r1, r1, r7
-	const r7, 20
-	move r2, r7
+	add r1, r1, r0
+	const r0, 20
+	move r2, r0
 	sub r2, r2, r6
 	call printStringLength@@u8@u8[r1, r2]
 
@@ -71,35 +72,52 @@
 	cast r0(i64), r3(u8)
 
 @main:
-	; 37 pc
+ Local variables
+	var 0: t.5 (u8/1)
+	var 1: t.6 (u8/1)
+	; 69 pc
 	; begin initialize global variables
 	const r6, 48
-	const r7, 49
-	const r0, 50
+	const r0, 49
+	const r5, 50
 	const r1, 34
 	; end initialize global variables
-	const r5, 1
+	const r4, 1
 	const r2, 1
 	const r3, 2
-	const r4, 3
-	move zero, r6
-	move one, r7
-	move two, r0
-	move threeFour, r1
-	move r1, r5
+	addrof r7, t.5
+	store [r7], r3
+	const r3, 3
+	addrof r7, t.6
+	store [r7], r3
+	addrof r7, zero
+	store [r7], r6
+	addrof r7, one
+	store [r7], r0
+	addrof r7, two
+	store [r7], r5
+	addrof r7, threeFour
+	store [r7], r1
+	move r1, r4
+	addrof r7, t.5
+	load r3, [r7]
+	addrof r7, t.6
+	load r4, [r7]
 	call _ = unusedArgs@u8@bool@u8@u8[r1, r2, r3, r4] -> i64
-	move r6, zero
+	addrof r7, zero
+	load r6, [r7]
 	move r1, r6
 	call printChar@u8[r1]
 	addrof r6, one
 	load r1, [r6]
 	call printChar@u8[r1]
 	addrof r6, two
-	const r7, 0
-	add r6, r6, r7
+	const r0, 0
+	add r6, r6, r0
 	load r1, [r6]
 	call printChar@u8[r1]
-	move r1, threeFour
+	addrof r7, threeFour
+	load r1, [r7]
 	call printUint@u8[r1]
 	const r1, 10
 	call printChar@u8[r1]

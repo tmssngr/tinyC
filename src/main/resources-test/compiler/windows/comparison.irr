@@ -12,8 +12,9 @@
 @printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 7 pc
-	move chr, r1
+	; 9 pc
+	addrof r7, chr
+	store [r7], r1
 	addrof r1, chr
 	const r2, 1
 	call printStringLength@@u8@u8[r1, r2]
@@ -26,33 +27,33 @@
 	const r6, 20
 	; 25:2 while true
 @while_1:
-	const r7, 1
-	sub r6, r6, r7
-	const r7, 10
-	move r3, r1
-	move r0, r3
-	mod r2, r0, r7
-	move r3, r2
-	const r7, 10
+	const r3, 1
+	sub r6, r6, r3
+	const r3, 10
+	move r4, r1
+	move r0, r4
+	mod r2, r0, r3
+	move r4, r2
+	const r3, 10
 	move r0, r1
-	div r0, r0, r7
+	div r0, r0, r3
 	move r1, r0
-	cast r7(u8), r3(i64)
-	const r0, 48
-	add r7, r7, r0
-	cast r0(i64), r6(u8)
-	addrof r3, [buffer]
-	add r3, r3, r0
-	store [r3], r7
+	cast r0(u8), r4(i64)
+	const r3, 48
+	add r0, r0, r3
+	cast r3(i64), r6(u8)
+	addrof r4, [buffer]
+	add r4, r4, r3
+	store [r4], r0
 	; 31:3 if number == 0
-	const r7, 0
-	equals r7, r1, r7
-	branch r7, false, @while_1, @while_1_break
-	cast r7(i64), r6(u8)
+	const r0, 0
+	equals r0, r1, r0
+	branch r0, false, @while_1, @while_1_break
+	cast r0(i64), r6(u8)
 	addrof r1, [buffer]
-	add r1, r1, r7
-	const r7, 20
-	move r2, r7
+	add r1, r1, r0
+	const r0, 20
+	move r2, r0
 	sub r2, r2, r6
 	call printStringLength@@u8@u8[r1, r2]
 
@@ -110,98 +111,171 @@
 
 @main:
  Local variables
-	var 0: c (u8/1)
-	var 1: d (u8/1)
-	; 132 pc
+	var 0: b (i16/2)
+	var 1: c (u8/1)
+	var 2: d (u8/1)
+	; 300 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const r1, [string-0]
 	call printString@@u8[r1]
 	const r6, 1
-	const r7, 2
-	lt r1, r6, r7
+	const r0, 2
+	lt r1, r6, r0
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@bool[r1]
-	lt r1, r7, r6
+	addrof r7, b
+	load r0, [r7]
+	lt r1, r0, r6
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@bool[r1]
 	const r1, [string-1]
 	call printString@@u8[r1]
 	const r0, 0
 	const r2, 128
 	lt r1, r0, r2
-	move c, r0
-	move d, r2
+	addrof r7, c
+	store [r7], r0
+	addrof r7, d
+	store [r7], r2
 	call printIntLf@bool[r1]
-	move r2, c
-	move r0, d
+	addrof r7, c
+	load r2, [r7]
+	addrof r7, d
+	load r0, [r7]
 	lt r1, r0, r2
-	move c, r2
-	move d, r0
+	addrof r7, c
+	store [r7], r2
+	addrof r7, d
+	store [r7], r0
 	call printIntLf@bool[r1]
 	const r1, [string-2]
 	call printString@@u8[r1]
-	lteq r1, r6, r7
+	addrof r7, b
+	load r0, [r7]
+	lteq r1, r6, r0
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@bool[r1]
-	lteq r1, r7, r6
+	addrof r7, b
+	load r0, [r7]
+	lteq r1, r0, r6
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@bool[r1]
 	const r1, [string-3]
 	call printString@@u8[r1]
-	move r0, c
-	move r2, d
+	addrof r7, c
+	load r0, [r7]
+	addrof r7, d
+	load r2, [r7]
 	lteq r1, r0, r2
-	move c, r0
-	move d, r2
+	addrof r7, c
+	store [r7], r0
+	addrof r7, d
+	store [r7], r2
 	call printIntLf@bool[r1]
-	move r2, c
-	move r0, d
+	addrof r7, c
+	load r2, [r7]
+	addrof r7, d
+	load r0, [r7]
 	lteq r1, r0, r2
-	move c, r2
-	move d, r0
+	addrof r7, c
+	store [r7], r2
+	addrof r7, d
+	store [r7], r0
 	call printIntLf@bool[r1]
 	const r1, [string-4]
 	call printString@@u8[r1]
-	equals r1, r6, r7
+	addrof r7, b
+	load r0, [r7]
+	equals r1, r6, r0
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@bool[r1]
-	equals r1, r7, r6
+	addrof r7, b
+	load r0, [r7]
+	equals r1, r0, r6
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@bool[r1]
 	const r1, [string-5]
 	call printString@@u8[r1]
-	notequals r1, r6, r7
+	addrof r7, b
+	load r0, [r7]
+	notequals r1, r6, r0
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@bool[r1]
-	notequals r1, r7, r6
+	addrof r7, b
+	load r0, [r7]
+	notequals r1, r0, r6
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@bool[r1]
 	const r1, [string-6]
 	call printString@@u8[r1]
-	gteq r1, r6, r7
+	addrof r7, b
+	load r0, [r7]
+	gteq r1, r6, r0
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@bool[r1]
-	gteq r1, r7, r6
+	addrof r7, b
+	load r0, [r7]
+	gteq r1, r0, r6
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@bool[r1]
 	const r1, [string-7]
 	call printString@@u8[r1]
-	move r0, c
-	move r2, d
+	addrof r7, c
+	load r0, [r7]
+	addrof r7, d
+	load r2, [r7]
 	gteq r1, r0, r2
-	move c, r0
-	move d, r2
+	addrof r7, c
+	store [r7], r0
+	addrof r7, d
+	store [r7], r2
 	call printIntLf@bool[r1]
-	move r2, c
-	move r0, d
+	addrof r7, c
+	load r2, [r7]
+	addrof r7, d
+	load r0, [r7]
 	gteq r1, r0, r2
-	move c, r2
-	move d, r0
+	addrof r7, c
+	store [r7], r2
+	addrof r7, d
+	store [r7], r0
 	call printIntLf@bool[r1]
 	const r1, [string-8]
 	call printString@@u8[r1]
-	gt r1, r6, r7
+	addrof r7, b
+	load r0, [r7]
+	gt r1, r6, r0
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@bool[r1]
-	gt r1, r7, r6
+	addrof r7, b
+	load r0, [r7]
+	gt r1, r0, r6
 	call printIntLf@bool[r1]
 	const r1, [string-9]
 	call printString@@u8[r1]
-	move r6, c
-	move r7, d
-	gt r1, r6, r7
+	addrof r7, c
+	load r6, [r7]
+	addrof r7, d
+	load r0, [r7]
+	gt r1, r6, r0
+	addrof r7, d
+	store [r7], r0
 	call printIntLf@bool[r1]
-	gt r1, r7, r6
+	addrof r7, d
+	load r0, [r7]
+	gt r1, r0, r6
 	call printIntLf@bool[r1]
 
 @printStringLength@@u8@i64:
