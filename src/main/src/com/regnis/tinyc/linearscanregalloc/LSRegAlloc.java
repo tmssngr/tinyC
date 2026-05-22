@@ -15,13 +15,13 @@ import org.jetbrains.annotations.*;
 public final class LSRegAlloc {
 
 	@NotNull
-	public static IRFunction process(@NotNull IRFunction function, @NotNull LSArchitecture architecture) {
-		return process(function, architecture.isX86(), architecture.registerCount(), architecture);
+	public static IRFunction process(@NotNull IRFunction function, @NotNull LSArchitecture architecture, @NotNull Type pointerIntType) {
+		return process(function, architecture.isX86(), architecture.registerCount(), architecture, pointerIntType);
 	}
 
 	@NotNull
-	public static IRFunction process(@NotNull IRFunction function, boolean isX86, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider) {
-		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, isX86);
+	public static IRFunction process(@NotNull IRFunction function, boolean isX86, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull Type pointerIntType) {
+		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, isX86, pointerIntType);
 		final IRVarInfos varInfos = preprocessorResult.first();
 		final List<IRInstruction> instructions = preprocessorResult.second();
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), instructions);
