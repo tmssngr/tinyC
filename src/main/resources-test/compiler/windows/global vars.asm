@@ -204,39 +204,41 @@ start:
         mov bx, 32
         ; const tmp.next{r1}, 63
         mov cx, 63
-        ; addrof tmp.ptrToSpace{r0}, space
-        lea rax, [var_0]
-        ; end initialize global variables
-        ; addrof spillHelper{r7}, space
+        ; addrof tmp.ptrToSpace{r7}, space
         lea r12, [var_0]
-        ; store [spillHelper{r7}], tmp.space{r6}
-        mov [r12], bx
-        ; addrof spillHelper{r7}, next
-        lea r12, [var_1]
-        ; store [spillHelper{r7}], tmp.next{r1}
-        mov [r12], cx
-        ; addrof spillHelper{r7}, ptrToSpace
-        lea r12, [var_2]
-        ; store [spillHelper{r7}], tmp.ptrToSpace{r0}
-        mov [r12], rax
+        ; end initialize global variables
+        ; addrof global_var_addr{r0}, space
+        lea rax, [var_0]
+        ; store [global_var_addr{r0}], tmp.space{r6}
+        mov [rax], bx
+        ; addrof global_var_addr{r0}, next
+        lea rax, [var_1]
+        ; store [global_var_addr{r0}], tmp.next{r1}
+        mov [rax], cx
+        ; addrof global_var_addr{r0}, ptrToSpace
+        lea rax, [var_2]
+        ; store [global_var_addr{r0}], tmp.ptrToSpace{r7}
+        mov [rax], r12
         ; call printIntLf@i16[tmp.next{r1}]
         call @printIntLf@i16
-        ; addrof spillHelper{r7}, ptrToSpace
-        lea r12, [var_2]
-        ; load tmp.ptrToSpace{r6}, [spillHelper{r7}]
-        mov rbx, [r12]
-        ; cast t.1{r6}(i64), tmp.ptrToSpace{r6}(i16*)
-        ; const t.2{r0}, 2
-        mov rax, 2
-        ; add t.0{r6}, t.0{r6}, t.2{r0}
-        add rbx, rax
-        ; cast tmp.ptrToSpace{r6}(i16*), t.0{r6}(i64)
-        ; addrof spillHelper{r7}, ptrToSpace
-        lea r12, [var_2]
-        ; store [spillHelper{r7}], tmp.ptrToSpace{r6}
-        mov [r12], rbx
-        ; load t.3{r1}, [tmp.ptrToSpace{r6}]
-        mov cx, [rbx]
+        ; addrof global_var_addr{r6}, ptrToSpace
+        lea rbx, [var_2]
+        ; load tmp.ptrToSpace{r7}, [global_var_addr{r6}]
+        mov r12, [rbx]
+        ; cast t.1{r6}(i64), tmp.ptrToSpace{r7}(i16*)
+        mov rbx, r12
+        ; const t.2{r7}, 2
+        mov r12, 2
+        ; add t.0{r6}, t.0{r6}, t.2{r7}
+        add rbx, r12
+        ; cast tmp.ptrToSpace{r7}(i16*), t.0{r6}(i64)
+        mov r12, rbx
+        ; addrof global_var_addr{r6}, ptrToSpace
+        lea rbx, [var_2]
+        ; store [global_var_addr{r6}], tmp.ptrToSpace{r7}
+        mov [rbx], r12
+        ; load t.3{r1}, [tmp.ptrToSpace{r7}]
+        mov cx, [r12]
         ; call printIntLf@i16[t.3{r1}]
         call @printIntLf@i16
         add rsp, 32

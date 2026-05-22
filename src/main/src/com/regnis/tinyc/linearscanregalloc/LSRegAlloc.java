@@ -6,7 +6,6 @@ import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
-import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -42,7 +41,7 @@ public final class LSRegAlloc {
 		final LSAlgorithmLoggerImpl logger = new LSAlgorithmLoggerImpl(blockBoundaries);
 
 		Map<IRVar, LSInterval> varToInterval = null;
-		if (!containsNonRegisterVars(varInfos, instructions2)) {
+		if (!containsNonRegisterVars(varInfos)) {
 			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount, logger);
 		}
 		IRVar spillHelper = null;
@@ -397,7 +396,8 @@ public final class LSRegAlloc {
 
 	private void memToReg(IRVar source, IRVar registerTarget, Location location) {
 		Utils.assertTrue(spillHelper != null);
-		Utils.assertTrue(source.scope() != VariableScope.register);
+		Utils.assertTrue(source.scope() == VariableScope.function
+		                 || source.scope() == VariableScope.parameter);
 		Utils.assertTrue(registerTarget.scope() == VariableScope.register);
 
 		add(createAddrOfCheckRegister(spillHelper, source, location));
@@ -407,7 +407,8 @@ public final class LSRegAlloc {
 	private void regToMem(IRVar registerSource, IRVar target, Location location) {
 		Utils.assertTrue(spillHelper != null);
 		Utils.assertTrue(registerSource.scope() == VariableScope.register);
-		Utils.assertTrue(target.scope() != VariableScope.register);
+		Utils.assertTrue(target.scope() == VariableScope.function
+		                 || target.scope() == VariableScope.parameter);
 
 		add(createAddrOfCheckRegister(spillHelper, target, location));
 		add(new IRMemStore(spillHelper, registerSource, location));
@@ -422,28 +423,8 @@ public final class LSRegAlloc {
 		return false;
 	}
 
-	private static boolean containsNonRegisterVars(IRVarInfos infos, List<IRInstruction> instructions) {
-		if (infos.cantBeRegister().size() > 0) {
-			return true;
-		}
-
-		final class GlobalVarConsumer implements Consumer<IRVar> {
-			private boolean accessesGlobalVar;
-
-			@Override
-			public void accept(IRVar var) {
-				accessesGlobalVar |= var.scope() == VariableScope.global;
-			}
-		}
-		final GlobalVarConsumer varConsumer = new GlobalVarConsumer();
-
-		for (IRInstruction instruction : instructions) {
-			IRUtils.getVars(instruction, varConsumer, varConsumer);
-			if (varConsumer.accessesGlobalVar) {
-				return true;
-			}
-		}
-		return false;
+	private static boolean containsNonRegisterVars(IRVarInfos infos) {
+		return infos.cantBeRegister().size() > 0;
 	}
 
 	private static IRVar deriveVar(IRVar var, int reg) {

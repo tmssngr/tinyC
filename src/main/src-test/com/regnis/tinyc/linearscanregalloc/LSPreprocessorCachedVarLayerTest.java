@@ -19,6 +19,7 @@ public class LSPreprocessorCachedVarLayerTest {
 	public void testGlobalRead() {
 		final IRVar varGlobal = new IRVar("global", 0, VariableScope.global, Type.I16);
 		final IRVar varLocal = new IRVar(LSPreprocessorCachedVarLayer.TMP_PREFIX + "global", 0, VariableScope.function, Type.I16);
+		final IRVar varHelper = new IRVar(LSPreprocessorCachedVarLayer.GLOBAL_VAR_ADDR, 1, VariableScope.function, Type.pointer(Type.VOID));
 
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(
 				new IRVarDef(varGlobal, 2)
@@ -34,11 +35,13 @@ public class LSPreprocessorCachedVarLayerTest {
 		));
 
 		IRTestUtils.assertEqualsInstructions(List.of(
-				new IRMove(varLocal, varGlobal, Location.DUMMY),
+				new IRAddrOf(varHelper, varGlobal, Location.DUMMY),
+				new IRMemLoad(varLocal, varHelper, Location.DUMMY),
 				new IRRetValue(varLocal, Location.DUMMY)
 		), result.instructions);
 		assertEquals(List.of(
-				             new IRVarDef(varLocal, 2)
+				             new IRVarDef(varLocal, 2),
+				             new IRVarDef(varHelper, 8)
 		             ),
 		             tempVarFactory.createVarInfos().vars());
 	}
@@ -47,6 +50,7 @@ public class LSPreprocessorCachedVarLayerTest {
 	public void testGlobalWrite() {
 		final IRVar varGlobal = new IRVar("global", 0, VariableScope.global, Type.I16);
 		final IRVar varLocal = new IRVar(LSPreprocessorCachedVarLayer.TMP_PREFIX + "global", 0, VariableScope.function, Type.I16);
+		final IRVar varHelper = new IRVar(LSPreprocessorCachedVarLayer.GLOBAL_VAR_ADDR, 1, VariableScope.function, Type.pointer(Type.VOID));
 
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(
 				new IRVarDef(varGlobal, 2)
@@ -63,10 +67,12 @@ public class LSPreprocessorCachedVarLayerTest {
 
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varLocal, 999, Location.DUMMY),
-				new IRMove(varGlobal, varLocal, Location.DUMMY)
+				new IRAddrOf(varHelper, varGlobal, Location.DUMMY),
+				new IRMemStore(varHelper, varLocal, Location.DUMMY)
 		), result.instructions);
 		assertEquals(List.of(
-				             new IRVarDef(varLocal, 2)
+				             new IRVarDef(varLocal, 2),
+				             new IRVarDef(varHelper, 8)
 		             ),
 		             tempVarFactory.createVarInfos().vars());
 	}
@@ -76,6 +82,7 @@ public class LSPreprocessorCachedVarLayerTest {
 		final IRVar varGlobal = new IRVar("global", 0, VariableScope.global, Type.I16);
 		final IRVar varOne = new IRVar("one", 0, VariableScope.function, Type.I16);
 		final IRVar varLocal = new IRVar(LSPreprocessorCachedVarLayer.TMP_PREFIX + "global", 1, VariableScope.function, Type.I16);
+		final IRVar varHelper = new IRVar(LSPreprocessorCachedVarLayer.GLOBAL_VAR_ADDR, 2, VariableScope.function, Type.pointer(Type.VOID));
 
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(
 				new IRVarDef(varGlobal, 2)
@@ -96,14 +103,17 @@ public class LSPreprocessorCachedVarLayerTest {
 
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varOne, 1, Location.DUMMY),
-				new IRMove(varLocal, varGlobal, Location.DUMMY),
+				new IRAddrOf(varHelper, varGlobal, Location.DUMMY),
+				new IRMemLoad(varLocal, varHelper, Location.DUMMY),
 				new IRBinary(varLocal, IRBinary.Op.Add, varLocal, varOne, Location.DUMMY),
-				new IRMove(varGlobal, varLocal, Location.DUMMY),
+				new IRAddrOf(varHelper, varGlobal, Location.DUMMY),
+				new IRMemStore(varHelper, varLocal, Location.DUMMY),
 				new IRRetValue(varLocal, Location.DUMMY)
 		), result.instructions);
 		assertEquals(List.of(
 				             new IRVarDef(varOne, 2),
-				             new IRVarDef(varLocal, 2)
+				             new IRVarDef(varLocal, 2),
+				             new IRVarDef(varHelper, 8)
 		             ),
 		             tempVarFactory.createVarInfos().vars());
 	}

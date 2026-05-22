@@ -273,9 +273,9 @@ start:
         ; const tmp.text{r6}, [string-0]
         lea rbx, [string_0]
         ; end initialize global variables
-        ; addrof spillHelper{r7}, text
+        ; addrof global_var_addr{r7}, text
         lea r12, [var_0]
-        ; store [spillHelper{r7}], tmp.text{r6}
+        ; store [global_var_addr{r7}], tmp.text{r6}
         mov [r12], rbx
         ; move tmp.text{r1}, tmp.text{r6}
         mov rcx, rbx
@@ -287,9 +287,9 @@ start:
         mov rbx, 1
         ; cast t.3{r0}(u8*), t.2{r6}(i64)
         mov rax, rbx
-        ; addrof spillHelper{r7}, text
+        ; addrof global_var_addr{r7}, text
         lea r12, [var_0]
-        ; load tmp.text{r6}, [spillHelper{r7}]
+        ; load tmp.text{r6}, [global_var_addr{r7}]
         mov rbx, [r12]
         ; move second{r1}, tmp.text{r6}
         mov rcx, rbx
@@ -297,9 +297,9 @@ start:
         add rcx, rax
         ; call printString@@u8[second{r1}]
         call @printString@@u8
-        ; addrof spillHelper{r7}, text
+        ; addrof global_var_addr{r7}, text
         lea r12, [var_0]
-        ; load tmp.text{r6}, [spillHelper{r7}]
+        ; load tmp.text{r6}, [global_var_addr{r7}]
         mov rbx, [r12]
         ; load chr{r1}, [tmp.text{r6}]
         mov cl, [rbx]
@@ -321,33 +321,33 @@ start:
         sub rsp, 32
         ; const length{r1}, 0
         mov cx, 0
-        ; addrof spillHelper{r7}, text
-        lea r12, [var_0]
-        ; load tmp.text{r6}, [spillHelper{r7}]
-        mov rbx, [r12]
+        ; addrof global_var_addr{r6}, text
+        lea rbx, [var_0]
+        ; load tmp.text{r6}, [global_var_addr{r6}]
+        mov rbx, [rbx]
         ; 16:2 for *ptr != 0
         jmp @for_5
 @for_5_body:
-        ; const t.5{r0}, 1
-        mov ax, 1
-        ; add length{r1}, length{r1}, t.5{r0}
-        add cx, ax
+        ; const t.5{r7}, 1
+        mov r12w, 1
+        ; add length{r1}, length{r1}, t.5{r7}
+        add cx, r12w
         ; cast t.7{r6}(i64), ptr{r6}(u8*)
-        ; const t.8{r0}, 1
-        mov rax, 1
-        ; add t.6{r6}, t.6{r6}, t.8{r0}
-        add rbx, rax
+        ; const t.8{r7}, 1
+        mov r12, 1
+        ; add t.6{r6}, t.6{r6}, t.8{r7}
+        add rbx, r12
         ; cast ptr{r6}(u8*), t.6{r6}(i64)
 @for_5:
-        ; load t.3{r0}, [ptr{r6}]
-        mov al, [rbx]
-        ; const t.4{r2}, 0
-        mov dl, 0
-        ; notequals t.2{r0}, t.3{r0}, t.4{r2}
-        cmp al, dl
-        setne al
-        ; branch t.2{r0}, true, @for_5_body, @for_5_break
-        or al, al
+        ; load t.3{r7}, [ptr{r6}]
+        mov r12b, [rbx]
+        ; const t.4{r0}, 0
+        mov al, 0
+        ; notequals t.2{r7}, t.3{r7}, t.4{r0}
+        cmp r12b, al
+        setne r12b
+        ; branch t.2{r7}, true, @for_5_body, @for_5_break
+        or r12b, r12b
         jnz @for_5_body
         ; call printIntLf@i16[length{r1}]
         call @printIntLf@i16

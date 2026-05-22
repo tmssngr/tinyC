@@ -145,22 +145,22 @@
 @printLength:
 	; 15 pc
 	const r1, 0
-	addrof r7, text
-	load r6, [r7]
+	addrof r6, text
+	load r6, [r6]
 	; 16:2 for *ptr != 0
 	jump @for_5
 @for_5_body:
-	const r0, 1
-	add r1, r1, r0
+	const r7, 1
+	add r1, r1, r7
 	cast r6(i64), r6(u8*)
-	const r0, 1
-	add r6, r6, r0
+	const r7, 1
+	add r6, r6, r7
 	cast r6(u8*), r6(i64)
 @for_5:
-	load r0, [r6]
-	const r2, 0
-	notequals r0, r0, r2
-	branch r0, true, @for_5_body, @for_5_break
+	load r7, [r6]
+	const r0, 0
+	notequals r7, r7, r0
+	branch r7, true, @for_5_body, @for_5_break
 	call printIntLf@i16[r1]
 
 @printStringLength@@u8@i64:

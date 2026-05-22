@@ -197,11 +197,11 @@ public class LSRegAllocTest {
 	public void testGlobalVar() {
 		final int rRet = 0;
 		final int rArg1 = 1;
-		final int rSpill = 2;
+		final int reg2 = 2;
 		final IRVar varGlobal = new IRVar("global", 0, VariableScope.global, Type.U8);
 		final IRVar varOne = new IRVar("one", 0, VariableScope.function, Type.U8);
 		final IRVar varLocalGlobal = new IRVar(LSPreprocessorCachedVarLayer.TMP_PREFIX + "global", 1, VariableScope.global, Type.U8);
-		final IRVar varSpill = new IRVar("spillHelper", 2, VariableScope.function, Type.pointer(Type.VOID));
+		final IRVar varHelper = new IRVar(LSPreprocessorCachedVarLayer.GLOBAL_VAR_ADDR, 2, VariableScope.global, Type.pointer(Type.VOID));
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(
 				new IRVarDef(varGlobal, 1)
 		), Set.of(), null);
@@ -221,11 +221,11 @@ public class LSRegAllocTest {
 		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varOne.asRegister(rArg1), 1, Location.DUMMY),
-				new IRAddrOf(varSpill.asRegister(rSpill), varGlobal, Location.DUMMY),
-				new IRMemLoad(varLocalGlobal.asRegister(rRet), varSpill.asRegister(rSpill), Location.DUMMY),
+				new IRAddrOf(varHelper.asRegister(reg2), varGlobal, Location.DUMMY),
+				new IRMemLoad(varLocalGlobal.asRegister(rRet), varHelper.asRegister(reg2), Location.DUMMY),
 				new IRBinary(varLocalGlobal.asRegister(rRet), IRBinary.Op.Add, varLocalGlobal.asRegister(rRet), varOne.asRegister(rArg1), Location.DUMMY),
-				new IRAddrOf(varSpill.asRegister(rSpill), varGlobal, Location.DUMMY),
-				new IRMemStore(varSpill.asRegister(rSpill), varLocalGlobal.asRegister(rRet), Location.DUMMY)
+				new IRAddrOf(varHelper.asRegister(reg2), varGlobal, Location.DUMMY),
+				new IRMemStore(varHelper.asRegister(reg2), varLocalGlobal.asRegister(rRet), Location.DUMMY)
 		), regAllocFunction.instructions());
 	}
 

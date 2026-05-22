@@ -207,10 +207,10 @@ start:
         ; const tmp.i{r6}, 0
         mov bl, 0
         ; end initialize global variables
-        ; addrof spillHelper{r7}, i
-        lea r12, [var_0]
-        ; store [spillHelper{r7}], tmp.i{r6}
-        mov [r12], bl
+        ; addrof global_var_addr{r0}, i
+        lea rax, [var_0]
+        ; store [global_var_addr{r0}], tmp.i{r6}
+        mov [rax], bl
         ; call t.0{r0} = next[] -> u8
         call @next
         ; move t.0{r6}, t.0{r0}
@@ -265,25 +265,19 @@ start:
         ; u8 next
 @next:
         sub rsp, 8
-        ; save clobbered non-volatile registers
-        push rbx
-        push r12
         ; const t.0{r1}, 1
         mov cl, 1
-        ; addrof spillHelper{r7}, i
-        lea r12, [var_0]
-        ; load tmp.i{r0}, [spillHelper{r7}]
-        mov al, [r12]
+        ; addrof global_var_addr{r2}, i
+        lea rdx, [var_0]
+        ; load tmp.i{r0}, [global_var_addr{r2}]
+        mov al, [rdx]
         ; add tmp.i{r0}, tmp.i{r0}, t.0{r1}
         add al, cl
         ; 11:9 return i
-        ; addrof spillHelper{r7}, i
-        lea r12, [var_0]
-        ; store [spillHelper{r7}], tmp.i{r0}
-        mov [r12], al
-        ; restore clobbered non-volatile registers
-        pop r12
-        pop rbx
+        ; addrof global_var_addr{r2}, i
+        lea rdx, [var_0]
+        ; store [global_var_addr{r2}], tmp.i{r0}
+        mov [rdx], al
         add rsp, 8
         ret
 

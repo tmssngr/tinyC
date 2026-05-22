@@ -100,13 +100,13 @@
 	arg 0: salt (i32/4)
 	; 6 pc
 	move r0, r1
-	addrof r7, __random__
-	store [r7], r0
+	addrof r1, __random__
+	store [r1], r0
 
 @random:
 	; 28 pc
-	addrof r7, __random__
-	load r0, [r7]
+	addrof r2, __random__
+	load r0, [r2]
 	move r2, r0
 	const r3, 524287
 	move r4, r2
@@ -135,8 +135,8 @@
 	move r0, r4
 	add r0, r0, r2
 	; 151:9 return __random__
-	addrof r7, __random__
-	store [r7], r0
+	addrof r2, __random__
+	store [r2], r0
 
 @rowColumnToCell@i16@i16:
  Local variables
@@ -935,8 +935,8 @@
 	const r6, 0
 	; end initialize global variables
 	const r1, 7439742
-	addrof r7, __random__
-	store [r7], r6
+	addrof r0, __random__
+	store [r0], r6
 	call initRandom@i32[r1]
 	const r6, 1
 	call clearField[]

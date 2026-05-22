@@ -15,10 +15,13 @@ import org.jetbrains.annotations.*;
 final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 
 	static final String TMP_PREFIX = "tmp.";
+	static final String GLOBAL_VAR_ADDR = "global_var_addr";
 
 	private final Map<IRVar, LocalVar> globalToLocal = new LinkedHashMap<>();
 	private final IRLocalVarFactory tempVarFactory;
 	private final IRCanBeRegister canBeRegister;
+
+	private IRVar addressHelperVar;
 
 	public LSPreprocessorCachedVarLayer(@NotNull IRCanBeRegister canBeRegister, @NotNull IRLocalVarFactory tempVarFactory, @NotNull LSPreprocessorLayer nextLayer) {
 		super(nextLayer);
@@ -145,7 +148,14 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 	private void storeIfModified(LocalVar local, IRVar global) {
 		if (local.modified) {
 			Utils.assertTrue(local.validLocally);
-			forward(new IRMove(global, local.var, Location.DUMMY));
+			if (global.scope() == VariableScope.global) {
+				final IRVar helper = getHelperVar();
+				forward(new IRAddrOf(helper, global, Location.DUMMY));
+				forward(new IRMemStore(helper, local.var, Location.DUMMY));
+			}
+			else {
+				forward(new IRMove(global, local.var, Location.DUMMY));
+			}
 			local.modified = false;
 		}
 	}
@@ -170,7 +180,14 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 			final LocalVar local = getLocal(var);
 			if (!local.validLocally) {
 				Utils.assertTrue(!local.modified);
-				forward(new IRMove(local.var, var, Location.DUMMY));
+				if (var.scope() == VariableScope.global) {
+					final IRVar helper = getHelperVar();
+					forward(new IRAddrOf(helper, var, Location.DUMMY));
+					forward(new IRMemLoad(local.var, helper, Location.DUMMY));
+				}
+				else {
+					forward(new IRMove(local.var, var, Location.DUMMY));
+				}
 				local.validLocally = true;
 			}
 			else if (storeIfModified) {
@@ -189,6 +206,14 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 			return local.var;
 		}
 		return var;
+	}
+
+	@NotNull
+	private IRVar getHelperVar() {
+		if (addressHelperVar == null) {
+			addressHelperVar = tempVarFactory.createPointerVar(GLOBAL_VAR_ADDR);
+		}
+		return addressHelperVar;
 	}
 
 	private static final class LocalVar {

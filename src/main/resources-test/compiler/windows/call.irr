@@ -91,8 +91,8 @@
 	; begin initialize global variables
 	const r6, 0
 	; end initialize global variables
-	addrof r7, i
-	store [r7], r6
+	addrof r0, i
+	store [r0], r6
 	call r0 = next[] -> u8
 	move r6, r0
 	call r0 = next[] -> u8
@@ -119,12 +119,12 @@
 @next:
 	; 11 pc
 	const r1, 1
-	addrof r7, i
-	load r0, [r7]
+	addrof r2, i
+	load r0, [r2]
 	add r0, r0, r1
 	; 11:9 return i
-	addrof r7, i
-	store [r7], r0
+	addrof r2, i
+	store [r2], r0
 
 @doPrint@u8@u8@u8@u8@u8:
  Local variables

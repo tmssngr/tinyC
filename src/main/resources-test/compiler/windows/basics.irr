@@ -92,22 +92,22 @@
 	const r3, 3
 	addrof r7, t.6
 	store [r7], r3
-	addrof r7, zero
-	store [r7], r6
-	addrof r7, one
-	store [r7], r0
-	addrof r7, two
-	store [r7], r5
-	addrof r7, threeFour
-	store [r7], r1
+	addrof r3, zero
+	store [r3], r6
+	addrof r3, one
+	store [r3], r0
+	addrof r3, two
+	store [r3], r5
+	addrof r3, threeFour
+	store [r3], r1
 	move r1, r4
 	addrof r7, t.5
 	load r3, [r7]
 	addrof r7, t.6
 	load r4, [r7]
 	call _ = unusedArgs@u8@bool@u8@u8[r1, r2, r3, r4] -> i64
-	addrof r7, zero
-	load r6, [r7]
+	addrof r6, zero
+	load r6, [r6]
 	move r1, r6
 	call printChar@u8[r1]
 	addrof r6, one
@@ -119,8 +119,8 @@
 	add r6, r6, r0
 	load r1, [r6]
 	call printChar@u8[r1]
-	addrof r7, threeFour
-	load r1, [r7]
+	addrof r6, threeFour
+	load r1, [r6]
 	call printUint@u8[r1]
 	const r1, 10
 	call printChar@u8[r1]

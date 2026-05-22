@@ -199,22 +199,22 @@ start:
         lea r12, [rsp+49]
         ; store [spillHelper{r7}], t.6{r3}
         mov [r12], r8b
-        ; addrof spillHelper{r7}, zero
-        lea r12, [var_0]
-        ; store [spillHelper{r7}], tmp.zero{r6}
-        mov [r12], bl
-        ; addrof spillHelper{r7}, one
-        lea r12, [var_1]
-        ; store [spillHelper{r7}], tmp.one{r0}
-        mov [r12], al
-        ; addrof spillHelper{r7}, two
-        lea r12, [var_2]
-        ; store [spillHelper{r7}], tmp.two{r5}
-        mov [r12], r10b
-        ; addrof spillHelper{r7}, threeFour
-        lea r12, [var_3]
-        ; store [spillHelper{r7}], tmp.threeFour{r1}
-        mov [r12], cl
+        ; addrof global_var_addr{r3}, zero
+        lea r8, [var_0]
+        ; store [global_var_addr{r3}], tmp.zero{r6}
+        mov [r8], bl
+        ; addrof global_var_addr{r3}, one
+        lea r8, [var_1]
+        ; store [global_var_addr{r3}], tmp.one{r0}
+        mov [r8], al
+        ; addrof global_var_addr{r3}, two
+        lea r8, [var_2]
+        ; store [global_var_addr{r3}], tmp.two{r5}
+        mov [r8], r10b
+        ; addrof global_var_addr{r3}, threeFour
+        lea r8, [var_3]
+        ; store [global_var_addr{r3}], tmp.threeFour{r1}
+        mov [r8], cl
         ; move t.3{r1}, t.3{r4}
         mov cl, r9b
         ; addrof spillHelper{r7}, t.5
@@ -227,10 +227,10 @@ start:
         mov r9b, [r12]
         ; call _ = unusedArgs@u8@bool@u8@u8[t.3{r1}, t.4{r2}, t.5{r3}, t.6{r4}] -> i64
         call @unusedArgs@u8@bool@u8@u8
-        ; addrof spillHelper{r7}, zero
-        lea r12, [var_0]
-        ; load tmp.zero{r6}, [spillHelper{r7}]
-        mov bl, [r12]
+        ; addrof global_var_addr{r6}, zero
+        lea rbx, [var_0]
+        ; load tmp.zero{r6}, [global_var_addr{r6}]
+        mov bl, [rbx]
         ; move tmp.zero{r1}, tmp.zero{r6}
         mov cl, bl
         ; call printChar@u8[tmp.zero{r1}]
@@ -252,10 +252,10 @@ start:
         mov cl, [rbx]
         ; call printChar@u8[t.8{r1}]
         call @printChar@u8
-        ; addrof spillHelper{r7}, threeFour
-        lea r12, [var_3]
-        ; load tmp.threeFour{r1}, [spillHelper{r7}]
-        mov cl, [r12]
+        ; addrof global_var_addr{r6}, threeFour
+        lea rbx, [var_3]
+        ; load tmp.threeFour{r1}, [global_var_addr{r6}]
+        mov cl, [rbx]
         ; call printUint@u8[tmp.threeFour{r1}]
         call @printUint@u8
         ; const t.12{r1}, 10

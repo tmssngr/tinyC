@@ -209,34 +209,25 @@ start:
         ret
 
         ; void initRandom@i32
-        ;   rsp+32: arg salt
+        ;   rsp+16: arg salt
 @initRandom@i32:
         sub rsp, 8
-        ; save clobbered non-volatile registers
-        push rbx
-        push r12
         ; move tmp.__random__{r0}, salt{r1}
         mov eax, ecx
-        ; addrof spillHelper{r7}, __random__
-        lea r12, [var_0]
-        ; store [spillHelper{r7}], tmp.__random__{r0}
-        mov [r12], eax
-        ; restore clobbered non-volatile registers
-        pop r12
-        pop rbx
+        ; addrof global_var_addr{r1}, __random__
+        lea rcx, [var_0]
+        ; store [global_var_addr{r1}], tmp.__random__{r0}
+        mov [rcx], eax
         add rsp, 8
         ret
 
         ; i32 random
 @random:
         sub rsp, 8
-        ; save clobbered non-volatile registers
-        push rbx
-        push r12
-        ; addrof spillHelper{r7}, __random__
-        lea r12, [var_0]
-        ; load tmp.__random__{r0}, [spillHelper{r7}]
-        mov eax, [r12]
+        ; addrof global_var_addr{r2}, __random__
+        lea rdx, [var_0]
+        ; load tmp.__random__{r0}, [global_var_addr{r2}]
+        mov eax, [rdx]
         ; move r{r2}, tmp.__random__{r0}
         mov edx, eax
         ; const t.6{r3}, 524287
@@ -296,13 +287,10 @@ start:
         ; add tmp.__random__{r0}, tmp.__random__{r0}, t.19{r2}
         add eax, edx
         ; 151:9 return __random__
-        ; addrof spillHelper{r7}, __random__
-        lea r12, [var_0]
-        ; store [spillHelper{r7}], tmp.__random__{r0}
-        mov [r12], eax
-        ; restore clobbered non-volatile registers
-        pop r12
-        pop rbx
+        ; addrof global_var_addr{r2}, __random__
+        lea rdx, [var_0]
+        ; store [global_var_addr{r2}], tmp.__random__{r0}
+        mov [rdx], eax
         add rsp, 8
         ret
 
@@ -1831,10 +1819,10 @@ start:
         ; end initialize global variables
         ; const t.6{r1}, 7439742
         mov ecx, 7439742
-        ; addrof spillHelper{r7}, __random__
-        lea r12, [var_0]
-        ; store [spillHelper{r7}], tmp.__random__{r6}
-        mov [r12], ebx
+        ; addrof global_var_addr{r0}, __random__
+        lea rax, [var_0]
+        ; store [global_var_addr{r0}], tmp.__random__{r6}
+        mov [rax], ebx
         ; call initRandom@i32[t.6{r1}]
         call @initRandom@i32
         ; const needsInitialize{r6}, 1
