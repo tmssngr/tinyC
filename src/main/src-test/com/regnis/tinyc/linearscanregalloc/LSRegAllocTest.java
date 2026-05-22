@@ -42,7 +42,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
 		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
 		assertEquals(new IRLiteral(varFour.asRegister(r1), 4), it.next());
 		assertEquals(new IRLiteral(varThree.asRegister(r2), 3), it.next());
@@ -74,7 +74,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
 		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
 		assertEquals(new IRMove(varT2.asRegister(rRet), argA.asRegister(rArg1)), it.next());
 		assertEquals(new IRBinary(varT2.asRegister(rRet), IRBinary.Op.Add, varT2.asRegister(rRet), argB.asRegister(rArg2)), it.next());
@@ -102,7 +102,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(1, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 2, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 2, callingConventionProvider, Type.I64);
 		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
 		assertEquals(new IRLiteral(varA.asRegister(rArg1), 1), it.next());
 		assertEquals(new IRMove(varA, varA.asRegister(rArg1)), it.next());
@@ -141,7 +141,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
 		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
 		assertEquals(new IRCompare(varTmp.asRegister(rRet), IRCompare.Op.Lt, varA.asRegister(rArg1), varB.asRegister(rArg2)), it.next());
 		assertEquals(new IRBranch(varTmp.asRegister(rRet), false, "@if_1_end", "@if_1_then"), it.next());
@@ -177,7 +177,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 5, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 5, callingConventionProvider, Type.I64);
 		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
 		assertEquals(new IRMove(varStr.asRegister(rNV1), varStr.asRegister(rArg1)), it.next());
 		// todo
@@ -212,7 +212,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
 		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
 		assertEquals(new IRLiteral(varOne.asRegister(rArg1), 1), it.next());
 		assertEquals(new IRMove(varLocalGlobal.asRegister(rRet), varGlobal), it.next());
@@ -252,7 +252,7 @@ public class LSRegAllocTest {
 				)
 		);
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
 		final IRVar varA0 = varA.asRegister(0);
 		final IRVar varA1 = varA.asRegister(1);
 		final IRVar varB0 = varB.asRegister(0);

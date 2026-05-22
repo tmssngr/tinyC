@@ -15,12 +15,12 @@ import org.jetbrains.annotations.*;
 public final class LSPreprocessor {
 
 	@NotNull
-	public static Pair<IRVarInfos, List<IRInstruction>> process(@NotNull IRFunction function, @NotNull LSCallingConventionProvider callingConventionProvider, boolean isX86) {
+	public static Pair<IRVarInfos, List<IRInstruction>> process(@NotNull IRFunction function, @NotNull LSCallingConventionProvider callingConventionProvider, boolean isX86, Type pointerIntType) {
 		final List<IRInstruction> instructions = function.instructions();
 
 		final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(function.returnType(), function.varInfos().getArgumentTypes());
 
-		final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(function.varInfos());
+		final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(function.varInfos(), pointerIntType);
 
 		final var resultLayer = new LSPreprocessorResultLayer();
 		// storing register parameters on the stack is done before any other processing
