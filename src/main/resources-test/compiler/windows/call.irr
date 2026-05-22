@@ -1,8 +1,9 @@
 @printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 7 pc
-	move chr, r1
+	; 9 pc
+	addrof r7, chr
+	store [r7], r1
 	addrof r1, chr
 	const r2, 1
 	call printStringLength@@u8@u8[r1, r2]
@@ -15,33 +16,33 @@
 	const r6, 20
 	; 25:2 while true
 @while_1:
-	const r7, 1
-	sub r6, r6, r7
-	const r7, 10
-	move r3, r1
-	move r0, r3
-	mod r2, r0, r7
-	move r3, r2
-	const r7, 10
+	const r3, 1
+	sub r6, r6, r3
+	const r3, 10
+	move r4, r1
+	move r0, r4
+	mod r2, r0, r3
+	move r4, r2
+	const r3, 10
 	move r0, r1
-	div r0, r0, r7
+	div r0, r0, r3
 	move r1, r0
-	cast r7(u8), r3(i64)
-	const r0, 48
-	add r7, r7, r0
-	cast r0(i64), r6(u8)
-	addrof r3, [buffer]
-	add r3, r3, r0
-	store [r3], r7
+	cast r0(u8), r4(i64)
+	const r3, 48
+	add r0, r0, r3
+	cast r3(i64), r6(u8)
+	addrof r4, [buffer]
+	add r4, r4, r3
+	store [r4], r0
 	; 31:3 if number == 0
-	const r7, 0
-	equals r7, r1, r7
-	branch r7, false, @while_1, @while_1_break
-	cast r7(i64), r6(u8)
+	const r0, 0
+	equals r0, r1, r0
+	branch r0, false, @while_1, @while_1_break
+	cast r0(i64), r6(u8)
 	addrof r1, [buffer]
-	add r1, r1, r7
-	const r7, 20
-	move r2, r7
+	add r1, r1, r0
+	const r0, 20
+	move r2, r0
 	sub r2, r2, r6
 	call printStringLength@@u8@u8[r1, r2]
 
@@ -80,37 +81,48 @@
 
 @main:
  Local variables
-	var 0: t.2 (u8/1)
-	var 1: t.3 (u8/1)
-	var 2: arg.0.4 (u8/1)
-	; 30 pc
+	var 0: t.1 (u8/1)
+	var 1: t.2 (u8/1)
+	var 2: t.3 (u8/1)
+	var 3: arg.0.4 (u8/1)
+	; 50 pc
 	; begin initialize global variables
 	const r6, 0
 	; end initialize global variables
-	move i, r6
+	addrof r7, i
+	store [r7], r6
 	call r0 = next[] -> u8
 	move r6, r0
 	call r0 = next[] -> u8
-	move r7, r0
+	addrof r7, t.1
+	store [r7], r0
 	call r0 = next[] -> u8
-	move t.2, r0
+	addrof r7, t.2
+	store [r7], r0
 	call r0 = next[] -> u8
-	move t.3, r0
+	addrof r7, t.3
+	store [r7], r0
 	call r0 = next[] -> u8
-	move arg.0.4, r0
+	addrof r7, arg.0.4
+	store [r7], r0
 	move r1, r6
-	move r2, r7
-	move r3, t.2
-	move r4, t.3
+	addrof r7, t.1
+	load r2, [r7]
+	addrof r7, t.2
+	load r3, [r7]
+	addrof r7, t.3
+	load r4, [r7]
 	call doPrint@u8@u8@u8@u8@u8[r1, r2, r3, r4, arg.0.4]
 
 @next:
-	; 7 pc
+	; 11 pc
 	const r1, 1
-	move r0, i
+	addrof r7, i
+	load r0, [r7]
 	add r0, r0, r1
 	; 11:9 return i
-	move i, r0
+	addrof r7, i
+	store [r7], r0
 
 @doPrint@u8@u8@u8@u8@u8:
  Local variables
@@ -119,17 +131,24 @@
 	arg 2: c (u8/1)
 	arg 3: d (u8/1)
 	arg 4: e (u8/1)
-	; 23 pc
-	move r6, e
-	move r7, r2
-	move c, r3
-	move d, r4
+	; 41 pc
+	addrof r7, e
+	load r6, [r7]
+	addrof r7, b
+	store [r7], r2
+	addrof r7, c
+	store [r7], r3
+	addrof r7, d
+	store [r7], r4
 	call printIntLf@u8[r1]
-	move r1, r7
+	addrof r7, b
+	load r1, [r7]
 	call printIntLf@u8[r1]
-	move r1, c
+	addrof r7, c
+	load r1, [r7]
 	call printIntLf@u8[r1]
-	move r1, d
+	addrof r7, d
+	load r1, [r7]
 	call printIntLf@u8[r1]
 	move r1, r6
 	call printIntLf@u8[r1]
