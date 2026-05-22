@@ -85,8 +85,10 @@ public class LSRegAllocTest {
 	public void testSplitLiveInterval() {
 		final int rRet = 0;
 		final int rArg1 = 1;
+		final int rSpill = 2;
 		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.U8);
 		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.U8);
+		final IRVar varSpill = new IRVar("spillHelper", 2, VariableScope.function, Type.pointer(Type.VOID));
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		final IRFunction function = new IRFunction(
 				"simple", "@simple", Type.U8,
@@ -101,13 +103,15 @@ public class LSRegAllocTest {
 						new IRRetValue(varA, Location.DUMMY)
 				)
 		);
-		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(1, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 2, callingConventionProvider, Type.I64);
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(1, 1);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varA.asRegister(rArg1), 1, Location.DUMMY),
-				new IRMove(varA, varA.asRegister(rArg1), Location.DUMMY),
+				new IRAddrOf(varSpill.asRegister(rSpill), varA, Location.DUMMY),
+				new IRMemStore(varSpill.asRegister(rSpill), varA.asRegister(rArg1), Location.DUMMY),
 				new IRCall(varB.asRegister(rRet), Type.U8, "foo", List.of(varA.asRegister(rArg1)), Location.DUMMY),
-				new IRMove(varA.asRegister(rArg1), varA, Location.DUMMY),
+				new IRAddrOf(varSpill.asRegister(rSpill), varA, Location.DUMMY),
+				new IRMemLoad(varA.asRegister(rArg1), varSpill.asRegister(rSpill), Location.DUMMY),
 				new IRBinary(varA.asRegister(rArg1), IRBinary.Op.Add, varA.asRegister(rArg1), varB.asRegister(rRet), Location.DUMMY),
 				new IRMove(varA.asRegister(rRet), varA.asRegister(rArg1), Location.DUMMY)
 		), regAllocFunction.instructions());
@@ -193,9 +197,11 @@ public class LSRegAllocTest {
 	public void testGlobalVar() {
 		final int rRet = 0;
 		final int rArg1 = 1;
+		final int rSpill = 2;
 		final IRVar varGlobal = new IRVar("global", 0, VariableScope.global, Type.U8);
 		final IRVar varOne = new IRVar("one", 0, VariableScope.function, Type.U8);
 		final IRVar varLocalGlobal = new IRVar(LSPreprocessorCachedVarLayer.TMP_PREFIX + "global", 1, VariableScope.global, Type.U8);
+		final IRVar varSpill = new IRVar("spillHelper", 2, VariableScope.function, Type.pointer(Type.VOID));
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(
 				new IRVarDef(varGlobal, 1)
 		), Set.of(), null);
@@ -215,21 +221,21 @@ public class LSRegAllocTest {
 		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varOne.asRegister(rArg1), 1, Location.DUMMY),
-				new IRMove(varLocalGlobal.asRegister(rRet), varGlobal, Location.DUMMY),
+				new IRAddrOf(varSpill.asRegister(rSpill), varGlobal, Location.DUMMY),
+				new IRMemLoad(varLocalGlobal.asRegister(rRet), varSpill.asRegister(rSpill), Location.DUMMY),
 				new IRBinary(varLocalGlobal.asRegister(rRet), IRBinary.Op.Add, varLocalGlobal.asRegister(rRet), varOne.asRegister(rArg1), Location.DUMMY),
-				new IRMove(varGlobal, varLocalGlobal.asRegister(rRet), Location.DUMMY)
+				new IRAddrOf(varSpill.asRegister(rSpill), varGlobal, Location.DUMMY),
+				new IRMemStore(varSpill.asRegister(rSpill), varLocalGlobal.asRegister(rRet), Location.DUMMY)
 		), regAllocFunction.instructions());
 	}
 
 	@Test
 	public void testStackVar() {
-		final int r0 = 0;
-		final int r1 = 1;
-		final int r2 = 2;
 		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.U8);
 		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.U8);
 		final IRVar varC = new IRVar("c", 2, VariableScope.function, Type.U8);
 		final IRVar varT = new IRVar("t", 3, VariableScope.function, Type.U8);
+		final IRVar varSpill = new IRVar("spillHelper", 4, VariableScope.function, Type.pointer(Type.VOID));
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		final IRFunction function = new IRFunction(
 				"simple", "@simple", Type.U8,
@@ -260,23 +266,47 @@ public class LSRegAllocTest {
 		final IRVar varC0 = varC.asRegister(0);
 		final IRVar varC1 = varC.asRegister(1);
 		final IRVar varT1 = varT.asRegister(1);
+		final IRVar varSpill2 = varSpill.asRegister(2);
 		assertEquals(List.of(
 				new IRLiteral(varA1, 1, Location.DUMMY),
 				new IRLiteral(varB0, 2, Location.DUMMY),
-				new IRMove(varB, varB0, Location.DUMMY),
+
+				new IRAddrOf(varSpill2, varB, Location.DUMMY),
+				new IRMemStore(varSpill2, varB0, Location.DUMMY),
+
 				new IRLiteral(varC0, 3, Location.DUMMY),
-				new IRMove(varC, varC0, Location.DUMMY),
-				new IRMove(varA, varA1, Location.DUMMY),
+
+				new IRAddrOf(varSpill2, varC, Location.DUMMY),
+				new IRMemStore(varSpill2, varC0, Location.DUMMY),
+
+				new IRAddrOf(varSpill2, varA, Location.DUMMY),
+				new IRMemStore(varSpill2, varA1, Location.DUMMY),
+
 				new IRCall(null, Type.VOID, "print", List.of(varA1), Location.DUMMY),
-				new IRMove(varB1, varB, Location.DUMMY),
+
+				new IRAddrOf(varSpill2, varB, Location.DUMMY),
+				new IRMemLoad(varB1, varSpill2, Location.DUMMY),
+
 				new IRCall(null, Type.VOID, "print", List.of(varB1), Location.DUMMY),
-				new IRMove(varA0, varA, Location.DUMMY),
+
+				new IRAddrOf(varSpill2, varA, Location.DUMMY),
+				new IRMemLoad(varA0, varSpill2, Location.DUMMY),
+
 				new IRMove(varT1, varA0, Location.DUMMY),
-				new IRMove(varC0, varC, Location.DUMMY),
+
+				new IRAddrOf(varSpill2, varC, Location.DUMMY),
+				new IRMemLoad(varC0, varSpill2, Location.DUMMY),
+
 				new IRBinary(varT1, IRBinary.Op.Add, varT1, varC0, Location.DUMMY),
-				new IRMove(varC, varC0, Location.DUMMY),
+
+				new IRAddrOf(varSpill2, varC, Location.DUMMY),
+				new IRMemStore(varSpill2, varC0, Location.DUMMY),
+
 				new IRCall(null, Type.VOID, "print", List.of(varT1), Location.DUMMY),
-				new IRMove(varC1, varC, Location.DUMMY),
+
+				new IRAddrOf(varSpill2, varC, Location.DUMMY),
+				new IRMemLoad(varC1, varSpill2, Location.DUMMY),
+
 				new IRCall(null, Type.VOID, "print", List.of(varC1), Location.DUMMY)
 		), regAllocFunction.instructions());
 	}

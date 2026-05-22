@@ -1,8 +1,9 @@
 @printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 7 pc
-	move chr, r1
+	; 9 pc
+	addrof r7, chr
+	store [r7], r1
 	addrof r1, chr
 	const r2, 1
 	call printStringLength@@u8@u8[r1, r2]
@@ -15,35 +16,35 @@
 	const r6, 20
 	; 25:2 while true
 @while_1:
-	const r7, 1
-	sub r6, r6, r7
-	const r7, 10
-	move r3, r1
-	move r0, r3
-	mod r2, r0, r7
-	move r3, r2
-	const r7, 10
+	const r3, 1
+	sub r6, r6, r3
+	const r3, 10
+	move r4, r1
+	move r0, r4
+	mod r2, r0, r3
+	move r4, r2
+	const r3, 10
 	move r0, r1
-	div r0, r0, r7
+	div r0, r0, r3
 	move r1, r0
-	cast r7(u8), r3(i64)
-	const r0, 48
-	add r7, r7, r0
+	cast r0(u8), r4(i64)
+	const r3, 48
+	add r0, r0, r3
+	cast r3(i64), r6(u8)
+	cast r3(u8*), r3(i64)
+	addrof r4, [buffer]
+	add r4, r4, r3
+	store [r4], r0
+	; 31:3 if number == 0
+	const r0, 0
+	equals r0, r1, r0
+	branch r0, false, @while_1, @while_1_break
 	cast r0(i64), r6(u8)
 	cast r0(u8*), r0(i64)
-	addrof r3, [buffer]
-	add r3, r3, r0
-	store [r3], r7
-	; 31:3 if number == 0
-	const r7, 0
-	equals r7, r1, r7
-	branch r7, false, @while_1, @while_1_break
-	cast r7(i64), r6(u8)
-	cast r7(u8*), r7(i64)
 	addrof r1, [buffer]
-	add r1, r1, r7
-	const r7, 20
-	move r2, r7
+	add r1, r1, r0
+	const r0, 20
+	move r2, r0
 	sub r2, r2, r6
 	call printStringLength@@u8@u8[r1, r2]
 
@@ -83,13 +84,15 @@
 @initRandom@i32:
  Local variables
 	arg 0: salt (i32/4)
-	; 4 pc
+	; 6 pc
 	move r0, r1
-	move __random__, r0
+	addrof r7, __random__
+	store [r7], r0
 
 @random:
-	; 24 pc
-	move r0, __random__
+	; 28 pc
+	addrof r7, __random__
+	load r0, [r7]
 	move r2, r0
 	const r3, 524287
 	move r4, r2
@@ -118,7 +121,8 @@
 	move r0, r4
 	add r0, r0, r2
 	; 151:9 return __random__
-	move __random__, r0
+	addrof r7, __random__
+	store [r7], r0
 
 @randomU8:
 	; 2 pc
@@ -127,12 +131,13 @@
 	cast r0(u8), r0(i32)
 
 @main:
-	; 11 pc
+	; 13 pc
 	; begin initialize global variables
 	const r6, 0
 	; end initialize global variables
 	const r1, 7439742
-	move __random__, r6
+	addrof r7, __random__
+	store [r7], r6
 	call initRandom@i32[r1]
 	const r6, 0
 	; 5:2 for i < 50

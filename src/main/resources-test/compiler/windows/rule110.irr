@@ -12,8 +12,9 @@
 @printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 7 pc
-	move chr, r1
+	; 9 pc
+	addrof r7, chr
+	store [r7], r1
 	addrof r1, chr
 	const r2, 1
 	call printStringLength@@u8@u8[r1, r2]

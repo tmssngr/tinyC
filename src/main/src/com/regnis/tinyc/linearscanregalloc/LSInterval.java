@@ -365,6 +365,15 @@ final class LSInterval {
 		return createTransition(fromInterval.register, toInterval.register, var);
 	}
 
+	public boolean containsSpill() {
+		for (LSInterval interval = this; interval != null; interval = interval.nextSplit) {
+			if (interval.register < 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@NotNull
 	private Pair<IRVar, IRVar> createTransition(int registerFrom, int registerTo, @NotNull IRVar var) {
 		Utils.assertTrue(registerFrom != registerTo);

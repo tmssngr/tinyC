@@ -42,20 +42,27 @@ start:
         ret
 
         ; void printChar@u8
-        ;   rsp+48: arg chr
+        ;   rsp+64: arg chr
 @printChar@u8:
         sub rsp, 8
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
         sub rsp, 32
-        ; move chr, chr{r1}
-        lea r11, [rsp+48]
-        mov [r11], cl
+        ; addrof spillHelper{r7}, chr
+        lea r12, [rsp+64]
+        ; store [spillHelper{r7}], chr{r1}
+        mov [r12], cl
         ; addrof t.1{r1}, chr
-        lea rcx, [rsp+48]
+        lea rcx, [rsp+64]
         ; const t.2{r2}, 1
         mov dl, 1
         ; call printStringLength@@u8@u8[t.1{r1}, t.2{r2}]
         call @printStringLength@@u8@u8
         add rsp, 32
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
         add rsp, 8
         ret
 

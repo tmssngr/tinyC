@@ -12,8 +12,9 @@
 @printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 7 pc
-	move chr, r1
+	; 9 pc
+	addrof r7, chr
+	store [r7], r1
 	addrof r1, chr
 	const r2, 1
 	call printStringLength@@u8@u8[r1, r2]
@@ -26,35 +27,35 @@
 	const r6, 20
 	; 25:2 while true
 @while_1:
-	const r7, 1
-	sub r6, r6, r7
-	const r7, 10
-	move r3, r1
-	move r0, r3
-	mod r2, r0, r7
-	move r3, r2
-	const r7, 10
+	const r3, 1
+	sub r6, r6, r3
+	const r3, 10
+	move r4, r1
+	move r0, r4
+	mod r2, r0, r3
+	move r4, r2
+	const r3, 10
 	move r0, r1
-	div r0, r0, r7
+	div r0, r0, r3
 	move r1, r0
-	cast r7(u8), r3(i64)
-	const r0, 48
-	add r7, r7, r0
+	cast r0(u8), r4(i64)
+	const r3, 48
+	add r0, r0, r3
+	cast r3(i64), r6(u8)
+	cast r3(u8*), r3(i64)
+	addrof r4, [buffer]
+	add r4, r4, r3
+	store [r4], r0
+	; 31:3 if number == 0
+	const r0, 0
+	equals r0, r1, r0
+	branch r0, false, @while_1, @while_1_break
 	cast r0(i64), r6(u8)
 	cast r0(u8*), r0(i64)
-	addrof r3, [buffer]
-	add r3, r3, r0
-	store [r3], r7
-	; 31:3 if number == 0
-	const r7, 0
-	equals r7, r1, r7
-	branch r7, false, @while_1, @while_1_break
-	cast r7(i64), r6(u8)
-	cast r7(u8*), r7(i64)
 	addrof r1, [buffer]
-	add r1, r1, r7
-	const r7, 20
-	move r2, r7
+	add r1, r1, r0
+	const r0, 20
+	move r2, r0
 	sub r2, r2, r6
 	call printStringLength@@u8@u8[r1, r2]
 
@@ -128,37 +129,56 @@
 
 @main:
  Local variables
-	var 0: c (i16/2)
-	var 1: d (i16/2)
-	var 2: t (bool/1)
-	var 3: f (bool/1)
-	var 4: b1 (u8/1)
-	; 229 pc
+	var 0: b (i16/2)
+	var 1: c (i16/2)
+	var 2: d (i16/2)
+	var 3: t (bool/1)
+	var 4: f (bool/1)
+	var 5: b1 (u8/1)
+	; 419 pc
 	; begin initialize global variables
 	; end initialize global variables
 	const r1, [string-0]
 	call printString@@u8[r1]
 	const r6, 0
-	const r7, 1
-	const r0, 2
-	move c, r0
-	const r0, 3
-	move d, r0
 	const r0, 1
-	move t, r0
+	addrof r7, b
+	store [r7], r0
+	const r0, 2
+	addrof r7, c
+	store [r7], r0
+	const r0, 3
+	addrof r7, d
+	store [r7], r0
+	const r0, 1
+	addrof r7, t
+	store [r7], r0
 	const r0, 0
-	move f, r0
+	addrof r7, f
+	store [r7], r0
 	move r1, r6
 	and r1, r1, r6
 	call printIntLf@i16[r1]
 	move r1, r6
-	and r1, r1, r7
+	addrof r7, b
+	load r0, [r7]
+	and r1, r1, r0
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@i16[r1]
-	move r1, r7
+	addrof r7, b
+	load r0, [r7]
+	move r1, r0
+	addrof r7, b
+	store [r7], r0
 	and r1, r1, r6
 	call printIntLf@i16[r1]
-	move r1, r7
-	and r1, r1, r7
+	addrof r7, b
+	load r0, [r7]
+	move r1, r0
+	and r1, r1, r0
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@i16[r1]
 	const r1, [string-1]
 	call printString@@u8[r1]
@@ -166,13 +186,25 @@
 	or r1, r1, r6
 	call printIntLf@i16[r1]
 	move r1, r6
-	or r1, r1, r7
+	addrof r7, b
+	load r0, [r7]
+	or r1, r1, r0
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@i16[r1]
-	move r1, r7
+	addrof r7, b
+	load r0, [r7]
+	move r1, r0
+	addrof r7, b
+	store [r7], r0
 	or r1, r1, r6
 	call printIntLf@i16[r1]
-	move r1, r7
-	or r1, r1, r7
+	addrof r7, b
+	load r0, [r7]
+	move r1, r0
+	or r1, r1, r0
+	addrof r7, b
+	store [r7], r0
 	call printIntLf@i16[r1]
 	const r1, [string-2]
 	call printString@@u8[r1]
@@ -180,107 +212,148 @@
 	xor r1, r1, r6
 	call printIntLf@i16[r1]
 	move r1, r6
-	move r0, c
+	addrof r7, c
+	load r0, [r7]
 	xor r1, r1, r0
-	move c, r0
+	addrof r7, c
+	store [r7], r0
 	call printIntLf@i16[r1]
-	move r1, r7
+	addrof r7, b
+	load r0, [r7]
+	move r1, r0
+	addrof r7, b
+	store [r7], r0
 	xor r1, r1, r6
 	call printIntLf@i16[r1]
-	move r1, r7
-	move r6, c
-	xor r1, r1, r6
+	addrof r7, b
+	load r6, [r7]
+	move r1, r6
+	addrof r7, c
+	load r0, [r7]
+	xor r1, r1, r0
+	addrof r7, c
+	store [r7], r0
 	call printIntLf@i16[r1]
 	const r1, [string-3]
 	call printString@@u8[r1]
 	; 26:15 logic and
-	move r0, f
+	addrof r7, f
+	load r0, [r7]
 	move r1, r0
 	branch r1, true, @and_2nd_5, @no_critical_edge_22
-	move f, r0
+	addrof r7, f
+	store [r7], r0
 	jump @and_next_5
 @and_2nd_5:
 	move r1, r0
-	move f, r0
+	addrof r7, f
+	store [r7], r0
 @and_next_5:
 	call printIntLf@bool[r1]
 	; 27:15 logic and
-	move r0, f
+	addrof r7, f
+	load r0, [r7]
 	move r1, r0
-	move f, r0
+	addrof r7, f
+	store [r7], r0
 	branch r1, false, @and_next_6, @and_2nd_6
-	move r1, t
-	move t, r1
+	addrof r7, t
+	load r1, [r7]
+	addrof r7, t
+	store [r7], r1
 @and_next_6:
 	call printIntLf@bool[r1]
 	; 28:15 logic and
-	move r0, t
+	addrof r7, t
+	load r0, [r7]
 	move r1, r0
-	move t, r0
+	addrof r7, t
+	store [r7], r0
 	branch r1, false, @and_next_7, @and_2nd_7
-	move r1, f
-	move f, r1
+	addrof r7, f
+	load r1, [r7]
+	addrof r7, f
+	store [r7], r1
 @and_next_7:
 	call printIntLf@bool[r1]
 	; 29:15 logic and
-	move r0, t
+	addrof r7, t
+	load r0, [r7]
 	move r1, r0
 	branch r1, true, @and_2nd_8, @no_critical_edge_25
-	move t, r0
+	addrof r7, t
+	store [r7], r0
 	jump @and_next_8
 @and_2nd_8:
 	move r1, r0
-	move t, r0
+	addrof r7, t
+	store [r7], r0
 @and_next_8:
 	call printIntLf@bool[r1]
 	const r1, [string-4]
 	call printString@@u8[r1]
 	; 31:15 logic or
-	move r0, f
+	addrof r7, f
+	load r0, [r7]
 	move r1, r0
 	branch r1, false, @or_2nd_9, @no_critical_edge_26
-	move f, r0
+	addrof r7, f
+	store [r7], r0
 	jump @or_next_9
 @or_2nd_9:
 	move r1, r0
-	move f, r0
+	addrof r7, f
+	store [r7], r0
 @or_next_9:
 	call printIntLf@bool[r1]
 	; 32:15 logic or
-	move r0, f
+	addrof r7, f
+	load r0, [r7]
 	move r1, r0
-	move f, r0
+	addrof r7, f
+	store [r7], r0
 	branch r1, true, @or_next_10, @or_2nd_10
-	move r1, t
-	move t, r1
+	addrof r7, t
+	load r1, [r7]
+	addrof r7, t
+	store [r7], r1
 @or_next_10:
 	call printIntLf@bool[r1]
 	; 33:15 logic or
-	move r0, t
+	addrof r7, t
+	load r0, [r7]
 	move r1, r0
-	move t, r0
+	addrof r7, t
+	store [r7], r0
 	branch r1, true, @or_next_11, @or_2nd_11
-	move r1, f
-	move f, r1
+	addrof r7, f
+	load r1, [r7]
+	addrof r7, f
+	store [r7], r1
 @or_next_11:
 	call printIntLf@bool[r1]
 	; 34:15 logic or
-	move r0, t
+	addrof r7, t
+	load r0, [r7]
 	move r1, r0
 	branch r1, false, @or_2nd_12, @no_critical_edge_29
-	move t, r0
+	addrof r7, t
+	store [r7], r0
 	jump @or_next_12
 @or_2nd_12:
 	move r1, r0
-	move t, r0
+	addrof r7, t
+	store [r7], r0
 @or_next_12:
 	call printIntLf@bool[r1]
 	const r1, [string-5]
 	call printString@@u8[r1]
-	move r0, f
+	addrof r7, f
+	load r0, [r7]
 	notlog r1, r0
 	call printIntLf@bool[r1]
-	move r0, t
+	addrof r7, t
+	load r0, [r7]
 	notlog r1, r0
 	call printIntLf@bool[r1]
 	const r1, [string-6]
@@ -291,28 +364,43 @@
 	and r0, r0, r2
 	move r1, r0
 	or r1, r1, r3
-	move b1, r3
+	addrof r7, b1
+	store [r7], r3
 	call printIntLf@u8[r1]
 	; 43:20 logic or
-	equals r1, r7, r6
-	branch r1, true, @or_next_13, @or_2nd_13
-	move r1, d
-	lt r1, r6, r1
-	move d, r1
+	addrof r7, c
+	load r0, [r7]
+	equals r1, r6, r0
+	branch r1, false, @or_2nd_13, @no_critical_edge_30
+	addrof r7, c
+	store [r7], r0
+	jump @or_next_13
+@or_2nd_13:
+	addrof r7, d
+	load r1, [r7]
+	lt r1, r0, r1
+	addrof r7, c
+	store [r7], r0
+	addrof r7, d
+	store [r7], r1
 @or_next_13:
 	call printIntLf@bool[r1]
 	; 44:20 logic and
-	equals r1, r7, r6
+	addrof r7, c
+	load r0, [r7]
+	equals r1, r6, r0
 	branch r1, false, @and_next_14, @and_2nd_14
-	move r0, d
-	lt r1, r6, r0
+	addrof r7, d
+	load r2, [r7]
+	lt r1, r0, r2
 @and_next_14:
 	call printIntLf@bool[r1]
 	const r1, -1
 	call printIntLf@i16[r1]
-	neg r1, r7
+	neg r1, r6
 	call printIntLf@i16[r1]
-	move r6, b1
+	addrof r7, b1
+	load r6, [r7]
 	not r1, r6
 	call printIntLf@u8[r1]
 

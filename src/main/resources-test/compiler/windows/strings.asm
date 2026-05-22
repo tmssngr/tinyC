@@ -42,104 +42,109 @@ start:
         ret
 
         ; void printChar@u8
-        ;   rsp+48: arg chr
+        ;   rsp+64: arg chr
 @printChar@u8:
         sub rsp, 8
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
         sub rsp, 32
-        ; move chr, chr{r1}
-        lea r11, [rsp+48]
-        mov [r11], cl
+        ; addrof spillHelper{r7}, chr
+        lea r12, [rsp+64]
+        ; store [spillHelper{r7}], chr{r1}
+        mov [r12], cl
         ; addrof t.1{r1}, chr
-        lea rcx, [rsp+48]
+        lea rcx, [rsp+64]
         ; const t.2{r2}, 1
         mov dl, 1
         ; call printStringLength@@u8@u8[t.1{r1}, t.2{r2}]
         call @printStringLength@@u8@u8
         add rsp, 32
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
         add rsp, 8
         ret
 
         ; void printUint@i64
-        ;   rsp+96: arg number
-        ;   rsp+60: var buffer
+        ;   rsp+80: arg number
+        ;   rsp+40: var buffer
 @printUint@i64:
-        sub rsp, 40
+        sub rsp, 32
         ; save clobbered non-volatile registers
         push rbx
-        push r12
         sub rsp, 32
         ; const pos{r6}, 20
         mov bl, 20
         ; 25:2 while true
 @while_1:
-        ; const t.5{r7}, 1
-        mov r12b, 1
-        ; sub pos{r6}, pos{r6}, t.5{r7}
-        sub bl, r12b
-        ; const t.6{r7}, 10
-        mov r12, 10
-        ; move remainder{r3}, number{r1}
-        mov r8, rcx
-        ; move remainder{r0}, remainder{r3}
-        mov rax, r8
-        ; mod remainder{r2}, remainder{r0}, t.6{r7}
+        ; const t.5{r3}, 1
+        mov r8b, 1
+        ; sub pos{r6}, pos{r6}, t.5{r3}
+        sub bl, r8b
+        ; const t.6{r3}, 10
+        mov r8, 10
+        ; move remainder{r4}, number{r1}
+        mov r9, rcx
+        ; move remainder{r0}, remainder{r4}
+        mov rax, r9
+        ; mod remainder{r2}, remainder{r0}, t.6{r3}
         cqo
-        idiv r12
-        ; move remainder{r3}, remainder{r2}
-        mov r8, rdx
-        ; const t.7{r7}, 10
-        mov r12, 10
+        idiv r8
+        ; move remainder{r4}, remainder{r2}
+        mov r9, rdx
+        ; const t.7{r3}, 10
+        mov r8, 10
         ; move number{r0}, number{r1}
         mov rax, rcx
-        ; div number{r0}, number{r0}, t.7{r7}
+        ; div number{r0}, number{r0}, t.7{r3}
         cqo
-        idiv r12
+        idiv r8
         ; move number{r1}, number{r0}
         mov rcx, rax
-        ; cast t.8{r7}(u8), remainder{r3}(i64)
-        mov r12b, r8b
-        ; const t.9{r0}, 48
-        mov al, 48
-        ; add digit{r7}, digit{r7}, t.9{r0}
-        add r12b, al
-        ; cast t.11{r0}(i64), pos{r6}(u8)
-        movzx rax, bl
-        ; cast t.12{r0}(u8*), t.11{r0}(i64)
-        ; addrof t.10{r3}, [buffer]
-        lea r8, [rsp+60]
-        ; add t.10{r3}, t.10{r3}, t.12{r0}
-        add r8, rax
-        ; store [t.10{r3}], digit{r7}
-        mov [r8], r12b
+        ; cast t.8{r0}(u8), remainder{r4}(i64)
+        mov al, r9b
+        ; const t.9{r3}, 48
+        mov r8b, 48
+        ; add digit{r0}, digit{r0}, t.9{r3}
+        add al, r8b
+        ; cast t.11{r3}(i64), pos{r6}(u8)
+        movzx r8, bl
+        ; cast t.12{r3}(u8*), t.11{r3}(i64)
+        ; addrof t.10{r4}, [buffer]
+        lea r9, [rsp+40]
+        ; add t.10{r4}, t.10{r4}, t.12{r3}
+        add r9, r8
+        ; store [t.10{r4}], digit{r0}
+        mov [r9], al
         ; 31:3 if number == 0
-        ; const t.14{r7}, 0
-        mov r12, 0
-        ; equals t.13{r7}, number{r1}, t.14{r7}
-        cmp rcx, r12
-        sete r12b
-        ; branch t.13{r7}, false, @while_1, @while_1_break
-        or r12b, r12b
+        ; const t.14{r0}, 0
+        mov rax, 0
+        ; equals t.13{r0}, number{r1}, t.14{r0}
+        cmp rcx, rax
+        sete al
+        ; branch t.13{r0}, false, @while_1, @while_1_break
+        or al, al
         jz @while_1
-        ; cast t.16{r7}(i64), pos{r6}(u8)
-        movzx r12, bl
-        ; cast t.17{r7}(u8*), t.16{r7}(i64)
+        ; cast t.16{r0}(i64), pos{r6}(u8)
+        movzx rax, bl
+        ; cast t.17{r0}(u8*), t.16{r0}(i64)
         ; addrof t.15{r1}, [buffer]
-        lea rcx, [rsp+60]
-        ; add t.15{r1}, t.15{r1}, t.17{r7}
-        add rcx, r12
-        ; const t.19{r7}, 20
-        mov r12b, 20
-        ; move t.18{r2}, t.19{r7}
-        mov dl, r12b
+        lea rcx, [rsp+40]
+        ; add t.15{r1}, t.15{r1}, t.17{r0}
+        add rcx, rax
+        ; const t.19{r0}, 20
+        mov al, 20
+        ; move t.18{r2}, t.19{r0}
+        mov dl, al
         ; sub t.18{r2}, t.18{r2}, pos{r6}
         sub dl, bl
         ; call printStringLength@@u8@u8[t.15{r1}, t.18{r2}]
         call @printStringLength@@u8@u8
         add rsp, 32
         ; restore clobbered non-volatile registers
-        pop r12
         pop rbx
-        add rsp, 40
+        add rsp, 32
         ret
 
         ; void printIntLf@u8
@@ -268,9 +273,10 @@ start:
         ; const tmp.text{r6}, [string-0]
         lea rbx, [string_0]
         ; end initialize global variables
-        ; move text, tmp.text{r6}
-        lea r11, [var_0]
-        mov [r11], rbx
+        ; addrof spillHelper{r7}, text
+        lea r12, [var_0]
+        ; store [spillHelper{r7}], tmp.text{r6}
+        mov [r12], rbx
         ; move tmp.text{r1}, tmp.text{r6}
         mov rcx, rbx
         ; call printString@@u8[tmp.text{r1}]
@@ -279,20 +285,22 @@ start:
         call @printLength
         ; const t.2{r6}, 1
         mov rbx, 1
-        ; cast t.3{r7}(u8*), t.2{r6}(i64)
-        mov r12, rbx
-        ; move tmp.text{r6}, text
-        lea r11, [var_0]
-        mov rbx, [r11]
+        ; cast t.3{r0}(u8*), t.2{r6}(i64)
+        mov rax, rbx
+        ; addrof spillHelper{r7}, text
+        lea r12, [var_0]
+        ; load tmp.text{r6}, [spillHelper{r7}]
+        mov rbx, [r12]
         ; move second{r1}, tmp.text{r6}
         mov rcx, rbx
-        ; add second{r1}, second{r1}, t.3{r7}
-        add rcx, r12
+        ; add second{r1}, second{r1}, t.3{r0}
+        add rcx, rax
         ; call printString@@u8[second{r1}]
         call @printString@@u8
-        ; move tmp.text{r6}, text
-        lea r11, [var_0]
-        mov rbx, [r11]
+        ; addrof spillHelper{r7}, text
+        lea r12, [var_0]
+        ; load tmp.text{r6}, [spillHelper{r7}]
+        mov rbx, [r12]
         ; load chr{r1}, [tmp.text{r6}]
         mov cl, [rbx]
         ; call printIntLf@u8[chr{r1}]
@@ -313,32 +321,33 @@ start:
         sub rsp, 32
         ; const length{r1}, 0
         mov cx, 0
-        ; move tmp.text{r6}, text
-        lea r11, [var_0]
-        mov rbx, [r11]
+        ; addrof spillHelper{r7}, text
+        lea r12, [var_0]
+        ; load tmp.text{r6}, [spillHelper{r7}]
+        mov rbx, [r12]
         ; 16:2 for *ptr != 0
         jmp @for_5
 @for_5_body:
-        ; const t.5{r7}, 1
-        mov r12w, 1
-        ; add length{r1}, length{r1}, t.5{r7}
-        add cx, r12w
+        ; const t.5{r0}, 1
+        mov ax, 1
+        ; add length{r1}, length{r1}, t.5{r0}
+        add cx, ax
         ; cast t.7{r6}(i64), ptr{r6}(u8*)
-        ; const t.8{r7}, 1
-        mov r12, 1
-        ; add t.6{r6}, t.6{r6}, t.8{r7}
-        add rbx, r12
+        ; const t.8{r0}, 1
+        mov rax, 1
+        ; add t.6{r6}, t.6{r6}, t.8{r0}
+        add rbx, rax
         ; cast ptr{r6}(u8*), t.6{r6}(i64)
 @for_5:
-        ; load t.3{r7}, [ptr{r6}]
-        mov r12b, [rbx]
-        ; const t.4{r0}, 0
-        mov al, 0
-        ; notequals t.2{r7}, t.3{r7}, t.4{r0}
-        cmp r12b, al
-        setne r12b
-        ; branch t.2{r7}, true, @for_5_body, @for_5_break
-        or r12b, r12b
+        ; load t.3{r0}, [ptr{r6}]
+        mov al, [rbx]
+        ; const t.4{r2}, 0
+        mov dl, 0
+        ; notequals t.2{r0}, t.3{r0}, t.4{r2}
+        cmp al, dl
+        setne al
+        ; branch t.2{r0}, true, @for_5_body, @for_5_break
+        or al, al
         jnz @for_5_body
         ; call printIntLf@i16[length{r1}]
         call @printIntLf@i16

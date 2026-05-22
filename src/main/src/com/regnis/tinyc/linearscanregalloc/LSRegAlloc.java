@@ -6,6 +6,7 @@ import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -22,7 +23,7 @@ public final class LSRegAlloc {
 	@NotNull
 	public static IRFunction process(@NotNull IRFunction function, boolean isX86, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull Type pointerIntType) {
 		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, isX86, pointerIntType);
-		final IRVarInfos varInfos = preprocessorResult.first();
+		IRVarInfos varInfos = preprocessorResult.first();
 		final List<IRInstruction> instructions = preprocessorResult.second();
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), instructions);
 		DetectVarLiveness.process(cfg, function.varInfos().cantBeRegister(), false);
@@ -30,25 +31,35 @@ public final class LSRegAlloc {
 
 		LSIntervalFactory.printInstructions(instructions);
 
-
 		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, isX86);
 		intervalFactory.handleBlocks(blocks);
 		final Map<String, LSIntervalFactory.Indices> blockToIndex = intervalFactory.getBlockToIndex();
 		final List<LSIntervalFactory.Indices> blockBoundaries = intervalFactory.getBlockIndices();
+		final List<IRInstruction> instructions2 = intervalFactory.getInstructions();
 
 		intervalFactory.debugPrint(function.name());
 
-		final Map<IRVar, LSInterval> varIntervals = intervalFactory.getVarIntervals();
 		final LSAlgorithmLoggerImpl logger = new LSAlgorithmLoggerImpl(blockBoundaries);
 
-		final Map<IRVar, LSInterval> varToInterval = LSAlgorithm.perform(varIntervals, intervalFactory.getFixedIntervals(), registerCount, logger);
+		Map<IRVar, LSInterval> varToInterval = null;
+		if (!containsNonRegisterVars(varInfos, instructions2)) {
+			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount, logger);
+		}
+		IRVar spillHelper = null;
+		if (varToInterval == null || containsSpills(varToInterval)) {
+			final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(varInfos, pointerIntType);
+			spillHelper = tempVarFactory.createPointerVar("spillHelper")
+					.asRegister(registerCount - 1);
+			varInfos = tempVarFactory.createVarInfos();
+			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount - 1, logger);
+		}
 
 		intervalFactory.debugPrint(function.name());
 
-		final LSRegAlloc regAlloc = new LSRegAlloc(varToInterval, registerCount, cfg, blockToIndex, varInfos);
+		final LSRegAlloc regAlloc = new LSRegAlloc(varToInterval, registerCount, cfg, blockToIndex, varInfos, spillHelper);
 		regAlloc.determineMovesAtBlockEdges(blocks);
 		regAlloc.processStackArguments();
-		regAlloc.processInstructions(intervalFactory.getInstructions());
+		regAlloc.processInstructions(instructions2);
 
 		System.out.println("\n" + function.name() + ":");
 		LSIntervalFactory.printInstructions(regAlloc.instructions);
@@ -64,15 +75,22 @@ public final class LSRegAlloc {
 	private final ControlFlowGraph cfg;
 	private final Map<String, LSIntervalFactory.Indices> blockToIndex;
 	private final IRCanBeRegister canBeRegister;
+	@Nullable private final IRVar spillHelper;
 
 	private int pos;
 
-	private LSRegAlloc(@NotNull Map<IRVar, LSInterval> varToInterval, int registerCount, ControlFlowGraph cfg, Map<String, LSIntervalFactory.Indices> blockToIndex, IRCanBeRegister canBeRegister) {
+	private LSRegAlloc(@NotNull Map<IRVar, LSInterval> varToInterval,
+	                   int registerCount,
+	                   @NotNull ControlFlowGraph cfg,
+	                   @NotNull Map<String, LSIntervalFactory.Indices> blockToIndex,
+	                   @NotNull IRCanBeRegister canBeRegister,
+	                   @Nullable IRVar spillHelper) {
 		this.varToInterval = varToInterval;
 		this.registerCount = registerCount;
 		this.cfg = cfg;
 		this.blockToIndex = blockToIndex;
 		this.canBeRegister = canBeRegister;
+		this.spillHelper = spillHelper;
 	}
 
 	private void processStackArguments() {
@@ -96,7 +114,7 @@ public final class LSRegAlloc {
 
 			final int register = interval.register();
 			if (register >= 0) {
-				add(new IRMove(var.asRegister(register), var, Location.DUMMY));
+				memToReg(var, var.asRegister(register), Location.DUMMY);
 			}
 		}
 	}
@@ -114,9 +132,10 @@ public final class LSRegAlloc {
 	private void processInstruction(IRInstruction instruction) {
 		switch (instruction) {
 		case IRAddrOf addrOf -> {
+			final IRVar source = addrOf.source();
 			IRVar target = addrOf.target();
 			target = targetExpectReg(target);
-			add(new IRAddrOf(target, addrOf.source(), addrOf.location()));
+			add(createAddrOfCheckRegister(target, source, addrOf.location()));
 		}
 		case IRAddrOfArray addrOfArray -> {
 			IRVar target = addrOfArray.addr();
@@ -194,7 +213,7 @@ public final class LSRegAlloc {
 				skip = true;
 			}
 			if (!skip) {
-				add(new IRMove(target, source, move.location()));
+				move(source, target, move.location());
 			}
 		}
 		case IRString string -> {
@@ -216,16 +235,16 @@ public final class LSRegAlloc {
 			final LSInterval interval = entry.getValue();
 			final Pair<IRVar, IRVar> transition = interval.getTransitionAt(pos, var);
 			if (transition != null) {
-				final IRVar from = transition.first();
-				final IRVar to = transition.second();
-				add(new IRMove(to, from, Location.DUMMY));
+				final IRVar source = transition.first();
+				final IRVar target = transition.second();
+				move(source, target);
 			}
 		}
 
 		final List<IRMove> moves = indexToMoves.get(pos);
 		if (moves != null) {
 			for (IRMove move : moves) {
-				add(move);
+				move(move.source(), move.target());
 			}
 		}
 	}
@@ -346,6 +365,85 @@ public final class LSRegAlloc {
 			moveIndex = blockIndex + 1;
 		}
 		indexToMoves.put(moveIndex, moves);
+	}
+
+	private void move(IRVar source, IRVar target) {
+		move(source, target, Location.DUMMY);
+	}
+
+	private void move(IRVar source, IRVar target, Location location) {
+		final boolean sourceIsRegister = source.scope() == VariableScope.register;
+		final boolean targetIsRegister = target.scope() == VariableScope.register;
+		if (sourceIsRegister) {
+			if (targetIsRegister) {
+				add(new IRMove(target, source, location));
+			}
+			else {
+				regToMem(source, target, location);
+			}
+		}
+		else {
+			Utils.assertTrue(targetIsRegister);
+			memToReg(source, target, location);
+		}
+	}
+
+	@NotNull
+	private static IRAddrOf createAddrOfCheckRegister(IRVar target, IRVar source, Location location) {
+		Utils.assertTrue(target.scope() == VariableScope.register);
+		Utils.assertTrue(source.scope() != VariableScope.register);
+		return new IRAddrOf(target, source, location);
+	}
+
+	private void memToReg(IRVar source, IRVar registerTarget, Location location) {
+		Utils.assertTrue(spillHelper != null);
+		Utils.assertTrue(source.scope() != VariableScope.register);
+		Utils.assertTrue(registerTarget.scope() == VariableScope.register);
+
+		add(createAddrOfCheckRegister(spillHelper, source, location));
+		add(new IRMemLoad(registerTarget, spillHelper, location));
+	}
+
+	private void regToMem(IRVar registerSource, IRVar target, Location location) {
+		Utils.assertTrue(spillHelper != null);
+		Utils.assertTrue(registerSource.scope() == VariableScope.register);
+		Utils.assertTrue(target.scope() != VariableScope.register);
+
+		add(createAddrOfCheckRegister(spillHelper, target, location));
+		add(new IRMemStore(spillHelper, registerSource, location));
+	}
+
+	private static boolean containsSpills(Map<IRVar, LSInterval> intervals) {
+		for (LSInterval interval : intervals.values()) {
+			if (interval.containsSpill()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean containsNonRegisterVars(IRVarInfos infos, List<IRInstruction> instructions) {
+		if (infos.cantBeRegister().size() > 0) {
+			return true;
+		}
+
+		final class GlobalVarConsumer implements Consumer<IRVar> {
+			private boolean accessesGlobalVar;
+
+			@Override
+			public void accept(IRVar var) {
+				accessesGlobalVar |= var.scope() == VariableScope.global;
+			}
+		}
+		final GlobalVarConsumer varConsumer = new GlobalVarConsumer();
+
+		for (IRInstruction instruction : instructions) {
+			IRUtils.getVars(instruction, varConsumer, varConsumer);
+			if (varConsumer.accessesGlobalVar) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static IRVar deriveVar(IRVar var, int reg) {

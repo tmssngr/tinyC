@@ -19,104 +19,109 @@ start:
         call [ExitProcess]
 
         ; void printChar@u8
-        ;   rsp+48: arg chr
+        ;   rsp+64: arg chr
 @printChar@u8:
         sub rsp, 8
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
         sub rsp, 32
-        ; move chr, chr{r1}
-        lea r11, [rsp+48]
-        mov [r11], cl
+        ; addrof spillHelper{r7}, chr
+        lea r12, [rsp+64]
+        ; store [spillHelper{r7}], chr{r1}
+        mov [r12], cl
         ; addrof t.1{r1}, chr
-        lea rcx, [rsp+48]
+        lea rcx, [rsp+64]
         ; const t.2{r2}, 1
         mov dl, 1
         ; call printStringLength@@u8@u8[t.1{r1}, t.2{r2}]
         call @printStringLength@@u8@u8
         add rsp, 32
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
         add rsp, 8
         ret
 
         ; void printUint@i64
-        ;   rsp+96: arg number
-        ;   rsp+60: var buffer
+        ;   rsp+80: arg number
+        ;   rsp+40: var buffer
 @printUint@i64:
-        sub rsp, 40
+        sub rsp, 32
         ; save clobbered non-volatile registers
         push rbx
-        push r12
         sub rsp, 32
         ; const pos{r6}, 20
         mov bl, 20
         ; 25:2 while true
 @while_1:
-        ; const t.5{r7}, 1
-        mov r12b, 1
-        ; sub pos{r6}, pos{r6}, t.5{r7}
-        sub bl, r12b
-        ; const t.6{r7}, 10
-        mov r12, 10
-        ; move remainder{r3}, number{r1}
-        mov r8, rcx
-        ; move remainder{r0}, remainder{r3}
-        mov rax, r8
-        ; mod remainder{r2}, remainder{r0}, t.6{r7}
+        ; const t.5{r3}, 1
+        mov r8b, 1
+        ; sub pos{r6}, pos{r6}, t.5{r3}
+        sub bl, r8b
+        ; const t.6{r3}, 10
+        mov r8, 10
+        ; move remainder{r4}, number{r1}
+        mov r9, rcx
+        ; move remainder{r0}, remainder{r4}
+        mov rax, r9
+        ; mod remainder{r2}, remainder{r0}, t.6{r3}
         cqo
-        idiv r12
-        ; move remainder{r3}, remainder{r2}
-        mov r8, rdx
-        ; const t.7{r7}, 10
-        mov r12, 10
+        idiv r8
+        ; move remainder{r4}, remainder{r2}
+        mov r9, rdx
+        ; const t.7{r3}, 10
+        mov r8, 10
         ; move number{r0}, number{r1}
         mov rax, rcx
-        ; div number{r0}, number{r0}, t.7{r7}
+        ; div number{r0}, number{r0}, t.7{r3}
         cqo
-        idiv r12
+        idiv r8
         ; move number{r1}, number{r0}
         mov rcx, rax
-        ; cast t.8{r7}(u8), remainder{r3}(i64)
-        mov r12b, r8b
-        ; const t.9{r0}, 48
-        mov al, 48
-        ; add digit{r7}, digit{r7}, t.9{r0}
-        add r12b, al
-        ; cast t.11{r0}(i64), pos{r6}(u8)
-        movzx rax, bl
-        ; cast t.12{r0}(u8*), t.11{r0}(i64)
-        ; addrof t.10{r3}, [buffer]
-        lea r8, [rsp+60]
-        ; add t.10{r3}, t.10{r3}, t.12{r0}
-        add r8, rax
-        ; store [t.10{r3}], digit{r7}
-        mov [r8], r12b
+        ; cast t.8{r0}(u8), remainder{r4}(i64)
+        mov al, r9b
+        ; const t.9{r3}, 48
+        mov r8b, 48
+        ; add digit{r0}, digit{r0}, t.9{r3}
+        add al, r8b
+        ; cast t.11{r3}(i64), pos{r6}(u8)
+        movzx r8, bl
+        ; cast t.12{r3}(u8*), t.11{r3}(i64)
+        ; addrof t.10{r4}, [buffer]
+        lea r9, [rsp+40]
+        ; add t.10{r4}, t.10{r4}, t.12{r3}
+        add r9, r8
+        ; store [t.10{r4}], digit{r0}
+        mov [r9], al
         ; 31:3 if number == 0
-        ; const t.14{r7}, 0
-        mov r12, 0
-        ; equals t.13{r7}, number{r1}, t.14{r7}
-        cmp rcx, r12
-        sete r12b
-        ; branch t.13{r7}, false, @while_1, @while_1_break
-        or r12b, r12b
+        ; const t.14{r0}, 0
+        mov rax, 0
+        ; equals t.13{r0}, number{r1}, t.14{r0}
+        cmp rcx, rax
+        sete al
+        ; branch t.13{r0}, false, @while_1, @while_1_break
+        or al, al
         jz @while_1
-        ; cast t.16{r7}(i64), pos{r6}(u8)
-        movzx r12, bl
-        ; cast t.17{r7}(u8*), t.16{r7}(i64)
+        ; cast t.16{r0}(i64), pos{r6}(u8)
+        movzx rax, bl
+        ; cast t.17{r0}(u8*), t.16{r0}(i64)
         ; addrof t.15{r1}, [buffer]
-        lea rcx, [rsp+60]
-        ; add t.15{r1}, t.15{r1}, t.17{r7}
-        add rcx, r12
-        ; const t.19{r7}, 20
-        mov r12b, 20
-        ; move t.18{r2}, t.19{r7}
-        mov dl, r12b
+        lea rcx, [rsp+40]
+        ; add t.15{r1}, t.15{r1}, t.17{r0}
+        add rcx, rax
+        ; const t.19{r0}, 20
+        mov al, 20
+        ; move t.18{r2}, t.19{r0}
+        mov dl, al
         ; sub t.18{r2}, t.18{r2}, pos{r6}
         sub dl, bl
         ; call printStringLength@@u8@u8[t.15{r1}, t.18{r2}]
         call @printStringLength@@u8@u8
         add rsp, 32
         ; restore clobbered non-volatile registers
-        pop r12
         pop rbx
-        add rsp, 40
+        add rsp, 32
         ret
 
         ; void printIntLf@u8
@@ -188,23 +193,34 @@ start:
         ret
 
         ; void initRandom@i32
-        ;   rsp+16: arg salt
+        ;   rsp+32: arg salt
 @initRandom@i32:
         sub rsp, 8
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
         ; move tmp.__random__{r0}, salt{r1}
         mov eax, ecx
-        ; move __random__, tmp.__random__{r0}
-        lea r11, [var_0]
-        mov [r11], eax
+        ; addrof spillHelper{r7}, __random__
+        lea r12, [var_0]
+        ; store [spillHelper{r7}], tmp.__random__{r0}
+        mov [r12], eax
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
         add rsp, 8
         ret
 
         ; i32 random
 @random:
         sub rsp, 8
-        ; move tmp.__random__{r0}, __random__
-        lea r11, [var_0]
-        mov eax, [r11]
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
+        ; addrof spillHelper{r7}, __random__
+        lea r12, [var_0]
+        ; load tmp.__random__{r0}, [spillHelper{r7}]
+        mov eax, [r12]
         ; move r{r2}, tmp.__random__{r0}
         mov edx, eax
         ; const t.6{r3}, 524287
@@ -264,9 +280,13 @@ start:
         ; add tmp.__random__{r0}, tmp.__random__{r0}, t.19{r2}
         add eax, edx
         ; 151:9 return __random__
-        ; move __random__, tmp.__random__{r0}
-        lea r11, [var_0]
-        mov [r11], eax
+        ; addrof spillHelper{r7}, __random__
+        lea r12, [var_0]
+        ; store [spillHelper{r7}], tmp.__random__{r0}
+        mov [r12], eax
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
         add rsp, 8
         ret
 
@@ -284,8 +304,10 @@ start:
 
         ; void main
 @main:
+        sub rsp, 8
         ; save clobbered non-volatile registers
         push rbx
+        push r12
         sub rsp, 32
         ; begin initialize global variables
         ; const tmp.__random__{r6}, 0
@@ -293,9 +315,10 @@ start:
         ; end initialize global variables
         ; const t.2{r1}, 7439742
         mov ecx, 7439742
-        ; move __random__, tmp.__random__{r6}
-        lea r11, [var_0]
-        mov [r11], ebx
+        ; addrof spillHelper{r7}, __random__
+        lea r12, [var_0]
+        ; store [spillHelper{r7}], tmp.__random__{r6}
+        mov [r12], ebx
         ; call initRandom@i32[t.2{r1}]
         call @initRandom@i32
         ; const i{r6}, 0
@@ -324,7 +347,9 @@ start:
         jnz @for_4_body
         add rsp, 32
         ; restore clobbered non-volatile registers
+        pop r12
         pop rbx
+        add rsp, 8
         ret
 
         ; void printStringLength@@u8@i64
