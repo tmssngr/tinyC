@@ -36,7 +36,7 @@ public class LSPreprocessorTest {
 				                                                         new IRBinary(d, IRBinary.Op.Add, a, b, Location.DUMMY),
 				                                                         new IRCall(c, Type.I16, "sub", List.of(d, c, b, a), Location.DUMMY),
 				                                                         new IRRetValue(c, Location.DUMMY)
-		                                                         )), callingConventionProvider, false);
+		                                                         )), callingConventionProvider, false, Type.I64);
 		assertEquals(List.of(
 				new IRMove(a, a.asRegister(1), Location.DUMMY),
 				new IRMove(b, b.asRegister(2), Location.DUMMY),
@@ -83,7 +83,7 @@ public class LSPreprocessorTest {
 				                                                         new IRLiteral(varA, 4, Location.DUMMY),
 				                                                         new IRJump("label"),
 				                                                         new IRLabel("label")
-		                                                         )), callingConventionProvider, false);
+		                                                         )), callingConventionProvider, false, Type.I64);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRLiteral(varTempA, 1, Location.DUMMY),
 				new IRAddrOf(varAddrA, varA, Location.DUMMY),
@@ -124,7 +124,7 @@ public class LSPreprocessorTest {
 				                                                         new IRLiteral(varT2, 1, Location.DUMMY),
 																		 new IRCall(null, Type.VOID, "printStringLength", List.of(varT1, varT2), Location.DUMMY),
 				                                                         new IRLabel("@printChar_ret")
-		                                                         )), callingConventionProvider, false);
+		                                                         )), callingConventionProvider, false, Type.I64);
 		IRTestUtils.assertEqualsInstructions(List.of(
 				new IRMove(varChr, varChr.asRegister(1), Location.DUMMY),
 				new IRAddrOf(varT1, varChr, Location.DUMMY),

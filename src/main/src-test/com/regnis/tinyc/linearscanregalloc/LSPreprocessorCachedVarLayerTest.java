@@ -27,7 +27,7 @@ public class LSPreprocessorCachedVarLayerTest {
 
 		final var result = new LSPreprocessorResultLayer();
 
-		final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(localVarInfos);
+		final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(localVarInfos, Type.I64);
 		final LSPreprocessorCachedVarLayer preprocessor = new LSPreprocessorCachedVarLayer(localVarInfos, tempVarFactory, result);
 		LSPreprocessorLayer.process(preprocessor, List.of(
 				new IRRetValue(varGlobal, Location.DUMMY)
@@ -55,7 +55,7 @@ public class LSPreprocessorCachedVarLayerTest {
 
 		final var result = new LSPreprocessorResultLayer();
 
-		final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(localVarInfos);
+		final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(localVarInfos, Type.I64);
 		final LSPreprocessorCachedVarLayer preprocessor = new LSPreprocessorCachedVarLayer(localVarInfos, tempVarFactory, result);
 		LSPreprocessorLayer.process(preprocessor, List.of(
 				new IRLiteral(varGlobal, 999, Location.DUMMY)
@@ -86,7 +86,7 @@ public class LSPreprocessorCachedVarLayerTest {
 
 		final var result = new LSPreprocessorResultLayer();
 
-		final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(localVarInfos);
+		final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(localVarInfos, Type.I64);
 		final LSPreprocessorCachedVarLayer preprocessor = new LSPreprocessorCachedVarLayer(localVarInfos, tempVarFactory, result);
 		LSPreprocessorLayer.process(preprocessor, List.of(
 				new IRLiteral(varOne, 1, Location.DUMMY),
@@ -124,7 +124,7 @@ public class LSPreprocessorCachedVarLayerTest {
 
 		final var result = new LSPreprocessorResultLayer();
 
-		final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(localVarInfos);
+		final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(localVarInfos, Type.I64);
 		final LSPreprocessorCachedVarLayer preprocessor = new LSPreprocessorCachedVarLayer(localVarInfos, tempVarFactory, result);
 		LSPreprocessorLayer.process(preprocessor, List.of(
 				new IRLiteral(varA, 1, Location.DUMMY),
