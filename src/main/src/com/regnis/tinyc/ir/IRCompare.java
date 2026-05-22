@@ -19,7 +19,12 @@ public record IRCompare(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar le
 	@NotNull
 	@Override
 	public String toString() {
-		return op.toString().toLowerCase() + " " + target + ", " + left + ", " + right;
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
+		return op.toString().toLowerCase() + " " + target.toString(comment) + ", " + left.toString(comment) + ", " + right.toString(comment);
 	}
 
 	public enum Op {

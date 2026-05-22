@@ -11,6 +11,11 @@ public record IRAddrOfArray(@NotNull IRVar addr, @NotNull IRVar array, @NotNull 
 	@NotNull
 	@Override
 	public String toString() {
-		return "addrof " + addr + ", [" + array + "]";
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
+		return "addrof " + addr.toString(comment) + ", [" + array.toString(comment) + "]";
 	}
 }

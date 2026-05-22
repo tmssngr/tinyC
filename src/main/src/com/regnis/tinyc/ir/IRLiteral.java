@@ -11,6 +11,10 @@ public record IRLiteral(@NotNull IRVar target, int value, @NotNull Location loca
 	@NotNull
 	@Override
 	public String toString() {
-		return "const " + target + ", " + value;
+		return toString(false);
+	}
+	@Override
+	public String toString(boolean comment) {
+		return "const " + target.toString(comment) + ", " + value;
 	}
 }

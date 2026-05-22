@@ -7,19 +7,19 @@ digraph program {
 	}
 	subgraph fn_printChar@u8 {
 		BasicBlock_1_printCharu8 [label="printCharu8",shape=box];
-		BasicBlock_1_printCharu8 -> BasicBlock_1_printCharu8_ret;
+		BasicBlock_1_printCharu8 -> BasicBlock_1_printCharu8_ret [label="(chr)"];
 		BasicBlock_1_printCharu8_ret [label="printCharu8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printUint@i64 {
 		BasicBlock_2_printUinti64 [label="printUinti64",shape=box];
-		BasicBlock_2_printUinti64 -> BasicBlock_2_while_1 [label="(number,pos)"];
+		BasicBlock_2_printUinti64 -> BasicBlock_2_while_1 [label="(buffer,number,pos)"];
 		BasicBlock_2_no_critical_edge_4 [label="no_critical_edge_4",shape=box];
-		BasicBlock_2_no_critical_edge_4 -> BasicBlock_2_while_1 [label="(number,pos)"];
+		BasicBlock_2_no_critical_edge_4 -> BasicBlock_2_while_1 [label="(buffer,number,pos)"];
 		BasicBlock_2_while_1 [label="while_1",shape=hexagon];
-		BasicBlock_2_while_1 -> BasicBlock_2_no_critical_edge_4 [label="(number,pos)"];
-		BasicBlock_2_while_1 -> BasicBlock_2_while_1_break [label="(pos)"];
+		BasicBlock_2_while_1 -> BasicBlock_2_no_critical_edge_4 [label="(buffer,number,pos)"];
+		BasicBlock_2_while_1 -> BasicBlock_2_while_1_break [label="(buffer,pos)"];
 		BasicBlock_2_while_1_break [label="while_1_break",shape=box];
-		BasicBlock_2_while_1_break -> BasicBlock_2_printUinti64_ret;
+		BasicBlock_2_while_1_break -> BasicBlock_2_printUinti64_ret [label="(buffer)"];
 		BasicBlock_2_printUinti64_ret [label="printUinti64_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printIntLf@u8 {
