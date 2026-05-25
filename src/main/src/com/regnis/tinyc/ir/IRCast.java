@@ -8,6 +8,10 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record IRCast(@NotNull IRVar target, @NotNull IRVar source, @NotNull Location location) implements IRInstruction {
+	public IRCast(@NotNull IRVar target, @NotNull IRVar source) {
+		this(target, source, Location.DUMMY);
+	}
+
 	@NotNull
 	@Override
 	public String toString() {

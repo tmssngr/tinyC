@@ -11,6 +11,10 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record IRCall(@Nullable IRVar target, @NotNull Type type, @NotNull String name, @NotNull List<IRVar> args, @NotNull Location location) implements IRInstruction {
+	public IRCall(@Nullable IRVar target, @NotNull Type type, @NotNull String name, @NotNull List<IRVar> args) {
+		this(target, type, name, args, Location.DUMMY);
+	}
+
 	public IRCall {
 		if (target != null) {
 			Utils.assertTrue(type.equals(target.type()));

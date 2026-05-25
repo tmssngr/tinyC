@@ -8,6 +8,10 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record IRRetValue(@NotNull IRVar var, @NotNull Location location) implements IRInstruction {
+	public IRRetValue(@NotNull IRVar var) {
+		this(var, Location.DUMMY);
+	}
+
 	@NotNull
 	@Override
 	public String toString() {

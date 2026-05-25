@@ -8,6 +8,10 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record IRAddrOf(@NotNull IRVar target, @NotNull IRVar source, @NotNull Location location) implements IRInstruction {
+	public IRAddrOf(@NotNull IRVar target, @NotNull IRVar source) {
+		this(target, source, Location.DUMMY);
+	}
+
 	public IRAddrOf {
 		Utils.assertTrue(target.type().isPointer());
 		// we don't verify more detailed, because we use it for pointer arithmetics,

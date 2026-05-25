@@ -8,6 +8,10 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record IRAddrOfArray(@NotNull IRVar addr, @NotNull IRVar array, @NotNull Location location) implements IRInstruction {
+	public IRAddrOfArray(@NotNull IRVar addr, @NotNull IRVar array) {
+		this(addr, array, Location.DUMMY);
+	}
+
 	@NotNull
 	@Override
 	public String toString() {
