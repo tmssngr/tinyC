@@ -8,6 +8,10 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record IRMemStore(@NotNull IRVar addr, @NotNull IRVar value, @NotNull Location location) implements IRInstruction {
+	public IRMemStore(@NotNull IRVar addr, @NotNull IRVar value) {
+		this(addr, value, Location.DUMMY);
+	}
+
 	public IRMemStore {
 		Utils.assertTrue(addr.type().isPointer());
 	}

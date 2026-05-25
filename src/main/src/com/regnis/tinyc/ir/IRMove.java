@@ -10,6 +10,10 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record IRMove(@NotNull IRVar target, @NotNull IRVar source, @NotNull Location location) implements IRInstruction {
+	public IRMove(@NotNull IRVar target, @NotNull IRVar source) {
+		this(target, source, Location.DUMMY);
+	}
+
 	public IRMove {
 		Utils.assertTrue(Objects.equals(target.type(), source.type()));
 	}
