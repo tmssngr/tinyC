@@ -10,6 +10,10 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public record IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar left, @NotNull IRVar right, @NotNull Location location) implements IRInstruction {
+	public IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar left, @NotNull IRVar right) {
+		this(target, op, left, right, Location.DUMMY);
+	}
+
 	public IRBinary {
 		Utils.assertTrue(Objects.equals(target.type(), left.type()), target.type() + " vs. " + left.type());
 		Utils.assertTrue(Objects.equals(target.type(), right.type()), target.type() + " vs. " + right.type());
