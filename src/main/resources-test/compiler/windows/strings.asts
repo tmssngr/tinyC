@@ -53,7 +53,7 @@ i64 strlen@@u8(u8* str) {
 	i64 length;
 
 	length = 0;
-	for (; (*str) != 0; str = (u8*)(((i64)str) + 1)) {
+	for (; (*str) != 0; str = str + 1) {
 		length = length + 1;
 	}
 	return length;
@@ -84,7 +84,7 @@ void printLength() {
 
 	length = 0;
 	ptr = text;
-	for (; (*ptr) != 0; ptr = (u8*)(((i64)ptr) + 1)) {
+	for (; (*ptr) != 0; ptr = ptr + 1) {
 		length = length + 1;
 	}
 	printIntLf@i16(length);

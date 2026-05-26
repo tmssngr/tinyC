@@ -32,15 +32,13 @@
 	var 9: t.9 (u8/1)
 	var 10: t.10 (u8*/8)
 	var 11: t.11 (i64/8)
-	var 12: t.12 (u8*/8)
-	var 13: t.13 (bool/1)
-	var 14: t.14 (i64/8)
-	var 15: t.15 (u8*/8)
-	var 16: t.16 (i64/8)
-	var 17: t.17 (u8*/8)
-	var 18: t.18 (u8/1)
-	var 19: t.19 (u8/1)
-	; 130 pc
+	var 12: t.12 (bool/1)
+	var 13: t.13 (i64/8)
+	var 14: t.14 (u8*/8)
+	var 15: t.15 (i64/8)
+	var 16: t.16 (u8/1)
+	var 17: t.17 (u8/1)
+	; 120 pc
 	const pos, 20
 	; 25:2 while true
 @while_1:
@@ -56,23 +54,21 @@
 	move digit, t.8
 	add digit, digit, t.9
 	cast t.11(i64), pos(u8)
-	cast t.12(u8*), t.11(i64)
 	addrof t.10, [buffer]
-	add t.10, t.10, t.12
+	add t.10, t.10, t.11
 	store [t.10], digit
 	; 31:3 if number == 0
-	const t.14, 0
-	equals t.13, number, t.14
-	branch t.13, false, @while_1, @while_1_break
+	const t.13, 0
+	equals t.12, number, t.13
+	branch t.12, false, @while_1, @while_1_break
 @while_1_break:
-	cast t.16(i64), pos(u8)
-	cast t.17(u8*), t.16(i64)
-	addrof t.15, [buffer]
-	add t.15, t.15, t.17
-	const t.19, 20
-	move t.18, t.19
-	sub t.18, t.18, pos
-	call printStringLength@@u8@u8[t.15, t.18]
+	cast t.15(i64), pos(u8)
+	addrof t.14, [buffer]
+	add t.14, t.14, t.15
+	const t.17, 20
+	move t.16, t.17
+	sub t.16, t.16, pos
+	call printStringLength@@u8@u8[t.14, t.16]
 @printUint@i64_ret:
 
 @printStringLength@@u8@u8:
@@ -112,9 +108,8 @@
 	var 8: t.8 (u8/1)
 	var 9: t.9 (u8*/8)
 	var 10: t.10 (i64/8)
-	var 11: t.11 (u8*/8)
-	var 12: t.12 (u8/1)
-	; 85 pc
+	var 11: t.11 (u8/1)
+	; 80 pc
 	; begin initialize global variables
 	const zero, 48
 	const one, 49
@@ -132,14 +127,13 @@
 	call printChar@u8[t.7]
 	addrof twoPtr, two
 	const t.10, 0
-	cast t.11(u8*), t.10(i64)
 	move t.9, twoPtr
-	add t.9, t.9, t.11
+	add t.9, t.9, t.10
 	load t.8, [t.9]
 	call printChar@u8[t.8]
 	call printUint@u8[threeFour]
-	const t.12, 10
-	call printChar@u8[t.12]
+	const t.11, 10
+	call printChar@u8[t.11]
 @main_ret:
 
 @printStringLength@@u8@i64:

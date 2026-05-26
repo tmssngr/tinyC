@@ -20,7 +20,12 @@ public record ExprBinary(@NotNull Op op, @Nullable Type type, @NotNull Expressio
 			}
 			else {
 				Utils.assertTrue(Objects.equals(type, leftType), type + " vs. " + leftType);
-				Utils.assertTrue(Objects.equals(type, rightType), type + " vs. " + rightType);
+				if ((op == Op.Add || op == Op.Sub) && type.isPointer()) {
+					Utils.assertTrue(right.typeNotNull().isInt());
+				}
+				else {
+					Utils.assertTrue(Objects.equals(type, rightType), type + " vs. " + rightType);
+				}
 			}
 		}
 	}

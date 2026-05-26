@@ -597,7 +597,6 @@ public final class TypeChecker {
 				final Type toType = leftType.toType();
 				if (toType != null && rightType.isInt()) {
 					final int size = getTypeSize(toType);
-					left = ExprCast.autocast(left, pointerIntType);
 					right = autoCastTo(pointerIntType, right, rightLocation);
 					if (size > 1) {
 						right = new ExprBinary(ExprBinary.Op.Multiply, pointerIntType, right,
@@ -605,8 +604,7 @@ public final class TypeChecker {
 						                                  rightLocation),
 						                       rightLocation);
 					}
-					return ExprCast.autocast(new ExprBinary(op, pointerIntType, left, right, location),
-					                         leftType);
+					return new ExprBinary(op, leftType, left, right, location);
 				}
 			}
 		}

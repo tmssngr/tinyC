@@ -49,6 +49,6 @@ void printStringLength@@u8@i64(u8* str, i64 length) {
 
 void main() {
 	printIntLf@i16(next);
-	ptrToSpace = (i16*)(((i64)ptrToSpace) + 2);
+	ptrToSpace = ptrToSpace + 2;
 	printIntLf@i16(*ptrToSpace);
 }

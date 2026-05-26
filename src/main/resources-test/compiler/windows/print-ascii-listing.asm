@@ -78,18 +78,16 @@ start:
         ret
 
         ; i64 strlen@@u8
-        ;   rsp+56: arg str
+        ;   rsp+40: arg str
         ;   rsp+0: var length
         ;   rsp+8: var t.2
         ;   rsp+9: var t.3
         ;   rsp+10: var t.4
         ;   rsp+16: var t.5
         ;   rsp+24: var t.6
-        ;   rsp+32: var t.7
-        ;   rsp+40: var t.8
 @strlen@@u8:
         ; reserve space for local variables
-        sub rsp, 48
+        sub rsp, 32
         ; const length, 0
         mov rax, 0
         lea rbx, [rsp+0]
@@ -109,36 +107,21 @@ start:
         add rbx, rcx
         lea rax, [rsp+0]
         mov [rax], rbx
-        ; cast t.7(i64), str(u8*)
-        lea rax, [rsp+56]
-        mov rbx, [rax]
-        lea rax, [rsp+32]
-        mov [rax], rbx
-        ; const t.8, 1
+        ; const t.6, 1
         mov rax, 1
-        lea rbx, [rsp+40]
+        lea rbx, [rsp+24]
         mov [rbx], rax
-        ; move t.6, t.7
-        lea rax, [rsp+32]
-        mov rbx, [rax]
-        lea rax, [rsp+24]
-        mov [rax], rbx
-        ; add t.6, t.6, t.8
-        lea rax, [rsp+24]
-        mov rbx, [rax]
+        ; add str, str, t.6
         lea rax, [rsp+40]
+        mov rbx, [rax]
+        lea rax, [rsp+24]
         mov rcx, [rax]
         add rbx, rcx
-        lea rax, [rsp+24]
-        mov [rax], rbx
-        ; cast str(u8*), t.6(i64)
-        lea rax, [rsp+24]
-        mov rbx, [rax]
-        lea rax, [rsp+56]
+        lea rax, [rsp+40]
         mov [rax], rbx
 @for_1:
         ; load t.3, [str]
-        lea rax, [rsp+56]
+        lea rax, [rsp+40]
         mov rbx, [rax]
         mov al, [rbx]
         lea rbx, [rsp+9]
@@ -167,7 +150,7 @@ start:
         mov rbx, [rax]
         mov rax, rbx
         ; release space for local variables
-        add rsp, 48
+        add rsp, 32
         ret
 
         ; void printStringLength@@u8@u8

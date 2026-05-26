@@ -16,7 +16,12 @@ public record IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar lef
 
 	public IRBinary {
 		Utils.assertTrue(Objects.equals(target.type(), left.type()), target.type() + " vs. " + left.type());
-		Utils.assertTrue(Objects.equals(target.type(), right.type()), target.type() + " vs. " + right.type());
+		if (op == Op.Add && target.type().isPointer()) {
+			Utils.assertTrue(right.type().isInt());
+		}
+		else {
+			Utils.assertTrue(Objects.equals(target.type(), right.type()), target.type() + " vs. " + right.type());
+		}
 	}
 
 	@NotNull
