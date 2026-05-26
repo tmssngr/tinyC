@@ -30,15 +30,13 @@
 	var 9: t.9 (u8/1)
 	var 10: t.10 (u8*/8)
 	var 11: t.11 (i64/8)
-	var 12: t.12 (u8*/8)
-	var 13: t.13 (bool/1)
-	var 14: t.14 (i64/8)
-	var 15: t.15 (u8*/8)
-	var 16: t.16 (i64/8)
-	var 17: t.17 (u8*/8)
-	var 18: t.18 (u8/1)
-	var 19: t.19 (u8/1)
-	; 130 pc
+	var 12: t.12 (bool/1)
+	var 13: t.13 (i64/8)
+	var 14: t.14 (u8*/8)
+	var 15: t.15 (i64/8)
+	var 16: t.16 (u8/1)
+	var 17: t.17 (u8/1)
+	; 120 pc
 	const pos, 20
 	; 25:2 while true
 @while_1:
@@ -54,22 +52,20 @@
 	move digit, t.8
 	add digit, digit, t.9
 	cast t.11(i64), pos(u8)
-	cast t.12(u8*), t.11(i64)
 	addrof t.10, [buffer]
-	add t.10, t.10, t.12
+	add t.10, t.10, t.11
 	store [t.10], digit
 	; 31:3 if number == 0
-	const t.14, 0
-	equals t.13, number, t.14
-	branch t.13, false, @while_1, @while_1_break
-	cast t.16(i64), pos(u8)
-	cast t.17(u8*), t.16(i64)
-	addrof t.15, [buffer]
-	add t.15, t.15, t.17
-	const t.19, 20
-	move t.18, t.19
-	sub t.18, t.18, pos
-	call printStringLength@@u8@u8[t.15, t.18]
+	const t.13, 0
+	equals t.12, number, t.13
+	branch t.12, false, @while_1, @while_1_break
+	cast t.15(i64), pos(u8)
+	addrof t.14, [buffer]
+	add t.14, t.14, t.15
+	const t.17, 20
+	move t.16, t.17
+	sub t.16, t.16, pos
+	call printStringLength@@u8@u8[t.14, t.16]
 
 @printIntLf@bool:
  Local variables
@@ -108,20 +104,15 @@
 	var 4: t.4 (u8/1)
 	var 5: t.5 (i64/8)
 	var 6: t.6 (i64/8)
-	var 7: t.7 (i64/8)
-	var 8: t.8 (i64/8)
-	; 57 pc
+	; 42 pc
 	const length, 0
 	; 61:2 for *str != 0
 	jump @for_4
 @for_4_body:
 	const t.5, 1
 	add length, length, t.5
-	cast t.7(i64), str(u8*)
-	const t.8, 1
-	move t.6, t.7
-	add t.6, t.6, t.8
-	cast str(u8*), t.6(i64)
+	const t.6, 1
+	add str, str, t.6
 @for_4:
 	load t.3, [str]
 	const t.4, 0
