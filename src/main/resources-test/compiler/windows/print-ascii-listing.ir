@@ -27,9 +27,7 @@
 	var 4: t.4 (u8/1)
 	var 5: t.5 (i64/8)
 	var 6: t.6 (i64/8)
-	var 7: t.7 (i64/8)
-	var 8: t.8 (i64/8)
-	; 58 pc
+	; 43 pc
 	const length, 0
 	; 61:2 for *str != 0
 @for_1:
@@ -41,11 +39,8 @@
 	const t.5, 1
 	add length, length, t.5
 @for_1_continue:
-	cast t.7(i64), str(u8*)
-	const t.8, 1
-	move t.6, t.7
-	add t.6, t.6, t.8
-	cast str(u8*), t.6(i64)
+	const t.6, 1
+	add str, str, t.6
 	jump @for_1
 @for_1_break:
 	; 64:9 return length

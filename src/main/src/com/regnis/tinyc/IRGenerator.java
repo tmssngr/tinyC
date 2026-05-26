@@ -351,7 +351,7 @@ public final class IRGenerator {
 		writeAddrOf(addr, access.expression(), access.location());
 		final int offset = getMemberOffset(access);
 		if (offset != 0) {
-			final IRVar offsetVar = createTempVar(addr.type());
+			final IRVar offsetVar = createTempVar(pointerIntType);
 			write(new IRLiteral(offsetVar, offset, access.location()));
 			write(new IRBinary(addr, IRBinary.Op.Add, addr, offsetVar, access.location()));
 		}
@@ -452,9 +452,6 @@ public final class IRGenerator {
 			offset = index;
 		}
 
-		final IRVar pointerOffset = createTempVar(var.type());
-		write(new IRCast(pointerOffset, offset, location));
-
 		final ExprVarAccess varAccess = access.varAccess();
 		if (varAccess.varIsArray()) {
 			write(new IRAddrOfArray(var, varAccessToVar(varAccess), location));
@@ -462,7 +459,7 @@ public final class IRGenerator {
 		else {
 			write(new IRMove(var, varAccessToVar(varAccess), location));
 		}
-		write(new IRBinary(var, IRBinary.Op.Add, var, pointerOffset, location));
+		write(new IRBinary(var, IRBinary.Op.Add, var, offset, location));
 	}
 
 	private void writeBinary(IRVar var, ExprBinary binary) {
