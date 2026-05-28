@@ -1,6 +1,5 @@
 package com.regnis.tinyc.ir.interpreter;
 
-import com.regnis.tinyc.*;
 import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 

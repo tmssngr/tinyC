@@ -43,6 +43,16 @@ public final class Interpreter {
 		Type type();
 	}
 
+	public interface MemoryLocation {
+		@NotNull
+		String name();
+
+		@Nullable
+		Value get(int index);
+
+		void set(int index, @NotNull Value value);
+	}
+
 	public record IntValue(int value, @NotNull Type type) implements Value {
 		public IntValue {
 			Utils.assertTrue(type.isInt());
@@ -68,7 +78,7 @@ public final class Interpreter {
 		}
 	}
 
-	public record PointerValue(Array array, int offset) implements Value {
+	public record PointerValue(@NotNull MemoryLocation memoryLocation, int offset) implements Value {
 		@Override
 		public Type type() {
 			return Type.POINTER_U8;
@@ -77,11 +87,19 @@ public final class Interpreter {
 		@NotNull
 		@Override
 		public String toString() {
-			return "@" + array.name + "+" + offset;
+			final StringBuilder buffer = new StringBuilder();
+			buffer.append("@");
+			buffer.append(memoryLocation.name());
+			if (offset != 0) {
+				buffer.append("+");
+				buffer.append(offset);
+			}
+			return buffer.toString();
 		}
 
+		@Nullable
 		public Value get(int index) {
-			return array.get(index + offset);
+			return memoryLocation.get(index + offset);
 		}
 	}
 
@@ -90,7 +108,8 @@ public final class Interpreter {
 		private final String name;
 		private final Type type;
 
-		private Object value;
+		@Nullable
+		private Value value;
 
 		public Var(@NotNull IRVar var) {
 			this.name = var.name();
@@ -113,8 +132,8 @@ public final class Interpreter {
 
 		@NotNull
 		public Value value() {
-			Utils.assertTrue(value instanceof Value);
-			return (Value)value;
+			Utils.assertTrue(value != null);
+			return value;
 		}
 
 		public int getInt() {
@@ -137,7 +156,7 @@ public final class Interpreter {
 		}
 
 		public void set(int value) {
-			Utils.assertTrue(type.isInt() || type.isPointer());
+			Utils.assertTrue(type.isInt());
 			setValue(new IntValue(value, type));
 		}
 
@@ -146,18 +165,21 @@ public final class Interpreter {
 			setValue(new BoolValue(value));
 		}
 
-		public void setPointer(Array array, int offset) {
+		public void setPointer(MemoryLocation memoryLocation, int offset) {
 			Utils.assertTrue(type.isPointer());
-			setValue(new PointerValue(array, offset));
+			setValue(new PointerValue(memoryLocation, offset));
 		}
 
-		private void setValue(@NotNull Value value) {
+		private void setValue(@Nullable Value value) {
+			if (value == null) {
+				Utils.assertTrue(type.isPointer());
+			}
 			this.value = value;
 			System.out.println("  " + name + " = " + value);
 		}
 	}
 
-	private static class Array {
+	private static class Array implements MemoryLocation {
 		private final String name;
 		private final Value[] buffer;
 
@@ -166,12 +188,20 @@ public final class Interpreter {
 			buffer = new Value[size];
 		}
 
+		@NotNull
+		@Override
+		public String name() {
+			return name;
+		}
+
+		@Override
 		public Value get(int index) {
 			return buffer[index];
 		}
 
-		private void set(int index, byte value) {
-			buffer[index] = new IntValue(value, Type.U8);
+		@Override
+		public void set(int index, @NotNull Value value) {
+			buffer[index] = value;
 			System.out.println("  " + name + "[" + index + "] = " + value);
 		}
 	}
@@ -254,7 +284,7 @@ public final class Interpreter {
 			}
 		}
 
-		private void addrOf(Var target, Array source) {
+		private void addrOf(Var target, MemoryLocation source) {
 			Utils.assertTrue(target.type.isPointer());
 			target.setPointer(source, 0);
 		}
@@ -266,7 +296,7 @@ public final class Interpreter {
 					Utils.assertTrue(target.type == left.type);
 					Utils.assertTrue(right.type.isInt());
 					final PointerValue p = left.getPointer();
-					target.setPointer(p.array, p.offset + right.getInt());
+					target.setPointer(p.memoryLocation, p.offset + right.getInt());
 					return;
 				}
 				Utils.assertTrue(target.type.isInt());
@@ -352,7 +382,7 @@ public final class Interpreter {
 			Utils.assertTrue(addr.type.isPointer());
 			Utils.assertTrue(value.type == Type.U8);
 			final PointerValue p = addr.getPointer();
-			p.array.set(p.offset, (byte)value.getInt());
+			p.memoryLocation.set(p.offset, value.value());
 		}
 
 		@NotNull
