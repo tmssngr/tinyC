@@ -16,6 +16,61 @@ import static org.junit.Assert.*;
 public class InterpreterTest {
 
 	@Test
+	public void testPointers() {
+		final Type pointerI16 = Type.pointer(Type.I16);
+		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.I16);
+		final IRVar varB = new IRVar("b", 1, VariableScope.function, pointerI16);
+		final IRVar varC = new IRVar("c", 2, VariableScope.function, Type.I16);
+		final IRVar varD = new IRVar("d", 3, VariableScope.function, pointerI16);
+		final IRVar varT4 = new IRVar("t.4", 4, VariableScope.function, Type.I16);
+		final IRVar varT5 = new IRVar("t.5", 5, VariableScope.function, Type.I16);
+		final IRVar varT6 = new IRVar("t.6", 6, VariableScope.function, Type.I16);
+		final IRVar varT7 = new IRVar("t.7", 7, VariableScope.function, Type.I16);
+		final IRVar varT8 = new IRVar("t.8", 8, VariableScope.function, Type.I16);
+
+		final List<Integer> printedValues = new ArrayList<>();
+		final Interpreter interpreter = new Interpreter(new IRFunction("main", "@main", Type.VOID,
+		                                                               new IRVarInfos(List.of(
+				                                                               new IRVarDef(varA, 2),
+				                                                               new IRVarDef(varB, 8),
+				                                                               new IRVarDef(varC, 2),
+				                                                               new IRVarDef(varD, 8),
+				                                                               new IRVarDef(varT4, 2),
+				                                                               new IRVarDef(varT5, 2),
+				                                                               new IRVarDef(varT6, 2),
+				                                                               new IRVarDef(varT7, 2),
+				                                                               new IRVarDef(varT8, 2)
+		                                                               ), Set.of(), new IRVarInfos(List.of(), Set.of(), null)),
+		                                                               List.of(
+				                                                               new IRLiteral(varA, 10),
+				                                                               new IRCall(null, Type.VOID, "printIntLf", List.of(varA)),
+				                                                               new IRAddrOf(varB, varA),
+				                                                               new IRMemLoad(varT4, varB),
+				                                                               new IRLiteral(varT5, 1),
+				                                                               new IRMove(varC, varT4),
+				                                                               new IRBinary(varC, IRBinary.Op.Sub, varC, varT5),
+				                                                               new IRCall(null, Type.VOID, "printIntLf", List.of(varC)),
+				                                                               new IRAddrOf(varD, varC),
+				                                                               new IRMemLoad(varT7, varD),
+				                                                               new IRLiteral(varT8, 1),
+				                                                               new IRMove(varT6, varT7),
+				                                                               new IRBinary(varT6, IRBinary.Op.Sub, varT6, varT8),
+				                                                               new IRMemStore(varD, varT6),
+				                                                               new IRCall(null, Type.VOID, "printIntLf", List.of(varC))
+		                                                               )),
+		                                                (name, args) -> {
+			                                                Assert.assertEquals("printIntLf", name);
+			                                                Assert.assertEquals(1, args.size());
+			                                                Assert.assertEquals(Type.I16, args.get(0).type());
+			                                                final Interpreter.IntValue value = (Interpreter.IntValue)args.get(0);
+			                                                printedValues.add(value.value());
+			                                                return null;
+		                                                });
+		interpreter.run(100);
+		assertEquals(List.of(10, 9, 8), printedValues);
+	}
+
+	@Test
 	public void testPrintUint() {
 		final IRVar varNumber = new IRVar("number", 0, VariableScope.parameter, Type.I32);
 		final IRVar varPos = new IRVar("pos", 1, VariableScope.function, Type.U8);
@@ -73,19 +128,15 @@ public class InterpreterTest {
 																			   new IRBinary(varValue8, IRBinary.Op.Sub, varValue8, varPos),
 																			   new IRCall(null, Type.VOID, "printStringLength", List.of(varMem, varValue8))
 		                                                               )),
-		                                                new Interpreter.CallHandler() {
-			                                                @Nullable
-			                                                @Override
-			                                                public Interpreter.Value call(String name, List<Interpreter.Value> args) {
-																assertEquals("printStringLength", name);
-				                                                assertEquals(2, args.size());
-				                                                assertEquals(new Interpreter.IntValue(3, Type.U8), args.get(1));
-				                                                final Interpreter.PointerValue pointerValue = (Interpreter.PointerValue)args.get(0);
-																assertEquals(new Interpreter.IntValue('1', Type.U8), pointerValue.get(0));
-																assertEquals(new Interpreter.IntValue('0', Type.U8), pointerValue.get(1));
-																assertEquals(new Interpreter.IntValue('0', Type.U8), pointerValue.get(2));
-				                                                return null;
-			                                                }
+		                                                (name, args) -> {
+															Assert.assertEquals("printStringLength", name);
+			                                                Assert.assertEquals(2, args.size());
+			                                                Assert.assertEquals(new Interpreter.IntValue(3, Type.U8), args.get(1));
+			                                                final Interpreter.PointerValue pointerValue = (Interpreter.PointerValue)args.get(0);
+															assertEquals(new Interpreter.IntValue('1', Type.U8), pointerValue.get(0));
+															assertEquals(new Interpreter.IntValue('0', Type.U8), pointerValue.get(1));
+															assertEquals(new Interpreter.IntValue('0', Type.U8), pointerValue.get(2));
+			                                                return null;
 		                                                });
 		interpreter.run(100);
 	}

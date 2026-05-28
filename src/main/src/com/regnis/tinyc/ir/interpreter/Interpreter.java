@@ -103,7 +103,7 @@ public final class Interpreter {
 		}
 	}
 
-	public static class Var {
+	public static class Var implements MemoryLocation {
 
 		private final String name;
 		private final Type type;
@@ -128,6 +128,26 @@ public final class Interpreter {
 			buffer.append(" ");
 			buffer.append(type);
 			return buffer.toString();
+		}
+
+		@NotNull
+		@Override
+		public String name() {
+			return name;
+		}
+
+		@Nullable
+		@Override
+		public Value get(int index) {
+			Utils.assertTrue(index == 0);
+			return value();
+		}
+
+		@Override
+		public void set(int index, @NotNull Value value) {
+			Utils.assertTrue(index == 0);
+			Utils.assertTrue(value.type().equals(type));
+			this.value = value;
 		}
 
 		@NotNull
@@ -253,6 +273,7 @@ public final class Interpreter {
 
 		private void execute(@NotNull IRInstruction instruction) {
 			switch (instruction) {
+			case IRAddrOf addrOf -> addrOf(get(addrOf.target()), get(addrOf.source()));
 			case IRAddrOfArray addrOf -> addrOf(get(addrOf.addr()), getArray(addrOf.array()));
 			case IRBinary binary -> binary(get(binary.target()), binary.op(), get(binary.left()), get(binary.right()));
 			case IRBranch branch -> branch(get(branch.conditionVar()), branch.jumpOnTrue(), branch.target(), branch.nextLabel());
@@ -278,6 +299,7 @@ public final class Interpreter {
 				// nothing to do
 			}
 			case IRLiteral literal -> get(literal.target()).set(literal.value());
+			case IRMemLoad load -> load(get(load.target()), get(load.addr()));
 			case IRMemStore store -> store(get(store.addr()), get(store.value()));
 			case IRMove move -> move(get(move.target()), get(move.source()));
 			default -> throw new UnsupportedOperationException(instruction.toString());
@@ -368,6 +390,13 @@ public final class Interpreter {
 			}
 		}
 
+		private void load(Var target, Var addr) {
+			Utils.assertTrue(addr.type.isPointer());
+			final PointerValue p = addr.getPointer();
+			final Value value = p.memoryLocation.get(p.offset);
+			target.setValue(value);
+		}
+
 		private void move(Var target, Var source) {
 			if (target.type.isInt()) {
 				Utils.assertTrue(target.type == source.type);
@@ -380,7 +409,7 @@ public final class Interpreter {
 
 		private void store(Var addr, Var value) {
 			Utils.assertTrue(addr.type.isPointer());
-			Utils.assertTrue(value.type == Type.U8);
+			Utils.assertTrue(Objects.equals(addr.type.toType(), value.type));
 			final PointerValue p = addr.getPointer();
 			p.memoryLocation.set(p.offset, value.value());
 		}
