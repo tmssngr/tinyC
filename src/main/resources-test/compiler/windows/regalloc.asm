@@ -12,258 +12,137 @@ section '.text' code readable executable
 start:
         ; alignment
         and rsp, -16
-        sub rsp, 8
-          call init
-        add rsp, 8
-          call @main
+        call init
+        call @main
         mov rcx, 0
         sub rsp, 0x20
-          call [ExitProcess]
+        call [ExitProcess]
 
         ; u8 simple
-        ;   rsp+0: var four
-        ;   rsp+1: var three
-        ;   rsp+2: var one
 @simple:
-        ; reserve space for local variables
-        sub rsp, 16
-        ; const four, 4
-        mov al, 4
-        lea rbx, [rsp+0]
-        mov [rbx], al
-        ; const three, 3
-        mov al, 3
-        lea rbx, [rsp+1]
-        mov [rbx], al
-        ; move one, four
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+2]
-        mov [rax], bl
-        ; sub one, one, three
-        lea rax, [rsp+2]
-        mov bl, [rax]
-        lea rax, [rsp+1]
-        mov cl, [rax]
-        sub bl, cl
-        lea rax, [rsp+2]
-        mov [rax], bl
+        sub rsp, 8
+        ; const four{r1}, 4
+        mov cl, 4
+        ; const three{r2}, 3
+        mov dl, 3
+        ; move one{r0}, four{r1}
+        mov al, cl
+        ; sub one{r0}, one{r0}, three{r2}
+        sub al, dl
         ; 5:9 return one
-        ; ret one
-        lea rax, [rsp+2]
-        mov bl, [rax]
-        mov rax, rbx
-        ; release space for local variables
-        add rsp, 16
+        add rsp, 8
         ret
 
         ; u8 registerHint@u8@u8
-        ;   rsp+40: arg a
-        ;   rsp+32: arg b
-        ;   rsp+0: var t.2
+        ;   rsp+16: arg a
+        ;   rsp+24: arg b
 @registerHint@u8@u8:
-        ; reserve space for local variables
-        sub rsp, 16
+        sub rsp, 8
         ; 9:11 return a + b
-        ; move t.2, a
-        lea rax, [rsp+40]
-        mov bl, [rax]
-        lea rax, [rsp+0]
-        mov [rax], bl
-        ; add t.2, t.2, b
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+32]
-        mov cl, [rax]
-        add bl, cl
-        lea rax, [rsp+0]
-        mov [rax], bl
-        ; ret t.2
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        mov rax, rbx
-        ; release space for local variables
-        add rsp, 16
+        ; move t.2{r0}, a{r1}
+        mov al, cl
+        ; add t.2{r0}, t.2{r0}, b{r2}
+        add al, dl
+        add rsp, 8
         ret
 
         ; u8 max@u8@u8
-        ;   rsp+40: arg a
-        ;   rsp+32: arg b
-        ;   rsp+0: var t.2
+        ;   rsp+16: arg a
+        ;   rsp+24: arg b
 @max@u8@u8:
-        ; reserve space for local variables
-        sub rsp, 16
+        sub rsp, 8
         ; 13:2 if a < b
-        ; lt t.2, a, b
-        lea rax, [rsp+40]
-        mov bl, [rax]
-        lea rax, [rsp+32]
-        mov cl, [rax]
-        cmp bl, cl
-        setb bl
-        lea rax, [rsp+0]
-        mov [rax], bl
-        ; branch t.2, true, @if_1_then, @if_1_end
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        or bl, bl
+        ; lt t.2{r3}, a{r1}, b{r2}
+        cmp cl, dl
+        setb r8b
+        ; branch t.2{r3}, true, @if_1_then, @if_1_end
+        or r8b, r8b
         jnz @if_1_then
         ; 16:9 return a
-        ; ret a
-        lea rax, [rsp+40]
-        mov bl, [rax]
-        mov rax, rbx
+        ; move a{r0}, a{r1}
+        mov al, cl
         jmp @max@u8@u8_ret
 @if_1_then:
         ; 14:10 return b
-        ; ret b
-        lea rax, [rsp+32]
-        mov bl, [rax]
-        mov rax, rbx
+        ; move b{r0}, b{r2}
+        mov al, dl
 @max@u8@u8_ret:
-        ; release space for local variables
-        add rsp, 16
+        add rsp, 8
         ret
 
         ; i16 fibonacci@u8
-        ;   rsp+24: arg i
-        ;   rsp+0: var a
-        ;   rsp+2: var b
-        ;   rsp+4: var c
-        ;   rsp+6: var t.4
-        ;   rsp+7: var t.5
-        ;   rsp+8: var t.6
+        ;   rsp+16: arg i
 @fibonacci@u8:
-        ; reserve space for local variables
-        sub rsp, 16
-        ; const a, 0
+        sub rsp, 8
+        ; const a{r0}, 0
         mov ax, 0
-        lea rbx, [rsp+0]
-        mov [rbx], ax
-        ; const b, 1
-        mov ax, 1
-        lea rbx, [rsp+2]
-        mov [rbx], ax
+        ; const b{r2}, 1
+        mov dx, 1
         ; 22:2 while i > 0
         jmp @while_2
 @while_2_body:
-        ; const t.6, 1
-        mov al, 1
-        lea rbx, [rsp+8]
-        mov [rbx], al
-        ; sub i, i, t.6
-        lea rax, [rsp+24]
-        mov bl, [rax]
-        lea rax, [rsp+8]
-        mov cl, [rax]
-        sub bl, cl
-        lea rax, [rsp+24]
-        mov [rax], bl
-        ; move c, a
-        lea rax, [rsp+0]
-        mov bx, [rax]
-        lea rax, [rsp+4]
-        mov [rax], bx
-        ; add c, c, b
-        lea rax, [rsp+4]
-        mov bx, [rax]
-        lea rax, [rsp+2]
-        mov cx, [rax]
-        add bx, cx
-        lea rax, [rsp+4]
-        mov [rax], bx
-        ; move a, b
-        lea rax, [rsp+2]
-        mov bx, [rax]
-        lea rax, [rsp+0]
-        mov [rax], bx
-        ; move b, c
-        lea rax, [rsp+4]
-        mov bx, [rax]
-        lea rax, [rsp+2]
-        mov [rax], bx
+        ; const t.6{r3}, 1
+        mov r8b, 1
+        ; sub i{r1}, i{r1}, t.6{r3}
+        sub cl, r8b
+        ; move c{r3}, a{r0}
+        mov r8w, ax
+        ; add c{r3}, c{r3}, b{r2}
+        add r8w, dx
+        ; move a{r0}, b{r2}
+        mov ax, dx
+        ; move b{r2}, c{r3}
+        mov dx, r8w
 @while_2:
-        ; const t.5, 0
-        mov al, 0
-        lea rbx, [rsp+7]
-        mov [rbx], al
-        ; gt t.4, i, t.5
-        lea rax, [rsp+24]
-        mov bl, [rax]
-        lea rax, [rsp+7]
-        mov cl, [rax]
-        cmp bl, cl
-        seta bl
-        lea rax, [rsp+6]
-        mov [rax], bl
-        ; branch t.4, true, @while_2_body, @while_2_break
-        lea rax, [rsp+6]
-        mov bl, [rax]
-        or bl, bl
+        ; const t.5{r3}, 0
+        mov r8b, 0
+        ; gt t.4{r3}, i{r1}, t.5{r3}
+        cmp cl, r8b
+        seta r8b
+        ; branch t.4{r3}, true, @while_2_body, @while_2_break
+        or r8b, r8b
         jnz @while_2_body
         ; 28:9 return a
-        ; ret a
-        lea rax, [rsp+0]
-        mov bx, [rax]
-        mov rax, rbx
-        ; release space for local variables
-        add rsp, 16
+        add rsp, 8
         ret
 
         ; void main
-        ;   rsp+0: var one
-        ;   rsp+1: var two
-        ;   rsp+2: var oneOrTwo
-        ;   rsp+4: var f5
-        ;   rsp+6: var t.4
 @main:
-        ; reserve space for local variables
-        sub rsp, 16
-        ; call one = simple[] -> u8
         sub rsp, 8
-          call @simple
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
+        sub rsp, 32
+        ; call one{r0} = simple[] -> u8
+        call @simple
+        ; move one{r6}, one{r0}
+        mov bl, al
+        ; const two{r7}, 2
+        mov r12b, 2
+        ; move one{r1}, one{r6}
+        mov cl, bl
+        ; move two{r2}, two{r7}
+        mov dl, r12b
+        ; call _ = registerHint@u8@u8[one{r1}, two{r2}] -> u8
+        call @registerHint@u8@u8
+        ; move one{r1}, one{r6}
+        mov cl, bl
+        ; move two{r2}, two{r7}
+        mov dl, r12b
+        ; call _ = max@u8@u8[one{r1}, two{r2}] -> u8
+        call @max@u8@u8
+        ; const t.4{r1}, 5
+        mov cl, 5
+        ; call _ = fibonacci@u8[t.4{r1}] -> i16
+        call @fibonacci@u8
+        add rsp, 32
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
         add rsp, 8
-        lea rbx, [rsp+0]
-        mov [rbx], al
-        ; const two, 2
-        mov al, 2
-        lea rbx, [rsp+1]
-        mov [rbx], al
-        ; call _ = registerHint@u8@u8[one, two] -> u8
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        push rbx
-        lea rax, [rsp+9]
-        mov bl, [rax]
-        push rbx
-        sub rsp, 8
-          call @registerHint@u8@u8
-        add rsp, 24
-        ; call _ = max@u8@u8[one, two] -> u8
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        push rbx
-        lea rax, [rsp+9]
-        mov bl, [rax]
-        push rbx
-        sub rsp, 8
-          call @max@u8@u8
-        add rsp, 24
-        ; const t.4, 5
-        mov al, 5
-        lea rbx, [rsp+6]
-        mov [rbx], al
-        ; call _ = fibonacci@u8[t.4] -> i16
-        lea rax, [rsp+6]
-        mov bl, [rax]
-        push rbx
-          call @fibonacci@u8
-        add rsp, 8
-        ; release space for local variables
-        add rsp, 16
         ret
 init:
-        sub rsp, 20h
+        sub rsp, 28h
           mov rcx, STD_IN_HANDLE
           call [GetStdHandle]
           ; handle in rax, 0 if invalid
@@ -281,7 +160,7 @@ init:
           ; handle in rax, 0 if invalid
           lea rcx, [hStdErr]
           mov qword [rcx], rax
-        add rsp, 20h
+        add rsp, 28h
         ret
 
 section '.data' data readable writeable

@@ -1,212 +1,158 @@
 @printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	var 1: t.1 (u8*/8)
-	var 2: t.2 (u8/1)
-	; 12 pc
-	addrof t.1, chr
-	const t.2, 1
-	call printStringLength@@u8@u8[t.1, t.2]
+	; 7 pc
+	move chr, r1
+	addrof r1, chr
+	const r2, 1
+	call printStringLength@@u8@u8[r1, r2]
 
 @printUint@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
-	var 2: pos (u8/1)
-	var 3: remainder (i64/8)
-	var 4: digit (u8/1)
-	var 5: t.5 (u8/1)
-	var 6: t.6 (i64/8)
-	var 7: t.7 (i64/8)
-	var 8: t.8 (u8/1)
-	var 9: t.9 (u8/1)
-	var 10: t.10 (u8*/8)
-	var 11: t.11 (i64/8)
-	var 12: t.12 (bool/1)
-	var 13: t.13 (i64/8)
-	var 14: t.14 (u8*/8)
-	var 15: t.15 (i64/8)
-	var 16: t.16 (u8/1)
-	var 17: t.17 (u8/1)
-	; 120 pc
-	const pos, 20
+	; 23 pc
+	const r6, 20
 	; 25:2 while true
 @while_1:
-	const t.5, 1
-	sub pos, pos, t.5
-	const t.6, 10
-	move remainder, number
-	mod remainder, remainder, t.6
-	const t.7, 10
-	div number, number, t.7
-	cast t.8(u8), remainder(i64)
-	const t.9, 48
-	move digit, t.8
-	add digit, digit, t.9
-	cast t.11(i64), pos(u8)
-	addrof t.10, [buffer]
-	add t.10, t.10, t.11
-	store [t.10], digit
+	const r7, 1
+	sub r6, r6, r7
+	const r7, 10
+	move r3, r1
+	move r0, r3
+	mod r2, r0, r7
+	move r3, r2
+	const r7, 10
+	move r0, r1
+	div r0, r0, r7
+	move r1, r0
+	cast r7(u8), r3(i64)
+	const r0, 48
+	add r7, r7, r0
+	cast r0(i64), r6(u8)
+	addrof r3, [buffer]
+	add r3, r3, r0
+	store [r3], r7
 	; 31:3 if number == 0
-	const t.13, 0
-	equals t.12, number, t.13
-	branch t.12, false, @while_1, @while_1_break
-	cast t.15(i64), pos(u8)
-	addrof t.14, [buffer]
-	add t.14, t.14, t.15
-	const t.17, 20
-	move t.16, t.17
-	sub t.16, t.16, pos
-	call printStringLength@@u8@u8[t.14, t.16]
+	const r7, 0
+	equals r7, r1, r7
+	branch r7, false, @while_1, @while_1_break
+	cast r7(i64), r6(u8)
+	addrof r1, [buffer]
+	add r1, r1, r7
+	const r7, 20
+	move r2, r7
+	sub r2, r2, r6
+	call printStringLength@@u8@u8[r1, r2]
 
 @printIntLf@u8:
  Local variables
 	arg 0: number (u8/1)
-	var 1: t.1 (i64/8)
-	; 8 pc
-	cast t.1(i64), number(u8)
-	call printIntLf@i64[t.1]
+	; 2 pc
+	cast r1(i64), r1(u8)
+	call printIntLf@i64[r1]
 
 @printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
-	var 1: t.1 (bool/1)
-	var 2: t.2 (i64/8)
-	var 3: t.3 (u8/1)
-	var 4: t.4 (u8/1)
-	; 30 pc
+	; 8 pc
+	move r6, r1
 	; 51:2 if number < 0
-	const t.2, 0
-	lt t.1, number, t.2
-	branch t.1, false, @if_3_end, @if_3_then
-	const t.3, 45
-	call printChar@u8[t.3]
-	neg number, number
+	const r7, 0
+	lt r7, r6, r7
+	branch r7, false, @if_3_end, @if_3_then
+	const r1, 45
+	call printChar@u8[r1]
+	neg r6, r6
 @if_3_end:
-	call printUint@i64[number]
-	const t.4, 10
-	call printChar@u8[t.4]
+	move r1, r6
+	call printUint@i64[r1]
+	const r1, 10
+	call printChar@u8[r1]
 
 @printStringLength@@u8@u8:
  Local variables
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
-	var 2: t.2 (i64/8)
-	; 10 pc
-	cast t.2(i64), length(u8)
-	call printStringLength@@u8@i64[str, t.2]
+	; 2 pc
+	cast r2(i64), r2(u8)
+	call printStringLength@@u8@i64[r1, r2]
 
 @initRandom@i32:
  Local variables
 	arg 0: salt (i32/4)
-	; 5 pc
-	move __random__, salt
+	; 4 pc
+	move r0, r1
+	move __random__, r0
 
 @random:
- Local variables
-	var 0: r (i32/4)
-	var 1: b (i32/4)
-	var 2: c (i32/4)
-	var 3: d (i32/4)
-	var 4: e (i32/4)
-	var 5: t.5 (i32/4)
-	var 6: t.6 (i32/4)
-	var 7: t.7 (i32/4)
-	var 8: t.8 (i32/4)
-	var 9: t.9 (i32/4)
-	var 10: t.10 (i32/4)
-	var 11: t.11 (i32/4)
-	var 12: t.12 (i32/4)
-	var 13: t.13 (i32/4)
-	var 14: t.14 (i32/4)
-	var 15: t.15 (i32/4)
-	var 16: t.16 (i32/4)
-	var 17: t.17 (i32/4)
-	var 18: t.18 (i32/4)
-	var 19: t.19 (i32/4)
-	var 20: t.20 (i32/4)
-	; 170 pc
-	move r, __random__
-	const t.6, 524287
-	move t.5, r
-	and t.5, t.5, t.6
-	const t.7, 48271
-	move b, t.5
-	mul b, b, t.7
-	const t.9, 15
-	move t.8, r
-	shiftright t.8, t.8, t.9
-	const t.10, 48271
-	move c, t.8
-	mul c, c, t.10
-	const t.12, 65535
-	move t.11, c
-	and t.11, t.11, t.12
-	const t.13, 15
-	move d, t.11
-	shiftleft d, d, t.13
-	const t.16, 16
-	move t.15, c
-	shiftright t.15, t.15, t.16
-	move t.14, t.15
-	add t.14, t.14, b
-	move e, t.14
-	add e, e, d
-	const t.18, 2147483647
-	move t.17, e
-	and t.17, t.17, t.18
-	const t.20, 31
-	move t.19, e
-	shiftright t.19, t.19, t.20
-	move __random__, t.17
-	add __random__, __random__, t.19
-	; 155:9 return __random__
-	ret __random__
+	; 24 pc
+	move r0, __random__
+	move r2, r0
+	const r3, 524287
+	move r4, r2
+	and r4, r4, r3
+	const r3, 48271
+	mul r4, r4, r3
+	const r1, 15
+	shiftright r2, r2, r1
+	const r3, 48271
+	mul r2, r2, r3
+	const r3, 65535
+	move r5, r2
+	and r5, r5, r3
+	const r1, 15
+	move r3, r5
+	shiftleft r3, r3, r1
+	const r1, 16
+	shiftright r2, r2, r1
+	add r2, r2, r4
+	add r2, r2, r3
+	const r3, 2147483647
+	move r4, r2
+	and r4, r4, r3
+	const r1, 31
+	shiftright r2, r2, r1
+	move r0, r4
+	add r0, r0, r2
+	; 151:9 return __random__
+	move __random__, r0
 
 @randomU8:
- Local variables
-	var 0: t.0 (u8/1)
-	var 1: t.1 (i32/4)
-	; 11 pc
-	; 159:10 return (u8)
-	call t.1 = random[] -> i32
-	cast t.0(u8), t.1(i32)
-	ret t.0
+	; 2 pc
+	; 155:10 return (u8)
+	call r0 = random[] -> i32
+	cast r0(u8), r0(i32)
 
 @main:
- Local variables
-	var 0: i (u8/1)
-	var 1: r (u8/1)
-	var 2: t.2 (i32/4)
-	var 3: t.3 (bool/1)
-	var 4: t.4 (u8/1)
-	var 5: t.5 (u8/1)
-	; 37 pc
+	; 11 pc
 	; begin initialize global variables
-	const __random__, 0
+	const r6, 0
 	; end initialize global variables
-	const t.2, 7439742
-	call initRandom@i32[t.2]
-	const i, 0
+	const r1, 7439742
+	move __random__, r6
+	call initRandom@i32[r1]
+	const r6, 0
 	; 5:2 for i < 50
 	jump @for_4
 @for_4_body:
-	call r = randomU8[] -> u8
-	call printIntLf@u8[r]
-	const t.5, 1
-	add i, i, t.5
+	call r0 = randomU8[] -> u8
+	move r1, r0
+	call printIntLf@u8[r1]
+	const r0, 1
+	add r6, r6, r0
 @for_4:
-	const t.4, 50
-	lt t.3, i, t.4
-	branch t.3, true, @for_4_body, @main_ret
+	const r0, 50
+	lt r0, r6, r0
+	branch r0, true, @for_4_body, @main_ret
 
 @printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
+	mov     r8, rdx
+	mov     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
 	xor     r9, r9
 	push    0
 	sub     rsp, 20h
