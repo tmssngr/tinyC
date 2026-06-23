@@ -9,7 +9,6 @@ import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.*;
 import java.util.*;
-import java.util.concurrent.*;
 
 import org.jetbrains.annotations.*;
 
@@ -25,16 +24,6 @@ public class Compiler {
 		}
 
 		compile(Paths.get(args[0]));
-	}
-
-	public static void compileAndRun(@NotNull Path inputFile) throws IOException, InterruptedException {
-		final Path outputFile = useExtension(inputFile, "", ".out");
-		compileAndRun(inputFile, outputFile);
-	}
-
-	public static void compileAndRun(@NotNull Path inputFile, @Nullable Path outputFile) throws IOException, InterruptedException {
-		final Path exeFile = compile(inputFile);
-		launchExe(exeFile, outputFile);
 	}
 
 	@NotNull
@@ -136,11 +125,7 @@ public class Compiler {
 	}
 
 	private static Path useExtension(Path path, String subdir, String extension) throws IOException {
-		final String fileName = path.getFileName().toString();
-		final int dotIndex = fileName.lastIndexOf('.');
-		final String derivedName = dotIndex > 1 ? fileName.substring(0, dotIndex) + extension
-				: fileName + extension;
-		final Path file = path.resolveSibling(subdir + derivedName);
+		final Path file = Utils.replaceExtensionWith(path, subdir, extension);
 		Files.createDirectories(file.getParent());
 		return file;
 	}
@@ -173,7 +158,7 @@ public class Compiler {
 		));
 		processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
 		processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
-		execute(processBuilder);
+		Utils.execute(processBuilder);
 	}
 
 	private static boolean launchFasm(Path asmFile, Path exeFile) throws IOException, InterruptedException {
@@ -198,41 +183,12 @@ public class Compiler {
 			processBuilder.environment().put("INCLUDE",
 			                                 fasmHome.resolve("INCLUDE").toString());
 		}
-		final int result = execute(processBuilder);
+		final int result = Utils.execute(processBuilder);
 		if (result == 0) {
 			return true;
 		}
 
 		System.err.println("Fasm failed " + result);
 		return false;
-	}
-
-	private static void launchExe(Path exeFile, @Nullable Path outputFile) throws IOException, InterruptedException {
-		final ProcessBuilder processBuilder = new ProcessBuilder(exeFile.toString());
-		if (outputFile != null) {
-			processBuilder.redirectOutput(outputFile.toFile());
-		}
-		else {
-			processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-		}
-		processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
-		final int result = execute(processBuilder);
-		if (result == 0) {
-			System.out.println("OK");
-			return;
-		}
-
-		System.err.println("Error " + result);
-	}
-
-	private static int execute(ProcessBuilder processBuilder) throws IOException, InterruptedException {
-		final long start = System.currentTimeMillis();
-		final Process process = processBuilder.start();
-		final long stop = System.currentTimeMillis();
-		System.out.println(processBuilder.command().getFirst() + ": " + (stop - start) + "ms");
-		if (!process.waitFor(5, TimeUnit.SECONDS)) {
-			process.destroy();
-		}
-		return process.exitValue();
 	}
 }
