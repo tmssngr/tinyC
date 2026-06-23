@@ -129,12 +129,33 @@ public class CompilerTest {
 		Compiler.compile(inputFile);
 	}
 
-	private void compileAndRun(String fileName) throws IOException, InterruptedException {
-		Compiler.compileAndRun(absolutePath(fileName));
+	@NotNull
+	private static Path absolutePath(String fileName) {
+		return Path.of("src/main/resources-test/compiler", fileName);
 	}
 
-	@NotNull
-	private Path absolutePath(String fileName) {
-		return Path.of("src/main/resources-test/compiler", fileName);
+	private static void compileAndRun(String fileName) throws IOException, InterruptedException {
+		final Path inputFile = absolutePath(fileName);
+		final Path outputFile = Utils.replaceExtensionWith(inputFile, "", ".out");
+		final Path exeFile = Compiler.compile(inputFile);
+		launchExe(exeFile, outputFile);
+	}
+
+	private static void launchExe(Path exeFile, @Nullable Path outputFile) throws IOException, InterruptedException {
+		final ProcessBuilder processBuilder = new ProcessBuilder(exeFile.toString());
+		if (outputFile != null) {
+			processBuilder.redirectOutput(outputFile.toFile());
+		}
+		else {
+			processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+		}
+		processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
+		final int result = Utils.execute(processBuilder);
+		if (result == 0) {
+			System.out.println("OK");
+			return;
+		}
+
+		System.err.println("Error " + result);
 	}
 }

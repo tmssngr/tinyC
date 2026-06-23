@@ -25,16 +25,6 @@ public class Compiler {
 		compile(Paths.get(args[0]));
 	}
 
-	public static void compileAndRun(@NotNull Path inputFile) throws IOException, InterruptedException {
-		final Path outputFile = useExtension(inputFile, "", ".out");
-		compileAndRun(inputFile, outputFile);
-	}
-
-	public static void compileAndRun(@NotNull Path inputFile, @Nullable Path outputFile) throws IOException, InterruptedException {
-		final Path exeFile = compile(inputFile);
-		launchExe(exeFile, outputFile);
-	}
-
 	@NotNull
 	public static Path compile(@NotNull Path inputFile) throws IOException, InterruptedException {
 		final String subdir = "windows/";
@@ -130,11 +120,7 @@ public class Compiler {
 	}
 
 	private static Path useExtension(Path path, String subdir, String extension) throws IOException {
-		final String fileName = path.getFileName().toString();
-		final int dotIndex = fileName.lastIndexOf('.');
-		final String derivedName = dotIndex > 1 ? fileName.substring(0, dotIndex) + extension
-				: fileName + extension;
-		final Path file = path.resolveSibling(subdir + derivedName);
+		final Path file = Utils.replaceExtensionWith(path, subdir, extension);
 		Files.createDirectories(file.getParent());
 		return file;
 	}
