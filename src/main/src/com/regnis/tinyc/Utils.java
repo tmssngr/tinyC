@@ -1,7 +1,9 @@
 package com.regnis.tinyc;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.*;
 
 import org.jetbrains.annotations.*;
@@ -93,5 +95,25 @@ public class Utils {
 			}
 		}
 		return low;
+	}
+
+	@NotNull
+	public static Path replaceExtensionWith(Path path, String subdir, String extension) {
+		final String fileName = path.getFileName().toString();
+		final int dotIndex = fileName.lastIndexOf('.');
+		final String derivedName = dotIndex > 1 ? fileName.substring(0, dotIndex) + extension
+				: fileName + extension;
+		return path.resolveSibling(subdir + derivedName);
+	}
+
+	static int execute(ProcessBuilder processBuilder) throws IOException, InterruptedException {
+		final long start = System.currentTimeMillis();
+		final Process process = processBuilder.start();
+		final long stop = System.currentTimeMillis();
+		System.out.println(processBuilder.command().getFirst() + ": " + (stop - start) + "ms");
+		if (!process.waitFor(5, TimeUnit.SECONDS)) {
+			process.destroy();
+		}
+		return process.exitValue();
 	}
 }
