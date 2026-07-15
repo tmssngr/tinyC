@@ -52,7 +52,7 @@ public final class LSRegAlloc {
 
 		Map<IRVar, LSInterval> varToInterval = null;
 		if (!containsNonRegisterVars(varInfos, instructions2)) {
-			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount, logger);
+			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount, null, logger);
 		}
 		IRVar spillHelper = null;
 		if (varToInterval == null || containsSpills(varToInterval)) {
@@ -60,7 +60,7 @@ public final class LSRegAlloc {
 			spillHelper = tempVarFactory.createPointerVar(MEM_VAR_ADDRESS)
 					.asRegister(registerCount - 1);
 			varInfos = tempVarFactory.createVarInfos();
-			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount - 1, logger);
+			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount - 1, null, logger);
 		}
 
 		if (debug) {
