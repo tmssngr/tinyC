@@ -1,6 +1,5 @@
 package com.regnis.tinyc.linearscanregalloc;
 
-import com.regnis.tinyc.*;
 import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
@@ -23,7 +22,7 @@ public class LSAlgorithmTest {
 		// 2: mov r0, a
 		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.I16);
 		final LSInterval interval = LSInterval.testVar(varA, List.of(new LSRange(0, 2)), List.of(write(0), read(2)));
-		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(interval), List.of(), 4, LSAlgorithmLogger.DUMMY);
+		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(interval), List.of(), 4, null, LSAlgorithmLogger.DUMMY);
 
 		assertEquals(1, intervals.size());
 
@@ -52,7 +51,7 @@ public class LSAlgorithmTest {
 				                                                             LSInterval.testFixed(0, List.of(new LSRange(4, 6))),
 				                                                             LSInterval.testFixed(1, List.of(new LSRange(-1, 0), new LSRange(2, 5), new LSRange(8, 12))),
 				                                                             LSInterval.testFixed(2, List.of(new LSRange(4, 5), new LSRange(10, 13)))
-		                                                             ), 4, new LSAlgorithmLoggerImpl(List.of()));
+		                                                             ), 4, null, new LSAlgorithmLoggerImpl(List.of()));
 		assertEquals(2, intervals.size());
 
 		LSInterval split = assertInterval(0, 8, 3, intervals.get(varStr));
@@ -75,7 +74,7 @@ public class LSAlgorithmTest {
 		                                                             List.of(
 				                                                             LSInterval.testFixed(0, List.of(new LSRange(2), new LSRange(6))),
 				                                                             LSInterval.testFixed(1, List.of(new LSRange(2), new LSRange(4, 7)))
-		                                                             ), 2, new LSAlgorithmLoggerImpl(List.of()));
+		                                                             ), 2, null, new LSAlgorithmLoggerImpl(List.of()));
 		assertEquals(1, intervals.size());
 
 		LSInterval split = assertInterval(0, 1, 0, intervals.get(varA));
@@ -104,7 +103,7 @@ public class LSAlgorithmTest {
 		                                                             List.of(
 				                                                             LSInterval.testFixed(0, List.of(new LSRange(4, 6), new LSRange(10))),
 				                                                             LSInterval.testFixed(1, List.of(new LSRange(2, 5)))
-		                                                             ), 2, new LSAlgorithmLoggerImpl(List.of()));
+		                                                             ), 2, null, new LSAlgorithmLoggerImpl(List.of()));
 		assertEquals(2, intervals.size());
 
 		// iA
@@ -138,7 +137,7 @@ public class LSAlgorithmTest {
 		                                         List.of(write(4), read(6)));
 		final LSInterval i1 = LSInterval.testVar(var1, List.of(new LSRange(0, 4)),
 		                                         List.of(write(0), read(2), read(4)));
-		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(iA, iB, i1), List.of(), 2, LSAlgorithmLogger.DUMMY);
+		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(iA, iB, i1), List.of(), 2, null, LSAlgorithmLogger.DUMMY);
 		assertEquals(3, intervals.size());
 
 		// iA
@@ -188,7 +187,7 @@ public class LSAlgorithmTest {
 		                                         List.of(write(6), read(8)));
 		final LSInterval i1 = LSInterval.testVar(var1, List.of(new LSRange(0, 6)),
 		                                         List.of(write(0), read(2), write(4), read(6)));
-		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(iA, i1, iB), List.of(), 2, LSAlgorithmLogger.DUMMY);
+		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(iA, i1, iB), List.of(), 2, null, LSAlgorithmLogger.DUMMY);
 		assertEquals(3, intervals.size());
 
 		LSInterval split = assertInterval(0, 5, 0, intervals.get(varA));
@@ -244,7 +243,7 @@ public class LSAlgorithmTest {
 		                                         List.of(write(6), read(12)));
 		final LSInterval iC = LSInterval.testVar(varC, List.of(new LSRange(8, 10)),
 		                                         List.of(write(8), read(10)));
-		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(iT, iA, iB, iC), List.of(), 2, LSAlgorithmLogger.DUMMY);
+		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(iT, iA, iB, iC), List.of(), 2, null, LSAlgorithmLogger.DUMMY);
 		assertEquals(4, intervals.size());
 
 		// iT
@@ -291,7 +290,7 @@ public class LSAlgorithmTest {
 		                                         List.of(write(4), read(8)));
 		final LSInterval iD = LSInterval.testVar(varD, List.of(new LSRange(6, 12)),
 		                                         List.of(write(6), read(8), read(12)));
-		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(iA, iB, iC, iD), List.of(), 2, LSAlgorithmLogger.DUMMY);
+		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(iA, iB, iC, iD), List.of(), 2, null, LSAlgorithmLogger.DUMMY);
 		assertEquals(4, intervals.size());
 
 		// iA
