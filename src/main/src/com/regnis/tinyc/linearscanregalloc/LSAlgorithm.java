@@ -1,6 +1,7 @@
 package com.regnis.tinyc.linearscanregalloc;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
@@ -13,8 +14,8 @@ import org.jetbrains.annotations.*;
 final class LSAlgorithm {
 
 	@NotNull
-	public static Map<IRVar, LSInterval> perform(@NotNull Map<IRVar, LSInterval> varIntervals, @NotNull List<LSInterval> intervals, int registerCount, @NotNull LSAlgorithmLogger logger) {
-		final LSAlgorithm algorithm = new LSAlgorithm(varIntervals, intervals, registerCount, logger);
+	public static Map<IRVar, LSInterval> perform(@NotNull Map<IRVar, LSInterval> varIntervals, @NotNull List<LSInterval> intervals, int registerCount, @Nullable Type pointerIntType, @NotNull LSAlgorithmLogger logger) {
+		final LSAlgorithm algorithm = new LSAlgorithm(varIntervals, intervals, registerCount, pointerIntType, logger);
 		return algorithm.run();
 	}
 
@@ -26,11 +27,13 @@ final class LSAlgorithm {
 	private final Map<IRVar, LSInterval> varIntervals;
 	private final LSAlgorithmLogger logger;
 	private final int registerCount;
+	@Nullable private final Type pointerIntType;
 
-	private LSAlgorithm(@NotNull Map<IRVar, LSInterval> varIntervals, @NotNull List<LSInterval> fixedIntervals, int registerCount, @NotNull LSAlgorithmLogger logger) {
+	private LSAlgorithm(@NotNull Map<IRVar, LSInterval> varIntervals, @NotNull List<LSInterval> fixedIntervals, int registerCount, @Nullable Type pointerIntType, @NotNull LSAlgorithmLogger logger) {
 		Utils.assertTrue(registerCount > 1);
 		this.varIntervals = varIntervals;
 		this.registerCount = registerCount;
+		this.pointerIntType = pointerIntType;
 		this.logger = logger;
 
 		for (LSInterval interval : fixedIntervals) {
