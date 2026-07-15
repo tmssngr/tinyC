@@ -31,7 +31,7 @@ public class LSAlgorithmTest {
 	}
 
 	@Test
-	public void test2() {
+	public void test3() {
 		//  0: move str, r1
 		//  2: move r1, str
 		//  4: call r0, strlen, [r1]
@@ -62,7 +62,7 @@ public class LSAlgorithmTest {
 	}
 
 	@Test
-	public void test3() {
+	public void test4() {
 		// 0: move a, 1
 		// 2: call foo
 		// 4: move r1, a
@@ -86,7 +86,7 @@ public class LSAlgorithmTest {
 	}
 
 	@Test
-	public void test4() {
+	public void test5() {
 		// 0: const a, 1
 		// 2: move r1, a
 		// 4: call r0, foo(r1)
