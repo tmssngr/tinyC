@@ -16,18 +16,69 @@ import static org.junit.Assert.*;
  */
 public class LSAlgorithmTest {
 
+	private static final Type Z8_POINTER_INT_TYPE = Type.I16;
+
 	@Test
 	public void test1() {
 		// 0: a = 1
 		// 2: mov r0, a
 		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.I16);
 		final LSInterval interval = LSInterval.testVar(varA, List.of(new LSRange(0, 2)), List.of(write(0), read(2)));
-		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(interval), List.of(), 4, null, LSAlgorithmLogger.DUMMY);
+		final Map<IRVar, LSInterval> varMap = toVarMap(interval);
+		final List<LSInterval> fixedIntervals = List.of();
+		{
+			final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(varMap, fixedIntervals, 4, null, LSAlgorithmLogger.DUMMY);
 
-		assertEquals(1, intervals.size());
+			assertEquals(1, intervals.size());
 
-		final LSInterval split = assertInterval(0, 2, 0, intervals.get(varA));
-		assertNull(split);
+			final LSInterval split = assertInterval(0, 2, 0, intervals.get(varA));
+			assertNull(split);
+		}
+		{
+			final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(varMap, fixedIntervals, 4, Z8_POINTER_INT_TYPE, LSAlgorithmLogger.DUMMY);
+
+			assertEquals(1, intervals.size());
+
+			final LSInterval split = assertInterval(0, 2, 0, intervals.get(varA));
+			assertNull(split);
+		}
+	}
+
+	@Test
+	public void test2() {
+		// 0: a = 1
+		// 2: b = 2
+		// 4: add a, b
+		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.I16);
+		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.I16);
+		final LSInterval intervalA = LSInterval.testVar(varA, List.of(new LSRange(0, 4)), List.of(write(0), write(4)));
+		final LSInterval intervalB = LSInterval.testVar(varB, List.of(new LSRange(2, 4)), List.of(write(2), read(4)));
+		final Map<IRVar, LSInterval> varMap = toVarMap(intervalA, intervalB);
+		final List<LSInterval> fixedIntervals = List.of();
+		{
+			final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(varMap, fixedIntervals, 4, null, LSAlgorithmLogger.DUMMY);
+
+			assertEquals(2, intervals.size());
+
+			LSInterval split = assertInterval(0, 4, 0, intervals.get(varA));
+			assertNull(split);
+
+			split = assertInterval(2, 4, 1, intervals.get(varB));
+			//                           ^
+			assertNull(split);
+		}
+		{
+			final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(varMap, fixedIntervals, 4, Z8_POINTER_INT_TYPE, LSAlgorithmLogger.DUMMY);
+
+			assertEquals(2, intervals.size());
+
+			LSInterval split = assertInterval(0, 4, 0, intervals.get(varA));
+			assertNull(split);
+
+			split = assertInterval(2, 4, 2, intervals.get(varB));
+			//                           ^
+			assertNull(split);
+		}
 	}
 
 	@Test
