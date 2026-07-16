@@ -97,19 +97,40 @@ public class LSAlgorithmTest {
 		                                           List.of(write(0), read(2), read(8)));
 		final LSInterval iLength = LSInterval.testVar(varLength, List.of(new LSRange(6, 10)),
 		                                              List.of(write(6), read(10)));
-		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(iStr, iLength),
-		                                                             List.of(
-				                                                             LSInterval.testFixed(0, List.of(new LSRange(4, 6))),
-				                                                             LSInterval.testFixed(1, List.of(new LSRange(-1, 0), new LSRange(2, 5), new LSRange(8, 12))),
-				                                                             LSInterval.testFixed(2, List.of(new LSRange(4, 5), new LSRange(10, 13)))
-		                                                             ), 4, null, new LSAlgorithmLoggerImpl(List.of()));
-		assertEquals(2, intervals.size());
+		final Map<IRVar, LSInterval> varMap = toVarMap(iStr, iLength);
+		{
+			final List<LSInterval> fixedIntervals = List.of(
+					LSInterval.testFixed(0, List.of(new LSRange(4, 6))),
+					LSInterval.testFixed(1, List.of(new LSRange(-1, 0), new LSRange(2, 5), new LSRange(8, 12))),
+					LSInterval.testFixed(2, List.of(new LSRange(4, 5), new LSRange(10, 13)))
+			);
+			final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(varMap, fixedIntervals, 4, null, new LSAlgorithmLoggerImpl(List.of()));
+			assertEquals(2, intervals.size());
 
-		LSInterval split = assertInterval(0, 8, 3, intervals.get(varStr));
-		assertNull(split);
+			LSInterval split = assertInterval(0, 8, 3, intervals.get(varStr));
+			assertNull(split);
 
-		split = assertInterval(6, 10, 2, intervals.get(varLength));
-		assertNull(split);
+			split = assertInterval(6, 10, 2, intervals.get(varLength));
+			assertNull(split);
+		}
+		{
+			final List<LSInterval> fixedIntervals = List.of(
+					LSInterval.testFixed(0, List.of(new LSRange(4, 6))),
+					LSInterval.testFixed(1, List.of(new LSRange(4, 6))),
+					LSInterval.testFixed(2, List.of(new LSRange(-1, 0), new LSRange(2, 5), new LSRange(8, 12))),
+					LSInterval.testFixed(3, List.of(new LSRange(-1, 0), new LSRange(2, 5), new LSRange(8, 12))),
+					LSInterval.testFixed(4, List.of(new LSRange(4, 5), new LSRange(10, 13))),
+					LSInterval.testFixed(5, List.of(new LSRange(4, 5), new LSRange(10, 13)))
+			);
+			final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(varMap, fixedIntervals, 8, Z8_POINTER_INT_TYPE, new LSAlgorithmLoggerImpl(List.of()));
+			assertEquals(2, intervals.size());
+
+			LSInterval split = assertInterval(0, 8, 3, intervals.get(varStr));
+			assertNull(split);
+
+			split = assertInterval(6, 10, 2, intervals.get(varLength));
+			assertNull(split);
+		}
 	}
 
 	@Test

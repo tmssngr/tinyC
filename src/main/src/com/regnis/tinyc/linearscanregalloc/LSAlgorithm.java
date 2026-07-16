@@ -165,7 +165,7 @@ final class LSAlgorithm {
 		final int from = current.getFrom();
 		for (LSInterval interval : fixedIntervals) {
 			final int freeUntil = interval.getFreeUntil(from);
-			setMinPos(freeUntil, interval, registersFreeUntil);
+			registersFreeUntil.setMinPos(freeUntil, interval.register(), 1);
 		}
 
 		for (LSInterval interval : active) {
@@ -322,8 +322,9 @@ final class LSAlgorithm {
 		// is higher than blocked pos.
 		for (LSInterval interval : fixedIntervals) {
 			final int blockedAt = interval.getFreeUntil(from);
-			setMinPos(blockedAt, interval, registersUsedNext);
-			setMinPos(blockedAt, interval, registersBlockedNext);
+			final int register = interval.register();
+			registersUsedNext.setMinPos(blockedAt, register, 1);
+			registersBlockedNext.setMinPos(blockedAt, register, 1);
 		}
 	}
 
