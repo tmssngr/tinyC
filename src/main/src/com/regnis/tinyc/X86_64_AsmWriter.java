@@ -28,23 +28,25 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 		this.registers = registers;
 	}
 
-	public void write(@NotNull IRProgram program) throws IOException {
-		boolean addEmptyLine = false;
-		for (IRFunction function : program.functions()) {
-			if (addEmptyLine) {
-				writeNL();
-			}
-			writeFunction(function);
-			addEmptyLine = true;
-		}
+	@Override
+	protected void writeFunction(IRFunction function) throws IOException {
+		writeComment(function.toString());
 
-		for (IRAsmFunction function : program.asmFunctions()) {
-			if (addEmptyLine) {
-				writeNL();
-			}
-			writeAsmFunction(function);
-			addEmptyLine = true;
-		}
+		final List<IRInstruction> instructions = function.instructions();
+		final int nonvolatileRegistersToPushPop = getNonVolatileRegistersToPushPop(instructions);
+		final List<IRVarDef> localVars = function.varInfos().vars();
+		final List<List<IRVar>> callsArgs = getCallsWithStackArgs(instructions);
+		stackOffsets = createX86StackOffsets(localVars, callsArgs, nonvolatileRegistersToPushPop);
+		final int rspOffset = stackOffsets.getRspOffset();
+		final int callArgSpace = stackOffsets.getCallArgSpace();
+		writeVarOffsetAsComments(localVars);
+		writeLabel(function.label());
+		writeFunctionProlog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
+
+		writeInstructions(instructions);
+
+		writeFunctionEpilog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
+		stackOffsets = null;
 	}
 
 	protected void writeAddrOf(IRAddrOf addrOf) throws IOException {
@@ -271,26 +273,6 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 			writeIndented(getStringLiteralName(literal.index()) + " db " + encoded);
 		}
 		writeNL();
-	}
-
-	private void writeFunction(IRFunction function) throws IOException {
-		writeComment(function.toString());
-
-		final List<IRInstruction> instructions = function.instructions();
-		final int nonvolatileRegistersToPushPop = getNonVolatileRegistersToPushPop(instructions);
-		final List<IRVarDef> localVars = function.varInfos().vars();
-		final List<List<IRVar>> callsArgs = getCallsWithStackArgs(instructions);
-		stackOffsets = createX86StackOffsets(localVars, callsArgs, nonvolatileRegistersToPushPop);
-		final int rspOffset = stackOffsets.getRspOffset();
-		final int callArgSpace = stackOffsets.getCallArgSpace();
-		writeVarOffsetAsComments(localVars);
-		writeLabel(function.label());
-		writeFunctionProlog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
-
-		writeInstructions(instructions);
-
-		writeFunctionEpilog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
-		stackOffsets = null;
 	}
 
 	private List<List<IRVar>> getCallsWithStackArgs(List<IRInstruction> instructions) {

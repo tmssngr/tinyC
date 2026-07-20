@@ -12,7 +12,7 @@ import org.jetbrains.annotations.*;
  */
 abstract class AsmWriter {
 
-	public abstract void write(@NotNull IRProgram program) throws IOException;
+	protected abstract void writeFunction(IRFunction function) throws IOException;
 
 	protected abstract void writeAddrOf(IRAddrOf addrOf) throws IOException;
 
@@ -51,6 +51,25 @@ abstract class AsmWriter {
 
 	protected AsmWriter(@NotNull BufferedWriter writer) {
 		this.writer = writer;
+	}
+
+	public void write(@NotNull IRProgram program) throws IOException {
+		boolean addEmptyLine = false;
+		for (IRFunction function : program.functions()) {
+			if (addEmptyLine) {
+				writeNL();
+			}
+			writeFunction(function);
+			addEmptyLine = true;
+		}
+
+		for (IRAsmFunction function : program.asmFunctions()) {
+			if (addEmptyLine) {
+				writeNL();
+			}
+			writeAsmFunction(function);
+			addEmptyLine = true;
+		}
 	}
 
 	protected void writeAsmFunction(IRAsmFunction function) throws IOException {
