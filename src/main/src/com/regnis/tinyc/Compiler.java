@@ -30,8 +30,10 @@ public class Compiler {
 	public static Path compile(@NotNull Path inputFile) throws IOException, InterruptedException {
 		final String subdirWin = "windows/";
 		final String subdirLinux = "linux/";
+		final String subdirZ8 = "z8/";
 		final Path asmFileWin = compile(inputFile, subdirWin, TargetArchitecture.WIN_X86_64);
 		final Path asmFileLinux = compile(inputFile, subdirLinux, TargetArchitecture.LINUX_X86_64);
+		final Path asmFileZ8 = compile(inputFile, subdirLinux, TargetArchitecture.Z8);
 		final Path asmFile;
 		final Path exeFile;
 		if (Utils.IS_WINDOWS) {

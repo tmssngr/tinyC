@@ -58,6 +58,7 @@ public final class AsmWriterTest {
 	private void write(String name, IRProgram program) throws IOException {
 		write(name, program, "x86win64", TargetArchitecture.WIN_X86_64);
 		write(name, program, "x86linux64", TargetArchitecture.LINUX_X86_64);
+		write(name, program, "z8", TargetArchitecture.Z8);
 	}
 
 	private void write(String name, IRProgram program, String subdir, TargetArchitecture architecture) throws IOException {
