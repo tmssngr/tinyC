@@ -6,3 +6,6 @@
     #include "linux_x86_64.h"
   #end
 #end
+#ifdef Z8
+  #include "z8.h"
+#end

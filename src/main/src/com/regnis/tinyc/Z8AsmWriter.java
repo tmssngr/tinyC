@@ -1,5 +1,6 @@
 package com.regnis.tinyc;
 
+import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.io.*;
@@ -93,12 +94,45 @@ final class Z8AsmWriter extends AsmWriter {
 
 	@Override
 	protected void writeLiteral(IRLiteral literal) throws IOException {
-
+		final IRVar target = literal.target();
+		Utils.assertTrue(target.scope() == VariableScope.register);
+		final int register = target.index();
+		int value = literal.value();
+		for (int i = getByteCount(target); i-- > 0; ) {
+			final StringBuilder buffer = new StringBuilder();
+			buffer.append("ld ");
+			getRegisterName(register + i, buffer);
+			buffer.append(", #%");
+			Utils.toHex(value & 0xFF, 2, buffer);
+			writeIndented(buffer.toString());
+			value >>= 8;
+		}
 	}
 
 	@Override
 	protected void writeMemLoad(IRMemLoad load) throws IOException {
-
+		final IRVar addr = load.addr();
+		final IRVar target = load.target();
+		Utils.assertTrue(addr.scope() == VariableScope.register);
+		Utils.assertTrue(target.scope() == VariableScope.register);
+		final int addrReg = addr.index();
+		Utils.assertTrue((addrReg & 1) == 0);
+		int targetReg = target.index();
+		final int byteCount = getByteCount(target);
+		for (int i = 0; i < byteCount; i++, targetReg++) {
+			if (i > 0) {
+				final StringBuilder buffer = new StringBuilder();
+				buffer.append("incw ");
+				getRegisterName(addrReg, buffer);
+				writeIndented(buffer.toString());
+			}
+			final StringBuilder buffer = new StringBuilder();
+			buffer.append("lde ");
+			getRegisterName(targetReg, buffer);
+			buffer.append(", r");
+			getRegisterName(addrReg, buffer);
+			writeIndented(buffer.toString());
+		}
 	}
 
 	@Override
@@ -163,5 +197,14 @@ final class Z8AsmWriter extends AsmWriter {
 		}
 */
 		writeIndented("ret");
+	}
+
+	private void getRegisterName(int reg, StringBuilder buffer) {
+		buffer.append("r");
+		buffer.append(reg);
+	}
+
+	private int getByteCount(IRVar target) {
+		return Type.getSize(target.type(), Type.I16);
 	}
 }
