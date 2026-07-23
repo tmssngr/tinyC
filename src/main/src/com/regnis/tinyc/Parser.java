@@ -1,7 +1,7 @@
 package com.regnis.tinyc;
 
-import com.regnis.tinyc.ast.Function;
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.ast.Function;
 
 import java.io.*;
 import java.nio.file.*;
@@ -43,8 +43,9 @@ public final class Parser {
 	private final Lexer lexer;
 	private final IncludeHandler includeHandler;
 	private final Set<String> defines;
+	private final List<Location> openIfDefLocations = new ArrayList<>();
 
-	private int openIfDefCount;
+	private int skipIfDef;
 	private TokenType token;
 
 	private Parser(@NotNull Lexer lexer, @NotNull IncludeHandler includeHandler, @NotNull Set<String> defines) {
@@ -58,6 +59,34 @@ public final class Parser {
 	public void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
 		while (token != TokenType.EOF) {
 			Location location = getLocation();
+			if (isConsume(TokenType.IFDEF)) {
+				openIfDefLocations.add(location);
+				if (skipIfDef == 0) {
+					final String name = consumeIdentifier();
+					if (!defines.contains(name)) {
+						skipIfDef = openIfDefLocations.size();
+					}
+				}
+				continue;
+			}
+
+			if (isConsume(TokenType.END)) {
+				if (openIfDefLocations.isEmpty()) {
+					throw new SyntaxException(Messages.endWithoutIfdef(), location);
+				}
+
+				if (openIfDefLocations.size() == skipIfDef) {
+					skipIfDef = 0;
+				}
+				openIfDefLocations.removeLast();
+				continue;
+			}
+
+			if (skipIfDef > 0) {
+				consume();
+				continue;
+			}
+
 			if (token == TokenType.IDENTIFIER) {
 				final String type = consumeIdentifier();
 				final String typeString = getTypeString(type);
@@ -141,39 +170,12 @@ public final class Parser {
 				constants.put(name, resolvedExpression);
 				continue;
 			}
-			else if (isConsume(TokenType.IFDEF)) {
-				final String name = consumeIdentifier();
-				if (defines.contains(name)) {
-					openIfDefCount++;
-					continue;
-				}
-
-				while (true) {
-					if (token == TokenType.EOF) {
-						throw new SyntaxException(Messages.unclosedIfdef(), location);
-					}
-					if (token == TokenType.END) {
-						break;
-					}
-					consume();
-				}
-				consume(TokenType.END);
-				continue;
-			}
-			else if (isConsume(TokenType.END)) {
-				if (openIfDefCount == 0) {
-					throw new SyntaxException(Messages.endWithoutIfdef(), location);
-				}
-
-				openIfDefCount--;
-				continue;
-			}
 
 			throw new SyntaxException(Messages.expectedRootElement(), location);
 		}
 
-		if (openIfDefCount > 0) {
-			throw new SyntaxException(Messages.unclosedIfdef(), getLocation());
+		if (openIfDefLocations.size() > 0) {
+			throw new SyntaxException(Messages.unclosedIfdef(), openIfDefLocations.removeLast());
 		}
 	}
 

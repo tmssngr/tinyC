@@ -715,7 +715,7 @@ public class ParserTest {
 				            #ifdef X86_64
 				            void main() {
 				            }""");
-		testIllegal(Messages.unclosedIfdef(), loc(2, 1),
+		testIllegal(Messages.unclosedIfdef(), loc(0, 0),
 		            """
 				            #ifdef X86_64
 				            void main() {
@@ -726,6 +726,51 @@ public class ParserTest {
 				            }
 				            #end
 				            """);
+	}
+
+	@Test
+	public void testIfDef2() {
+		final String input = """
+				#ifdef X86_64
+				      #ifdef __WINDOWS
+				        void print(i64 a) {}
+				      #end
+				      #ifdef __LINUX
+				        void print(i16 a) {}
+				      #end
+				#end
+				""";
+		assertEquals(new Program(List.of(),
+		                         List.of(),
+		                         List.of(
+				                         new Function("print", "void", null, List.of(new Function.Parameter("i64", "a", loc(2, 19))),
+				                                      List.of(),
+				                                      List.of(),
+				                                      List.of(), loc(2, 8))
+		                         ),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram(input, Set.of("X86_64", "__WINDOWS")));
+		assertEquals(new Program(List.of(),
+		                         List.of(),
+		                         List.of(
+				                         new Function("print", "void", null, List.of(new Function.Parameter("i16", "a", loc(5, 19))),
+				                                      List.of(),
+				                                      List.of(),
+				                                      List.of(), loc(5, 8))
+		                         ),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram(input, Set.of("X86_64", "__LINUX")));
+		assertEquals(new Program(List.of(),
+		                         List.of(),
+		                         List.of(),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram(input, Set.of("Z8")));
 	}
 
 	private static void testIllegal(String expectedMessage, Location expectedLocation, String input) {
