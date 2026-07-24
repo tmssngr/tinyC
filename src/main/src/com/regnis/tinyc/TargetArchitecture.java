@@ -12,19 +12,15 @@ import java.util.*;
 public enum TargetArchitecture {
 
 	WIN_X86_64(Set.of("X86_64", "__WINDOWS"),
-	           Type.I64,
 	           new LSArchitecture.X86_64(4, 1, 2, X86Registers.WINDOWS)),
 
 	LINUX_X86_64(Set.of("X86_64", "__LINUX"),
-	             Type.I64,
 	             new LSArchitecture.X86_64(6, 1, 2, X86Registers.LINUX));
 
-	public final Type pointerIntType;
 	public final Set<String> defines;
 	public final LSArchitecture architecture;
 
-	TargetArchitecture(Set<String> defines, Type pointerIntType, LSArchitecture architecture) {
-		this.pointerIntType = pointerIntType;
+	TargetArchitecture(Set<String> defines, LSArchitecture architecture) {
 		this.defines = defines;
 		this.architecture = architecture;
 	}

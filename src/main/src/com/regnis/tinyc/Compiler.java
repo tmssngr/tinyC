@@ -59,7 +59,7 @@ public class Compiler {
 	private static Path compile(@NotNull Path inputFile, String subdir, TargetArchitecture architecture) throws IOException, InterruptedException {
 		final Program parsedProgram = Parser.parse(inputFile, architecture.defines);
 
-		final TypeChecker checker = new TypeChecker(architecture.pointerIntType, message -> {
+		final TypeChecker checker = new TypeChecker(architecture.architecture.getPointerIntType(), message -> {
 			if (message.isError()) {
 				System.err.println(message);
 			}
@@ -93,7 +93,7 @@ public class Compiler {
 
 		write(program, astSimpleFile);
 
-		IRProgram irProgram = IRGenerator.convert(program, architecture.pointerIntType);
+		IRProgram irProgram = IRGenerator.convert(program, architecture.architecture.getPointerIntType());
 		irProgram = CleanupGlobalUnusedVariables.process(irProgram);
 		irProgram = IROptimizer.branchAndLabelOptimizations(irProgram);
 		write(irProgram, irFile);
@@ -115,7 +115,7 @@ public class Compiler {
 					final VarLiveness liveness = result.liveness();
 					irWriter.write(cfg, liveness);
 					dotWriter.writeCfg(cfg, liveness);
-					function = LSRegAlloc.process(function, architecture.architecture, Type.I64);
+					function = LSRegAlloc.process(function, architecture.architecture);
 					final List<IRInstruction> optimizedInstructions = IROptimizer.optimize(function.instructions(), optimizationBehavior);
 					final IRFunction optimizedFunction = CleanupLocalUnusedVariables.optimize(function.derive(optimizedInstructions));
 					functions.add(optimizedFunction);
