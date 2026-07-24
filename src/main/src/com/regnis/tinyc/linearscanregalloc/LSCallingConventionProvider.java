@@ -11,5 +11,6 @@ import org.jetbrains.annotations.*;
  */
 public interface LSCallingConventionProvider {
 
+	@NotNull
 	LSCallingConvention getCallingConvention(@NotNull Type targetType, @NotNull List<Type> argTypes);
 }
