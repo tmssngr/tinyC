@@ -625,28 +625,30 @@ public final class TypeChecker {
 			throw new SyntaxException(Messages.operationNotSupportedForTypes(op, leftType, rightType), location);
 		}
 
-		Type type;
+		final Type type;
 		switch (op.kind) {
 		case Arithmetic -> {
 			type = leftType;
 			if (!Objects.equals(leftType, rightType)) {
-				if (leftType == Type.U8) {
-					left = autoCastTo(rightType, left, left.location());
-					type = rightType;
+				if (right instanceof ExprIntLiteral) {
+					right = simpleCast(type, right, right.location());
 				}
 				else {
-					right = autoCastTo(leftType, right, right.location());
+					throw new SyntaxException(Messages.needExplicitCast(type, rightType), location);
 				}
 			}
 		}
 		case Relational -> {
 			type = Type.BOOL;
 			if (!Objects.equals(leftType, rightType)) {
-				if (leftType == Type.U8) {
-					left = autoCastTo(rightType, left, left.location());
+				if (right instanceof ExprIntLiteral) {
+					right = simpleCast(leftType, right, right.location());
+				}
+				else if (left instanceof ExprIntLiteral) {
+					left = simpleCast(rightType, left, left.location());
 				}
 				else {
-					right = autoCastTo(leftType, right, right.location());
+					throw new SyntaxException(Messages.needExplicitCast(leftType, rightType), location);
 				}
 			}
 		}
