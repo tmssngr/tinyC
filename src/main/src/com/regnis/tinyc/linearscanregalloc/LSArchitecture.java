@@ -50,6 +50,7 @@ public interface LSArchitecture {
 			return this;
 		}
 
+		@NotNull
 		@Override
 		public LSCallingConvention getCallingConvention(@NotNull Type targetType, @NotNull List<Type> argTypes) {
 			return callingConvention;
