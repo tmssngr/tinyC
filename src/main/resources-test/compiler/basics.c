@@ -6,7 +6,7 @@ u8 two = '2';
 u8 threeFour = 34;
 
 i64 unusedArgs(u8 a, bool b, u8 c, u8 d) {
-	return c;
+	return (i64)c;
 }
 
 void main() {

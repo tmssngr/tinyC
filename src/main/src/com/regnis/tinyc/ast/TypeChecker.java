@@ -307,7 +307,7 @@ public final class TypeChecker {
 				throw new SyntaxException(Messages.cantReturnAnythingFromVoidFunction(), location);
 			}
 			expression = processExpression(expression);
-			expression = autoCastTo(expectedReturnType, expression, location);
+			expression = simpleCast(expectedReturnType, expression, location);
 		}
 		add(new StmtReturn(expression, location));
 	}

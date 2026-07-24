@@ -93,7 +93,7 @@
 	arg 3: d (u8/1)
 	var 4: t.4 (i64/8)
 	; 9 pc
-	; 9:9 return (autocast)
+	; 9:10 return (i64)
 	cast t.4(i64), c(u8)
 	ret t.4
 	jump @unusedArgs@u8@bool@u8@u8_ret
