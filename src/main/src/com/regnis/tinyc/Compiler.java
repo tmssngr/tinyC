@@ -59,7 +59,7 @@ public class Compiler {
 	private static Path compile(@NotNull Path inputFile, String subdir, TargetArchitecture architecture) throws IOException, InterruptedException {
 		final Program parsedProgram = Parser.parse(inputFile, architecture.defines);
 
-		final TypeChecker checker = new TypeChecker(architecture.pointerIntType);
+		final TypeChecker checker = new TypeChecker(architecture.architecture.getPointerIntType());
 		final Program typedProgram = checker.check(parsedProgram);
 
 		Program program = UnusedFunctionRemover.removeUnusedFunctions(typedProgram);
@@ -86,7 +86,7 @@ public class Compiler {
 
 		write(program, astSimpleFile);
 
-		IRProgram irProgram = IRGenerator.convert(program, architecture.pointerIntType);
+		IRProgram irProgram = IRGenerator.convert(program, architecture.architecture.getPointerIntType());
 		irProgram = CleanupGlobalUnusedVariables.process(irProgram);
 		irProgram = IROptimizer.branchAndLabelOptimizations(irProgram);
 		write(irProgram, irFile);
@@ -103,7 +103,7 @@ public class Compiler {
 					final ControlFlowGraph cfg = result.second();
 					irWriter.write(cfg);
 					dotWriter.writeCfg(cfg);
-					function = LSRegAlloc.process(function, architecture.architecture, Type.I64);
+					function = LSRegAlloc.process(function, architecture.architecture);
 					final List<IRInstruction> optimizedInstructions = IROptimizer.optimize(function.instructions());
 					final IRFunction optimizedFunction = CleanupLocalUnusedVariables.optimize(function.derive(optimizedInstructions));
 					functions.add(optimizedFunction);
