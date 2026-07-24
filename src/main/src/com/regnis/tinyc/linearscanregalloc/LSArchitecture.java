@@ -86,9 +86,24 @@ public interface LSArchitecture {
 			return 16;
 		}
 
+		@NotNull
 		@Override
 		public LSCallingConvention getCallingConvention(@NotNull Type targetType, @NotNull List<Type> argTypes) {
-			return null;
+			final List<Integer> argRegisters = new ArrayList<>();
+			if (targetType == Type.VOID) {
+				targetType = Type.U8;
+			}
+
+			int argRegister = Math.max(Type.getSize(targetType, getPointerIntType()), 2);
+			for (Type type : argTypes) {
+				if (argRegister >= 8) {
+					break;
+				}
+				argRegisters.add(argRegister);
+				final int size = Type.getSize(type, getPointerIntType());
+				argRegister += size;
+			}
+			return new LSCallingConvention(argRegisters, 16);
 		}
 	}
 }
