@@ -12,6 +12,8 @@ import org.jetbrains.annotations.*;
  */
 public interface LSArchitecture {
 
+	Type getPointerIntType();
+
 	int registerCount();
 
 	@NotNull
@@ -30,6 +32,11 @@ public interface LSArchitecture {
 			this.nonVolatileRegisterCount = nonVolatileRegisterCount;
 			this.registers = registers;
 			this.callingConvention = LSCallingConvention.createX86CallingConvention(argRegisterCount, otherVolatileRegisterCount);
+		}
+
+		@Override
+		public Type getPointerIntType() {
+			return Type.I64;
 		}
 
 		@Override

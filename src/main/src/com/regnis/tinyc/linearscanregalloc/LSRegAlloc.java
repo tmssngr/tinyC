@@ -18,8 +18,8 @@ public final class LSRegAlloc {
 	static final String MEM_VAR_ADDRESS = "memVarAddr";
 
 	@NotNull
-	public static IRFunction process(@NotNull IRFunction function, @NotNull LSArchitecture architecture, @NotNull Type pointerIntType) {
-		return process(function, architecture instanceof LSArchitecture.X86_64 x86_64 ? x86_64.getRegisters() : null, architecture.registerCount(), architecture.getCallingConventionProvider(), pointerIntType);
+	public static IRFunction process(@NotNull IRFunction function, @NotNull LSArchitecture architecture) {
+		return process(function, architecture instanceof LSArchitecture.X86_64 x86_64 ? x86_64.getRegisters() : null, architecture.registerCount(), architecture.getCallingConventionProvider(), architecture.getPointerIntType());
 	}
 
 	@NotNull
