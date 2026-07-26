@@ -275,9 +275,7 @@ final class LSInterval {
 
 	public void addReadUse(int pos) {
 		Utils.assertTrue(pos >= 0);
-		if (var == null) {
-			return;
-		}
+		Utils.assertTrue(var != null);
 		if (uses.size() > 0) {
 			final LSUse first = uses.getFirst();
 			if (first.pos() == pos) {
@@ -292,9 +290,7 @@ final class LSInterval {
 
 	public void addWritePos(int pos) {
 		Utils.assertTrue(pos >= 0);
-		if (var == null) {
-			return;
-		}
+		Utils.assertTrue(var != null);
 		if (uses.size() > 0) {
 			final LSUse first = uses.getFirst();
 			Utils.assertTrue(pos < first.pos());
