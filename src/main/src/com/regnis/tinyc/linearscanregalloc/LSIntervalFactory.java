@@ -418,6 +418,8 @@ final class LSIntervalFactory {
 		}
 		final LSInterval sourceInterval = handleSource(source, live);
 		if (target.scope() == VariableScope.register) {
+			// there shouldn't be any move directly from one register to another
+			Utils.assertTrue(sourceInterval.register() < 0);
 			sourceInterval.setRegisterHint(target.index());
 		}
 	}
@@ -431,7 +433,9 @@ final class LSIntervalFactory {
 		if (pos > blockStart) {
 			interval.add(blockStart, pos);
 		}
-		interval.addReadUse(pos);
+		if (var.scope() != VariableScope.register) {
+			interval.addReadUse(pos);
+		}
 		return interval;
 	}
 
@@ -453,7 +457,9 @@ final class LSIntervalFactory {
 		}
 
 		interval.truncateFirstRangeTo(pos);
-		interval.addWritePos(pos);
+		if (var.scope() != VariableScope.register) {
+			interval.addWritePos(pos);
+		}
 		return interval;
 	}
 
