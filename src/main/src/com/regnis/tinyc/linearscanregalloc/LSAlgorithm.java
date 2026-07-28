@@ -14,8 +14,8 @@ import org.jetbrains.annotations.*;
 final class LSAlgorithm {
 
 	@NotNull
-	public static Map<IRVar, LSInterval> perform(@NotNull Map<IRVar, LSInterval> varIntervals, @NotNull List<LSInterval> intervals, int registerCount, @Nullable Type pointerIntType, @NotNull LSAlgorithmLogger logger) {
-		final LSAlgorithm algorithm = new LSAlgorithm(varIntervals, intervals, registerCount, pointerIntType, logger);
+	public static Map<IRVar, LSInterval> perform(@NotNull Map<IRVar, LSInterval> varIntervals, @NotNull List<LSInterval> fixedIntervals, int registerCount, @Nullable Type pointerIntType, @NotNull LSAlgorithmLogger logger) {
+		final LSAlgorithm algorithm = new LSAlgorithm(varIntervals, fixedIntervals, registerCount, pointerIntType, logger);
 		return algorithm.run();
 	}
 
@@ -113,13 +113,16 @@ final class LSAlgorithm {
 
 		final int currentTo = current.getTo();
 
+		final int registerAmount = getRegisterAmount(current);
+		final boolean onlyEvenRegisters = isOnlyEvenRegisters(current.var());
+
 		final int registerHint = current.getRegisterHint();
-		int reg = getIdealRegister(registerHint, currentTo, registersFreeUntil);
+		int reg = getIdealRegister(registerHint, currentTo, registerAmount, registersFreeUntil, onlyEvenRegisters);
 		if (reg < 0) {
 			return false;
 		}
 
-		final int maxFreeUntil = registersFreeUntil.get(reg);
+		final int maxFreeUntil = registersFreeUntil.get(reg, registerAmount);
 		if (maxFreeUntil >= currentTo) {
 			setRegister(current, reg);
 			return true;
@@ -140,7 +143,7 @@ final class LSAlgorithm {
 		}
 
 		final int splitPos = getIdealSplitPosition(current, maxFreeUntil);
-		reg = getIdealRegister(registerHint, splitPos, registersFreeUntil);
+		reg = getIdealRegister(registerHint, splitPos, registerAmount, registersFreeUntil, onlyEvenRegisters);
 		Utils.assertTrue(reg >= 0);
 		setRegister(current, reg);
 		final LSInterval split = truncateAndSplit(current, splitPos + 1);
@@ -154,24 +157,32 @@ final class LSAlgorithm {
 		return true;
 	}
 
-	private int getIdealRegister(int registerHint, int to, RegisterPositions registersFreeUntil) {
-		if (registerHint >= 0 && registersFreeUntil.get(registerHint) >= to) {
-			return registerHint;
+	private boolean isOnlyEvenRegisters(IRVar var) {
+		final Type type = var.type();
+		return pointerIntType != null && type.isPointer();
+	}
+
+	private int getIdealRegister(int registerHint, int to, int registerAmount, RegisterPositions registersFreeUntil, boolean onlyEvenRegisters) {
+		if (registerHint >= 0) {
+			Utils.assertTrue(!onlyEvenRegisters || (registerHint & 1) == 0);
+			if (registersFreeUntil.get(registerHint, registerAmount) >= to) {
+				return registerHint;
+			}
 		}
 
-		final int exactReg = registersFreeUntil.getExact(to);
+		final int exactReg = registersFreeUntil.getExact(to, registerAmount, onlyEvenRegisters);
 		if (exactReg >= 0) {
 			return exactReg;
 		}
 
-		return registersFreeUntil.getMax();
+		return registersFreeUntil.getMax(registerAmount, onlyEvenRegisters);
 	}
 
 	private void prepareFreeUntil(LSInterval current, RegisterPositions registersFreeUntil) {
 		final int from = current.getFrom();
 		for (LSInterval interval : fixedIntervals) {
 			final int freeUntil = interval.getFreeUntil(from);
-			setMinPos(freeUntil, interval, registersFreeUntil);
+			registersFreeUntil.setMinPos(freeUntil, interval.register(), 1);
 		}
 
 		for (LSInterval interval : active) {
@@ -205,6 +216,8 @@ final class LSAlgorithm {
 		final RegisterPositions registersUsedNext = new RegisterPositions(registerCount);
 		final RegisterPositions registersBlockedNext = new RegisterPositions(registerCount);
 
+		final int registerAmount = getRegisterAmount(current);
+		final boolean onlyEvenRegisters = isOnlyEvenRegisters(current.var());
 		final int from = current.getFrom();
 		prepareUseAndBlockPos(current, registersUsedNext, registersBlockedNext);
 
@@ -214,8 +227,8 @@ final class LSAlgorithm {
 		Utils.assertTrue(firstUse != null);
 
 		final int currentNextUse = firstUse.pos();
-		final int reg = Math.max(registersUsedNext.getMax(), 0);
-		final int regUsedNextAt = registersUsedNext.get(reg);
+		final int reg = Math.max(registersUsedNext.getMax(registerAmount, onlyEvenRegisters), 0);
+		final int regUsedNextAt = registersUsedNext.get(reg, registerAmount);
 		if (regUsedNextAt < currentNextUse) {
 			// all active and inactive intervals are used before current, so it is best to spill current
 			final LSInterval split = truncateAndSplit(current, currentNextUse - 1);
@@ -225,7 +238,7 @@ final class LSAlgorithm {
 		}
 
 		registersBlockedNext.log("blocked next:", logger);
-		final int regBlockedNextAt = registersBlockedNext.get(reg);
+		final int regBlockedNextAt = registersBlockedNext.get(reg, registerAmount);
 		if (regBlockedNextAt < current.getTo()) {
 			// If the selected register has a blocked pos somewhere in the middle of current
 			// then the register is not available for the whole lifetime. So current must be
@@ -329,13 +342,20 @@ final class LSAlgorithm {
 		for (LSInterval interval : fixedIntervals) {
 			final int blockedAt = interval.getFreeUntil(from);
 			final int register = interval.register();
-			registersUsedNext.setMinPos(blockedAt, register);
-			registersBlockedNext.setMinPos(blockedAt, register);
+			registersUsedNext.setMinPos(blockedAt, register, 1);
+			registersBlockedNext.setMinPos(blockedAt, register, 1);
 		}
 	}
 
-	private void setMinPos(int freeUntil, LSInterval interval, RegisterPositions registersFreeUntil) {
-		registersFreeUntil.setMinPos(freeUntil, interval.register());
+	private void setMinPos(int pos, LSInterval interval, RegisterPositions registersFreeUntil) {
+		final int registerAmount = getRegisterAmount(interval);
+		registersFreeUntil.setMinPos(pos, interval.register(), registerAmount);
+	}
+
+	private int getRegisterAmount(LSInterval interval) {
+		return pointerIntType != null
+				? Type.getSize(interval.var().type(), pointerIntType)
+				: 1;
 	}
 
 	@NotNull
@@ -399,30 +419,57 @@ final class LSAlgorithm {
 			return Arrays.toString(positions);
 		}
 
-		public void setMinPos(int pos, int register) {
-			final int prev = positions[register];
-			positions[register] = Math.min(pos, prev);
+		public void setMinPos(int pos, int register, int registerAmount) {
+			for (; registerAmount > 0; registerAmount--, register++) {
+				final int prev = positions[register];
+				positions[register] = Math.min(pos, prev);
+			}
 		}
 
-		public int get(int r) {
-			return positions[r];
-		}
+		public int get(int register, int registerAmount) {
+			Utils.assertTrue(register <= positions.length - registerAmount);
 
-		public int getExact(int to) {
-			for (int reg = 0; reg < positions.length; reg++) {
-				final int pos = positions[reg];
-				if (pos == to) {
-					return reg;
+			int minPos = positions[register];
+			while (--registerAmount > 0) {
+				register++;
+				if (register >= positions.length) {
+					return -1;
 				}
+				minPos = Math.min(minPos, positions[register]);
+			}
+			return minPos;
+		}
+
+		public int getExact(int to, int registerAmount, boolean onlyEvenRegisters) {
+			final int highestReg = positions.length - registerAmount;
+			for (int reg = 0, amount = registerAmount; reg <= highestReg; reg++) {
+				final int pos = positions[reg];
+				if (pos != to) {
+					amount = registerAmount;
+					continue;
+				}
+
+				amount--;
+				if (amount > 0) {
+					continue;
+				}
+
+				final int startReg = reg - registerAmount + 1;
+				if (onlyEvenRegisters && (startReg & 1) > 0) {
+					amount++;
+					continue;
+				}
+				return startReg;
 			}
 			return -1;
 		}
 
-		public int getMax() {
+		public int getMax(int registerAmount, boolean onlyEvenRegisters) {
+			final int highestReg = positions.length - registerAmount;
 			int maxReg = -1;
 			int max = 0;
-			for (int reg = 0; reg < positions.length; reg++) {
-				final int pos = positions[reg];
+			for (int reg = 0; reg <= highestReg; reg += onlyEvenRegisters ? 2 : 1) {
+				final int pos = get(reg, registerAmount);
 				if (pos > max) {
 					max = pos;
 					maxReg = reg;
