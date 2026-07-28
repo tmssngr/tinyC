@@ -17,6 +17,19 @@ import static org.junit.Assert.*;
 public class LSAlgorithmTest {
 
 	@Test
+	public void testRegisterPositions() {
+		final LSAlgorithm.RegisterPositions positions = new LSAlgorithm.RegisterPositions(6);
+		positions.setMinPos(2, 0);
+		positions.setMinPos(3, 1);
+		assertEquals(2, positions.get(0));
+		assertEquals(3, positions.get(1));
+		assertEquals(Integer.MAX_VALUE, positions.get(2));
+		assertEquals(0, positions.getExact(2));
+		assertEquals(1, positions.getExact(3));
+		assertEquals(2, positions.getMax());
+	}
+
+	@Test
 	public void test1() {
 		// 0: a = 1
 		// 2: mov r0, a
