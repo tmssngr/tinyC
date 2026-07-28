@@ -158,7 +158,13 @@ final class LSAlgorithm {
 		if (registerHint >= 0 && registersFreeUntil.get(registerHint) >= to) {
 			return registerHint;
 		}
-		return registersFreeUntil.getExactOrMax(to);
+
+		final int exactReg = registersFreeUntil.getExact(to);
+		if (exactReg >= 0) {
+			return exactReg;
+		}
+
+		return registersFreeUntil.getMax();
 	}
 
 	private void prepareFreeUntil(LSInterval current, RegisterPositions registersFreeUntil) {
@@ -380,7 +386,7 @@ final class LSAlgorithm {
 		}
 	}
 
-	private static final class RegisterPositions {
+	static final class RegisterPositions {
 		private final int[] positions;
 
 		public RegisterPositions(int registerCount) {
@@ -402,14 +408,14 @@ final class LSAlgorithm {
 			return positions[r];
 		}
 
-		public int getExactOrMax(int to) {
+		public int getExact(int to) {
 			for (int reg = 0; reg < positions.length; reg++) {
 				final int pos = positions[reg];
 				if (pos == to) {
 					return reg;
 				}
 			}
-			return getMax();
+			return -1;
 		}
 
 		public int getMax() {
