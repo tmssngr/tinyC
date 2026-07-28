@@ -165,17 +165,17 @@ final class LSAlgorithm {
 		final int from = current.getFrom();
 		for (LSInterval interval : fixedIntervals) {
 			final int freeUntil = interval.getFreeUntil(from);
-			registersFreeUntil.setMinPos(freeUntil, interval);
+			setMinPos(freeUntil, interval, registersFreeUntil);
 		}
 
 		for (LSInterval interval : active) {
-			registersFreeUntil.setMinPos(-1, interval);
+			setMinPos(-1, interval, registersFreeUntil);
 		}
 
 		for (LSInterval interval : inactive) {
 			final int firstIntersection = LSInterval.getFirstIntersection(interval, current);
 			if (firstIntersection >= 0) {
-				registersFreeUntil.setMinPos(firstIntersection, interval);
+				setMinPos(firstIntersection, interval, registersFreeUntil);
 			}
 		}
 	}
@@ -302,7 +302,7 @@ final class LSAlgorithm {
 		for (LSInterval interval : active) {
 			final LSUse usedNext = interval.getUsedNext(from + 1);
 			if (usedNext != null) {
-				registersUsedNext.setMinPos(usedNext.pos(), interval);
+				setMinPos(usedNext.pos(), interval, registersUsedNext);
 			}
 		}
 
@@ -311,7 +311,7 @@ final class LSAlgorithm {
 			if (firstIntersection >= 0) {
 				final LSUse usedNext = interval.getUsedNext(firstIntersection);
 				if (usedNext != null) {
-					registersUsedNext.setMinPos(usedNext.pos(), interval);
+					setMinPos(usedNext.pos(), interval, registersUsedNext);
 				}
 			}
 		}
@@ -322,9 +322,14 @@ final class LSAlgorithm {
 		// is higher than blocked pos.
 		for (LSInterval interval : fixedIntervals) {
 			final int blockedAt = interval.getFreeUntil(from);
-			registersUsedNext.setMinPos(blockedAt, interval);
-			registersBlockedNext.setMinPos(blockedAt, interval);
+			final int register = interval.register();
+			registersUsedNext.setMinPos(blockedAt, register);
+			registersBlockedNext.setMinPos(blockedAt, register);
 		}
+	}
+
+	private void setMinPos(int freeUntil, LSInterval interval, RegisterPositions registersFreeUntil) {
+		registersFreeUntil.setMinPos(freeUntil, interval.register());
 	}
 
 	@NotNull
@@ -388,8 +393,7 @@ final class LSAlgorithm {
 			return Arrays.toString(positions);
 		}
 
-		public void setMinPos(int pos, LSInterval interval) {
-			final int register = interval.register();
+		public void setMinPos(int pos, int register) {
 			final int prev = positions[register];
 			positions[register] = Math.min(pos, prev);
 		}
