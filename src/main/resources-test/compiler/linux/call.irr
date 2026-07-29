@@ -122,7 +122,7 @@
 	arg 2: c (u8/1)
 	arg 3: d (u8/1)
 	arg 4: e (u8/1)
-	; 37 pc
+	; 40 pc
 	move b{r8}, b{r2}
 	addrof memVarAddr{r9}, c
 	store [memVarAddr{r9}], c{r3}
@@ -134,13 +134,16 @@
 	move b{r1}, b{r8}
 	call printIntLf@u8[b{r1}]
 	addrof memVarAddr{r9}, c
-	load c{r1}, [memVarAddr{r9}]
+	load c{r3}, [memVarAddr{r9}]
+	move c{r1}, c{r3}
 	call printIntLf@u8[c{r1}]
 	addrof memVarAddr{r9}, d
-	load d{r1}, [memVarAddr{r9}]
+	load d{r4}, [memVarAddr{r9}]
+	move d{r1}, d{r4}
 	call printIntLf@u8[d{r1}]
 	addrof memVarAddr{r9}, e
-	load e{r1}, [memVarAddr{r9}]
+	load e{r5}, [memVarAddr{r9}]
+	move e{r1}, e{r5}
 	call printIntLf@u8[e{r1}]
 
 @printStringLength@@u8@i64:

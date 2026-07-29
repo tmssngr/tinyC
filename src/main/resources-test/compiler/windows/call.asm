@@ -233,16 +233,22 @@ start:
         mov cl, bl
         ; addrof memVarAddr{r7}, t.1
         lea r12, [rsp+56]
-        ; load t.1{r2}, [memVarAddr{r7}]
-        mov dl, [r12]
+        ; load t.1{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; move t.1{r2}, t.1{r0}
+        mov dl, al
         ; addrof memVarAddr{r7}, t.2
         lea r12, [rsp+57]
-        ; load t.2{r3}, [memVarAddr{r7}]
-        mov r8b, [r12]
+        ; load t.2{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; move t.2{r3}, t.2{r0}
+        mov r8b, al
         ; addrof memVarAddr{r7}, t.3
         lea r12, [rsp+58]
-        ; load t.3{r4}, [memVarAddr{r7}]
-        mov r9b, [r12]
+        ; load t.3{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; move t.3{r4}, t.3{r0}
+        mov r9b, al
         ; call doPrint@u8@u8@u8@u8@u8[t.0{r1}, t.1{r2}, t.2{r3}, t.3{r4}, arg.5.4]
         call @doPrint@u8@u8@u8@u8@u8
         add rsp, 40
@@ -307,20 +313,26 @@ start:
         call @printIntLf@u8
         ; addrof memVarAddr{r7}, b
         lea r12, [rsp+72]
-        ; load b{r1}, [memVarAddr{r7}]
-        mov cl, [r12]
+        ; load b{r2}, [memVarAddr{r7}]
+        mov dl, [r12]
+        ; move b{r1}, b{r2}
+        mov cl, dl
         ; call printIntLf@u8[b{r1}]
         call @printIntLf@u8
         ; addrof memVarAddr{r7}, c
         lea r12, [rsp+80]
-        ; load c{r1}, [memVarAddr{r7}]
-        mov cl, [r12]
+        ; load c{r3}, [memVarAddr{r7}]
+        mov r8b, [r12]
+        ; move c{r1}, c{r3}
+        mov cl, r8b
         ; call printIntLf@u8[c{r1}]
         call @printIntLf@u8
         ; addrof memVarAddr{r7}, d
         lea r12, [rsp+88]
-        ; load d{r1}, [memVarAddr{r7}]
-        mov cl, [r12]
+        ; load d{r4}, [memVarAddr{r7}]
+        mov r9b, [r12]
+        ; move d{r1}, d{r4}
+        mov cl, r9b
         ; call printIntLf@u8[d{r1}]
         call @printIntLf@u8
         ; move e{r1}, e{r6}
