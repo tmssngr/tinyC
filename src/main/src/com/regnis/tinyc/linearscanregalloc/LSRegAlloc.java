@@ -21,7 +21,11 @@ public final class LSRegAlloc {
 
 	@NotNull
 	public static IRFunction process(@NotNull IRFunction function, @NotNull LSArchitecture architecture) {
-		return process(function, architecture instanceof LSArchitecture.X86_64 x86_64 ? x86_64.getRegisters() : null, architecture.registerCount(), architecture.getCallingConventionProvider(), architecture.getPointerIntType());
+		final X86Registers x86Registers = architecture instanceof LSArchitecture.X86_64 x86_64 ? x86_64.getRegisters() : null;
+		final int registeredCount = architecture.registerCount();
+		final LSCallingConventionProvider callingConventionProvider = architecture.getCallingConventionProvider();
+		final Type pointerIntType = architecture.getPointerIntType();
+		return process(function, x86Registers, registeredCount, callingConventionProvider, pointerIntType);
 	}
 
 	@NotNull
