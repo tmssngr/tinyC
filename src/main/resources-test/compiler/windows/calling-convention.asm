@@ -211,20 +211,26 @@ _printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
         call _printIntLf@i16
         ; addrof memVarAddr{r7}, b
         lea r12, [rsp+72]
-        ; load b{r1}, [memVarAddr{r7}]
-        mov cx, [r12]
+        ; load b{r2}, [memVarAddr{r7}]
+        mov dx, [r12]
+        ; move b{r1}, b{r2}
+        mov cx, dx
         ; call printIntLf@i16[b{r1}]
         call _printIntLf@i16
         ; addrof memVarAddr{r7}, c
         lea r12, [rsp+80]
-        ; load c{r1}, [memVarAddr{r7}]
-        mov cx, [r12]
+        ; load c{r3}, [memVarAddr{r7}]
+        mov r8w, [r12]
+        ; move c{r1}, c{r3}
+        mov cx, r8w
         ; call printIntLf@i16[c{r1}]
         call _printIntLf@i16
         ; addrof memVarAddr{r7}, d
         lea r12, [rsp+88]
-        ; load d{r1}, [memVarAddr{r7}]
-        mov cx, [r12]
+        ; load d{r4}, [memVarAddr{r7}]
+        mov r9w, [r12]
+        ; move d{r1}, d{r4}
+        mov cx, r9w
         ; call printIntLf@i16[d{r1}]
         call _printIntLf@i16
         ; addrof memVarAddr{r7}, e
@@ -262,16 +268,16 @@ _printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
         add cx, dx
         ; addrof memVarAddr{r7}, c
         lea r12, [rsp+80]
-        ; load c{r2}, [memVarAddr{r7}]
-        mov dx, [r12]
-        ; add t.13{r1}, c{r2}
-        add cx, dx
+        ; load c{r3}, [memVarAddr{r7}]
+        mov r8w, [r12]
+        ; add t.13{r1}, c{r3}
+        add cx, r8w
         ; addrof memVarAddr{r7}, d
         lea r12, [rsp+88]
-        ; load d{r2}, [memVarAddr{r7}]
-        mov dx, [r12]
-        ; add t.12{r1}, d{r2}
-        add cx, dx
+        ; load d{r4}, [memVarAddr{r7}]
+        mov r9w, [r12]
+        ; add t.12{r1}, d{r4}
+        add cx, r9w
         ; addrof memVarAddr{r7}, e
         lea r12, [rsp+96]
         ; load e{r2}, [memVarAddr{r7}]
