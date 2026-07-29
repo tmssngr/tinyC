@@ -100,11 +100,14 @@ main:
 	store [memVarAddr{r7}], t.6.1{r0}
 	move t.2.1{r1}, t.2.1{r6}
 	addrof memVarAddr{r7}, t.3.1
-	load t.3.1{r2}, [memVarAddr{r7}]
+	load t.3.1{r0}, [memVarAddr{r7}]
+	move t.3.1{r2}, t.3.1{r0}
 	addrof memVarAddr{r7}, t.4.1
-	load t.4.1{r3}, [memVarAddr{r7}]
+	load t.4.1{r0}, [memVarAddr{r7}]
+	move t.4.1{r3}, t.4.1{r0}
 	addrof memVarAddr{r7}, t.5.1
-	load t.5.1{r4}, [memVarAddr{r7}]
+	load t.5.1{r0}, [memVarAddr{r7}]
+	move t.5.1{r4}, t.5.1{r0}
 	call doPrint@u8@u8@u8@u8@u8[t.2.1{r1}, t.3.1{r2}, t.4.1{r3}, t.5.1{r4}, arg.5.4]
 
 next:
@@ -135,13 +138,16 @@ doPrint@u8@u8@u8@u8@u8:
 	store [memVarAddr{r7}], d{r4}
 	call printIntLf@u8[a{r1}]
 	addrof memVarAddr{r7}, b
-	load b{r1}, [memVarAddr{r7}]
+	load b{r2}, [memVarAddr{r7}]
+	move b{r1}, b{r2}
 	call printIntLf@u8[b{r1}]
 	addrof memVarAddr{r7}, c
-	load c{r1}, [memVarAddr{r7}]
+	load c{r3}, [memVarAddr{r7}]
+	move c{r1}, c{r3}
 	call printIntLf@u8[c{r1}]
 	addrof memVarAddr{r7}, d
-	load d{r1}, [memVarAddr{r7}]
+	load d{r4}, [memVarAddr{r7}]
+	move d{r1}, d{r4}
 	call printIntLf@u8[d{r1}]
 	move e{r1}, e{r6}
 	call printIntLf@u8[e{r1}]

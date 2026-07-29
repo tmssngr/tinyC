@@ -205,10 +205,10 @@ _while_4_body:
         mov [r12], cx
         ; call printIntLf@i16[a.3{r1}]
         call _printIntLf@i16
-        ; load a.3{r0}, [memVarAddr{r7}]
-        mov ax, [r12]
-        ; move a.2{r6}, a.3{r0}
-        mov bx, ax
+        ; load a.3{r1}, [memVarAddr{r7}]
+        mov cx, [r12]
+        ; move a.2{r6}, a.3{r1}
+        mov bx, cx
         ; addrof memVarAddr{r7}, b.3
         lea r12, [rsp+48]
         ; load b.3{r0}, [memVarAddr{r7}]
