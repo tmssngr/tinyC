@@ -81,8 +81,6 @@
 
 @main:
 	; 8 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const r6, 250
 	; 4:3 for i != 2
 	jump @for_4

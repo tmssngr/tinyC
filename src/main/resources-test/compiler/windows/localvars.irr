@@ -81,8 +81,6 @@
 
 @main:
 	; 1 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const r1, 10
 	call printIntLf@u8[r1]
 

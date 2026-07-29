@@ -84,8 +84,6 @@
 	var 0: a (i16/2)
 	var 1: c (i16/2)
 	; 34 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const r1, 10
 	addrof r7, a
 	store [r7], r1

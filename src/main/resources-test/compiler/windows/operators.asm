@@ -284,8 +284,6 @@ start:
         push rbx
         push r12
         sub rsp, 32
-        ; begin initialize global variables
-        ; end initialize global variables
         ; const t.9{r1}, [string-0]
         lea rcx, [string_0]
         ; call printString@@u8[t.9{r1}]

@@ -78,8 +78,6 @@
 
 @main:
 	; 36 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const r1, [string-0]
 	call printString@@u8[r1]
 	const r6, 0

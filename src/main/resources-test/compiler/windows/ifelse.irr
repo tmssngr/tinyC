@@ -81,8 +81,6 @@
 
 @main:
 	; 8 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const r6, 1
 	; 5:2 if a > 0
 	const r7, 0

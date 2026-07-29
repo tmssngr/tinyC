@@ -1,4 +1,3 @@
-i32 __random__;
 i16 space;
 i16 next;
 i16* ptrToSpace;

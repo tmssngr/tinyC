@@ -81,8 +81,6 @@
 
 @main:
 	; 27 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const r6, 32
 	const r7, 0
 	addrof r0, [chars]

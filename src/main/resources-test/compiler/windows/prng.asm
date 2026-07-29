@@ -277,7 +277,7 @@ start:
         mov eax, r9d
         ; add tmp.__random__{r0}, tmp.__random__{r0}, t.19{r2}
         add eax, edx
-        ; 151:9 return __random__
+        ; 15:9 return __random__
         ; addrof memVarAddr{r7}, __random__
         lea r12, [var_0]
         ; store [memVarAddr{r7}], tmp.__random__{r0}
@@ -292,7 +292,7 @@ start:
 @randomU8:
         sub rsp, 8
         sub rsp, 32
-        ; 155:10 return (u8)
+        ; 19:10 return (u8)
         ; call t.1{r0} = random[] -> i32
         call @random
         ; cast t.0{r0}(u8), t.1{r0}(i32)
@@ -321,7 +321,7 @@ start:
         call @initRandom@i32
         ; const i{r6}, 0
         mov bl, 0
-        ; 5:2 for i < 50
+        ; 6:2 for i < 50
         jmp @for_4
 @for_4_body:
         ; call r{r0} = randomU8[] -> u8

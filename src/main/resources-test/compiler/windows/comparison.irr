@@ -115,8 +115,6 @@
 	var 1: c (u8/1)
 	var 2: d (u8/1)
 	; 300 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const r1, [string-0]
 	call printString@@u8[r1]
 	const r6, 1

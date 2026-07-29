@@ -1,4 +1,3 @@
-i32 __random__;
 u8 global;
 
 void printString@@u8(u8* str) {

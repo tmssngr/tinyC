@@ -132,8 +132,6 @@
 	var 4: f (bool/1)
 	var 5: b1 (u8/1)
 	; 419 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const r1, [string-0]
 	call printString@@u8[r1]
 	const r6, 0

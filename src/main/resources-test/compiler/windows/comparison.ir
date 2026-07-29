@@ -179,8 +179,6 @@
 	var 32: t.32 (bool/1)
 	var 33: t.33 (bool/1)
 	; 268 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const t.4, [string-0]
 	call printString@@u8[t.4]
 	const a, 1

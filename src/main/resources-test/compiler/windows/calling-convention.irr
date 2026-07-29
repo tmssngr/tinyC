@@ -165,8 +165,6 @@
 	var 3: arg.0.6 (i16/2)
 	var 4: arg.0.7 (i16/2)
 	; 41 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const r1, 1
 	const r2, 2
 	const r3, 3

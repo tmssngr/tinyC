@@ -199,8 +199,6 @@ start:
         push rbx
         push r12
         sub rsp, 32
-        ; begin initialize global variables
-        ; end initialize global variables
         ; const tmp.a{r1}, 10
         mov cx, 10
         ; addrof memVarAddr{r7}, a

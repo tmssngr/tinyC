@@ -118,13 +118,13 @@
 	shiftright r2, r2, r1
 	move r0, r4
 	add r0, r0, r2
-	; 151:9 return __random__
+	; 15:9 return __random__
 	addrof r7, __random__
 	store [r7], r0
 
 @randomU8:
 	; 2 pc
-	; 155:10 return (u8)
+	; 19:10 return (u8)
 	call r0 = random[] -> i32
 	cast r0(u8), r0(i32)
 
@@ -138,7 +138,7 @@
 	store [r7], r6
 	call initRandom@i32[r1]
 	const r6, 0
-	; 5:2 for i < 50
+	; 6:2 for i < 50
 	jump @for_4
 @for_4_body:
 	call r0 = randomU8[] -> u8

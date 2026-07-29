@@ -81,8 +81,6 @@
 
 @main:
 	; 29 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const r7, 22
 	move r0, r7
 	mul r0, r0, r7

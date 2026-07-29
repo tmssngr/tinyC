@@ -197,8 +197,6 @@ start:
         push rbx
         push r12
         sub rsp, 32
-        ; begin initialize global variables
-        ; end initialize global variables
         ; const i{r6}, 250
         mov bl, 250
         ; 4:3 for i != 2

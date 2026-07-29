@@ -194,8 +194,6 @@ start:
 @main:
         sub rsp, 8
         sub rsp, 32
-        ; begin initialize global variables
-        ; end initialize global variables
         ; const a{r1}, 10
         mov cl, 10
         ; call printIntLf@u8[a{r1}]

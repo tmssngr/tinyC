@@ -81,8 +81,6 @@
 
 @main:
 	; 11 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const r6, 5
 	; 5:2 while i > 0
 	jump @while_4
