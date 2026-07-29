@@ -93,8 +93,8 @@ while_4_body:
 	addrof memVarAddr{r7}, a.3
 	store [memVarAddr{r7}], a.3{r1}
 	call printIntLf@i16[a.3{r1}]
-	load a.3{r0}, [memVarAddr{r7}]
-	move a.2{r6}, a.3{r0}
+	load a.3{r1}, [memVarAddr{r7}]
+	move a.2{r6}, a.3{r1}
 	addrof memVarAddr{r7}, b.3
 	load b.3{r0}, [memVarAddr{r7}]
 while_4:

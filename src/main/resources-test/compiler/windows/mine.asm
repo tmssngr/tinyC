@@ -657,12 +657,16 @@ _printCell@u8@i16@i16:
 _if_15_else:
         ; addrof memVarAddr{r7}, row
         lea r12, [rsp+72]
-        ; load row{r1}, [memVarAddr{r7}]
-        mov cx, [r12]
+        ; load row{r2}, [memVarAddr{r7}]
+        mov dx, [r12]
+        ; move row{r1}, row{r2}
+        mov cx, dx
         ; addrof memVarAddr{r7}, column
         lea r12, [rsp+80]
-        ; load column{r2}, [memVarAddr{r7}]
-        mov dx, [r12]
+        ; load column{r3}, [memVarAddr{r7}]
+        mov r8w, [r12]
+        ; move column{r2}, column{r3}
+        mov dx, r8w
         ; call count.1{r0} = getBombCountAround@i16@i16[row{r1}, column{r2}] -> u8
         call _getBombCountAround@i16@i16
         ; 81:4 if count > 0
@@ -743,8 +747,8 @@ _printField@i16@i16:
 _for_18_body:
         ; addrof memVarAddr{r7}, row.2
         lea r12, [rsp+48]
-        ; store [memVarAddr{r7}], row.2{r0}
-        mov [r12], ax
+        ; store [memVarAddr{r7}], row.2{r1}
+        mov [r12], cx
         ; const arg.1.0{r1}, 124
         mov cl, 124
         ; call printChar@u8[arg.1.0{r1}]
@@ -756,8 +760,6 @@ _for_18_body:
         mov dx, ax
         jmp _for_19
 _for_19_body:
-        ; move column.2{r2}, column.2{r0}
-        mov dx, ax
         ; addrof memVarAddr{r7}, row.2
         lea r12, [rsp+48]
         ; load row.2{r1}, [memVarAddr{r7}]
@@ -800,13 +802,17 @@ _for_19_body:
         mov r8w, [r12]
         ; call printCell@u8@i16@i16[cell.1{r1}, row.2{r2}, column.2{r3}]
         call _printCell@u8@i16@i16
-        ; load column.2{r0}, [memVarAddr{r7}]
-        mov ax, [r12]
+        ; load column.2{r2}, [memVarAddr{r7}]
+        mov dx, [r12]
+        ; move column.3{r0}, column.2{r2}
+        mov ax, dx
         ; add column.3{r0}, 1
         add ax, 1
+        ; move column.2{r2}, column.3{r0}
+        mov dx, ax
 _for_19:
-        ; branch column.2{r0} lt 40: for_19_body
-        cmp ax, 40
+        ; branch column.2{r2} lt 40: for_19_body
+        cmp dx, 40
         jl _for_19_body
         ; addrof memVarAddr{r7}, row.2
         lea r12, [rsp+48]
@@ -816,8 +822,10 @@ _for_19:
         mov r8w, bx
         ; addrof memVarAddr{r7}, columnCursor
         lea r12, [rsp+72]
-        ; load columnCursor{r4}, [memVarAddr{r7}]
-        mov r9w, [r12]
+        ; load columnCursor{r2}, [memVarAddr{r7}]
+        mov dx, [r12]
+        ; move columnCursor{r4}, columnCursor{r2}
+        mov r9w, dx
         ; const arg.6.1{r2}, 40
         mov dx, 40
         ; call spacer.1{r0} = getSpacer@i16@i16@i16@i16[row.2{r1}, arg.6.1{r2}, rowCursor{r3}, columnCursor{r4}] -> u8
@@ -832,13 +840,17 @@ _for_19:
         call _printString@@u8
         ; addrof memVarAddr{r7}, row.2
         lea r12, [rsp+48]
-        ; load row.2{r0}, [memVarAddr{r7}]
-        mov ax, [r12]
+        ; load row.2{r1}, [memVarAddr{r7}]
+        mov cx, [r12]
+        ; move row.4{r0}, row.2{r1}
+        mov ax, cx
         ; add row.4{r0}, 1
         add ax, 1
+        ; move row.2{r1}, row.4{r0}
+        mov cx, ax
 _for_18:
-        ; branch row.2{r0} lt 20: for_18_body
-        cmp ax, 20
+        ; branch row.2{r1} lt 20: for_18_body
+        cmp cx, 20
         jl _for_18_body
         add rsp, 32
         ; restore clobbered non-volatile registers
@@ -1211,12 +1223,14 @@ _for_30_body:
         ; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
         ; addrof memVarAddr{r7}, row.1
         lea r12, [rsp+50]
-        ; load row.1{r0}, [memVarAddr{r7}]
-        mov ax, [r12]
-        ; move t.10.1{r1}, row.1{r0}
+        ; load row.1{r1}, [memVarAddr{r7}]
+        mov cx, [r12]
+        ; move t.10.1{r0}, row.1{r1}
+        mov ax, cx
+        ; sub t.10.1{r0}, curr_r{r6}
+        sub ax, bx
+        ; move t.10.1{r1}, t.10.1{r0}
         mov cx, ax
-        ; sub t.10.1{r1}, curr_r{r6}
-        sub cx, bx
         ; call t.9.1{r0} = abs@i16[t.10.1{r1}] -> i16
         call _abs@i16
         ; branch t.9.1{r0} gt 1: if_31_then
@@ -1224,16 +1238,16 @@ _for_30_body:
         jg _if_31_then
         ; addrof memVarAddr{r7}, column.1
         lea r12, [rsp+52]
-        ; load column.1{r0}, [memVarAddr{r7}]
-        mov ax, [r12]
-        ; move t.12.1{r1}, column.1{r0}
-        mov cx, ax
+        ; load column.1{r2}, [memVarAddr{r7}]
+        mov dx, [r12]
+        ; move t.12.1{r1}, column.1{r2}
+        mov cx, dx
         ; addrof memVarAddr{r7}, curr_c
         lea r12, [rsp+72]
-        ; load curr_c{r0}, [memVarAddr{r7}]
-        mov ax, [r12]
-        ; sub t.12.1{r1}, curr_c{r0}
-        sub cx, ax
+        ; load curr_c{r2}, [memVarAddr{r7}]
+        mov dx, [r12]
+        ; sub t.12.1{r1}, curr_c{r2}
+        sub cx, dx
         ; call t.11.1{r0} = abs@i16[t.12.1{r1}] -> i16
         call _abs@i16
         ; branch t.11.1{r0} lteq 1: for_30_continue, if_31_then
@@ -1353,12 +1367,12 @@ _maybeRevealAround@i16@i16.no_critical_edge_15:
 _if_36_end:
         ; addrof memVarAddr{r7}, column
         lea r12, [rsp+88]
-        ; load column{r0}, [memVarAddr{r7}]
-        mov ax, [r12]
-        ; move c.1{r2}, column{r0}
-        mov dx, ax
-        ; add c.1{r2}, dc.2{r3}
-        add dx, r8w
+        ; load column{r2}, [memVarAddr{r7}]
+        mov dx, [r12]
+        ; move c.1{r0}, column{r2}
+        mov ax, dx
+        ; add c.1{r0}, dc.2{r3}
+        add ax, r8w
         ; addrof memVarAddr{r7}, dc.2
         lea r12, [rsp+52]
         ; store [memVarAddr{r7}], dc.2{r3}
@@ -1368,10 +1382,12 @@ _if_36_end:
         lea r12, [rsp+50]
         ; store [memVarAddr{r7}], r.1{r1}
         mov [r12], cx
+        ; move c.1{r2}, c.1{r0}
+        mov dx, ax
         ; addrof memVarAddr{r7}, c.1
         lea r12, [rsp+54]
-        ; store [memVarAddr{r7}], c.1{r2}
-        mov [r12], dx
+        ; store [memVarAddr{r7}], c.1{r0}
+        mov [r12], ax
         ; call t.8.1{r0} = checkCellBounds@i16@i16[r.1{r1}, c.1{r2}] -> bool
         call _checkCellBounds@i16@i16
         ; branch t.8.1{r0} equals 0: for_35_continue
@@ -1817,8 +1833,10 @@ _if_53_end:
         ; 270:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=270:15]])
         ; addrof memVarAddr{r7}, cell.3
         lea r12, [rsp+59]
-        ; load cell.3{r1}, [memVarAddr{r7}]
-        mov cl, [r12]
+        ; load cell.3{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; move cell.3{r1}, cell.3{r0}
+        mov cl, al
         ; call t.20.1{r0} = isBomb@u8[cell.3{r1}] -> bool
         call _isBomb@u8
         ; branch t.20.1{r0} notequals 0: if_54_then
