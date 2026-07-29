@@ -524,24 +524,22 @@ printLeft:
 	var 2: bombDigits (i16/2)
 	var 3: t.3 (u8/1)
 	var 4: t.4 (u8/1)
-	var 5: t.5 (u8*/8)
-	var 6: t.6 (i16/2)
-	var 7: t.7 (bool/1)
-	; 54 pc
+	var 5: t.5 (i16/2)
+	var 6: t.6 (bool/1)
+	; 49 pc
 	call count = getHiddenCount[] -> i16
 	call t.3 = getDigitCount@i16[count] -> u8
 	cast leftDigits(i16), t.3(u8)
 	call t.4 = getDigitCount@i16[40] -> u8
 	cast bombDigits(i16), t.4(u8)
-	const t.5, [string-1]
-	call printString@@u8[t.5]
-	move t.6, bombDigits
-	sub t.6, t.6, leftDigits
-	call printSpaces@i16[t.6]
+	call setCursor@i16@i16[20, 6]
+	move t.5, bombDigits
+	sub t.5, t.5, leftDigits
+	call printSpaces@i16[t.5]
 	call printUint@i16[count]
 	; 156:15 return count == 0
-	equals t.7, count, 0
-	ret t.7
+	equals t.6, count, 0
+	ret t.6
 	jump printLeft_ret
 printLeft_ret:
 
@@ -702,20 +700,21 @@ main:
 	var 3: chr (i16/2)
 	var 4: cell (u8/1)
 	var 5: cell (u8/1)
-	var 6: t.6 (bool/1)
-	var 7: t.7 (u8*/8)
-	var 8: t.8 (i16/2)
+	var 6: t.6 (u8*/8)
+	var 7: t.7 (bool/1)
+	var 8: t.8 (u8*/8)
 	var 9: t.9 (i16/2)
 	var 10: t.10 (i16/2)
 	var 11: t.11 (i16/2)
 	var 12: t.12 (i16/2)
 	var 13: t.13 (i16/2)
-	var 14: t.14 (bool/1)
+	var 14: t.14 (i16/2)
 	var 15: t.15 (bool/1)
-	var 16: t.16 (u8/1)
-	var 17: t.17 (bool/1)
-	var 18: t.18 (u8*/8)
-	; 258 pc
+	var 16: t.16 (bool/1)
+	var 17: t.17 (u8/1)
+	var 18: t.18 (bool/1)
+	var 19: t.19 (u8*/8)
+	; 265 pc
 	; begin initialize global variables
 	const __random__, 0
 	; end initialize global variables
@@ -724,104 +723,107 @@ main:
 	call clearField[]
 	const curr_c, 20
 	const curr_r, 10
-	; 219:2 while true
+	call setCursor@i16@i16[20, 0]
+	const t.6, [string-1]
+	call printString@@u8[t.6]
+	; 221:2 while true
 while_40:
 	call printField@i16@i16[curr_r, curr_c]
-	; 221:3 if !needsInitialize
+	; 223:3 if !needsInitialize
 	branch needsInitialize notequals 0: if_41_end, if_41_then
 if_41_then:
-	; 222:4 if printLeft([])
-	call t.6 = printLeft[] -> bool
-	branch t.6 equals 0: if_41_end, if_42_then
+	; 224:4 if printLeft([])
+	call t.7 = printLeft[] -> bool
+	branch t.7 equals 0: if_41_end, if_42_then
 if_42_then:
-	const t.7, [string-2]
-	call printString@@u8[t.7]
+	const t.8, [string-2]
+	call printString@@u8[t.8]
 	jump main_ret
 if_41_end:
 	call chr = getChar[] -> i16
-	; 229:3 if chr == 27
+	; 231:3 if chr == 27
 	branch chr equals 27: main_ret, if_43_end
 if_43_end:
-	; 234:3 if chr == -8120
+	; 236:3 if chr == -8120
 	branch chr notequals -8120: if_44_else, if_44_then
 if_44_then:
-	move t.9, curr_r
-	add t.9, t.9, 20
-	move t.8, t.9
-	sub t.8, t.8, 1
-	move curr_r, t.8
+	move t.10, curr_r
+	add t.10, t.10, 20
+	move t.9, t.10
+	sub t.9, t.9, 1
+	move curr_r, t.9
 	mod curr_r, curr_r, 20
 	jump while_40
 if_44_else:
-	; 238:8 if chr == -8112
+	; 240:8 if chr == -8112
 	branch chr notequals -8112: if_45_else, if_45_then
 if_45_then:
-	move t.10, curr_r
-	add t.10, t.10, 1
-	move curr_r, t.10
+	move t.11, curr_r
+	add t.11, t.11, 1
+	move curr_r, t.11
 	mod curr_r, curr_r, 20
 	jump while_40
 if_45_else:
-	; 242:8 if chr == -8117
+	; 244:8 if chr == -8117
 	branch chr notequals -8117: if_46_else, if_46_then
 if_46_then:
-	move t.12, curr_c
-	add t.12, t.12, 40
-	move t.11, t.12
-	sub t.11, t.11, 1
-	move curr_c, t.11
+	move t.13, curr_c
+	add t.13, t.13, 40
+	move t.12, t.13
+	sub t.12, t.12, 1
+	move curr_c, t.12
 	mod curr_c, curr_c, 40
 	jump while_40
 if_46_else:
-	; 246:8 if chr == -8115
+	; 248:8 if chr == -8115
 	branch chr notequals -8115: if_47_else, if_47_then
 if_47_then:
-	move t.13, curr_c
-	add t.13, t.13, 1
-	move curr_c, t.13
+	move t.14, curr_c
+	add t.14, t.14, 1
+	move curr_c, t.14
 	mod curr_c, curr_c, 40
 	jump while_40
 if_47_else:
-	; 250:8 if chr == 32
+	; 252:8 if chr == 32
 	branch chr notequals 32: if_48_else, if_48_then
 if_48_then:
-	; 251:4 if !needsInitialize
+	; 253:4 if !needsInitialize
 	branch needsInitialize notequals 0: while_40, if_49_then
 if_49_then:
 	call cell = getCell@i16@i16[curr_r, curr_c] -> u8
-	; 253:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=253:17]])
-	call t.14 = isOpen@u8[cell] -> bool
-	branch t.14 notequals 0: while_40, if_50_then
+	; 255:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=255:17]])
+	call t.15 = isOpen@u8[cell] -> bool
+	branch t.15 notequals 0: while_40, if_50_then
 if_50_then:
 	xor cell, cell, 4
 	call setCell@i16@i16@u8[curr_r, curr_c, cell]
 	jump while_40
 if_48_else:
-	; 259:8 if chr == 13
+	; 261:8 if chr == 13
 	branch chr notequals 13: while_40, if_51_then
 if_51_then:
-	; 260:4 if needsInitialize
+	; 262:4 if needsInitialize
 	branch needsInitialize equals 0: if_52_end, if_52_then
 if_52_then:
 	const needsInitialize, 0
 	call initField@i16@i16[curr_r, curr_c]
 if_52_end:
 	call cell = getCell@i16@i16[curr_r, curr_c] -> u8
-	; 265:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=265:16]])
-	call t.15 = isOpen@u8[cell] -> bool
-	branch t.15 notequals 0: if_53_end, if_53_then
+	; 267:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=267:16]])
+	call t.16 = isOpen@u8[cell] -> bool
+	branch t.16 notequals 0: if_53_end, if_53_then
 if_53_then:
-	move t.16, cell
-	or t.16, t.16, 2
-	call setCell@i16@i16@u8[curr_r, curr_c, t.16]
+	move t.17, cell
+	or t.17, t.17, 2
+	call setCell@i16@i16@u8[curr_r, curr_c, t.17]
 if_53_end:
-	; 268:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=268:15]])
-	call t.17 = isBomb@u8[cell] -> bool
-	branch t.17 equals 0: if_54_end, if_54_then
+	; 270:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=270:15]])
+	call t.18 = isBomb@u8[cell] -> bool
+	branch t.18 equals 0: if_54_end, if_54_then
 if_54_then:
 	call printField@i16@i16[curr_r, curr_c]
-	const t.18, [string-3]
-	call printString@@u8[t.18]
+	const t.19, [string-3]
+	call printString@@u8[t.19]
 	jump main_ret
 if_54_end:
 	call maybeRevealAround@i16@i16[curr_r, curr_c]

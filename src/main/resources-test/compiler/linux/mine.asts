@@ -248,7 +248,7 @@ bool printLeft() {
 	count = getHiddenCount();
 	leftDigits = (i16)(getDigitCount@i16(count));
 	bombDigits = (i16)(getDigitCount@i16(40));
-	printString@@u8("Left: ");
+	setCursor@i16@i16(20, 6);
 	printSpaces@i16(bombDigits - leftDigits);
 	printUint@i16(count);
 	return count == 0;
@@ -334,6 +334,8 @@ void main() {
 	clearField();
 	curr_c = 20;
 	curr_r = 10;
+	setCursor@i16@i16(20, 0);
+	printString@@u8("Left: ");
 	while (true) {
 		printField@i16@i16(curr_r, curr_c);
 		if (!needsInitialize) {
