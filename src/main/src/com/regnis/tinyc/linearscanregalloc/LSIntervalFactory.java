@@ -361,54 +361,65 @@ final class LSIntervalFactory {
 			return;
 		}
 
-		if (source.scope() == VariableScope.register) {
+		if (source.scope() == VariableScope.register
+		    && targetInterval != null) {
 			// this may overwrite an already set register hint
 			targetInterval.setRegisterHint(source.index());
 		}
 		final LSInterval sourceInterval = handleSource(source, live);
-		if (target.scope() == VariableScope.register) {
+		if (target.scope() == VariableScope.register
+		    && sourceInterval != null) {
 			// there shouldn't be any move directly from one register to another
 			Utils.assertTrue(sourceInterval.register() < 0);
 			sourceInterval.setRegisterHint(target.index());
 		}
 	}
 
+	@Nullable
 	private LSInterval handleSource(@NotNull IRVar var, Set<IRVar> live) {
 		Utils.assertTrue(var.scope() != VariableScope.global);
-		if (var.scope() != VariableScope.register) {
-			live.add(var);
+		if (var.scope() == VariableScope.register) {
+			if (pos > blockStart) {
+				final LSInterval interval = getInterval(var);
+				interval.add(blockStart, pos);
+			}
+			return null;
 		}
+
+		live.add(var);
 		final LSInterval interval = getInterval(var);
 		if (pos > blockStart) {
 			interval.add(blockStart, pos);
 		}
-		if (var.scope() != VariableScope.register) {
-			interval.addReadUse(pos);
-		}
+		interval.addReadUse(pos);
 		return interval;
 	}
 
-	@NotNull
+	@Nullable
 	private LSInterval handleTarget(@NotNull IRVar var, Set<IRVar> live) {
 		Utils.assertTrue(var.scope() != VariableScope.global);
-		if (var.scope() != VariableScope.register) {
-			Utils.assertTrue(canBeRegister.canBeRegister(var));
-			live.remove(var);
+		if (var.scope() == VariableScope.register) {
+			final LSInterval interval = getInterval(var);
+			// no range yet?
+			if (interval.getFrom() < 0) {
+				Utils.assertTrue(var.index() == 0);
+				interval.add(pos, pos + 1);
+			}
+			else {
+				interval.truncateFirstRangeTo(pos);
+			}
+
+			return null;
 		}
+
+		Utils.assertTrue(canBeRegister.canBeRegister(var));
+		live.remove(var);
 
 		final LSInterval interval = getInterval(var);
-		// no range yet?
-		if (interval.getFrom() < 0) {
-			Utils.assertTrue(var.scope() == VariableScope.register);
-			Utils.assertTrue(var.index() == 0);
-			interval.add(pos, pos + 1);
-			return interval;
-		}
+		Utils.assertTrue(interval.getFrom() >= 0);
 
 		interval.truncateFirstRangeTo(pos);
-		if (var.scope() != VariableScope.register) {
-			interval.addWritePos(pos);
-		}
+		interval.addWritePos(pos);
 		return interval;
 	}
 
