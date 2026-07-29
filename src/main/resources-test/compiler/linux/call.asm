@@ -303,20 +303,26 @@ _start:
         call @printIntLf@u8
         ; addrof memVarAddr{r9}, c
         lea r12, [rsp+34]
-        ; load c{r1}, [memVarAddr{r9}]
-        mov dil, [r12]
+        ; load c{r3}, [memVarAddr{r9}]
+        mov dl, [r12]
+        ; move c{r1}, c{r3}
+        mov dil, dl
         ; call printIntLf@u8[c{r1}]
         call @printIntLf@u8
         ; addrof memVarAddr{r9}, d
         lea r12, [rsp+35]
-        ; load d{r1}, [memVarAddr{r9}]
-        mov dil, [r12]
+        ; load d{r4}, [memVarAddr{r9}]
+        mov cl, [r12]
+        ; move d{r1}, d{r4}
+        mov dil, cl
         ; call printIntLf@u8[d{r1}]
         call @printIntLf@u8
         ; addrof memVarAddr{r9}, e
         lea r12, [rsp+36]
-        ; load e{r1}, [memVarAddr{r9}]
-        mov dil, [r12]
+        ; load e{r5}, [memVarAddr{r9}]
+        mov r8b, [r12]
+        ; move e{r1}, e{r5}
+        mov dil, r8b
         ; call printIntLf@u8[e{r1}]
         call @printIntLf@u8
         ; restore clobbered non-volatile registers
