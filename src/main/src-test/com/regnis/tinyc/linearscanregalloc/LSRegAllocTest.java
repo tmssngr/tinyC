@@ -290,9 +290,7 @@ public class LSRegAllocTest {
 		assertEquals(new IRCall(null, Type.VOID, "print", List.of(varB1)), it.next());
 
 		assertEquals(new IRAddrOf(varSpill2, varA), it.next());
-		assertEquals(new IRMemLoad(varA0, varSpill2), it.next());
-
-		assertEquals(new IRMove(varT1, varA0), it.next());
+		assertEquals(new IRMemLoad(varA1, varSpill2), it.next());
 
 		assertEquals(new IRAddrOf(varSpill2, varC), it.next());
 		assertEquals(new IRMemLoad(varC0, varSpill2), it.next());

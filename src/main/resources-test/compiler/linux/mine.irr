@@ -370,7 +370,7 @@
 	arg 1: row (i16/2)
 	arg 2: column (i16/2)
 	var 3: chr (u8/1)
-	; 54 pc
+	; 56 pc
 	move r8, r1
 	addrof r9, row
 	store [r9], r2
@@ -403,9 +403,11 @@
 	jump @if_14_end
 @if_15_else:
 	addrof r9, row
-	load r1, [r9]
-	addrof r9, column
 	load r2, [r9]
+	move r1, r2
+	addrof r9, column
+	load r3, [r9]
+	move r2, r3
 	call r0 = getBombCountAround@i16@i16[r1, r2] -> u8
 	; 81:4 if count > 0
 	const r8, 0
@@ -432,7 +434,7 @@
 	arg 1: columnCursor (i16/2)
 	var 2: row (i16/2)
 	var 3: column (i16/2)
-	; 141 pc
+	; 139 pc
 	move r8, r1
 	addrof r9, columnCursor
 	store [r9], r2
@@ -453,12 +455,10 @@
 	call printChar@u8[r1]
 	const r2, 0
 	; 99:3 for column < 40
-	move r5, r2
 	jump @for_19
 @for_19_body:
 	addrof r9, row
 	load r1, [r9]
-	move r2, r5
 	addrof r9, row
 	store [r9], r1
 	addrof r9, column
@@ -492,11 +492,11 @@
 	call printCell@u8@i16@i16[r1, r2, r3]
 	const r0, 1
 	addrof r9, column
-	load r5, [r9]
-	add r5, r5, r0
+	load r2, [r9]
+	add r2, r2, r0
 @for_19:
 	const r0, 40
-	lt r0, r5, r0
+	lt r0, r2, r0
 	branch r0, true, @for_19_body, @for_19_break
 	const r2, 40
 	addrof r9, row
@@ -702,7 +702,7 @@
 	var 3: row (i16/2)
 	var 4: column (i16/2)
 	var 5: t.13 (bool/1)
-	; 120 pc
+	; 121 pc
 	move r8, r1
 	addrof r9, curr_c
 	store [r9], r2
@@ -737,11 +737,12 @@
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
 	; 179:4 logic or
 	addrof r9, row
-	load r0, [r9]
-	move r1, r0
+	load r1, [r9]
+	move r0, r1
 	addrof r9, row
-	store [r9], r0
-	sub r1, r1, r8
+	store [r9], r1
+	sub r0, r0, r8
+	move r1, r0
 	call r0 = abs@i16[r1] -> i16
 	const r2, 1
 	gt r0, r0, r2
@@ -757,15 +758,15 @@
 	jump @or_next_32
 @or_2nd_32:
 	addrof r9, column
-	load r0, [r9]
-	move r1, r0
+	load r2, [r9]
+	move r1, r2
 	addrof r9, column
-	store [r9], r0
+	store [r9], r2
 	addrof r9, curr_c
-	load r0, [r9]
-	sub r1, r1, r0
+	load r2, [r9]
+	sub r1, r1, r2
 	addrof r9, curr_c
-	store [r9], r0
+	store [r9], r2
 	call r0 = abs@i16[r1] -> i16
 	const r4, 1
 	gt r0, r0, r4
@@ -796,7 +797,7 @@
 	var 4: dc (i16/2)
 	var 5: c (i16/2)
 	var 6: cell (u8/1)
-	; 177 pc
+	; 178 pc
 	move r8, r1
 	; 186:2 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=186:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=186:30]]) != 0
 	move r1, r8
@@ -846,18 +847,19 @@
 	jump @for_35_continue
 @if_36_end:
 	addrof r9, column
-	load r0, [r9]
-	move r2, r0
+	load r2, [r9]
+	move r0, r2
 	addrof r9, column
-	store [r9], r0
-	add r2, r2, r3
+	store [r9], r2
+	add r0, r0, r3
 	addrof r9, dc
 	store [r9], r3
 	; 198:4 if !checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=198:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=198:28]])
 	addrof r9, r
 	store [r9], r1
+	move r2, r0
 	addrof r9, c
-	store [r9], r2
+	store [r9], r0
 	call r0 = checkCellBounds@i16@i16[r1, r2] -> bool
 	notlog r0, r0
 	branch r0, true, @for_35_continue, @if_38_end
@@ -922,7 +924,7 @@
 	var 1: curr_r (i16/2)
 	var 2: cell (u8/1)
 	var 3: cell (u8/1)
-	; 402 pc
+	; 417 pc
 	; begin initialize global variables
 	const r8, 0
 	; end initialize global variables
@@ -1121,13 +1123,15 @@
 	store [r9], r1
 	const r8, 0
 	addrof r9, curr_r
-	load r1, [r9]
+	load r0, [r9]
+	move r1, r0
 	addrof r9, curr_r
-	store [r9], r1
+	store [r9], r0
 	addrof r9, curr_c
-	load r2, [r9]
+	load r0, [r9]
+	move r2, r0
 	addrof r9, curr_c
-	store [r9], r2
+	store [r9], r0
 	call initField@i16@i16[r1, r2]
 	jump @if_53_end
 @if_51_then:
@@ -1136,24 +1140,28 @@
 	load r3, [r9]
 	xor r3, r3, r0
 	addrof r9, curr_r
-	load r1, [r9]
+	load r0, [r9]
+	move r1, r0
 	addrof r9, curr_r
-	store [r9], r1
+	store [r9], r0
 	addrof r9, curr_c
-	load r2, [r9]
+	load r0, [r9]
+	move r2, r0
 	addrof r9, curr_c
-	store [r9], r2
+	store [r9], r0
 	call setCell@i16@i16@u8[r1, r2, r3]
 	jump @while_40
 @if_53_end:
 	addrof r9, curr_r
-	load r1, [r9]
+	load r0, [r9]
+	move r1, r0
 	addrof r9, curr_r
-	store [r9], r1
+	store [r9], r0
 	addrof r9, curr_c
-	load r2, [r9]
+	load r0, [r9]
+	move r2, r0
 	addrof r9, curr_c
-	store [r9], r2
+	store [r9], r0
 	call r0 = getCell@i16@i16[r1, r2] -> u8
 	; 269:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=269:16]])
 	move r1, r0
@@ -1170,38 +1178,45 @@
 	store [r9], r4
 	or r3, r3, r0
 	addrof r9, curr_r
-	load r1, [r9]
+	load r0, [r9]
+	move r1, r0
 	addrof r9, curr_r
-	store [r9], r1
+	store [r9], r0
 	addrof r9, curr_c
-	load r2, [r9]
+	load r0, [r9]
+	move r2, r0
 	addrof r9, curr_c
-	store [r9], r2
+	store [r9], r0
 	call setCell@i16@i16@u8[r1, r2, r3]
 @if_54_end:
 	; 272:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=272:15]])
 	addrof r9, cell
-	load r1, [r9]
+	load r0, [r9]
+	move r1, r0
 	call r0 = isBomb@u8[r1] -> bool
 	branch r0, true, @if_55_then, @if_55_end
 	addrof r9, curr_r
-	load r1, [r9]
+	load r0, [r9]
+	move r1, r0
 	addrof r9, curr_r
-	store [r9], r1
+	store [r9], r0
 	addrof r9, curr_c
-	load r2, [r9]
+	load r0, [r9]
+	move r2, r0
 	addrof r9, curr_c
-	store [r9], r2
+	store [r9], r0
 	call maybeRevealAround@i16@i16[r1, r2]
 @while_40:
 	addrof r9, curr_r
-	load r1, [r9]
+	load r0, [r9]
+	move r1, r0
 	addrof r9, curr_r
-	store [r9], r1
+	store [r9], r0
 	addrof r9, curr_c
-	load r2, [r9]
+	load r0, [r9]
+	move r2, r0
 	addrof r9, curr_c
-	store [r9], r2
+	store [r9], r0
 	call printField@i16@i16[r1, r2]
 	; 221:3 if !needsInitialize
 	notlog r0, r8
@@ -1213,9 +1228,11 @@
 	jump @main_ret
 @if_55_then:
 	addrof r9, curr_r
-	load r1, [r9]
+	load r0, [r9]
+	move r1, r0
 	addrof r9, curr_c
-	load r2, [r9]
+	load r0, [r9]
+	move r2, r0
 	call printField@i16@i16[r1, r2]
 	const r1, [string-3]
 	call printString@@u8[r1]

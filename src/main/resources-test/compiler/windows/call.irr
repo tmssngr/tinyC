@@ -85,7 +85,7 @@
 	var 1: t.2 (u8/1)
 	var 2: t.3 (u8/1)
 	var 3: arg.5.4 (u8/1)
-	; 50 pc
+	; 53 pc
 	; begin initialize global variables
 	const r6, 0
 	; end initialize global variables
@@ -107,11 +107,14 @@
 	store [r7], r0
 	move r1, r6
 	addrof r7, t.1
-	load r2, [r7]
+	load r0, [r7]
+	move r2, r0
 	addrof r7, t.2
-	load r3, [r7]
+	load r0, [r7]
+	move r3, r0
 	addrof r7, t.3
-	load r4, [r7]
+	load r0, [r7]
+	move r4, r0
 	call doPrint@u8@u8@u8@u8@u8[r1, r2, r3, r4, arg.5.4]
 
 @next:
@@ -131,7 +134,7 @@
 	arg 2: c (u8/1)
 	arg 3: d (u8/1)
 	arg 4: e (u8/1)
-	; 41 pc
+	; 44 pc
 	addrof r7, e
 	load r6, [r7]
 	addrof r7, b
@@ -142,13 +145,16 @@
 	store [r7], r4
 	call printIntLf@u8[r1]
 	addrof r7, b
-	load r1, [r7]
+	load r2, [r7]
+	move r1, r2
 	call printIntLf@u8[r1]
 	addrof r7, c
-	load r1, [r7]
+	load r3, [r7]
+	move r1, r3
 	call printIntLf@u8[r1]
 	addrof r7, d
-	load r1, [r7]
+	load r4, [r7]
+	move r1, r4
 	call printIntLf@u8[r1]
 	move r1, r6
 	call printIntLf@u8[r1]
