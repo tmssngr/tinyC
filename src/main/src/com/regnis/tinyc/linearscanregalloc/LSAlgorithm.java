@@ -149,7 +149,8 @@ final class LSAlgorithm {
 			return true;
 		}
 
-		splitRemainingInterval(split);
+		splitRemainingInterval(split)
+				.setRegisterHint(registerHint);
 		return true;
 	}
 
@@ -254,16 +255,17 @@ final class LSAlgorithm {
 		}
 	}
 
-	private void splitRemainingInterval(LSInterval interval) {
+	private LSInterval splitRemainingInterval(LSInterval interval) {
 		final LSUse nextUse = interval.getUsedNext(0);
 		if (nextUse != null && nextUse.pos() > interval.getFrom()) {
 			final LSInterval split = truncateAndSplit(interval, nextUse.pos() - 1);
 			addToDone(interval);
 			addToUnhandled(split);
+			return split;
 		}
-		else {
-			addToUnhandled(interval);
-		}
+
+		addToUnhandled(interval);
+		return interval;
 	}
 
 	private void splitOffSpilledPart(int from, LSInterval interval) {
