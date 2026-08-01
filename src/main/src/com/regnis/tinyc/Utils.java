@@ -33,6 +33,12 @@ public class Utils {
 		return list.getLast();
 	}
 
+	public static String toHex(long value, int digits) {
+		final StringBuilder buffer = new StringBuilder();
+		toHex(value, digits, buffer);
+		return buffer.toString();
+	}
+
 	public static void toHex(long value, int digits, StringBuilder buffer) {
 		if (digits < 1) {
 			return;
