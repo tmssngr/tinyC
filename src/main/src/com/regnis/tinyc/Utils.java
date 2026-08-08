@@ -61,4 +61,8 @@ public class Utils {
 		buffer.append('"');
 		return buffer.toString();
 	}
+
+	public static boolean isInInterval(int chr, char from, char to) {
+		return from <= chr && chr <= to;
+	}
 }

@@ -459,14 +459,10 @@ public final class Lexer {
 	}
 
 	private static boolean isIdentifierChar(int chr) {
-		return isInInterval(chr, '0', '9')
-		       || isInInterval(chr, 'A', 'Z')
-		       || isInInterval(chr, 'a', 'z')
+		return Utils.isInInterval(chr, '0', '9')
+		       || Utils.isInInterval(chr, 'A', 'Z')
+		       || Utils.isInInterval(chr, 'a', 'z')
 		       || chr == '_';
-	}
-
-	private static boolean isInInterval(int chr, char from, char to) {
-		return from <= chr && chr <= to;
 	}
 
 	private interface ValidCharPredicate {
