@@ -41,7 +41,7 @@ public final class LSRegAlloc {
 			LSIntervalFactory.printInstructions(instructions);
 		}
 
-		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, x86Registers);
+		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, x86Registers, null);
 		intervalFactory.handleBlocks(blocks);
 		final Map<String, LSIntervalFactory.Indices> blockToIndex = intervalFactory.getBlockToIndex();
 		final List<LSIntervalFactory.Indices> blockBoundaries = intervalFactory.getBlockIndices();

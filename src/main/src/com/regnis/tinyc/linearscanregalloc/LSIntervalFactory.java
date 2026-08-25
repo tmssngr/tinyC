@@ -30,6 +30,7 @@ final class LSIntervalFactory {
 	private final List<LSInterval> varIntervals = new ArrayList<>();
 	private final Map<IRVar, LSInterval> varToInterval = new HashMap<>();
 	private final LSInterval[] fixedIntervals;
+	@Nullable private final Type pointerIntType;
 	private final X86Registers x86Registers;
 	private final IRCanBeRegister canBeRegister;
 	private final LSCallingConventionProvider callingConventionProvider;
@@ -37,10 +38,11 @@ final class LSIntervalFactory {
 	private int pos;
 	private int blockStart;
 
-	public LSIntervalFactory(@NotNull IRCanBeRegister canBeRegister, @NotNull LSCallingConventionProvider callingConventionProvider, int registerCount, @Nullable X86Registers x86Registers) {
+	public LSIntervalFactory(@NotNull IRCanBeRegister canBeRegister, @NotNull LSCallingConventionProvider callingConventionProvider, int registerCount, @Nullable X86Registers x86Registers, @Nullable Type pointerIntType) {
 		this.canBeRegister = canBeRegister;
 		this.callingConventionProvider = callingConventionProvider;
 		this.x86Registers = x86Registers;
+		this.pointerIntType = pointerIntType;
 
 		fixedIntervals = new LSInterval[registerCount];
 	}
@@ -454,7 +456,7 @@ final class LSIntervalFactory {
 			// no range yet?
 			if (interval.getFrom() < 0) {
 				Utils.assertTrue(var.index() == 0);
-				interval.add(pos, pos + 1);
+				setRegisterInterval(var, interval, pos, pos + 1);
 			}
 			else {
 				interval.truncateFirstRangeTo(pos);
@@ -472,6 +474,22 @@ final class LSIntervalFactory {
 		interval.truncateFirstRangeTo(pos);
 		interval.addWritePos(pos);
 		return interval;
+	}
+
+	private void setRegisterInterval(IRVar var, LSInterval interval, int from, int to) {
+		Utils.assertTrue(var.scope() == VariableScope.register);
+		Utils.assertTrue(var.index() == interval.register());
+		interval.add(from, to);
+		if (pointerIntType == null) {
+			return;
+		}
+
+		int size = Type.getSize(var.type(), pointerIntType);
+		int register = interval.register() + 1;
+		for (size--; size > 0; size--, register++) {
+			interval = getRegisterInterval(register);
+			interval.add(from, to);
+		}
 	}
 
 	@NotNull
