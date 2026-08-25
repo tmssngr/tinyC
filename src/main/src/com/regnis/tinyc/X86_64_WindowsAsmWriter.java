@@ -24,6 +24,7 @@ public final class X86_64_WindowsAsmWriter extends X86_64_AsmWriter {
 
 		super.write(program);
 
+		writeNL();
 		writeInit();
 		writeNL();
 		writePostamble(program.varInfos().vars(), program.stringLiterals());
@@ -56,7 +57,6 @@ public final class X86_64_WindowsAsmWriter extends X86_64_AsmWriter {
 		writeIndented("mov rcx, 0");
 		writeIndented("sub rsp, 0x20");
 		writeIndented("call [ExitProcess]");
-		writeNL();
 	}
 
 	private void writeInit() throws IOException {

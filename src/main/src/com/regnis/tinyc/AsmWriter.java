@@ -53,21 +53,14 @@ abstract class AsmWriter {
 	}
 
 	public void write(@NotNull IRProgram program) throws IOException {
-		boolean addEmptyLine = false;
 		for (IRFunction function : program.functions()) {
-			if (addEmptyLine) {
-				writeNL();
-			}
+			writeNL();
 			writeFunction(function);
-			addEmptyLine = true;
 		}
 
 		for (IRAsmFunction function : program.asmFunctions()) {
-			if (addEmptyLine) {
-				writeNL();
-			}
+			writeNL();
 			writeAsmFunction(function);
-			addEmptyLine = true;
 		}
 	}
 

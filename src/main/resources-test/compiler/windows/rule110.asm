@@ -350,6 +350,7 @@ start:
           call    [WriteFile]
         mov     rsp, rdi
         ret
+
 init:
         sub rsp, 28h
           mov rcx, STD_IN_HANDLE

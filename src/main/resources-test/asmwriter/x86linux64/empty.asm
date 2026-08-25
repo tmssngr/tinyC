@@ -8,4 +8,3 @@ _start:
         xor rdi, rdi        ; exit code 0
         syscall
 
-

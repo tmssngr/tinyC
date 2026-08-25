@@ -39,6 +39,7 @@ start:
         mov r8, [rdx]
         add rsp, 8
         ret
+
 init:
         sub rsp, 28h
           mov rcx, STD_IN_HANDLE

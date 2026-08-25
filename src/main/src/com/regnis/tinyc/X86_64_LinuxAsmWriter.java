@@ -45,7 +45,6 @@ public final class X86_64_LinuxAsmWriter extends X86_64_AsmWriter {
 		writeIndented("mov rax, 60         ; sys_exit");
 		writeIndented("xor rdi, rdi        ; exit code 0");
 		writeIndented("syscall");
-		writeNL();
 	}
 
 	private void writePostamble(List<IRVarDef> globalVariables, List<IRStringLiteral> stringLiterals) throws IOException {

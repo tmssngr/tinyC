@@ -2424,6 +2424,7 @@ start:
         call   [SetConsoleCursorPosition]
         add     rsp, 28h
         ret
+
 init:
         sub rsp, 28h
           mov rcx, STD_IN_HANDLE
