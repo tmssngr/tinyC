@@ -287,15 +287,17 @@ final class LSIntervalFactory {
 		case IRBranch branch -> handleSource(branch.conditionVar(), live);
 		case IRCall call -> {
 			final IRVar target = call.target();
+			int highestResultRegister = -1;
 			if (target != null) {
 				expectRegister(target, 0);
 				handleTarget(target, live);
+				highestResultRegister = getRegisterAmount(target) - 1;
 			}
 
 			final LSCallingConvention targetCallingConvention = callingConventionProvider.getCallingConvention(call.type(), call.getArgumentTypes());
 
 			for (int i = 0; i < targetCallingConvention.volatileRegisterCount(); i++) {
-				if (target != null && i == 0) {
+				if (i <= highestResultRegister) {
 					// already handled above
 					continue;
 				}
@@ -433,8 +435,12 @@ final class LSIntervalFactory {
 		Utils.assertTrue(var.scope() != VariableScope.global);
 		if (var.scope() == VariableScope.register) {
 			if (pos > blockStart) {
-				final LSInterval interval = getInterval(var);
-				interval.add(blockStart, pos);
+				final int registerAmount = getRegisterAmount(var);
+				int register = var.index();
+				for (int i = 0; i < registerAmount; i++, register++) {
+					final LSInterval interval = getRegisterInterval(register);
+					interval.add(blockStart, pos);
+				}
 			}
 			return null;
 		}
@@ -452,14 +458,18 @@ final class LSIntervalFactory {
 	private LSInterval handleTarget(@NotNull IRVar var, Set<IRVar> live) {
 		Utils.assertTrue(var.scope() != VariableScope.global);
 		if (var.scope() == VariableScope.register) {
-			final LSInterval interval = getInterval(var);
-			// no range yet?
-			if (interval.getFrom() < 0) {
-				Utils.assertTrue(var.index() == 0);
-				setRegisterInterval(var, interval, pos, pos + 1);
-			}
-			else {
-				interval.truncateFirstRangeTo(pos);
+			final int registerAmount = getRegisterAmount(var);
+			int register = var.index();
+			for (int i = 0; i < registerAmount; i++, register++) {
+				final LSInterval interval = getRegisterInterval(register);
+				// no range yet?
+				if (interval.getFrom() < 0) {
+					Utils.assertTrue(var.index() == 0);
+					setRegisterInterval(var, interval, pos, pos + 1);
+				}
+				else {
+					interval.truncateFirstRangeTo(pos);
+				}
 			}
 
 			return null;
@@ -474,6 +484,12 @@ final class LSIntervalFactory {
 		interval.truncateFirstRangeTo(pos);
 		interval.addWritePos(pos);
 		return interval;
+	}
+
+	private int getRegisterAmount(IRVar var) {
+		return pointerIntType != null
+				? Type.getSize(var.type(), pointerIntType)
+				: 1;
 	}
 
 	private void setRegisterInterval(IRVar var, LSInterval interval, int from, int to) {
