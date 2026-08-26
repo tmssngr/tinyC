@@ -49,7 +49,11 @@ public final class ProgramWriter {
 			write(parameter.name());
 			addComma = true;
 		}
-		writeln(") {");
+		write(") ");
+		if (function.statements().isEmpty() && function.asmLines().size() > 0) {
+			write("asm ");
+		}
+		writeln("{");
 		writeVariables(INDENTATION, function.localVars());
 		writeStatements(function.statements());
 		writeln("}");
