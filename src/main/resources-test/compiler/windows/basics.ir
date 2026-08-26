@@ -40,7 +40,7 @@
 	var 17: t.17 (u8/1)
 	; 120 pc
 	const pos, 20
-	; 25:2 while true
+	; 28:2 while true
 @while_1:
 	const t.5, 1
 	sub pos, pos, t.5
@@ -57,7 +57,7 @@
 	addrof t.10, [buffer]
 	add t.10, t.10, t.11
 	store [t.10], digit
-	; 31:3 if number == 0
+	; 34:3 if number == 0
 	const t.13, 0
 	equals t.12, number, t.13
 	branch t.12, false, @while_1, @while_1_break

@@ -1,3 +1,6 @@
+void printStringLength@@u8@i64(u8* str, i64 length) asm {
+}
+
 void printChar@u8(u8 chr) {
 	printStringLength@@u8@u8(&chr, 1);
 }
@@ -37,9 +40,6 @@ void printIntLf@i64(i64 number) {
 
 void printStringLength@@u8@u8(u8* str, u8 length) {
 	printStringLength@@u8@i64(str, (i64)length);
-}
-
-void printStringLength@@u8@i64(u8* str, i64 length) asm {
 }
 
 i16 printAndSum@i16@i16@i16@i16@i16@i16@i16@i16(i16 a, i16 b, i16 c, i16 d, i16 e, i16 f, i16 g, i16 h) {

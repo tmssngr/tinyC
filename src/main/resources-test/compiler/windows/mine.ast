@@ -1,6 +1,15 @@
 i32 __random__;
 u8* field[800];
 
+void printStringLength@@u8@i64(u8* str, i64 length) asm {
+}
+
+i16 getChar() asm {
+}
+
+void setCursor@i16@i16(i16 x, i16 y) asm {
+}
+
 void printString@@u8(u8* str) {
 	i64 length;
 
@@ -48,15 +57,6 @@ i64 strlen@@u8(u8* str) {
 
 void printStringLength@@u8@u8(u8* str, u8 length) {
 	printStringLength@@u8@i64(str, (i64)length);
-}
-
-void printStringLength@@u8@i64(u8* str, i64 length) asm {
-}
-
-i16 getChar() asm {
-}
-
-void setCursor@i16@i16(i16 x, i16 y) asm {
 }
 
 void initRandom@i32(i32 salt) {

@@ -76,7 +76,7 @@ start:
         sub rsp, 32
         ; const pos{r6}, 20
         mov bl, 20
-        ; 25:2 while true
+        ; 28:2 while true
 @while_1:
         ; const t.5{r3}, 1
         mov r8b, 1
@@ -116,7 +116,7 @@ start:
         add r9, r8
         ; store [t.10{r4}], digit{r0}
         mov [r9], al
-        ; 31:3 if number == 0
+        ; 34:3 if number == 0
         ; const t.13{r0}, 0
         mov rax, 0
         ; equals t.12{r0}, number{r1}, t.13{r0}
@@ -194,7 +194,7 @@ start:
         sub rsp, 32
         ; move number{r6}, number{r1}
         mov rbx, rcx
-        ; 51:2 if number < 0
+        ; 54:2 if number < 0
         ; const t.2{r7}, 0
         mov r12, 0
         ; lt t.1{r7}, number{r6}, t.2{r7}
@@ -231,7 +231,7 @@ start:
         sub rsp, 8
         ; const length{r0}, 0
         mov rax, 0
-        ; 61:2 for *str != 0
+        ; 64:2 for *str != 0
         jmp @for_4
 @for_4_body:
         ; const t.5{r2}, 1
@@ -253,7 +253,7 @@ start:
         ; branch t.2{r2}, true, @for_4_body, @for_4_break
         or dl, dl
         jnz @for_4_body
-        ; 64:9 return length
+        ; 67:9 return length
         add rsp, 8
         ret
 

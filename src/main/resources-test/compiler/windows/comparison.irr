@@ -25,7 +25,7 @@
 	var 1: buffer[] (u8*/20)
 	; 23 pc
 	const r6, 20
-	; 25:2 while true
+	; 28:2 while true
 @while_1:
 	const r3, 1
 	sub r6, r6, r3
@@ -45,7 +45,7 @@
 	addrof r4, [buffer]
 	add r4, r4, r3
 	store [r4], r0
-	; 31:3 if number == 0
+	; 34:3 if number == 0
 	const r0, 0
 	equals r0, r1, r0
 	branch r0, false, @while_1, @while_1_break
@@ -69,7 +69,7 @@
 	arg 0: number (i64/8)
 	; 8 pc
 	move r6, r1
-	; 51:2 if number < 0
+	; 54:2 if number < 0
 	const r7, 0
 	lt r7, r6, r7
 	branch r7, false, @if_3_end, @if_3_then
@@ -87,7 +87,7 @@
 	arg 0: str (u8*/8)
 	; 7 pc
 	const r0, 0
-	; 61:2 for *str != 0
+	; 64:2 for *str != 0
 	jump @for_4
 @for_4_body:
 	const r2, 1
@@ -99,7 +99,7 @@
 	const r3, 0
 	notequals r2, r2, r3
 	branch r2, true, @for_4_body, @for_4_break
-	; 64:9 return length
+	; 67:9 return length
 
 @printStringLength@@u8@u8:
  Local variables
