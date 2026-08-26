@@ -49,7 +49,7 @@
 	var 17: t.17 (u8/1)
 	; 120 pc
 	const pos, 20
-	; 28:2 while true
+	; 33:2 while true
 @while_1:
 	const t.5, 1
 	sub pos, pos, t.5
@@ -66,7 +66,7 @@
 	addrof t.10, [buffer]
 	add t.10, t.10, t.11
 	store [t.10], digit
-	; 34:3 if number == 0
+	; 39:3 if number == 0
 	const t.13, 0
 	equals t.12, number, t.13
 	branch t.12, false, @while_1, @while_1_break
@@ -91,7 +91,7 @@
 	var 6: t.6 (i64/8)
 	; 43 pc
 	const length, 0
-	; 64:2 for *str != 0
+	; 69:2 for *str != 0
 @for_3:
 	load t.3, [str]
 	const t.4, 0
@@ -105,7 +105,7 @@
 	add str, str, t.6
 	jump @for_3
 @for_3_break:
-	; 67:9 return length
+	; 72:9 return length
 	ret length
 	jump @strlen@@u8_ret
 @strlen@@u8_ret:

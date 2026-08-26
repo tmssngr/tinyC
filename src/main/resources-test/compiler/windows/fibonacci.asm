@@ -53,7 +53,7 @@ start:
         sub rsp, 32
         ; const pos{r6}, 20
         mov bl, 20
-        ; 28:2 while true
+        ; 33:2 while true
 @while_1:
         ; const t.5{r3}, 1
         mov r8b, 1
@@ -93,7 +93,7 @@ start:
         add r9, r8
         ; store [t.10{r4}], digit{r0}
         mov [r9], al
-        ; 34:3 if number == 0
+        ; 39:3 if number == 0
         ; const t.13{r0}, 0
         mov rax, 0
         ; equals t.12{r0}, number{r1}, t.13{r0}
@@ -145,7 +145,7 @@ start:
         sub rsp, 32
         ; move number{r6}, number{r1}
         mov rbx, rcx
-        ; 54:2 if number < 0
+        ; 59:2 if number < 0
         ; const t.2{r7}, 0
         mov r12, 0
         ; lt t.1{r7}, number{r6}, t.2{r7}
