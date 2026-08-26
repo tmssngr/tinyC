@@ -8,7 +8,7 @@ public final class InvalidTokenException extends RuntimeException {
 	public final Location location;
 
 	public InvalidTokenException(String message, Location location) {
-		super(message);
+		super(location + " " + message);
 		this.location = location;
 	}
 }
