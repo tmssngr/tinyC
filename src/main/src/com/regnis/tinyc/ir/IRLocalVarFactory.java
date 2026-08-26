@@ -35,11 +35,14 @@ public final class IRLocalVarFactory {
 			Utils.assertTrue(!def.var().name().equals(name));
 		}
 
-		IRVarInfos varInfos = this.varInfos;
+		final int size;
 		if (var.scope() == VariableScope.global) {
-			varInfos = varInfos.global();
+			size = varInfos.global().size(var);
 		}
-		final int size = varInfos.size(var);
+		else {
+			final IRVarDef varDef = getVarDef(var);
+			size = varDef.size();
+		}
 		return addVar(name, size, var.type());
 	}
 
@@ -56,6 +59,15 @@ public final class IRLocalVarFactory {
 		final Type type = Type.pointer(Type.VOID);
 		final int size = Type.getSize(type, pointerIntType);
 		return addVar(name, size, type);
+	}
+
+	private IRVarDef getVarDef(IRVar var) {
+		for (IRVarDef varDef : varDefs) {
+			if (varDef.var().equals(var)) {
+				return varDef;
+			}
+		}
+		throw new IllegalArgumentException("Unknown var " + var.toString(true));
 	}
 
 	@NotNull
