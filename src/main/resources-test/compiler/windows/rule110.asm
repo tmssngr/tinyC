@@ -92,7 +92,7 @@ start:
         mov rax, 0
         lea rbx, [rsp+0]
         mov [rbx], rax
-        ; 61:2 for *str != 0
+        ; 64:2 for *str != 0
         jmp @for_1
 @for_1_body:
         ; const t.5, 1
@@ -144,7 +144,7 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @for_1_body
-        ; 64:9 return length
+        ; 67:9 return length
         ; ret length
         lea rax, [rsp+0]
         mov rbx, [rax]

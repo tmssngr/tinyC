@@ -1,5 +1,8 @@
 i32 __random__;
 
+void printStringLength@@u8@i64(u8* str, i64 length) asm {
+}
+
 void printChar@u8(u8 chr) {
 	printStringLength@@u8@u8(&chr, 1);
 }
@@ -39,9 +42,6 @@ void printIntLf@i64(i64 number) {
 
 void printStringLength@@u8@u8(u8* str, u8 length) {
 	printStringLength@@u8@i64(str, (i64)length);
-}
-
-void printStringLength@@u8@i64(u8* str, i64 length) asm {
 }
 
 void initRandom@i32(i32 salt) {

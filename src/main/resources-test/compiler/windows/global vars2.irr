@@ -17,7 +17,7 @@
 	var 6: t.6 (i64/8)
 	; 42 pc
 	const length, 0
-	; 61:2 for *str != 0
+	; 64:2 for *str != 0
 	jump @for_1
 @for_1_body:
 	const t.5, 1
@@ -29,7 +29,7 @@
 	const t.4, 0
 	notequals t.2, t.3, t.4
 	branch t.2, true, @for_1_body, @for_1_break
-	; 64:9 return length
+	; 67:9 return length
 	ret length
 
 @next:

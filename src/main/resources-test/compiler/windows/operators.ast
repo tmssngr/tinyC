@@ -1,3 +1,6 @@
+void printStringLength@@u8@i64(u8* str, i64 length) asm {
+}
+
 void printString@@u8(u8* str) {
 	i64 length;
 
@@ -62,9 +65,6 @@ i64 strlen@@u8(u8* str) {
 
 void printStringLength@@u8@u8(u8* str, u8 length) {
 	printStringLength@@u8@i64(str, (i64)length);
-}
-
-void printStringLength@@u8@i64(u8* str, i64 length) asm {
 }
 
 void main() {

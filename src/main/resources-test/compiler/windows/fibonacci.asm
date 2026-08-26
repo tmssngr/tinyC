@@ -75,7 +75,7 @@ start:
         mov al, 20
         lea rbx, [rsp+20]
         mov [rbx], al
-        ; 25:2 while true
+        ; 28:2 while true
 @while_1:
         ; const t.5, 1
         mov al, 1
@@ -170,7 +170,7 @@ start:
         lea rax, [rsp+32]
         mov cl, [rax]
         mov [rbx], cl
-        ; 31:3 if number == 0
+        ; 34:3 if number == 0
         ; const t.13, 0
         mov rax, 0
         lea rbx, [rsp+88]
@@ -269,7 +269,7 @@ start:
 @printIntLf@i64:
         ; reserve space for local variables
         sub rsp, 32
-        ; 51:2 if number < 0
+        ; 54:2 if number < 0
         ; const t.2, 0
         mov rax, 0
         lea rbx, [rsp+8]

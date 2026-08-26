@@ -38,7 +38,7 @@
 	var 17: t.17 (u8/1)
 	; 120 pc
 	const pos, 20
-	; 25:2 while true
+	; 28:2 while true
 @while_1:
 	const t.5, 1
 	sub pos, pos, t.5
@@ -55,7 +55,7 @@
 	addrof t.10, [buffer]
 	add t.10, t.10, t.11
 	store [t.10], digit
-	; 31:3 if number == 0
+	; 34:3 if number == 0
 	const t.13, 0
 	equals t.12, number, t.13
 	branch t.12, false, @while_1, @while_1_break
@@ -83,7 +83,7 @@
 	var 3: t.3 (u8/1)
 	var 4: t.4 (u8/1)
 	; 30 pc
-	; 51:2 if number < 0
+	; 54:2 if number < 0
 	const t.2, 0
 	lt t.1, number, t.2
 	branch t.1, false, @if_3_end, @if_3_then
@@ -106,7 +106,7 @@
 	var 6: t.6 (i64/8)
 	; 42 pc
 	const length, 0
-	; 61:2 for *str != 0
+	; 64:2 for *str != 0
 	jump @for_4
 @for_4_body:
 	const t.5, 1
@@ -118,7 +118,7 @@
 	const t.4, 0
 	notequals t.2, t.3, t.4
 	branch t.2, true, @for_4_body, @for_4_break
-	; 64:9 return length
+	; 67:9 return length
 	ret length
 
 @printStringLength@@u8@u8:
