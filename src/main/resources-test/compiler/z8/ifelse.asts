@@ -1,0 +1,31 @@
+void printChar@u8(u8 chr) asm {
+}
+
+void printUint@i16(i16 number) {
+	printUint@i32((i32)number);
+}
+
+void printUint@i32(i32 number) asm {
+}
+
+void printIntLf@i16(i16 number) {
+	if (number < 0) {
+		printChar@u8(45);
+		number = -number;
+	}
+	printUint@i16(number);
+	printChar@u8(13);
+}
+
+void main() {
+	i16 a;
+
+	a = 1;
+	if (a > 0) {
+		printIntLf@i16(a);
+	}
+	else {
+		a = -a;
+		printIntLf@i16(a);
+	}
+}

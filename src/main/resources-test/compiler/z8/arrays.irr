@@ -1,0 +1,40 @@
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+
+@main:
+	; 27 pc
+	const r8, 32
+	const r9, 0
+	addrof r12, [chars]
+	add r12, r12, r9
+	store [r12], r8
+	const r8, 0
+	addrof r10, [chars]
+	add r10, r10, r8
+	load r8, [r10]
+	const r9, 1
+	add r8, r8, r9
+	const r9, 1
+	addrof r12, [chars]
+	add r12, r12, r9
+	store [r12], r8
+	const r8, 1
+	addrof r10, [chars]
+	add r10, r10, r8
+	load r8, [r10]
+	const r9, 2
+	add r8, r8, r9
+	const r9, 2
+	addrof r12, [chars]
+	add r12, r12, r9
+	store [r12], r8
+	const r8, 2
+	addrof r10, [chars]
+	add r10, r10, r8
+	load r0, [r10]
+	call printIntLf@u8[r0]
+
+Global variables
+	0: chars[] (u8*/512)
+

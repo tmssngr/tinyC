@@ -1,0 +1,66 @@
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+	; 0 pc
+@printIntLf@u8_ret:
+
+@main:
+ Local variables
+	var 0: chr (u8/1)
+	var 1: result (u8/1)
+	var 2: t.2 (u8*/2)
+	var 3: t.3 (i16/2)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (u8*/2)
+	var 7: t.7 (i16/2)
+	var 8: t.8 (u8/1)
+	var 9: t.9 (u8*/2)
+	var 10: t.10 (i16/2)
+	var 11: t.11 (u8/1)
+	var 12: t.12 (u8/1)
+	var 13: t.13 (u8*/2)
+	var 14: t.14 (i16/2)
+	var 15: t.15 (u8/1)
+	var 16: t.16 (u8*/2)
+	var 17: t.17 (i16/2)
+	var 18: t.18 (u8*/2)
+	var 19: t.19 (i16/2)
+	; 141 pc
+	const chr, 32
+	const t.3, 0
+	addrof t.2, [chars]
+	add t.2, t.2, t.3
+	store [t.2], chr
+	const t.7, 0
+	addrof t.6, [chars]
+	add t.6, t.6, t.7
+	load t.5, [t.6]
+	const t.8, 1
+	move t.4, t.5
+	add t.4, t.4, t.8
+	const t.10, 1
+	addrof t.9, [chars]
+	add t.9, t.9, t.10
+	store [t.9], t.4
+	const t.14, 1
+	addrof t.13, [chars]
+	add t.13, t.13, t.14
+	load t.12, [t.13]
+	const t.15, 2
+	move t.11, t.12
+	add t.11, t.11, t.15
+	const t.17, 2
+	addrof t.16, [chars]
+	add t.16, t.16, t.17
+	store [t.16], t.11
+	const t.19, 2
+	addrof t.18, [chars]
+	add t.18, t.18, t.19
+	load result, [t.18]
+	call printIntLf@u8[result]
+@main_ret:
+
+Global variables
+	0: chars[] (u8*/512)
+

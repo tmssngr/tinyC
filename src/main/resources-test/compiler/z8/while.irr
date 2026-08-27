@@ -1,0 +1,28 @@
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+
+@main:
+	; 11 pc
+	const r8, 5
+	; 5:2 while i > 0
+	jump @while_1
+@while_1_body:
+	move r0, r8
+	call printIntLf@u8[r0]
+	const r9, 1
+	sub r8, r8, r9
+@while_1:
+	const r9, 0
+	gt r9, r8, r9
+	branch r9, true, @while_1_body, @while_2
+@while_2:
+	move r0, r8
+	call printIntLf@u8[r0]
+	const r0, 1
+	add r8, r8, r0
+	; 13:3 if i < 5
+	const r0, 5
+	lt r0, r8, r0
+	branch r0, true, @while_2, @main_ret
+

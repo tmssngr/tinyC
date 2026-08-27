@@ -35,7 +35,8 @@ public class LSPreprocessorTest {
 				                                                         new IRBinary(d, IRBinary.Op.Add, a, b),
 				                                                         new IRCall(c, Type.I16, "sub", List.of(d, c, b, a)),
 				                                                         new IRRetValue(c)
-		                                                         )), callingConventionProvider, null, Type.I64);
+				                                                         //                           vvvv
+		                                                         )), callingConventionProvider, null, true, Type.I64);
 		assertEquals(new IRVarInfos(List.of(
 				new IRVarDef(a, 2),
 				new IRVarDef(b, 2),
@@ -59,6 +60,61 @@ public class LSPreprocessorTest {
 				                        arg02,
 				                        arg03
 		                        )), it.next());
+		assertEquals(new IRMove(c, c.asRegister(0)), it.next());
+		assertEquals(new IRMove(c.asRegister(0), c), it.next());
+		assertFalse(it.hasNext());
+	}
+
+	@Test
+	public void testArgsNoStackSlotsForRegisterArgs() {
+		final IRVar a = new IRVar("a", 0, VariableScope.parameter, Type.I16);
+		final IRVar b = new IRVar("b", 1, VariableScope.parameter, Type.I16);
+		final IRVar c = new IRVar("c", 2, VariableScope.parameter, Type.I16);
+		final IRVar d = new IRVar("d", 3, VariableScope.function, Type.I16);
+		final IRVar paramA = new IRVar("param.a", 4, VariableScope.function, Type.I16);
+		final IRVar paramB = new IRVar("param.b", 5, VariableScope.function, Type.I16);
+		final IRVar arg02 = new IRVar("arg.0.2", 6, VariableScope.function, Type.I16);
+		final IRVar arg03 = new IRVar("arg.0.3", 7, VariableScope.function, Type.I16);
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final var result = LSPreprocessor.process(new IRFunction("name", "label", Type.BOOL,
+		                                                         new IRVarInfos(List.of(
+				                                                         new IRVarDef(a, 2),
+				                                                         new IRVarDef(b, 2),
+				                                                         new IRVarDef(c, 2),
+				                                                         new IRVarDef(d, 2)
+		                                                         ), Set.of(), globalVarInfos),
+		                                                         List.of(
+				                                                         new IRBinary(d, IRBinary.Op.Add, a, b),
+				                                                         new IRCall(c, Type.I16, "sub", List.of(d, c, b, a)),
+				                                                         new IRRetValue(c)
+				                                                         //                           vvvvv
+		                                                         )), callingConventionProvider, null, false, Type.I64);
+		assertEquals(new IRVarInfos(List.of(
+				new IRVarDef(a, 2),
+				new IRVarDef(b, 2),
+				new IRVarDef(c, 2),
+				new IRVarDef(d, 2),
+				new IRVarDef(paramA, 2),
+				new IRVarDef(paramB, 2),
+				new IRVarDef(arg02, 2),
+				new IRVarDef(arg03, 2)
+		), Set.of(arg02, arg03), globalVarInfos), result.first());
+		final Iterator<IRInstruction> it = result.second().iterator();
+		assertEquals(new IRMove(paramA, a.asRegister(1)), it.next());
+		assertEquals(new IRMove(paramB, b.asRegister(2)), it.next());
+		assertEquals(new IRBinary(d, IRBinary.Op.Add, paramA, paramB), it.next());
+		assertEquals(new IRMove(arg02, paramB), it.next());
+		assertEquals(new IRMove(arg03, paramA), it.next());
+		assertEquals(new IRMove(d.asRegister(1), d), it.next());
+		assertEquals(new IRMove(c.asRegister(2), c), it.next());
+		assertEquals(new IRCall(c.asRegister(0), Type.I16, "sub",
+		                                    List.of(
+				                                    d.asRegister(1),
+				                                    c.asRegister(2),
+				                                    arg02,
+				                                    arg03
+		                                    )), it.next());
 		assertEquals(new IRMove(c, c.asRegister(0)), it.next());
 		assertEquals(new IRMove(c.asRegister(0), c), it.next());
 		assertFalse(it.hasNext());
@@ -90,7 +146,7 @@ public class LSPreprocessorTest {
 				                                                         new IRMove(varA, 4),
 				                                                         new IRJump("label"),
 				                                                         new IRLabel("label")
-		                                                         )), callingConventionProvider, null, Type.I64);
+		                                                         )), callingConventionProvider, null, true, Type.I64);
 		assertEquals(List.of(
 				             new IRVarDef(varB, 2),
 				             new IRVarDef(varAddrA, 8),
@@ -131,7 +187,7 @@ public class LSPreprocessorTest {
 				                                                         new IRMove(varT2, 1),
 				                                                         new IRCall(null, Type.VOID, "printStringLength", List.of(varT1, varT2)),
 				                                                         new IRLabel("@printChar_ret")
-		                                                         )), callingConventionProvider, null, Type.I64);
+		                                                         )), callingConventionProvider, null, true, Type.I64);
 		assertEquals(List.of(
 				             new IRVarDef(varChr, 1),
 				             new IRVarDef(varT1, 8),

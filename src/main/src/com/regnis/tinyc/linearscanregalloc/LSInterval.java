@@ -83,6 +83,8 @@ final class LSInterval {
 		final StringBuilder buffer = new StringBuilder();
 		buffer.append(var());
 		buffer.append("' ");
+		buffer.append(var().type());
+		buffer.append(" ");
 		buffer.append(getFrom());
 		buffer.append("...");
 		buffer.append(getTo());

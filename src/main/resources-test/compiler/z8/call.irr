@@ -1,0 +1,62 @@
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+
+@main:
+	; 20 pc
+	; begin initialize global variables
+	const r8, 0
+	; end initialize global variables
+	addrof r14, i
+	store [r14], r8
+	call r0 = next[] -> u8
+	move r8, r0
+	call r0 = next[] -> u8
+	move r9, r0
+	call r0 = next[] -> u8
+	move r10, r0
+	call r0 = next[] -> u8
+	move r11, r0
+	call r0 = next[] -> u8
+	move r4, r0
+	move r0, r8
+	move r1, r9
+	move r2, r10
+	move r3, r11
+	call doPrint@u8@u8@u8@u8@u8[r0, r1, r2, r3, r4]
+
+@next:
+	; 11 pc
+	const r1, 1
+	addrof r14, i
+	load r0, [r14]
+	add r0, r0, r1
+	; 11:9 return i
+	addrof r14, i
+	store [r14], r0
+
+@doPrint@u8@u8@u8@u8@u8:
+ Local variables
+	arg 0: a (u8/1)
+	arg 1: b (u8/1)
+	arg 2: c (u8/1)
+	arg 3: d (u8/1)
+	arg 4: e (u8/1)
+	; 13 pc
+	move r8, r1
+	move r9, r2
+	move r10, r3
+	move r11, r4
+	call printIntLf@u8[r0]
+	move r0, r8
+	call printIntLf@u8[r0]
+	move r0, r9
+	call printIntLf@u8[r0]
+	move r0, r10
+	call printIntLf@u8[r0]
+	move r0, r11
+	call printIntLf@u8[r0]
+
+Global variables
+	0: i (u8/1)
+

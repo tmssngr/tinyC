@@ -1,0 +1,233 @@
+@printUint@i16:
+ Local variables
+	arg 0: number (i16/2)
+	; 2 pc
+	cast r0(i32), r0(i16)
+	call printUint@i32[r0]
+
+@printIntLf@i16:
+ Local variables
+	arg 0: number (i16/2)
+	; 8 pc
+	move r8, r0
+	; 127:2 if number < 0
+	const r10, 0
+	lt r10, r8, r10
+	branch r10, false, @if_1_end, @if_1_then
+	const r0, 45
+	call printChar@u8[r0]
+	neg r8, r8
+@if_1_end:
+	move r0, r8
+	call printUint@i16[r0]
+	const r0, 13
+	call printChar@u8[r0]
+
+@printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
+ Local variables
+	arg 0: a (i16/2)
+	arg 1: b (i16/2)
+	arg 2: c (i16/2)
+	arg 3: d (i16/2)
+	arg 4: e (i16/2)
+	arg 5: f (i16/2)
+	arg 6: g (i16/2)
+	arg 7: h (i16/2)
+	var 8: param.a (i16/2)
+	var 9: param.b (i16/2)
+	var 10: param.c (i16/2)
+	var 11: param.d (i16/2)
+	; 133 pc
+	addrof r14, f
+	load r12, [r14]
+	addrof r14, g
+	load r10, [r14]
+	addrof r14, h
+	load r8, [r14]
+	addrof r14, param.a
+	store [r14], r0
+	addrof r14, param.b
+	store [r14], r2
+	addrof r14, param.c
+	store [r14], r4
+	addrof r14, param.d
+	store [r14], r6
+	addrof r14, param.a
+	load r0, [r14]
+	addrof r14, param.a
+	store [r14], r0
+	call printIntLf@i16[r0]
+	addrof r14, param.b
+	load r2, [r14]
+	move r0, r2
+	addrof r14, param.b
+	store [r14], r2
+	call printIntLf@i16[r0]
+	addrof r14, param.c
+	load r4, [r14]
+	move r0, r4
+	addrof r14, param.c
+	store [r14], r4
+	call printIntLf@i16[r0]
+	addrof r14, param.d
+	load r6, [r14]
+	move r0, r6
+	addrof r14, param.d
+	store [r14], r6
+	call printIntLf@i16[r0]
+	addrof r14, e
+	load r0, [r14]
+	addrof r14, e
+	store [r14], r0
+	call printIntLf@i16[r0]
+	move r0, r12
+	call printIntLf@i16[r0]
+	move r0, r10
+	call printIntLf@i16[r0]
+	move r0, r8
+	call printIntLf@i16[r0]
+	; 17:35 return a + b + c + d + e + f + g + h
+	addrof r14, param.a
+	load r0, [r14]
+	move r2, r0
+	addrof r14, param.b
+	load r4, [r14]
+	add r2, r2, r4
+	addrof r14, param.c
+	load r4, [r14]
+	add r2, r2, r4
+	addrof r14, param.d
+	load r6, [r14]
+	add r2, r2, r6
+	addrof r14, e
+	load r4, [r14]
+	add r2, r2, r4
+	add r2, r2, r12
+	add r2, r2, r10
+	move r0, r2
+	add r0, r0, r8
+
+@main:
+ Local variables
+	var 0: t.4 (i16/2)
+	var 1: arg.0.4 (i16/2)
+	var 2: arg.0.5 (i16/2)
+	var 3: arg.0.6 (i16/2)
+	var 4: arg.0.7 (i16/2)
+	; 40 pc
+	const r0, 1
+	const r2, 2
+	const r4, 3
+	const r6, 4
+	const r8, 5
+	const r10, 6
+	const r12, 7
+	addrof r14, t.4
+	store [r14], r6
+	const r6, 8
+	addrof r14, arg.0.4
+	store [r14], r8
+	addrof r14, arg.0.5
+	store [r14], r10
+	addrof r14, arg.0.6
+	store [r14], r12
+	addrof r14, arg.0.7
+	store [r14], r6
+	addrof r14, t.4
+	load r6, [r14]
+	call r0 = printAndSum@i16@i16@i16@i16@i16@i16@i16@i16[r0, r2, r4, r6, arg.0.4, arg.0.5, arg.0.6, arg.0.7] -> i16
+	call printIntLf@i16[r0]
+
+@printChar@u8:
+	cp    r0, #%0a
+	jr    ne, .1
+	ld    r0, #%0d
+	.1:
+	ld    %15, r0
+	jp    %0818
+
+@printUint@i32:
+	ld   r4, #1
+	ld   r5, #%28
+	ld   r6, #8
+	.push:
+	push @r5
+	inc  r5
+	djnz r6, .push
+	; result
+	clr     r11
+	clr     r12
+	clr     r13
+	clr     r14
+	clr     r15
+	; summand (bcd-shifted power of 2)
+	clr     r6
+	clr     r7
+	clr     r8
+	clr     r9
+	ld      r10, #1
+	; counter
+	ld      r5, #%20
+	.1:
+	sra     r0
+	rrc     r1
+	rrc     r2
+	rrc     r3
+	jr      nc, .2
+	add     r15, r10
+	da      r15
+	adc     r14, r9
+	da      r14
+	adc     r13, r8
+	da      r13
+	adc     r12, r7
+	da      r12
+	adc     r11, r6
+	da      r11
+	.2:
+	add     r10, r10
+	da      r10
+	adc     r9, r9
+	da      r9
+	adc     r8, r8
+	da      r8
+	adc     r7, r7
+	da      r7
+	adc     r6, r6
+	da      r6
+	djnz    r5, .1
+	ld      r6, #%2b
+	; counter
+	ld      r7, #10
+	.loop:
+	ld      r5, @r6
+	tm      r7, #1
+	jr      nz, .4
+	swap    r5
+	.4:
+	and     r5, #%0f
+	or      r4, r4
+	jr      z, .5
+	cp      r7, #1
+	jr      eq, .5
+	or      r5, r5
+	jr      z, .6
+	clr     r4
+	.5:
+	ld      %15, r5
+	add     %15, #'0'
+	call    %0818
+	.6:
+	tm      r7, #1
+	jr      z, .7
+	inc     r6
+	.7:
+	djnz    r7, .loop
+	ld   r5, #%2f
+	ld   r6, #8
+	.pop:
+	pop  @r5
+	dec  r5
+	djnz r6, .pop
+	ret
+

@@ -1,0 +1,123 @@
+@printNibble@u8:
+ Local variables
+	arg 0: x (u8/1)
+	; 6 pc
+	const r8, 15
+	and r0, r0, r8
+	; 5:2 if x > 9
+	const r8, 9
+	gt r8, r0, r8
+	branch r8, false, @if_1_end, @if_1_then
+	const r8, 7
+	add r0, r0, r8
+@if_1_end:
+	const r8, 48
+	add r0, r0, r8
+	call printChar@u8[r0]
+
+@printHex2@u8:
+ Local variables
+	arg 0: x (u8/1)
+	; 6 pc
+	move r8, r0
+	const r9, 4
+	move r0, r8
+	shiftright r0, r0, r9
+	call printNibble@u8[r0]
+	move r0, r8
+	call printNibble@u8[r0]
+
+@main:
+	; 36 pc
+	const r0, [string-0]
+	call printString@@u8[r0]
+	const r8, 0
+	; 19:2 for i < 16
+	jump @for_2
+@for_2_body:
+	; 20:3 if i & 7 == 0
+	const r9, 7
+	move r10, r8
+	and r10, r10, r9
+	const r9, 0
+	equals r9, r10, r9
+	branch r9, false, @if_3_end, @if_3_then
+	const r0, 32
+	call printChar@u8[r0]
+@if_3_end:
+	move r0, r8
+	call printNibble@u8[r0]
+	const r9, 1
+	add r8, r8, r9
+@for_2:
+	const r9, 16
+	lt r9, r8, r9
+	branch r9, true, @for_2_body, @for_2_break
+	const r0, 10
+	call printChar@u8[r0]
+	const r8, 32
+	; 27:2 for i < 128
+	jump @for_4
+@for_4_body:
+	; 28:3 if i & 15 == 0
+	const r9, 15
+	move r10, r8
+	and r10, r10, r9
+	const r9, 0
+	equals r9, r10, r9
+	branch r9, false, @if_5_end, @if_5_then
+	move r0, r8
+	call printHex2@u8[r0]
+@if_5_end:
+	; 31:3 if i & 7 == 0
+	const r9, 7
+	move r10, r8
+	and r10, r10, r9
+	const r9, 0
+	equals r9, r10, r9
+	branch r9, false, @if_6_end, @if_6_then
+	const r0, 32
+	call printChar@u8[r0]
+@if_6_end:
+	move r0, r8
+	call printChar@u8[r0]
+	; 35:3 if i & 15 == 15
+	const r9, 15
+	move r10, r8
+	and r10, r10, r9
+	const r9, 15
+	equals r9, r10, r9
+	branch r9, false, @for_4_continue, @if_7_then
+	const r0, 10
+	call printChar@u8[r0]
+@for_4_continue:
+	const r0, 1
+	add r8, r8, r0
+@for_4:
+	const r0, 128
+	lt r0, r8, r0
+	branch r0, true, @for_4_body, @main_ret
+
+@printString@@u8:
+	ld   r2, r0
+	ld   r3, r1
+	jr   .loop
+	.print:
+	call printChar_Pu8
+	incw r2
+	.loop:
+	lde  r0, @rr2
+	or   r0, r0
+	jr   nz, .print
+	ret
+
+@printChar@u8:
+	cp    r0, #%0a
+	jr    ne, .1
+	ld    r0, #%0d
+	.1:
+	ld    %15, r0
+	jp    %0818
+
+String literals
+	string lit 0 " x\0"

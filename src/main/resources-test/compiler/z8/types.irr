@@ -1,0 +1,22 @@
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+
+@main:
+	; 8 pc
+	const r8, 250
+	; 4:3 for i != 2
+	jump @for_1
+@for_1_body:
+	move r0, r8
+	call printIntLf@u8[r0]
+	const r9, 1
+	add r8, r8, r9
+@for_1:
+	const r9, 2
+	notequals r9, r8, r9
+	branch r9, true, @for_1_body, @for_1_break
+	const r8, 260
+	cast r0(u8), r8(i16)
+	call printIntLf@u8[r0]
+

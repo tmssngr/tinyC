@@ -1,0 +1,134 @@
+@printBoard:
+	; 17 pc
+	const r0, 124
+	call printChar@u8[r0]
+	const r8, 0
+	; 11:2 for i < 30
+	jump @for_1
+@for_1_body:
+	; 12:3 if [...] == 0
+	cast r9(i16), r8(u8)
+	addrof r12, [board]
+	add r12, r12, r9
+	load r9, [r12]
+	const r10, 0
+	equals r9, r9, r10
+	branch r9, true, @if_2_then, @if_2_else
+	const r0, 42
+	call printChar@u8[r0]
+	jump @for_1_continue
+@if_2_then:
+	const r0, 32
+	call printChar@u8[r0]
+@for_1_continue:
+	const r9, 1
+	add r8, r8, r9
+@for_1:
+	const r9, 30
+	lt r9, r8, r9
+	branch r9, true, @for_1_body, @for_1_break
+	const r0, [string-0]
+	call printString@@u8[r0]
+
+@main:
+	; 50 pc
+	const r8, 0
+	; 23:2 for i < 30
+	jump @for_3
+@for_3_body:
+	const r9, 0
+	cast r10(i16), r8(u8)
+	addrof r12, [board]
+	add r12, r12, r10
+	store [r12], r9
+	const r9, 1
+	add r8, r8, r9
+@for_3:
+	const r9, 30
+	lt r9, r8, r9
+	branch r9, true, @for_3_body, @for_3_break
+	const r8, 1
+	const r9, 29
+	addrof r12, [board]
+	add r12, r12, r9
+	store [r12], r8
+	call printBoard[]
+	const r8, 0
+	; 30:2 for i < 28
+	jump @for_4
+@for_4_body:
+	const r9, 0
+	addrof r12, [board]
+	add r12, r12, r9
+	load r9, [r12]
+	const r10, 1
+	shiftleft r9, r9, r10
+	const r10, 1
+	addrof r12, [board]
+	add r12, r12, r10
+	load r10, [r12]
+	or r9, r9, r10
+	const r10, 1
+	; 32:3 for j < 29
+	jump @for_5
+@for_5_body:
+	const r11, 1
+	shiftleft r9, r9, r11
+	const r11, 7
+	and r9, r9, r11
+	const r11, 1
+	move r12, r10
+	add r12, r12, r11
+	cast r11(i16), r12(u8)
+	addrof r14, [board]
+	add r14, r14, r11
+	load r11, [r14]
+	or r9, r9, r11
+	const r11, 110
+	shiftright r11, r11, r9
+	const r12, 1
+	and r11, r11, r12
+	cast r12(i16), r10(u8)
+	addrof r14, [board]
+	add r14, r14, r12
+	store [r14], r11
+	const r11, 1
+	add r10, r10, r11
+@for_5:
+	const r11, 29
+	lt r11, r10, r11
+	branch r11, true, @for_5_body, @for_5_break
+	call printBoard[]
+	const r0, 1
+	add r8, r8, r0
+@for_4:
+	const r0, 28
+	lt r0, r8, r0
+	branch r0, true, @for_4_body, @main_ret
+
+@printString@@u8:
+	ld   r2, r0
+	ld   r3, r1
+	jr   .loop
+	.print:
+	call printChar_Pu8
+	incw r2
+	.loop:
+	lde  r0, @rr2
+	or   r0, r0
+	jr   nz, .print
+	ret
+
+@printChar@u8:
+	cp    r0, #%0a
+	jr    ne, .1
+	ld    r0, #%0d
+	.1:
+	ld    %15, r0
+	jp    %0818
+
+Global variables
+	0: board[] (u8*/60)
+
+String literals
+	string lit 0 "|\n\0"

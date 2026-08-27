@@ -1,0 +1,95 @@
+@printIntLf@bool:
+ Local variables
+	arg 0: number (bool/1)
+
+@main:
+	; 60 pc
+	const r0, [string-0]
+	call printString@@u8[r0]
+	const r8, 1
+	const r10, 2
+	lt r0, r8, r10
+	call printIntLf@bool[r0]
+	lt r0, r10, r8
+	call printIntLf@bool[r0]
+	const r0, [string-1]
+	call printString@@u8[r0]
+	const r12, 0
+	const r13, 128
+	lt r0, r12, r13
+	call printIntLf@bool[r0]
+	lt r0, r13, r12
+	call printIntLf@bool[r0]
+	const r0, [string-2]
+	call printString@@u8[r0]
+	lteq r0, r8, r10
+	call printIntLf@bool[r0]
+	lteq r0, r10, r8
+	call printIntLf@bool[r0]
+	const r0, [string-3]
+	call printString@@u8[r0]
+	lteq r0, r12, r13
+	call printIntLf@bool[r0]
+	lteq r0, r13, r12
+	call printIntLf@bool[r0]
+	const r0, [string-4]
+	call printString@@u8[r0]
+	equals r0, r8, r10
+	call printIntLf@bool[r0]
+	equals r0, r10, r8
+	call printIntLf@bool[r0]
+	const r0, [string-5]
+	call printString@@u8[r0]
+	notequals r0, r8, r10
+	call printIntLf@bool[r0]
+	notequals r0, r10, r8
+	call printIntLf@bool[r0]
+	const r0, [string-6]
+	call printString@@u8[r0]
+	gteq r0, r8, r10
+	call printIntLf@bool[r0]
+	gteq r0, r10, r8
+	call printIntLf@bool[r0]
+	const r0, [string-7]
+	call printString@@u8[r0]
+	gteq r0, r12, r13
+	call printIntLf@bool[r0]
+	gteq r0, r13, r12
+	call printIntLf@bool[r0]
+	const r0, [string-8]
+	call printString@@u8[r0]
+	gt r0, r8, r10
+	call printIntLf@bool[r0]
+	gt r0, r10, r8
+	call printIntLf@bool[r0]
+	const r0, [string-9]
+	call printString@@u8[r0]
+	gt r0, r12, r13
+	call printIntLf@bool[r0]
+	gt r0, r13, r12
+	call printIntLf@bool[r0]
+
+@printString@@u8:
+	ld   r2, r0
+	ld   r3, r1
+	jr   .loop
+	.print:
+	call printChar_Pu8
+	incw r2
+	.loop:
+	lde  r0, @rr2
+	or   r0, r0
+	jr   nz, .print
+	ret
+
+String literals
+	string lit 0 "< (signed)\n\0"
+	string lit 1 "< (unsigned)\n\0"
+	string lit 2 "<= (signed)\n\0"
+	string lit 3 "<= (unsigned)\n\0"
+	string lit 4 "==\n\0"
+	string lit 5 "!=\n\0"
+	string lit 6 ">= (signed)\n\0"
+	string lit 7 ">= (unsigned)\n\0"
+	string lit 8 "> (signed)\n\0"
+	string lit 9 "> (unsigned)\n\0"
