@@ -74,15 +74,18 @@ public final class IRUtils {
 		}
 	}
 
-	public static int getMaxReg(List<IRInstruction> instructions) {
+	public static int getMaxReg(List<IRInstruction> instructions, @Nullable Type pointerIntType) {
 		class MaxRegConsumer implements Consumer<IRVar> {
 			private int maxReg;
 
 			@Override
 			public void accept(IRVar var) {
-				if (var.scope() == VariableScope.register) {
-					maxReg = Math.max(maxReg, var.index() + 1);
+				if (var.scope() != VariableScope.register) {
+					return;
 				}
+
+				final int size = pointerIntType != null ? Type.getSize(var.type(), pointerIntType) : 1;
+				maxReg = Math.max(maxReg, var.index() + size);
 			}
 		}
 		final MaxRegConsumer consumer = new MaxRegConsumer();

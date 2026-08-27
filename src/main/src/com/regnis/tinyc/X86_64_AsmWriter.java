@@ -260,7 +260,7 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 	}
 
 	private int getNonVolatileRegistersToPushPop(List<IRInstruction> instructions) {
-		final int maxReg = IRUtils.getMaxReg(instructions);
+		final int maxReg = IRUtils.getMaxReg(instructions, null);
 		return Math.max(0, maxReg - FIRST_NON_VOLATILE_REGISTER);
 	}
 
