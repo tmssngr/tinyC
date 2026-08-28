@@ -220,7 +220,7 @@ _random:
         lea rdi, [var_0]
         ; store [a.__random__1{r1}], t.__random__1{r2}
         mov [rdi], esi
-        ; 15:9 return __random__
+        ; 16:9 return __random__
         ; addrof a.__random__2{r1}, __random__
         lea rdi, [var_0]
         ; load t.__random__2{r0}, [a.__random__2{r1}]
@@ -231,7 +231,7 @@ _random:
         ; u8 randomU8
 _randomU8:
         sub rsp, 8
-        ; 19:10 return (u8)
+        ; 53:10 return (u8)
         ; call t.1{r0} = random[] -> i32
         call _random
         ; cast t.0{r0}(u8), t.1{r0}(i32)
