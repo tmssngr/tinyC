@@ -7,46 +7,6 @@ printUint@i16:
 	call printUint@i32[t.1]
 printUint@i16_ret:
 
-initRandom@i32:
- Local variables
-	arg 0: salt (i32/4)
-	; 5 pc
-	move __random__, salt
-initRandom@i32_ret:
-
-random:
- Local variables
-	var 0: r (i32/4)
-	var 1: b (i32/4)
-	var 2: c (i32/4)
-	var 3: d (i32/4)
-	var 4: e (i32/4)
-	var 5: t.5 (i32/4)
-	var 6: t.6 (i32/4)
-	var 7: t.7 (i32/4)
-	var 8: t.8 (i32/4)
-	var 9: t.9 (i32/4)
-	var 10: t.10 (i32/4)
-	var 11: t.11 (i32/4)
-	; 75 pc
-	move r, __random__
-	and t.5, r, 524287
-	mul b, t.5, 48271
-	shiftright t.6, r, 15
-	mul c, t.6, 48271
-	and t.7, c, 65535
-	shiftleft d, t.7, 15
-	shiftright t.9, c, 16
-	add t.8, t.9, b
-	add e, t.8, d
-	and t.10, e, 2147483647
-	shiftright t.11, e, 31
-	add __random__, t.10, t.11
-	; 15:9 return __random__
-	ret __random__
-	jump random_ret
-random_ret:
-
 rowColumnToCell@i16@i16:
  Local variables
 	arg 0: row (i16/2)
@@ -468,34 +428,30 @@ initField@i16@i16:
 	var 2: bombs (i16/2)
 	var 3: row (i16/2)
 	var 4: column (i16/2)
-	var 5: t.5 (i32/4)
-	var 6: t.6 (i32/4)
-	var 7: t.7 (i32/4)
-	var 8: t.8 (i32/4)
+	var 5: t.5 (i16/2)
+	var 6: t.6 (i16/2)
+	var 7: t.7 (i16/2)
+	var 8: t.8 (i16/2)
 	var 9: t.9 (i16/2)
 	var 10: t.10 (i16/2)
-	var 11: t.11 (i16/2)
-	var 12: t.12 (i16/2)
-	; 72 pc
+	; 62 pc
 	const bombs, 40
 	; 175:2 for bombs > 0
 for_27:
 	branch bombs lteq 0: initField@i16@i16_ret, for_27_body
 for_27_body:
-	call t.6 = random[] -> i32
-	mod t.5, t.6, 20
-	cast row(i16), t.5(i32)
-	call t.8 = random[] -> i32
-	mod t.7, t.8, 40
-	cast column(i16), t.7(i32)
+	call t.5 = random16[] -> i16
+	mod row, t.5, 20
+	call t.6 = random16[] -> i16
+	mod column, t.6, 40
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
-	sub t.10, row, curr_r
-	call t.9 = abs@i16[t.10] -> i16
-	branch t.9 gt 1: if_28_then, or_29
+	sub t.8, row, curr_r
+	call t.7 = abs@i16[t.8] -> i16
+	branch t.7 gt 1: if_28_then, or_29
 or_29:
-	sub t.12, column, curr_c
-	call t.11 = abs@i16[t.12] -> i16
-	branch t.11 lteq 1: for_27_continue, if_28_then
+	sub t.10, column, curr_c
+	call t.9 = abs@i16[t.10] -> i16
+	branch t.9 lteq 1: for_27_continue, if_28_then
 if_28_then:
 	call setCell@i16@i16@u8[row, column, 1]
 for_27_continue:
@@ -583,10 +539,7 @@ main:
 	var 17: t.17 (u8/1)
 	var 18: t.18 (bool/1)
 	var 19: t.19 (u8*/2)
-	; 210 pc
-	; begin initialize global variables
-	const __random__, 0
-	; end initialize global variables
+	; 208 pc
 	call initRandom@i32[7439742]
 	const needsInitialize, 1
 	call clearField[]
@@ -805,9 +758,22 @@ getChar:
 	ld   r1, %13
 	ret
 
+initRandom@i32:
+	ld   %70, r0
+	ld   %71, r1
+	ld   %72, r2
+	ld   %73, r3
+	ret
+
+random16:
+	call %0836
+	ld   r0, %74
+	ld   r1, %75
+	and  r0, #%7f
+	ret
+
 Global variables
-	0: __random__ (i32/4)
-	1: field[] (u8*/1600)
+	0: field[] (u8*/1600)
 
 String literals
 	string lit 0 "|\n\0"
