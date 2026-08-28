@@ -4,66 +4,12 @@ printIntLf@u8:
 	; 0 pc
 printIntLf@u8_ret:
 
-initRandom@i32:
- Local variables
-	arg 0: salt (i32/4)
-	var 1: t.1 (i32/4)
-	var 2: a.2 (i32*/2)
-	; 16 pc
-	move t.1, salt
-	addrof a.2, __random__
-	store [a.2], t.1
-initRandom@i32_ret:
-
-random:
- Local variables
-	var 0: r (i32/4)
-	var 1: b (i32/4)
-	var 2: c (i32/4)
-	var 3: d (i32/4)
-	var 4: e (i32/4)
-	var 5: a.5 (i32*/2)
-	var 6: t.6 (i32/4)
-	var 7: t.7 (i32/4)
-	var 8: t.8 (i32/4)
-	var 9: t.9 (i32/4)
-	var 10: t.10 (i32/4)
-	var 11: t.11 (i32/4)
-	var 12: t.12 (i32/4)
-	var 13: t.13 (i32/4)
-	var 14: a.14 (i32*/2)
-	var 15: a.15 (i32*/2)
-	var 16: t.16 (i32/4)
-	; 103 pc
-	addrof a.5, __random__
-	load r, [a.5]
-	and t.6, r, 524287
-	mul b, t.6, 48271
-	shiftright t.7, r, 15
-	mul c, t.7, 48271
-	and t.8, c, 65535
-	shiftleft d, t.8, 15
-	shiftright t.10, c, 16
-	add t.9, t.10, b
-	add e, t.9, d
-	and t.12, e, 2147483647
-	shiftright t.13, e, 31
-	add t.11, t.12, t.13
-	addrof a.14, __random__
-	store [a.14], t.11
-	; 15:9 return __random__
-	addrof a.15, __random__
-	load t.16, [a.15]
-	ret t.16
-	jump random_ret
-random_ret:
-
 randomU8:
  Local variables
 	var 0: t.0 (u8/1)
 	var 1: t.1 (i32/4)
 	; 12 pc
-	; 19:10 return (u8)
+	; 60:10 return (u8)
 	call t.1 = random[] -> i32
 	cast t.0(u8), t.1(i32)
 	ret t.0
@@ -74,14 +20,7 @@ main:
  Local variables
 	var 0: i (u8/1)
 	var 1: r (u8/1)
-	var 2: t.2 (i32/4)
-	var 3: a.3 (i32*/2)
-	; 31 pc
-	; begin initialize global variables
-	const t.2, 0
-	addrof a.3, __random__
-	store [a.3], t.2
-	; end initialize global variables
+	; 18 pc
 	call initRandom@i32[7439742]
 	const i, 0
 	; 6:2 for i < 50
@@ -95,6 +34,26 @@ for_1_continue:
 	jump for_1
 main_ret:
 
-Global variables
-	0: __random__ (i32/4)
+initRandom@i32:
+	ld   %74, r0
+	ld   %75, r1
+	ld   %76, r2
+	ld   %77, r3
+	ld   r0, #%F7
+	ld   r1, #%A8
+	ld   r2, #%74
+	ld   r3, #4
+	.1:
+	ldei @rr0, @r2
+	djnz r3, .1
+	ret
+
+random:
+	call %0836
+	ld   r0, %74
+	ld   r1, %75
+	call %0836
+	ld   r2, %74
+	ld   r3, %75
+	ret
 

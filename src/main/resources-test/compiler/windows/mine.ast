@@ -79,6 +79,10 @@ i32 random() {
 	return __random__;
 }
 
+i16 random16() {
+	return ((i16)(random())) & 32767;
+}
+
 i16 rowColumnToCell@i16@i16(i16 row, i16 column) {
 	return (row * 40) + column;
 }
@@ -281,8 +285,8 @@ void initField@i16@i16(i16 curr_r, i16 curr_c) {
 
 	bombs = 40;
 	for (; bombs > 0; bombs = bombs - 1) {
-		row = (i16)((random()) % 20);
-		column = (i16)((random()) % 40);
+		row = (random16()) % 20;
+		column = (random16()) % 40;
 		if (((abs@i16(row - curr_r)) > 1) || ((abs@i16(column - curr_c)) > 1)) {
 			setCell@i16@i16@u8(row, column, 1);
 		}

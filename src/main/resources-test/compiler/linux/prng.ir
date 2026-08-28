@@ -125,7 +125,7 @@ random:
 	add t.11, t.12, t.13
 	addrof a.14, __random__
 	store [a.14], t.11
-	; 15:9 return __random__
+	; 16:9 return __random__
 	addrof a.15, __random__
 	load t.16, [a.15]
 	ret t.16
@@ -137,7 +137,7 @@ randomU8:
 	var 0: t.0 (u8/1)
 	var 1: t.1 (i32/4)
 	; 12 pc
-	; 19:10 return (u8)
+	; 60:10 return (u8)
 	call t.1 = random[] -> i32
 	cast t.0(u8), t.1(i32)
 	ret t.0
