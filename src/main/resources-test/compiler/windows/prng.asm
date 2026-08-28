@@ -229,7 +229,7 @@ _random:
         lea rcx, [var_0]
         ; store [a.14.1{r1}], t.11.1{r2}
         mov [rcx], edx
-        ; 15:9 return __random__
+        ; 16:9 return __random__
         ; move t.16.1{r0}, t.16.1{r2}
         mov eax, edx
         add rsp, 8
@@ -239,7 +239,7 @@ _random:
 _randomU8:
         sub rsp, 8
         sub rsp, 32
-        ; 19:10 return (u8)
+        ; 53:10 return (u8)
         ; call t.1.1{r0} = random[] -> i32
         call _random
         ; cast t.0.1{r0}(u8), t.1.1{r0}(i32)

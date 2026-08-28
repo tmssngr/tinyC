@@ -5,38 +5,6 @@ printUint@i16:
 	cast t.1.1{r0}(i32), param.number{r0}(i16)
 	call printUint@i32[t.1.1{r0}]
 
-initRandom@i32:
- Local variables
-	arg 0: salt (i32/4)
-	; 5 pc
-	addrof a.2.1{r4}, __random__
-	store [a.2.1{r4}], t.1.1{r0}
-
-random:
-	; 27 pc
-	addrof a.5.1{r4}, __random__
-	load r.1{r6}, [a.5.1{r4}]
-	move t.6.1{r10}, r.1{r6}
-	and t.6.1{r10}, 524287
-	mul b.1{r10}, 48271
-	move t.7.1{r4}, r.1{r6}
-	shiftright t.7.1{r4}, 15
-	mul c.1{r4}, 48271
-	move t.8.1{r0}, c.1{r4}
-	and t.8.1{r0}, 65535
-	shiftleft d.1{r0}, 15
-	shiftright t.10.1{r4}, 16
-	add t.9.1{r4}, b.1{r10}
-	add e.1{r4}, d.1{r0}
-	move t.12.1{r8}, e.1{r4}
-	and t.12.1{r8}, 2147483647
-	shiftright t.13.1{r4}, 31
-	add t.11.1{r8}, t.13.1{r4}
-	addrof a.14.1{r4}, __random__
-	store [a.14.1{r4}], t.11.1{r8}
-	; 15:9 return __random__
-	move t.16.1{r0}, t.16.1{r8}
-
 rowColumnToCell@i16@i16:
  Local variables
 	arg 0: row (i16/2)
@@ -465,38 +433,36 @@ initField@i16@i16:
 	arg 1: curr_c (i16/2)
 	var 2: row.1 (i16/2)
 	var 3: column.1 (i16/2)
-	; 54 pc
+	; 52 pc
 	move param.curr_r{r8}, curr_r{r0}
 	move param.curr_c{r10}, curr_c{r2}
 	const bombs.1{r12}, 40
 	; 175:2 for bombs > 0
 	jump for_27
 for_27_body:
-	call t.6.1{r0} = random[] -> i32
-	mod t.5.1{r0}, 20
-	cast row.1{r0}(i16), t.5.1{r0}(i32)
+	call t.5.1{r0} = random16[] -> i16
+	mod row.1{r0}, 20
 	addrof memVarAddr{r14}, row.1
 	store [memVarAddr{r14}], row.1{r0}
-	call t.8.1{r0} = random[] -> i32
-	move t.7.1{r2}, t.8.1{r0}
-	mod t.7.1{r2}, 40
-	cast column.1{r2}(i16), t.7.1{r2}(i32)
+	call t.6.1{r0} = random16[] -> i16
+	move column.1{r2}, t.6.1{r0}
+	mod column.1{r2}, 40
 	addrof memVarAddr{r14}, column.1
 	store [memVarAddr{r14}], column.1{r2}
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
 	addrof memVarAddr{r14}, row.1
 	load row.1{r0}, [memVarAddr{r14}]
-	move t.10.1{r2}, row.1{r0}
-	sub t.10.1{r2}, param.curr_r{r8}
-	move t.10.1{r0}, t.10.1{r2}
-	call t.9.1{r0} = abs@i16[t.10.1{r0}] -> i16
-	branch t.9.1{r0} gt 1: if_28_then
+	move t.8.1{r2}, row.1{r0}
+	sub t.8.1{r2}, param.curr_r{r8}
+	move t.8.1{r0}, t.8.1{r2}
+	call t.7.1{r0} = abs@i16[t.8.1{r0}] -> i16
+	branch t.7.1{r0} gt 1: if_28_then
 	addrof memVarAddr{r14}, column.1
 	load column.1{r2}, [memVarAddr{r14}]
-	move t.12.1{r0}, column.1{r2}
-	sub t.12.1{r0}, param.curr_c{r10}
-	call t.11.1{r0} = abs@i16[t.12.1{r0}] -> i16
-	branch t.11.1{r0} lteq 1: for_27_continue, if_28_then
+	move t.10.1{r0}, column.1{r2}
+	sub t.10.1{r0}, param.curr_c{r10}
+	call t.9.1{r0} = abs@i16[t.10.1{r0}] -> i16
+	branch t.9.1{r0} lteq 1: for_27_continue, if_28_then
 if_28_then:
 	addrof memVarAddr{r14}, row.1
 	load row.1{r0}, [memVarAddr{r14}]
@@ -596,12 +562,7 @@ for_31:
 maybeRevealAround@i16@i16_ret:
 
 main:
-	; 91 pc
-	; begin initialize global variables
-	const t.6.1{r8}, 0
-	addrof a.7.1{r12}, __random__
-	store [a.7.1{r12}], t.6.1{r8}
-	; end initialize global variables
+	; 86 pc
 	const arg.0.0{r0}, 7439742
 	call initRandom@i32[arg.0.0{r0}]
 	const needsInitialize.1{r8}, 1
@@ -611,14 +572,14 @@ main:
 	const arg.2.0{r0}, 20
 	const arg.2.1{r2}, 0
 	call setCursor@i16@i16[arg.2.0{r0}, arg.2.1{r2}]
-	const t.8.1{r0}, [string-1]
-	call printString@@u8[t.8.1{r0}]
+	const t.6.1{r0}, [string-1]
+	call printString@@u8[t.6.1{r0}]
 	; 221:2 while true
 	jump while_37
 if_38_then:
 	; 224:4 if printLeft([])
-	call t.9.1{r0} = printLeft[] -> bool
-	branch t.9.1{r0} notequals 0: if_39_then, if_38_end
+	call t.7.1{r0} = printLeft[] -> bool
+	branch t.7.1{r0} notequals 0: if_39_then, if_38_end
 if_38_end:
 	call chr.1{r0} = getChar[] -> i16
 	; 231:3 if chr == 27
@@ -627,30 +588,30 @@ if_38_end:
 	branch chr.1{r0} notequals 4: if_42_else, if_42_then
 	jump if_42_then
 if_41_then:
-	add t.12.1{r11}, 20
-	sub t.11.1{r11}, 1
+	add t.10.1{r11}, 20
+	sub t.9.1{r11}, 1
 	mod curr_r.4{r11}, 20
 	jump while_37
 if_42_else:
 	branch chr.1{r0} notequals 1: if_43_else, if_43_then
 	jump if_43_then
 if_42_then:
-	add t.13.1{r11}, 1
+	add t.11.1{r11}, 1
 	mod curr_r.5{r11}, 20
 	jump while_37
 if_43_else:
 	branch chr.1{r0} notequals 2: if_44_else, if_44_then
 	jump if_44_then
 if_43_then:
-	add t.15.1{r9}, 40
-	sub t.14.1{r9}, 1
+	add t.13.1{r9}, 40
+	sub t.12.1{r9}, 1
 	mod curr_c.4{r9}, 40
 	jump while_37
 if_44_else:
 	branch chr.1{r0} notequals 32: if_45_else, if_45_then
 	jump if_45_then
 if_44_then:
-	add t.16.1{r9}, 1
+	add t.14.1{r9}, 1
 	mod curr_c.5{r9}, 40
 	jump while_37
 if_45_else:
@@ -668,8 +629,8 @@ if_46_then:
 	call cell.1{r0} = getCell@i16@i16[curr_r.2{r0}, curr_c.2{r2}] -> u8
 	move cell.1{r13}, cell.1{r0}
 	; 255:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=255:17]])
-	call t.17.1{r0} = isOpen@u8[cell.1{r0}] -> bool
-	branch t.17.1{r0} notequals 0: while_37, if_47_then
+	call t.15.1{r0} = isOpen@u8[cell.1{r0}] -> bool
+	branch t.15.1{r0} notequals 0: while_37, if_47_then
 	jump if_47_then
 if_49_then:
 	const needsInitialize.5{r8}, 0
@@ -690,18 +651,18 @@ if_49_end:
 	call cell.3{r0} = getCell@i16@i16[curr_r.2{r0}, curr_c.2{r2}] -> u8
 	move cell.3{r13}, cell.3{r0}
 	; 267:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=267:16]])
-	call t.18.1{r0} = isOpen@u8[cell.3{r0}] -> bool
-	branch t.18.1{r0} notequals 0: if_50_end
-	move t.19.1{r4}, cell.3{r13}
-	or t.19.1{r4}, 2
+	call t.16.1{r0} = isOpen@u8[cell.3{r0}] -> bool
+	branch t.16.1{r0} notequals 0: if_50_end
+	move t.17.1{r4}, cell.3{r13}
+	or t.17.1{r4}, 2
 	move curr_r.2{r0}, curr_r.2{r11}
 	move curr_c.2{r2}, curr_c.2{r9}
-	call setCell@i16@i16@u8[curr_r.2{r0}, curr_c.2{r2}, t.19.1{r4}]
+	call setCell@i16@i16@u8[curr_r.2{r0}, curr_c.2{r2}, t.17.1{r4}]
 if_50_end:
 	; 270:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=270:15]])
 	move cell.3{r0}, cell.3{r13}
-	call t.20.1{r0} = isBomb@u8[cell.3{r0}] -> bool
-	branch t.20.1{r0} notequals 0: if_51_then
+	call t.18.1{r0} = isBomb@u8[cell.3{r0}] -> bool
+	branch t.18.1{r0} notequals 0: if_51_then
 	move curr_r.2{r0}, curr_r.2{r11}
 	move curr_c.2{r2}, curr_c.2{r9}
 	call maybeRevealAround@i16@i16[curr_r.2{r0}, curr_c.2{r2}]
@@ -713,15 +674,15 @@ while_37:
 	branch needsInitialize.2{r8} notequals 0: if_38_end, if_38_then
 	jump if_38_then
 if_39_then:
-	const t.10.1{r0}, [string-2]
-	call printString@@u8[t.10.1{r0}]
+	const t.8.1{r0}, [string-2]
+	call printString@@u8[t.8.1{r0}]
 	jump main_ret
 if_51_then:
 	move curr_r.2{r0}, curr_r.2{r11}
 	move curr_c.2{r2}, curr_c.2{r9}
 	call printField@i16@i16[curr_r.2{r0}, curr_c.2{r2}]
-	const t.21.1{r0}, [string-3]
-	call printString@@u8[t.21.1{r0}]
+	const t.19.1{r0}, [string-3]
+	call printString@@u8[t.19.1{r0}]
 main_ret:
 
 printString@@u8:
@@ -841,9 +802,29 @@ getChar:
 	ld   r1, %13
 	ret
 
+initRandom@i32:
+	ld   %74, r0
+	ld   %75, r1
+	ld   %76, r2
+	ld   %77, r3
+	ld   r0, #%F7
+	ld   r1, #%A8
+	ld   r2, #%74
+	ld   r3, #4
+	.1:
+	ldei @rr0, @r2
+	djnz r3, .1
+	ret
+
+random16:
+	call %0836
+	ld   r0, %74
+	ld   r1, %75
+	and  r0, #%7f
+	ret
+
 Global variables
-	0: __random__ (i32/4)
-	1: field[] (u8*/1600)
+	0: field[] (u8*/1600)
 
 String literals
 	string lit 0 "|\n\0"

@@ -2,51 +2,14 @@ printIntLf@u8:
  Local variables
 	arg 0: number (u8/1)
 
-initRandom@i32:
- Local variables
-	arg 0: salt (i32/4)
-	; 5 pc
-	addrof a.2.1{r4}, __random__
-	store [a.2.1{r4}], t.1.1{r0}
-
-random:
-	; 27 pc
-	addrof a.5.1{r4}, __random__
-	load r.1{r6}, [a.5.1{r4}]
-	move t.6.1{r10}, r.1{r6}
-	and t.6.1{r10}, 524287
-	mul b.1{r10}, 48271
-	move t.7.1{r4}, r.1{r6}
-	shiftright t.7.1{r4}, 15
-	mul c.1{r4}, 48271
-	move t.8.1{r0}, c.1{r4}
-	and t.8.1{r0}, 65535
-	shiftleft d.1{r0}, 15
-	shiftright t.10.1{r4}, 16
-	add t.9.1{r4}, b.1{r10}
-	add e.1{r4}, d.1{r0}
-	move t.12.1{r8}, e.1{r4}
-	and t.12.1{r8}, 2147483647
-	shiftright t.13.1{r4}, 31
-	add t.11.1{r8}, t.13.1{r4}
-	addrof a.14.1{r4}, __random__
-	store [a.14.1{r4}], t.11.1{r8}
-	; 15:9 return __random__
-	move t.16.1{r0}, t.16.1{r8}
-
 randomU8:
 	; 2 pc
-	; 19:10 return (u8)
+	; 53:10 return (u8)
 	call t.1.1{r0} = random[] -> i32
 	cast t.0.1{r0}(u8), t.1.1{r0}(i32)
 
 main:
-	; 13 pc
-	; begin initialize global variables
-	const t.2.1{r8}, 0
-	addrof a.3.1{r12}, __random__
-	store [a.3.1{r12}], t.2.1{r8}
-	; end initialize global variables
+	; 8 pc
 	const arg.0.0{r0}, 7439742
 	call initRandom@i32[arg.0.0{r0}]
 	const i.1{r8}, 0
@@ -61,6 +24,19 @@ for_1_body:
 for_1:
 	branch i.2{r8} lt 50: for_1_body
 
-Global variables
-	0: __random__ (i32/4)
+initRandom@i32:
+	ld   %70, r0
+	ld   %71, r1
+	ld   %72, r2
+	ld   %73, r3
+	ret
+
+random:
+	call %0836
+	ld   r0, %74
+	ld   r1, %75
+	call %0836
+	ld   r2, %74
+	ld   r3, %75
+	ret
 

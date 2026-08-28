@@ -22,448 +22,6 @@ printUint_Pi16:
         call printUint_Pi32
         ret
 
-        ; void initRandom@i32
-        ; arg salt (i32): r0
-initRandom_Pi32:
-        ; addrof a.2.1{r4}, __random__
-        ld   r4, #hi(var_0)
-        ld   r5, #lo(var_0)
-        ; store [a.2.1{r4}], t.1.1{r0}
-        lde  @rr4, r0
-        incw r4
-        lde  @rr4, r1
-        incw r4
-        lde  @rr4, r2
-        incw r4
-        lde  @rr4, r3
-        add  r5, #3
-        adc  r4, #0
-        ret
-
-        ; i32 random
-random:
-        ; save clobbered non-volatile registers
-        push r8
-        push r9
-        push r10
-        push r11
-        push r12
-        push r13
-        ; addrof a.5.1{r4}, __random__
-        ld   r4, #hi(var_0)
-        ld   r5, #lo(var_0)
-        ; load r.1{r6}, [a.5.1{r4}]
-        lde  r6, @rr4
-        incw r4
-        lde  r7, @rr4
-        incw r4
-        lde  r8, @rr4
-        incw r4
-        lde  r9, @rr4
-        add  r5, #3
-        adc  r4, #0
-        ; move t.6.1{r10}, r.1{r6}
-        ld   r13, r9
-        ld   r12, r8
-        ld   r11, r7
-        ld   r10, r6
-        ; and t.6.1{r10}, 524287
-        and  r11, #%07
-        clr  r10
-        ; mul b.1{r10}, 48271
-        Not supported yet: mul/div/mod for i32
-        ; move t.7.1{r4}, r.1{r6}
-        ld   r4, r6
-        ld   r5, r7
-        ld   r6, r8
-        ld   r7, r9
-        ; shiftright t.7.1{r4}, 15
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        ; mul c.1{r4}, 48271
-        Not supported yet: mul/div/mod for i32
-        ; move t.8.1{r0}, c.1{r4}
-        ld   r0, r4
-        ld   r1, r5
-        ld   r2, r6
-        ld   r3, r7
-        ; and t.8.1{r0}, 65535
-        clr  r1
-        clr  r0
-        ; shiftleft d.1{r0}, 15
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        ; shiftright t.10.1{r4}, 16
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        ; add t.9.1{r4}, b.1{r10}
-        add  r7, r13
-        adc  r6, r12
-        adc  r5, r11
-        adc  r4, r10
-        ; add e.1{r4}, d.1{r0}
-        add  r7, r3
-        adc  r6, r2
-        adc  r5, r1
-        adc  r4, r0
-        ; move t.12.1{r8}, e.1{r4}
-        ld   r11, r7
-        ld   r10, r6
-        ld   r9, r5
-        ld   r8, r4
-        ; and t.12.1{r8}, 2147483647
-        and  r8, #%7f
-        ; shiftright t.13.1{r4}, 31
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        ; add t.11.1{r8}, t.13.1{r4}
-        add  r11, r7
-        adc  r10, r6
-        adc  r9, r5
-        adc  r8, r4
-        ; addrof a.14.1{r4}, __random__
-        ld   r4, #hi(var_0)
-        ld   r5, #lo(var_0)
-        ; store [a.14.1{r4}], t.11.1{r8}
-        lde  @rr4, r8
-        incw r4
-        lde  @rr4, r9
-        incw r4
-        lde  @rr4, r10
-        incw r4
-        lde  @rr4, r11
-        add  r5, #3
-        adc  r4, #0
-        ; 15:9 return __random__
-        ; move t.16.1{r0}, t.16.1{r8}
-        ld   r0, r8
-        ld   r1, r9
-        ld   r2, r10
-        ld   r3, r11
-        ; restore clobbered non-volatile registers
-        pop  r13
-        pop  r12
-        pop  r11
-        pop  r10
-        pop  r9
-        pop  r8
-        ret
-
         ; i16 rowColumnToCell@i16@i16
         ; arg row (i16): r0
         ; arg column (i16): r2
@@ -498,8 +56,8 @@ getCell_Pi16_Pi16:
         ; call t.4.1{r0} = rowColumnToCell@i16@i16[param.row{r0}, param.column{r2}] -> i16
         call rowColumnToCell_Pi16_Pi16
         ; addrof t.3.1{r2}, field
-        ld   r2, #hi(var_1)
-        ld   r3, #lo(var_1)
+        ld   r2, #hi(var_0)
+        ld   r3, #lo(var_0)
         ; add t.3.2{r2}, t.4.1{r0}
         add  r3, r1
         adc  r2, r0
@@ -655,8 +213,8 @@ setCell_Pi16_Pi16_Pu8:
         ; call t.4.1{r0} = rowColumnToCell@i16@i16[param.row{r0}, param.column{r2}] -> i16
         call rowColumnToCell_Pi16_Pi16
         ; addrof t.3.1{r2}, field
-        ld   r2, #hi(var_1)
-        ld   r3, #lo(var_1)
+        ld   r2, #hi(var_0)
+        ld   r3, #lo(var_0)
         ; add t.3.2{r2}, t.4.1{r0}
         add  r3, r1
         adc  r2, r0
@@ -1589,13 +1147,18 @@ initField_Pi16_Pi16:
         jr   for__27
 
 for__27__body:
-        ; call t.6.1{r0} = random[] -> i32
-        call random
-        ; mod t.5.1{r0}, 20
-        Not supported yet: mul/div/mod for i32
-        ; cast row.1{r0}(i16), t.5.1{r0}(i32)
-        ld   r0, r2
-        ld   r1, r3
+        ; call t.5.1{r0} = random16[] -> i16
+        call random16
+        ; mod row.1{r0}, 20
+        ld   %12, r0
+        ld   %13, r1
+        ld   %14, #%00
+        ld   %15, #%14
+        srp  #%10
+        call %011F ; mod
+        srp  #%20
+        ld   r0, %12
+        ld   r1, %13
         ; addrof memVarAddr{r14}, row.1
         ld   r14, SPH
         ld   r15, SPL
@@ -1606,18 +1169,21 @@ for__27__body:
         incw r14
         lde  @rr14, r1
         decw r14
-        ; call t.8.1{r0} = random[] -> i32
-        call random
-        ; move t.7.1{r2}, t.8.1{r0}
-        ld   r5, r3
-        ld   r4, r2
+        ; call t.6.1{r0} = random16[] -> i16
+        call random16
+        ; move column.1{r2}, t.6.1{r0}
         ld   r3, r1
         ld   r2, r0
-        ; mod t.7.1{r2}, 40
-        Not supported yet: mul/div/mod for i32
-        ; cast column.1{r2}(i16), t.7.1{r2}(i32)
-        ld   r2, r4
-        ld   r3, r5
+        ; mod column.1{r2}, 40
+        ld   %12, r2
+        ld   %13, r3
+        ld   %14, #%00
+        ld   %15, #%28
+        srp  #%10
+        call %011F ; mod
+        srp  #%20
+        ld   r2, %12
+        ld   r3, %13
         ; addrof memVarAddr{r14}, column.1
         ld   r14, SPH
         ld   r15, SPL
@@ -1639,18 +1205,18 @@ for__27__body:
         incw r14
         lde  r1, @rr14
         decw r14
-        ; move t.10.1{r2}, row.1{r0}
+        ; move t.8.1{r2}, row.1{r0}
         ld   r3, r1
         ld   r2, r0
-        ; sub t.10.1{r2}, param.curr_r{r8}
+        ; sub t.8.1{r2}, param.curr_r{r8}
         sub  r3, r9
         sbc  r2, r8
-        ; move t.10.1{r0}, t.10.1{r2}
+        ; move t.8.1{r0}, t.8.1{r2}
         ld   r0, r2
         ld   r1, r3
-        ; call t.9.1{r0} = abs@i16[t.10.1{r0}] -> i16
+        ; call t.7.1{r0} = abs@i16[t.8.1{r0}] -> i16
         call abs_Pi16
-        ; branch t.9.1{r0} gt 1: if_28_then
+        ; branch t.7.1{r0} gt 1: if_28_then
         cp   r0, #%00
         jr   gt, if__28__then
         jr   ne, .gt21
@@ -1667,15 +1233,15 @@ for__27__body:
         incw r14
         lde  r3, @rr14
         decw r14
-        ; move t.12.1{r0}, column.1{r2}
+        ; move t.10.1{r0}, column.1{r2}
         ld   r0, r2
         ld   r1, r3
-        ; sub t.12.1{r0}, param.curr_c{r10}
+        ; sub t.10.1{r0}, param.curr_c{r10}
         sub  r1, r11
         sbc  r0, r10
-        ; call t.11.1{r0} = abs@i16[t.12.1{r0}] -> i16
+        ; call t.9.1{r0} = abs@i16[t.10.1{r0}] -> i16
         call abs_Pi16
-        ; branch t.11.1{r0} lteq 1: for_27_continue, if_28_then
+        ; branch t.9.1{r0} lteq 1: for_27_continue, if_28_then
         cp   r0, #%00
         jr   lt, for__27__continue
         jr   ne, .lt22
@@ -2041,26 +1607,6 @@ main:
         push r11
         push r12
         push r13
-        ; begin initialize global variables
-        ; const t.6.1{r8}, 0
-        ld   r8, #%00
-        ld   r9, #%00
-        ld   r10, #%00
-        ld   r11, #%00
-        ; addrof a.7.1{r12}, __random__
-        ld   r12, #hi(var_0)
-        ld   r13, #lo(var_0)
-        ; store [a.7.1{r12}], t.6.1{r8}
-        lde  @rr12, r8
-        incw r12
-        lde  @rr12, r9
-        incw r12
-        lde  @rr12, r10
-        incw r12
-        lde  @rr12, r11
-        add  r13, #3
-        adc  r12, #0
-        ; end initialize global variables
         ; const arg.0.0{r0}, 7439742
         ld   r0, #%00
         ld   r1, #%71
@@ -2086,19 +1632,19 @@ main:
         ld   r3, #%00
         ; call setCursor@i16@i16[arg.2.0{r0}, arg.2.1{r2}]
         call setCursor_Pi16_Pi16
-        ; const t.8.1{r0}, [string-1]
+        ; const t.6.1{r0}, [string-1]
         ld   r0, #hi(string_1)
         ld   r1, #lo(string_1)
-        ; call printString@@u8[t.8.1{r0}]
+        ; call printString@@u8[t.6.1{r0}]
         call printString_P_Pu8
         ; 221:2 while true
         jr   while__37
 
 if__38__then:
         ; 224:4 if printLeft([])
-        ; call t.9.1{r0} = printLeft[] -> bool
+        ; call t.7.1{r0} = printLeft[] -> bool
         call printLeft
-        ; branch t.9.1{r0} notequals 0: if_39_then, if_38_end
+        ; branch t.7.1{r0} notequals 0: if_39_then, if_38_end
         cp   r0, #%00
         jr   ne, if__39__then
 if__38__end:
@@ -2125,10 +1671,10 @@ if__38__end:
         jr   if__42__then
 
 if__41__then:
-        ; add t.12.1{r11}, 20
+        ; add t.10.1{r11}, 20
         add  r12, #%14
         adc  r11, #%00
-        ; sub t.11.1{r11}, 1
+        ; sub t.9.1{r11}, 1
         sub  r12, #%01
         sbc  r11, #%00
         ; mod curr_r.4{r11}, 20
@@ -2152,7 +1698,7 @@ if__42__else:
         jr   if__43__then
 
 if__42__then:
-        ; add t.13.1{r11}, 1
+        ; add t.11.1{r11}, 1
         add  r12, #%01
         adc  r11, #%00
         ; mod curr_r.5{r11}, 20
@@ -2176,10 +1722,10 @@ if__43__else:
         jr   if__44__then
 
 if__43__then:
-        ; add t.15.1{r9}, 40
+        ; add t.13.1{r9}, 40
         add  r10, #%28
         adc  r9, #%00
-        ; sub t.14.1{r9}, 1
+        ; sub t.12.1{r9}, 1
         sub  r10, #%01
         sbc  r9, #%00
         ; mod curr_c.4{r9}, 40
@@ -2203,7 +1749,7 @@ if__44__else:
         jr   if__45__then
 
 if__44__then:
-        ; add t.16.1{r9}, 1
+        ; add t.14.1{r9}, 1
         add  r10, #%01
         adc  r9, #%00
         ; mod curr_c.5{r9}, 40
@@ -2250,9 +1796,9 @@ if__46__then:
         ; move cell.1{r13}, cell.1{r0}
         ld   r13, r0
         ; 255:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=255:17]])
-        ; call t.17.1{r0} = isOpen@u8[cell.1{r0}] -> bool
+        ; call t.15.1{r0} = isOpen@u8[cell.1{r0}] -> bool
         call isOpen_Pu8
-        ; branch t.17.1{r0} notequals 0: while_37, if_47_then
+        ; branch t.15.1{r0} notequals 0: while_37, if_47_then
         cp   r0, #%00
         jr   ne, while__37
         jr   if__47__then
@@ -2297,14 +1843,14 @@ if__49__end:
         ; move cell.3{r13}, cell.3{r0}
         ld   r13, r0
         ; 267:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=267:16]])
-        ; call t.18.1{r0} = isOpen@u8[cell.3{r0}] -> bool
+        ; call t.16.1{r0} = isOpen@u8[cell.3{r0}] -> bool
         call isOpen_Pu8
-        ; branch t.18.1{r0} notequals 0: if_50_end
+        ; branch t.16.1{r0} notequals 0: if_50_end
         cp   r0, #%00
         jr   ne, if__50__end
-        ; move t.19.1{r4}, cell.3{r13}
+        ; move t.17.1{r4}, cell.3{r13}
         ld   r4, r13
-        ; or t.19.1{r4}, 2
+        ; or t.17.1{r4}, 2
         or  r4, #%02
         ; move curr_r.2{r0}, curr_r.2{r11}
         ld   r0, r11
@@ -2312,15 +1858,15 @@ if__49__end:
         ; move curr_c.2{r2}, curr_c.2{r9}
         ld   r2, r9
         ld   r3, r10
-        ; call setCell@i16@i16@u8[curr_r.2{r0}, curr_c.2{r2}, t.19.1{r4}]
+        ; call setCell@i16@i16@u8[curr_r.2{r0}, curr_c.2{r2}, t.17.1{r4}]
         call setCell_Pi16_Pi16_Pu8
 if__50__end:
         ; 270:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=270:15]])
         ; move cell.3{r0}, cell.3{r13}
         ld   r0, r13
-        ; call t.20.1{r0} = isBomb@u8[cell.3{r0}] -> bool
+        ; call t.18.1{r0} = isBomb@u8[cell.3{r0}] -> bool
         call isBomb_Pu8
-        ; branch t.20.1{r0} notequals 0: if_51_then
+        ; branch t.18.1{r0} notequals 0: if_51_then
         cp   r0, #%00
         jr   ne, if__51__then
         ; move curr_r.2{r0}, curr_r.2{r11}
@@ -2347,10 +1893,10 @@ while__37:
         jr   if__38__then
 
 if__39__then:
-        ; const t.10.1{r0}, [string-2]
+        ; const t.8.1{r0}, [string-2]
         ld   r0, #hi(string_2)
         ld   r1, #lo(string_2)
-        ; call printString@@u8[t.10.1{r0}]
+        ; call printString@@u8[t.8.1{r0}]
         call printString_P_Pu8
         jr   main__ret
 
@@ -2363,10 +1909,10 @@ if__51__then:
         ld   r3, r10
         ; call printField@i16@i16[curr_r.2{r0}, curr_c.2{r2}]
         call printField_Pi16_Pi16
-        ; const t.21.1{r0}, [string-3]
+        ; const t.19.1{r0}, [string-3]
         ld   r0, #hi(string_3)
         ld   r1, #lo(string_3)
-        ; call printString@@u8[t.21.1{r0}]
+        ; call printString@@u8[t.19.1{r0}]
         call printString_P_Pu8
 main__ret:
         ; restore clobbered non-volatile registers
@@ -2500,11 +2046,31 @@ getChar:
         ld   r1, %13
         ret
 
-        ; variable 0: __random__ (i32/4)
+        ; void initRandom@i32
+initRandom_Pi32:
+        ld   %74, r0
+        ld   %75, r1
+        ld   %76, r2
+        ld   %77, r3
+        ld   r0, #%F7
+        ld   r1, #%A8
+        ld   r2, #%74
+        ld   r3, #4
+.1:
+        ldei @rr0, @r2
+        djnz r3, .1
+        ret
+
+        ; i16 random16
+random16:
+        call %0836
+        ld   r0, %74
+        ld   r1, %75
+        and  r0, #%7f
+        ret
+
+        ; variable 0: field[] (u8*/1600)
 var_0:
-        .data %00 %00 %00 %00
-        ; variable 1: field[] (u8*/1600)
-var_1:
         .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
         .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
         .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
