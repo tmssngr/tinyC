@@ -235,7 +235,7 @@ _random:
         mov eax, esi
         ; add tmp.__random__{r0}, tmp.__random__{r0}, t.11{r1}
         add eax, edi
-        ; 15:9 return __random__
+        ; 16:9 return __random__
         ; addrof memVarAddr{r9}, __random__
         lea r12, [var_0]
         ; store [memVarAddr{r9}], tmp.__random__{r0}
@@ -251,7 +251,7 @@ _random:
         ; u8 randomU8
 _randomU8:
         sub rsp, 8
-        ; 19:10 return (u8)
+        ; 53:10 return (u8)
         ; call t.1{r0} = random[] -> i32
         call _random
         ; cast t.0{r0}(u8), t.1{r0}(i32)
