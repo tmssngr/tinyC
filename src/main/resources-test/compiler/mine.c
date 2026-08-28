@@ -173,8 +173,8 @@ void clearField() {
 
 void initField(i16 curr_r, i16 curr_c) {
 	for (i16 bombs = bombCount; bombs > 0; bombs -= 1) {
-		i16 row = (random() % height) as i16;
-		i16 column = (random() % width) as i16;
+		i16 row = random16() % height;
+		i16 column = random16() % width;
 		if (abs(row    - curr_r) > 1 ||
 		    abs(column - curr_c) > 1) {
 			setCell(row, column, maskBomb);
