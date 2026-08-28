@@ -1,3 +1,4 @@
+#ifdef X86_64
 i32 __random__ = 0
 const __random__a = 48271
 
@@ -14,6 +15,46 @@ i32 random() {
 	__random__ = (e & 0x7fffffff) + (e >> 31)
 	return __random__
 }
+
+i16 random16() {
+	return random() as i16 & 0x7FFF
+}
+#endif
+
+#ifdef Z8
+void initRandom(i32 salt) asm {
+	"ld   %74, r0"
+	"ld   %75, r1"
+	"ld   %76, r2"
+	"ld   %77, r3"
+	"ld   r0, #%F7"
+	"ld   r1, #%A8"
+	"ld   r2, #%74"
+	"ld   r3, #4"
+".1:"
+	"ldei @rr0, @r2"
+	"djnz r3, .1"
+	"ret"
+}
+
+i32 random() asm {
+	"call %0836"
+	"ld   r0, %74"
+	"ld   r1, %75"
+	"call %0836"
+	"ld   r2, %74"
+	"ld   r3, %75"
+	"ret"
+}
+
+i16 random16() asm {
+	"call %0836"
+	"ld   r0, %74"
+	"ld   r1, %75"
+	"and  r0, #%7f"
+	"ret"
+}
+#endif
 
 u8 randomU8() {
 	return random() as u8
