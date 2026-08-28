@@ -2,51 +2,14 @@
  Local variables
 	arg 0: number (u8/1)
 
-@initRandom@i32:
- Local variables
-	arg 0: salt (i32/4)
-	; 5 pc
-	addrof memVarAddr{r14}, __random__
-	store [memVarAddr{r14}], tmp.__random__{r0}
-
-@random:
-	; 27 pc
-	addrof memVarAddr{r14}, __random__
-	load tmp.__random__{r0}, [memVarAddr{r14}]
-	move r{r4}, tmp.__random__{r0}
-	move t.5{r8}, r{r4}
-	and t.5{r8}, t.5{r8}, 524287
-	mul b{r8}, b{r8}, 48271
-	shiftright t.6{r4}, t.6{r4}, 15
-	mul c{r4}, c{r4}, 48271
-	move t.7{r0}, c{r4}
-	and t.7{r0}, t.7{r0}, 65535
-	shiftleft d{r0}, d{r0}, 15
-	shiftright t.9{r4}, t.9{r4}, 16
-	add t.8{r4}, t.8{r4}, b{r8}
-	add e{r4}, e{r4}, d{r0}
-	move t.10{r8}, e{r4}
-	and t.10{r8}, t.10{r8}, 2147483647
-	shiftright t.11{r4}, t.11{r4}, 31
-	move tmp.__random__{r0}, t.10{r8}
-	add tmp.__random__{r0}, tmp.__random__{r0}, t.11{r4}
-	; 15:9 return __random__
-	addrof memVarAddr{r14}, __random__
-	store [memVarAddr{r14}], tmp.__random__{r0}
-
 @randomU8:
 	; 2 pc
-	; 19:10 return (u8)
+	; 53:10 return (u8)
 	call t.1{r0} = random[] -> i32
 	cast t.0{r0}(u8), t.1{r0}(i32)
 
 @main:
-	; 12 pc
-	; begin initialize global variables
-	const tmp.__random__{r8}, 0
-	; end initialize global variables
-	addrof memVarAddr{r14}, __random__
-	store [memVarAddr{r14}], tmp.__random__{r8}
+	; 7 pc
 	const arg.0.0{r0}, 7439742
 	call initRandom@i32[arg.0.0{r0}]
 	const i{r8}, 0
@@ -60,6 +23,19 @@
 	lt t.2{r0}, i{r8}, 50
 	branch t.2{r0}, true, @for_1_body, @main_ret
 
-Global variables
-	0: __random__ (i32/4)
+@initRandom@i32:
+	ld   %70, r0
+	ld   %71, r1
+	ld   %72, r2
+	ld   %73, r3
+	ret
+
+@random:
+	call %0836
+	ld   r0, %74
+	ld   r1, %75
+	call %0836
+	ld   r2, %74
+	ld   r3, %75
+	ret
 
