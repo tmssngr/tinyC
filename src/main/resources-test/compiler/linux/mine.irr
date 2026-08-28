@@ -112,9 +112,17 @@
 	shiftright t.11{r1}, t.11{r1}, 31
 	move tmp.__random__{r0}, t.10{r2}
 	add tmp.__random__{r0}, tmp.__random__{r0}, t.11{r1}
-	; 15:9 return __random__
+	; 16:9 return __random__
 	addrof memVarAddr{r9}, __random__
 	store [memVarAddr{r9}], tmp.__random__{r0}
+
+@random16:
+	; 4 pc
+	; 20:23 return (i16) & 32767
+	call t.2{r0} = random[] -> i32
+	cast t.1{r1}(i16), t.2{r0}(i32)
+	move t.0{r0}, t.1{r1}
+	and t.0{r0}, t.0{r0}, 32767
 
 @rowColumnToCell@i16@i16:
  Local variables
@@ -641,8 +649,8 @@
 	var 2: bombs (i16/2)
 	var 3: row (i16/2)
 	var 4: column (i16/2)
-	var 5: t.10 (bool/1)
-	; 121 pc
+	var 5: t.8 (bool/1)
+	; 120 pc
 	move curr_r{r8}, curr_r{r1}
 	addrof memVarAddr{r9}, curr_c
 	store [memVarAddr{r9}], curr_c{r2}
@@ -656,62 +664,61 @@
 @for_30_body:
 	addrof memVarAddr{r9}, bombs
 	store [memVarAddr{r9}], bombs{r0}
-	call t.7{r0} = random[] -> i32
-	move t.6{r1}, t.7{r0}
-	move t.6{r0}, t.6{r1}
-	mod t.6{r3}, t.6{r0}, 20
-	move t.6{r1}, t.6{r3}
-	cast row{r1}(i16), t.6{r1}(i32)
+	call t.6{r0} = random16[] -> i16
+	move row{r1}, t.6{r0}
+	move row{r0}, row{r1}
+	mod row{r3}, row{r0}, 20
+	move row{r1}, row{r3}
 	addrof memVarAddr{r9}, row
 	store [memVarAddr{r9}], row{r1}
-	call t.9{r0} = random[] -> i32
-	move t.8{r2}, t.9{r0}
-	move t.8{r0}, t.8{r2}
-	mod t.8{r3}, t.8{r0}, 40
-	move t.8{r2}, t.8{r3}
-	cast column{r2}(i16), t.8{r2}(i32)
+	call t.7{r0} = random16[] -> i16
+	move column{r2}, t.7{r0}
+	move column{r0}, column{r2}
+	mod column{r3}, column{r0}, 40
+	move column{r2}, column{r3}
 	addrof memVarAddr{r9}, column
 	store [memVarAddr{r9}], column{r2}
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
 	; 179:4 logic or
 	addrof memVarAddr{r9}, row
-	load row{r1}, [memVarAddr{r9}]
-	move t.12{r0}, row{r1}
+	load row{r0}, [memVarAddr{r9}]
+	move t.10{r1}, row{r0}
 	addrof memVarAddr{r9}, row
-	store [memVarAddr{r9}], row{r1}
-	sub t.12{r0}, t.12{r0}, curr_r{r8}
-	move t.12{r1}, t.12{r0}
-	call t.11{r0} = abs@i16[t.12{r1}] -> i16
-	gt t.10{r0}, t.11{r0}, 1
-	branch t.10{r0}, true, @no_critical_edge_8, @or_2nd_32
-	addrof memVarAddr{r9}, t.10
-	store [memVarAddr{r9}], t.10{r0}
+	store [memVarAddr{r9}], row{r0}
+	sub t.10{r1}, t.10{r1}, curr_r{r8}
+	call t.9{r0} = abs@i16[t.10{r1}] -> i16
+	gt t.8{r0}, t.9{r0}, 1
+	branch t.8{r0}, true, @no_critical_edge_8, @or_2nd_32
+	addrof memVarAddr{r9}, t.8
+	store [memVarAddr{r9}], t.8{r0}
 	jump @or_2nd_32
 @no_critical_edge_8:
-	addrof memVarAddr{r9}, t.10
-	store [memVarAddr{r9}], t.10{r0}
-	addrof memVarAddr{r9}, t.10
-	load t.10{r0}, [memVarAddr{r9}]
+	addrof memVarAddr{r9}, t.8
+	store [memVarAddr{r9}], t.8{r0}
+	addrof memVarAddr{r9}, t.8
+	load t.8{r0}, [memVarAddr{r9}]
 	jump @or_next_32
 @or_2nd_32:
 	addrof memVarAddr{r9}, column
-	load column{r2}, [memVarAddr{r9}]
-	move t.14{r1}, column{r2}
+	load column{r0}, [memVarAddr{r9}]
+	move t.12{r1}, column{r0}
 	addrof memVarAddr{r9}, column
-	store [memVarAddr{r9}], column{r2}
+	store [memVarAddr{r9}], column{r0}
 	addrof memVarAddr{r9}, curr_c
 	load curr_c{r2}, [memVarAddr{r9}]
-	sub t.14{r1}, t.14{r1}, curr_c{r2}
+	sub t.12{r1}, t.12{r1}, curr_c{r2}
 	addrof memVarAddr{r9}, curr_c
 	store [memVarAddr{r9}], curr_c{r2}
-	call t.13{r0} = abs@i16[t.14{r1}] -> i16
-	gt t.10{r0}, t.13{r0}, 1
+	call t.11{r0} = abs@i16[t.12{r1}] -> i16
+	gt t.8{r0}, t.11{r0}, 1
 @or_next_32:
-	branch t.10{r0}, false, @for_30_continue, @if_31_then
+	branch t.8{r0}, false, @for_30_continue, @if_31_then
 	addrof memVarAddr{r9}, row
-	load row{r1}, [memVarAddr{r9}]
+	load row{r0}, [memVarAddr{r9}]
+	move row{r1}, row{r0}
 	addrof memVarAddr{r9}, column
-	load column{r2}, [memVarAddr{r9}]
+	load column{r0}, [memVarAddr{r9}]
+	move column{r2}, column{r0}
 	const arg.4.2{r3}, 1
 	call setCell@i16@i16@u8[row{r1}, column{r2}, arg.4.2{r3}]
 @for_30_continue:

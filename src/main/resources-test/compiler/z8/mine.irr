@@ -15,38 +15,6 @@
 	; 139:9 return 0
 	const t.0{r0}, 0
 
-@initRandom@i32:
- Local variables
-	arg 0: salt (i32/4)
-	; 5 pc
-	addrof memVarAddr{r14}, __random__
-	store [memVarAddr{r14}], tmp.__random__{r0}
-
-@random:
-	; 27 pc
-	addrof memVarAddr{r14}, __random__
-	load tmp.__random__{r0}, [memVarAddr{r14}]
-	move r{r4}, tmp.__random__{r0}
-	move t.5{r8}, r{r4}
-	and t.5{r8}, t.5{r8}, 524287
-	mul b{r8}, b{r8}, 48271
-	shiftright t.6{r4}, t.6{r4}, 15
-	mul c{r4}, c{r4}, 48271
-	move t.7{r0}, c{r4}
-	and t.7{r0}, t.7{r0}, 65535
-	shiftleft d{r0}, d{r0}, 15
-	shiftright t.9{r4}, t.9{r4}, 16
-	add t.8{r4}, t.8{r4}, b{r8}
-	add e{r4}, e{r4}, d{r0}
-	move t.10{r8}, e{r4}
-	and t.10{r8}, t.10{r8}, 2147483647
-	shiftright t.11{r4}, t.11{r4}, 31
-	move tmp.__random__{r0}, t.10{r8}
-	add tmp.__random__{r0}, tmp.__random__{r0}, t.11{r4}
-	; 15:9 return __random__
-	addrof memVarAddr{r14}, __random__
-	store [memVarAddr{r14}], tmp.__random__{r0}
-
 @rowColumnToCell@i16@i16:
  Local variables
 	arg 0: row (i16/2)
@@ -456,46 +424,44 @@
 	arg 1: curr_c (i16/2)
 	var 2: row (i16/2)
 	var 3: column (i16/2)
-	; 65 pc
+	; 63 pc
 	move param.curr_r{r8}, curr_r{r0}
 	move param.curr_c{r10}, curr_c{r2}
 	const bombs{r12}, 40
 	; 175:2 for bombs > 0
 	jump @for_27
 @for_27_body:
-	call t.7{r0} = random[] -> i32
-	mod t.6{r0}, t.6{r0}, 20
-	cast row{r0}(i16), t.6{r0}(i32)
+	call t.6{r0} = random16[] -> i16
+	mod row{r0}, row{r0}, 20
 	addrof memVarAddr{r14}, row
 	store [memVarAddr{r14}], row{r0}
-	call t.9{r0} = random[] -> i32
-	move t.8{r2}, t.9{r0}
-	mod t.8{r2}, t.8{r2}, 40
-	cast column{r2}(i16), t.8{r2}(i32)
+	call t.7{r0} = random16[] -> i16
+	move column{r2}, t.7{r0}
+	mod column{r2}, column{r2}, 40
 	addrof memVarAddr{r14}, column
 	store [memVarAddr{r14}], column{r2}
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
 	; 179:4 logic or
 	addrof memVarAddr{r14}, row
 	load row{r0}, [memVarAddr{r14}]
-	move t.12{r2}, row{r0}
+	move t.10{r2}, row{r0}
 	addrof memVarAddr{r14}, row
 	store [memVarAddr{r14}], row{r0}
-	sub t.12{r2}, t.12{r2}, param.curr_r{r8}
-	move t.12{r0}, t.12{r2}
-	call t.11{r0} = abs@i16[t.12{r0}] -> i16
-	gt t.10{r14}, t.11{r0}, 1
-	branch t.10{r14}, true, @or_next_29, @or_2nd_29
+	sub t.10{r2}, t.10{r2}, param.curr_r{r8}
+	move t.10{r0}, t.10{r2}
+	call t.9{r0} = abs@i16[t.10{r0}] -> i16
+	gt t.8{r14}, t.9{r0}, 1
+	branch t.8{r14}, true, @or_next_29, @or_2nd_29
 	addrof memVarAddr{r14}, column
 	load column{r2}, [memVarAddr{r14}]
-	move t.14{r0}, column{r2}
+	move t.12{r0}, column{r2}
 	addrof memVarAddr{r14}, column
 	store [memVarAddr{r14}], column{r2}
-	sub t.14{r0}, t.14{r0}, param.curr_c{r10}
-	call t.13{r0} = abs@i16[t.14{r0}] -> i16
-	gt t.10{r14}, t.13{r0}, 1
+	sub t.12{r0}, t.12{r0}, param.curr_c{r10}
+	call t.11{r0} = abs@i16[t.12{r0}] -> i16
+	gt t.8{r14}, t.11{r0}, 1
 @or_next_29:
-	branch t.10{r14}, false, @for_27_continue, @if_28_then
+	branch t.8{r14}, false, @for_27_continue, @if_28_then
 	addrof memVarAddr{r14}, row
 	load row{r0}, [memVarAddr{r14}]
 	addrof memVarAddr{r14}, column
@@ -611,12 +577,7 @@
 @maybeRevealAround@i16@i16_ret:
 
 @main:
-	; 108 pc
-	; begin initialize global variables
-	const tmp.__random__{r8}, 0
-	; end initialize global variables
-	addrof memVarAddr{r14}, __random__
-	store [memVarAddr{r14}], tmp.__random__{r8}
+	; 103 pc
 	const arg.0.0{r0}, 7439742
 	call initRandom@i32[arg.0.0{r0}]
 	const needsInitialize{r8}, 1
@@ -870,9 +831,22 @@
 	djnz r6, .pop
 	ret
 
+@initRandom@i32:
+	ld   %70, r0
+	ld   %71, r1
+	ld   %72, r2
+	ld   %73, r3
+	ret
+
+@random16:
+	call %0836
+	ld   r0, %74
+	ld   r1, %75
+	and  r0, #%7f
+	ret
+
 Global variables
-	0: __random__ (i32/4)
-	1: field[] (u8*/1600)
+	0: field[] (u8*/1600)
 
 String literals
 	string lit 0 "|\n\0"
