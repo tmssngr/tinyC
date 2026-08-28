@@ -15,52 +15,6 @@
 	; 139:9 return 0
 	const r0, 0
 
-@initRandom@i32:
- Local variables
-	arg 0: salt (i32/4)
-	; 5 pc
-	addrof r14, __random__
-	store [r14], r0
-
-@random:
- Local variables
-	var 0: b (i32/4)
-	; 36 pc
-	addrof r14, __random__
-	load r0, [r14]
-	move r4, r0
-	const r8, 524287
-	move r0, r4
-	and r0, r0, r8
-	const r8, 48271
-	mul r0, r0, r8
-	const r8, 15
-	shiftright r4, r4, r8
-	const r8, 48271
-	mul r4, r4, r8
-	const r8, 65535
-	addrof r14, b
-	store [r14], r0
-	move r0, r4
-	and r0, r0, r8
-	const r8, 15
-	shiftleft r0, r0, r8
-	const r8, 16
-	shiftright r4, r4, r8
-	addrof r14, b
-	load r8, [r14]
-	add r4, r4, r8
-	add r4, r4, r0
-	const r8, 2147483647
-	move r0, r4
-	and r0, r0, r8
-	const r8, 31
-	shiftright r4, r4, r8
-	add r0, r0, r4
-	; 15:9 return __random__
-	addrof r14, __random__
-	store [r14], r0
-
 @rowColumnToCell@i16@i16:
  Local variables
 	arg 0: row (i16/2)
@@ -512,25 +466,24 @@
 	arg 1: curr_c (i16/2)
 	var 2: row (i16/2)
 	var 3: column (i16/2)
-	; 64 pc
+	; 63 pc
 	move r8, r0
 	move r10, r2
 	const r12, 40
 	; 175:2 for bombs > 0
 	jump @for_27
 @for_27_body:
-	call r0 = random[] -> i32
-	const r4, 20
-	mod r0, r0, r4
-	cast r0(i16), r0(i32)
+	call r0 = random16[] -> i16
+	const r2, 20
+	mod r0, r0, r2
 	addrof r14, row
 	store [r14], r0
-	call r0 = random[] -> i32
-	const r4, 40
-	mod r0, r0, r4
-	cast r2(i16), r0(i32)
+	call r0 = random16[] -> i16
+	const r2, 40
+	move r4, r0
+	mod r4, r4, r2
 	addrof r14, column
-	store [r14], r2
+	store [r14], r4
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
 	; 179:4 logic or
 	addrof r14, row
@@ -680,13 +633,8 @@
 @maybeRevealAround@i16@i16_ret:
 
 @main:
-	; 108 pc
-	; begin initialize global variables
-	const r8, 0
-	; end initialize global variables
+	; 103 pc
 	const r0, 7439742
-	addrof r14, __random__
-	store [r14], r8
 	call initRandom@i32[r0]
 	const r8, 1
 	call clearField[]
@@ -962,9 +910,22 @@
 	djnz r6, .pop
 	ret
 
+@initRandom@i32:
+	ld   %70, r0
+	ld   %71, r1
+	ld   %72, r2
+	ld   %73, r3
+	ret
+
+@random16:
+	call %0836
+	ld   r0, %74
+	ld   r1, %75
+	and  r0, #%7f
+	ret
+
 Global variables
-	0: __random__ (i32/4)
-	1: field[] (u8*/1600)
+	0: field[] (u8*/1600)
 
 String literals
 	string lit 0 "|\n\0"

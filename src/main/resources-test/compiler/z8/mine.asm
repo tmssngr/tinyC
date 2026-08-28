@@ -36,260 +36,6 @@ getChar:
         ld   r1, #%00
         ret
 
-        ; void initRandom@i32
-        ; arg salt (i32): r0
-initRandom_Pi32:
-        ; save clobbered non-volatile registers
-        push r8
-        push r9
-        push r10
-        push r11
-        push r12
-        push r13
-        push r14
-        push r15
-        ; addrof memVarAddr{r14}, __random__
-        ld   r14, #hi(var__0)
-        ld   r15, #lo(var__0)
-        ; store [memVarAddr{r14}], tmp.__random__{r0}
-        lde  @rr14, r0
-        incw r14
-        lde  @rr14, r1
-        incw r14
-        lde  @rr14, r2
-        incw r14
-        lde  @rr14, r3
-        ; restore clobbered non-volatile registers
-        pop  r15
-        pop  r14
-        pop  r13
-        pop  r12
-        pop  r11
-        pop  r10
-        pop  r9
-        pop  r8
-        ret
-
-        ; i32 random
-        ; var b (i32): SP+8
-random:
-        ; save clobbered non-volatile registers
-        push r8
-        push r9
-        push r10
-        push r11
-        push r12
-        push r13
-        push r14
-        push r15
-        ; addrof memVarAddr{r14}, __random__
-        ld   r14, #hi(var__0)
-        ld   r15, #lo(var__0)
-        ; load tmp.__random__{r0}, [memVarAddr{r14}]
-        lde  r0, @rr14
-        incw r14
-        lde  r1, @rr14
-        incw r14
-        lde  r2, @rr14
-        incw r14
-        lde  r3, @rr14
-        ; move r{r4}, tmp.__random__{r0}
-        ld   r4, r0
-        ld   r5, r1
-        ld   r6, r2
-        ld   r7, r3
-        ; const t.6{r8}, 524287
-        ld   r8, #%00
-        ld   r9, #%07
-        ld   r10, #%ff
-        ld   r11, #%ff
-        ; move t.5{r0}, r{r4}
-        ld   r0, r4
-        ld   r1, r5
-        ld   r2, r6
-        ld   r3, r7
-        ; and t.5{r0}, t.5{r0}, t.6{r8}
-        and  r0, r8
-        and  r1, r9
-        and  r2, r10
-        and  r3, r11
-        ; const t.7{r8}, 48271
-        ld   r8, #%00
-        ld   r9, #%00
-        ld   r10, #%bc
-        ld   r11, #%8f
-        ; mul b{r0}, b{r0}, t.7{r8}
-        Not supported yet: mul/div/mod for i32
-        ; const t.9{r8}, 15
-        ld   r8, #%00
-        ld   r9, #%00
-        ld   r10, #%00
-        ld   r11, #%0f
-        ; shiftright t.8{r4}, t.8{r4}, t.9{r8}
-        or   r11, r11
-        jr   z, .next1
-        push r11
-.shift1:
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        djnz r11, .shift1
-        pop  r11
-.next1:
-        ; const t.10{r8}, 48271
-        ld   r8, #%00
-        ld   r9, #%00
-        ld   r10, #%bc
-        ld   r11, #%8f
-        ; mul c{r4}, c{r4}, t.10{r8}
-        Not supported yet: mul/div/mod for i32
-        ; const t.12{r8}, 65535
-        ld   r8, #%00
-        ld   r9, #%00
-        ld   r10, #%ff
-        ld   r11, #%ff
-        ; addrof memVarAddr{r14}, b
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%08
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], b{r0}
-        lde  @rr14, r0
-        incw r14
-        lde  @rr14, r1
-        incw r14
-        lde  @rr14, r2
-        incw r14
-        lde  @rr14, r3
-        ; move t.11{r0}, c{r4}
-        ld   r0, r4
-        ld   r1, r5
-        ld   r2, r6
-        ld   r3, r7
-        ; and t.11{r0}, t.11{r0}, t.12{r8}
-        and  r0, r8
-        and  r1, r9
-        and  r2, r10
-        and  r3, r11
-        ; const t.13{r8}, 15
-        ld   r8, #%00
-        ld   r9, #%00
-        ld   r10, #%00
-        ld   r11, #%0f
-        ; shiftleft d{r0}, d{r0}, t.13{r8}
-        or   r11, r11
-        jr   z, .next2
-        push r11
-.shift2:
-        rcf
-        rlc  r3
-        rlc  r2
-        rlc  r1
-        rlc  r0
-        djnz r11, .shift2
-        pop  r11
-.next2:
-        ; const t.16{r8}, 16
-        ld   r8, #%00
-        ld   r9, #%00
-        ld   r10, #%00
-        ld   r11, #%10
-        ; shiftright t.15{r4}, t.15{r4}, t.16{r8}
-        or   r11, r11
-        jr   z, .next3
-        push r11
-.shift3:
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        djnz r11, .shift3
-        pop  r11
-.next3:
-        ; addrof memVarAddr{r14}, b
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%08
-        adc  r14, #%00
-        ; load b{r8}, [memVarAddr{r14}]
-        lde  r8, @rr14
-        incw r14
-        lde  r9, @rr14
-        incw r14
-        lde  r10, @rr14
-        incw r14
-        lde  r11, @rr14
-        ; add t.14{r4}, t.14{r4}, b{r8}
-        add  r7, r11
-        adc  r6, r10
-        adc  r5, r9
-        adc  r4, r8
-        ; add e{r4}, e{r4}, d{r0}
-        add  r7, r3
-        adc  r6, r2
-        adc  r5, r1
-        adc  r4, r0
-        ; const t.18{r8}, 2147483647
-        ld   r8, #%7f
-        ld   r9, #%ff
-        ld   r10, #%ff
-        ld   r11, #%ff
-        ; move t.17{r0}, e{r4}
-        ld   r0, r4
-        ld   r1, r5
-        ld   r2, r6
-        ld   r3, r7
-        ; and t.17{r0}, t.17{r0}, t.18{r8}
-        and  r0, r8
-        and  r1, r9
-        and  r2, r10
-        and  r3, r11
-        ; const t.20{r8}, 31
-        ld   r8, #%00
-        ld   r9, #%00
-        ld   r10, #%00
-        ld   r11, #%1f
-        ; shiftright t.19{r4}, t.19{r4}, t.20{r8}
-        or   r11, r11
-        jr   z, .next4
-        push r11
-.shift4:
-        sra  r4
-        rrc  r5
-        rrc  r6
-        rrc  r7
-        djnz r11, .shift4
-        pop  r11
-.next4:
-        ; add tmp.__random__{r0}, tmp.__random__{r0}, t.19{r4}
-        add  r3, r7
-        adc  r2, r6
-        adc  r1, r5
-        adc  r0, r4
-        ; 15:9 return __random__
-        ; addrof memVarAddr{r14}, __random__
-        ld   r14, #hi(var__0)
-        ld   r15, #lo(var__0)
-        ; store [memVarAddr{r14}], tmp.__random__{r0}
-        lde  @rr14, r0
-        incw r14
-        lde  @rr14, r1
-        incw r14
-        lde  @rr14, r2
-        incw r14
-        lde  @rr14, r3
-        ; restore clobbered non-volatile registers
-        pop  r15
-        pop  r14
-        pop  r13
-        pop  r12
-        pop  r11
-        pop  r10
-        pop  r9
-        pop  r8
-        ret
-
         ; i16 rowColumnToCell@i16@i16
         ; arg row (i16): r0
         ; arg column (i16): r2
@@ -327,8 +73,8 @@ getCell_Pi16_Pi16:
         ; call t.4{r0} = rowColumnToCell@i16@i16[param.row{r0}, param.column{r2}] -> i16
         call rowColumnToCell_Pi16_Pi16
         ; addrof t.3{r2}, [field]
-        ld   r2, #hi(var__1)
-        ld   r3, #lo(var__1)
+        ld   r2, #hi(var__0)
+        ld   r3, #lo(var__0)
         ; add t.3{r2}, t.3{r2}, t.4{r0}
         add  r3, r1
         adc  r2, r0
@@ -350,12 +96,12 @@ isBomb_Pu8:
         ld   r1, #%00
         ; notequals t.1{r0}, t.2{r2}, t.4{r1}
         cp   r2, r1
-        jr   ne, .ne5
+        jr   ne, .ne1
         ld   r0, #0  ; false
-        jr   .5
-.ne5:
+        jr   .1
+.ne1:
         ld   r0, #1
-.5:
+.1:
         ret
 
         ; bool isOpen@u8
@@ -372,12 +118,12 @@ isOpen_Pu8:
         ld   r1, #%00
         ; notequals t.1{r0}, t.2{r2}, t.4{r1}
         cp   r2, r1
-        jr   ne, .ne6
+        jr   ne, .ne2
         ld   r0, #0  ; false
-        jr   .6
-.ne6:
+        jr   .2
+.ne2:
         ld   r0, #1
-.6:
+.2:
         ret
 
         ; bool isFlag@u8
@@ -394,12 +140,12 @@ isFlag_Pu8:
         ld   r1, #%00
         ; notequals t.1{r0}, t.2{r2}, t.4{r1}
         cp   r2, r1
-        jr   ne, .ne7
+        jr   ne, .ne3
         ld   r0, #0  ; false
-        jr   .7
-.ne7:
+        jr   .3
+.ne3:
         ld   r0, #1
-.7:
+.3:
         ret
 
         ; bool checkCellBounds@i16@i16
@@ -415,16 +161,16 @@ checkCellBounds_Pi16_Pi16:
         ld   r5, #%00
         ; gteq t.2{r4}, param.row{r0}, t.3{r4}
         cp   r0, r4
-        jr   ge, .true8
-        jr   ne, .false8
+        jr   ge, .true4
+        jr   ne, .false4
         cp   r1, r5
-        jr   ult, .false8
-.true8:
+        jr   ult, .false4
+.true4:
         ld   r4, #1
-        jr   .8
-.false8:
+        jr   .4
+.false4:
         ld   r4, #0
-.8:
+.4:
         ; branch t.2{r4}, false, @and_next_3, @and_2nd_3
         or   r4, r4
         jr   z, and__next__3
@@ -433,16 +179,16 @@ checkCellBounds_Pi16_Pi16:
         ld   r5, #%14
         ; lt t.2{r4}, param.row{r0}, t.4{r4}
         cp   r0, r4
-        jr   lt, .true9
-        jr   ne, .false9
+        jr   lt, .true5
+        jr   ne, .false5
         cp   r1, r5
-        jr   uge, .false9
-.true9:
+        jr   uge, .false5
+.true5:
         ld   r4, #1
-        jr   .9
-.false9:
+        jr   .5
+.false5:
         ld   r4, #0
-.9:
+.5:
 and__next__3:
         ; branch t.2{r4}, false, @and_next_2, @and_2nd_2
         or   r4, r4
@@ -452,16 +198,16 @@ and__next__3:
         ld   r5, #%00
         ; gteq t.2{r4}, param.column{r2}, t.5{r4}
         cp   r2, r4
-        jr   ge, .true10
-        jr   ne, .false10
+        jr   ge, .true6
+        jr   ne, .false6
         cp   r3, r5
-        jr   ult, .false10
-.true10:
+        jr   ult, .false6
+.true6:
         ld   r4, #1
-        jr   .10
-.false10:
+        jr   .6
+.false6:
         ld   r4, #0
-.10:
+.6:
 and__next__2:
         ; branch t.2{r4}, false, @and_next_1, @and_2nd_1
         or   r4, r4
@@ -471,16 +217,16 @@ and__next__2:
         ld   r5, #%28
         ; lt t.2{r4}, param.column{r2}, t.6{r4}
         cp   r2, r4
-        jr   lt, .true11
-        jr   ne, .false11
+        jr   lt, .true7
+        jr   ne, .false7
         cp   r3, r5
-        jr   uge, .false11
-.true11:
+        jr   uge, .false7
+.true7:
         ld   r4, #1
-        jr   .11
-.false11:
+        jr   .7
+.false7:
         ld   r4, #0
-.11:
+.7:
 and__next__1:
         ; move t.2{r0}, t.2{r4}
         ld   r0, r4
@@ -498,8 +244,8 @@ setCell_Pi16_Pi16_Pu8:
         ; call t.4{r0} = rowColumnToCell@i16@i16[param.row{r0}, param.column{r2}] -> i16
         call rowColumnToCell_Pi16_Pi16
         ; addrof t.3{r2}, [field]
-        ld   r2, #hi(var__1)
-        ld   r3, #lo(var__1)
+        ld   r2, #hi(var__0)
+        ld   r3, #lo(var__0)
         ; add t.3{r2}, t.3{r2}, t.4{r0}
         add  r3, r1
         adc  r2, r0
@@ -677,16 +423,16 @@ for__5:
         ld   r2, #%01
         ; lteq t.10{r1}, dc{r3}, t.11{r1}
         cp   r3, r1
-        jr   le, .true12
-        jr   ne, .false12
+        jr   le, .true8
+        jr   ne, .false8
         cp   r4, r2
-        jr   ugt, .false12
-.true12:
+        jr   ugt, .false8
+.true8:
         ld   r1, #1
-        jr   .12
-.false12:
+        jr   .8
+.false8:
         ld   r1, #0
-.12:
+.8:
         ; branch t.10{r1}, true, @for_5_body, @for_4_continue
         or   r1, r1
         jr   nz, for__5__body
@@ -702,16 +448,16 @@ for__4:
         ld   r2, #%01
         ; lteq t.8{r1}, dr{r13}, t.9{r1}
         cp   r13, r1
-        jr   le, .true13
-        jr   ne, .false13
+        jr   le, .true9
+        jr   ne, .false9
         cp   r14, r2
-        jr   ugt, .false13
-.true13:
+        jr   ugt, .false9
+.true9:
         ld   r1, #1
-        jr   .13
-.false13:
+        jr   .9
+.false9:
         ld   r1, #0
-.13:
+.9:
         ; branch t.8{r1}, true, @for_4_body, @for_4_break
         or   r1, r1
         jr   nz, for__4__body
@@ -738,28 +484,28 @@ getSpacer_Pi16_Pi16_Pi16_Pi16:
         ; 62:2 if rowCursor == row
         ; equals t.4{r1}, param.rowCursor{r4}, param.row{r0}
         cp   r4, r0
-        jr   ne, .ne14
+        jr   ne, .ne10
         cp   r5, r1
-        jr   ne, .ne14
+        jr   ne, .ne10
         ld   r1, #1  ; true
-        jr   .14
-.ne14:
+        jr   .10
+.ne10:
         ld   r1, #0
-.14:
+.10:
         ; branch t.4{r1}, false, @if_8_end, @if_8_then
         or   r1, r1
         jr   z, if__8__end
         ; 63:3 if columnCursor == column
         ; equals t.5{r1}, param.columnCursor{r6}, param.column{r2}
         cp   r6, r2
-        jr   ne, .ne15
+        jr   ne, .ne11
         cp   r7, r3
-        jr   ne, .ne15
+        jr   ne, .ne11
         ld   r1, #1  ; true
-        jr   .15
-.ne15:
+        jr   .11
+.ne11:
         ld   r1, #0
-.15:
+.11:
         ; branch t.5{r1}, true, @if_9_then, @if_9_end
         or   r1, r1
         jr   nz, if__9__then
@@ -775,14 +521,14 @@ getSpacer_Pi16_Pi16_Pi16_Pi16:
         sbc  r1, r4
         ; equals t.7{r1}, param.columnCursor{r6}, t.8{r1}
         cp   r6, r1
-        jr   ne, .ne16
+        jr   ne, .ne12
         cp   r7, r2
-        jr   ne, .ne16
+        jr   ne, .ne12
         ld   r1, #1  ; true
-        jr   .16
-.ne16:
+        jr   .12
+.ne12:
         ld   r1, #0
-.16:
+.12:
         ; branch t.7{r1}, false, @if_8_end, @if_10_then
         or   r1, r1
         jr   z, if__8__end
@@ -881,13 +627,13 @@ if__12__else:
         ld   r8, #%00
         ; gt t.7{r8}, count{r0}, t.8{r8}
         cp   r0, r8
-        jr   ule, .false17
-.true17:
+        jr   ule, .false13
+.true13:
         ld   r8, #1
-        jr   .17
-.false17:
+        jr   .13
+.false13:
         ld   r8, #0
-.17:
+.13:
         ; branch t.7{r8}, false, @if_13_else, @if_13_then
         or   r8, r8
         jr   z, if__13__else
@@ -1013,16 +759,16 @@ for__16:
         ld   r7, #%28
         ; lt t.12{r6}, column{r14}, t.13{r6}
         cp   r14, r6
-        jr   lt, .true18
-        jr   ne, .false18
+        jr   lt, .true14
+        jr   ne, .false14
         cp   r15, r7
-        jr   uge, .false18
-.true18:
+        jr   uge, .false14
+.true14:
         ld   r6, #1
-        jr   .18
-.false18:
+        jr   .14
+.false14:
         ld   r6, #0
-.18:
+.14:
         ; branch t.12{r6}, true, @for_16_body, @for_16_break
         or   r6, r6
         jr   nz, for__16__body
@@ -1059,16 +805,16 @@ for__15:
         ld   r1, #%14
         ; lt t.9{r0}, row{r12}, t.10{r0}
         cp   r12, r0
-        jr   lt, .true19
-        jr   ne, .false19
+        jr   lt, .true15
+        jr   ne, .false15
         cp   r13, r1
-        jr   uge, .false19
-.true19:
+        jr   uge, .false15
+.true15:
         ld   r0, #1
-        jr   .19
-.false19:
+        jr   .15
+.false15:
         ld   r0, #0
-.19:
+.15:
         ; branch t.9{r0}, true, @for_15_body, @printField@i16@i16_ret
         or   r0, r0
         jr   nz, for__15__body
@@ -1112,16 +858,16 @@ for__17:
         ld   r1, #%00
         ; gt t.1{r0}, param.i{r8}, t.2{r0}
         cp   r8, r0
-        jr   gt, .true20
-        jr   ne, .false20
+        jr   gt, .true16
+        jr   ne, .false16
         cp   r9, r1
-        jr   ule, .false20
-.true20:
+        jr   ule, .false16
+.true16:
         ld   r0, #1
-        jr   .20
-.false20:
+        jr   .16
+.false16:
         ld   r0, #0
-.20:
+.16:
         ; branch t.1{r0}, true, @for_17_body, @printSpaces@i16_ret
         or   r0, r0
         jr   nz, for__17__body
@@ -1141,16 +887,16 @@ getDigitCount_Pi16:
         ld   r4, #%00
         ; lt t.2{r3}, param.value{r0}, t.3{r3}
         cp   r0, r3
-        jr   lt, .true21
-        jr   ne, .false21
+        jr   lt, .true17
+        jr   ne, .false17
         cp   r1, r4
-        jr   uge, .false21
-.true21:
+        jr   uge, .false17
+.true17:
         ld   r3, #1
-        jr   .21
-.false21:
+        jr   .17
+.false17:
         ld   r3, #0
-.21:
+.17:
         ; branch t.2{r3}, false, @while_19, @if_18_then
         or   r3, r3
         jr   z, while__19
@@ -1184,14 +930,14 @@ while__19:
         ld   r4, #%00
         ; equals t.6{r3}, param.value{r0}, t.7{r3}
         cp   r0, r3
-        jr   ne, .ne22
+        jr   ne, .ne18
         cp   r1, r4
-        jr   ne, .ne22
+        jr   ne, .ne18
         ld   r3, #1  ; true
-        jr   .22
-.ne22:
+        jr   .18
+.ne18:
         ld   r3, #0
-.22:
+.18:
         ; branch t.6{r3}, false, @while_19, @while_19_break
         or   r3, r3
         jr   z, while__19
@@ -1245,12 +991,12 @@ for__22__body:
         ld   r2, #%00
         ; equals t.8{r2}, t.9{r3}, t.11{r2}
         cp   r3, r2
-        jr   ne, .ne23
+        jr   ne, .ne19
         ld   r2, #1  ; true
-        jr   .23
-.ne23:
+        jr   .19
+.ne19:
         ld   r2, #0
-.23:
+.19:
         ; branch t.8{r2}, false, @for_22_continue, @if_23_then
         or   r2, r2
         jr   z, for__22__continue
@@ -1273,16 +1019,16 @@ for__22:
         ld   r3, #%28
         ; lt t.6{r2}, c{r12}, t.7{r2}
         cp   r12, r2
-        jr   lt, .true24
-        jr   ne, .false24
+        jr   lt, .true20
+        jr   ne, .false20
         cp   r13, r3
-        jr   uge, .false24
-.true24:
+        jr   uge, .false20
+.true20:
         ld   r2, #1
-        jr   .24
-.false24:
+        jr   .20
+.false20:
         ld   r2, #0
-.24:
+.20:
         ; branch t.6{r2}, true, @for_22_body, @for_21_continue
         or   r2, r2
         jr   nz, for__22__body
@@ -1298,16 +1044,16 @@ for__21:
         ld   r3, #%14
         ; lt t.4{r2}, r{r10}, t.5{r2}
         cp   r10, r2
-        jr   lt, .true25
-        jr   ne, .false25
+        jr   lt, .true21
+        jr   ne, .false21
         cp   r11, r3
-        jr   uge, .false25
-.true25:
+        jr   uge, .false21
+.true21:
         ld   r2, #1
-        jr   .25
-.false25:
+        jr   .21
+.false21:
         ld   r2, #0
-.25:
+.21:
         ; branch t.4{r2}, true, @for_21_body, @for_21_break
         or   r2, r2
         jr   nz, for__21__body
@@ -1378,14 +1124,14 @@ printLeft:
         ld   r2, #%00
         ; equals t.8{r0}, count{r8}, t.9{r1}
         cp   r8, r1
-        jr   ne, .ne26
+        jr   ne, .ne22
         cp   r9, r2
-        jr   ne, .ne26
+        jr   ne, .ne22
         ld   r0, #1  ; true
-        jr   .26
-.ne26:
+        jr   .22
+.ne22:
         ld   r0, #0
-.26:
+.22:
         ; restore clobbered non-volatile registers
         pop  r13
         pop  r12
@@ -1407,16 +1153,16 @@ abs_Pi16:
         ld   r5, #%00
         ; lt t.1{r4}, param.a{r2}, t.2{r4}
         cp   r2, r4
-        jr   lt, .true27
-        jr   ne, .false27
+        jr   lt, .true23
+        jr   ne, .false23
         cp   r3, r5
-        jr   uge, .false27
-.true27:
+        jr   uge, .false23
+.true23:
         ld   r4, #1
-        jr   .27
-.false27:
+        jr   .23
+.false23:
         ld   r4, #0
-.27:
+.23:
         ; branch t.1{r4}, true, @if_24_then, @if_24_end
         or   r4, r4
         jr   nz, if__24__then
@@ -1481,16 +1227,16 @@ for__26:
         ld   r1, #%28
         ; lt t.4{r0}, c{r10}, t.5{r0}
         cp   r10, r0
-        jr   lt, .true28
-        jr   ne, .false28
+        jr   lt, .true24
+        jr   ne, .false24
         cp   r11, r1
-        jr   uge, .false28
-.true28:
+        jr   uge, .false24
+.true24:
         ld   r0, #1
-        jr   .28
-.false28:
+        jr   .24
+.false24:
         ld   r0, #0
-.28:
+.24:
         ; branch t.4{r0}, true, @for_26_body, @for_25_continue
         or   r0, r0
         jr   nz, for__26__body
@@ -1506,16 +1252,16 @@ for__25:
         ld   r1, #%14
         ; lt t.2{r0}, r{r8}, t.3{r0}
         cp   r8, r0
-        jr   lt, .true29
-        jr   ne, .false29
+        jr   lt, .true25
+        jr   ne, .false25
         cp   r9, r1
-        jr   uge, .false29
-.true29:
+        jr   uge, .false25
+.true25:
         ld   r0, #1
-        jr   .29
-.false29:
+        jr   .25
+.false25:
         ld   r0, #0
-.29:
+.25:
         ; branch t.2{r0}, true, @for_25_body, @clearField_ret
         or   r0, r0
         jr   nz, for__25__body
@@ -1554,18 +1300,21 @@ initField_Pi16_Pi16:
         jr   for__27
 
 for__27__body:
-        ; call t.8{r0} = random[] -> i32
-        call random
-        ; const t.9{r4}, 20
-        ld   r4, #%00
-        ld   r5, #%00
-        ld   r6, #%00
-        ld   r7, #%14
-        ; mod t.7{r0}, t.7{r0}, t.9{r4}
-        Not supported yet: mul/div/mod for i32
-        ; cast row{r0}(i16), t.7{r0}(i32)
-        ld   r0, r2
-        ld   r1, r3
+        ; call t.7{r0} = random16[] -> i16
+        call random16
+        ; const t.8{r2}, 20
+        ld   r2, #%00
+        ld   r3, #%14
+        ; mod row{r0}, row{r0}, t.8{r2}
+        ld   %12, r0
+        ld   %13, r1
+        ld   %14, r2
+        ld   %15, r3
+        srp  #%10
+        call %011F ; mod
+        srp  #%20
+        ld   r0, %12
+        ld   r1, %13
         ; addrof memVarAddr{r14}, row
         ld   r14, SPH
         ld   r15, SPL
@@ -1575,27 +1324,33 @@ for__27__body:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
-        ; call t.11{r0} = random[] -> i32
-        call random
-        ; const t.12{r4}, 40
-        ld   r4, #%00
-        ld   r5, #%00
-        ld   r6, #%00
-        ld   r7, #%28
-        ; mod t.10{r0}, t.10{r0}, t.12{r4}
-        Not supported yet: mul/div/mod for i32
-        ; cast column{r2}(i16), t.10{r0}(i32)
-        ld   r2, r2
-        ld   r3, r3
+        ; call t.9{r0} = random16[] -> i16
+        call random16
+        ; const t.10{r2}, 40
+        ld   r2, #%00
+        ld   r3, #%28
+        ; move column{r4}, t.9{r0}
+        ld   r4, r0
+        ld   r5, r1
+        ; mod column{r4}, column{r4}, t.10{r2}
+        ld   %12, r4
+        ld   %13, r5
+        ld   %14, r2
+        ld   %15, r3
+        srp  #%10
+        call %011F ; mod
+        srp  #%20
+        ld   r4, %12
+        ld   r5, %13
         ; addrof memVarAddr{r14}, column
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%0a
         adc  r14, #%00
-        ; store [memVarAddr{r14}], column{r2}
-        lde  @rr14, r2
+        ; store [memVarAddr{r14}], column{r4}
+        lde  @rr14, r4
         incw r14
-        lde  @rr14, r3
+        lde  @rr14, r5
         ; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
         ; 179:4 logic or
         ; addrof memVarAddr{r14}, row
@@ -1607,7 +1362,7 @@ for__27__body:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
-        ; move t.15{r2}, row{r0}
+        ; move t.13{r2}, row{r0}
         ld   r2, r0
         ld   r3, r1
         ; addrof memVarAddr{r14}, row
@@ -1619,30 +1374,30 @@ for__27__body:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
-        ; sub t.15{r2}, t.15{r2}, param.curr_r{r8}
+        ; sub t.13{r2}, t.13{r2}, param.curr_r{r8}
         sub  r3, r9
         sbc  r2, r8
-        ; move t.15{r0}, t.15{r2}
+        ; move t.13{r0}, t.13{r2}
         ld   r0, r2
         ld   r1, r3
-        ; call t.14{r0} = abs@i16[t.15{r0}] -> i16
+        ; call t.12{r0} = abs@i16[t.13{r0}] -> i16
         call abs_Pi16
-        ; const t.16{r2}, 1
+        ; const t.14{r2}, 1
         ld   r2, #%00
         ld   r3, #%01
-        ; gt t.13{r14}, t.14{r0}, t.16{r2}
+        ; gt t.11{r14}, t.12{r0}, t.14{r2}
         cp   r0, r2
-        jr   gt, .true30
-        jr   ne, .false30
+        jr   gt, .true26
+        jr   ne, .false26
         cp   r1, r3
-        jr   ule, .false30
-.true30:
+        jr   ule, .false26
+.true26:
         ld   r14, #1
-        jr   .30
-.false30:
+        jr   .26
+.false26:
         ld   r14, #0
-.30:
-        ; branch t.13{r14}, true, @or_next_29, @or_2nd_29
+.26:
+        ; branch t.11{r14}, true, @or_next_29, @or_2nd_29
         or   r14, r14
         jr   nz, or__next__29
         ; addrof memVarAddr{r14}, column
@@ -1654,7 +1409,7 @@ for__27__body:
         lde  r2, @rr14
         incw r14
         lde  r3, @rr14
-        ; move t.18{r0}, column{r2}
+        ; move t.16{r0}, column{r2}
         ld   r0, r2
         ld   r1, r3
         ; addrof memVarAddr{r14}, column
@@ -1666,31 +1421,31 @@ for__27__body:
         lde  @rr14, r2
         incw r14
         lde  @rr14, r3
-        ; sub t.18{r0}, t.18{r0}, param.curr_c{r10}
+        ; sub t.16{r0}, t.16{r0}, param.curr_c{r10}
         sub  r1, r11
         sbc  r0, r10
-        ; call t.17{r0} = abs@i16[t.18{r0}] -> i16
+        ; call t.15{r0} = abs@i16[t.16{r0}] -> i16
         call abs_Pi16
-        ; const t.19{r5}, 1
+        ; const t.17{r5}, 1
         ld   r5, #%00
         ld   r6, #%01
-        ; gt t.13{r14}, t.17{r0}, t.19{r5}
+        ; gt t.11{r14}, t.15{r0}, t.17{r5}
         cp   r0, r5
-        jr   gt, .true31
-        jr   ne, .false31
+        jr   gt, .true27
+        jr   ne, .false27
         cp   r1, r6
-        jr   ule, .false31
-.true31:
+        jr   ule, .false27
+.true27:
         ld   r14, #1
-        jr   .31
-.false31:
+        jr   .27
+.false27:
         ld   r14, #0
-.31:
+.27:
 or__next__29:
-        ; branch t.13{r14}, false, @for_27_continue, @if_28_then
+        ; branch t.11{r14}, false, @for_27_continue, @if_28_then
         or   r14, r14
         jr   z, for__27__continue
-        ; const t.20{r4}, 1
+        ; const t.18{r4}, 1
         ld   r4, #%01
         ; addrof memVarAddr{r14}, row
         ld   r14, SPH
@@ -1710,13 +1465,13 @@ or__next__29:
         lde  r2, @rr14
         incw r14
         lde  r3, @rr14
-        ; call setCell@i16@i16@u8[row{r0}, column{r2}, t.20{r4}]
+        ; call setCell@i16@i16@u8[row{r0}, column{r2}, t.18{r4}]
         call setCell_Pi16_Pi16_Pu8
 for__27__continue:
-        ; const t.21{r0}, 1
+        ; const t.19{r0}, 1
         ld   r0, #%00
         ld   r1, #%01
-        ; sub bombs{r12}, bombs{r12}, t.21{r0}
+        ; sub bombs{r12}, bombs{r12}, t.19{r0}
         sub  r13, r1
         sbc  r12, r0
 for__27:
@@ -1725,16 +1480,16 @@ for__27:
         ld   r1, #%00
         ; gt t.5{r0}, bombs{r12}, t.6{r0}
         cp   r12, r0
-        jr   gt, .true32
-        jr   ne, .false32
+        jr   gt, .true28
+        jr   ne, .false28
         cp   r13, r1
-        jr   ule, .false32
-.true32:
+        jr   ule, .false28
+.true28:
         ld   r0, #1
-        jr   .32
-.false32:
+        jr   .28
+.false28:
         ld   r0, #0
-.32:
+.28:
         ; branch t.5{r0}, true, @for_27_body, @initField@i16@i16_ret
         or   r0, r0
         jr   nz, for__27__body
@@ -1784,12 +1539,12 @@ maybeRevealAround_Pi16_Pi16:
         ld   r12, #%00
         ; notequals t.7{r12}, t.8{r0}, t.9{r12}
         cp   r0, r12
-        jr   ne, .ne33
+        jr   ne, .ne29
         ld   r12, #0  ; false
-        jr   .33
-.ne33:
+        jr   .29
+.ne29:
         ld   r12, #1
-.33:
+.29:
         ; branch t.7{r12}, true, @maybeRevealAround@i16@i16_ret, @if_30_end
         or   r12, r12
         jr   nz, maybeRevealAround_Pi16_Pi16__ret
@@ -1844,14 +1599,14 @@ for__32__body:
         ld   r7, #%00
         ; equals t.14{r14}, dr{r12}, t.15{r6}
         cp   r12, r6
-        jr   ne, .ne34
+        jr   ne, .ne30
         cp   r13, r7
-        jr   ne, .ne34
+        jr   ne, .ne30
         ld   r14, #1  ; true
-        jr   .34
-.ne34:
+        jr   .30
+.ne30:
         ld   r14, #0
-.34:
+.30:
         ; branch t.14{r14}, false, @and_next_34, @and_2nd_34
         or   r14, r14
         jr   z, and__next__34
@@ -1860,14 +1615,14 @@ for__32__body:
         ld   r7, #%00
         ; equals t.14{r14}, dc{r4}, t.16{r6}
         cp   r4, r6
-        jr   ne, .ne35
+        jr   ne, .ne31
         cp   r5, r7
-        jr   ne, .ne35
+        jr   ne, .ne31
         ld   r14, #1  ; true
-        jr   .35
-.ne35:
+        jr   .31
+.ne31:
         ld   r14, #0
-.35:
+.31:
 and__next__34:
         ; branch t.14{r14}, false, @if_33_end, @no_critical_edge_17
         or   r14, r14
@@ -1932,9 +1687,9 @@ if__33__end:
         ; notlog t.17{r14}, t.18{r0}
         or   r0, r0
         ld   r14, #0  ; false
-        jr   nz, .36
+        jr   nz, .32
         ld   r14, #1  ; true
-.36:
+.32:
         ; branch t.17{r14}, true, @for_32_continue, @if_35_end
         or   r14, r14
         jr   nz, for__32__continue
@@ -2081,16 +1836,16 @@ for__32:
         ld   r1, #%01
         ; lteq t.12{r0}, dc{r2}, t.13{r0}
         cp   r2, r0
-        jr   le, .true37
-        jr   ne, .false37
+        jr   le, .true33
+        jr   ne, .false33
         cp   r3, r1
-        jr   ugt, .false37
-.true37:
+        jr   ugt, .false33
+.true33:
         ld   r0, #1
-        jr   .37
-.false37:
+        jr   .33
+.false33:
         ld   r0, #0
-.37:
+.33:
         ; branch t.12{r0}, true, @for_32_body, @for_31_continue
         or   r0, r0
         jr   nz, for__32__body
@@ -2106,16 +1861,16 @@ for__31:
         ld   r1, #%01
         ; lteq t.10{r0}, dr{r12}, t.11{r0}
         cp   r12, r0
-        jr   le, .true38
-        jr   ne, .false38
+        jr   le, .true34
+        jr   ne, .false34
         cp   r13, r1
-        jr   ugt, .false38
-.true38:
+        jr   ugt, .false34
+.true34:
         ld   r0, #1
-        jr   .38
-.false38:
+        jr   .34
+.false34:
         ld   r0, #0
-.38:
+.34:
         ; branch t.10{r0}, true, @for_31_body, @maybeRevealAround@i16@i16_ret
         or   r0, r0
         jr   nz, for__31__body
@@ -2141,30 +1896,11 @@ main:
         push r12
         push r13
         push r14
-        push r15
-        ; begin initialize global variables
-        ; const tmp.__random__{r8}, 0
-        ld   r8, #%00
-        ld   r9, #%00
-        ld   r10, #%00
-        ld   r11, #%00
-        ; end initialize global variables
         ; const t.6{r0}, 7439742
         ld   r0, #%00
         ld   r1, #%71
         ld   r2, #%85
         ld   r3, #%7e
-        ; addrof memVarAddr{r14}, __random__
-        ld   r14, #hi(var__0)
-        ld   r15, #lo(var__0)
-        ; store [memVarAddr{r14}], tmp.__random__{r8}
-        lde  @rr14, r8
-        incw r14
-        lde  @rr14, r9
-        incw r14
-        lde  @rr14, r10
-        incw r14
-        lde  @rr14, r11
         ; call initRandom@i32[t.6{r0}]
         call initRandom_Pi32
         ; const needsInitialize{r8}, 1
@@ -2196,14 +1932,14 @@ if__38__end:
         ld   r14, #%1b
         ; equals t.10{r13}, chr{r0}, t.11{r13}
         cp   r0, r13
-        jr   ne, .ne39
+        jr   ne, .ne35
         cp   r1, r14
-        jr   ne, .ne39
+        jr   ne, .ne35
         ld   r13, #1  ; true
-        jr   .39
-.ne39:
+        jr   .35
+.ne35:
         ld   r13, #0
-.39:
+.35:
         ; branch t.10{r13}, true, @main_ret, @if_40_end
         or   r13, r13
         jr   nz, main__ret
@@ -2213,14 +1949,14 @@ if__38__end:
         ld   r14, #%48
         ; equals t.12{r13}, chr{r0}, t.13{r13}
         cp   r0, r13
-        jr   ne, .ne40
+        jr   ne, .ne36
         cp   r1, r14
-        jr   ne, .ne40
+        jr   ne, .ne36
         ld   r13, #1  ; true
-        jr   .40
-.ne40:
+        jr   .36
+.ne36:
         ld   r13, #0
-.40:
+.36:
         ; branch t.12{r13}, true, @if_41_then, @if_41_else
         or   r13, r13
         jr   nz, if__41__then
@@ -2230,14 +1966,14 @@ if__38__end:
         ld   r14, #%50
         ; equals t.19{r13}, chr{r0}, t.20{r13}
         cp   r0, r13
-        jr   ne, .ne41
+        jr   ne, .ne37
         cp   r1, r14
-        jr   ne, .ne41
+        jr   ne, .ne37
         ld   r13, #1  ; true
-        jr   .41
-.ne41:
+        jr   .37
+.ne37:
         ld   r13, #0
-.41:
+.37:
         ; branch t.19{r13}, false, @if_42_else, @if_42_then
         or   r13, r13
         jr   z, if__42__else
@@ -2278,14 +2014,14 @@ if__42__else:
         ld   r14, #%4b
         ; equals t.24{r13}, chr{r0}, t.25{r13}
         cp   r0, r13
-        jr   ne, .ne42
+        jr   ne, .ne38
         cp   r1, r14
-        jr   ne, .ne42
+        jr   ne, .ne38
         ld   r13, #1  ; true
-        jr   .42
-.ne42:
+        jr   .38
+.ne38:
         ld   r13, #0
-.42:
+.38:
         ; branch t.24{r13}, false, @if_43_else, @if_43_then
         or   r13, r13
         jr   z, if__43__else
@@ -2320,14 +2056,14 @@ if__43__else:
         ld   r14, #%4b
         ; equals t.31{r13}, chr{r0}, t.32{r13}
         cp   r0, r13
-        jr   ne, .ne43
+        jr   ne, .ne39
         cp   r1, r14
-        jr   ne, .ne43
+        jr   ne, .ne39
         ld   r13, #1  ; true
-        jr   .43
-.ne43:
+        jr   .39
+.ne39:
         ld   r13, #0
-.43:
+.39:
         ; branch t.31{r13}, false, @if_44_else, @if_44_then
         or   r13, r13
         jr   z, if__44__else
@@ -2368,14 +2104,14 @@ if__44__else:
         ld   r14, #%4d
         ; equals t.38{r13}, chr{r0}, t.39{r13}
         cp   r0, r13
-        jr   ne, .ne44
+        jr   ne, .ne40
         cp   r1, r14
-        jr   ne, .ne44
+        jr   ne, .ne40
         ld   r13, #1  ; true
-        jr   .44
-.ne44:
+        jr   .40
+.ne40:
         ld   r13, #0
-.44:
+.40:
         ; branch t.38{r13}, false, @if_45_else, @if_45_then
         or   r13, r13
         jr   z, if__45__else
@@ -2416,14 +2152,14 @@ if__45__else:
         ld   r14, #%20
         ; equals t.43{r13}, chr{r0}, t.44{r13}
         cp   r0, r13
-        jr   ne, .ne45
+        jr   ne, .ne41
         cp   r1, r14
-        jr   ne, .ne45
+        jr   ne, .ne41
         ld   r13, #1  ; true
-        jr   .45
-.ne45:
+        jr   .41
+.ne41:
         ld   r13, #0
-.45:
+.41:
         ; branch t.43{r13}, false, @if_46_else, @if_46_then
         or   r13, r13
         jr   z, if__46__else
@@ -2458,14 +2194,14 @@ if__46__else:
         ld   r14, #%0d
         ; equals t.49{r13}, chr{r0}, t.50{r13}
         cp   r0, r13
-        jr   ne, .ne46
+        jr   ne, .ne42
         cp   r1, r14
-        jr   ne, .ne46
+        jr   ne, .ne42
         ld   r13, #1  ; true
-        jr   .46
-.ne46:
+        jr   .42
+.ne42:
         ld   r13, #0
-.46:
+.42:
         ; branch t.49{r13}, false, @while_37, @if_49_then
         or   r13, r13
         jr   z, while__37
@@ -2476,9 +2212,9 @@ if__46__then:
         ; notlog t.45{r13}, needsInitialize{r8}
         or   r8, r8
         ld   r13, #0  ; false
-        jr   nz, .47
+        jr   nz, .43
         ld   r13, #1  ; true
-.47:
+.43:
         ; branch t.45{r13}, false, @while_37, @if_47_then
         or   r13, r13
         jr   z, while__37
@@ -2509,9 +2245,9 @@ if__47__then:
         ; notlog t.46{r14}, t.47{r0}
         or   r0, r0
         ld   r14, #0  ; false
-        jr   nz, .48
+        jr   nz, .44
         ld   r14, #1  ; true
-.48:
+.44:
         ; branch t.46{r14}, false, @while_37, @if_48_then
         or   r14, r14
         jr   z, while__37
@@ -2566,9 +2302,9 @@ if__50__end:
         ; notlog t.51{r14}, t.52{r0}
         or   r0, r0
         ld   r14, #0  ; false
-        jr   nz, .49
+        jr   nz, .45
         ld   r14, #1  ; true
-.49:
+.45:
         ; branch t.51{r14}, false, @if_51_end, @if_51_then
         or   r14, r14
         jr   z, if__51__end
@@ -2616,9 +2352,9 @@ while__37:
         ; notlog t.7{r13}, needsInitialize{r8}
         or   r8, r8
         ld   r13, #0  ; false
-        jr   nz, .50
+        jr   nz, .46
         ld   r13, #1  ; true
-.50:
+.46:
         ; branch t.7{r13}, false, @if_38_end, @if_38_then
         or   r13, r13
         jr   z, if__38__end
@@ -2648,7 +2384,6 @@ if__52__then:
         call printString_P_Pu8
 main__ret:
         ; restore clobbered non-volatile registers
-        pop  r15
         pop  r14
         pop  r13
         pop  r12
@@ -2767,11 +2502,24 @@ printUint_Pi32:
         djnz r6, .pop
         ret
 
-        ; variable 0: __random__ (i32/4)
+        ; void initRandom@i32
+initRandom_Pi32:
+        ld   %70, r0
+        ld   %71, r1
+        ld   %72, r2
+        ld   %73, r3
+        ret
+
+        ; i16 random16
+random16:
+        call %0836
+        ld   r0, %74
+        ld   r1, %75
+        and  r0, #%7f
+        ret
+
+        ; variable 0: field[] (u8*/1600)
 var__0:
-        .data %00 %00 %00 %00
-        ; variable 1: field[] (u8*/1600)
-var__1:
         .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
         .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
         .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00

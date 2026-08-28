@@ -130,9 +130,18 @@
 	shiftright r1, r1, r4
 	move r0, r3
 	add r0, r0, r1
-	; 15:9 return __random__
+	; 16:9 return __random__
 	addrof r9, __random__
 	store [r9], r0
+
+@random16:
+	; 4 pc
+	; 20:23 return (i16) & 32767
+	call r0 = random[] -> i32
+	cast r1(i16), r0(i32)
+	const r2, 32767
+	move r0, r1
+	and r0, r0, r2
 
 @rowColumnToCell@i16@i16:
  Local variables
@@ -701,8 +710,8 @@
 	var 2: bombs (i16/2)
 	var 3: row (i16/2)
 	var 4: column (i16/2)
-	var 5: t.13 (bool/1)
-	; 121 pc
+	var 5: t.11 (bool/1)
+	; 120 pc
 	move r8, r1
 	addrof r9, curr_c
 	store [r9], r2
@@ -716,52 +725,49 @@
 @for_30_body:
 	addrof r9, bombs
 	store [r9], r1
-	call r0 = random[] -> i32
+	call r0 = random16[] -> i16
 	const r1, 20
 	move r2, r0
 	move r0, r2
 	mod r3, r0, r1
 	move r2, r3
-	cast r1(i16), r2(i32)
 	addrof r9, row
-	store [r9], r1
-	call r0 = random[] -> i32
+	store [r9], r2
+	call r0 = random16[] -> i16
 	const r2, 40
 	move r4, r0
 	move r0, r4
 	mod r3, r0, r2
 	move r4, r3
-	cast r2(i16), r4(i32)
 	addrof r9, column
-	store [r9], r2
+	store [r9], r4
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
 	; 179:4 logic or
 	addrof r9, row
-	load r1, [r9]
-	move r0, r1
-	addrof r9, row
-	store [r9], r1
-	sub r0, r0, r8
+	load r0, [r9]
 	move r1, r0
+	addrof r9, row
+	store [r9], r0
+	sub r1, r1, r8
 	call r0 = abs@i16[r1] -> i16
 	const r2, 1
 	gt r0, r0, r2
 	branch r0, true, @no_critical_edge_8, @or_2nd_32
-	addrof r9, t.13
+	addrof r9, t.11
 	store [r9], r0
 	jump @or_2nd_32
 @no_critical_edge_8:
-	addrof r9, t.13
+	addrof r9, t.11
 	store [r9], r0
-	addrof r9, t.13
+	addrof r9, t.11
 	load r0, [r9]
 	jump @or_next_32
 @or_2nd_32:
 	addrof r9, column
-	load r2, [r9]
-	move r1, r2
+	load r0, [r9]
+	move r1, r0
 	addrof r9, column
-	store [r9], r2
+	store [r9], r0
 	addrof r9, curr_c
 	load r2, [r9]
 	sub r1, r1, r2
@@ -774,9 +780,11 @@
 	branch r0, false, @for_30_continue, @if_31_then
 	const r3, 1
 	addrof r9, row
-	load r1, [r9]
+	load r0, [r9]
+	move r1, r0
 	addrof r9, column
-	load r2, [r9]
+	load r0, [r9]
+	move r2, r0
 	call setCell@i16@i16@u8[r1, r2, r3]
 @for_30_continue:
 	const r0, 1

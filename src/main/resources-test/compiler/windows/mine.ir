@@ -185,10 +185,27 @@
 	shiftright t.19, t.19, t.20
 	move __random__, t.17
 	add __random__, __random__, t.19
-	; 15:9 return __random__
+	; 16:9 return __random__
 	ret __random__
 	jump @random_ret
 @random_ret:
+
+@random16:
+ Local variables
+	var 0: t.0 (i16/2)
+	var 1: t.1 (i16/2)
+	var 2: t.2 (i32/4)
+	var 3: t.3 (i16/2)
+	; 26 pc
+	; 20:23 return (i16) & 32767
+	call t.2 = random[] -> i32
+	cast t.1(i16), t.2(i32)
+	const t.3, 32767
+	move t.0, t.1
+	and t.0, t.0, t.3
+	ret t.0
+	jump @random16_ret
+@random16_ret:
 
 @rowColumnToCell@i16@i16:
  Local variables
@@ -768,22 +785,20 @@
 	var 4: column (i16/2)
 	var 5: t.5 (bool/1)
 	var 6: t.6 (i16/2)
-	var 7: t.7 (i32/4)
-	var 8: t.8 (i32/4)
-	var 9: t.9 (i32/4)
-	var 10: t.10 (i32/4)
-	var 11: t.11 (i32/4)
-	var 12: t.12 (i32/4)
-	var 13: t.13 (bool/1)
+	var 7: t.7 (i16/2)
+	var 8: t.8 (i16/2)
+	var 9: t.9 (i16/2)
+	var 10: t.10 (i16/2)
+	var 11: t.11 (bool/1)
+	var 12: t.12 (i16/2)
+	var 13: t.13 (i16/2)
 	var 14: t.14 (i16/2)
 	var 15: t.15 (i16/2)
 	var 16: t.16 (i16/2)
 	var 17: t.17 (i16/2)
-	var 18: t.18 (i16/2)
+	var 18: t.18 (u8/1)
 	var 19: t.19 (i16/2)
-	var 20: t.20 (u8/1)
-	var 21: t.21 (i16/2)
-	; 135 pc
+	; 125 pc
 	const bombs, 40
 	; 175:2 for bombs > 0
 @for_30:
@@ -791,38 +806,36 @@
 	gt t.5, bombs, t.6
 	branch t.5, false, @initField@i16@i16_ret, @for_30_body
 @for_30_body:
-	call t.8 = random[] -> i32
-	const t.9, 20
-	move t.7, t.8
-	mod t.7, t.7, t.9
-	cast row(i16), t.7(i32)
-	call t.11 = random[] -> i32
-	const t.12, 40
-	move t.10, t.11
-	mod t.10, t.10, t.12
-	cast column(i16), t.10(i32)
+	call t.7 = random16[] -> i16
+	const t.8, 20
+	move row, t.7
+	mod row, row, t.8
+	call t.9 = random16[] -> i16
+	const t.10, 40
+	move column, t.9
+	mod column, column, t.10
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
 	; 179:4 logic or
-	move t.15, row
-	sub t.15, t.15, curr_r
-	call t.14 = abs@i16[t.15] -> i16
-	const t.16, 1
-	gt t.13, t.14, t.16
-	branch t.13, true, @or_next_32, @or_2nd_32
+	move t.13, row
+	sub t.13, t.13, curr_r
+	call t.12 = abs@i16[t.13] -> i16
+	const t.14, 1
+	gt t.11, t.12, t.14
+	branch t.11, true, @or_next_32, @or_2nd_32
 @or_2nd_32:
-	move t.18, column
-	sub t.18, t.18, curr_c
-	call t.17 = abs@i16[t.18] -> i16
-	const t.19, 1
-	gt t.13, t.17, t.19
+	move t.16, column
+	sub t.16, t.16, curr_c
+	call t.15 = abs@i16[t.16] -> i16
+	const t.17, 1
+	gt t.11, t.15, t.17
 @or_next_32:
-	branch t.13, false, @for_30_continue, @if_31_then
+	branch t.11, false, @for_30_continue, @if_31_then
 @if_31_then:
-	const t.20, 1
-	call setCell@i16@i16@u8[row, column, t.20]
+	const t.18, 1
+	call setCell@i16@i16@u8[row, column, t.18]
 @for_30_continue:
-	const t.21, 1
-	sub bombs, bombs, t.21
+	const t.19, 1
+	sub bombs, bombs, t.19
 	jump @for_30
 @initField@i16@i16_ret:
 
