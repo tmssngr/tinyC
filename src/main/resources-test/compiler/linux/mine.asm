@@ -249,7 +249,7 @@ _random:
         mov eax, esi
         ; add tmp.__random__{r0}, tmp.__random__{r0}, t.11{r1}
         add eax, edi
-        ; 15:9 return __random__
+        ; 16:9 return __random__
         ; addrof memVarAddr{r9}, __random__
         lea r12, [var_0]
         ; store [memVarAddr{r9}], tmp.__random__{r0}
@@ -259,6 +259,21 @@ _random:
         pop rbx
         pop r10
         pop r9
+        add rsp, 8
+        ret
+
+        ; i16 random16
+_random16:
+        sub rsp, 8
+        ; 20:23 return (i16) & 32767
+        ; call t.2{r0} = random[] -> i32
+        call _random
+        ; cast t.1{r1}(i16), t.2{r0}(i32)
+        mov di, ax
+        ; move t.0{r0}, t.1{r1}
+        mov ax, di
+        ; and t.0{r0}, t.0{r0}, 32767
+        and ax, 32767
         add rsp, 8
         ret
 
@@ -1240,38 +1255,36 @@ _for_30_body:
         lea r12, [rsp+36]
         ; store [memVarAddr{r9}], bombs{r0}
         mov [r12], ax
-        ; call t.6{r0} = random[] -> i32
-        call _random
-        ; move t.5{r1}, t.6{r0}
-        mov edi, eax
-        ; move t.5{r0}, t.5{r1}
-        mov eax, edi
-        ; mod t.5{r3}, t.5{r0}, 20
-        movsxd rax, eax
+        ; call t.5{r0} = random16[] -> i16
+        call _random16
+        ; move row{r1}, t.5{r0}
+        mov di, ax
+        ; move row{r0}, row{r1}
+        mov ax, di
+        ; mod row{r3}, row{r0}, 20
+        movsx rax, ax
         cqo
         mov rcx, 20
         idiv rcx
-        ; move t.5{r1}, t.5{r3}
-        mov edi, edx
-        ; cast row{r1}(i16), t.5{r1}(i32)
+        ; move row{r1}, row{r3}
+        mov di, dx
         ; addrof memVarAddr{r9}, row
         lea r12, [rsp+38]
         ; store [memVarAddr{r9}], row{r1}
         mov [r12], di
-        ; call t.8{r0} = random[] -> i32
-        call _random
-        ; move t.7{r2}, t.8{r0}
-        mov esi, eax
-        ; move t.7{r0}, t.7{r2}
-        mov eax, esi
-        ; mod t.7{r3}, t.7{r0}, 40
-        movsxd rax, eax
+        ; call t.6{r0} = random16[] -> i16
+        call _random16
+        ; move column{r2}, t.6{r0}
+        mov si, ax
+        ; move column{r0}, column{r2}
+        mov ax, si
+        ; mod column{r3}, column{r0}, 40
+        movsx rax, ax
         cqo
         mov rcx, 40
         idiv rcx
-        ; move t.7{r2}, t.7{r3}
-        mov esi, edx
-        ; cast column{r2}(i16), t.7{r2}(i32)
+        ; move column{r2}, column{r3}
+        mov si, dx
         ; addrof memVarAddr{r9}, column
         lea r12, [rsp+40]
         ; store [memVarAddr{r9}], column{r2}
@@ -1279,57 +1292,59 @@ _for_30_body:
         ; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
         ; addrof memVarAddr{r9}, row
         lea r12, [rsp+38]
-        ; load row{r1}, [memVarAddr{r9}]
-        mov di, [r12]
-        ; move t.10{r0}, row{r1}
-        mov ax, di
+        ; load row{r0}, [memVarAddr{r9}]
+        mov ax, [r12]
+        ; move t.8{r1}, row{r0}
+        mov di, ax
         ; addrof memVarAddr{r9}, row
         lea r12, [rsp+38]
-        ; store [memVarAddr{r9}], row{r1}
-        mov [r12], di
-        ; sub t.10{r0}, t.10{r0}, curr_r{r8}
-        sub ax, bx
-        ; move t.10{r1}, t.10{r0}
-        mov di, ax
-        ; call t.9{r0} = abs@i16[t.10{r1}] -> i16
+        ; store [memVarAddr{r9}], row{r0}
+        mov [r12], ax
+        ; sub t.8{r1}, t.8{r1}, curr_r{r8}
+        sub di, bx
+        ; call t.7{r0} = abs@i16[t.8{r1}] -> i16
         call _abs@i16
-        ; branch t.9{r0} gt 1: if_31_then, or_32
+        ; branch t.7{r0} gt 1: if_31_then, or_32
         cmp ax, 1
         jg _if_31_then
         ; addrof memVarAddr{r9}, column
         lea r12, [rsp+40]
-        ; load column{r2}, [memVarAddr{r9}]
-        mov si, [r12]
-        ; move t.12{r1}, column{r2}
-        mov di, si
+        ; load column{r0}, [memVarAddr{r9}]
+        mov ax, [r12]
+        ; move t.10{r1}, column{r0}
+        mov di, ax
         ; addrof memVarAddr{r9}, column
         lea r12, [rsp+40]
-        ; store [memVarAddr{r9}], column{r2}
-        mov [r12], si
+        ; store [memVarAddr{r9}], column{r0}
+        mov [r12], ax
         ; addrof memVarAddr{r9}, curr_c
         lea r12, [rsp+34]
         ; load curr_c{r2}, [memVarAddr{r9}]
         mov si, [r12]
-        ; sub t.12{r1}, t.12{r1}, curr_c{r2}
+        ; sub t.10{r1}, t.10{r1}, curr_c{r2}
         sub di, si
         ; addrof memVarAddr{r9}, curr_c
         lea r12, [rsp+34]
         ; store [memVarAddr{r9}], curr_c{r2}
         mov [r12], si
-        ; call t.11{r0} = abs@i16[t.12{r1}] -> i16
+        ; call t.9{r0} = abs@i16[t.10{r1}] -> i16
         call _abs@i16
-        ; branch t.11{r0} lteq 1: for_30_continue, if_31_then
+        ; branch t.9{r0} lteq 1: for_30_continue, if_31_then
         cmp ax, 1
         jle _for_30_continue
 _if_31_then:
         ; addrof memVarAddr{r9}, row
         lea r12, [rsp+38]
-        ; load row{r1}, [memVarAddr{r9}]
-        mov di, [r12]
+        ; load row{r0}, [memVarAddr{r9}]
+        mov ax, [r12]
+        ; move row{r1}, row{r0}
+        mov di, ax
         ; addrof memVarAddr{r9}, column
         lea r12, [rsp+40]
-        ; load column{r2}, [memVarAddr{r9}]
-        mov si, [r12]
+        ; load column{r0}, [memVarAddr{r9}]
+        mov ax, [r12]
+        ; move column{r2}, column{r0}
+        mov si, ax
         ; const arg.4.2{r3}, 1
         mov dl, 1
         ; call setCell@i16@i16@u8[row{r1}, column{r2}, arg.4.2{r3}]
