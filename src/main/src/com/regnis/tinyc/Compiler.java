@@ -7,6 +7,7 @@ import com.regnis.tinyc.ir.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.jetbrains.annotations.*;
 
@@ -211,6 +212,9 @@ public class Compiler {
 		final Process process = processBuilder.start();
 		final long stop = System.currentTimeMillis();
 		System.out.println(processBuilder.command().getFirst() + ": " + (stop - start) + "ms");
-		return process.waitFor();
+		if (!process.waitFor(5, TimeUnit.SECONDS)) {
+			process.destroy();
+		}
+		return process.exitValue();
 	}
 }
