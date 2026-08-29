@@ -57,6 +57,11 @@ public class CompilerTest {
 	}
 
 	@Test
+	public void testGlobalVars2() throws IOException, InterruptedException {
+		compileAndRun("global vars2.c");
+	}
+
+	@Test
 	public void testArrays() throws IOException, InterruptedException {
 		compileAndRun("arrays.c");
 	}
