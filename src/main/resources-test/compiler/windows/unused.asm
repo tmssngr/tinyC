@@ -12,39 +12,32 @@ section '.text' code readable executable
 start:
         ; alignment
         and rsp, -16
-        sub rsp, 8
-          call init
-        add rsp, 8
-          call @main
+        call init
+        call @main
         mov rcx, 0
         sub rsp, 0x20
-          call [ExitProcess]
+        call [ExitProcess]
 
         ; void unusedArg@u8
-        ;   rsp+8: arg a
+        ;   rsp+16: arg a
 @unusedArg@u8:
+        sub rsp, 8
+        add rsp, 8
         ret
 
         ; void main
-        ;   rsp+0: var t.0
 @main:
-        ; reserve space for local variables
-        sub rsp, 16
-        ; const t.0, 0
-        mov al, 0
-        lea rbx, [rsp+0]
-        mov [rbx], al
-        ; call unusedArg@u8[t.0]
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        push rbx
-          call @unusedArg@u8
+        sub rsp, 8
+        sub rsp, 32
+        ; const t.0{r1}, 0
+        mov cl, 0
+        ; call unusedArg@u8[t.0{r1}]
+        call @unusedArg@u8
+        add rsp, 32
         add rsp, 8
-        ; release space for local variables
-        add rsp, 16
         ret
 init:
-        sub rsp, 20h
+        sub rsp, 28h
           mov rcx, STD_IN_HANDLE
           call [GetStdHandle]
           ; handle in rax, 0 if invalid
@@ -62,7 +55,7 @@ init:
           ; handle in rax, 0 if invalid
           lea rcx, [hStdErr]
           mov qword [rcx], rax
-        add rsp, 20h
+        add rsp, 28h
         ret
 
 section '.data' data readable writeable
