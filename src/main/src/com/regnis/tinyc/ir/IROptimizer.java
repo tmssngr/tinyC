@@ -15,6 +15,7 @@ public class IROptimizer {
 		while (true) {
 			final List<IRInstruction> instructions = removeObsoleteLabelJump(initialInstructions);
 
+			removeJumpJump(instructions);
 			removeJumpLabel(instructions, false);
 			flipBranchLabel(instructions);
 			removeBranchJumpLabel(instructions);
@@ -55,6 +56,49 @@ public class IROptimizer {
 		}
 	}
 
+	static List<IRInstruction> removeObsoleteLabelJump(List<IRInstruction> instructions) {
+		final Map<String, String> oldToNewTarget = new HashMap<>();
+		final Set<String> obsoleteLabels = new HashSet<>();
+		IRInstruction prevInstruction = null;
+		for (IRInstruction instruction : instructions) {
+			if (prevInstruction instanceof IRLabel(String label)
+			    && instruction instanceof IRJump(String jumpTarget)) {
+				final String prev = oldToNewTarget.put(label, jumpTarget);
+				Utils.assertTrue(prev == null);
+				obsoleteLabels.add(label);
+			}
+			else if (prevInstruction instanceof IRLabel(String label1)
+			         && instruction instanceof IRLabel(String label2)) {
+				final String prev = oldToNewTarget.put(label1, label2);
+				Utils.assertTrue(prev == null);
+				obsoleteLabels.add(label1);
+			}
+			prevInstruction = instruction;
+		}
+
+		final List<IRInstruction> newInstructions = new ArrayList<>(instructions.size());
+		for (IRInstruction instruction : instructions) {
+			switch (instruction) {
+			case IRLabel(String label) -> {
+				if (!obsoleteLabels.contains(label)) {
+					newInstructions.add(instruction);
+				}
+			}
+			case IRJump(String target) -> {
+				final String newTarget = getNewTarget(target, oldToNewTarget);
+				newInstructions.add(new IRJump(newTarget));
+			}
+			case IRBranch branch -> {
+				final String newTarget = getNewTarget(branch.target(), oldToNewTarget);
+				final String newNextLabel = getNewTarget(branch.nextLabel(), oldToNewTarget);
+				newInstructions.add(new IRBranch(branch.conditionVar(), branch.jumpOnTrue(), newTarget, newNextLabel));
+			}
+			default -> newInstructions.add(instruction);
+			}
+		}
+		return newInstructions;
+	}
+
 	private static void removeJumpJump(List<IRInstruction> instructions) {
 		new Peephole2Optimization<>(instructions) {
 			@Override
@@ -70,6 +114,7 @@ public class IROptimizer {
 	private static void removeJumpLabel(List<IRInstruction> instructions, boolean ignoreJumpAfterRet) {
 		new Peephole2Optimization<>(instructions) {
 			private boolean skip;
+
 			@Override
 			protected void handle(IRInstruction item1, IRInstruction item2) {
 				if (skip) {
@@ -119,62 +164,6 @@ public class IROptimizer {
 				}
 			}
 		}.process();
-	}
-
-	private static List<IRInstruction> removeObsoleteLabelJump(List<IRInstruction> instructions) {
-		final Map<String, String> oldToNewTarget = new HashMap<>();
-		final Set<String> obsoleteLabels = new HashSet<>();
-		new Peephole2Optimization<>(instructions) {
-			@Override
-			protected void handle(IRInstruction item1, IRInstruction item2) {
-				if (item1 instanceof IRLabel(String label)
-				    && item2 instanceof IRJump(String jumpTarget)) {
-					final String prev = oldToNewTarget.put(label, jumpTarget);
-					Utils.assertTrue(prev == null);
-					obsoleteLabels.add(label);
-				}
-				else if (item1 instanceof IRLabel(String label1)
-				         && item2 instanceof IRLabel(String label2)) {
-					final String prev = oldToNewTarget.put(label1, label2);
-					Utils.assertTrue(prev == null);
-					obsoleteLabels.add(label1);
-				}
-			}
-		}.process();
-
-		final List<IRInstruction> newInstructions = new ArrayList<>(instructions.size());
-		boolean skipJump = false;
-		for (IRInstruction instruction : instructions) {
-			switch (instruction) {
-			case IRLabel(String label) -> {
-				if (obsoleteLabels.contains(label)) {
-					skipJump = true;
-					continue;
-				}
-
-				skipJump = false;
-			}
-			case IRJump(String target) -> {
-				if (skipJump) {
-					skipJump = false;
-					continue;
-				}
-
-				final String newTarget = getNewTarget(target, oldToNewTarget);
-				instruction = new IRJump(newTarget);
-			}
-			case IRBranch branch -> {
-				Utils.assertTrue(!skipJump);
-				final String newTarget = getNewTarget(branch.target(), oldToNewTarget);
-				final String newNextLabel = getNewTarget(branch.nextLabel(), oldToNewTarget);
-				instruction = new IRBranch(branch.conditionVar(), branch.jumpOnTrue(), newTarget, newNextLabel);
-			}
-			default -> Utils.assertTrue(!skipJump);
-			}
-
-			newInstructions.add(instruction);
-		}
-		return newInstructions;
 	}
 
 	@NotNull

@@ -455,7 +455,7 @@
 	var 8: t.8 (u8/1)
 	var 9: t.9 (u8/1)
 	var 10: t.10 (bool/1)
-	; 70 pc
+	; 71 pc
 	const chr, 46
 	; 74:2 if isOpen@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=74:13]])
 	call t.5 = isOpen@u8[cell] -> bool
@@ -480,6 +480,7 @@
 	jump @if_14_end
 @if_16_else:
 	const chr, 32
+	jump @if_14_end
 @if_14_else:
 	; 88:7 if isFlag@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=88:18]])
 	call t.10 = isFlag@u8[cell] -> bool
@@ -974,7 +975,7 @@
 	var 54: t.54 (u8/1)
 	var 55: t.55 (bool/1)
 	var 56: t.56 (u8*/8)
-	; 446 pc
+	; 448 pc
 	; begin initialize global variables
 	const __random__, 0
 	; end initialize global variables
@@ -1097,6 +1098,7 @@
 	const t.48, 4
 	xor cell, cell, t.48
 	call setCell@i16@i16@u8[curr_r, curr_c, cell]
+	jump @while_40
 @if_49_else:
 	; 262:8 if chr == 13
 	const t.50, 13
@@ -1130,6 +1132,7 @@
 	jump @main_ret
 @if_55_end:
 	call maybeRevealAround@i16@i16[curr_r, curr_c]
+	jump @while_40
 @main_ret:
 
 @printStringLength@@u8@i64:
