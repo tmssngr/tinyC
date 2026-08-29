@@ -64,8 +64,10 @@ public final class LSRegAlloc {
 	private final ControlFlowGraph cfg;
 	private final Map<String, LSIntervalFactory.Indices> blockToIndex;
 	private final IRCanBeRegister canBeRegister;
+	private final Iterator<Integer> blockStartsSorted;
 
 	private int pos;
+	private int currentBlockStart;
 
 	private LSRegAlloc(@NotNull Map<IRVar, LSInterval> varToInterval, int registerCount, ControlFlowGraph cfg, Map<String, LSIntervalFactory.Indices> blockToIndex, IRCanBeRegister canBeRegister) {
 		this.varToInterval = varToInterval;
@@ -73,6 +75,18 @@ public final class LSRegAlloc {
 		this.cfg = cfg;
 		this.blockToIndex = blockToIndex;
 		this.canBeRegister = canBeRegister;
+
+		final List<Integer> blockStartsSorted = new ArrayList<>(blockToIndex.size());
+		for (Map.Entry<String, LSIntervalFactory.Indices> entry : blockToIndex.entrySet()) {
+			final int start = entry.getValue().start();
+			// even numbers
+			Utils.assertTrue((start & 1) == 0);
+			blockStartsSorted.add(start);
+		}
+		blockStartsSorted.sort(Integer::compareTo);
+		// unique?
+		Utils.assertTrue(new HashSet<>(blockStartsSorted).size() == blockStartsSorted.size());
+		this.blockStartsSorted = blockStartsSorted.iterator();
 	}
 
 	private void processStackArguments() {
@@ -102,7 +116,13 @@ public final class LSRegAlloc {
 	}
 
 	private void processInstructions(List<IRInstruction> instructions) {
+		currentBlockStart = blockStartsSorted.next();
+		int nextBlockStart = blockStartsSorted.hasNext() ? blockStartsSorted.next() : Integer.MAX_VALUE;
 		for (IRInstruction instruction : instructions) {
+			if (pos == nextBlockStart) {
+				currentBlockStart = nextBlockStart;
+				nextBlockStart = blockStartsSorted.hasNext() ? blockStartsSorted.next() : Integer.MAX_VALUE;
+			}
 			processMoves();
 			processInstruction(instruction);
 			pos++;
@@ -215,11 +235,16 @@ public final class LSRegAlloc {
 			final IRVar var = entry.getKey();
 			final LSInterval interval = entry.getValue();
 			final Pair<IRVar, IRVar> transition = interval.getTransitionAt(pos, var);
-			if (transition != null) {
-				final IRVar from = transition.first();
-				final IRVar to = transition.second();
-				add(new IRMove(to, from));
+			if (transition == null) {
+				continue;
 			}
+
+			final IRVar from = transition.first();
+			final IRVar to = transition.second();
+			if (isRedundantStore(from, to, interval)) {
+				continue;
+			}
+			add(new IRMove(to, from));
 		}
 
 		final List<IRMove> moves = indexToMoves.get(pos);
@@ -228,6 +253,48 @@ public final class LSRegAlloc {
 				add(move);
 			}
 		}
+	}
+
+	private boolean isRedundantStore(IRVar from, IRVar to, LSInterval interval) {
+		if (from.scope() != VariableScope.register && to.scope() != VariableScope.function) {
+			return false;
+		}
+
+		for (LSInterval i = interval, prevInterval = null; i != null; prevInterval = i, i = i.getNextSplit()) {
+			if (i.register() >= 0) {
+				continue;
+			}
+			if (!i.contains(pos)) {
+				continue;
+			}
+			final List<LSRange> ranges = i.ranges();
+			final LSRange first = ranges.getFirst();
+			if (!first.contains(pos, false)) {
+				return false;
+			}
+			if (currentBlockStart > first.from()) {
+				return false;
+			}
+			if (prevInterval == null) {
+				return false;
+			}
+			if (prevInterval.getTo() < first.from()) {
+				return false;
+			}
+			Utils.assertTrue(prevInterval.register() == from.index());
+			LSUse useBefore = i.getUseBefore(pos);
+			if (useBefore == null) {
+				useBefore = prevInterval.getUseBefore(pos);
+				if (useBefore == null) {
+					return false;
+				}
+			}
+			if (useBefore.pos() < currentBlockStart) {
+				return false;
+			}
+			return !useBefore.write();
+		}
+		return false;
 	}
 
 	private IRVar sourceExpectReg(IRVar source) {
