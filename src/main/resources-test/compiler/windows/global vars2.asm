@@ -104,16 +104,19 @@ start:
         mov bl, 0
         ; end initialize global variables
         ; 12:2 while true
+        ; move global, tmp.global{r6}
+        lea r11, [var_0]
+        mov [r11], bl
         jmp @while_2
 @if_3_end:
         ; 19:3 if n < 2
-        ; const t.5{r0}, 2
-        mov al, 2
-        ; lt t.4{r7}, n{r7}, t.5{r0}
-        cmp r12b, al
-        setb r12b
-        ; branch t.4{r7}, false, @while_2, @if_4_then
-        or r12b, r12b
+        ; const t.5{r7}, 2
+        mov r12b, 2
+        ; lt t.4{r6}, n{r6}, t.5{r7}
+        cmp bl, r12b
+        setb bl
+        ; branch t.4{r6}, false, @while_2, @if_4_then
+        or bl, bl
         jz @while_2
         ; const t.6{r1}, [string-1]
         lea rcx, [string_1]
@@ -122,20 +125,17 @@ start:
 @while_2:
         ; const t.1{r1}, [string-0]
         lea rcx, [string_0]
-        ; move global, tmp.global{r6}
-        lea r11, [var_0]
-        mov [r11], bl
         ; call printString@@u8[t.1{r1}]
         call @printString@@u8
         ; call n{r0} = next[] -> u8
         call @next
-        ; move n{r7}, n{r0}
-        mov r12b, al
+        ; move n{r6}, n{r0}
+        mov bl, al
         ; 15:3 if n == 3
         ; const t.3{r0}, 3
         mov al, 3
-        ; equals t.2{r0}, n{r7}, t.3{r0}
-        cmp r12b, al
+        ; equals t.2{r0}, n{r6}, t.3{r0}
+        cmp bl, al
         sete al
         ; branch t.2{r0}, false, @if_3_end, @main_ret
         or al, al
