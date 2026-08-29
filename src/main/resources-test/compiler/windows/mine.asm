@@ -1615,7 +1615,6 @@ start:
         ; void main
         ;   rsp+48: var curr_r
         ;   rsp+50: var cell
-        ;   rsp+51: var cell
 @main:
         sub rsp, 8
         ; save clobbered non-volatile registers
@@ -1626,12 +1625,12 @@ start:
         ; const tmp.__random__{r6}, 0
         mov ebx, 0
         ; end initialize global variables
-        ; const t.6{r1}, 7439742
+        ; const t.5{r1}, 7439742
         mov ecx, 7439742
         ; move __random__, tmp.__random__{r6}
         lea r11, [var_0]
         mov [r11], ebx
-        ; call initRandom@i32[t.6{r1}]
+        ; call initRandom@i32[t.5{r1}]
         call @initRandom@i32
         ; const needsInitialize{r6}, 1
         mov bl, 1
@@ -1639,293 +1638,44 @@ start:
         call @clearField
         ; const curr_c{r7}, 20
         mov r12w, 20
-        ; const curr_r{r0}, 10
-        mov ax, 10
-        ; move curr_r, curr_r{r0}
+        ; const curr_r{r1}, 10
+        mov cx, 10
+        ; move curr_r, curr_r{r1}
         lea r11, [rsp+48]
-        mov [r11], ax
+        mov [r11], cx
         ; 218:2 while true
         jmp @while_40
 @if_41_then:
         ; 221:4 if printLeft([])
-        ; call t.8{r0} = printLeft[] -> bool
+        ; call t.7{r0} = printLeft[] -> bool
         call @printLeft
-        ; branch t.8{r0}, true, @if_42_then, @if_41_end
+        ; branch t.7{r0}, true, @main_ret, @if_41_end
         or al, al
-        jnz @if_42_then
+        jnz @main_ret
 @if_41_end:
         ; call chr{r0} = getChar[] -> i16
         call @getChar
-        ; move chr{r3}, chr{r0}
-        mov r8w, ax
-        ; 228:3 if chr == 27
-        ; const t.11{r4}, 27
-        mov r9w, 27
-        ; equals t.10{r4}, chr{r3}, t.11{r4}
-        cmp r8w, r9w
-        sete r9b
-        ; branch t.10{r4}, true, @main_ret, @if_43_end
-        or r9b, r9b
+        ; 227:3 if chr == 27
+        ; const t.9{r3}, 27
+        mov r8w, 27
+        ; equals t.8{r3}, chr{r0}, t.9{r3}
+        cmp ax, r8w
+        sete r8b
+        ; branch t.8{r3}, true, @main_ret, @if_43_end
+        or r8b, r8b
         jnz @main_ret
-        ; 233:3 if chr == -8120
-        ; const t.13{r4}, -8120
-        mov r9w, -8120
-        ; equals t.12{r4}, chr{r3}, t.13{r4}
-        cmp r8w, r9w
-        sete r9b
-        ; branch t.12{r4}, true, @if_44_then, @if_44_else
-        or r9b, r9b
-        jnz @if_44_then
-        ; 237:8 if chr == -8112
-        ; const t.20{r4}, -8112
-        mov r9w, -8112
-        ; equals t.19{r4}, chr{r3}, t.20{r4}
-        cmp r8w, r9w
-        sete r9b
-        ; branch t.19{r4}, false, @if_45_else, @if_45_then
-        or r9b, r9b
-        jz @if_45_else
-        jmp @if_45_then
-@if_44_then:
-        ; const t.16{r3}, 20
-        mov r8w, 20
-        ; move curr_r{r1}, curr_r
-        lea r11, [rsp+48]
-        mov cx, [r11]
-        ; move t.15{r4}, curr_r{r1}
-        mov r9w, cx
-        ; add t.15{r4}, t.15{r4}, t.16{r3}
-        add r9w, r8w
-        ; const t.17{r3}, 1
-        mov r8w, 1
-        ; sub t.14{r4}, t.14{r4}, t.17{r3}
-        sub r9w, r8w
-        ; const t.18{r3}, 20
-        mov r8w, 20
-        ; move curr_r{r1}, t.14{r4}
-        mov cx, r9w
-        ; move curr_r{r0}, curr_r{r1}
-        mov ax, cx
-        ; mod curr_r{r2}, curr_r{r0}, t.18{r3}
-        movsx rax, ax
-        movsx r8, r8w
-        cqo
-        idiv r8
-        ; move curr_r{r1}, curr_r{r2}
-        mov cx, dx
-        ; move curr_r, curr_r{r1}
-        lea r11, [rsp+48]
-        mov [r11], cx
-        jmp @while_40
-@if_45_else:
-        ; move curr_r{r1}, curr_r
-        lea r11, [rsp+48]
-        mov cx, [r11]
-        ; 241:8 if chr == -8117
-        ; const t.25{r4}, -8117
-        mov r9w, -8117
-        ; equals t.24{r4}, chr{r3}, t.25{r4}
-        cmp r8w, r9w
-        sete r9b
-        ; branch t.24{r4}, false, @if_46_else, @if_46_then
-        or r9b, r9b
-        jz @if_46_else
-        jmp @if_46_then
-@if_45_then:
-        ; move curr_r{r1}, curr_r
-        lea r11, [rsp+48]
-        mov cx, [r11]
-        ; const t.22{r3}, 1
-        mov r8w, 1
-        ; move t.21{r4}, curr_r{r1}
-        mov r9w, cx
-        ; add t.21{r4}, t.21{r4}, t.22{r3}
-        add r9w, r8w
-        ; const t.23{r3}, 20
-        mov r8w, 20
-        ; move curr_r{r1}, t.21{r4}
-        mov cx, r9w
-        ; move curr_r{r0}, curr_r{r1}
-        mov ax, cx
-        ; mod curr_r{r2}, curr_r{r0}, t.23{r3}
-        movsx rax, ax
-        movsx r8, r8w
-        cqo
-        idiv r8
-        ; move curr_r{r1}, curr_r{r2}
-        mov cx, dx
-        ; move curr_r, curr_r{r1}
-        lea r11, [rsp+48]
-        mov [r11], cx
-        jmp @while_40
-@if_46_else:
-        ; 245:8 if chr == -8117
-        ; const t.32{r4}, -8117
-        mov r9w, -8117
-        ; equals t.31{r4}, chr{r3}, t.32{r4}
-        cmp r8w, r9w
-        sete r9b
-        ; branch t.31{r4}, false, @if_47_else, @if_47_then
-        or r9b, r9b
-        jz @if_47_else
-        jmp @if_47_then
-@if_46_then:
-        ; const t.28{r3}, 40
-        mov r8w, 40
-        ; add t.27{r7}, t.27{r7}, t.28{r3}
-        add r12w, r8w
-        ; const t.29{r3}, 1
-        mov r8w, 1
-        ; sub t.26{r7}, t.26{r7}, t.29{r3}
-        sub r12w, r8w
-        ; const t.30{r3}, 40
-        mov r8w, 40
-        ; move curr_c{r0}, curr_c{r7}
-        mov ax, r12w
-        ; mod curr_c{r2}, curr_c{r0}, t.30{r3}
-        movsx rax, ax
-        movsx r8, r8w
-        cqo
-        idiv r8
-        ; move curr_c{r7}, curr_c{r2}
-        mov r12w, dx
-        ; move curr_r, curr_r{r1}
-        lea r11, [rsp+48]
-        mov [r11], cx
-        jmp @while_40
-@if_47_else:
-        ; 249:8 if chr == -8115
-        ; const t.39{r4}, -8115
-        mov r9w, -8115
-        ; equals t.38{r4}, chr{r3}, t.39{r4}
-        cmp r8w, r9w
-        sete r9b
-        ; branch t.38{r4}, false, @if_48_else, @if_48_then
-        or r9b, r9b
-        jz @if_48_else
-        jmp @if_48_then
-@if_47_then:
-        ; const t.35{r3}, 40
-        mov r8w, 40
-        ; add t.34{r7}, t.34{r7}, t.35{r3}
-        add r12w, r8w
-        ; const t.36{r3}, 1
-        mov r8w, 1
-        ; sub t.33{r7}, t.33{r7}, t.36{r3}
-        sub r12w, r8w
-        ; const t.37{r3}, 40
-        mov r8w, 40
-        ; move curr_c{r0}, curr_c{r7}
-        mov ax, r12w
-        ; mod curr_c{r2}, curr_c{r0}, t.37{r3}
-        movsx rax, ax
-        movsx r8, r8w
-        cqo
-        idiv r8
-        ; move curr_c{r7}, curr_c{r2}
-        mov r12w, dx
-        ; move curr_r, curr_r{r1}
-        lea r11, [rsp+48]
-        mov [r11], cx
-        jmp @while_40
-@if_48_else:
-        ; 253:8 if chr == 32
-        ; const t.44{r4}, 32
-        mov r9w, 32
-        ; equals t.43{r4}, chr{r3}, t.44{r4}
-        cmp r8w, r9w
-        sete r9b
-        ; branch t.43{r4}, false, @if_49_else, @if_49_then
-        or r9b, r9b
-        jz @if_49_else
-        jmp @if_49_then
-@if_48_then:
-        ; const t.41{r3}, 1
-        mov r8w, 1
-        ; add t.40{r7}, t.40{r7}, t.41{r3}
-        add r12w, r8w
-        ; const t.42{r3}, 40
-        mov r8w, 40
-        ; move curr_c{r0}, curr_c{r7}
-        mov ax, r12w
-        ; mod curr_c{r2}, curr_c{r0}, t.42{r3}
-        movsx rax, ax
-        movsx r8, r8w
-        cqo
-        idiv r8
-        ; move curr_c{r7}, curr_c{r2}
-        mov r12w, dx
-        ; move curr_r, curr_r{r1}
-        lea r11, [rsp+48]
-        mov [r11], cx
-        jmp @while_40
-@if_49_else:
-        ; 262:8 if chr == 13
-        ; const t.50{r0}, 13
-        mov ax, 13
-        ; equals t.49{r0}, chr{r3}, t.50{r0}
-        cmp r8w, ax
+        ; 232:3 if chr == 13
+        ; const t.11{r3}, 13
+        mov r8w, 13
+        ; equals t.10{r0}, chr{r0}, t.11{r3}
+        cmp ax, r8w
         sete al
-        ; branch t.49{r0}, false, @no_critical_edge_30, @if_52_then
-        or al, al
-        jz @no_critical_edge_30
-        jmp @if_52_then
-@if_49_then:
-        ; 254:4 if !needsInitialize
-        ; notlog t.45{r0}, needsInitialize{r6}
-        or bl, bl
-        sete al
-        ; branch t.45{r0}, false, @no_critical_edge_33, @if_50_then
-        or al, al
-        jz @no_critical_edge_33
-        jmp @if_50_then
-@no_critical_edge_30:
-        ; move curr_r, curr_r{r1}
-        lea r11, [rsp+48]
-        mov [r11], cx
-        jmp @while_40
-@if_52_then:
-        ; branch needsInitialize{r6}, false, @no_critical_edge_31, @if_53_then
-        or bl, bl
-        jz @no_critical_edge_31
-        jmp @if_53_then
-@no_critical_edge_33:
-        ; move curr_r, curr_r{r1}
-        lea r11, [rsp+48]
-        mov [r11], cx
-        jmp @while_40
-@if_50_then:
-        ; move curr_r, curr_r{r1}
-        lea r11, [rsp+48]
-        mov [r11], cx
-        ; move curr_c{r2}, curr_c{r7}
-        mov dx, r12w
-        ; call cell{r0} = getCell@i16@i16[curr_r{r1}, curr_c{r2}] -> u8
-        call @getCell@i16@i16
-        ; 256:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=256:17]])
-        ; move cell{r1}, cell{r0}
-        mov cl, al
-        ; move cell, cell{r0}
-        lea r11, [rsp+50]
-        mov [r11], al
-        ; call t.47{r0} = isOpen@u8[cell{r1}] -> bool
-        call @isOpen@u8
-        ; notlog t.46{r0}, t.47{r0}
-        or al, al
-        sete al
-        ; branch t.46{r0}, false, @while_40, @if_51_then
+        ; branch t.10{r0}, false, @while_40, @if_44_then
         or al, al
         jz @while_40
-        jmp @if_51_then
-@no_critical_edge_31:
-        ; move curr_r, curr_r{r1}
-        lea r11, [rsp+48]
-        mov [r11], cx
-        jmp @if_53_end
-@if_53_then:
-        ; move curr_r, curr_r{r1}
-        lea r11, [rsp+48]
-        mov [r11], cx
+        ; branch needsInitialize{r6}, false, @if_45_end, @if_45_then
+        or bl, bl
+        jz @if_45_end
         ; const needsInitialize{r6}, 0
         mov bl, 0
         ; move curr_r{r1}, curr_r
@@ -1938,27 +1688,7 @@ start:
         mov dx, r12w
         ; call initField@i16@i16[curr_r{r1}, curr_c{r2}]
         call @initField@i16@i16
-        jmp @if_53_end
-@if_51_then:
-        ; const t.48{r0}, 4
-        mov al, 4
-        ; move cell{r3}, cell
-        lea r11, [rsp+50]
-        mov r8b, [r11]
-        ; xor cell{r3}, cell{r3}, t.48{r0}
-        xor r8b, al
-        ; move curr_r{r1}, curr_r
-        lea r11, [rsp+48]
-        mov cx, [r11]
-        ; move curr_r, curr_r{r1}
-        lea r11, [rsp+48]
-        mov [r11], cx
-        ; move curr_c{r2}, curr_c{r7}
-        mov dx, r12w
-        ; call setCell@i16@i16@u8[curr_r{r1}, curr_c{r2}, cell{r3}]
-        call @setCell@i16@i16@u8
-        jmp @while_40
-@if_53_end:
+@if_45_end:
         ; move curr_r{r1}, curr_r
         lea r11, [rsp+48]
         mov cx, [r11]
@@ -1969,31 +1699,31 @@ start:
         mov dx, r12w
         ; call cell{r0} = getCell@i16@i16[curr_r{r1}, curr_c{r2}] -> u8
         call @getCell@i16@i16
-        ; 268:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=268:16]])
+        ; 238:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=238:16]])
         ; move cell{r1}, cell{r0}
         mov cl, al
         ; move cell, cell{r0}
-        lea r11, [rsp+51]
+        lea r11, [rsp+50]
         mov [r11], al
-        ; call t.52{r0} = isOpen@u8[cell{r1}] -> bool
+        ; call t.13{r0} = isOpen@u8[cell{r1}] -> bool
         call @isOpen@u8
-        ; notlog t.51{r0}, t.52{r0}
+        ; notlog t.12{r0}, t.13{r0}
         or al, al
         sete al
-        ; branch t.51{r0}, false, @if_54_end, @if_54_then
+        ; branch t.12{r0}, false, @if_46_end, @if_46_then
         or al, al
-        jz @if_54_end
-        ; const t.54{r0}, 2
+        jz @if_46_end
+        ; const t.15{r0}, 2
         mov al, 2
         ; move cell{r4}, cell
-        lea r11, [rsp+51]
+        lea r11, [rsp+50]
         mov r9b, [r11]
-        ; move t.53{r3}, cell{r4}
+        ; move t.14{r3}, cell{r4}
         mov r8b, r9b
         ; move cell, cell{r4}
-        lea r11, [rsp+51]
+        lea r11, [rsp+50]
         mov [r11], r9b
-        ; or t.53{r3}, t.53{r3}, t.54{r0}
+        ; or t.14{r3}, t.14{r3}, t.15{r0}
         or r8b, al
         ; move curr_r{r1}, curr_r
         lea r11, [rsp+48]
@@ -2003,18 +1733,18 @@ start:
         mov [r11], cx
         ; move curr_c{r2}, curr_c{r7}
         mov dx, r12w
-        ; call setCell@i16@i16@u8[curr_r{r1}, curr_c{r2}, t.53{r3}]
+        ; call setCell@i16@i16@u8[curr_r{r1}, curr_c{r2}, t.14{r3}]
         call @setCell@i16@i16@u8
-@if_54_end:
-        ; 271:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=271:15]])
+@if_46_end:
+        ; 241:4 if isBomb@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=241:15]])
         ; move cell{r1}, cell
-        lea r11, [rsp+51]
+        lea r11, [rsp+50]
         mov cl, [r11]
-        ; call t.55{r0} = isBomb@u8[cell{r1}] -> bool
+        ; call t.16{r0} = isBomb@u8[cell{r1}] -> bool
         call @isBomb@u8
-        ; branch t.55{r0}, true, @if_55_then, @if_55_end
+        ; branch t.16{r0}, true, @if_47_then, @if_47_end
         or al, al
-        jnz @if_55_then
+        jnz @if_47_then
         ; move curr_r{r1}, curr_r
         lea r11, [rsp+48]
         mov cx, [r11]
@@ -2037,20 +1767,14 @@ start:
         ; call printField@i16@i16[curr_r{r1}, curr_c{r2}]
         call @printField@i16@i16
         ; 220:3 if !needsInitialize
-        ; notlog t.7{r0}, needsInitialize{r6}
+        ; notlog t.6{r0}, needsInitialize{r6}
         or bl, bl
         sete al
-        ; branch t.7{r0}, false, @if_41_end, @if_41_then
+        ; branch t.6{r0}, false, @if_41_end, @if_41_then
         or al, al
         jz @if_41_end
         jmp @if_41_then
-@if_42_then:
-        ; const t.9{r1}, [string-2]
-        lea rcx, [string_2]
-        ; call printString@@u8[t.9{r1}]
-        call @printString@@u8
-        jmp @main_ret
-@if_55_then:
+@if_47_then:
         ; move curr_r{r1}, curr_r
         lea r11, [rsp+48]
         mov cx, [r11]
@@ -2058,9 +1782,9 @@ start:
         mov dx, r12w
         ; call printField@i16@i16[curr_r{r1}, curr_c{r2}]
         call @printField@i16@i16
-        ; const t.56{r1}, [string-3]
-        lea rcx, [string_3]
-        ; call printString@@u8[t.56{r1}]
+        ; const t.17{r1}, [string-2]
+        lea rcx, [string_2]
+        ; call printString@@u8[t.17{r1}]
         call @printString@@u8
 @main_ret:
         add rsp, 32
@@ -2148,8 +1872,7 @@ section '.data' data readable writeable
 section '.data' data readable
         string_0 db '|', 0x0a, 0x00
         string_1 db 'Left: ', 0x00
-        string_2 db ' You', 0x27, 've cleaned the field!', 0x00
-        string_3 db 'boom! you', 0x27, 've lost', 0x00
+        string_2 db 'boom! you', 0x27, 've lost', 0x00
 
 section '.idata' import data readable writeable
 

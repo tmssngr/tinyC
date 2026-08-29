@@ -219,7 +219,6 @@ void main() {
 		printField(curr_r, curr_c);
 		if (!needsInitialize) {
 			if (printLeft()) {
-				printString(" You've cleaned the field!");
 				break;
 			}
 		}
@@ -230,36 +229,7 @@ void main() {
 		}
 
 		// cursor up
-		if (chr == (i16)0xE048) {
-			curr_r = (curr_r + height - 1) % height;
-		}
-		// cursor down
-		else if (chr == (i16)0xE050) {
-			curr_r = (curr_r + 1) % height;
-		}
-		// cursor left
-		else if (chr == (i16)0xE04B) {
-			curr_c = (curr_c + width - 1) % width;
-		}
-		// cursor left
-		else if (chr == (i16)0xE04B) {
-			curr_c = (curr_c + width - 1) % width;
-		}
-		// cursor right
-		else if (chr == (i16)0xE04D) {
-			curr_c = (curr_c + 1) % width;
-		}
-		// space = flag
-		else if (chr == 0x20) {
-			if (!needsInitialize) {
-				u8 cell = getCell(curr_r, curr_c);
-				if (!isOpen(cell)) {
-					cell = cell ^ maskFlag;
-					setCell(curr_r, curr_c, cell);
-				}
-			}
-		}
-		else if (chr == 0x0D) {
+		if (chr == 0x0D) {
 			if (needsInitialize) {
 				needsInitialize = false;
 				initField(curr_r, curr_c);

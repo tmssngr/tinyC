@@ -788,8 +788,7 @@
  Local variables
 	var 0: curr_r (i16/2)
 	var 1: cell (u8/1)
-	var 2: cell (u8/1)
-	; 211 pc
+	; 87 pc
 	; begin initialize global variables
 	const r6, 0
 	; end initialize global variables
@@ -799,174 +798,41 @@
 	const r6, 1
 	call clearField[]
 	const r7, 20
-	const r0, 10
-	move curr_r, r0
+	const r1, 10
+	move curr_r, r1
 	; 218:2 while true
 	jump @while_40
 @if_41_then:
 	; 221:4 if printLeft([])
 	call r0 = printLeft[] -> bool
-	branch r0, true, @if_42_then, @if_41_end
+	branch r0, true, @main_ret, @if_41_end
 @if_41_end:
 	call r0 = getChar[] -> i16
-	move r3, r0
-	; 228:3 if chr == 27
-	const r4, 27
-	equals r4, r3, r4
-	branch r4, true, @main_ret, @if_43_end
-	; 233:3 if chr == -8120
-	const r4, -8120
-	equals r4, r3, r4
-	branch r4, true, @if_44_then, @if_44_else
-	; 237:8 if chr == -8112
-	const r4, -8112
-	equals r4, r3, r4
-	branch r4, false, @if_45_else, @if_45_then
-	jump @if_45_then
-@if_44_then:
-	const r3, 20
-	move r1, curr_r
-	move r4, r1
-	add r4, r4, r3
-	const r3, 1
-	sub r4, r4, r3
-	const r3, 20
-	move r1, r4
-	move r0, r1
-	mod r2, r0, r3
-	move r1, r2
-	move curr_r, r1
-	jump @while_40
-@if_45_else:
-	move r1, curr_r
-	; 241:8 if chr == -8117
-	const r4, -8117
-	equals r4, r3, r4
-	branch r4, false, @if_46_else, @if_46_then
-	jump @if_46_then
-@if_45_then:
-	move r1, curr_r
-	const r3, 1
-	move r4, r1
-	add r4, r4, r3
-	const r3, 20
-	move r1, r4
-	move r0, r1
-	mod r2, r0, r3
-	move r1, r2
-	move curr_r, r1
-	jump @while_40
-@if_46_else:
-	; 245:8 if chr == -8117
-	const r4, -8117
-	equals r4, r3, r4
-	branch r4, false, @if_47_else, @if_47_then
-	jump @if_47_then
-@if_46_then:
-	const r3, 40
-	add r7, r7, r3
-	const r3, 1
-	sub r7, r7, r3
-	const r3, 40
-	move r0, r7
-	mod r2, r0, r3
-	move r7, r2
-	move curr_r, r1
-	jump @while_40
-@if_47_else:
-	; 249:8 if chr == -8115
-	const r4, -8115
-	equals r4, r3, r4
-	branch r4, false, @if_48_else, @if_48_then
-	jump @if_48_then
-@if_47_then:
-	const r3, 40
-	add r7, r7, r3
-	const r3, 1
-	sub r7, r7, r3
-	const r3, 40
-	move r0, r7
-	mod r2, r0, r3
-	move r7, r2
-	move curr_r, r1
-	jump @while_40
-@if_48_else:
-	; 253:8 if chr == 32
-	const r4, 32
-	equals r4, r3, r4
-	branch r4, false, @if_49_else, @if_49_then
-	jump @if_49_then
-@if_48_then:
-	const r3, 1
-	add r7, r7, r3
-	const r3, 40
-	move r0, r7
-	mod r2, r0, r3
-	move r7, r2
-	move curr_r, r1
-	jump @while_40
-@if_49_else:
-	; 262:8 if chr == 13
-	const r0, 13
-	equals r0, r3, r0
-	branch r0, false, @no_critical_edge_30, @if_52_then
-	jump @if_52_then
-@if_49_then:
-	; 254:4 if !needsInitialize
-	notlog r0, r6
-	branch r0, false, @no_critical_edge_33, @if_50_then
-	jump @if_50_then
-@no_critical_edge_30:
-	move curr_r, r1
-	jump @while_40
-@if_52_then:
-	branch r6, false, @no_critical_edge_31, @if_53_then
-	jump @if_53_then
-@no_critical_edge_33:
-	move curr_r, r1
-	jump @while_40
-@if_50_then:
-	move curr_r, r1
-	move r2, r7
-	call r0 = getCell@i16@i16[r1, r2] -> u8
-	; 256:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=256:17]])
-	move r1, r0
-	move cell, r0
-	call r0 = isOpen@u8[r1] -> bool
-	notlog r0, r0
-	branch r0, false, @while_40, @if_51_then
-	jump @if_51_then
-@no_critical_edge_31:
-	move curr_r, r1
-	jump @if_53_end
-@if_53_then:
-	move curr_r, r1
+	; 227:3 if chr == 27
+	const r3, 27
+	equals r3, r0, r3
+	branch r3, true, @main_ret, @if_43_end
+	; 232:3 if chr == 13
+	const r3, 13
+	equals r0, r0, r3
+	branch r0, false, @while_40, @if_44_then
+	branch r6, false, @if_45_end, @if_45_then
 	const r6, 0
 	move r1, curr_r
 	move curr_r, r1
 	move r2, r7
 	call initField@i16@i16[r1, r2]
-	jump @if_53_end
-@if_51_then:
-	const r0, 4
-	move r3, cell
-	xor r3, r3, r0
-	move r1, curr_r
-	move curr_r, r1
-	move r2, r7
-	call setCell@i16@i16@u8[r1, r2, r3]
-	jump @while_40
-@if_53_end:
+@if_45_end:
 	move r1, curr_r
 	move curr_r, r1
 	move r2, r7
 	call r0 = getCell@i16@i16[r1, r2] -> u8
-	; 268:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=268:16]])
+	; 238:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=238:16]])
 	move r1, r0
 	move cell, r0
 	call r0 = isOpen@u8[r1] -> bool
 	notlog r0, r0
-	branch r0, false, @if_54_end, @if_54_then
+	branch r0, false, @if_46_end, @if_46_then
 	const r0, 2
 	move r4, cell
 	move r3, r4
@@ -976,11 +842,11 @@
 	move curr_r, r1
 	move r2, r7
 	call setCell@i16@i16@u8[r1, r2, r3]
-@if_54_end:
-	; 271:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=271:15]])
+@if_46_end:
+	; 241:4 if isBomb@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=241:15]])
 	move r1, cell
 	call r0 = isBomb@u8[r1] -> bool
-	branch r0, true, @if_55_then, @if_55_end
+	branch r0, true, @if_47_then, @if_47_end
 	move r1, curr_r
 	move curr_r, r1
 	move r2, r7
@@ -994,15 +860,11 @@
 	notlog r0, r6
 	branch r0, false, @if_41_end, @if_41_then
 	jump @if_41_then
-@if_42_then:
-	const r1, [string-2]
-	call printString@@u8[r1]
-	jump @main_ret
-@if_55_then:
+@if_47_then:
 	move r1, curr_r
 	move r2, r7
 	call printField@i16@i16[r1, r2]
-	const r1, [string-3]
+	const r1, [string-2]
 	call printString@@u8[r1]
 @main_ret:
 
@@ -1055,5 +917,4 @@ Global variables
 String literals
 	string lit 0 "|\n\0"
 	string lit 1 "Left: \0"
-	string lit 2 " You've cleaned the field!\0"
-	string lit 3 "boom! you've lost\0"
+	string lit 2 "boom! you've lost\0"

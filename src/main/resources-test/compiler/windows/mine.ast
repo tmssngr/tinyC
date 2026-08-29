@@ -327,7 +327,6 @@ void main() {
 	i16 curr_r;
 	i16 chr;
 	u8 cell;
-	u8 cell;
 
 	initRandom@i32(7439742);
 	needsInitialize = true;
@@ -338,7 +337,6 @@ void main() {
 		printField@i16@i16(curr_r, curr_c);
 		if (!needsInitialize) {
 			if (printLeft()) {
-				printString@@u8(" You've cleaned the field!");
 				break;
 			}
 		}
@@ -346,57 +344,21 @@ void main() {
 		if (chr == 27) {
 			break;
 		}
-		if (chr == ((i16)57416)) {
-			curr_r = ((curr_r + 20) - 1) % 20;
-		}
-		else {
-			if (chr == ((i16)57424)) {
-				curr_r = (curr_r + 1) % 20;
+		if (chr == 13) {
+			if (needsInitialize) {
+				needsInitialize = false;
+				initField@i16@i16(curr_r, curr_c);
 			}
-			else {
-				if (chr == ((i16)57419)) {
-					curr_c = ((curr_c + 40) - 1) % 40;
-				}
-				else {
-					if (chr == ((i16)57419)) {
-						curr_c = ((curr_c + 40) - 1) % 40;
-					}
-					else {
-						if (chr == ((i16)57421)) {
-							curr_c = (curr_c + 1) % 40;
-						}
-						else {
-							if (chr == 32) {
-								if (!needsInitialize) {
-									cell = getCell@i16@i16(curr_r, curr_c);
-									if (!(isOpen@u8(cell))) {
-										cell = cell ^ 4;
-										setCell@i16@i16@u8(curr_r, curr_c, cell);
-									}
-								}
-							}
-							else {
-								if (chr == 13) {
-									if (needsInitialize) {
-										needsInitialize = false;
-										initField@i16@i16(curr_r, curr_c);
-									}
-									cell = getCell@i16@i16(curr_r, curr_c);
-									if (!(isOpen@u8(cell))) {
-										setCell@i16@i16@u8(curr_r, curr_c, cell | 2);
-									}
-									if (isBomb@u8(cell)) {
-										printField@i16@i16(curr_r, curr_c);
-										printString@@u8("boom! you've lost");
-										break;
-									}
-									maybeRevealAround@i16@i16(curr_r, curr_c);
-								}
-							}
-						}
-					}
-				}
+			cell = getCell@i16@i16(curr_r, curr_c);
+			if (!(isOpen@u8(cell))) {
+				setCell@i16@i16@u8(curr_r, curr_c, cell | 2);
 			}
+			if (isBomb@u8(cell)) {
+				printField@i16@i16(curr_r, curr_c);
+				printString@@u8("boom! you've lost");
+				break;
+			}
+			maybeRevealAround@i16@i16(curr_r, curr_c);
 		}
 	}
 }
