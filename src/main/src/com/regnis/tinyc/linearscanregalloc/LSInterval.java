@@ -282,6 +282,7 @@ final class LSInterval {
 			final LSUse first = uses.getFirst();
 			if (first.pos() == pos) {
 				Utils.assertTrue(first.write());
+				uses.set(0, LSUse.readWrite(pos));
 				return;
 			}
 			Utils.assertTrue(pos < first.pos());
@@ -295,7 +296,8 @@ final class LSInterval {
 			return;
 		}
 		if (uses.size() > 0) {
-			Utils.assertTrue(pos < uses.getFirst().pos());
+			final LSUse first = uses.getFirst();
+			Utils.assertTrue(pos < first.pos());
 		}
 		uses.addFirst(LSUse.write(pos));
 	}
