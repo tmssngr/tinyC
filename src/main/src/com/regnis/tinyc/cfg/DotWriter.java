@@ -28,7 +28,7 @@ public final class DotWriter extends TextWriter {
 	public void writeCfg(ControlFlowGraph cfg) throws IOException {
 		final String name = cfg.name();
 		writeIndentation();
-		writeln("subgraph fn_" + name + " {");
+		writeln("subgraph fn_" + escape(name) + " {");
 		for (BasicBlock block : cfg.blocks()) {
 			writeBasicBlock(block, cfg);
 		}
@@ -97,6 +97,24 @@ public final class DotWriter extends TextWriter {
 
 	@NotNull
 	private static String getBlockName(BasicBlock block) {
-		return block.name.replace("@", "");
+		return escape(block.name);
+	}
+
+	@NotNull
+	private static String escape(String name) {
+		final StringBuilder buffer = new StringBuilder();
+		for (int i = 0; i < name.length(); i++) {
+			final char chr = name.charAt(i);
+			switch (chr) {
+			case '_' -> buffer.append("__");
+			case '@' -> {
+				if (i > 0) {
+					buffer.append("_A");
+				}
+			}
+			default -> buffer.append(chr);
+			}
+		}
+		return buffer.toString();
 	}
 }

@@ -1,94 +1,94 @@
 digraph program {
 	edge[fontsize="10pt"];
-	subgraph fn_printString@@u8 {
-		BasicBlock_0_printStringu8 [label="printStringu8",shape=box];
-		BasicBlock_0_printStringu8 -> BasicBlock_0_printStringu8_ret;
-		BasicBlock_0_printStringu8_ret [label="printStringu8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	subgraph fn_printString_A_Au8 {
+		BasicBlock_0_printString_A_Au8 [label="printString_A_Au8",shape=box];
+		BasicBlock_0_printString_A_Au8 -> BasicBlock_0_printString_A_Au8__ret;
+		BasicBlock_0_printString_A_Au8__ret [label="printString_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
-	subgraph fn_printChar@u8 {
-		BasicBlock_1_printCharu8 [label="printCharu8",shape=box];
-		BasicBlock_1_printCharu8 -> BasicBlock_1_printCharu8_ret;
-		BasicBlock_1_printCharu8_ret [label="printCharu8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	subgraph fn_printChar_Au8 {
+		BasicBlock_1_printChar_Au8 [label="printChar_Au8",shape=box];
+		BasicBlock_1_printChar_Au8 -> BasicBlock_1_printChar_Au8__ret;
+		BasicBlock_1_printChar_Au8__ret [label="printChar_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
-	subgraph fn_strlen@@u8 {
-		BasicBlock_2_strlenu8 [label="strlenu8",shape=box];
-		BasicBlock_2_strlenu8 -> BasicBlock_2_for_1 [label="(length,str)"];
-		BasicBlock_2_for_1_body [label="for_1_body",shape=box];
-		BasicBlock_2_for_1_body -> BasicBlock_2_for_1 [label="(length,str)"];
-		BasicBlock_2_for_1 [label="for_1",shape=hexagon];
-		BasicBlock_2_for_1 -> BasicBlock_2_for_1_break [label="(length)"];
-		BasicBlock_2_for_1 -> BasicBlock_2_for_1_body [label="(length,str)"];
-		BasicBlock_2_for_1_break [label="for_1_break",shape=box];
-		BasicBlock_2_for_1_break -> BasicBlock_2_strlenu8_ret;
-		BasicBlock_2_strlenu8_ret [label="strlenu8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	subgraph fn_strlen_A_Au8 {
+		BasicBlock_2_strlen_A_Au8 [label="strlen_A_Au8",shape=box];
+		BasicBlock_2_strlen_A_Au8 -> BasicBlock_2_for__1 [label="(length,str)"];
+		BasicBlock_2_for__1__body [label="for__1__body",shape=box];
+		BasicBlock_2_for__1__body -> BasicBlock_2_for__1 [label="(length,str)"];
+		BasicBlock_2_for__1 [label="for__1",shape=hexagon];
+		BasicBlock_2_for__1 -> BasicBlock_2_for__1__break [label="(length)"];
+		BasicBlock_2_for__1 -> BasicBlock_2_for__1__body [label="(length,str)"];
+		BasicBlock_2_for__1__break [label="for__1__break",shape=box];
+		BasicBlock_2_for__1__break -> BasicBlock_2_strlen_A_Au8__ret;
+		BasicBlock_2_strlen_A_Au8__ret [label="strlen_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
-	subgraph fn_printStringLength@@u8@u8 {
-		BasicBlock_3_printStringLengthu8u8 [label="printStringLengthu8u8",shape=box];
-		BasicBlock_3_printStringLengthu8u8 -> BasicBlock_3_printStringLengthu8u8_ret;
-		BasicBlock_3_printStringLengthu8u8_ret [label="printStringLengthu8u8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	subgraph fn_printStringLength_A_Au8_Au8 {
+		BasicBlock_3_printStringLength_A_Au8_Au8 [label="printStringLength_A_Au8_Au8",shape=box];
+		BasicBlock_3_printStringLength_A_Au8_Au8 -> BasicBlock_3_printStringLength_A_Au8_Au8__ret;
+		BasicBlock_3_printStringLength_A_Au8_Au8__ret [label="printStringLength_A_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
-	subgraph fn_printNibble@u8 {
-		BasicBlock_4_printNibbleu8 [label="printNibbleu8",shape=hexagon];
-		BasicBlock_4_printNibbleu8 -> BasicBlock_4_no_critical_edge_4 [label="(x)"];
-		BasicBlock_4_printNibbleu8 -> BasicBlock_4_if_2_then [label="(x)"];
-		BasicBlock_4_no_critical_edge_4 [label="no_critical_edge_4",shape=box];
-		BasicBlock_4_no_critical_edge_4 -> BasicBlock_4_if_2_end [label="(x)"];
-		BasicBlock_4_if_2_then [label="if_2_then",shape=box];
-		BasicBlock_4_if_2_then -> BasicBlock_4_if_2_end [label="(x)"];
-		BasicBlock_4_if_2_end [label="if_2_end",shape=box];
-		BasicBlock_4_if_2_end -> BasicBlock_4_printNibbleu8_ret;
-		BasicBlock_4_printNibbleu8_ret [label="printNibbleu8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	subgraph fn_printNibble_Au8 {
+		BasicBlock_4_printNibble_Au8 [label="printNibble_Au8",shape=hexagon];
+		BasicBlock_4_printNibble_Au8 -> BasicBlock_4_no__critical__edge__4 [label="(x)"];
+		BasicBlock_4_printNibble_Au8 -> BasicBlock_4_if__2__then [label="(x)"];
+		BasicBlock_4_no__critical__edge__4 [label="no__critical__edge__4",shape=box];
+		BasicBlock_4_no__critical__edge__4 -> BasicBlock_4_if__2__end [label="(x)"];
+		BasicBlock_4_if__2__then [label="if__2__then",shape=box];
+		BasicBlock_4_if__2__then -> BasicBlock_4_if__2__end [label="(x)"];
+		BasicBlock_4_if__2__end [label="if__2__end",shape=box];
+		BasicBlock_4_if__2__end -> BasicBlock_4_printNibble_Au8__ret;
+		BasicBlock_4_printNibble_Au8__ret [label="printNibble_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
-	subgraph fn_printHex2@u8 {
-		BasicBlock_5_printHex2u8 [label="printHex2u8",shape=box];
-		BasicBlock_5_printHex2u8 -> BasicBlock_5_printHex2u8_ret;
-		BasicBlock_5_printHex2u8_ret [label="printHex2u8_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	subgraph fn_printHex2_Au8 {
+		BasicBlock_5_printHex2_Au8 [label="printHex2_Au8",shape=box];
+		BasicBlock_5_printHex2_Au8 -> BasicBlock_5_printHex2_Au8__ret;
+		BasicBlock_5_printHex2_Au8__ret [label="printHex2_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
 		BasicBlock_6_main [label="main",shape=box];
-		BasicBlock_6_main -> BasicBlock_6_for_3 [label="(i)"];
-		BasicBlock_6_for_3_body [label="for_3_body",shape=hexagon];
-		BasicBlock_6_for_3_body -> BasicBlock_6_no_critical_edge_19 [label="(i)"];
-		BasicBlock_6_for_3_body -> BasicBlock_6_if_4_then [label="(i)"];
-		BasicBlock_6_no_critical_edge_19 [label="no_critical_edge_19",shape=box];
-		BasicBlock_6_no_critical_edge_19 -> BasicBlock_6_if_4_end [label="(i)"];
-		BasicBlock_6_if_4_then [label="if_4_then",shape=box];
-		BasicBlock_6_if_4_then -> BasicBlock_6_if_4_end [label="(i)"];
-		BasicBlock_6_if_4_end [label="if_4_end",shape=box];
-		BasicBlock_6_if_4_end -> BasicBlock_6_for_3_continue [label="(i)"];
-		BasicBlock_6_for_3_continue [label="for_3_continue",shape=box];
-		BasicBlock_6_for_3_continue -> BasicBlock_6_for_3 [label="(i)"];
-		BasicBlock_6_for_3 [label="for_3",shape=hexagon];
-		BasicBlock_6_for_3 -> BasicBlock_6_for_3_break;
-		BasicBlock_6_for_3 -> BasicBlock_6_for_3_body [label="(i)"];
-		BasicBlock_6_for_3_break [label="for_3_break",shape=box];
-		BasicBlock_6_for_3_break -> BasicBlock_6_for_5 [label="(i)"];
-		BasicBlock_6_for_5_body [label="for_5_body",shape=hexagon];
-		BasicBlock_6_for_5_body -> BasicBlock_6_no_critical_edge_16 [label="(i)"];
-		BasicBlock_6_for_5_body -> BasicBlock_6_if_6_then [label="(i)"];
-		BasicBlock_6_no_critical_edge_16 [label="no_critical_edge_16",shape=box];
-		BasicBlock_6_no_critical_edge_16 -> BasicBlock_6_if_6_end [label="(i)"];
-		BasicBlock_6_if_6_then [label="if_6_then",shape=box];
-		BasicBlock_6_if_6_then -> BasicBlock_6_if_6_end [label="(i)"];
-		BasicBlock_6_if_6_end [label="if_6_end",shape=hexagon];
-		BasicBlock_6_if_6_end -> BasicBlock_6_no_critical_edge_17 [label="(i)"];
-		BasicBlock_6_if_6_end -> BasicBlock_6_if_7_then [label="(i)"];
-		BasicBlock_6_no_critical_edge_17 [label="no_critical_edge_17",shape=box];
-		BasicBlock_6_no_critical_edge_17 -> BasicBlock_6_if_7_end [label="(i)"];
-		BasicBlock_6_if_7_then [label="if_7_then",shape=box];
-		BasicBlock_6_if_7_then -> BasicBlock_6_if_7_end [label="(i)"];
-		BasicBlock_6_if_7_end [label="if_7_end",shape=hexagon];
-		BasicBlock_6_if_7_end -> BasicBlock_6_no_critical_edge_18 [label="(i)"];
-		BasicBlock_6_if_7_end -> BasicBlock_6_if_8_then [label="(i)"];
-		BasicBlock_6_no_critical_edge_18 [label="no_critical_edge_18",shape=box];
-		BasicBlock_6_no_critical_edge_18 -> BasicBlock_6_for_5_continue [label="(i)"];
-		BasicBlock_6_if_8_then [label="if_8_then",shape=box];
-		BasicBlock_6_if_8_then -> BasicBlock_6_for_5_continue [label="(i)"];
-		BasicBlock_6_for_5_continue [label="for_5_continue",shape=box];
-		BasicBlock_6_for_5_continue -> BasicBlock_6_for_5 [label="(i)"];
-		BasicBlock_6_for_5 [label="for_5",shape=hexagon];
-		BasicBlock_6_for_5 -> BasicBlock_6_main_ret;
-		BasicBlock_6_for_5 -> BasicBlock_6_for_5_body [label="(i)"];
-		BasicBlock_6_main_ret [label="main_ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+		BasicBlock_6_main -> BasicBlock_6_for__3 [label="(i)"];
+		BasicBlock_6_for__3__body [label="for__3__body",shape=hexagon];
+		BasicBlock_6_for__3__body -> BasicBlock_6_no__critical__edge__19 [label="(i)"];
+		BasicBlock_6_for__3__body -> BasicBlock_6_if__4__then [label="(i)"];
+		BasicBlock_6_no__critical__edge__19 [label="no__critical__edge__19",shape=box];
+		BasicBlock_6_no__critical__edge__19 -> BasicBlock_6_if__4__end [label="(i)"];
+		BasicBlock_6_if__4__then [label="if__4__then",shape=box];
+		BasicBlock_6_if__4__then -> BasicBlock_6_if__4__end [label="(i)"];
+		BasicBlock_6_if__4__end [label="if__4__end",shape=box];
+		BasicBlock_6_if__4__end -> BasicBlock_6_for__3__continue [label="(i)"];
+		BasicBlock_6_for__3__continue [label="for__3__continue",shape=box];
+		BasicBlock_6_for__3__continue -> BasicBlock_6_for__3 [label="(i)"];
+		BasicBlock_6_for__3 [label="for__3",shape=hexagon];
+		BasicBlock_6_for__3 -> BasicBlock_6_for__3__break;
+		BasicBlock_6_for__3 -> BasicBlock_6_for__3__body [label="(i)"];
+		BasicBlock_6_for__3__break [label="for__3__break",shape=box];
+		BasicBlock_6_for__3__break -> BasicBlock_6_for__5 [label="(i)"];
+		BasicBlock_6_for__5__body [label="for__5__body",shape=hexagon];
+		BasicBlock_6_for__5__body -> BasicBlock_6_no__critical__edge__16 [label="(i)"];
+		BasicBlock_6_for__5__body -> BasicBlock_6_if__6__then [label="(i)"];
+		BasicBlock_6_no__critical__edge__16 [label="no__critical__edge__16",shape=box];
+		BasicBlock_6_no__critical__edge__16 -> BasicBlock_6_if__6__end [label="(i)"];
+		BasicBlock_6_if__6__then [label="if__6__then",shape=box];
+		BasicBlock_6_if__6__then -> BasicBlock_6_if__6__end [label="(i)"];
+		BasicBlock_6_if__6__end [label="if__6__end",shape=hexagon];
+		BasicBlock_6_if__6__end -> BasicBlock_6_no__critical__edge__17 [label="(i)"];
+		BasicBlock_6_if__6__end -> BasicBlock_6_if__7__then [label="(i)"];
+		BasicBlock_6_no__critical__edge__17 [label="no__critical__edge__17",shape=box];
+		BasicBlock_6_no__critical__edge__17 -> BasicBlock_6_if__7__end [label="(i)"];
+		BasicBlock_6_if__7__then [label="if__7__then",shape=box];
+		BasicBlock_6_if__7__then -> BasicBlock_6_if__7__end [label="(i)"];
+		BasicBlock_6_if__7__end [label="if__7__end",shape=hexagon];
+		BasicBlock_6_if__7__end -> BasicBlock_6_no__critical__edge__18 [label="(i)"];
+		BasicBlock_6_if__7__end -> BasicBlock_6_if__8__then [label="(i)"];
+		BasicBlock_6_no__critical__edge__18 [label="no__critical__edge__18",shape=box];
+		BasicBlock_6_no__critical__edge__18 -> BasicBlock_6_for__5__continue [label="(i)"];
+		BasicBlock_6_if__8__then [label="if__8__then",shape=box];
+		BasicBlock_6_if__8__then -> BasicBlock_6_for__5__continue [label="(i)"];
+		BasicBlock_6_for__5__continue [label="for__5__continue",shape=box];
+		BasicBlock_6_for__5__continue -> BasicBlock_6_for__5 [label="(i)"];
+		BasicBlock_6_for__5 [label="for__5",shape=hexagon];
+		BasicBlock_6_for__5 -> BasicBlock_6_main__ret;
+		BasicBlock_6_for__5 -> BasicBlock_6_for__5__body [label="(i)"];
+		BasicBlock_6_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 }
