@@ -80,7 +80,10 @@ final class LSPreprocessorCachedVarLayer extends LSPreprocessorAbstractLayer {
 			storeAllModified();
 			forward(jump);
 		}
-		case IRLabel label -> forward(label);
+		case IRLabel label -> {
+			storeAllModified();
+			forward(label);
+		}
 		case IRLiteral literal -> {
 			final IRVar target = target(literal.target());
 			forward(new IRLiteral(target, literal.value(), literal.location()));
