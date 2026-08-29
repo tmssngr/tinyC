@@ -105,8 +105,6 @@
 	var 4: t.4 (u8/1)
 	var 5: t.5 (u8/1)
 	; 37 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const i, 250
 	; 4:3 for i != 2
 	jump @for_4

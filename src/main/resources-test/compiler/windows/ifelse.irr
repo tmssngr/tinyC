@@ -102,8 +102,6 @@
 	var 1: t.1 (bool/1)
 	var 2: t.2 (i16/2)
 	; 26 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const a, 1
 	; 5:2 if a > 0
 	const t.2, 0

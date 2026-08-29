@@ -142,8 +142,6 @@
 	var 40: t.40 (u8/1)
 	var 41: t.41 (u8/1)
 	; 303 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const i, 0
 	; 23:2 for i < 30
 	jump @for_4

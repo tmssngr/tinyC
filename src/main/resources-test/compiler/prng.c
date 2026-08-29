@@ -1,4 +1,5 @@
 #include "io.h"
+#include "random.h"
 
 void main() {
 	initRandom(7439742);

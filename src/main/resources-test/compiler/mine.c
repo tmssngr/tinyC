@@ -1,4 +1,5 @@
 #include "io.h"
+#include "random.h"
 
 const width = 40;
 const height = 20;

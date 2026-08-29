@@ -111,8 +111,6 @@
 	var 3: t.3 (i16/2)
 	var 4: t.4 (i16/2)
 	; 44 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const a, 0
 	const b, 1
 	; 6:2 while b < 1000

@@ -588,7 +588,7 @@ start:
         add ebx, ecx
         lea rax, [var_0]
         mov [rax], ebx
-        ; 155:9 return __random__
+        ; 15:9 return __random__
         ; ret __random__
         lea rax, [var_0]
         mov ebx, [rax]
@@ -603,7 +603,7 @@ start:
 @randomU8:
         ; reserve space for local variables
         sub rsp, 16
-        ; 159:10 return (u8)
+        ; 19:10 return (u8)
         ; call t.1 = random[] -> i32
         sub rsp, 8
           call @random
@@ -653,7 +653,7 @@ start:
         mov al, 0
         lea rbx, [rsp+0]
         mov [rbx], al
-        ; 5:2 for i < 50
+        ; 6:2 for i < 50
         jmp @for_4
 @for_4_body:
         ; call r = randomU8[] -> u8

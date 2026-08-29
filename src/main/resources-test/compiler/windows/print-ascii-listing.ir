@@ -127,8 +127,6 @@
 	var 27: t.27 (u8/1)
 	var 28: t.28 (u8/1)
 	; 187 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const t.2, [string-0]
 	call printString@@u8[t.2]
 	const i, 0

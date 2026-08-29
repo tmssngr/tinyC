@@ -108,8 +108,6 @@
 	var 7: t.7 (i16/2)
 	var 8: t.8 (i16/2)
 	; 67 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const a, 10
 	call printIntLf@i16[a]
 	addrof b, a

@@ -107,8 +107,6 @@
  Local variables
 	var 0: a (u8/1)
 	; 5 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const a, 10
 	call printIntLf@u8[a]
 @main_ret:

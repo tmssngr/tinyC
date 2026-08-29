@@ -549,8 +549,6 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 144
-        ; begin initialize global variables
-        ; end initialize global variables
         ; const t.9, [string-0]
         lea rax, [string_0]
         lea rbx, [rsp+16]

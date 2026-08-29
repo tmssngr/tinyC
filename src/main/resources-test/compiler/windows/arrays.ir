@@ -126,8 +126,6 @@
 	var 18: t.18 (u8*/8)
 	var 19: t.19 (i64/8)
 	; 141 pc
-	; begin initialize global variables
-	; end initialize global variables
 	const chr, 32
 	const t.3, 0
 	addrof t.2, [chars]

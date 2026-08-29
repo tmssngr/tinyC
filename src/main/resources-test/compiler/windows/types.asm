@@ -362,8 +362,6 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 16
-        ; begin initialize global variables
-        ; end initialize global variables
         ; const i, 250
         mov al, 250
         lea rbx, [rsp+0]

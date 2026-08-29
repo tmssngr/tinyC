@@ -1,5 +1,3 @@
-i32 __random__;
-
 void printString@@u8(u8* str) {
 	i64 length;
 

@@ -372,8 +372,6 @@ start:
 @main:
         ; reserve space for local variables
         sub rsp, 128
-        ; begin initialize global variables
-        ; end initialize global variables
         ; const t.2, 1
         mov al, 1
         lea rbx, [rsp+16]
