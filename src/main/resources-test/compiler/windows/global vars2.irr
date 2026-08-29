@@ -29,26 +29,29 @@
 	; 64:9 return length
 
 @next:
-	; 8 pc
-	move r1, global
+	; 12 pc
+	addrof r7, global
+	load r1, [r7]
 	move r0, r1
 	const r2, 1
 	add r1, r1, r2
 	; 8:9 return copy
-	move global, r1
+	addrof r7, global
+	store [r7], r1
 
 @main:
-	; 14 pc
+	; 16 pc
 	; begin initialize global variables
 	const r6, 0
 	; end initialize global variables
 	; 12:2 while true
-	move global, r6
+	addrof r7, global
+	store [r7], r6
 	jump @while_2
 @if_3_end:
 	; 19:3 if n < 2
-	const r7, 2
-	lt r6, r6, r7
+	const r0, 2
+	lt r6, r6, r0
 	branch r6, false, @while_2, @if_4_then
 	const r1, [string-1]
 	call printString@@u8[r1]
