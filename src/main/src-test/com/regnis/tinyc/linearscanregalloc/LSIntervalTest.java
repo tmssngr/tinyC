@@ -18,6 +18,16 @@ import static org.junit.Assert.*;
 public class LSIntervalTest {
 
 	@Test
+	public void testUses() {
+		final LSInterval interval = new LSInterval(new IRVar("a", 0, VariableScope.function, Type.I16));
+		interval.addReadUse(10);
+		interval.addWritePos(6);
+		interval.addReadUse(6);
+		interval.addWritePos(2);
+		assertEquals(List.of(write(2), readWrite(6), read(10)), interval.uses());
+	}
+
+	@Test
 	public void testSplit() {
 		final LSInterval interval = LSInterval.testVar(new IRVar("a", 0, VariableScope.function, Type.I16),
 		                                               List.of(new LSRange(1, 20), new LSRange(20, 25)),

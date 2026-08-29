@@ -7,13 +7,17 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record LSUse(int pos, boolean write) {
+public record LSUse(int pos, boolean read, boolean write) {
 	public static LSUse write(int pos) {
-		return new LSUse(pos, true);
+		return new LSUse(pos, false, true);
 	}
 
 	public static LSUse read(int pos) {
-		return new LSUse(pos, false);
+		return new LSUse(pos, true, false);
+	}
+
+	public static LSUse readWrite(int pos) {
+		return new LSUse(pos, true, true);
 	}
 
 	public LSUse {
@@ -30,6 +34,12 @@ public record LSUse(int pos, boolean write) {
 	}
 
 	public char asChar() {
-		return write() ? 'W' : 'R';
+		if (!write) {
+			return 'R';
+		}
+		if (!read) {
+			return 'W';
+		}
+		return 'X';
 	}
 }
