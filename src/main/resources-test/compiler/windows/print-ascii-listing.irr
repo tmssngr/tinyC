@@ -2,39 +2,39 @@
  Local variables
 	arg 0: str (u8*/8)
 	; 6 pc
-	move r6, r1
-	move r1, r6
-	call r0 = strlen@@u8[r1] -> i64
-	move r1, r6
-	move r2, r0
-	call printStringLength@@u8@i64[r1, r2]
+	move str{r6}, str{r1}
+	move str{r1}, str{r6}
+	call length{r0} = strlen@@u8[str{r1}] -> i64
+	move str{r1}, str{r6}
+	move length{r2}, length{r0}
+	call printStringLength@@u8@i64[str{r1}, length{r2}]
 
 @printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	; 7 pc
-	move chr, r1
-	addrof r1, chr
-	const r2, 1
-	call printStringLength@@u8@u8[r1, r2]
+	move chr, chr{r1}
+	addrof t.1{r1}, chr
+	const t.2{r2}, 1
+	call printStringLength@@u8@u8[t.1{r1}, t.2{r2}]
 
 @strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	; 7 pc
-	const r0, 0
+	const length{r0}, 0
 	; 61:2 for *str != 0
 	jump @for_1
 @for_1_body:
-	const r2, 1
-	add r0, r0, r2
-	const r2, 1
-	add r1, r1, r2
+	const t.5{r2}, 1
+	add length{r0}, length{r0}, t.5{r2}
+	const t.6{r2}, 1
+	add str{r1}, str{r1}, t.6{r2}
 @for_1:
-	load r2, [r1]
-	const r3, 0
-	notequals r2, r2, r3
-	branch r2, true, @for_1_body, @for_1_break
+	load t.3{r2}, [str{r1}]
+	const t.4{r3}, 0
+	notequals t.2{r2}, t.3{r2}, t.4{r3}
+	branch t.2{r2}, true, @for_1_body, @for_1_break
 	; 64:9 return length
 
 @printStringLength@@u8@u8:
@@ -42,111 +42,111 @@
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
 	; 2 pc
-	cast r2(i64), r2(u8)
-	call printStringLength@@u8@i64[r1, r2]
+	cast t.2{r2}(i64), length{r2}(u8)
+	call printStringLength@@u8@i64[str{r1}, t.2{r2}]
 
 @printNibble@u8:
  Local variables
 	arg 0: x (u8/1)
 	; 6 pc
-	const r6, 15
-	and r1, r1, r6
+	const t.1{r6}, 15
+	and x{r1}, x{r1}, t.1{r6}
 	; 5:2 if x > 9
-	const r6, 9
-	gt r6, r1, r6
-	branch r6, false, @if_2_end, @if_2_then
-	const r6, 7
-	add r1, r1, r6
+	const t.3{r6}, 9
+	gt t.2{r6}, x{r1}, t.3{r6}
+	branch t.2{r6}, false, @if_2_end, @if_2_then
+	const t.4{r6}, 7
+	add x{r1}, x{r1}, t.4{r6}
 @if_2_end:
-	const r6, 48
-	add r1, r1, r6
-	call printChar@u8[r1]
+	const t.5{r6}, 48
+	add x{r1}, x{r1}, t.5{r6}
+	call printChar@u8[x{r1}]
 
 @printHex2@u8:
  Local variables
 	arg 0: x (u8/1)
 	; 7 pc
-	move r6, r1
-	const r1, 4
-	move r7, r6
-	shiftright r7, r7, r1
-	move r1, r7
-	call printNibble@u8[r1]
-	move r1, r6
-	call printNibble@u8[r1]
+	move x{r6}, x{r1}
+	const t.2{r1}, 4
+	move t.1{r7}, x{r6}
+	shiftright t.1{r7}, t.1{r7}, t.2{r1}
+	move t.1{r1}, t.1{r7}
+	call printNibble@u8[t.1{r1}]
+	move x{r1}, x{r6}
+	call printNibble@u8[x{r1}]
 
 @main:
 	; 36 pc
 	; begin initialize global variables
 	; end initialize global variables
-	const r1, [string-0]
-	call printString@@u8[r1]
-	const r6, 0
+	const t.2{r1}, [string-0]
+	call printString@@u8[t.2{r1}]
+	const i{r6}, 0
 	; 19:2 for i < 16
 	jump @for_3
 @for_3_body:
 	; 20:3 if i & 7 == 0
-	const r7, 7
-	move r0, r6
-	and r0, r0, r7
-	const r7, 0
-	equals r7, r0, r7
-	branch r7, false, @if_4_end, @if_4_then
-	const r1, 32
-	call printChar@u8[r1]
+	const t.7{r7}, 7
+	move t.6{r0}, i{r6}
+	and t.6{r0}, t.6{r0}, t.7{r7}
+	const t.8{r7}, 0
+	equals t.5{r7}, t.6{r0}, t.8{r7}
+	branch t.5{r7}, false, @if_4_end, @if_4_then
+	const t.9{r1}, 32
+	call printChar@u8[t.9{r1}]
 @if_4_end:
-	move r1, r6
-	call printNibble@u8[r1]
-	const r7, 1
-	add r6, r6, r7
+	move i{r1}, i{r6}
+	call printNibble@u8[i{r1}]
+	const t.10{r7}, 1
+	add i{r6}, i{r6}, t.10{r7}
 @for_3:
-	const r7, 16
-	lt r7, r6, r7
-	branch r7, true, @for_3_body, @for_3_break
-	const r1, 10
-	call printChar@u8[r1]
-	const r6, 32
+	const t.4{r7}, 16
+	lt t.3{r7}, i{r6}, t.4{r7}
+	branch t.3{r7}, true, @for_3_body, @for_3_break
+	const t.11{r1}, 10
+	call printChar@u8[t.11{r1}]
+	const i{r6}, 32
 	; 27:2 for i < 128
 	jump @for_5
 @for_5_body:
 	; 28:3 if i & 15 == 0
-	const r7, 15
-	move r0, r6
-	and r0, r0, r7
-	const r7, 0
-	equals r7, r0, r7
-	branch r7, false, @if_6_end, @if_6_then
-	move r1, r6
-	call printHex2@u8[r1]
+	const t.16{r7}, 15
+	move t.15{r0}, i{r6}
+	and t.15{r0}, t.15{r0}, t.16{r7}
+	const t.17{r7}, 0
+	equals t.14{r7}, t.15{r0}, t.17{r7}
+	branch t.14{r7}, false, @if_6_end, @if_6_then
+	move i{r1}, i{r6}
+	call printHex2@u8[i{r1}]
 @if_6_end:
 	; 31:3 if i & 7 == 0
-	const r7, 7
-	move r0, r6
-	and r0, r0, r7
-	const r7, 0
-	equals r7, r0, r7
-	branch r7, false, @if_7_end, @if_7_then
-	const r1, 32
-	call printChar@u8[r1]
+	const t.20{r7}, 7
+	move t.19{r0}, i{r6}
+	and t.19{r0}, t.19{r0}, t.20{r7}
+	const t.21{r7}, 0
+	equals t.18{r7}, t.19{r0}, t.21{r7}
+	branch t.18{r7}, false, @if_7_end, @if_7_then
+	const t.22{r1}, 32
+	call printChar@u8[t.22{r1}]
 @if_7_end:
-	move r1, r6
-	call printChar@u8[r1]
+	move i{r1}, i{r6}
+	call printChar@u8[i{r1}]
 	; 35:3 if i & 15 == 15
-	const r7, 15
-	move r0, r6
-	and r0, r0, r7
-	const r7, 15
-	equals r7, r0, r7
-	branch r7, false, @for_5_continue, @if_8_then
-	const r1, 10
-	call printChar@u8[r1]
+	const t.25{r7}, 15
+	move t.24{r0}, i{r6}
+	and t.24{r0}, t.24{r0}, t.25{r7}
+	const t.26{r7}, 15
+	equals t.23{r7}, t.24{r0}, t.26{r7}
+	branch t.23{r7}, false, @for_5_continue, @if_8_then
+	const t.27{r1}, 10
+	call printChar@u8[t.27{r1}]
 @for_5_continue:
-	const r0, 1
-	add r6, r6, r0
+	const t.28{r0}, 1
+	add i{r6}, i{r6}, t.28{r0}
 @for_5:
-	const r0, 128
-	lt r0, r6, r0
-	branch r0, true, @for_5_body, @main_ret
+	const t.13{r0}, 128
+	lt t.12{r0}, i{r6}, t.13{r0}
+	branch t.12{r0}, true, @for_5_body, @main_ret
 
 @printStringLength@@u8@i64:
 	mov     rdi, rsp

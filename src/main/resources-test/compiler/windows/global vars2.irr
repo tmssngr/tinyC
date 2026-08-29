@@ -2,65 +2,65 @@
  Local variables
 	arg 0: str (u8*/8)
 	; 6 pc
-	move r6, r1
-	move r1, r6
-	call r0 = strlen@@u8[r1] -> i64
-	move r1, r6
-	move r2, r0
-	call printStringLength@@u8@i64[r1, r2]
+	move str{r6}, str{r1}
+	move str{r1}, str{r6}
+	call length{r0} = strlen@@u8[str{r1}] -> i64
+	move str{r1}, str{r6}
+	move length{r2}, length{r0}
+	call printStringLength@@u8@i64[str{r1}, length{r2}]
 
 @strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	; 7 pc
-	const r0, 0
+	const length{r0}, 0
 	; 61:2 for *str != 0
 	jump @for_1
 @for_1_body:
-	const r2, 1
-	add r0, r0, r2
-	const r2, 1
-	add r1, r1, r2
+	const t.5{r2}, 1
+	add length{r0}, length{r0}, t.5{r2}
+	const t.6{r2}, 1
+	add str{r1}, str{r1}, t.6{r2}
 @for_1:
-	load r2, [r1]
-	const r3, 0
-	notequals r2, r2, r3
-	branch r2, true, @for_1_body, @for_1_break
+	load t.3{r2}, [str{r1}]
+	const t.4{r3}, 0
+	notequals t.2{r2}, t.3{r2}, t.4{r3}
+	branch t.2{r2}, true, @for_1_body, @for_1_break
 	; 64:9 return length
 
 @next:
 	; 8 pc
-	move r1, global
-	move r0, r1
-	const r2, 1
-	add r1, r1, r2
+	move tmp.global{r1}, global
+	move copy{r0}, tmp.global{r1}
+	const t.1{r2}, 1
+	add tmp.global{r1}, tmp.global{r1}, t.1{r2}
 	; 8:9 return copy
-	move global, r1
+	move global, tmp.global{r1}
 
 @main:
 	; 14 pc
 	; begin initialize global variables
-	const r6, 0
+	const tmp.global{r6}, 0
 	; end initialize global variables
 	; 12:2 while true
-	move global, r6
+	move global, tmp.global{r6}
 	jump @while_2
 @if_3_end:
 	; 19:3 if n < 2
-	const r7, 2
-	lt r6, r6, r7
-	branch r6, false, @while_2, @if_4_then
-	const r1, [string-1]
-	call printString@@u8[r1]
+	const t.5{r7}, 2
+	lt t.4{r6}, n{r6}, t.5{r7}
+	branch t.4{r6}, false, @while_2, @if_4_then
+	const t.6{r1}, [string-1]
+	call printString@@u8[t.6{r1}]
 @while_2:
-	const r1, [string-0]
-	call printString@@u8[r1]
-	call r0 = next[] -> u8
-	move r6, r0
+	const t.1{r1}, [string-0]
+	call printString@@u8[t.1{r1}]
+	call n{r0} = next[] -> u8
+	move n{r6}, n{r0}
 	; 15:3 if n == 3
-	const r0, 3
-	equals r0, r6, r0
-	branch r0, false, @if_3_end, @main_ret
+	const t.3{r0}, 3
+	equals t.2{r0}, n{r6}, t.3{r0}
+	branch t.2{r0}, false, @if_3_end, @main_ret
 
 @printStringLength@@u8@i64:
 	mov     rdi, rsp

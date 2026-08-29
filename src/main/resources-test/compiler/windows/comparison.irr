@@ -2,102 +2,102 @@
  Local variables
 	arg 0: str (u8*/8)
 	; 6 pc
-	move r6, r1
-	move r1, r6
-	call r0 = strlen@@u8[r1] -> i64
-	move r1, r6
-	move r2, r0
-	call printStringLength@@u8@i64[r1, r2]
+	move str{r6}, str{r1}
+	move str{r1}, str{r6}
+	call length{r0} = strlen@@u8[str{r1}] -> i64
+	move str{r1}, str{r6}
+	move length{r2}, length{r0}
+	call printStringLength@@u8@i64[str{r1}, length{r2}]
 
 @printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	; 7 pc
-	move chr, r1
-	addrof r1, chr
-	const r2, 1
-	call printStringLength@@u8@u8[r1, r2]
+	move chr, chr{r1}
+	addrof t.1{r1}, chr
+	const t.2{r2}, 1
+	call printStringLength@@u8@u8[t.1{r1}, t.2{r2}]
 
 @printUint@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
 	; 23 pc
-	const r6, 20
+	const pos{r6}, 20
 	; 25:2 while true
 @while_1:
-	const r7, 1
-	sub r6, r6, r7
-	const r7, 10
-	move r3, r1
-	move r0, r3
-	mod r2, r0, r7
-	move r3, r2
-	const r7, 10
-	move r0, r1
-	div r0, r0, r7
-	move r1, r0
-	cast r7(u8), r3(i64)
-	const r0, 48
-	add r7, r7, r0
-	cast r0(i64), r6(u8)
-	addrof r3, [buffer]
-	add r3, r3, r0
-	store [r3], r7
+	const t.5{r7}, 1
+	sub pos{r6}, pos{r6}, t.5{r7}
+	const t.6{r7}, 10
+	move remainder{r3}, number{r1}
+	move remainder{r0}, remainder{r3}
+	mod remainder{r2}, remainder{r0}, t.6{r7}
+	move remainder{r3}, remainder{r2}
+	const t.7{r7}, 10
+	move number{r0}, number{r1}
+	div number{r0}, number{r0}, t.7{r7}
+	move number{r1}, number{r0}
+	cast t.8{r7}(u8), remainder{r3}(i64)
+	const t.9{r0}, 48
+	add digit{r7}, digit{r7}, t.9{r0}
+	cast t.11{r0}(i64), pos{r6}(u8)
+	addrof t.10{r3}, [buffer]
+	add t.10{r3}, t.10{r3}, t.11{r0}
+	store [t.10{r3}], digit{r7}
 	; 31:3 if number == 0
-	const r7, 0
-	equals r7, r1, r7
-	branch r7, false, @while_1, @while_1_break
-	cast r7(i64), r6(u8)
-	addrof r1, [buffer]
-	add r1, r1, r7
-	const r7, 20
-	move r2, r7
-	sub r2, r2, r6
-	call printStringLength@@u8@u8[r1, r2]
+	const t.13{r7}, 0
+	equals t.12{r7}, number{r1}, t.13{r7}
+	branch t.12{r7}, false, @while_1, @while_1_break
+	cast t.15{r7}(i64), pos{r6}(u8)
+	addrof t.14{r1}, [buffer]
+	add t.14{r1}, t.14{r1}, t.15{r7}
+	const t.17{r7}, 20
+	move t.16{r2}, t.17{r7}
+	sub t.16{r2}, t.16{r2}, pos{r6}
+	call printStringLength@@u8@u8[t.14{r1}, t.16{r2}]
 
 @printIntLf@bool:
  Local variables
 	arg 0: number (bool/1)
 	; 2 pc
-	cast r1(i64), r1(bool)
-	call printIntLf@i64[r1]
+	cast t.1{r1}(i64), number{r1}(bool)
+	call printIntLf@i64[t.1{r1}]
 
 @printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
 	; 8 pc
-	move r6, r1
+	move number{r6}, number{r1}
 	; 51:2 if number < 0
-	const r7, 0
-	lt r7, r6, r7
-	branch r7, false, @if_3_end, @if_3_then
-	const r1, 45
-	call printChar@u8[r1]
-	neg r6, r6
+	const t.2{r7}, 0
+	lt t.1{r7}, number{r6}, t.2{r7}
+	branch t.1{r7}, false, @if_3_end, @if_3_then
+	const t.3{r1}, 45
+	call printChar@u8[t.3{r1}]
+	neg number{r6}, number{r6}
 @if_3_end:
-	move r1, r6
-	call printUint@i64[r1]
-	const r1, 10
-	call printChar@u8[r1]
+	move number{r1}, number{r6}
+	call printUint@i64[number{r1}]
+	const t.4{r1}, 10
+	call printChar@u8[t.4{r1}]
 
 @strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	; 7 pc
-	const r0, 0
+	const length{r0}, 0
 	; 61:2 for *str != 0
 	jump @for_4
 @for_4_body:
-	const r2, 1
-	add r0, r0, r2
-	const r2, 1
-	add r1, r1, r2
+	const t.5{r2}, 1
+	add length{r0}, length{r0}, t.5{r2}
+	const t.6{r2}, 1
+	add str{r1}, str{r1}, t.6{r2}
 @for_4:
-	load r2, [r1]
-	const r3, 0
-	notequals r2, r2, r3
-	branch r2, true, @for_4_body, @for_4_break
+	load t.3{r2}, [str{r1}]
+	const t.4{r3}, 0
+	notequals t.2{r2}, t.3{r2}, t.4{r3}
+	branch t.2{r2}, true, @for_4_body, @for_4_break
 	; 64:9 return length
 
 @printStringLength@@u8@u8:
@@ -105,8 +105,8 @@
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
 	; 2 pc
-	cast r2(i64), r2(u8)
-	call printStringLength@@u8@i64[r1, r2]
+	cast t.2{r2}(i64), length{r2}(u8)
+	call printStringLength@@u8@i64[str{r1}, t.2{r2}]
 
 @main:
  Local variables
@@ -115,94 +115,94 @@
 	; 132 pc
 	; begin initialize global variables
 	; end initialize global variables
-	const r1, [string-0]
-	call printString@@u8[r1]
-	const r6, 1
-	const r7, 2
-	lt r1, r6, r7
-	call printIntLf@bool[r1]
-	lt r1, r7, r6
-	call printIntLf@bool[r1]
-	const r1, [string-1]
-	call printString@@u8[r1]
-	const r0, 0
-	const r2, 128
-	lt r1, r0, r2
-	move c, r0
-	move d, r2
-	call printIntLf@bool[r1]
-	move r2, c
-	move r0, d
-	lt r1, r0, r2
-	move c, r2
-	move d, r0
-	call printIntLf@bool[r1]
-	const r1, [string-2]
-	call printString@@u8[r1]
-	lteq r1, r6, r7
-	call printIntLf@bool[r1]
-	lteq r1, r7, r6
-	call printIntLf@bool[r1]
-	const r1, [string-3]
-	call printString@@u8[r1]
-	move r0, c
-	move r2, d
-	lteq r1, r0, r2
-	move c, r0
-	move d, r2
-	call printIntLf@bool[r1]
-	move r2, c
-	move r0, d
-	lteq r1, r0, r2
-	move c, r2
-	move d, r0
-	call printIntLf@bool[r1]
-	const r1, [string-4]
-	call printString@@u8[r1]
-	equals r1, r6, r7
-	call printIntLf@bool[r1]
-	equals r1, r7, r6
-	call printIntLf@bool[r1]
-	const r1, [string-5]
-	call printString@@u8[r1]
-	notequals r1, r6, r7
-	call printIntLf@bool[r1]
-	notequals r1, r7, r6
-	call printIntLf@bool[r1]
-	const r1, [string-6]
-	call printString@@u8[r1]
-	gteq r1, r6, r7
-	call printIntLf@bool[r1]
-	gteq r1, r7, r6
-	call printIntLf@bool[r1]
-	const r1, [string-7]
-	call printString@@u8[r1]
-	move r0, c
-	move r2, d
-	gteq r1, r0, r2
-	move c, r0
-	move d, r2
-	call printIntLf@bool[r1]
-	move r2, c
-	move r0, d
-	gteq r1, r0, r2
-	move c, r2
-	move d, r0
-	call printIntLf@bool[r1]
-	const r1, [string-8]
-	call printString@@u8[r1]
-	gt r1, r6, r7
-	call printIntLf@bool[r1]
-	gt r1, r7, r6
-	call printIntLf@bool[r1]
-	const r1, [string-9]
-	call printString@@u8[r1]
-	move r6, c
-	move r7, d
-	gt r1, r6, r7
-	call printIntLf@bool[r1]
-	gt r1, r7, r6
-	call printIntLf@bool[r1]
+	const t.4{r1}, [string-0]
+	call printString@@u8[t.4{r1}]
+	const a{r6}, 1
+	const b{r7}, 2
+	lt t.5{r1}, a{r6}, b{r7}
+	call printIntLf@bool[t.5{r1}]
+	lt t.6{r1}, b{r7}, a{r6}
+	call printIntLf@bool[t.6{r1}]
+	const t.7{r1}, [string-1]
+	call printString@@u8[t.7{r1}]
+	const c{r0}, 0
+	const d{r2}, 128
+	lt t.8{r1}, c{r0}, d{r2}
+	move c, c{r0}
+	move d, d{r2}
+	call printIntLf@bool[t.8{r1}]
+	move c{r2}, c
+	move d{r0}, d
+	lt t.9{r1}, d{r0}, c{r2}
+	move c, c{r2}
+	move d, d{r0}
+	call printIntLf@bool[t.9{r1}]
+	const t.10{r1}, [string-2]
+	call printString@@u8[t.10{r1}]
+	lteq t.11{r1}, a{r6}, b{r7}
+	call printIntLf@bool[t.11{r1}]
+	lteq t.12{r1}, b{r7}, a{r6}
+	call printIntLf@bool[t.12{r1}]
+	const t.13{r1}, [string-3]
+	call printString@@u8[t.13{r1}]
+	move c{r0}, c
+	move d{r2}, d
+	lteq t.14{r1}, c{r0}, d{r2}
+	move c, c{r0}
+	move d, d{r2}
+	call printIntLf@bool[t.14{r1}]
+	move c{r2}, c
+	move d{r0}, d
+	lteq t.15{r1}, d{r0}, c{r2}
+	move c, c{r2}
+	move d, d{r0}
+	call printIntLf@bool[t.15{r1}]
+	const t.16{r1}, [string-4]
+	call printString@@u8[t.16{r1}]
+	equals t.17{r1}, a{r6}, b{r7}
+	call printIntLf@bool[t.17{r1}]
+	equals t.18{r1}, b{r7}, a{r6}
+	call printIntLf@bool[t.18{r1}]
+	const t.19{r1}, [string-5]
+	call printString@@u8[t.19{r1}]
+	notequals t.20{r1}, a{r6}, b{r7}
+	call printIntLf@bool[t.20{r1}]
+	notequals t.21{r1}, b{r7}, a{r6}
+	call printIntLf@bool[t.21{r1}]
+	const t.22{r1}, [string-6]
+	call printString@@u8[t.22{r1}]
+	gteq t.23{r1}, a{r6}, b{r7}
+	call printIntLf@bool[t.23{r1}]
+	gteq t.24{r1}, b{r7}, a{r6}
+	call printIntLf@bool[t.24{r1}]
+	const t.25{r1}, [string-7]
+	call printString@@u8[t.25{r1}]
+	move c{r0}, c
+	move d{r2}, d
+	gteq t.26{r1}, c{r0}, d{r2}
+	move c, c{r0}
+	move d, d{r2}
+	call printIntLf@bool[t.26{r1}]
+	move c{r2}, c
+	move d{r0}, d
+	gteq t.27{r1}, d{r0}, c{r2}
+	move c, c{r2}
+	move d, d{r0}
+	call printIntLf@bool[t.27{r1}]
+	const t.28{r1}, [string-8]
+	call printString@@u8[t.28{r1}]
+	gt t.29{r1}, a{r6}, b{r7}
+	call printIntLf@bool[t.29{r1}]
+	gt t.30{r1}, b{r7}, a{r6}
+	call printIntLf@bool[t.30{r1}]
+	const t.31{r1}, [string-9]
+	call printString@@u8[t.31{r1}]
+	move c{r6}, c
+	move d{r7}, d
+	gt t.32{r1}, c{r6}, d{r7}
+	call printIntLf@bool[t.32{r1}]
+	gt t.33{r1}, d{r7}, c{r6}
+	call printIntLf@bool[t.33{r1}]
 
 @printStringLength@@u8@i64:
 	mov     rdi, rsp
