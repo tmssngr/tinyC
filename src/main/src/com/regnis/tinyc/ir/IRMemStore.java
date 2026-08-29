@@ -19,6 +19,11 @@ public record IRMemStore(@NotNull IRVar addr, @NotNull IRVar value, @NotNull Loc
 	@NotNull
 	@Override
 	public String toString() {
-		return "store [" + addr + "], " + value;
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
+		return "store [" + addr.toString(comment) + "], " + value.toString(comment);
 	}
 }
