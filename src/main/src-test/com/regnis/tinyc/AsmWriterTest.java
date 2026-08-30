@@ -60,7 +60,7 @@ public final class AsmWriterTest {
 		Files.createDirectories(dir);
 		final Path asmFile = dir.resolve(name + ".asm");
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
-			final X86Win64 output = new X86Win64(writer);
+			final AsmWriter output = new X86_64_WindowsAsmWriter(writer, 4, X86Registers.WINDOWS);
 			output.write(program);
 		}
 	}
