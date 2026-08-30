@@ -15,9 +15,11 @@ public final class IRLocalVarFactory {
 	private final IRVarInfos varInfos;
 	private final List<IRVarDef> varDefs;
 	private final Set<IRVar> cantBeRegister;
+	private final Type pointerIntType;
 
-	public IRLocalVarFactory(@NotNull IRVarInfos varInfos) {
+	public IRLocalVarFactory(@NotNull IRVarInfos varInfos, @NotNull Type pointerIntType) {
 		this.varInfos = varInfos;
+		this.pointerIntType = pointerIntType;
 		varDefs = new ArrayList<>(varInfos.vars());
 		cantBeRegister = new HashSet<>(varInfos.cantBeRegister());
 	}
@@ -33,15 +35,15 @@ public final class IRLocalVarFactory {
 			Utils.assertTrue(!def.var().name().equals(name));
 		}
 
-		IRVarInfos varInfos = this.varInfos;
+		final int size;
 		if (var.scope() == VariableScope.global) {
-			varInfos = varInfos.global();
+			size = varInfos.global().size(var);
 		}
-		final int size = varInfos.size(var);
-		final int index = varDefs.size();
-		final IRVar localVar = new IRVar(name, index, VariableScope.function, var.type());
-		varDefs.add(new IRVarDef(localVar, size));
-		return localVar;
+		else {
+			final IRVarDef varDef = getVarDef(var);
+			size = varDef.size();
+		}
+		return addVar(name, size, var.type());
 	}
 
 	@NotNull
@@ -49,5 +51,48 @@ public final class IRLocalVarFactory {
 		final IRVar stackVar = createVar(var, name);
 		cantBeRegister.add(stackVar);
 		return stackVar;
+	}
+
+	@NotNull
+	public IRVar createPointerVar(@NotNull String prefix) {
+		final String name = createUniqueName(prefix);
+		final Type type = Type.pointer(Type.VOID);
+		final int size = Type.getSize(type, pointerIntType);
+		return addVar(name, size, type);
+	}
+
+	private IRVarDef getVarDef(IRVar var) {
+		for (IRVarDef varDef : varDefs) {
+			if (varDef.var().equals(var)) {
+				return varDef;
+			}
+		}
+		throw new IllegalArgumentException("Unknown var " + var.toString(true));
+	}
+
+	@NotNull
+	private IRVar addVar(@NotNull String name, int size, @NotNull Type type) {
+		final int index = varDefs.size();
+		final IRVar localVar = new IRVar(name, index, VariableScope.function, type);
+		varDefs.add(new IRVarDef(localVar, size));
+		return localVar;
+	}
+
+	private String createUniqueName(String prefix) {
+		final Set<String> names = new HashSet<>();
+		// there can already be variables with the same name (and even different type), e.g. from different scopes inside a method
+		varDefs.forEach(vardef -> names.add(vardef.var().name()));
+
+		int i = 0;
+		while (true) {
+			String name = prefix;
+			if (i > 0) {
+				name = name + i;
+			}
+			if (!names.contains(name)) {
+				return name;
+			}
+			i++;
+		}
 	}
 }
