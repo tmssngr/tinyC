@@ -117,19 +117,6 @@ start:
         add rsp, 40
         ret
 
-        ; void printIntLf@u8
-        ;   rsp+48: arg number
-@printIntLf@u8:
-        sub rsp, 8
-        sub rsp, 32
-        ; cast t.1{r1}(i64), number{r1}(u8)
-        movzx rcx, cl
-        ; call printIntLf@i64[t.1{r1}]
-        call @printIntLf@i64
-        add rsp, 32
-        add rsp, 8
-        ret
-
         ; void printIntLf@i64
         ;   rsp+64: arg number
 @printIntLf@i64:
@@ -268,18 +255,6 @@ start:
         add rsp, 8
         ret
 
-        ; u8 randomU8
-@randomU8:
-        sub rsp, 8
-        sub rsp, 32
-        ; 19:10 return (u8)
-        ; call t.1{r0} = random[] -> i32
-        call @random
-        ; cast t.0{r0}(u8), t.1{r0}(i32)
-        add rsp, 32
-        add rsp, 8
-        ret
-
         ; void main
 @main:
         ; save clobbered non-volatile registers
@@ -297,26 +272,26 @@ start:
         ; call initRandom@i32[t.2{r1}]
         call @initRandom@i32
         ; const i{r6}, 0
-        mov bl, 0
-        ; 6:2 for i < 50
+        mov bx, 0
+        ; 6:2 for i < 300
         jmp @for_4
 @for_4_body:
-        ; call r{r0} = randomU8[] -> u8
-        call @randomU8
-        ; move r{r1}, r{r0}
-        mov cl, al
-        ; call printIntLf@u8[r{r1}]
-        call @printIntLf@u8
-        ; const t.5{r0}, 1
-        mov al, 1
-        ; add i{r6}, i{r6}, t.5{r0}
-        add bl, al
+        ; call r{r0} = random[] -> i32
+        call @random
+        ; cast t.5{r1}(i64), r{r0}(i32)
+        movsxd rcx, eax
+        ; call printIntLf@i64[t.5{r1}]
+        call @printIntLf@i64
+        ; const t.6{r0}, 1
+        mov ax, 1
+        ; add i{r6}, i{r6}, t.6{r0}
+        add bx, ax
 @for_4:
-        ; const t.4{r0}, 50
-        mov al, 50
+        ; const t.4{r0}, 300
+        mov ax, 300
         ; lt t.3{r0}, i{r6}, t.4{r0}
-        cmp bl, al
-        setb al
+        cmp bx, ax
+        setl al
         ; branch t.3{r0}, true, @for_4_body, @main_ret
         or al, al
         jnz @for_4_body
