@@ -229,7 +229,7 @@ public final class IRWriter extends TextWriter {
 	}
 
 	private int getInstructionTime(IRVar var) {
-		return 2;
+		return var.scope() != VariableScope.register ? 2 : 0;
 	}
 
 	private void writeGlobalVars(List<IRVarDef> globalVars) throws IOException {
