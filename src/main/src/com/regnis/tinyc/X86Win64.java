@@ -388,7 +388,15 @@ public final class X86Win64 extends AsmWriter {
 		final int sourceSize = getTypeSize(cast.source().type());
 		final int targetSize = getTypeSize(cast.target().type());
 		if (targetSize > sourceSize) {
-			writeIndented("movzx " + getRegName(valueReg, targetSize) + ", " + getRegName(valueReg, sourceSize));
+			if (sourceSize == 1) {
+				writeIndented("movzx " + getRegName(valueReg, targetSize) + ", " + getRegName(valueReg, sourceSize));
+			}
+			else if (sourceSize == 4) {
+				writeIndented("movsxd " + getRegName(valueReg, targetSize) + ", " + getRegName(valueReg, sourceSize));
+			}
+			else {
+				writeIndented("movsx " + getRegName(valueReg, targetSize) + ", " + getRegName(valueReg, sourceSize));
+			}
 		}
 		storeVar(cast.target(), valueReg);
 		free(valueReg);

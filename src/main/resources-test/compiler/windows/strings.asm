@@ -297,7 +297,7 @@ start:
         ; cast t.1(i64), number(i16)
         lea rax, [rsp+24]
         mov bx, [rax]
-        movzx rbx, bx
+        movsx rbx, bx
         lea rax, [rsp+0]
         mov [rax], rbx
         ; call printIntLf@i64[t.1]

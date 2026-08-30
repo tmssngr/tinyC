@@ -86,7 +86,7 @@ start:
         ; cast t.1(i64), number(i16)
         lea rax, [rsp+24]
         mov bx, [rax]
-        movzx rbx, bx
+        movsx rbx, bx
         lea rax, [rsp+0]
         mov [rax], rbx
         ; call printUint@i64[t.1]
@@ -712,7 +712,7 @@ start:
         ; cast t.4(i64), t.5(i16)
         lea rax, [rsp+24]
         mov bx, [rax]
-        movzx rbx, bx
+        movsx rbx, bx
         lea rax, [rsp+16]
         mov [rax], rbx
         ; addrof t.3, [field]
@@ -1003,7 +1003,7 @@ start:
         ; cast t.4(i64), t.5(i16)
         lea rax, [rsp+16]
         mov bx, [rax]
-        movzx rbx, bx
+        movsx rbx, bx
         lea rax, [rsp+8]
         mov [rax], rbx
         ; addrof t.3, [field]
