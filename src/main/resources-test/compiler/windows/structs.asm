@@ -64,17 +64,17 @@ start:
         ; move remainder{r0}, remainder{r4}
         mov rax, r9
         ; mod remainder{r2}, remainder{r0}, 10
-        mov cx, 10
         cqo
-        idiv cx
+        mov rcx, 10
+        idiv rcx
         ; move remainder{r4}, remainder{r2}
         mov r9, rdx
         ; move number{r0}, number{r6}
         mov rax, rbx
         ; div number{r0}, number{r0}, 10
-        mov cx, 10
         cqo
-        idiv cx
+        mov rcx, 10
+        idiv rcx
         ; move number{r6}, number{r0}
         mov rbx, rax
         ; cast t.5{r0}(u8), remainder{r4}(i64)

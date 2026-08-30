@@ -100,17 +100,17 @@ start:
         ; move remainder{r0}, remainder{r4}
         mov rax, r9
         ; mod remainder{r2}, remainder{r0}, 10
-        mov cx, 10
         cqo
-        idiv cx
+        mov rcx, 10
+        idiv rcx
         ; move remainder{r4}, remainder{r2}
         mov r9, rdx
         ; move number{r0}, number{r6}
         mov rax, rbx
         ; div number{r0}, number{r0}, 10
-        mov cx, 10
         cqo
-        idiv cx
+        mov rcx, 10
+        idiv rcx
         ; move number{r6}, number{r0}
         mov rbx, rax
         ; cast t.5{r0}(u8), remainder{r4}(i64)
@@ -1028,9 +1028,9 @@ start:
         mov ax, r8w
         ; div value{r0}, value{r0}, 10
         movsx rax, ax
-        mov cx, 10
         cqo
-        idiv cx
+        mov rcx, 10
+        idiv rcx
         ; move value{r3}, value{r0}
         mov r8w, ax
         ; 127:3 if value == 0
@@ -1340,9 +1340,9 @@ start:
         mov eax, r8d
         ; mod t.7{r2}, t.7{r0}, 20
         movsxd rax, eax
-        mov cx, 20
         cqo
-        idiv cx
+        mov rcx, 20
+        idiv rcx
         ; move t.7{r3}, t.7{r2}
         mov r8d, edx
         ; cast row{r1}(i16), t.7{r3}(i32)
@@ -1359,9 +1359,9 @@ start:
         mov eax, r8d
         ; mod t.9{r2}, t.9{r0}, 40
         movsxd rax, eax
-        mov cx, 40
         cqo
-        idiv cx
+        mov rcx, 40
+        idiv rcx
         ; move t.9{r3}, t.9{r2}
         mov r8d, edx
         ; cast column{r2}(i16), t.9{r3}(i32)
@@ -1816,9 +1816,9 @@ start:
         mov ax, r9w
         ; mod curr_r{r2}, curr_r{r0}, 20
         movsx rax, ax
-        mov cx, 20
         cqo
-        idiv cx
+        mov rcx, 20
+        idiv rcx
         ; move curr_r{r4}, curr_r{r2}
         mov r9w, dx
         ; addrof memVarAddr{r7}, curr_r
@@ -1856,9 +1856,9 @@ start:
         mov ax, r9w
         ; mod curr_r{r2}, curr_r{r0}, 20
         movsx rax, ax
-        mov cx, 20
         cqo
-        idiv cx
+        mov rcx, 20
+        idiv rcx
         ; move curr_r{r4}, curr_r{r2}
         mov r9w, dx
         ; addrof memVarAddr{r7}, curr_r
@@ -1894,9 +1894,9 @@ start:
         mov ax, r10w
         ; mod curr_c{r2}, curr_c{r0}, 40
         movsx rax, ax
-        mov cx, 40
         cqo
-        idiv cx
+        mov rcx, 40
+        idiv rcx
         ; move curr_c{r5}, curr_c{r2}
         mov r10w, dx
         ; addrof memVarAddr{r7}, curr_c
@@ -1940,9 +1940,9 @@ start:
         mov ax, r10w
         ; mod curr_c{r2}, curr_c{r0}, 40
         movsx rax, ax
-        mov cx, 40
         cqo
-        idiv cx
+        mov rcx, 40
+        idiv rcx
         ; move curr_c{r5}, curr_c{r2}
         mov r10w, dx
         ; addrof memVarAddr{r7}, curr_c
@@ -1976,9 +1976,9 @@ start:
         mov ax, r10w
         ; mod curr_c{r2}, curr_c{r0}, 40
         movsx rax, ax
-        mov cx, 40
         cqo
-        idiv cx
+        mov rcx, 40
+        idiv rcx
         ; move curr_c{r5}, curr_c{r2}
         mov r10w, dx
         ; addrof memVarAddr{r7}, curr_c
