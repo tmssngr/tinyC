@@ -36,7 +36,7 @@
 	var 13: t.13 (u8/1)
 	; 104 pc
 	const pos, 20
-	; 28:2 while true
+	; 33:2 while true
 @while_1:
 	sub pos, pos, 1
 	move remainder, number
@@ -49,7 +49,7 @@
 	addrof t.6, [buffer]
 	add t.6, t.6, t.7
 	store [t.6], digit
-	; 34:3 if number == 0
+	; 39:3 if number == 0
 	const t.9, 0
 	equals t.8, number, t.9
 	branch t.8, false, @while_1, @while_1_break

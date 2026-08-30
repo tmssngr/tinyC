@@ -26,7 +26,7 @@
 	; 24 pc
 	move r6, r1
 	const r3, 20
-	; 28:2 while true
+	; 33:2 while true
 @while_1:
 	sub r3, r3, 1
 	move r4, r6
@@ -42,7 +42,7 @@
 	addrof r5, [buffer]
 	add r5, r5, r4
 	store [r5], r0
-	; 34:3 if number == 0
+	; 39:3 if number == 0
 	const r0, 0
 	equals r0, r6, r0
 	branch r0, false, @while_1, @while_1_break
@@ -80,7 +80,7 @@
 	arg 0: number (i64/8)
 	; 8 pc
 	move r6, r1
-	; 54:2 if number < 0
+	; 59:2 if number < 0
 	const r7, 0
 	lt r7, r6, r7
 	branch r7, false, @if_3_end, @if_3_then
@@ -98,7 +98,7 @@
 	arg 0: str (u8*/8)
 	; 7 pc
 	const r0, 0
-	; 64:2 for *str != 0
+	; 69:2 for *str != 0
 	jump @for_4
 @for_4_body:
 	add r0, r0, 1
@@ -108,7 +108,7 @@
 	const r3, 0
 	notequals r2, r2, r3
 	branch r2, true, @for_4_body, @for_4_break
-	; 67:9 return length
+	; 72:9 return length
 
 @printStringLength@@u8@u8:
  Local variables

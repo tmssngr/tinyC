@@ -35,7 +35,7 @@ public class LSPreprocessorTest {
 				                                                         new IRBinary(d, IRBinary.Op.Add, a, b),
 				                                                         new IRCall(c, Type.I16, "sub", List.of(d, c, b, a)),
 				                                                         new IRRetValue(c)
-		                                                         )), callingConventionProvider, false, Type.I64);
+		                                                         )), callingConventionProvider, null, Type.I64);
 		assertEquals(new IRVarInfos(List.of(
 				new IRVarDef(a, 2),
 				new IRVarDef(b, 2),
@@ -90,7 +90,7 @@ public class LSPreprocessorTest {
 				                                                         new IRMove(varA, 4),
 				                                                         new IRJump("label"),
 				                                                         new IRLabel("label")
-		                                                         )), callingConventionProvider, false, Type.I64);
+		                                                         )), callingConventionProvider, null, Type.I64);
 		assertEquals(List.of(
 				             new IRVarDef(varB, 2),
 				             new IRVarDef(varAddrA, 8),
@@ -131,7 +131,7 @@ public class LSPreprocessorTest {
 				                                                         new IRMove(varT2, 1),
 				                                                         new IRCall(null, Type.VOID, "printStringLength", List.of(varT1, varT2)),
 				                                                         new IRLabel("@printChar_ret")
-		                                                         )), callingConventionProvider, false, Type.I64);
+		                                                         )), callingConventionProvider, null, Type.I64);
 		assertEquals(List.of(
 				             new IRVarDef(varChr, 1),
 				             new IRVarDef(varT1, 8),

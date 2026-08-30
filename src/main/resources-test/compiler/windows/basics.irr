@@ -22,7 +22,7 @@
 	; 24 pc
 	move r6, r1
 	const r3, 20
-	; 28:2 while true
+	; 33:2 while true
 @while_1:
 	sub r3, r3, 1
 	move r4, r6
@@ -38,7 +38,7 @@
 	addrof r5, [buffer]
 	add r5, r5, r4
 	store [r5], r0
-	; 34:3 if number == 0
+	; 39:3 if number == 0
 	const r0, 0
 	equals r0, r6, r0
 	branch r0, false, @while_1, @while_1_break

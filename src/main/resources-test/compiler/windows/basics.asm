@@ -68,7 +68,7 @@ start:
         mov rbx, rcx
         ; const pos{r3}, 20
         mov r8b, 20
-        ; 28:2 while true
+        ; 33:2 while true
 @while_1:
         ; sub pos{r3}, pos{r3}, 1
         sub r8b, 1
@@ -102,7 +102,7 @@ start:
         add r10, r9
         ; store [t.6{r5}], digit{r0}
         mov [r10], al
-        ; 34:3 if number == 0
+        ; 39:3 if number == 0
         ; const t.9{r0}, 0
         mov rax, 0
         ; equals t.8{r0}, number{r6}, t.9{r0}

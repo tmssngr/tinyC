@@ -1,5 +1,6 @@
 package com.regnis.tinyc;
 
+import java.io.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -9,6 +10,9 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public class Utils {
+
+	public static final boolean IS_WINDOWS = File.separatorChar == '\\';
+
 	public static void assertTrue(boolean value) {
 		assertTrue(value, "");
 	}

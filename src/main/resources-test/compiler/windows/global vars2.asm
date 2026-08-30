@@ -47,7 +47,7 @@ start:
         sub rsp, 8
         ; const length{r0}, 0
         mov rax, 0
-        ; 64:2 for *str != 0
+        ; 69:2 for *str != 0
         jmp @for_1
 @for_1_body:
         ; add length{r0}, length{r0}, 1
@@ -65,7 +65,7 @@ start:
         ; branch t.2{r2}, true, @for_1_body, @for_1_break
         or dl, dl
         jnz @for_1_body
-        ; 67:9 return length
+        ; 72:9 return length
         add rsp, 8
         ret
 
