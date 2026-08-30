@@ -100,17 +100,17 @@ _while_1:
         ; move remainder.1{r0}, remainder.1{r4}
         mov rax, r9
         ; mod remainder.1{r2}, remainder.1{r0}, 10
-        mov cx, 10
         cqo
-        idiv cx
+        mov rcx, 10
+        idiv rcx
         ; move remainder.1{r4}, remainder.1{r2}
         mov r9, rdx
         ; move number.2{r0}, number.2{r3}
         mov rax, r8
         ; div number.2{r0}, 10
-        mov cx, 10
         cqo
-        idiv cx
+        mov rcx, 10
+        idiv rcx
         ; move number.2{r3}, number.2{r0}
         mov r8, rax
         ; cast t.5.1{r0}(u8), remainder.1{r4}(i64)
@@ -958,9 +958,9 @@ _while_22:
         mov ax, r9w
         ; div value.4{r0}, 10
         movsx rax, ax
-        mov cx, 10
         cqo
-        idiv cx
+        mov rcx, 10
+        idiv rcx
         ; move value.4{r4}, value.4{r0}
         mov r9w, ax
         ; 127:3 if value == 0
@@ -1248,9 +1248,9 @@ _for_30_body:
         mov eax, r8d
         ; mod t.5.1{r2}, t.5.1{r0}, 20
         movsxd rax, eax
-        mov cx, 20
         cqo
-        idiv cx
+        mov rcx, 20
+        idiv rcx
         ; move t.5.1{r3}, t.5.1{r2}
         mov r8d, edx
         ; cast row.1{r1}(i16), t.5.1{r3}(i32)
@@ -1267,9 +1267,9 @@ _for_30_body:
         mov eax, r8d
         ; mod t.7.1{r2}, t.7.1{r0}, 40
         movsxd rax, eax
-        mov cx, 40
         cqo
-        idiv cx
+        mov rcx, 40
+        idiv rcx
         ; move t.7.1{r3}, t.7.1{r2}
         mov r8d, edx
         ; cast column.1{r2}(i16), t.7.1{r3}(i32)
@@ -1687,9 +1687,9 @@ _if_41_end:
         mov ax, r8w
         ; mod curr_r.4{r2}, curr_r.4{r0}, 20
         movsx rax, ax
-        mov cx, 20
         cqo
-        idiv cx
+        mov rcx, 20
+        idiv rcx
         ; move curr_r.4{r3}, curr_r.4{r2}
         mov r8w, dx
         ; addrof memVarAddr{r7}, curr_c.2
@@ -1723,9 +1723,9 @@ _if_44_else:
         mov ax, r8w
         ; mod curr_r.5{r2}, curr_r.5{r0}, 20
         movsx rax, ax
-        mov cx, 20
         cqo
-        idiv cx
+        mov rcx, 20
+        idiv rcx
         ; move curr_r.5{r3}, curr_r.5{r2}
         mov r8w, dx
         ; move curr_r.2{r4}, curr_r.5{r3}
@@ -1749,9 +1749,9 @@ _if_45_else:
         mov ax, r8w
         ; mod curr_c.4{r2}, curr_c.4{r0}, 40
         movsx rax, ax
-        mov cx, 40
         cqo
-        idiv cx
+        mov rcx, 40
+        idiv rcx
         ; move curr_c.4{r3}, curr_c.4{r2}
         mov r8w, dx
         ; move curr_c.2{r5}, curr_c.4{r3}
@@ -1773,9 +1773,9 @@ _if_46_else:
         mov ax, r8w
         ; mod curr_c.5{r2}, curr_c.5{r0}, 40
         movsx rax, ax
-        mov cx, 40
         cqo
-        idiv cx
+        mov rcx, 40
+        idiv rcx
         ; move curr_c.5{r3}, curr_c.5{r2}
         mov r8w, dx
         ; move curr_c.2{r5}, curr_c.5{r3}

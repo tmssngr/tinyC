@@ -87,17 +87,17 @@ _while_1:
         ; move remainder.1{r0}, remainder.1{r4}
         mov rax, r9
         ; mod remainder.1{r2}, remainder.1{r0}, 10
-        mov cx, 10
         cqo
-        idiv cx
+        mov rcx, 10
+        idiv rcx
         ; move remainder.1{r4}, remainder.1{r2}
         mov r9, rdx
         ; move number.2{r0}, number.2{r3}
         mov rax, r8
         ; div number.2{r0}, 10
-        mov cx, 10
         cqo
-        idiv cx
+        mov rcx, 10
+        idiv rcx
         ; move number.2{r3}, number.2{r0}
         mov r8, rax
         ; cast t.5.1{r0}(u8), remainder.1{r4}(i64)
