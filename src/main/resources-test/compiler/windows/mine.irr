@@ -336,39 +336,27 @@
 	arg 0: cell (u8/1)
 	arg 1: row (i16/2)
 	arg 2: column (i16/2)
-	var 3: chr (u8/1)
-	; 38 pc
+	; 27 pc
 	move r6, r1
 	move r7, r2
 	move column, r3
-	const r1, 46
-	move chr, r1
-	; 75:2 if isOpen@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=75:13]])
-	move r1, r6
-	call r0 = isOpen@u8[r1] -> bool
-	branch r0, true, @if_14_then, @if_14_else
-	; 89:7 if isFlag@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=89:18]])
+	; 75:2 if isFlag@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=75:13]])
 	move r1, r6
 	call r0 = isFlag@u8[r1] -> bool
-	branch r0, false, @no_critical_edge_10, @if_17_then
-	jump @if_17_then
-@if_14_then:
-	; 76:3 if isBomb@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=76:14]])
+	branch r0, true, @if_14_then, @if_14_else
+	; 79:3 if isBomb@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=79:14]])
 	move r1, r6
 	call r0 = isBomb@u8[r1] -> bool
 	branch r0, false, @if_15_else, @if_15_then
 	jump @if_15_then
-@no_critical_edge_10:
-	move r6, chr
-	jump @if_14_end
-@if_17_then:
+@if_14_then:
 	const r6, 35
 	jump @if_14_end
 @if_15_else:
 	move r1, r7
 	move r2, column
 	call r0 = getBombCountAround@i16@i16[r1, r2] -> u8
-	; 81:4 if count > 0
+	; 84:4 if count > 0
 	const r6, 0
 	gt r6, r0, r6
 	branch r6, false, @if_16_else, @if_16_then
@@ -403,16 +391,16 @@
 	move row, r1
 	; 97:2 for row < 20
 	move r1, row
-	jump @for_18
-@for_18_body:
+	jump @for_17
+@for_17_body:
 	move row, r1
 	const r1, 124
 	call printChar@u8[r1]
 	const r2, 0
 	; 99:3 for column < 40
 	move r5, r2
-	jump @for_19
-@for_19_body:
+	jump @for_18
+@for_18_body:
 	move r1, row
 	move r2, r5
 	move row, r1
@@ -436,10 +424,10 @@
 	const r0, 1
 	move r5, column
 	add r5, r5, r0
-@for_19:
+@for_18:
 	const r0, 40
 	lt r0, r5, r0
-	branch r0, true, @for_19_body, @for_19_break
+	branch r0, true, @for_18_body, @for_18_break
 	const r2, 40
 	move r1, row
 	move row, r1
@@ -453,10 +441,10 @@
 	const r0, 1
 	move r1, row
 	add r1, r1, r0
-@for_18:
+@for_17:
 	const r0, 20
 	lt r0, r1, r0
-	branch r0, true, @for_18_body, @printField@i16@i16_ret
+	branch r0, true, @for_17_body, @printField@i16@i16_ret
 
 @printSpaces@i16:
  Local variables
@@ -464,16 +452,16 @@
 	; 6 pc
 	move r6, r1
 	; 112:2 for i > 0
-	jump @for_20
-@for_20_body:
+	jump @for_19
+@for_19_body:
 	const r1, 48
 	call printChar@u8[r1]
 	const r0, 1
 	sub r6, r6, r0
-@for_20:
+@for_19:
 	const r0, 0
 	gt r0, r6, r0
-	branch r0, true, @for_20_body, @printSpaces@i16_ret
+	branch r0, true, @for_19_body, @printSpaces@i16_ret
 
 @getDigitCount@i16:
  Local variables
@@ -483,10 +471,10 @@
 	; 119:2 if value < 0
 	const r4, 0
 	lt r4, r1, r4
-	branch r4, false, @while_22, @if_21_then
+	branch r4, false, @while_21, @if_20_then
 	const r3, 1
 	neg r1, r1
-@while_22:
+@while_21:
 	const r4, 1
 	add r3, r3, r4
 	const r4, 10
@@ -496,7 +484,7 @@
 	; 127:3 if value == 0
 	const r2, 0
 	equals r2, r1, r2
-	branch r2, false, @while_22, @while_22_break
+	branch r2, false, @while_21, @while_21_break
 	; 132:9 return count
 	move r0, r3
 
@@ -507,12 +495,12 @@
 	const r6, 0
 	const r7, 0
 	; 137:2 for r < 20
-	jump @for_24
-@for_24_body:
+	jump @for_23
+@for_23_body:
 	const r2, 0
 	; 138:3 for c < 40
-	jump @for_25
-@for_25_body:
+	jump @for_24
+@for_24_body:
 	move r1, r7
 	move c, r2
 	call r0 = getCell@i16@i16[r1, r2] -> u8
@@ -522,23 +510,23 @@
 	and r2, r2, r1
 	const r1, 0
 	equals r1, r2, r1
-	branch r1, false, @for_25_continue, @if_26_then
+	branch r1, false, @for_24_continue, @if_25_then
 	const r1, 1
 	add r6, r6, r1
-@for_25_continue:
+@for_24_continue:
 	const r1, 1
 	move r2, c
 	add r2, r2, r1
-@for_25:
+@for_24:
 	const r1, 40
 	lt r1, r2, r1
-	branch r1, true, @for_25_body, @for_24_continue
+	branch r1, true, @for_24_body, @for_23_continue
 	const r1, 1
 	add r7, r7, r1
-@for_24:
+@for_23:
 	const r1, 20
 	lt r1, r7, r1
-	branch r1, true, @for_24_body, @for_24_break
+	branch r1, true, @for_23_body, @for_23_break
 	; 145:9 return count
 	move r0, r6
 
@@ -574,11 +562,11 @@
 	; 160:2 if a < 0
 	const r2, 0
 	lt r2, r1, r2
-	branch r2, true, @if_27_then, @if_27_end
+	branch r2, true, @if_26_then, @if_26_end
 	; 163:9 return a
 	move r0, r1
 	jump @abs@i16_ret
-@if_27_then:
+@if_26_then:
 	; 161:10 return -a
 	neg r1, r1
 	move r0, r1
@@ -588,28 +576,28 @@
 	; 11 pc
 	const r6, 0
 	; 167:2 for r < 20
-	jump @for_28
-@for_28_body:
+	jump @for_27
+@for_27_body:
 	const r7, 0
 	; 168:3 for c < 40
-	jump @for_29
-@for_29_body:
+	jump @for_28
+@for_28_body:
 	const r3, 0
 	move r1, r6
 	move r2, r7
 	call setCell@i16@i16@u8[r1, r2, r3]
 	const r0, 1
 	add r7, r7, r0
-@for_29:
+@for_28:
 	const r0, 40
 	lt r0, r7, r0
-	branch r0, true, @for_29_body, @for_28_continue
+	branch r0, true, @for_28_body, @for_27_continue
 	const r0, 1
 	add r6, r6, r0
-@for_28:
+@for_27:
 	const r0, 20
 	lt r0, r6, r0
-	branch r0, true, @for_28_body, @clearField_ret
+	branch r0, true, @for_27_body, @clearField_ret
 
 @initField@i16@i16:
  Local variables
@@ -626,8 +614,8 @@
 	move bombs, r0
 	; 175:2 for bombs > 0
 	move r1, bombs
-	jump @for_30
-@for_30_body:
+	jump @for_29
+@for_29_body:
 	move bombs, r1
 	call r0 = random[] -> i32
 	const r1, 20
@@ -654,14 +642,14 @@
 	call r0 = abs@i16[r1] -> i16
 	const r2, 1
 	gt r0, r0, r2
-	branch r0, true, @no_critical_edge_8, @or_2nd_32
+	branch r0, true, @no_critical_edge_8, @or_2nd_31
 	move t.13, r0
-	jump @or_2nd_32
+	jump @or_2nd_31
 @no_critical_edge_8:
 	move t.13, r0
 	move r0, t.13
-	jump @or_next_32
-@or_2nd_32:
+	jump @or_next_31
+@or_2nd_31:
 	move r0, column
 	move r1, r0
 	move column, r0
@@ -669,20 +657,20 @@
 	call r0 = abs@i16[r1] -> i16
 	const r4, 1
 	gt r0, r0, r4
-@or_next_32:
-	branch r0, false, @for_30_continue, @if_31_then
+@or_next_31:
+	branch r0, false, @for_29_continue, @if_30_then
 	const r3, 1
 	move r1, row
 	move r2, column
 	call setCell@i16@i16@u8[r1, r2, r3]
-@for_30_continue:
+@for_29_continue:
 	const r0, 1
 	move r1, bombs
 	sub r1, r1, r0
-@for_30:
+@for_29:
 	const r0, 0
 	gt r0, r1, r0
-	branch r0, true, @for_30_body, @initField@i16@i16_ret
+	branch r0, true, @for_29_body, @initField@i16@i16_ret
 
 @maybeRevealAround@i16@i16:
  Local variables
@@ -702,12 +690,12 @@
 	call r0 = getBombCountAround@i16@i16[r1, r2] -> u8
 	const r3, 0
 	notequals r0, r0, r3
-	branch r0, true, @maybeRevealAround@i16@i16_ret, @if_33_end
+	branch r0, true, @maybeRevealAround@i16@i16_ret, @if_32_end
 	const r0, -1
 	; 190:2 for dr <= 1
 	move r1, r0
-	jump @for_34
-@for_34_body:
+	jump @for_33
+@for_33_body:
 	move r0, r1
 	move r1, r6
 	add r1, r1, r0
@@ -716,8 +704,8 @@
 	move dr, r0
 	move r, r1
 	move r1, r3
-	jump @for_35
-@for_35_body:
+	jump @for_34
+@for_34_body:
 	move r3, r1
 	move r0, dr
 	move r1, r
@@ -726,15 +714,15 @@
 	const r4, 0
 	equals r4, r0, r4
 	move dr, r0
-	branch r4, false, @and_next_37, @and_2nd_37
+	branch r4, false, @and_next_36, @and_2nd_36
 	const r0, 0
 	equals r4, r3, r0
-@and_next_37:
-	branch r4, false, @if_36_end, @no_critical_edge_17
+@and_next_36:
+	branch r4, false, @if_35_end, @no_critical_edge_17
 	move dc, r3
 	move r, r1
-	jump @for_35_continue
-@if_36_end:
+	jump @for_34_continue
+@if_35_end:
 	move r2, r7
 	add r2, r2, r3
 	move dc, r3
@@ -743,7 +731,7 @@
 	move c, r2
 	call r0 = checkCellBounds@i16@i16[r1, r2] -> bool
 	notlog r0, r0
-	branch r0, true, @for_35_continue, @if_38_end
+	branch r0, true, @for_34_continue, @if_37_end
 	move r1, r
 	move r, r1
 	move r2, c
@@ -753,7 +741,7 @@
 	move r1, r0
 	move cell, r0
 	call r0 = isOpen@u8[r1] -> bool
-	branch r0, true, @for_35_continue, @if_39_end
+	branch r0, true, @for_34_continue, @if_38_end
 	const r0, 2
 	move r4, cell
 	move r3, r4
@@ -767,29 +755,28 @@
 	move r, r1
 	move r2, c
 	call maybeRevealAround@i16@i16[r1, r2]
-@for_35_continue:
+@for_34_continue:
 	const r0, 1
 	move r1, dc
-	add r1, r1, r0
-@for_35:
-	const r0, 1
-	lteq r0, r1, r0
-	branch r0, true, @for_35_body, @for_34_continue
-	const r0, 1
-	move r1, dr
 	add r1, r1, r0
 @for_34:
 	const r0, 1
 	lteq r0, r1, r0
-	branch r0, true, @for_34_body, @maybeRevealAround@i16@i16_ret
+	branch r0, true, @for_34_body, @for_33_continue
+	const r0, 1
+	move r1, dr
+	add r1, r1, r0
+@for_33:
+	const r0, 1
+	lteq r0, r1, r0
+	branch r0, true, @for_33_body, @maybeRevealAround@i16@i16_ret
 @maybeRevealAround@i16@i16_ret:
 
 @main:
  Local variables
 	var 0: curr_r (i16/2)
 	var 1: cell (u8/1)
-	var 2: cell (u8/1)
-	; 211 pc
+	; 93 pc
 	; begin initialize global variables
 	const r6, 0
 	; end initialize global variables
@@ -799,174 +786,45 @@
 	const r6, 1
 	call clearField[]
 	const r7, 20
-	const r0, 10
-	move curr_r, r0
+	const r1, 10
+	move curr_r, r1
 	; 219:2 while true
-	jump @while_40
-@if_41_then:
+	jump @while_39
+@if_40_then:
 	; 222:4 if printLeft([])
 	call r0 = printLeft[] -> bool
-	branch r0, true, @if_42_then, @if_41_end
-@if_41_end:
+	branch r0, true, @if_41_then, @if_40_end
+@if_40_end:
 	call r0 = getChar[] -> i16
-	move r3, r0
 	; 229:3 if chr == 27
-	const r4, 27
-	equals r4, r3, r4
-	branch r4, true, @main_ret, @if_43_end
-	; 234:3 if chr == -8120
-	const r4, -8120
-	equals r4, r3, r4
-	branch r4, true, @if_44_then, @if_44_else
-	; 238:8 if chr == -8112
-	const r4, -8112
-	equals r4, r3, r4
-	branch r4, false, @if_45_else, @if_45_then
-	jump @if_45_then
-@if_44_then:
-	const r3, 20
-	move r1, curr_r
-	move r4, r1
-	add r4, r4, r3
-	const r3, 1
-	sub r4, r4, r3
-	const r3, 20
-	move r1, r4
-	move r0, r1
-	mod r2, r0, r3
-	move r1, r2
-	move curr_r, r1
-	jump @while_40
-@if_45_else:
-	move r1, curr_r
-	; 242:8 if chr == -8117
-	const r4, -8117
-	equals r4, r3, r4
-	branch r4, false, @if_46_else, @if_46_then
-	jump @if_46_then
-@if_45_then:
-	move r1, curr_r
-	const r3, 1
-	move r4, r1
-	add r4, r4, r3
-	const r3, 20
-	move r1, r4
-	move r0, r1
-	mod r2, r0, r3
-	move r1, r2
-	move curr_r, r1
-	jump @while_40
-@if_46_else:
-	; 246:8 if chr == -8117
-	const r4, -8117
-	equals r4, r3, r4
-	branch r4, false, @if_47_else, @if_47_then
-	jump @if_47_then
-@if_46_then:
-	const r3, 40
-	add r7, r7, r3
-	const r3, 1
-	sub r7, r7, r3
-	const r3, 40
-	move r0, r7
-	mod r2, r0, r3
-	move r7, r2
-	move curr_r, r1
-	jump @while_40
-@if_47_else:
-	; 250:8 if chr == -8115
-	const r4, -8115
-	equals r4, r3, r4
-	branch r4, false, @if_48_else, @if_48_then
-	jump @if_48_then
-@if_47_then:
-	const r3, 40
-	add r7, r7, r3
-	const r3, 1
-	sub r7, r7, r3
-	const r3, 40
-	move r0, r7
-	mod r2, r0, r3
-	move r7, r2
-	move curr_r, r1
-	jump @while_40
-@if_48_else:
-	; 254:8 if chr == 32
-	const r4, 32
-	equals r4, r3, r4
-	branch r4, false, @if_49_else, @if_49_then
-	jump @if_49_then
-@if_48_then:
-	const r3, 1
-	add r7, r7, r3
-	const r3, 40
-	move r0, r7
-	mod r2, r0, r3
-	move r7, r2
-	move curr_r, r1
-	jump @while_40
-@if_49_else:
-	; 263:8 if chr == 13
-	const r0, 13
-	equals r0, r3, r0
-	branch r0, false, @no_critical_edge_30, @if_52_then
-	jump @if_52_then
-@if_49_then:
-	; 255:4 if !needsInitialize
-	notlog r0, r6
-	branch r0, false, @no_critical_edge_33, @if_50_then
-	jump @if_50_then
-@no_critical_edge_30:
-	move curr_r, r1
-	jump @while_40
-@if_52_then:
-	branch r6, false, @no_critical_edge_31, @if_53_then
-	jump @if_53_then
-@no_critical_edge_33:
-	move curr_r, r1
-	jump @while_40
-@if_50_then:
-	move curr_r, r1
-	move r2, r7
-	call r0 = getCell@i16@i16[r1, r2] -> u8
-	; 257:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=257:17]])
-	move r1, r0
-	move cell, r0
-	call r0 = isOpen@u8[r1] -> bool
-	notlog r0, r0
-	branch r0, false, @while_40, @if_51_then
-	jump @if_51_then
-@no_critical_edge_31:
-	move curr_r, r1
-	jump @if_53_end
-@if_53_then:
-	move curr_r, r1
+	const r3, 27
+	equals r3, r0, r3
+	branch r3, true, @main_ret, @if_42_end
+	; 234:3 if chr == 13
+	const r3, 13
+	equals r0, r0, r3
+	branch r0, false, @while_39, @if_43_then
+	branch r6, false, @if_44_end, @if_44_then
 	const r6, 0
 	move r1, curr_r
 	move curr_r, r1
 	move r2, r7
 	call initField@i16@i16[r1, r2]
-	jump @if_53_end
-@if_51_then:
-	const r0, 4
-	move r3, cell
-	xor r3, r3, r0
 	move r1, curr_r
 	move curr_r, r1
 	move r2, r7
-	call setCell@i16@i16@u8[r1, r2, r3]
-	jump @while_40
-@if_53_end:
+	call printField@i16@i16[r1, r2]
+@if_44_end:
 	move r1, curr_r
 	move curr_r, r1
 	move r2, r7
 	call r0 = getCell@i16@i16[r1, r2] -> u8
-	; 269:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=269:16]])
+	; 241:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=241:16]])
 	move r1, r0
 	move cell, r0
 	call r0 = isOpen@u8[r1] -> bool
 	notlog r0, r0
-	branch r0, false, @if_54_end, @if_54_then
+	branch r0, false, @if_45_end, @if_45_then
 	const r0, 2
 	move r4, cell
 	move r3, r4
@@ -976,32 +834,29 @@
 	move curr_r, r1
 	move r2, r7
 	call setCell@i16@i16@u8[r1, r2, r3]
-@if_54_end:
-	; 272:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=272:15]])
+@if_45_end:
+	; 244:4 if isBomb@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=244:15]])
 	move r1, cell
 	call r0 = isBomb@u8[r1] -> bool
-	branch r0, true, @if_55_then, @if_55_end
+	branch r0, true, @if_46_then, @if_46_end
 	move r1, curr_r
 	move curr_r, r1
 	move r2, r7
 	call maybeRevealAround@i16@i16[r1, r2]
-@while_40:
+@while_39:
 	move r1, curr_r
 	move curr_r, r1
 	move r2, r7
 	call printField@i16@i16[r1, r2]
 	; 221:3 if !needsInitialize
 	notlog r0, r6
-	branch r0, false, @if_41_end, @if_41_then
-	jump @if_41_then
-@if_42_then:
+	branch r0, false, @if_40_end, @if_40_then
+	jump @if_40_then
+@if_41_then:
 	const r1, [string-2]
 	call printString@@u8[r1]
 	jump @main_ret
-@if_55_then:
-	move r1, curr_r
-	move r2, r7
-	call printField@i16@i16[r1, r2]
+@if_46_then:
 	const r1, [string-3]
 	call printString@@u8[r1]
 @main_ret:
