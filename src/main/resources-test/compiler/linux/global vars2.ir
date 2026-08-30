@@ -1,0 +1,99 @@
+@printString@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	var 1: length (i64/8)
+	; 10 pc
+	call length = strlen@@u8[str] -> i64
+	call printStringLength@@u8@i64[str, length]
+@printString@@u8_ret:
+
+@strlen@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	var 1: length (i64/8)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	var 5: t.5 (i64/8)
+	var 6: t.6 (i64/8)
+	; 43 pc
+	const length, 0
+	; 69:2 for *str != 0
+@for_1:
+	load t.3, [str]
+	const t.4, 0
+	notequals t.2, t.3, t.4
+	branch t.2, false, @for_1_break, @for_1_body
+@for_1_body:
+	const t.5, 1
+	add length, length, t.5
+@for_1_continue:
+	const t.6, 1
+	add str, str, t.6
+	jump @for_1
+@for_1_break:
+	; 72:9 return length
+	ret length
+	jump @strlen@@u8_ret
+@strlen@@u8_ret:
+
+@next:
+ Local variables
+	var 0: copy (u8/1)
+	var 1: t.1 (u8/1)
+	; 18 pc
+	move copy, global
+	const t.1, 1
+	add global, global, t.1
+	; 8:9 return copy
+	ret copy
+	jump @next_ret
+@next_ret:
+
+@main:
+ Local variables
+	var 0: n (u8/1)
+	var 1: t.1 (u8*/8)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (bool/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (u8*/8)
+	; 42 pc
+	; begin initialize global variables
+	const global, 0
+	; end initialize global variables
+	; 12:2 while true
+@while_2:
+	const t.1, [string-0]
+	call printString@@u8[t.1]
+	call n = next[] -> u8
+	; 15:3 if n == 3
+	const t.3, 3
+	equals t.2, n, t.3
+	branch t.2, true, @main_ret, @if_3_end
+@if_3_end:
+	; 19:3 if n < 2
+	const t.5, 2
+	lt t.4, n, t.5
+	branch t.4, false, @while_2, @if_4_then
+@if_4_then:
+	const t.6, [string-1]
+	call printString@@u8[t.6]
+	jump @while_2
+@main_ret:
+
+@printStringLength@@u8@i64:
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 1
+	mov rax, 1
+	syscall
+	ret
+
+Global variables
+	0: global (u8/1)
+
+String literals
+	string lit 0 "loop\n\0"
+	string lit 1 "<2\n\0"

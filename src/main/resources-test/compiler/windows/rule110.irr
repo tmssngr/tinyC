@@ -24,7 +24,7 @@
 	arg 0: str (u8*/8)
 	; 7 pc
 	const r0, 0
-	; 64:2 for *str != 0
+	; 69:2 for *str != 0
 	jump @for_1
 @for_1_body:
 	const r2, 1
@@ -36,7 +36,7 @@
 	const r3, 0
 	notequals r2, r2, r3
 	branch r2, true, @for_1_body, @for_1_break
-	; 67:9 return length
+	; 72:9 return length
 
 @printStringLength@@u8@u8:
  Local variables
