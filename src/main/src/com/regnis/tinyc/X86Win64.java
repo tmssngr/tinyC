@@ -204,21 +204,9 @@ public final class X86Win64 extends AsmWriter {
 		final IRVar sourceVar = source.var();
 		if (sourceVar != null) {
 			final IRVar target = move.target();
-			final int addrReg = TMP_REG;
-			if (sourceVar.scope() == VariableScope.register) {
-				if (target.scope() == VariableScope.register) {
-					writeIndented("mov " + getRegName(target) + ", " + getRegName(sourceVar));
-					return;
-				}
-
-				addrOf(addrReg, target);
-				writeIndented("mov [" + getRegName(addrReg) + "], " + getRegName(sourceVar));
-				return;
-			}
-
+			Utils.assertTrue(sourceVar.scope() == VariableScope.register);
 			Utils.assertTrue(target.scope() == VariableScope.register);
-			addrOf(addrReg, sourceVar);
-			writeIndented("mov " + getRegName(target) + ", [" + getRegName(addrReg) + "]");
+			writeIndented("mov " + getRegName(target) + ", " + getRegName(sourceVar));
 		}
 		else {
 			final IRVar target = move.target();
@@ -460,13 +448,8 @@ public final class X86Win64 extends AsmWriter {
 		if (targetReg == leftReg) {
 			writeIndented(op + " " + targetRegName + ", " + rightRegName);
 		}
-		else if (targetReg == rightReg) {
-			final String tmpRegName = getRegName(TMP_REG, target);
-			writeIndented("mov " + tmpRegName + ", " + leftRegName);
-			writeIndented(op + " " + tmpRegName + ", " + rightRegName);
-			writeIndented("mov " + targetRegName + ", " + tmpRegName);
-		}
 		else {
+			Utils.assertTrue(targetReg != rightReg);
 			writeIndented("mov " + targetRegName + ", " + leftRegName);
 			writeIndented(op + " " + targetRegName + ", " + rightRegName);
 		}
@@ -533,7 +516,7 @@ public final class X86Win64 extends AsmWriter {
 			case 8 -> getNRegName(13, size);
 			case 9 -> getNRegName(14, size);
 			case 10 -> getNRegName(15, size);
-			case TMP_REG -> getNRegName(11, size); // temp
+			case 11 -> getNRegName(11, size);
 			default -> throw new IllegalStateException();
 		};
 	}
