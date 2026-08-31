@@ -1,8 +1,9 @@
 @printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 7 pc
-	move chr, chr{r1}
+	; 9 pc
+	addrof memVarAddr{r7}, chr
+	store [memVarAddr{r7}], chr{r1}
 	addrof t.1{r1}, chr
 	const arg.0.1{r2}, 1
 	call printStringLength@@u8@u8[t.1{r1}, arg.0.1{r2}]
@@ -13,32 +14,32 @@
 	var 1: buffer[] (u8*/20)
 	; 24 pc
 	move number{r6}, number{r1}
-	const pos{r7}, 20
+	const pos{r3}, 20
 	; 28:2 while true
 @while_1:
-	sub pos{r7}, pos{r7}, 1
-	move remainder{r3}, number{r6}
-	move remainder{r0}, remainder{r3}
+	sub pos{r3}, pos{r3}, 1
+	move remainder{r4}, number{r6}
+	move remainder{r0}, remainder{r4}
 	mod remainder{r2}, remainder{r0}, 10
-	move remainder{r3}, remainder{r2}
+	move remainder{r4}, remainder{r2}
 	move number{r0}, number{r6}
 	div number{r0}, number{r0}, 10
 	move number{r6}, number{r0}
-	cast t.5{r0}(u8), remainder{r3}(i64)
+	cast t.5{r0}(u8), remainder{r4}(i64)
 	add digit{r0}, digit{r0}, 48
-	cast t.7{r3}(i64), pos{r7}(u8)
-	addrof t.6{r4}, [buffer]
-	add t.6{r4}, t.6{r4}, t.7{r3}
-	store [t.6{r4}], digit{r0}
+	cast t.7{r4}(i64), pos{r3}(u8)
+	addrof t.6{r5}, [buffer]
+	add t.6{r5}, t.6{r5}, t.7{r4}
+	store [t.6{r5}], digit{r0}
 	; 34:3 if number == 0
 	equals t.8{r0}, number{r6}, 0
 	branch t.8{r0}, false, @while_1, @while_1_break
-	cast t.10{r6}(i64), pos{r7}(u8)
+	cast t.10{r6}(i64), pos{r3}(u8)
 	addrof t.9{r1}, [buffer]
 	add t.9{r1}, t.9{r1}, t.10{r6}
 	const t.12{r6}, 20
 	move t.11{r2}, t.12{r6}
-	sub t.11{r2}, t.11{r2}, pos{r7}
+	sub t.11{r2}, t.11{r2}, pos{r3}
 	call printStringLength@@u8@u8[t.9{r1}, t.11{r2}]
 
 @printIntLf@u8:
