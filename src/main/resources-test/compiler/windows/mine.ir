@@ -104,10 +104,12 @@
 	const t.6, 1
 	add str, str, t.6
 	jump @for_3
+
 @for_3_break:
 	; 67:9 return length
 	ret length
 	jump @strlen@@u8_ret
+
 @strlen@@u8_ret:
 
 @printStringLength@@u8@u8:
@@ -188,6 +190,7 @@
 	; 15:9 return __random__
 	ret __random__
 	jump @random_ret
+
 @random_ret:
 
 @rowColumnToCell@i16@i16:
@@ -206,6 +209,7 @@
 	add t.2, t.2, column
 	ret t.2
 	jump @rowColumnToCell@i16@i16_ret
+
 @rowColumnToCell@i16@i16_ret:
 
 @getCell@i16@i16:
@@ -225,6 +229,7 @@
 	load t.2, [t.3]
 	ret t.2
 	jump @getCell@i16@i16_ret
+
 @getCell@i16@i16_ret:
 
 @isBomb@u8:
@@ -243,6 +248,7 @@
 	notequals t.1, t.2, t.4
 	ret t.1
 	jump @isBomb@u8_ret
+
 @isBomb@u8_ret:
 
 @isOpen@u8:
@@ -261,6 +267,7 @@
 	notequals t.1, t.2, t.4
 	ret t.1
 	jump @isOpen@u8_ret
+
 @isOpen@u8_ret:
 
 @isFlag@u8:
@@ -279,6 +286,7 @@
 	notequals t.1, t.2, t.4
 	ret t.1
 	jump @isFlag@u8_ret
+
 @isFlag@u8_ret:
 
 @checkCellBounds@i16@i16:
@@ -314,6 +322,7 @@
 @and_next_4:
 	ret t.2
 	jump @checkCellBounds@i16@i16_ret
+
 @checkCellBounds@i16@i16_ret:
 
 @setCell@i16@i16@u8:
@@ -386,14 +395,17 @@
 	const t.15, 1
 	add dc, dc, t.15
 	jump @for_8
+
 @for_7_continue:
 	const t.16, 1
 	add dr, dr, t.16
 	jump @for_7
+
 @for_7_break:
 	; 58:9 return count
 	ret count
 	jump @getBombCountAround@i16@i16_ret
+
 @getBombCountAround@i16@i16_ret:
 
 @getSpacer@i16@i16@i16@i16:
@@ -423,6 +435,7 @@
 	const t.6, 91
 	ret t.6
 	jump @getSpacer@i16@i16@i16@i16_ret
+
 @if_12_end:
 	; 66:3 if columnCursor == column - 1
 	const t.9, 1
@@ -435,11 +448,13 @@
 	const t.10, 93
 	ret t.10
 	jump @getSpacer@i16@i16@i16@i16_ret
+
 @if_11_end:
 	; 70:9 return 32
 	const t.11, 32
 	ret t.11
 	jump @getSpacer@i16@i16@i16@i16_ret
+
 @getSpacer@i16@i16@i16@i16_ret:
 
 @printCell@u8@i16@i16:
@@ -462,6 +477,7 @@
 @if_14_then:
 	const chr, 35
 	jump @if_14_end
+
 @if_14_else:
 	; 79:3 if isBomb@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=79:14]])
 	call t.6 = isBomb@u8[cell] -> bool
@@ -469,6 +485,7 @@
 @if_15_then:
 	const chr, 42
 	jump @if_14_end
+
 @if_15_else:
 	call count = getBombCountAround@i16@i16[row, column] -> u8
 	; 84:4 if count > 0
@@ -480,6 +497,7 @@
 	move chr, count
 	add chr, chr, t.9
 	jump @if_14_end
+
 @if_16_else:
 	const chr, 32
 @if_14_end:
@@ -534,6 +552,7 @@
 	const t.14, 1
 	add column, column, t.14
 	jump @for_18
+
 @for_18_break:
 	const t.15, 40
 	call spacer = getSpacer@i16@i16@i16@i16[row, t.15, rowCursor, columnCursor] -> u8
@@ -544,6 +563,7 @@
 	const t.17, 1
 	add row, row, t.17
 	jump @for_17
+
 @printField@i16@i16_ret:
 
 @printSpaces@i16:
@@ -566,6 +586,7 @@
 	const t.4, 1
 	sub i, i, t.4
 	jump @for_19
+
 @printSpaces@i16_ret:
 
 @getDigitCount@i16:
@@ -602,6 +623,7 @@
 	; 132:9 return count
 	ret count
 	jump @getDigitCount@i16_ret
+
 @getDigitCount@i16_ret:
 
 @getHiddenCount:
@@ -652,14 +674,17 @@
 	const t.13, 1
 	add c, c, t.13
 	jump @for_24
+
 @for_23_continue:
 	const t.14, 1
 	add r, r, t.14
 	jump @for_23
+
 @for_23_break:
 	; 145:9 return count
 	ret count
 	jump @getHiddenCount_ret
+
 @getHiddenCount_ret:
 
 @printLeft:
@@ -692,6 +717,7 @@
 	equals t.8, count, t.9
 	ret t.8
 	jump @printLeft_ret
+
 @printLeft_ret:
 
 @abs@i16:
@@ -710,10 +736,12 @@
 	neg t.3, a
 	ret t.3
 	jump @abs@i16_ret
+
 @if_26_end:
 	; 163:9 return a
 	ret a
 	jump @abs@i16_ret
+
 @abs@i16_ret:
 
 @clearField:
@@ -748,10 +776,12 @@
 	const t.7, 1
 	add c, c, t.7
 	jump @for_28
+
 @for_27_continue:
 	const t.8, 1
 	add r, r, t.8
 	jump @for_27
+
 @clearField_ret:
 
 @initField@i16@i16:
@@ -819,6 +849,7 @@
 	const t.21, 1
 	sub bombs, bombs, t.21
 	jump @for_29
+
 @initField@i16@i16_ret:
 
 @maybeRevealAround@i16@i16:
@@ -856,6 +887,7 @@
 @if_32_then:
 	; 187:3 return
 	jump @maybeRevealAround@i16@i16_ret
+
 @if_32_end:
 	const dr, -1
 	; 190:2 for dr <= 1
@@ -905,10 +937,12 @@
 	const t.22, 1
 	add dc, dc, t.22
 	jump @for_34
+
 @for_33_continue:
 	const t.23, 1
 	add dr, dr, t.23
 	jump @for_33
+
 @maybeRevealAround@i16@i16_ret:
 
 @main:
@@ -956,6 +990,7 @@
 	const t.8, [string-2]
 	call printString@@u8[t.8]
 	jump @main_ret
+
 @if_40_end:
 	call chr = getChar[] -> i16
 	; 229:3 if chr == 27
@@ -993,9 +1028,11 @@
 	const t.18, [string-3]
 	call printString@@u8[t.18]
 	jump @main_ret
+
 @if_46_end:
 	call maybeRevealAround@i16@i16[curr_r, curr_c]
 	jump @while_39
+
 @main_ret:
 
 @printStringLength@@u8@i64:

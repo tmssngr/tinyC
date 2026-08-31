@@ -17,17 +17,20 @@ public record IRVar(@NotNull String name, int index, @NotNull VariableScope scop
 
 	public String toString(boolean comment) {
 		final StringBuilder buffer = new StringBuilder();
-		if (!comment && scope == VariableScope.register) {
+		if (scope == VariableScope.register) {
 			buffer.append("r");
 			buffer.append(index);
-		}
-		else {
-			buffer.append(name);
-			if (scope == VariableScope.register) {
-				buffer.append("{r");
-				buffer.append(index);
-				buffer.append("}");
+			if (comment) {
+				buffer.append("{");
 			}
+		}
+
+		if (comment || scope != VariableScope.register) {
+			buffer.append(name);
+		}
+
+		if (scope == VariableScope.register && comment) {
+			buffer.append("}");
 		}
 		return buffer.toString();
 	}

@@ -127,7 +127,7 @@ public final class IRWriter extends TextWriter {
 					writeln("; " + c.comment());
 				}
 				else {
-					writeln(instruction.toString());
+					writeln(instruction.toString(true));
 					if (block != null) {
 						try {
 							write(block.getLiveAfter(i));
@@ -135,6 +135,9 @@ public final class IRWriter extends TextWriter {
 						catch (NullPointerException e) {
 							writeln("##########################");
 						}
+					}
+					if (instruction instanceof IRJump) {
+						writeln();
 					}
 				}
 			}
