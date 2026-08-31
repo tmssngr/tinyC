@@ -25,20 +25,23 @@ for_1:
 	; 67:9 return length
 
 next:
-	; 8 pc
-	move tmp.global{r1}, global
+	; 12 pc
+	addrof memVarAddr{r7}, global
+	load tmp.global{r1}, [memVarAddr{r7}]
 	move copy{r0}, tmp.global{r1}
 	add tmp.global{r1}, tmp.global{r1}, 1
 	; 8:9 return copy
-	move global, tmp.global{r1}
+	addrof memVarAddr{r7}, global
+	store [memVarAddr{r7}], tmp.global{r1}
 
 main:
-	; 12 pc
+	; 14 pc
 	; begin initialize global variables
 	const tmp.global{r6}, 0
 	; end initialize global variables
 	; 12:2 while true
-	move global, tmp.global{r6}
+	addrof memVarAddr{r7}, global
+	store [memVarAddr{r7}], tmp.global{r6}
 	jump while_2
 if_3_end:
 	branch n{r6} gteq 2: while_2, if_4_then
