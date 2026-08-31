@@ -40,8 +40,8 @@ main:
 	; 14 pc
 	; begin initialize global variables
 	const t.global{r6}, 0
-	addrof a.global{r7}, global
-	store [a.global{r7}], t.global{r6}
+	addrof a.global{r0}, global
+	store [a.global{r0}], t.global{r6}
 	; end initialize global variables
 	; 12:2 while true
 	jump while_2
