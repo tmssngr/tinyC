@@ -22,17 +22,24 @@ final class LSAlgorithm {
 	private final List<LSInterval> active = new ArrayList<>();
 	private final List<LSInterval> inactive = new ArrayList<>();
 	private final Map<IRVar, LSInterval> varToInterval = new LinkedHashMap<>();
+	private final List<LSInterval> fixedIntervals = new ArrayList<>();
 	private final Map<IRVar, LSInterval> varIntervals;
 	private final LSAlgorithmLogger logger;
-	private final List<LSInterval> fixedIntervals;
 	private final int registerCount;
 
 	private LSAlgorithm(@NotNull Map<IRVar, LSInterval> varIntervals, @NotNull List<LSInterval> fixedIntervals, int registerCount, @NotNull LSAlgorithmLogger logger) {
 		Utils.assertTrue(registerCount > 1);
 		this.varIntervals = varIntervals;
-		this.fixedIntervals = fixedIntervals;
 		this.registerCount = registerCount;
 		this.logger = logger;
+
+		for (LSInterval interval : fixedIntervals) {
+			final int register = interval.register();
+			Utils.assertTrue(register >= 0);
+			if (register < registerCount) {
+				this.fixedIntervals.add(interval);
+			}
+		}
 	}
 
 	private Map<IRVar, LSInterval> run() {
