@@ -70,33 +70,44 @@ start:
         ; u8 next
 @next:
         sub rsp, 8
-        ; move tmp.global{r1}, global
-        lea r11, [var_0]
-        mov cl, [r11]
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
+        ; addrof memVarAddr{r7}, global
+        lea r12, [var_0]
+        ; load tmp.global{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
         ; move copy{r0}, tmp.global{r1}
         mov al, cl
         ; add tmp.global{r1}, tmp.global{r1}, 1
         add cl, 1
         ; 8:9 return copy
-        ; move global, tmp.global{r1}
-        lea r11, [var_0]
-        mov [r11], cl
+        ; addrof memVarAddr{r7}, global
+        lea r12, [var_0]
+        ; store [memVarAddr{r7}], tmp.global{r1}
+        mov [r12], cl
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
         add rsp, 8
         ret
 
         ; void main
 @main:
+        sub rsp, 8
         ; save clobbered non-volatile registers
         push rbx
+        push r12
         sub rsp, 32
         ; begin initialize global variables
         ; const tmp.global{r6}, 0
         mov bl, 0
         ; end initialize global variables
         ; 12:2 while true
-        ; move global, tmp.global{r6}
-        lea r11, [var_0]
-        mov [r11], bl
+        ; addrof memVarAddr{r7}, global
+        lea r12, [var_0]
+        ; store [memVarAddr{r7}], tmp.global{r6}
+        mov [r12], bl
         jmp @while_2
 @if_3_end:
         ; 19:3 if n < 2
@@ -128,7 +139,9 @@ start:
         jz @if_3_end
         add rsp, 32
         ; restore clobbered non-volatile registers
+        pop r12
         pop rbx
+        add rsp, 8
         ret
 
         ; void printStringLength@@u8@i64
