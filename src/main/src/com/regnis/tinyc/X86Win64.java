@@ -416,17 +416,20 @@ public final class X86Win64 extends AsmWriter {
 		}
 	}
 
-	protected void writeMove(IRMove copy) throws IOException {
-		final int valueReg = loadVar(copy.source());
-		storeVar(copy.target(), valueReg);
-		free(valueReg);
-	}
-
-	protected void writeLiteral(IRLiteral literal) throws IOException {
-		final int valueReg = getFreeReg();
-		writeIndented("mov " + getRegName(valueReg, literal.target()) + ", " + literal.value());
-		storeVar(literal.target(), valueReg);
-		free(valueReg);
+	protected void writeMove(IRMove move) throws IOException {
+		final IRValue source = move.source();
+		final IRVar sourceVar = source.var();
+		if (sourceVar != null) {
+			final int valueReg = loadVar(sourceVar);
+			storeVar(move.target(), valueReg);
+			free(valueReg);
+		}
+		else {
+			final int valueReg = getFreeReg();
+			writeIndented("mov " + getRegName(valueReg, move.target()) + ", " + source.value());
+			storeVar(move.target(), valueReg);
+			free(valueReg);
+		}
 	}
 
 	protected void writeMemLoad(IRMemLoad load) throws IOException {
