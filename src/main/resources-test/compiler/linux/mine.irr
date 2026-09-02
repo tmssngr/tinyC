@@ -129,8 +129,8 @@
 	arg 0: row (i16/2)
 	arg 1: column (i16/2)
 	; 3 pc
-	; 16:21 return row * 40 + column
-	mul t.3{r1}, t.3{r1}, 40
+	; 16:21 return row * 17 + column
+	mul t.3{r1}, t.3{r1}, 17
 	move t.2{r0}, t.3{r1}
 	add t.2{r0}, t.2{r0}, column{r2}
 
@@ -175,7 +175,7 @@
 	arg 0: row (i16/2)
 	arg 1: column (i16/2)
 	; 7 pc
-	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
+	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 17
 	; 37:21 logic and
 	; 37:6 logic and
 	; 36:21 logic and
@@ -187,7 +187,7 @@
 	gteq t.2{r0}, column{r2}, 0
 @and_next_5:
 	branch t.2{r0}, false, @checkCellBounds@i16@i16_ret, @and_2nd_4
-	lt t.2{r0}, column{r2}, 40
+	lt t.2{r0}, column{r2}, 17
 @checkCellBounds@i16@i16_ret:
 
 @setCell@i16@i16@u8:
@@ -426,7 +426,7 @@
 	const arg.1.0{r1}, 124
 	call printChar@u8[arg.1.0{r1}]
 	const column{r2}, 0
-	; 99:3 for column < 40
+	; 99:3 for column < 17
 	jump @for_19
 @for_19_body:
 	addrof memVarAddr{r9}, row
@@ -466,7 +466,7 @@
 	load column{r2}, [memVarAddr{r9}]
 	add column{r2}, column{r2}, 1
 @for_19:
-	lt t.8{r0}, column{r2}, 40
+	lt t.8{r0}, column{r2}, 17
 	branch t.8{r0}, true, @for_19_body, @for_19_break
 	addrof memVarAddr{r9}, row
 	load row{r1}, [memVarAddr{r9}]
@@ -478,7 +478,7 @@
 	move columnCursor{r4}, columnCursor{r2}
 	addrof memVarAddr{r9}, columnCursor
 	store [memVarAddr{r9}], columnCursor{r2}
-	const arg.6.1{r2}, 40
+	const arg.6.1{r2}, 17
 	call spacer{r0} = getSpacer@i16@i16@i16@i16[row{r1}, arg.6.1{r2}, rowCursor{r3}, columnCursor{r4}] -> u8
 	move spacer{r1}, spacer{r0}
 	call printChar@u8[spacer{r1}]
@@ -538,7 +538,7 @@
 	jump @for_24
 @for_24_body:
 	const c{r2}, 0
-	; 138:3 for c < 40
+	; 138:3 for c < 17
 	addrof memVarAddr{r9}, r
 	store [memVarAddr{r9}], r{r1}
 	jump @for_25
@@ -561,7 +561,7 @@
 	load c{r2}, [memVarAddr{r9}]
 	add c{r2}, c{r2}, 1
 @for_25:
-	lt t.5{r1}, c{r2}, 40
+	lt t.5{r1}, c{r2}, 17
 	branch t.5{r1}, true, @for_25_body, @for_24_continue
 	addrof memVarAddr{r9}, r
 	load r{r1}, [memVarAddr{r9}]
@@ -584,7 +584,7 @@
 	cast leftDigits{r0}(i16), t.3{r0}(u8)
 	addrof memVarAddr{r9}, leftDigits
 	store [memVarAddr{r9}], leftDigits{r0}
-	const arg.2.0{r1}, 40
+	const arg.2.0{r1}, 17
 	call t.4{r0} = getDigitCount@i16[arg.2.0{r1}] -> u8
 	cast bombDigits{r0}(i16), t.4{r0}(u8)
 	addrof memVarAddr{r9}, bombDigits
@@ -626,7 +626,7 @@
 	jump @for_28
 @for_28_body:
 	const c{r9}, 0
-	; 168:3 for c < 40
+	; 168:3 for c < 17
 	jump @for_29
 @for_29_body:
 	move r{r1}, r{r8}
@@ -635,7 +635,7 @@
 	call setCell@i16@i16@u8[r{r1}, c{r2}, arg.0.2{r3}]
 	add c{r9}, c{r9}, 1
 @for_29:
-	lt t.3{r0}, c{r9}, 40
+	lt t.3{r0}, c{r9}, 17
 	branch t.3{r0}, true, @for_29_body, @for_28_continue
 	add r{r8}, r{r8}, 1
 @for_28:
@@ -654,7 +654,7 @@
 	move curr_r{r8}, curr_r{r1}
 	addrof memVarAddr{r9}, curr_c
 	store [memVarAddr{r9}], curr_c{r2}
-	const bombs{r0}, 40
+	const bombs{r0}, 17
 	addrof memVarAddr{r9}, bombs
 	store [memVarAddr{r9}], bombs{r0}
 	; 175:2 for bombs > 0
@@ -674,7 +674,7 @@
 	call t.7{r0} = random16[] -> i16
 	move column{r2}, t.7{r0}
 	move column{r0}, column{r2}
-	mod column{r3}, column{r0}, 40
+	mod column{r3}, column{r0}, 17
 	move column{r2}, column{r3}
 	addrof memVarAddr{r9}, column
 	store [memVarAddr{r9}], column{r2}
@@ -865,7 +865,7 @@
 	call initRandom@i32[arg.0.0{r1}]
 	const needsInitialize{r8}, 1
 	call clearField[]
-	const curr_c{r0}, 20
+	const curr_c{r0}, 8
 	addrof memVarAddr{r9}, curr_c
 	store [memVarAddr{r9}], curr_c{r0}
 	const curr_r{r0}, 10
@@ -931,11 +931,11 @@
 	addrof memVarAddr{r9}, curr_c
 	load curr_c{r2}, [memVarAddr{r9}]
 	move t.17{r5}, curr_c{r2}
-	add t.17{r5}, t.17{r5}, 40
+	add t.17{r5}, t.17{r5}, 17
 	sub t.16{r5}, t.16{r5}, 1
 	move curr_c{r2}, t.16{r5}
 	move curr_c{r0}, curr_c{r2}
-	mod curr_c{r3}, curr_c{r0}, 40
+	mod curr_c{r3}, curr_c{r0}, 17
 	move curr_c{r2}, curr_c{r3}
 	addrof memVarAddr{r9}, curr_c
 	store [memVarAddr{r9}], curr_c{r2}
@@ -953,11 +953,11 @@
 	addrof memVarAddr{r9}, curr_c
 	load curr_c{r2}, [memVarAddr{r9}]
 	move t.20{r5}, curr_c{r2}
-	add t.20{r5}, t.20{r5}, 40
+	add t.20{r5}, t.20{r5}, 17
 	sub t.19{r5}, t.19{r5}, 1
 	move curr_c{r2}, t.19{r5}
 	move curr_c{r0}, curr_c{r2}
-	mod curr_c{r3}, curr_c{r0}, 40
+	mod curr_c{r3}, curr_c{r0}, 17
 	move curr_c{r2}, curr_c{r3}
 	addrof memVarAddr{r9}, curr_c
 	store [memVarAddr{r9}], curr_c{r2}
@@ -974,7 +974,7 @@
 	add t.22{r5}, t.22{r5}, 1
 	move curr_c{r2}, t.22{r5}
 	move curr_c{r0}, curr_c{r2}
-	mod curr_c{r3}, curr_c{r0}, 40
+	mod curr_c{r3}, curr_c{r0}, 17
 	move curr_c{r2}, curr_c{r3}
 	addrof memVarAddr{r9}, curr_c
 	store [memVarAddr{r9}], curr_c{r2}
@@ -1183,7 +1183,7 @@
 
 Global variables
 	0: __random__ (i32/4)
-	1: field[] (u8*/6400)
+	1: field[] (u8*/2720)
 
 String literals
 	string lit 0 "|\n\0"

@@ -176,9 +176,9 @@
 	var 2: t.2 (i16/2)
 	var 3: t.3 (i16/2)
 	; 26 pc
-	; 16:21 return row * 40 + column
+	; 16:21 return row * 17 + column
 	move t.3, row
-	mul t.3, t.3, 40
+	mul t.3, t.3, 17
 	move t.2, t.3
 	add t.2, t.2, column
 	ret t.2
@@ -252,7 +252,7 @@
 	arg 1: column (i16/2)
 	var 2: t.2 (bool/1)
 	; 33 pc
-	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
+	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 17
 	; 37:21 logic and
 	; 37:6 logic and
 	; 36:21 logic and
@@ -267,7 +267,7 @@
 @and_next_5:
 	branch t.2, false, @and_next_4, @and_2nd_4
 @and_2nd_4:
-	lt t.2, column, 40
+	lt t.2, column, 17
 @and_next_4:
 	ret t.2
 	jump @checkCellBounds@i16@i16_ret
@@ -454,9 +454,9 @@
 @for_18_body:
 	call printChar@u8[124]
 	const column, 0
-	; 99:3 for column < 40
+	; 99:3 for column < 17
 @for_19:
-	lt t.8, column, 40
+	lt t.8, column, 17
 	branch t.8, false, @for_19_break, @for_19_body
 @for_19_body:
 	call spacer = getSpacer@i16@i16@i16@i16[row, column, rowCursor, columnCursor] -> u8
@@ -467,7 +467,7 @@
 	add column, column, 1
 	jump @for_19
 @for_19_break:
-	call spacer = getSpacer@i16@i16@i16@i16[row, 40, rowCursor, columnCursor] -> u8
+	call spacer = getSpacer@i16@i16@i16@i16[row, 17, rowCursor, columnCursor] -> u8
 	call printChar@u8[spacer]
 	const t.9, [string-0]
 	call printString@@u8[t.9]
@@ -539,9 +539,9 @@
 	branch t.4, false, @for_24_break, @for_24_body
 @for_24_body:
 	const c, 0
-	; 138:3 for c < 40
+	; 138:3 for c < 17
 @for_25:
-	lt t.5, c, 40
+	lt t.5, c, 17
 	branch t.5, false, @for_24_continue, @for_25_body
 @for_25_body:
 	call cell = getCell@i16@i16[r, c] -> u8
@@ -578,7 +578,7 @@
 	call count = getHiddenCount[] -> i16
 	call t.3 = getDigitCount@i16[count] -> u8
 	cast leftDigits(i16), t.3(u8)
-	call t.4 = getDigitCount@i16[40] -> u8
+	call t.4 = getDigitCount@i16[17] -> u8
 	cast bombDigits(i16), t.4(u8)
 	const t.5, [string-1]
 	call printString@@u8[t.5]
@@ -626,9 +626,9 @@
 	branch t.2, false, @clearField_ret, @for_28_body
 @for_28_body:
 	const c, 0
-	; 168:3 for c < 40
+	; 168:3 for c < 17
 @for_29:
-	lt t.3, c, 40
+	lt t.3, c, 17
 	branch t.3, false, @for_28_continue, @for_29_body
 @for_29_body:
 	call setCell@i16@i16@u8[r, c, 0]
@@ -656,7 +656,7 @@
 	var 11: t.11 (i16/2)
 	var 12: t.12 (i16/2)
 	; 97 pc
-	const bombs, 40
+	const bombs, 17
 	; 175:2 for bombs > 0
 @for_30:
 	gt t.5, bombs, 0
@@ -667,7 +667,7 @@
 	mod row, row, 20
 	call t.7 = random16[] -> i16
 	move column, t.7
-	mod column, column, 40
+	mod column, column, 17
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
 	; 179:4 logic or
 	move t.10, row
@@ -805,7 +805,7 @@
 	call initRandom@i32[7439742]
 	const needsInitialize, 1
 	call clearField[]
-	const curr_c, 20
+	const curr_c, 8
 	const curr_r, 10
 	; 219:2 while true
 @while_40:
@@ -854,11 +854,11 @@
 	branch t.15, false, @if_46_else, @if_46_then
 @if_46_then:
 	move t.17, curr_c
-	add t.17, t.17, 40
+	add t.17, t.17, 17
 	move t.16, t.17
 	sub t.16, t.16, 1
 	move curr_c, t.16
-	mod curr_c, curr_c, 40
+	mod curr_c, curr_c, 17
 	jump @while_40
 @if_46_else:
 	; 246:8 if chr == -8117
@@ -866,11 +866,11 @@
 	branch t.18, false, @if_47_else, @if_47_then
 @if_47_then:
 	move t.20, curr_c
-	add t.20, t.20, 40
+	add t.20, t.20, 17
 	move t.19, t.20
 	sub t.19, t.19, 1
 	move curr_c, t.19
-	mod curr_c, curr_c, 40
+	mod curr_c, curr_c, 17
 	jump @while_40
 @if_47_else:
 	; 250:8 if chr == -8115
@@ -880,7 +880,7 @@
 	move t.22, curr_c
 	add t.22, t.22, 1
 	move curr_c, t.22
-	mod curr_c, curr_c, 40
+	mod curr_c, curr_c, 17
 	jump @while_40
 @if_48_else:
 	; 254:8 if chr == 32
@@ -978,7 +978,7 @@
 
 Global variables
 	0: __random__ (i32/4)
-	1: field[] (u8*/6400)
+	1: field[] (u8*/2720)
 
 String literals
 	string lit 0 "|\n\0"
