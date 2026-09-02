@@ -321,8 +321,8 @@ public final class IRGenerator {
 
 	private void writeExpression(IRVar var, Expression expression) {
 		switch (expression) {
-		case ExprIntLiteral literal -> write(new IRLiteral(var, literal.value(), literal.location()));
-		case ExprBoolLiteral literal -> write(new IRLiteral(var, literal.value() ? 1 : 0, literal.location()));
+		case ExprIntLiteral literal -> write(new IRMove(var, literal.value(), literal.location()));
+		case ExprBoolLiteral literal -> write(new IRMove(var, literal.value() ? 1 : 0, literal.location()));
 		case ExprStringLiteral literal -> write(new IRString(var, literal.index(), literal.location()));
 		case ExprVarAccess access -> write(new IRMove(var, varAccessToVar(access), access.location()));
 		case ExprArrayAccess access -> writeArrayAccess(var, access);
@@ -352,7 +352,7 @@ public final class IRGenerator {
 		final int offset = getMemberOffset(access);
 		if (offset != 0) {
 			final IRVar offsetVar = createTempVar(pointerIntType);
-			write(new IRLiteral(offsetVar, offset, access.location()));
+			write(new IRMove(offsetVar, offset, access.location()));
 			write(new IRBinary(addr, IRBinary.Op.Add, addr, offsetVar, access.location()));
 		}
 	}
@@ -445,7 +445,7 @@ public final class IRGenerator {
 		final IRVar offset;
 		if (typeSize > 1) {
 			offset = createTempVar(index.type());
-			write(new IRLiteral(offset, typeSize, location));
+			write(new IRMove(offset, typeSize, location));
 			write(new IRBinary(offset, IRBinary.Op.Mul, offset, index, location));
 		}
 		else {
