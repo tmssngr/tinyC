@@ -14,9 +14,9 @@ rowColumnToCell@i16@i16:
 	var 2: t.2 (i16/2)
 	var 3: t.3 (i16/2)
 	; 26 pc
-	; 16:21 return row * 40 + column
+	; 16:21 return row * 17 + column
 	move t.3, row
-	mul t.3, t.3, 40
+	mul t.3, t.3, 17
 	move t.2, t.3
 	add t.2, t.2, column
 	ret t.2
@@ -88,7 +88,7 @@ checkCellBounds@i16@i16:
 	arg 1: column (i16/2)
 	var 2: t.2 (bool/1)
 	; 33 pc
-	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
+	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 17
 	; 37:21 logic and
 	; 37:6 logic and
 	; 36:21 logic and
@@ -103,7 +103,7 @@ and_2nd_2:
 and_next_2:
 	branch t.2 equals 0: and_next_1, and_2nd_1
 and_2nd_1:
-	lt t.2, column, 40
+	lt t.2, column, 17
 and_next_1:
 	ret t.2
 	jump checkCellBounds@i16@i16_ret
@@ -273,9 +273,9 @@ for_15:
 for_15_body:
 	call printChar@u8[124]
 	const column, 0
-	; 99:3 for column < 40
+	; 99:3 for column < 17
 for_16:
-	branch column gteq 40: for_16_break, for_16_body
+	branch column gteq 17: for_16_break, for_16_body
 for_16_body:
 	call spacer = getSpacer@i16@i16@i16@i16[row, column, rowCursor, columnCursor] -> u8
 	call printChar@u8[spacer]
@@ -285,7 +285,7 @@ for_16_continue:
 	add column, column, 1
 	jump for_16
 for_16_break:
-	call spacer = getSpacer@i16@i16@i16@i16[row, 40, rowCursor, columnCursor] -> u8
+	call spacer = getSpacer@i16@i16@i16@i16[row, 17, rowCursor, columnCursor] -> u8
 	call printChar@u8[spacer]
 	const t.7, [string-0]
 	call printString@@u8[t.7]
@@ -347,9 +347,9 @@ for_21:
 	branch r gteq 20: for_21_break, for_21_body
 for_21_body:
 	const c, 0
-	; 138:3 for c < 40
+	; 138:3 for c < 17
 for_22:
-	branch c gteq 40: for_21_continue, for_22_body
+	branch c gteq 17: for_21_continue, for_22_body
 for_22_body:
 	call cell = getCell@i16@i16[r, c] -> u8
 	; 140:4 if cell & 6 == 0
@@ -384,7 +384,7 @@ printLeft:
 	call count = getHiddenCount[] -> i16
 	call t.3 = getDigitCount@i16[count] -> u8
 	cast leftDigits(i16), t.3(u8)
-	call t.4 = getDigitCount@i16[40] -> u8
+	call t.4 = getDigitCount@i16[17] -> u8
 	cast bombDigits(i16), t.4(u8)
 	const t.5, [string-1]
 	call printString@@u8[t.5]
@@ -427,9 +427,9 @@ for_25:
 	branch r gteq 20: clearField_ret, for_25_body
 for_25_body:
 	const c, 0
-	; 168:3 for c < 40
+	; 168:3 for c < 17
 for_26:
-	branch c gteq 40: for_25_continue, for_26_body
+	branch c gteq 17: for_25_continue, for_26_body
 for_26_body:
 	call setCell@i16@i16@u8[r, c, 0]
 for_26_continue:
@@ -454,7 +454,7 @@ initField@i16@i16:
 	var 9: t.9 (i16/2)
 	var 10: t.10 (i16/2)
 	; 82 pc
-	const bombs, 40
+	const bombs, 17
 	; 175:2 for bombs > 0
 for_27:
 	branch bombs lteq 0: initField@i16@i16_ret, for_27_body
@@ -464,7 +464,7 @@ for_27_body:
 	mod row, row, 20
 	call t.6 = random16[] -> i16
 	move column, t.6
-	mod column, column, 40
+	mod column, column, 17
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
 	move t.8, row
 	sub t.8, t.8, curr_r
@@ -568,7 +568,7 @@ main:
 	call initRandom@i32[7439742]
 	const needsInitialize, 1
 	call clearField[]
-	const curr_c, 20
+	const curr_c, 8
 	const curr_r, 10
 	; 219:2 while true
 while_37:
@@ -612,11 +612,11 @@ if_42_else:
 	branch chr notequals 1: if_43_else, if_43_then
 if_43_then:
 	move t.12, curr_c
-	add t.12, t.12, 40
+	add t.12, t.12, 17
 	move t.11, t.12
 	sub t.11, t.11, 1
 	move curr_c, t.11
-	mod curr_c, curr_c, 40
+	mod curr_c, curr_c, 17
 	jump while_37
 if_43_else:
 	; 246:8 if chr == 2
@@ -625,7 +625,7 @@ if_44_then:
 	move t.13, curr_c
 	add t.13, t.13, 1
 	move curr_c, t.13
-	mod curr_c, curr_c, 40
+	mod curr_c, curr_c, 17
 	jump while_37
 if_44_else:
 	; 250:8 if chr == 32
@@ -806,7 +806,7 @@ random16:
 	ret
 
 Global variables
-	0: field[] (u8*/1600)
+	0: field[] (u8*/680)
 
 String literals
 	string lit 0 "|\n\0"

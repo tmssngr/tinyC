@@ -10,9 +10,9 @@ rowColumnToCell@i16@i16:
 	arg 0: row (i16/2)
 	arg 1: column (i16/2)
 	; 4 pc
-	; 16:21 return row * 40 + column
+	; 16:21 return row * 17 + column
 	move t.3{r4}, param.row{r0}
-	mul t.3{r4}, t.3{r4}, 40
+	mul t.3{r4}, t.3{r4}, 17
 	move t.2{r0}, t.3{r4}
 	add t.2{r0}, t.2{r0}, param.column{r2}
 
@@ -59,7 +59,7 @@ checkCellBounds@i16@i16:
 	arg 0: row (i16/2)
 	arg 1: column (i16/2)
 	; 8 pc
-	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
+	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 17
 	; 37:21 logic and
 	; 37:6 logic and
 	; 36:21 logic and
@@ -71,7 +71,7 @@ and_next_3:
 	gteq t.2{r4}, param.column{r2}, 0
 and_next_2:
 	branch t.2{r4} equals 0: and_next_1, and_2nd_1
-	lt t.2{r4}, param.column{r2}, 40
+	lt t.2{r4}, param.column{r2}, 17
 and_next_1:
 	move t.2{r0}, t.2{r4}
 
@@ -243,7 +243,7 @@ for_15_body:
 	const arg.1.0{r0}, 124
 	call printChar@u8[arg.1.0{r0}]
 	const column{r14}, 0
-	; 99:3 for column < 40
+	; 99:3 for column < 17
 	jump for_16
 for_16_body:
 	move row{r0}, row{r12}
@@ -260,11 +260,11 @@ for_16_body:
 	call printCell@u8@i16@i16[cell{r0}, row{r1}, column{r3}]
 	add column{r14}, column{r14}, 1
 for_16:
-	branch column{r14} lt 40: for_16_body, for_16_break
+	branch column{r14} lt 17: for_16_body, for_16_break
 	move row{r0}, row{r12}
 	move param.rowCursor{r4}, param.rowCursor{r8}
 	move param.columnCursor{r6}, param.columnCursor{r10}
-	const arg.6.1{r2}, 40
+	const arg.6.1{r2}, 17
 	call spacer{r0} = getSpacer@i16@i16@i16@i16[row{r0}, arg.6.1{r2}, param.rowCursor{r4}, param.columnCursor{r6}] -> u8
 	call printChar@u8[spacer{r0}]
 	const t.7{r0}, [string-0]
@@ -312,7 +312,7 @@ getHiddenCount:
 	jump for_21
 for_21_body:
 	const c{r12}, 0
-	; 138:3 for c < 40
+	; 138:3 for c < 17
 	jump for_22
 for_22_body:
 	move r{r0}, r{r10}
@@ -326,7 +326,7 @@ for_22_body:
 for_22_continue:
 	add c{r12}, c{r12}, 1
 for_22:
-	branch c{r12} lt 40: for_22_body, for_21_continue
+	branch c{r12} lt 17: for_22_body, for_21_continue
 	add r{r10}, r{r10}, 1
 for_21:
 	branch r{r10} lt 20: for_21_body, for_21_break
@@ -340,7 +340,7 @@ printLeft:
 	move count{r0}, count{r8}
 	call t.3{r0} = getDigitCount@i16[count{r0}] -> u8
 	cast leftDigits{r10}(i16), t.3{r0}(u8)
-	const arg.2.0{r0}, 40
+	const arg.2.0{r0}, 17
 	call t.4{r0} = getDigitCount@i16[arg.2.0{r0}] -> u8
 	cast bombDigits{r12}(i16), t.4{r0}(u8)
 	const t.5{r0}, [string-1]
@@ -376,7 +376,7 @@ clearField:
 	jump for_25
 for_25_body:
 	const c{r10}, 0
-	; 168:3 for c < 40
+	; 168:3 for c < 17
 	jump for_26
 for_26_body:
 	move r{r0}, r{r8}
@@ -385,7 +385,7 @@ for_26_body:
 	call setCell@i16@i16@u8[r{r0}, c{r2}, arg.0.2{r4}]
 	add c{r10}, c{r10}, 1
 for_26:
-	branch c{r10} lt 40: for_26_body, for_25_continue
+	branch c{r10} lt 17: for_26_body, for_25_continue
 	add r{r8}, r{r8}, 1
 for_25:
 	branch r{r8} lt 20: for_25_body, clearField_ret
@@ -399,7 +399,7 @@ initField@i16@i16:
 	; 60 pc
 	move param.curr_r{r8}, curr_r{r0}
 	move param.curr_c{r10}, curr_c{r2}
-	const bombs{r12}, 40
+	const bombs{r12}, 17
 	; 175:2 for bombs > 0
 	jump for_27
 for_27_body:
@@ -409,7 +409,7 @@ for_27_body:
 	store [memVarAddr{r14}], row{r0}
 	call t.6{r0} = random16[] -> i16
 	move column{r2}, t.6{r0}
-	mod column{r2}, column{r2}, 40
+	mod column{r2}, column{r2}, 17
 	addrof memVarAddr{r14}, column
 	store [memVarAddr{r14}], column{r2}
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
@@ -541,7 +541,7 @@ main:
 	call initRandom@i32[arg.0.0{r0}]
 	const needsInitialize{r8}, 1
 	call clearField[]
-	const curr_c{r9}, 20
+	const curr_c{r9}, 8
 	const curr_r{r11}, 10
 	; 219:2 while true
 	jump while_37
@@ -572,16 +572,16 @@ if_43_else:
 	branch chr{r0} notequals 2: if_44_else, if_44_then
 	jump if_44_then
 if_43_then:
-	add t.12{r9}, t.12{r9}, 40
+	add t.12{r9}, t.12{r9}, 17
 	sub t.11{r9}, t.11{r9}, 1
-	mod curr_c{r9}, curr_c{r9}, 40
+	mod curr_c{r9}, curr_c{r9}, 17
 	jump while_37
 if_44_else:
 	branch chr{r0} notequals 32: if_45_else, if_45_then
 	jump if_45_then
 if_44_then:
 	add t.13{r9}, t.13{r9}, 1
-	mod curr_c{r9}, curr_c{r9}, 40
+	mod curr_c{r9}, curr_c{r9}, 17
 	jump while_37
 if_45_else:
 	branch chr{r0} notequals 13: while_37, if_48_then
@@ -788,7 +788,7 @@ random16:
 	ret
 
 Global variables
-	0: field[] (u8*/1600)
+	0: field[] (u8*/680)
 
 String literals
 	string lit 0 "|\n\0"
