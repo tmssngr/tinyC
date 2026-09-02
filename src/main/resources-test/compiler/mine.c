@@ -1,7 +1,12 @@
 #include "io.h"
 #include "random.h"
 
-const width = 40;
+#ifdef Z8
+const width = 17
+#else
+const width = 40
+#endif
+
 const height = 20;
 const bombRatio = 50;
 const bombCount = height * width * bombRatio / 1000;

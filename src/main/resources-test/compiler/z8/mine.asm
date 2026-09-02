@@ -26,15 +26,15 @@ printUint_Pi16:
         ; arg row (i16): r0
         ; arg column (i16): r2
 rowColumnToCell_Pi16_Pi16:
-        ; 16:21 return row * 40 + column
+        ; 21:21 return row * 17 + column
         ; move t.3.1{r4}, param.row{r0}
         ld   r5, r1
         ld   r4, r0
-        ; mul t.3.1{r4}, 40
+        ; mul t.3.1{r4}, 17
         ld   %12, r4
         ld   %13, r5
         ld   %14, #%00
-        ld   %15, #%28
+        ld   %15, #%11
         srp  #%10
         call %00BA ; mul
         srp  #%20
@@ -52,7 +52,7 @@ rowColumnToCell_Pi16_Pi16:
         ; arg row (i16): r0
         ; arg column (i16): r2
 getCell_Pi16_Pi16:
-        ; 20:15 return [...]
+        ; 25:15 return [...]
         ; call t.4.1{r0} = rowColumnToCell@i16@i16[param.row{r0}, param.column{r2}] -> i16
         call rowColumnToCell_Pi16_Pi16
         ; addrof t.3.1{r2}, field
@@ -68,7 +68,7 @@ getCell_Pi16_Pi16:
         ; bool isBomb@u8
         ; arg cell (u8): r0
 isBomb_Pu8:
-        ; 24:27 return cell & 1 != 0
+        ; 29:27 return cell & 1 != 0
         ; move t.2.1{r1}, param.cell{r0}
         ld   r1, r0
         ; and t.2.1{r1}, 1
@@ -86,7 +86,7 @@ isBomb_Pu8:
         ; bool isOpen@u8
         ; arg cell (u8): r0
 isOpen_Pu8:
-        ; 28:27 return cell & 2 != 0
+        ; 33:27 return cell & 2 != 0
         ; move t.2.1{r1}, param.cell{r0}
         ld   r1, r0
         ; and t.2.1{r1}, 2
@@ -104,7 +104,7 @@ isOpen_Pu8:
         ; bool isFlag@u8
         ; arg cell (u8): r0
 isFlag_Pu8:
-        ; 32:27 return cell & 4 != 0
+        ; 37:27 return cell & 4 != 0
         ; move t.2.1{r1}, param.cell{r0}
         ld   r1, r0
         ; and t.2.1{r1}, 4
@@ -123,10 +123,10 @@ isFlag_Pu8:
         ; arg row (i16): r0
         ; arg column (i16): r2
 checkCellBounds_Pi16_Pi16:
-        ; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
-        ; 37:21 logic and
-        ; 36:40 logic and
-        ; 36:21 logic and
+        ; 42:21 return row >= 0 && row < 20 && column >= 0 && column < 17
+        ; 42:21 logic and
+        ; 41:40 logic and
+        ; 41:21 logic and
         ; gteq t.2.1{r4}, param.row{r0}, 0
         cp   r0, #%00
         jr   gt, .true4
@@ -184,11 +184,11 @@ and__next__2:
         jr   checkCellBounds_Pi16_Pi16__ret
 
 and__2nd__1:
-        ; lt t.2.7{r1}, param.column{r2}, 40
+        ; lt t.2.7{r1}, param.column{r2}, 17
         cp   r2, #%00
         jr   lt, .true7
         jr   ne, .false7
-        cp   r3, #%28
+        cp   r3, #%11
         jr   ult, .true7
 .false7:
         ld   r1, #0
@@ -258,7 +258,7 @@ getBombCountAround_Pi16_Pi16:
         ; const dr.1{r4}, -1
         ld   r4, #%ff
         ld   r5, #%ff
-        ; 46:2 for dr <= 1
+        ; 51:2 for dr <= 1
         ; move dr.2{r1}, dr.2{r4}
         ld   r1, r4
         ld   r2, r5
@@ -287,7 +287,7 @@ for__4__body:
         ; const dc.1{r4}, -1
         ld   r4, #%ff
         ld   r5, #%ff
-        ; 48:3 for dc <= 1
+        ; 53:3 for dc <= 1
         ; addrof memVarAddr{r14}, r.1
         ld   r14, SPH
         ld   r15, SPL
@@ -333,7 +333,7 @@ for__5__body:
         incw r14
         lde  @rr14, r5
         decw r14
-        ; 50:4 if checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=50:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=50:27]])
+        ; 55:4 if checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=55:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=55:27]])
         ; addrof memVarAddr{r14}, r.1
         ld   r14, SPH
         ld   r15, SPL
@@ -376,7 +376,7 @@ for__5__body:
         decw r14
         ; call cell.1{r0} = getCell@i16@i16[r.1{r0}, c.1{r2}] -> u8
         call getCell_Pi16_Pi16
-        ; 52:5 if isBomb@u8([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=52:16]])
+        ; 57:5 if isBomb@u8([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=57:16]])
         ; call t.9.1{r0} = isBomb@u8[cell.1{r0}] -> bool
         call isBomb_Pu8
         ; branch t.9.1{r0} equals 0: for_5_continue
@@ -431,7 +431,7 @@ for__4:
         cp   r2, #%01
         jr   ule, for__4__body
 .lt9:
-        ; 58:9 return count
+        ; 63:9 return count
         ; move count.2{r0}, count.2{r12}
         ld   r0, r12
         ; restore clobbered non-volatile registers
@@ -468,7 +468,7 @@ getSpacer_Pi16_Pi16_Pi16_Pi16:
         cp   r6, r2
         jr   eq, if__9__then
 .notEquals10:
-        ; 66:3 if columnCursor == column - 1
+        ; 71:3 if columnCursor == column - 1
         ; move t.4.1{r1}, param.column{r2}
         ld   r1, r2
         ld   r2, r3
@@ -483,19 +483,19 @@ getSpacer_Pi16_Pi16_Pi16_Pi16:
         jr   if__10__then
 
 if__9__then:
-        ; 64:11 return 91
+        ; 69:11 return 91
         ; const {r0}, 91
         ld   r0, #%5b
         jr   getSpacer_Pi16_Pi16_Pi16_Pi16__ret
 
 if__10__then:
-        ; 67:11 return 93
+        ; 72:11 return 93
         ; const {r0}, 93
         ld   r0, #%5d
         jr   getSpacer_Pi16_Pi16_Pi16_Pi16__ret
 
 if__8__end:
-        ; 70:9 return 32
+        ; 75:9 return 32
         ; const {r0}, 32
         ld   r0, #%20
 getSpacer_Pi16_Pi16_Pi16_Pi16__ret:
@@ -523,13 +523,13 @@ printCell_Pu8_Pi16_Pi16:
         ld   r11, r3
         ; const chr.1{r13}, 46
         ld   r13, #%2e
-        ; 75:2 if isOpen@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=75:13]])
+        ; 80:2 if isOpen@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=80:13]])
         ; call t.5.1{r0} = isOpen@u8[param.cell{r0}] -> bool
         call isOpen_Pu8
         ; branch t.5.1{r0} notequals 0: if_11_then
         cp   r0, #%00
         jr   ne, if__11__then
-        ; 89:7 if isFlag@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=89:18]])
+        ; 94:7 if isFlag@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=94:18]])
         ; move param.cell{r0}, param.cell{r8}
         ld   r0, r8
         ; call t.7.1{r0} = isFlag@u8[param.cell{r0}] -> bool
@@ -540,7 +540,7 @@ printCell_Pu8_Pi16_Pi16:
         jr   if__14__then
 
 if__11__then:
-        ; 76:3 if isBomb@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=76:14]])
+        ; 81:3 if isBomb@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=81:14]])
         ; move param.cell{r0}, param.cell{r8}
         ld   r0, r8
         ; call t.6.1{r0} = isBomb@u8[param.cell{r0}] -> bool
@@ -569,7 +569,7 @@ if__12__else:
         ld   r3, r12
         ; call count.1{r0} = getBombCountAround@i16@i16[param.row{r0}, param.column{r2}] -> u8
         call getBombCountAround_Pi16_Pi16
-        ; 81:4 if count > 0
+        ; 86:4 if count > 0
         ; branch count.1{r0} lteq 0: if_13_else, if_13_then
         cp   r0, #%00
         jr   ule, if__13__else
@@ -634,7 +634,7 @@ printField_Pi16_Pi16:
         ; const row.1{r12}, 0
         ld   r12, #%00
         ld   r13, #%00
-        ; 97:2 for row < 20
+        ; 102:2 for row < 20
         jr   for__15
 
 for__15__body:
@@ -645,7 +645,7 @@ for__15__body:
         ; const column.1{r14}, 0
         ld   r14, #%00
         ld   r15, #%00
-        ; 99:3 for column < 40
+        ; 104:3 for column < 17
         jr   for__16
 
 for__16__body:
@@ -684,11 +684,11 @@ for__16__body:
         ; add column.3{r14}, 1
         incw r14
 for__16:
-        ; branch column.2{r14} lt 40: for_16_body
+        ; branch column.2{r14} lt 17: for_16_body
         cp   r14, #%00
         jr   lt, for__16__body
         jr   ne, .lt11
-        cp   r15, #%28
+        cp   r15, #%11
         jr   ult, for__16__body
 .lt11:
         ; move row.2{r0}, row.2{r12}
@@ -700,9 +700,9 @@ for__16:
         ; move param.columnCursor{r6}, param.columnCursor{r10}
         ld   r6, r10
         ld   r7, r11
-        ; const arg.6.1{r2}, 40
+        ; const arg.6.1{r2}, 17
         ld   r2, #%00
-        ld   r3, #%28
+        ld   r3, #%11
         ; call spacer.1{r0} = getSpacer@i16@i16@i16@i16[row.2{r0}, arg.6.1{r2}, param.rowCursor{r4}, param.columnCursor{r6}] -> u8
         call getSpacer_Pi16_Pi16_Pi16_Pi16
         ; call printChar@u8[spacer.1{r0}]
@@ -781,7 +781,7 @@ for__17:
 getDigitCount_Pi16:
         ; const count.1{r2}, 0
         ld   r2, #%00
-        ; 119:2 if value < 0
+        ; 124:2 if value < 0
         ; branch param.value{r0} lt 0: if_18_then
         cp   r0, #%00
         jr   lt, if__18__then
@@ -836,13 +836,13 @@ while__19:
         srp  #%20
         ld   r1, %12
         ld   r2, %13
-        ; 127:3 if value == 0
+        ; 132:3 if value == 0
         ; branch value.4{r1} notequals 0: getDigitCount@i16.no_critical_edge_7
         cp   r2, #%00
         jr   ne, getDigitCount_Pi16_2eno__critical__edge__7
         cp   r1, #%00
         jr   ne, getDigitCount_Pi16_2eno__critical__edge__7
-        ; 132:9 return count
+        ; 137:9 return count
         ret
 
         ; i16 getHiddenCount
@@ -860,14 +860,14 @@ getHiddenCount:
         ; const r.1{r10}, 0
         ld   r10, #%00
         ld   r11, #%00
-        ; 137:2 for r < 20
+        ; 142:2 for r < 20
         jr   for__21
 
 for__21__body:
         ; const c.1{r12}, 0
         ld   r12, #%00
         ld   r13, #%00
-        ; 138:3 for c < 40
+        ; 143:3 for c < 17
         jr   for__22
 
 for__22__body:
@@ -879,7 +879,7 @@ for__22__body:
         ld   r3, r13
         ; call cell.1{r0} = getCell@i16@i16[r.2{r0}, c.2{r2}] -> u8
         call getCell_Pi16_Pi16
-        ; 140:4 if cell & 6 == 0
+        ; 145:4 if cell & 6 == 0
         ; move t.4.1{r2}, cell.1{r0}
         ld   r2, r0
         ; and t.4.1{r2}, 6
@@ -911,11 +911,11 @@ for__22__continue:
         ld   r13, r5
         ld   r12, r4
 for__22:
-        ; branch c.2{r12} lt 40: for_22_body
+        ; branch c.2{r12} lt 17: for_22_body
         cp   r12, #%00
         jr   lt, for__22__body
         jr   ne, .lt15
-        cp   r13, #%28
+        cp   r13, #%11
         jr   ult, for__22__body
 .lt15:
         ; move r.4{r2}, r.2{r10}
@@ -934,7 +934,7 @@ for__21:
         cp   r11, #%14
         jr   ult, for__21__body
 .lt16:
-        ; 145:9 return count
+        ; 150:9 return count
         ; move count.2{r0}, count.2{r8}
         ld   r0, r8
         ld   r1, r9
@@ -966,9 +966,9 @@ printLeft:
         ; cast leftDigits.1{r10}(i16), t.3.1{r0}(u8)
         ld   r11, r0
         ld   r10, #0
-        ; const arg.2.0{r0}, 40
+        ; const arg.2.0{r0}, 17
         ld   r0, #%00
-        ld   r1, #%28
+        ld   r1, #%11
         ; call t.4.1{r0} = getDigitCount@i16[arg.2.0{r0}] -> u8
         call getDigitCount_Pi16
         ; cast bombDigits.1{r12}(i16), t.4.1{r0}(u8)
@@ -995,7 +995,7 @@ printLeft:
         ld   r1, r9
         ; call printUint@i16[count.1{r0}]
         call printUint_Pi16
-        ; 156:15 return count == 0
+        ; 161:15 return count == 0
         ; equals t.6.1{r0}, count.1{r8}, 0
         cp   r8, #%00
         jr   ne, .ne17
@@ -1028,11 +1028,11 @@ abs_Pi16:
         cp   r3, #%00
         jr   ult, if__24__then
 .lt18:
-        ; 163:9 return a
+        ; 168:9 return a
         jr   abs_Pi16__ret
 
 if__24__then:
-        ; 161:10 return -a
+        ; 166:10 return -a
         ; neg t.1.1{r2}, param.a{r2}
         com  r2
         com  r3
@@ -1053,14 +1053,14 @@ clearField:
         ; const r.1{r8}, 0
         ld   r8, #%00
         ld   r9, #%00
-        ; 167:2 for r < 20
+        ; 172:2 for r < 20
         jr   for__25
 
 for__25__body:
         ; const c.1{r10}, 0
         ld   r10, #%00
         ld   r11, #%00
-        ; 168:3 for c < 40
+        ; 173:3 for c < 17
         jr   for__26
 
 for__26__body:
@@ -1083,11 +1083,11 @@ for__26__body:
         ld   r11, r1
         ld   r10, r0
 for__26:
-        ; branch c.2{r10} lt 40: for_26_body
+        ; branch c.2{r10} lt 17: for_26_body
         cp   r10, #%00
         jr   lt, for__26__body
         jr   ne, .lt19
-        cp   r11, #%28
+        cp   r11, #%11
         jr   ult, for__26__body
 .lt19:
         ; move r.4{r0}, r.2{r8}
@@ -1140,10 +1140,10 @@ initField_Pi16_Pi16:
         ; move param.curr_c{r10}, curr_c{r2}
         ld   r11, r3
         ld   r10, r2
-        ; const bombs.1{r12}, 40
+        ; const bombs.1{r12}, 17
         ld   r12, #%00
-        ld   r13, #%28
-        ; 175:2 for bombs > 0
+        ld   r13, #%11
+        ; 180:2 for bombs > 0
         jr   for__27
 
 for__27__body:
@@ -1174,11 +1174,11 @@ for__27__body:
         ; move column.1{r2}, t.6.1{r0}
         ld   r3, r1
         ld   r2, r0
-        ; mod column.1{r2}, 40
+        ; mod column.1{r2}, 17
         ld   %12, r2
         ld   %13, r3
         ld   %14, #%00
-        ld   %15, #%28
+        ld   %15, #%11
         srp  #%10
         call %011F ; mod
         srp  #%20
@@ -1194,7 +1194,7 @@ for__27__body:
         incw r14
         lde  @rr14, r3
         decw r14
-        ; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
+        ; 183:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=183:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=183:20], location=183:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=184:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=184:20], location=184:18]]) > 1
         ; addrof memVarAddr{r14}, row.1
         ld   r14, SPH
         ld   r15, SPL
@@ -1336,7 +1336,7 @@ maybeRevealAround_Pi16_Pi16:
         ; move param.column{r10}, column{r2}
         ld   r11, r3
         ld   r10, r2
-        ; 186:2 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=186:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=186:30]]) != 0
+        ; 191:2 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=191:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=191:30]]) != 0
         ; call t.7.1{r0} = getBombCountAround@i16@i16[param.row{r0}, param.column{r2}] -> u8
         call getBombCountAround_Pi16_Pi16
         ; branch t.7.1{r0} notequals 0: maybeRevealAround@i16@i16_ret
@@ -1345,7 +1345,7 @@ maybeRevealAround_Pi16_Pi16:
         ; const dr.1{r12}, -1
         ld   r12, #%ff
         ld   r13, #%ff
-        ; 190:2 for dr <= 1
+        ; 195:2 for dr <= 1
         jr   for__31
 
 for__31__body:
@@ -1358,7 +1358,7 @@ for__31__body:
         ; const dc.1{r4}, -1
         ld   r4, #%ff
         ld   r5, #%ff
-        ; 192:3 for dc <= 1
+        ; 197:3 for dc <= 1
         ; addrof memVarAddr{r14}, r.1
         ld   r14, SPH
         ld   r15, SPL
@@ -1432,7 +1432,7 @@ if__33__end:
         incw r14
         lde  @rr14, r5
         decw r14
-        ; 198:4 if !checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=198:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=198:28]])
+        ; 203:4 if !checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=203:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=203:28]])
         ; addrof memVarAddr{r14}, r.1
         ld   r14, SPH
         ld   r15, SPL
@@ -1480,7 +1480,7 @@ if__33__end:
         decw r14
         ; call cell.1{r0} = getCell@i16@i16[r.1{r0}, c.1{r2}] -> u8
         call getCell_Pi16_Pi16
-        ; 203:4 if isOpen@u8([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=203:15]])
+        ; 208:4 if isOpen@u8([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=208:15]])
         ; addrof memVarAddr{r14}, cell.1
         ld   r14, SPH
         ld   r15, SPL
@@ -1618,9 +1618,9 @@ main:
         ld   r8, #%01
         ; call clearField[]
         call clearField
-        ; const curr_c.1{r9}, 20
+        ; const curr_c.1{r9}, 8
         ld   r9, #%00
-        ld   r10, #%14
+        ld   r10, #%08
         ; const curr_r.1{r11}, 10
         ld   r11, #%00
         ld   r12, #%0a
@@ -1637,11 +1637,11 @@ main:
         ld   r1, #lo(string_1)
         ; call printString@@u8[t.6.1{r0}]
         call printString_P_Pu8
-        ; 221:2 while true
+        ; 226:2 while true
         jr   while__37
 
 if__38__then:
-        ; 224:4 if printLeft([])
+        ; 229:4 if printLeft([])
         ; call t.7.1{r0} = printLeft[] -> bool
         call printLeft
         ; branch t.7.1{r0} notequals 0: if_39_then, if_38_end
@@ -1650,7 +1650,7 @@ if__38__then:
 if__38__end:
         ; call chr.1{r0} = getChar[] -> i16
         call getChar
-        ; 231:3 if chr == 27
+        ; 236:3 if chr == 27
         ; branch chr.1{r0} equals 27: main_ret
         cp   r1, #%1b
         jr   ne, .notEquals26
@@ -1722,17 +1722,17 @@ if__43__else:
         jr   if__44__then
 
 if__43__then:
-        ; add t.13.1{r9}, 40
-        add  r10, #%28
+        ; add t.13.1{r9}, 17
+        add  r10, #%11
         adc  r9, #%00
         ; sub t.12.1{r9}, 1
         sub  r10, #%01
         sbc  r9, #%00
-        ; mod curr_c.4{r9}, 40
+        ; mod curr_c.4{r9}, 17
         ld   %12, r9
         ld   %13, r10
         ld   %14, #%00
-        ld   %15, #%28
+        ld   %15, #%11
         srp  #%10
         call %011F ; mod
         srp  #%20
@@ -1752,11 +1752,11 @@ if__44__then:
         ; add t.14.1{r9}, 1
         add  r10, #%01
         adc  r9, #%00
-        ; mod curr_c.5{r9}, 40
+        ; mod curr_c.5{r9}, 17
         ld   %12, r9
         ld   %13, r10
         ld   %14, #%00
-        ld   %15, #%28
+        ld   %15, #%11
         srp  #%10
         call %011F ; mod
         srp  #%20
@@ -1795,7 +1795,7 @@ if__46__then:
         call getCell_Pi16_Pi16
         ; move cell.1{r13}, cell.1{r0}
         ld   r13, r0
-        ; 255:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=255:17]])
+        ; 260:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=260:17]])
         ; call t.15.1{r0} = isOpen@u8[cell.1{r0}] -> bool
         call isOpen_Pu8
         ; branch t.15.1{r0} notequals 0: while_37, if_47_then
@@ -1842,7 +1842,7 @@ if__49__end:
         call getCell_Pi16_Pi16
         ; move cell.3{r13}, cell.3{r0}
         ld   r13, r0
-        ; 267:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=267:16]])
+        ; 272:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=272:16]])
         ; call t.16.1{r0} = isOpen@u8[cell.3{r0}] -> bool
         call isOpen_Pu8
         ; branch t.16.1{r0} notequals 0: if_50_end
@@ -1861,7 +1861,7 @@ if__49__end:
         ; call setCell@i16@i16@u8[curr_r.2{r0}, curr_c.2{r2}, t.17.1{r4}]
         call setCell_Pi16_Pi16_Pu8
 if__50__end:
-        ; 270:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=270:15]])
+        ; 275:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=275:15]])
         ; move cell.3{r0}, cell.3{r13}
         ld   r0, r13
         ; call t.18.1{r0} = isBomb@u8[cell.3{r0}] -> bool
@@ -1886,7 +1886,7 @@ while__37:
         ld   r3, r10
         ; call printField@i16@i16[curr_r.2{r0}, curr_c.2{r2}]
         call printField_Pi16_Pi16
-        ; 223:3 if !needsInitialize
+        ; 228:3 if !needsInitialize
         ; branch needsInitialize.2{r8} notequals 0: if_38_end, if_38_then
         cp   r8, #%00
         jr   ne, if__38__end
@@ -2069,7 +2069,7 @@ random16:
         and  r0, #%7f
         ret
 
-        ; variable 0: field[] (u8*/1600)
+        ; variable 0: field[] (u8*/680)
 var_0:
         .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
         .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
@@ -2092,35 +2092,7 @@ var_0:
         .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
         .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
         .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
+        .data %00 %00 %00 %00 %00 %00 %00 %00
 
 string_0:
         .data "|" %0a %00
