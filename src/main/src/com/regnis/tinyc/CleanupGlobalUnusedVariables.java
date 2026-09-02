@@ -109,20 +109,14 @@ public class CleanupGlobalUnusedVariables extends CleanupUnusedVariables {
 		@Nullable
 		public IRInstruction replace(@NotNull IRInstruction instruction) {
 			switch (instruction) {
-			case IRLiteral literal -> {
-				final IRVar target = literal.target();
-				if (isUnusedGlobal(target)) {
-					return null;
-				}
-			}
 			case IRString literal -> {
 				final IRVar target = literal.target();
 				if (isUnusedGlobal(target)) {
 					return null;
 				}
 			}
-			case IRMove copy -> {
-				final IRVar target = copy.target();
+			case IRMove move -> {
+				final IRVar target = move.target();
 				if (isUnusedGlobal(target)) {
 					return null;
 				}
