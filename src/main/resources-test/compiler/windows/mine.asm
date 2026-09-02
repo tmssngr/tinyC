@@ -290,10 +290,10 @@ start:
         ;   rsp+24: arg column
 @rowColumnToCell@i16@i16:
         sub rsp, 8
-        ; 16:21 return row * 40 + column
-        ; mul t.3{r1}, t.3{r1}, 40
+        ; 16:21 return row * 17 + column
+        ; mul t.3{r1}, t.3{r1}, 17
         movsx rcx, cx
-        imul  rcx, 40
+        imul  rcx, 17
         ; move t.2{r0}, t.3{r1}
         mov ax, cx
         ; add t.2{r0}, t.2{r0}, column{r2}
@@ -366,7 +366,7 @@ start:
         ;   rsp+24: arg column
 @checkCellBounds@i16@i16:
         sub rsp, 8
-        ; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
+        ; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 17
         ; 37:21 logic and
         ; 37:6 logic and
         ; 36:21 logic and
@@ -390,8 +390,8 @@ start:
         ; branch t.2{r0}, false, @checkCellBounds@i16@i16_ret, @and_2nd_4
         or al, al
         jz @checkCellBounds@i16@i16_ret
-        ; lt t.2{r0}, column{r2}, 40
-        cmp dx, 40
+        ; lt t.2{r0}, column{r2}, 17
+        cmp dx, 17
         setl al
 @checkCellBounds@i16@i16_ret:
         add rsp, 8
@@ -826,7 +826,7 @@ start:
         call @printChar@u8
         ; const column{r2}, 0
         mov dx, 0
-        ; 99:3 for column < 40
+        ; 99:3 for column < 17
         jmp @for_19
 @for_19_body:
         ; addrof memVarAddr{r7}, row
@@ -902,8 +902,8 @@ start:
         ; add column{r2}, column{r2}, 1
         add dx, 1
 @for_19:
-        ; lt t.8{r0}, column{r2}, 40
-        cmp dx, 40
+        ; lt t.8{r0}, column{r2}, 17
+        cmp dx, 17
         setl al
         ; branch t.8{r0}, true, @for_19_body, @for_19_break
         or al, al
@@ -928,8 +928,8 @@ start:
         lea r12, [rsp+72]
         ; store [memVarAddr{r7}], columnCursor{r2}
         mov [r12], dx
-        ; const arg.6.1{r2}, 40
-        mov dx, 40
+        ; const arg.6.1{r2}, 17
+        mov dx, 17
         ; call spacer{r0} = getSpacer@i16@i16@i16@i16[row{r1}, arg.6.1{r2}, rowCursor{r3}, columnCursor{r4}] -> u8
         call @getSpacer@i16@i16@i16@i16
         ; move spacer{r1}, spacer{r0}
@@ -1051,7 +1051,7 @@ start:
 @for_24_body:
         ; const c{r2}, 0
         mov dx, 0
-        ; 138:3 for c < 40
+        ; 138:3 for c < 17
         ; addrof memVarAddr{r7}, r
         lea r12, [rsp+48]
         ; store [memVarAddr{r7}], r{r1}
@@ -1093,8 +1093,8 @@ start:
         ; add c{r2}, c{r2}, 1
         add dx, 1
 @for_25:
-        ; lt t.5{r1}, c{r2}, 40
-        cmp dx, 40
+        ; lt t.5{r1}, c{r2}, 17
+        cmp dx, 17
         setl cl
         ; branch t.5{r1}, true, @for_25_body, @for_24_continue
         or cl, cl
@@ -1145,8 +1145,8 @@ start:
         lea r12, [rsp+48]
         ; store [memVarAddr{r7}], leftDigits{r0}
         mov [r12], ax
-        ; const arg.2.0{r1}, 40
-        mov cx, 40
+        ; const arg.2.0{r1}, 17
+        mov cx, 17
         ; call t.4{r0} = getDigitCount@i16[arg.2.0{r1}] -> u8
         call @getDigitCount@i16
         ; cast bombDigits{r0}(i16), t.4{r0}(u8)
@@ -1227,7 +1227,7 @@ start:
 @for_28_body:
         ; const c{r7}, 0
         mov r12w, 0
-        ; 168:3 for c < 40
+        ; 168:3 for c < 17
         jmp @for_29
 @for_29_body:
         ; move r{r1}, r{r6}
@@ -1241,8 +1241,8 @@ start:
         ; add c{r7}, c{r7}, 1
         add r12w, 1
 @for_29:
-        ; lt t.3{r0}, c{r7}, 40
-        cmp r12w, 40
+        ; lt t.3{r0}, c{r7}, 17
+        cmp r12w, 17
         setl al
         ; branch t.3{r0}, true, @for_29_body, @for_28_continue
         or al, al
@@ -1282,8 +1282,8 @@ start:
         lea r12, [rsp+72]
         ; store [memVarAddr{r7}], curr_c{r2}
         mov [r12], dx
-        ; const bombs{r0}, 40
-        mov ax, 40
+        ; const bombs{r0}, 17
+        mov ax, 17
         ; addrof memVarAddr{r7}, bombs
         lea r12, [rsp+48]
         ; store [memVarAddr{r7}], bombs{r0}
@@ -1322,10 +1322,10 @@ start:
         mov r8w, ax
         ; move column{r0}, column{r3}
         mov ax, r8w
-        ; mod column{r2}, column{r0}, 40
+        ; mod column{r2}, column{r0}, 17
         movsx rax, ax
         cqo
-        mov rcx, 40
+        mov rcx, 17
         idiv rcx
         ; move column{r3}, column{r2}
         mov r8w, dx
@@ -1698,8 +1698,8 @@ start:
         mov bl, 1
         ; call clearField[]
         call @clearField
-        ; const curr_c{r0}, 20
-        mov ax, 20
+        ; const curr_c{r0}, 8
+        mov ax, 8
         ; addrof memVarAddr{r7}, curr_c
         lea r12, [rsp+48]
         ; store [memVarAddr{r7}], curr_c{r0}
@@ -1827,18 +1827,18 @@ start:
         mov r10w, [r12]
         ; move t.17{r3}, curr_c{r5}
         mov r8w, r10w
-        ; add t.17{r3}, t.17{r3}, 40
-        add r8w, 40
+        ; add t.17{r3}, t.17{r3}, 17
+        add r8w, 17
         ; sub t.16{r3}, t.16{r3}, 1
         sub r8w, 1
         ; move curr_c{r5}, t.16{r3}
         mov r10w, r8w
         ; move curr_c{r0}, curr_c{r5}
         mov ax, r10w
-        ; mod curr_c{r2}, curr_c{r0}, 40
+        ; mod curr_c{r2}, curr_c{r0}, 17
         movsx rax, ax
         cqo
-        mov rcx, 40
+        mov rcx, 17
         idiv rcx
         ; move curr_c{r5}, curr_c{r2}
         mov r10w, dx
@@ -1871,18 +1871,18 @@ start:
         mov r10w, [r12]
         ; move t.20{r3}, curr_c{r5}
         mov r8w, r10w
-        ; add t.20{r3}, t.20{r3}, 40
-        add r8w, 40
+        ; add t.20{r3}, t.20{r3}, 17
+        add r8w, 17
         ; sub t.19{r3}, t.19{r3}, 1
         sub r8w, 1
         ; move curr_c{r5}, t.19{r3}
         mov r10w, r8w
         ; move curr_c{r0}, curr_c{r5}
         mov ax, r10w
-        ; mod curr_c{r2}, curr_c{r0}, 40
+        ; mod curr_c{r2}, curr_c{r0}, 17
         movsx rax, ax
         cqo
-        mov rcx, 40
+        mov rcx, 17
         idiv rcx
         ; move curr_c{r5}, curr_c{r2}
         mov r10w, dx
@@ -1913,10 +1913,10 @@ start:
         mov r10w, r8w
         ; move curr_c{r0}, curr_c{r5}
         mov ax, r10w
-        ; mod curr_c{r2}, curr_c{r0}, 40
+        ; mod curr_c{r2}, curr_c{r0}, 17
         movsx rax, ax
         cqo
-        mov rcx, 40
+        mov rcx, 17
         idiv rcx
         ; move curr_c{r5}, curr_c{r2}
         mov r10w, dx
@@ -2319,8 +2319,8 @@ section '.data' data readable writeable
         hStdErr rb 8
         ; variable 0: __random__ (i32/4)
         var_0 rb 4
-        ; variable 1: field[] (u8*/6400)
-        var_1 rb 6400
+        ; variable 1: field[] (u8*/2720)
+        var_1 rb 2720
 
 section '.data' data readable
         string_0 db '|', 0x0a, 0x00

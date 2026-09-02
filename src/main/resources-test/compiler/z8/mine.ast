@@ -1,4 +1,4 @@
-u8* field[800];
+u8* field[340];
 
 void printString@@u8(u8* str) asm {
 }
@@ -27,7 +27,7 @@ i16 random16() asm {
 }
 
 i16 rowColumnToCell@i16@i16(i16 row, i16 column) {
-	return (row * 40) + column;
+	return (row * 17) + column;
 }
 
 u8 getCell@i16@i16(i16 row, i16 column) {
@@ -47,7 +47,7 @@ bool isFlag@u8(u8 cell) {
 }
 
 bool checkCellBounds@i16@i16(i16 row, i16 column) {
-	return (((0 <= row) && (row < 20)) && (0 <= column)) && (column < 40);
+	return (((0 <= row) && (row < 20)) && (0 <= column)) && (column < 17);
 }
 
 void setCell@i16@i16@u8(i16 row, i16 column, u8 cell) {
@@ -131,13 +131,13 @@ void printField@i16@i16(i16 rowCursor, i16 columnCursor) {
 	for (; row < 20; row = row + 1) {
 		printChar@u8(124);
 		column = 0;
-		for (; column < 40; column = column + 1) {
+		for (; column < 17; column = column + 1) {
 			spacer = getSpacer@i16@i16@i16@i16(row, column, rowCursor, columnCursor);
 			printChar@u8(spacer);
 			cell = getCell@i16@i16(row, column);
 			printCell@u8@i16@i16(cell, row, column);
 		}
-		spacer = getSpacer@i16@i16@i16@i16(row, 40, rowCursor, columnCursor);
+		spacer = getSpacer@i16@i16@i16@i16(row, 17, rowCursor, columnCursor);
 		printChar@u8(spacer);
 		printString@@u8("|\n");
 	}
@@ -177,7 +177,7 @@ i16 getHiddenCount() {
 	r = 0;
 	for (; r < 20; r = r + 1) {
 		c = 0;
-		for (; c < 40; c = c + 1) {
+		for (; c < 17; c = c + 1) {
 			cell = getCell@i16@i16(r, c);
 			if ((cell & (4 | 2)) == 0) {
 				count = count + 1;
@@ -194,7 +194,7 @@ bool printLeft() {
 
 	count = getHiddenCount();
 	leftDigits = (i16)(getDigitCount@i16(count));
-	bombDigits = (i16)(getDigitCount@i16(40));
+	bombDigits = (i16)(getDigitCount@i16(17));
 	printString@@u8("Left: ");
 	printSpaces@i16(bombDigits - leftDigits);
 	printUint@i16(count);
@@ -215,7 +215,7 @@ void clearField() {
 	r = 0;
 	for (; r < 20; r = r + 1) {
 		c = 0;
-		for (; c < 40; c = c + 1) {
+		for (; c < 17; c = c + 1) {
 			setCell@i16@i16@u8(r, c, 0);
 		}
 	}
@@ -226,10 +226,10 @@ void initField@i16@i16(i16 curr_r, i16 curr_c) {
 	i16 row;
 	i16 column;
 
-	bombs = 40;
+	bombs = 17;
 	for (; bombs > 0; bombs = bombs - 1) {
 		row = (random16()) % 20;
-		column = (random16()) % 40;
+		column = (random16()) % 17;
 		if (((abs@i16(row - curr_r)) > 1) || ((abs@i16(column - curr_c)) > 1)) {
 			setCell@i16@i16@u8(row, column, 1);
 		}
@@ -279,7 +279,7 @@ void main() {
 	initRandom@i32(7439742);
 	needsInitialize = true;
 	clearField();
-	curr_c = (i16)(40 / 2);
+	curr_c = (i16)(17 / 2);
 	curr_r = (i16)(20 / 2);
 	while (true) {
 		printField@i16@i16(curr_r, curr_c);
@@ -302,15 +302,15 @@ void main() {
 			}
 			else {
 				if (chr == ((i16)57419)) {
-					curr_c = ((curr_c + 40) - 1) % 40;
+					curr_c = ((curr_c + 17) - 1) % 17;
 				}
 				else {
 					if (chr == ((i16)57419)) {
-						curr_c = ((curr_c + 40) - 1) % 40;
+						curr_c = ((curr_c + 17) - 1) % 17;
 					}
 					else {
 						if (chr == ((i16)57421)) {
-							curr_c = (curr_c + 1) % 40;
+							curr_c = (curr_c + 1) % 17;
 						}
 						else {
 							if (chr == 32) {
