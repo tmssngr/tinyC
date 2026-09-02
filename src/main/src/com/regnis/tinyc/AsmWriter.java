@@ -30,8 +30,6 @@ abstract class AsmWriter {
 
 	protected abstract void writeJump(IRJump jump) throws IOException;
 
-	protected abstract void writeLiteral(IRLiteral literal) throws IOException;
-
 	protected abstract void writeMemLoad(IRMemLoad load) throws IOException;
 
 	protected abstract void writeMemStore(IRMemStore store) throws IOException;
@@ -86,10 +84,9 @@ abstract class AsmWriter {
 		case IRCompare compare -> writeCompare(compare);
 		case IRJump jump -> writeJump(jump);
 		case IRLabel label -> writeLabel(label.label());
-		case IRLiteral literal -> writeLiteral(literal);
 		case IRMemLoad load -> writeMemLoad(load);
 		case IRMemStore store -> writeMemStore(store);
-		case IRMove copy -> writeMove(copy);
+		case IRMove move -> writeMove(move);
 		case IRRetValue retValue -> writeRetValue(retValue);
 		case IRString literal -> writeString(literal);
 		case IRUnary unary -> writeUnary(unary);
