@@ -14,8 +14,8 @@ rowColumnToCell@i16@i16:
 	var 2: t.2 (i16/2)
 	var 3: t.3 (i16/2)
 	; 16 pc
-	; 16:21 return row * 40 + column
-	mul t.3, row, 40
+	; 21:21 return row * 17 + column
+	mul t.3, row, 17
 	add t.2, t.3, column
 	ret t.2
 	jump rowColumnToCell@i16@i16_ret
@@ -29,7 +29,7 @@ getCell@i16@i16:
 	var 3: t.3 (u8*/2)
 	var 4: t.4 (i16/2)
 	; 29 pc
-	; 20:15 return [...]
+	; 25:15 return [...]
 	call t.4 = rowColumnToCell@i16@i16[row, column] -> i16
 	addrof t.3, field
 	add t.3, t.4
@@ -44,7 +44,7 @@ isBomb@u8:
 	var 1: t.1 (bool/1)
 	var 2: t.2 (u8/1)
 	; 14 pc
-	; 24:27 return cell & 1 != 0
+	; 29:27 return cell & 1 != 0
 	and t.2, cell, 1
 	notequals t.1, t.2, 0
 	ret t.1
@@ -57,7 +57,7 @@ isOpen@u8:
 	var 1: t.1 (bool/1)
 	var 2: t.2 (u8/1)
 	; 14 pc
-	; 28:27 return cell & 2 != 0
+	; 33:27 return cell & 2 != 0
 	and t.2, cell, 2
 	notequals t.1, t.2, 0
 	ret t.1
@@ -70,7 +70,7 @@ isFlag@u8:
 	var 1: t.1 (bool/1)
 	var 2: t.2 (u8/1)
 	; 14 pc
-	; 32:27 return cell & 4 != 0
+	; 37:27 return cell & 4 != 0
 	and t.2, cell, 4
 	notequals t.1, t.2, 0
 	ret t.1
@@ -83,10 +83,10 @@ checkCellBounds@i16@i16:
 	arg 1: column (i16/2)
 	var 2: t.2 (bool/1)
 	; 33 pc
-	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
-	; 37:21 logic and
-	; 36:40 logic and
-	; 36:21 logic and
+	; 42:21 return row >= 0 && row < 20 && column >= 0 && column < 17
+	; 42:21 logic and
+	; 41:40 logic and
+	; 41:21 logic and
 	gteq t.2, row, 0
 	branch t.2 equals 0: and_next_3, and_2nd_3
 and_2nd_3:
@@ -98,7 +98,7 @@ and_2nd_2:
 and_next_2:
 	branch t.2 equals 0: and_next_1, and_2nd_1
 and_2nd_1:
-	lt t.2, column, 40
+	lt t.2, column, 17
 and_next_1:
 	ret t.2
 	jump checkCellBounds@i16@i16_ret
@@ -133,23 +133,23 @@ getBombCountAround@i16@i16:
 	; 72 pc
 	const count, 0
 	const dr, -1
-	; 46:2 for dr <= 1
+	; 51:2 for dr <= 1
 for_4:
 	branch dr gt 1: for_4_break, for_4_body
 for_4_body:
 	add r, row, dr
 	const dc, -1
-	; 48:3 for dc <= 1
+	; 53:3 for dc <= 1
 for_5:
 	branch dc gt 1: for_4_continue, for_5_body
 for_5_body:
 	add c, column, dc
-	; 50:4 if checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=50:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=50:27]])
+	; 55:4 if checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=55:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=55:27]])
 	call t.8 = checkCellBounds@i16@i16[r, c] -> bool
 	branch t.8 equals 0: for_5_continue, if_6_then
 if_6_then:
 	call cell = getCell@i16@i16[r, c] -> u8
-	; 52:5 if isBomb@u8([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=52:16]])
+	; 57:5 if isBomb@u8([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=57:16]])
 	call t.9 = isBomb@u8[cell] -> bool
 	branch t.9 equals 0: for_5_continue, if_7_then
 if_7_then:
@@ -161,7 +161,7 @@ for_4_continue:
 	add dr, 1
 	jump for_4
 for_4_break:
-	; 58:9 return count
+	; 63:9 return count
 	ret count
 	jump getBombCountAround@i16@i16_ret
 getBombCountAround@i16@i16_ret:
@@ -174,25 +174,25 @@ getSpacer@i16@i16@i16@i16:
 	arg 3: columnCursor (i16/2)
 	var 4: t.4 (i16/2)
 	; 26 pc
-	; 62:2 if rowCursor == row
+	; 67:2 if rowCursor == row
 	branch rowCursor notequals row: if_8_end, if_8_then
 if_8_then:
-	; 63:3 if columnCursor == column
+	; 68:3 if columnCursor == column
 	branch columnCursor notequals column: if_9_end, if_9_then
 if_9_then:
-	; 64:11 return 91
+	; 69:11 return 91
 	ret 91
 	jump getSpacer@i16@i16@i16@i16_ret
 if_9_end:
-	; 66:3 if columnCursor == column - 1
+	; 71:3 if columnCursor == column - 1
 	sub t.4, column, 1
 	branch columnCursor notequals t.4: if_8_end, if_10_then
 if_10_then:
-	; 67:11 return 93
+	; 72:11 return 93
 	ret 93
 	jump getSpacer@i16@i16@i16@i16_ret
 if_8_end:
-	; 70:9 return 32
+	; 75:9 return 32
 	ret 32
 	jump getSpacer@i16@i16@i16@i16_ret
 getSpacer@i16@i16@i16@i16_ret:
@@ -209,11 +209,11 @@ printCell@u8@i16@i16:
 	var 7: t.7 (bool/1)
 	; 53 pc
 	const chr, 46
-	; 75:2 if isOpen@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=75:13]])
+	; 80:2 if isOpen@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=80:13]])
 	call t.5 = isOpen@u8[cell] -> bool
 	branch t.5 equals 0: if_11_else, if_11_then
 if_11_then:
-	; 76:3 if isBomb@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=76:14]])
+	; 81:3 if isBomb@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=81:14]])
 	call t.6 = isBomb@u8[cell] -> bool
 	branch t.6 equals 0: if_12_else, if_12_then
 if_12_then:
@@ -221,7 +221,7 @@ if_12_then:
 	jump if_11_end
 if_12_else:
 	call count = getBombCountAround@i16@i16[row, column] -> u8
-	; 81:4 if count > 0
+	; 86:4 if count > 0
 	branch count lteq 0: if_13_else, if_13_then
 if_13_then:
 	add chr, count, 48
@@ -230,7 +230,7 @@ if_13_else:
 	const chr, 32
 	jump if_11_end
 if_11_else:
-	; 89:7 if isFlag@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=89:18]])
+	; 94:7 if isFlag@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=94:18]])
 	call t.7 = isFlag@u8[cell] -> bool
 	branch t.7 equals 0: if_11_end, if_14_then
 if_14_then:
@@ -252,15 +252,15 @@ printField@i16@i16:
 	; 70 pc
 	call setCursor@i16@i16[0, 0]
 	const row, 0
-	; 97:2 for row < 20
+	; 102:2 for row < 20
 for_15:
 	branch row gteq 20: printField@i16@i16_ret, for_15_body
 for_15_body:
 	call printChar@u8[124]
 	const column, 0
-	; 99:3 for column < 40
+	; 104:3 for column < 17
 for_16:
-	branch column gteq 40: for_16_break, for_16_body
+	branch column gteq 17: for_16_break, for_16_body
 for_16_body:
 	call spacer = getSpacer@i16@i16@i16@i16[row, column, rowCursor, columnCursor] -> u8
 	call printChar@u8[spacer]
@@ -270,7 +270,7 @@ for_16_continue:
 	add column, 1
 	jump for_16
 for_16_break:
-	call spacer = getSpacer@i16@i16@i16@i16[row, 40, rowCursor, columnCursor] -> u8
+	call spacer = getSpacer@i16@i16@i16@i16[row, 17, rowCursor, columnCursor] -> u8
 	call printChar@u8[spacer]
 	const t.7, [string-0]
 	call printString@@u8[t.7]
@@ -283,7 +283,7 @@ printSpaces@i16:
  Local variables
 	arg 0: i (i16/2)
 	; 10 pc
-	; 112:2 for i > 0
+	; 117:2 for i > 0
 for_17:
 	branch i lteq 0: printSpaces@i16_ret, for_17_body
 for_17_body:
@@ -299,20 +299,20 @@ getDigitCount@i16:
 	var 1: count (u8/1)
 	; 29 pc
 	const count, 0
-	; 119:2 if value < 0
+	; 124:2 if value < 0
 	branch value gteq 0: if_18_end, if_18_then
 if_18_then:
 	const count, 1
 	neg value, value
 if_18_end:
-	; 124:2 while true
+	; 129:2 while true
 while_19:
 	add count, 1
 	div value, 10
-	; 127:3 if value == 0
+	; 132:3 if value == 0
 	branch value notequals 0: while_19, while_19_break
 while_19_break:
-	; 132:9 return count
+	; 137:9 return count
 	ret count
 	jump getDigitCount@i16_ret
 getDigitCount@i16_ret:
@@ -327,17 +327,17 @@ getHiddenCount:
 	; 48 pc
 	const count, 0
 	const r, 0
-	; 137:2 for r < 20
+	; 142:2 for r < 20
 for_21:
 	branch r gteq 20: for_21_break, for_21_body
 for_21_body:
 	const c, 0
-	; 138:3 for c < 40
+	; 143:3 for c < 17
 for_22:
-	branch c gteq 40: for_21_continue, for_22_body
+	branch c gteq 17: for_21_continue, for_22_body
 for_22_body:
 	call cell = getCell@i16@i16[r, c] -> u8
-	; 140:4 if cell & 6 == 0
+	; 145:4 if cell & 6 == 0
 	and t.4, cell, 6
 	branch t.4 notequals 0: for_22_continue, if_23_then
 if_23_then:
@@ -349,7 +349,7 @@ for_21_continue:
 	add r, 1
 	jump for_21
 for_21_break:
-	; 145:9 return count
+	; 150:9 return count
 	ret count
 	jump getHiddenCount_ret
 getHiddenCount_ret:
@@ -367,13 +367,13 @@ printLeft:
 	call count = getHiddenCount[] -> i16
 	call t.3 = getDigitCount@i16[count] -> u8
 	cast leftDigits(i16), t.3(u8)
-	call t.4 = getDigitCount@i16[40] -> u8
+	call t.4 = getDigitCount@i16[17] -> u8
 	cast bombDigits(i16), t.4(u8)
 	call setCursor@i16@i16[20, 6]
 	sub t.5, bombDigits, leftDigits
 	call printSpaces@i16[t.5]
 	call printUint@i16[count]
-	; 156:15 return count == 0
+	; 161:15 return count == 0
 	equals t.6, count, 0
 	ret t.6
 	jump printLeft_ret
@@ -384,15 +384,15 @@ abs@i16:
 	arg 0: a (i16/2)
 	var 1: t.1 (i16/2)
 	; 16 pc
-	; 160:2 if a < 0
+	; 165:2 if a < 0
 	branch a gteq 0: if_24_end, if_24_then
 if_24_then:
-	; 161:10 return -a
+	; 166:10 return -a
 	neg t.1, a
 	ret t.1
 	jump abs@i16_ret
 if_24_end:
-	; 163:9 return a
+	; 168:9 return a
 	ret a
 	jump abs@i16_ret
 abs@i16_ret:
@@ -403,14 +403,14 @@ clearField:
 	var 1: c (i16/2)
 	; 27 pc
 	const r, 0
-	; 167:2 for r < 20
+	; 172:2 for r < 20
 for_25:
 	branch r gteq 20: clearField_ret, for_25_body
 for_25_body:
 	const c, 0
-	; 168:3 for c < 40
+	; 173:3 for c < 17
 for_26:
-	branch c gteq 40: for_25_continue, for_26_body
+	branch c gteq 17: for_25_continue, for_26_body
 for_26_body:
 	call setCell@i16@i16@u8[r, c, 0]
 for_26_continue:
@@ -435,16 +435,16 @@ initField@i16@i16:
 	var 9: t.9 (i16/2)
 	var 10: t.10 (i16/2)
 	; 62 pc
-	const bombs, 40
-	; 175:2 for bombs > 0
+	const bombs, 17
+	; 180:2 for bombs > 0
 for_27:
 	branch bombs lteq 0: initField@i16@i16_ret, for_27_body
 for_27_body:
 	call t.5 = random16[] -> i16
 	mod row, t.5, 20
 	call t.6 = random16[] -> i16
-	mod column, t.6, 40
-	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
+	mod column, t.6, 17
+	; 183:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=183:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=183:20], location=183:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=184:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=184:20], location=184:18]]) > 1
 	sub t.8, row, curr_r
 	call t.7 = abs@i16[t.8] -> i16
 	branch t.7 gt 1: if_28_then, or_29
@@ -473,36 +473,36 @@ maybeRevealAround@i16@i16:
 	var 9: t.9 (bool/1)
 	var 10: t.10 (u8/1)
 	; 95 pc
-	; 186:2 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=186:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=186:30]]) != 0
+	; 191:2 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=191:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=191:30]]) != 0
 	call t.7 = getBombCountAround@i16@i16[row, column] -> u8
 	branch t.7 equals 0: if_30_end, if_30_then
 if_30_then:
-	; 187:3 return
+	; 192:3 return
 	jump maybeRevealAround@i16@i16_ret
 if_30_end:
 	const dr, -1
-	; 190:2 for dr <= 1
+	; 195:2 for dr <= 1
 for_31:
 	branch dr gt 1: maybeRevealAround@i16@i16_ret, for_31_body
 for_31_body:
 	add r, row, dr
 	const dc, -1
-	; 192:3 for dc <= 1
+	; 197:3 for dc <= 1
 for_32:
 	branch dc gt 1: for_31_continue, for_32_body
 for_32_body:
-	; 193:4 if dr == 0 && dc == 0
+	; 198:4 if dr == 0 && dc == 0
 	branch dr notequals 0: if_33_end, and_34
 and_34:
 	branch dc equals 0: for_32_continue, if_33_end
 if_33_end:
 	add c, column, dc
-	; 198:4 if !checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=198:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=198:28]])
+	; 203:4 if !checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=203:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=203:28]])
 	call t.8 = checkCellBounds@i16@i16[r, c] -> bool
 	branch t.8 equals 0: for_32_continue, if_35_end
 if_35_end:
 	call cell = getCell@i16@i16[r, c] -> u8
-	; 203:4 if isOpen@u8([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=203:15]])
+	; 208:4 if isOpen@u8([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=208:15]])
 	call t.9 = isOpen@u8[cell] -> bool
 	branch t.9 notequals 0: for_32_continue, if_36_end
 if_36_end:
@@ -543,18 +543,18 @@ main:
 	call initRandom@i32[7439742]
 	const needsInitialize, 1
 	call clearField[]
-	const curr_c, 20
+	const curr_c, 8
 	const curr_r, 10
 	call setCursor@i16@i16[20, 0]
 	const t.6, [string-1]
 	call printString@@u8[t.6]
-	; 221:2 while true
+	; 226:2 while true
 while_37:
 	call printField@i16@i16[curr_r, curr_c]
-	; 223:3 if !needsInitialize
+	; 228:3 if !needsInitialize
 	branch needsInitialize notequals 0: if_38_end, if_38_then
 if_38_then:
-	; 224:4 if printLeft([])
+	; 229:4 if printLeft([])
 	call t.7 = printLeft[] -> bool
 	branch t.7 equals 0: if_38_end, if_39_then
 if_39_then:
@@ -563,10 +563,10 @@ if_39_then:
 	jump main_ret
 if_38_end:
 	call chr = getChar[] -> i16
-	; 231:3 if chr == 27
+	; 236:3 if chr == 27
 	branch chr equals 27: main_ret, if_40_end
 if_40_end:
-	; 236:3 if chr == 3
+	; 241:3 if chr == 3
 	branch chr notequals 3: if_41_else, if_41_then
 if_41_then:
 	add t.10, curr_r, 20
@@ -574,36 +574,36 @@ if_41_then:
 	mod curr_r, t.9, 20
 	jump while_37
 if_41_else:
-	; 240:8 if chr == 4
+	; 245:8 if chr == 4
 	branch chr notequals 4: if_42_else, if_42_then
 if_42_then:
 	add t.11, curr_r, 1
 	mod curr_r, t.11, 20
 	jump while_37
 if_42_else:
-	; 244:8 if chr == 1
+	; 249:8 if chr == 1
 	branch chr notequals 1: if_43_else, if_43_then
 if_43_then:
-	add t.13, curr_c, 40
+	add t.13, curr_c, 17
 	sub t.12, t.13, 1
-	mod curr_c, t.12, 40
+	mod curr_c, t.12, 17
 	jump while_37
 if_43_else:
-	; 248:8 if chr == 2
+	; 253:8 if chr == 2
 	branch chr notequals 2: if_44_else, if_44_then
 if_44_then:
 	add t.14, curr_c, 1
-	mod curr_c, t.14, 40
+	mod curr_c, t.14, 17
 	jump while_37
 if_44_else:
-	; 252:8 if chr == 32
+	; 257:8 if chr == 32
 	branch chr notequals 32: if_45_else, if_45_then
 if_45_then:
-	; 253:4 if !needsInitialize
+	; 258:4 if !needsInitialize
 	branch needsInitialize notequals 0: while_37, if_46_then
 if_46_then:
 	call cell = getCell@i16@i16[curr_r, curr_c] -> u8
-	; 255:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=255:17]])
+	; 260:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=260:17]])
 	call t.15 = isOpen@u8[cell] -> bool
 	branch t.15 notequals 0: while_37, if_47_then
 if_47_then:
@@ -611,24 +611,24 @@ if_47_then:
 	call setCell@i16@i16@u8[curr_r, curr_c, cell]
 	jump while_37
 if_45_else:
-	; 261:8 if chr == 13
+	; 266:8 if chr == 13
 	branch chr notequals 13: while_37, if_48_then
 if_48_then:
-	; 262:4 if needsInitialize
+	; 267:4 if needsInitialize
 	branch needsInitialize equals 0: if_49_end, if_49_then
 if_49_then:
 	const needsInitialize, 0
 	call initField@i16@i16[curr_r, curr_c]
 if_49_end:
 	call cell = getCell@i16@i16[curr_r, curr_c] -> u8
-	; 267:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=267:16]])
+	; 272:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=272:16]])
 	call t.16 = isOpen@u8[cell] -> bool
 	branch t.16 notequals 0: if_50_end, if_50_then
 if_50_then:
 	or t.17, cell, 2
 	call setCell@i16@i16@u8[curr_r, curr_c, t.17]
 if_50_end:
-	; 270:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=270:15]])
+	; 275:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=275:15]])
 	call t.18 = isBomb@u8[cell] -> bool
 	branch t.18 equals 0: if_51_end, if_51_then
 if_51_then:
@@ -780,7 +780,7 @@ random16:
 	ret
 
 Global variables
-	0: field[] (u8*/1600)
+	0: field[] (u8*/680)
 
 String literals
 	string lit 0 "|\n\0"
