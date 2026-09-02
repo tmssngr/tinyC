@@ -326,9 +326,9 @@ start:
         ;   rsp+24: arg column
 @rowColumnToCell@i16@i16:
         sub rsp, 8
-        ; 16:21 return row * 40 + column
-        ; const t.4{r3}, 40
-        mov r8w, 40
+        ; 16:21 return row * 17 + column
+        ; const t.4{r3}, 17
+        mov r8w, 17
         ; mul t.3{r1}, t.3{r1}, t.4{r3}
         movsx rcx, cx
         movsx r8, r8w
@@ -417,7 +417,7 @@ start:
         ;   rsp+24: arg column
 @checkCellBounds@i16@i16:
         sub rsp, 8
-        ; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
+        ; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 17
         ; 37:21 logic and
         ; 37:6 logic and
         ; 36:21 logic and
@@ -447,8 +447,8 @@ start:
         ; branch t.2{r0}, false, @checkCellBounds@i16@i16_ret, @and_2nd_4
         or al, al
         jz @checkCellBounds@i16@i16_ret
-        ; const t.6{r1}, 40
-        mov cx, 40
+        ; const t.6{r1}, 17
+        mov cx, 17
         ; lt t.2{r0}, column{r2}, t.6{r1}
         cmp dx, cx
         setl al
@@ -899,7 +899,7 @@ start:
         call @printChar@u8
         ; const column{r2}, 0
         mov dx, 0
-        ; 99:3 for column < 40
+        ; 99:3 for column < 17
         jmp @for_19
 @for_19_body:
         ; addrof memVarAddr{r7}, row
@@ -977,16 +977,16 @@ start:
         ; add column{r2}, column{r2}, t.14{r0}
         add dx, ax
 @for_19:
-        ; const t.13{r0}, 40
-        mov ax, 40
+        ; const t.13{r0}, 17
+        mov ax, 17
         ; lt t.12{r0}, column{r2}, t.13{r0}
         cmp dx, ax
         setl al
         ; branch t.12{r0}, true, @for_19_body, @for_19_break
         or al, al
         jnz @for_19_body
-        ; const t.15{r2}, 40
-        mov dx, 40
+        ; const t.15{r2}, 17
+        mov dx, 17
         ; addrof memVarAddr{r7}, row
         lea r12, [rsp+48]
         ; load row{r1}, [memVarAddr{r7}]
@@ -1144,7 +1144,7 @@ start:
         mov cx, dx
         ; const c{r2}, 0
         mov dx, 0
-        ; 138:3 for c < 40
+        ; 138:3 for c < 17
         ; addrof memVarAddr{r7}, r
         lea r12, [rsp+48]
         ; store [memVarAddr{r7}], r{r1}
@@ -1194,8 +1194,8 @@ start:
         ; add c{r2}, c{r2}, t.13{r1}
         add dx, cx
 @for_25:
-        ; const t.7{r1}, 40
-        mov cx, 40
+        ; const t.7{r1}, 17
+        mov cx, 17
         ; lt t.6{r1}, c{r2}, t.7{r1}
         cmp dx, cx
         setl cl
@@ -1252,8 +1252,8 @@ start:
         lea r12, [rsp+48]
         ; store [memVarAddr{r7}], leftDigits{r0}
         mov [r12], ax
-        ; const t.5{r1}, 40
-        mov cx, 40
+        ; const t.5{r1}, 17
+        mov cx, 17
         ; call t.4{r0} = getDigitCount@i16[t.5{r1}] -> u8
         call @getDigitCount@i16
         ; cast bombDigits{r0}(i16), t.4{r0}(u8)
@@ -1338,7 +1338,7 @@ start:
 @for_28_body:
         ; const c{r7}, 0
         mov r12w, 0
-        ; 168:3 for c < 40
+        ; 168:3 for c < 17
         jmp @for_29
 @for_29_body:
         ; const t.6{r3}, 0
@@ -1354,8 +1354,8 @@ start:
         ; add c{r7}, c{r7}, t.7{r0}
         add r12w, ax
 @for_29:
-        ; const t.5{r0}, 40
-        mov ax, 40
+        ; const t.5{r0}, 17
+        mov ax, 17
         ; lt t.4{r0}, c{r7}, t.5{r0}
         cmp r12w, ax
         setl al
@@ -1401,8 +1401,8 @@ start:
         lea r12, [rsp+72]
         ; store [memVarAddr{r7}], curr_c{r2}
         mov [r12], dx
-        ; const bombs{r0}, 40
-        mov ax, 40
+        ; const bombs{r0}, 17
+        mov ax, 17
         ; addrof memVarAddr{r7}, bombs
         lea r12, [rsp+48]
         ; store [memVarAddr{r7}], bombs{r0}
@@ -1439,8 +1439,8 @@ start:
         mov [r12], r8w
         ; call t.9{r0} = random16[] -> i16
         call @random16
-        ; const t.10{r3}, 40
-        mov r8w, 40
+        ; const t.10{r3}, 17
+        mov r8w, 17
         ; move column{r4}, t.9{r0}
         mov r9w, ax
         ; move column{r0}, column{r4}
@@ -1849,8 +1849,8 @@ start:
         mov bl, 1
         ; call clearField[]
         call @clearField
-        ; const curr_c{r0}, 20
-        mov ax, 20
+        ; const curr_c{r0}, 8
+        mov ax, 8
         ; addrof memVarAddr{r7}, curr_c
         lea r12, [rsp+48]
         ; store [memVarAddr{r7}], curr_c{r0}
@@ -1992,8 +1992,8 @@ start:
         jz @if_47_else
         jmp @if_47_then
 @if_46_then:
-        ; const t.28{r3}, 40
-        mov r8w, 40
+        ; const t.28{r3}, 17
+        mov r8w, 17
         ; addrof memVarAddr{r7}, curr_c
         lea r12, [rsp+48]
         ; load curr_c{r4}, [memVarAddr{r7}]
@@ -2004,8 +2004,8 @@ start:
         mov r8w, 1
         ; sub t.26{r4}, t.26{r4}, t.29{r3}
         sub r9w, r8w
-        ; const t.30{r3}, 40
-        mov r8w, 40
+        ; const t.30{r3}, 17
+        mov r8w, 17
         ; move curr_c{r0}, curr_c{r4}
         mov ax, r9w
         ; mod curr_c{r2}, curr_c{r0}, t.30{r3}
@@ -2044,16 +2044,16 @@ start:
         lea r12, [rsp+48]
         ; load curr_c{r4}, [memVarAddr{r7}]
         mov r9w, [r12]
-        ; const t.35{r3}, 40
-        mov r8w, 40
+        ; const t.35{r3}, 17
+        mov r8w, 17
         ; add t.34{r4}, t.34{r4}, t.35{r3}
         add r9w, r8w
         ; const t.36{r3}, 1
         mov r8w, 1
         ; sub t.33{r4}, t.33{r4}, t.36{r3}
         sub r9w, r8w
-        ; const t.37{r3}, 40
-        mov r8w, 40
+        ; const t.37{r3}, 17
+        mov r8w, 17
         ; move curr_c{r0}, curr_c{r4}
         mov ax, r9w
         ; mod curr_c{r2}, curr_c{r0}, t.37{r3}
@@ -2088,8 +2088,8 @@ start:
         mov r8w, 1
         ; add t.40{r4}, t.40{r4}, t.41{r3}
         add r9w, r8w
-        ; const t.42{r3}, 40
-        mov r8w, 40
+        ; const t.42{r3}, 17
+        mov r8w, 17
         ; move curr_c{r0}, curr_c{r4}
         mov ax, r9w
         ; mod curr_c{r2}, curr_c{r0}, t.42{r3}
@@ -2504,8 +2504,8 @@ section '.data' data readable writeable
         hStdErr rb 8
         ; variable 0: __random__ (i32/4)
         var_0 rb 4
-        ; variable 1: field[] (u8*/6400)
-        var_1 rb 6400
+        ; variable 1: field[] (u8*/2720)
+        var_1 rb 2720
 
 section '.data' data readable
         string_0 db '|', 0x0a, 0x00

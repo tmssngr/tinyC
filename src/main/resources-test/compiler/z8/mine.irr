@@ -20,8 +20,8 @@
 	arg 0: row (i16/2)
 	arg 1: column (i16/2)
 	; 4 pc
-	; 16:21 return row * 40 + column
-	const r4, 40
+	; 16:21 return row * 17 + column
+	const r4, 17
 	move r6, r0
 	mul r6, r6, r4
 	move r0, r6
@@ -76,7 +76,7 @@
 	arg 0: row (i16/2)
 	arg 1: column (i16/2)
 	; 8 pc
-	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
+	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 17
 	; 37:21 logic and
 	; 37:6 logic and
 	; 36:21 logic and
@@ -91,7 +91,7 @@
 	gteq r4, r2, r4
 @and_next_2:
 	branch r4, false, @and_next_1, @and_2nd_1
-	const r4, 40
+	const r4, 17
 	lt r4, r2, r4
 @and_next_1:
 	move r0, r4
@@ -279,7 +279,7 @@
 	const r0, 124
 	call printChar@u8[r0]
 	const r14, 0
-	; 99:3 for column < 40
+	; 99:3 for column < 17
 	jump @for_16
 @for_16_body:
 	move r0, r12
@@ -297,10 +297,10 @@
 	const r6, 1
 	add r14, r14, r6
 @for_16:
-	const r6, 40
+	const r6, 17
 	lt r6, r14, r6
 	branch r6, true, @for_16_body, @for_16_break
-	const r2, 40
+	const r2, 17
 	move r0, r12
 	move r4, r8
 	move r6, r10
@@ -363,7 +363,7 @@
 	jump @for_21
 @for_21_body:
 	const r12, 0
-	; 138:3 for c < 40
+	; 138:3 for c < 17
 	jump @for_22
 @for_22_body:
 	move r0, r10
@@ -382,7 +382,7 @@
 	const r2, 1
 	add r12, r12, r2
 @for_22:
-	const r2, 40
+	const r2, 17
 	lt r2, r12, r2
 	branch r2, true, @for_22_body, @for_21_continue
 	const r2, 1
@@ -401,7 +401,7 @@
 	move r0, r8
 	call r0 = getDigitCount@i16[r0] -> u8
 	cast r10(i16), r0(u8)
-	const r0, 40
+	const r0, 17
 	call r0 = getDigitCount@i16[r0] -> u8
 	cast r12(i16), r0(u8)
 	const r0, [string-1]
@@ -440,7 +440,7 @@
 	jump @for_25
 @for_25_body:
 	const r10, 0
-	; 168:3 for c < 40
+	; 168:3 for c < 17
 	jump @for_26
 @for_26_body:
 	const r4, 0
@@ -450,7 +450,7 @@
 	const r0, 1
 	add r10, r10, r0
 @for_26:
-	const r0, 40
+	const r0, 17
 	lt r0, r10, r0
 	branch r0, true, @for_26_body, @for_25_continue
 	const r0, 1
@@ -469,7 +469,7 @@
 	; 63 pc
 	move r8, r0
 	move r10, r2
-	const r12, 40
+	const r12, 17
 	; 175:2 for bombs > 0
 	jump @for_27
 @for_27_body:
@@ -479,7 +479,7 @@
 	addrof r14, row
 	store [r14], r0
 	call r0 = random16[] -> i16
-	const r2, 40
+	const r2, 17
 	move r4, r0
 	mod r4, r4, r2
 	addrof r14, column
@@ -638,7 +638,7 @@
 	call initRandom@i32[r0]
 	const r8, 1
 	call clearField[]
-	const r9, 20
+	const r9, 8
 	const r11, 10
 	; 219:2 while true
 	jump @while_37
@@ -688,11 +688,11 @@
 	branch r13, false, @if_44_else, @if_44_then
 	jump @if_44_then
 @if_43_then:
-	const r13, 40
+	const r13, 17
 	add r9, r9, r13
 	const r13, 1
 	sub r9, r9, r13
-	const r13, 40
+	const r13, 17
 	mod r9, r9, r13
 	jump @while_37
 @if_44_else:
@@ -702,11 +702,11 @@
 	branch r13, false, @if_45_else, @if_45_then
 	jump @if_45_then
 @if_44_then:
-	const r13, 40
+	const r13, 17
 	add r9, r9, r13
 	const r13, 1
 	sub r9, r9, r13
-	const r13, 40
+	const r13, 17
 	mod r9, r9, r13
 	jump @while_37
 @if_45_else:
@@ -718,7 +718,7 @@
 @if_45_then:
 	const r13, 1
 	add r9, r9, r13
-	const r13, 40
+	const r13, 17
 	mod r9, r9, r13
 	jump @while_37
 @if_46_else:
@@ -925,7 +925,7 @@
 	ret
 
 Global variables
-	0: field[] (u8*/1600)
+	0: field[] (u8*/680)
 
 String literals
 	string lit 0 "|\n\0"

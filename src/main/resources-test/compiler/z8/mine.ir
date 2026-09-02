@@ -32,8 +32,8 @@
 	var 3: t.3 (i16/2)
 	var 4: t.4 (i16/2)
 	; 30 pc
-	; 16:21 return row * 40 + column
-	const t.4, 40
+	; 16:21 return row * 17 + column
+	const t.4, 17
 	move t.3, row
 	mul t.3, t.3, t.4
 	move t.2, t.3
@@ -123,7 +123,7 @@
 	var 5: t.5 (i16/2)
 	var 6: t.6 (i16/2)
 	; 49 pc
-	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
+	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 17
 	; 37:21 logic and
 	; 37:6 logic and
 	; 36:21 logic and
@@ -141,7 +141,7 @@
 @and_next_2:
 	branch t.2, false, @and_next_1, @and_2nd_1
 @and_2nd_1:
-	const t.6, 40
+	const t.6, 17
 	lt t.2, column, t.6
 @and_next_1:
 	ret t.2
@@ -355,9 +355,9 @@
 	const t.11, 124
 	call printChar@u8[t.11]
 	const column, 0
-	; 99:3 for column < 40
+	; 99:3 for column < 17
 @for_16:
-	const t.13, 40
+	const t.13, 17
 	lt t.12, column, t.13
 	branch t.12, false, @for_16_break, @for_16_body
 @for_16_body:
@@ -370,7 +370,7 @@
 	add column, column, t.14
 	jump @for_16
 @for_16_break:
-	const t.15, 40
+	const t.15, 17
 	call spacer = getSpacer@i16@i16@i16@i16[row, t.15, rowCursor, columnCursor] -> u8
 	call printChar@u8[spacer]
 	const t.16, [string-0]
@@ -466,9 +466,9 @@
 	branch t.4, false, @for_21_break, @for_21_body
 @for_21_body:
 	const c, 0
-	; 138:3 for c < 40
+	; 138:3 for c < 17
 @for_22:
-	const t.7, 40
+	const t.7, 17
 	lt t.6, c, t.7
 	branch t.6, false, @for_21_continue, @for_22_body
 @for_22_body:
@@ -513,7 +513,7 @@
 	call count = getHiddenCount[] -> i16
 	call t.3 = getDigitCount@i16[count] -> u8
 	cast leftDigits(i16), t.3(u8)
-	const t.5, 40
+	const t.5, 17
 	call t.4 = getDigitCount@i16[t.5] -> u8
 	cast bombDigits(i16), t.4(u8)
 	const t.6, [string-1]
@@ -571,9 +571,9 @@
 	branch t.2, false, @clearField_ret, @for_25_body
 @for_25_body:
 	const c, 0
-	; 168:3 for c < 40
+	; 168:3 for c < 17
 @for_26:
-	const t.5, 40
+	const t.5, 17
 	lt t.4, c, t.5
 	branch t.4, false, @for_25_continue, @for_26_body
 @for_26_body:
@@ -612,7 +612,7 @@
 	var 18: t.18 (u8/1)
 	var 19: t.19 (i16/2)
 	; 125 pc
-	const bombs, 40
+	const bombs, 17
 	; 175:2 for bombs > 0
 @for_27:
 	const t.6, 0
@@ -624,7 +624,7 @@
 	move row, t.7
 	mod row, row, t.8
 	call t.9 = random16[] -> i16
-	const t.10, 40
+	const t.10, 17
 	move column, t.9
 	mod column, column, t.10
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
@@ -806,7 +806,7 @@
 	call initRandom@i32[t.6]
 	const needsInitialize, 1
 	call clearField[]
-	const curr_c, 20
+	const curr_c, 8
 	const curr_r, 10
 	; 219:2 while true
 @while_37:
@@ -863,13 +863,13 @@
 	equals t.24, chr, t.25
 	branch t.24, false, @if_43_else, @if_43_then
 @if_43_then:
-	const t.28, 40
+	const t.28, 17
 	move t.27, curr_c
 	add t.27, t.27, t.28
 	const t.29, 1
 	move t.26, t.27
 	sub t.26, t.26, t.29
-	const t.30, 40
+	const t.30, 17
 	move curr_c, t.26
 	mod curr_c, curr_c, t.30
 	jump @while_37
@@ -879,13 +879,13 @@
 	equals t.31, chr, t.32
 	branch t.31, false, @if_44_else, @if_44_then
 @if_44_then:
-	const t.35, 40
+	const t.35, 17
 	move t.34, curr_c
 	add t.34, t.34, t.35
 	const t.36, 1
 	move t.33, t.34
 	sub t.33, t.33, t.36
-	const t.37, 40
+	const t.37, 17
 	move curr_c, t.33
 	mod curr_c, curr_c, t.37
 	jump @while_37
@@ -898,7 +898,7 @@
 	const t.41, 1
 	move t.40, curr_c
 	add t.40, t.40, t.41
-	const t.42, 40
+	const t.42, 17
 	move curr_c, t.40
 	mod curr_c, curr_c, t.42
 	jump @while_37
@@ -1079,7 +1079,7 @@
 	ret
 
 Global variables
-	0: field[] (u8*/1600)
+	0: field[] (u8*/680)
 
 String literals
 	string lit 0 "|\n\0"
