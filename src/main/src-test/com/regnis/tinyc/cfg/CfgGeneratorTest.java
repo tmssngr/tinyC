@@ -20,8 +20,8 @@ public class CfgGeneratorTest {
 		final ControlFlowGraph cfg = CfgGenerator.create("start", List.of(
 				new IRJump("end"),
 				new IRLabel("redundant"),
-				new IRLiteral(new IRVar("a", 0, VariableScope.function, Type.BOOL), 0, new Location(1, 1)),
-				new IRLiteral(new IRVar("b", 1, VariableScope.function, Type.BOOL), 0, new Location(1, 1)),
+				new IRMove(new IRVar("a", 0, VariableScope.function, Type.BOOL), 0, new Location(1, 1)),
+				new IRMove(new IRVar("b", 1, VariableScope.function, Type.BOOL), 0, new Location(1, 1)),
 				new IRLabel("end")
 		));
 		assertEquals(List.of(
