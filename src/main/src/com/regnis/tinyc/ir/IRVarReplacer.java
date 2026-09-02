@@ -34,10 +34,16 @@ public abstract class IRVarReplacer {
 			case IRCompare compare -> new IRCompare(replace(compare.target()), compare.op(), replace(compare.left()), replace(compare.right()), compare.location());
 			case IRLabel ignored -> instruction;
 			case IRJump ignored -> instruction;
-			case IRLiteral literal -> new IRLiteral(replace(literal.target()), literal.value(), literal.location());
 			case IRMemLoad load -> new IRMemLoad(replace(load.target()), replace(load.addr()), load.location());
 			case IRMemStore store -> new IRMemStore(replace(store.addr()), replace(store.value()), store.location());
-			case IRMove copy -> new IRMove(replace(copy.target()), replace(copy.source()), copy.location());
+			case IRMove move -> {
+				IRValue source = move.source();
+				final IRVar sourceVar = source.var();
+				if (sourceVar != null) {
+					source = new IRValue(replace(sourceVar));
+				}
+				yield new IRMove(replace(move.target()), source, move.location());
+			}
 			case IRRetValue retValue -> new IRRetValue(replace(retValue.var()), retValue.location());
 			case IRString literal -> new IRString(replace(literal.target()), literal.stringIndex(), literal.location());
 			case IRUnary unary -> new IRUnary(unary.op(), replace(unary.target()), replace(unary.source()));
