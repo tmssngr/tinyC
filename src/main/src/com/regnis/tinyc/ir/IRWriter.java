@@ -184,15 +184,15 @@ public final class IRWriter extends TextWriter {
 				sum += getInstructionTime(i.target());
 			}
 			case IRMove i -> {
-				sum += getInstructionTime(i.source());
-				sum++;
+				final IRVar sourceVar = i.source().var();
+				if (sourceVar != null) {
+					sum += getInstructionTime(sourceVar);
+					sum++;
+				}
 				sum += getInstructionTime(i.target());
 			}
 			case IRJump i -> {
 				sum++;
-			}
-			case IRLiteral i -> {
-				sum += getInstructionTime(i.target());
 			}
 			case IRMemLoad i -> {
 				sum += getInstructionTime(i.addr());
