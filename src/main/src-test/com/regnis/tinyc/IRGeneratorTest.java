@@ -49,7 +49,7 @@ public class IRGeneratorTest {
 						             new IRVarDef(new IRVar("t.0", 0, VariableScope.function, Type.U8), 1)
 				             ), Set.of(), globalVarInfos), List.of(
 						             new IRComment("2:10 return 0"),
-						             new IRLiteral(tmp(0, Type.U8), 0, loc(1, 9)),
+						             new IRMove(tmp(0, Type.U8), 0, loc(1, 9)),
 						             new IRRetValue(tmp(0, Type.U8), loc(1, 2)),
 						             new IRJump("@get_ret"),
 						             new IRLabel("@get_ret")
@@ -65,7 +65,7 @@ public class IRGeneratorTest {
 						             new IRLabel("@while_1"),
 						             new IRCall(var("chr", 0, Type.U8), Type.U8, "get", List.of(), loc(5, 13)),
 						             new IRComment("7:5 if chr > 97"),
-						             new IRLiteral(tmp(2, Type.U8), 97, loc(6, 14)),
+						             new IRMove(tmp(2, Type.U8), 97, loc(6, 14)),
 						             new IRCompare(tmp(1, Type.BOOL), IRCompare.Op.Gt, var("chr", 0, Type.U8), tmp(2, Type.U8), loc(6, 12)),
 						             new IRBranch(tmp(1, Type.BOOL), false, "@if_2_end",
 						                          "@if_2_then"),
@@ -73,7 +73,7 @@ public class IRGeneratorTest {
 						             new IRJump("@while_1"),
 						             new IRLabel("@if_2_end"),
 						             new IRComment("10:5 if chr == 10"),
-						             new IRLiteral(tmp(4, Type.U8), 10, loc(9, 15)),
+						             new IRMove(tmp(4, Type.U8), 10, loc(9, 15)),
 						             new IRCompare(tmp(3, Type.BOOL), IRCompare.Op.Equals, var("chr", 0, Type.U8), tmp(4, Type.U8), loc(9, 12)),
 						             new IRBranch(tmp(3, Type.BOOL), false, "@if_3_end",
 						                          "@if_3_then"),
@@ -93,7 +93,7 @@ public class IRGeneratorTest {
 				                            ), Set.of(), globalVarInfos),
 				                            List.of(
 						                            new IRComment("2:10 return 0"),
-						                            new IRLiteral(tmp(0, Type.U8), 0, loc(1, 9)),
+						                            new IRMove(tmp(0, Type.U8), 0, loc(1, 9)),
 						                            new IRRetValue(tmp(0, Type.U8), loc(1, 2)),
 						                            new IRJump("@get_ret"),
 						                            new IRLabel("@get_ret")
@@ -111,13 +111,13 @@ public class IRGeneratorTest {
 						                            new IRLabel("@while_1"),
 						                            new IRCall(var("chr", 0, Type.U8), Type.U8, "get", List.of(), loc(5, 13)),
 						                            new IRComment("7:5 if chr > 97"),
-													new IRLiteral(tmp(2, Type.U8), 97, loc(6, 14)),
+													new IRMove(tmp(2, Type.U8), 97, loc(6, 14)),
 						                            new IRCompare(tmp(1, Type.BOOL), IRCompare.Op.Gt, var("chr", 0, Type.U8), tmp(2, Type.U8), loc(6, 12)),
 						                            new IRBranch(tmp(1, Type.BOOL), true, "@while_1",
 						                                         "@if_2_end"),
 						                            new IRLabel("@if_2_end"),
 						                            new IRComment("10:5 if chr == 10"),
-						                            new IRLiteral(tmp(4, Type.U8), 10, loc(9, 15)),
+						                            new IRMove(tmp(4, Type.U8), 10, loc(9, 15)),
 						                            new IRCompare(tmp(3, Type.BOOL), IRCompare.Op.Equals, var("chr", 0, Type.U8), tmp(4, Type.U8), loc(9, 12)),
 						                            new IRBranch(tmp(3, Type.BOOL), false, "@while_1",
 						                                         "@foo_ret"),

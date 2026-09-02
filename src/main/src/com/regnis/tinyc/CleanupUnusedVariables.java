@@ -29,12 +29,20 @@ public abstract class CleanupUnusedVariables {
 		case IRCompare compare -> readWrite(compare.target(), List.of(compare.left(), compare.right()));
 		case IRLabel ignored -> {
 		}
-		case IRLiteral literal -> write(literal.target());
 		case IRJump ignored -> {
 		}
 		case IRMemLoad load -> readWrite(load.target(), List.of(load.addr()));
 		case IRMemStore store -> read(List.of(store.addr(), store.value()));
-		case IRMove copy -> readWrite(copy.target(), List.of(copy.source()));
+		case IRMove move -> {
+			final IRValue source = move.source();
+			final IRVar sourceVar = source.var();
+			if (sourceVar != null) {
+				readWrite(move.target(), List.of(sourceVar));
+			}
+			else {
+				write(move.target());
+			}
+		}
 		case IRRetValue retValue -> read(List.of(retValue.var()));
 		case IRString literal -> write(literal.target());
 		case IRUnary unary -> readWrite(unary.target(), List.of(unary.source()));

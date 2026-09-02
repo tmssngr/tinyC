@@ -20,14 +20,14 @@ public class DetectVarLivenessTest {
 		final IRVar bool_needsInitialize = new IRVar("needsInitialize", 0, VariableScope.function, Type.BOOL);
 		final IRVar bool_exit = new IRVar("exit", 1, VariableScope.function, Type.BOOL);
 		final ControlFlowGraph cfg = CfgGenerator.create("main", List.of(
-				new IRLiteral(bool_needsInitialize, 1),
+				new IRMove(bool_needsInitialize, 1),
 				new IRLabel("loop"),
 				new IRCall(bool_exit, Type.BOOL, "isExit", List.of()),
 				new IRBranch(bool_exit, true, "exit", "1"),
 				new IRLabel("1"),
 				new IRBranch(bool_needsInitialize, false, "3", "2"),
 				new IRLabel("2"),
-				new IRLiteral(bool_needsInitialize, 0),
+				new IRMove(bool_needsInitialize, 0),
 				new IRCall(null, Type.VOID, "doSomething", List.of()),
 				new IRLabel("3"),
 				new IRJump("loop"),
@@ -36,7 +36,7 @@ public class DetectVarLivenessTest {
 		DetectVarLiveness.process(cfg);
 		final Iterator<BasicBlock> it = cfg.blocks().iterator();
 		assertBlock("main", List.of(
-				            new IRLiteral(bool_needsInitialize, 1),
+				            new IRMove(bool_needsInitialize, 1),
 				            new IRJump("loop")
 		            ),
 		            Set.of(),
@@ -53,7 +53,7 @@ public class DetectVarLivenessTest {
 		            Set.of(bool_needsInitialize),
 		            Set.of(bool_needsInitialize), it.next());
 		assertBlock("2", List.of(
-				            new IRLiteral(bool_needsInitialize, 0),
+				            new IRMove(bool_needsInitialize, 0),
 				            new IRCall(null, Type.VOID, "doSomething", List.of()),
 				            new IRJump("3")
 		            ),

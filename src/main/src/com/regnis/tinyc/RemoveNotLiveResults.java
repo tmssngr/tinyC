@@ -65,7 +65,6 @@ public class RemoveNotLiveResults {
 		case IRComment i -> add(i);
 		case IRCompare i -> addIfIsLive(i.target(), i, live);
 		case IRJump i -> add(i);
-		case IRLiteral i -> addIfIsLive(i.target(), i, live);
 		case IRMemLoad i -> addIfIsLive(i.target(), i, live);
 		case IRMemStore i -> add(i);
 		case IRMove i -> addIfIsLive(i.target(), i, live);

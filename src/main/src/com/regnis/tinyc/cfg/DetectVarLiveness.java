@@ -110,9 +110,6 @@ public final class DetectVarLiveness {
 		}
 		case IRJump ignored -> {
 		}
-		case IRLiteral literal -> {
-			defined(literal.target(), defines);
-		}
 		case IRMemLoad load -> {
 			defined(load.target(), defines);
 			uses(load.addr(), uses);
@@ -123,7 +120,11 @@ public final class DetectVarLiveness {
 		}
 		case IRMove copy -> {
 			defined(copy.target(), defines);
-			uses(copy.source(), uses);
+			final IRValue source = copy.source();
+			final IRVar sourceVar = source.var();
+			if (sourceVar != null) {
+				uses(sourceVar, uses);
+			}
 		}
 		case IRRetValue retValue -> {
 			uses(retValue.var(), uses);
