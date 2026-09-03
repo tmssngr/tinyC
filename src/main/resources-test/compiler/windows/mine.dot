@@ -298,12 +298,12 @@ digraph program {
 		BasicBlock_25_initField_Ai16_Ai16 [label="initField_Ai16_Ai16",shape=box];
 		BasicBlock_25_initField_Ai16_Ai16 -> BasicBlock_25_for__30 [label="(bombs,curr_c,curr_r)"];
 		BasicBlock_25_for__30__body [label="for__30__body",shape=hexagon];
-		BasicBlock_25_for__30__body -> BasicBlock_25_no__critical__edge__8 [label="(bombs,column,curr_c,curr_r,row,t.13)"];
+		BasicBlock_25_for__30__body -> BasicBlock_25_no__critical__edge__8 [label="(bombs,column,curr_c,curr_r,row,t.11)"];
 		BasicBlock_25_for__30__body -> BasicBlock_25_or__2nd__32 [label="(bombs,column,curr_c,curr_r,row)"];
 		BasicBlock_25_no__critical__edge__8 [label="no__critical__edge__8",shape=box];
-		BasicBlock_25_no__critical__edge__8 -> BasicBlock_25_or__next__32 [label="(bombs,column,curr_c,curr_r,row,t.13)"];
+		BasicBlock_25_no__critical__edge__8 -> BasicBlock_25_or__next__32 [label="(bombs,column,curr_c,curr_r,row,t.11)"];
 		BasicBlock_25_or__2nd__32 [label="or__2nd__32",shape=box];
-		BasicBlock_25_or__2nd__32 -> BasicBlock_25_or__next__32 [label="(bombs,column,curr_c,curr_r,row,t.13)"];
+		BasicBlock_25_or__2nd__32 -> BasicBlock_25_or__next__32 [label="(bombs,column,curr_c,curr_r,row,t.11)"];
 		BasicBlock_25_or__next__32 [label="or__next__32",shape=hexagon];
 		BasicBlock_25_or__next__32 -> BasicBlock_25_no__critical__edge__9 [label="(bombs,curr_c,curr_r)"];
 		BasicBlock_25_or__next__32 -> BasicBlock_25_if__31__then [label="(bombs,column,curr_c,curr_r,row)"];

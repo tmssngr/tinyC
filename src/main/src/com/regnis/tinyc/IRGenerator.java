@@ -351,9 +351,7 @@ public final class IRGenerator {
 		writeAddrOf(addr, access.expression(), access.location());
 		final int offset = getMemberOffset(access);
 		if (offset != 0) {
-			final IRVar offsetVar = createTempVar(pointerIntType);
-			write(new IRMove(offsetVar, offset, access.location()));
-			write(new IRBinary(addr, IRBinary.Op.Add, addr, offsetVar, access.location()));
+			write(new IRBinary(addr, IRBinary.Op.Add, addr, new IRValue(offset, pointerIntType), access.location()));
 		}
 	}
 
@@ -519,8 +517,24 @@ public final class IRGenerator {
 
 	private void writeBinary(IRBinary.Op op, IRVar var, ExprBinary binary) {
 		final IRVar left = writeExpression(binary.left());
-		final IRVar right = writeExpression(binary.right());
 		Utils.assertTrue(var.type().equals(left.type()));
+		final Expression rightExpr = binary.right();
+		if (rightExpr instanceof ExprIntLiteral rightLiteral) {
+			final int value = rightLiteral.value();
+			final Location location = binary.location();
+			if (!Objects.equals(var, left)) {
+				write(new IRMove(var, left, location));
+			}
+			if (var.type().isPointer()) {
+				write(new IRBinary(var, op, var, new IRValue(value, pointerIntType), location));
+			}
+			else {
+				write(new IRBinary(var, op, var, value, location));
+			}
+			return;
+		}
+
+		final IRVar right = writeExpression(rightExpr);
 		final Location location = binary.location();
 		if (Objects.equals(var, left)) {
 			write(new IRBinary(var, op, var, right, location));

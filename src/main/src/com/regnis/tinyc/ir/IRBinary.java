@@ -9,9 +9,13 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar left, @NotNull IRVar right, @NotNull Location location) implements IRInstruction {
-	public IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar left, @NotNull IRVar right) {
-		this(target, op, left, right, Location.DUMMY);
+public record IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar left, @NotNull IRValue right, @NotNull Location location) implements IRInstruction {
+	public IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar left, @NotNull IRVar right, @NotNull Location location) {
+		this(target, op, left, new IRValue(right), location);
+	}
+
+	public IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar left, int rightValue, @NotNull Location location) {
+		this(target, op, left, new IRValue(rightValue, left.type()), location);
 	}
 
 	public IRBinary {

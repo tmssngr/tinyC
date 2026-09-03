@@ -12,6 +12,10 @@ public record IRValue(@Nullable IRVar var, int value, @NotNull Type type) {
 		this(var, 0, var.type());
 	}
 
+	public IRValue(int value, @NotNull Type type) {
+		this(null, value, type);
+	}
+
 	@NotNull
 	@Override
 	public String toString() {
