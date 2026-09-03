@@ -1,0 +1,153 @@
+@printString@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	; 6 pc
+	move str{r8}, str{r1}
+	move str{r1}, str{r8}
+	call length{r0} = strlen@@u8[str{r1}] -> i64
+	move str{r1}, str{r8}
+	move length{r2}, length{r0}
+	call printStringLength@@u8@i64[str{r1}, length{r2}]
+
+@printChar@u8:
+ Local variables
+	arg 0: chr (u8/1)
+	; 9 pc
+	addrof memVarAddr{r9}, chr
+	store [memVarAddr{r9}], chr{r1}
+	addrof t.1{r1}, chr
+	const arg.0.1{r2}, 1
+	call printStringLength@@u8@u8[t.1{r1}, arg.0.1{r2}]
+
+@strlen@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	; 7 pc
+	const length{r0}, 0
+	; 69:2 for *str != 0
+	jump @for_1
+@for_1_body:
+	add length{r0}, length{r0}, 1
+	add str{r1}, str{r1}, 1
+@for_1:
+	load t.3{r2}, [str{r1}]
+	notequals t.2{r2}, t.3{r2}, 0
+	branch t.2{r2}, true, @for_1_body, @for_1_break
+	; 72:9 return length
+
+@printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	; 2 pc
+	cast t.2{r2}(i64), length{r2}(u8)
+	call printStringLength@@u8@i64[str{r1}, t.2{r2}]
+
+@printBoard:
+	; 17 pc
+	const arg.0.0{r1}, 124
+	call printChar@u8[arg.0.0{r1}]
+	const i{r8}, 0
+	; 11:2 for i < 30
+	jump @for_2
+@for_2_body:
+	; 12:3 if [...] == 0
+	cast t.5{r9}(i64), i{r8}(u8)
+	addrof t.4{r0}, [board]
+	add t.4{r0}, t.4{r0}, t.5{r9}
+	load t.3{r9}, [t.4{r0}]
+	equals t.2{r9}, t.3{r9}, 0
+	branch t.2{r9}, true, @if_3_then, @if_3_else
+	const arg.2.0{r1}, 42
+	call printChar@u8[arg.2.0{r1}]
+	jump @for_2_continue
+@if_3_then:
+	const arg.1.0{r1}, 32
+	call printChar@u8[arg.1.0{r1}]
+@for_2_continue:
+	add i{r8}, i{r8}, 1
+@for_2:
+	lt t.1{r9}, i{r8}, 30
+	branch t.1{r9}, true, @for_2_body, @for_2_break
+	const t.6{r1}, [string-0]
+	call printString@@u8[t.6{r1}]
+
+@main:
+	; 51 pc
+	const i{r8}, 0
+	; 23:2 for i < 30
+	jump @for_4
+@for_4_body:
+	const t.5{r9}, 0
+	cast t.7{r0}(i64), i{r8}(u8)
+	addrof t.6{r1}, [board]
+	add t.6{r1}, t.6{r1}, t.7{r0}
+	store [t.6{r1}], t.5{r9}
+	add i{r8}, i{r8}, 1
+@for_4:
+	lt t.4{r9}, i{r8}, 30
+	branch t.4{r9}, true, @for_4_body, @for_4_break
+	const t.8{r8}, 1
+	const t.10{r9}, 29
+	addrof t.9{r0}, [board]
+	add t.9{r0}, t.9{r0}, t.10{r9}
+	store [t.9{r0}], t.8{r8}
+	call printBoard[]
+	const i{r8}, 0
+	; 30:2 for i < 28
+	jump @for_5
+@for_5_body:
+	const t.15{r9}, 0
+	addrof t.14{r0}, [board]
+	add t.14{r0}, t.14{r0}, t.15{r9}
+	load t.13{r9}, [t.14{r0}]
+	shiftleft t.12{r9}, t.12{r9}, 1
+	const t.18{r0}, 1
+	addrof t.17{r1}, [board]
+	add t.17{r1}, t.17{r1}, t.18{r0}
+	load t.16{r0}, [t.17{r1}]
+	or pattern{r9}, pattern{r9}, t.16{r0}
+	const j{r0}, 1
+	; 32:3 for j < 29
+	jump @for_6
+@for_6_body:
+	shiftleft t.21{r9}, t.21{r9}, 1
+	and t.20{r9}, t.20{r9}, 7
+	move t.25{r1}, j{r0}
+	add t.25{r1}, t.25{r1}, 1
+	cast t.24{r1}(i64), t.25{r1}(u8)
+	addrof t.23{r2}, [board]
+	add t.23{r2}, t.23{r2}, t.24{r1}
+	load t.22{r1}, [t.23{r2}]
+	or pattern{r9}, pattern{r9}, t.22{r1}
+	const t.28{r1}, 110
+	move pattern{r4}, pattern{r9}
+	shiftright t.27{r1}, t.27{r1}, pattern{r4}
+	and t.26{r1}, t.26{r1}, 1
+	cast t.30{r2}(i64), j{r0}(u8)
+	addrof t.29{r3}, [board]
+	add t.29{r3}, t.29{r3}, t.30{r2}
+	store [t.29{r3}], t.26{r1}
+	add j{r0}, j{r0}, 1
+@for_6:
+	lt t.19{r1}, j{r0}, 29
+	branch t.19{r1}, true, @for_6_body, @for_6_break
+	call printBoard[]
+	add i{r8}, i{r8}, 1
+@for_5:
+	lt t.11{r0}, i{r8}, 28
+	branch t.11{r0}, true, @for_5_body, @main_ret
+
+@printStringLength@@u8@i64:
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 1
+	mov rax, 1
+	syscall
+	ret
+
+Global variables
+	0: board[] (u8*/240)
+
+String literals
+	string lit 0 "|\n\0"

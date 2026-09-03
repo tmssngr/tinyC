@@ -1,0 +1,212 @@
+@printString@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	var 1: length (i64/8)
+	; 10 pc
+	call length = strlen@@u8[str] -> i64
+	call printStringLength@@u8@i64[str, length]
+@printString@@u8_ret:
+
+@printChar@u8:
+ Local variables
+	arg 0: chr (u8/1)
+	var 1: t.1 (u8*/8)
+	; 8 pc
+	addrof t.1, chr
+	call printStringLength@@u8@u8[t.1, 1]
+@printChar@u8_ret:
+
+@strlen@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	var 1: length (i64/8)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	; 31 pc
+	const length, 0
+	; 69:2 for *str != 0
+@for_1:
+	load t.3, [str]
+	notequals t.2, t.3, 0
+	branch t.2, false, @for_1_break, @for_1_body
+@for_1_body:
+	add length, length, 1
+@for_1_continue:
+	add str, str, 1
+	jump @for_1
+@for_1_break:
+	; 72:9 return length
+	ret length
+	jump @strlen@@u8_ret
+@strlen@@u8_ret:
+
+@printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	var 2: t.2 (i64/8)
+	; 10 pc
+	cast t.2(i64), length(u8)
+	call printStringLength@@u8@i64[str, t.2]
+@printStringLength@@u8@u8_ret:
+
+@printBoard:
+ Local variables
+	var 0: i (u8/1)
+	var 1: t.1 (bool/1)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8*/8)
+	var 5: t.5 (i64/8)
+	var 6: t.6 (u8*/8)
+	; 55 pc
+	call printChar@u8[124]
+	const i, 0
+	; 11:2 for i < 30
+@for_2:
+	lt t.1, i, 30
+	branch t.1, false, @for_2_break, @for_2_body
+@for_2_body:
+	; 12:3 if [...] == 0
+	cast t.5(i64), i(u8)
+	addrof t.4, [board]
+	add t.4, t.4, t.5
+	load t.3, [t.4]
+	equals t.2, t.3, 0
+	branch t.2, false, @if_3_else, @if_3_then
+@if_3_then:
+	call printChar@u8[32]
+	jump @for_2_continue
+@if_3_else:
+	call printChar@u8[42]
+@for_2_continue:
+	add i, i, 1
+	jump @for_2
+@for_2_break:
+	const t.6, [string-0]
+	call printString@@u8[t.6]
+@printBoard_ret:
+
+@main:
+ Local variables
+	var 0: i (u8/1)
+	var 1: i (u8/1)
+	var 2: pattern (u8/1)
+	var 3: j (u8/1)
+	var 4: t.4 (bool/1)
+	var 5: t.5 (u8/1)
+	var 6: t.6 (u8*/8)
+	var 7: t.7 (i64/8)
+	var 8: t.8 (u8/1)
+	var 9: t.9 (u8*/8)
+	var 10: t.10 (i64/8)
+	var 11: t.11 (bool/1)
+	var 12: t.12 (u8/1)
+	var 13: t.13 (u8/1)
+	var 14: t.14 (u8*/8)
+	var 15: t.15 (i64/8)
+	var 16: t.16 (u8/1)
+	var 17: t.17 (u8*/8)
+	var 18: t.18 (i64/8)
+	var 19: t.19 (bool/1)
+	var 20: t.20 (u8/1)
+	var 21: t.21 (u8/1)
+	var 22: t.22 (u8/1)
+	var 23: t.23 (u8*/8)
+	var 24: t.24 (i64/8)
+	var 25: t.25 (u8/1)
+	var 26: t.26 (u8/1)
+	var 27: t.27 (u8/1)
+	var 28: t.28 (u8/1)
+	var 29: t.29 (u8*/8)
+	var 30: t.30 (i64/8)
+	; 259 pc
+	const i, 0
+	; 23:2 for i < 30
+@for_4:
+	lt t.4, i, 30
+	branch t.4, false, @for_4_break, @for_4_body
+@for_4_body:
+	const t.5, 0
+	cast t.7(i64), i(u8)
+	addrof t.6, [board]
+	add t.6, t.6, t.7
+	store [t.6], t.5
+@for_4_continue:
+	add i, i, 1
+	jump @for_4
+@for_4_break:
+	const t.8, 1
+	const t.10, 29
+	addrof t.9, [board]
+	add t.9, t.9, t.10
+	store [t.9], t.8
+	call printBoard[]
+	const i, 0
+	; 30:2 for i < 28
+@for_5:
+	lt t.11, i, 28
+	branch t.11, false, @main_ret, @for_5_body
+@for_5_body:
+	const t.15, 0
+	addrof t.14, [board]
+	add t.14, t.14, t.15
+	load t.13, [t.14]
+	move t.12, t.13
+	shiftleft t.12, t.12, 1
+	const t.18, 1
+	addrof t.17, [board]
+	add t.17, t.17, t.18
+	load t.16, [t.17]
+	move pattern, t.12
+	or pattern, pattern, t.16
+	const j, 1
+	; 32:3 for j < 29
+@for_6:
+	lt t.19, j, 29
+	branch t.19, false, @for_6_break, @for_6_body
+@for_6_body:
+	move t.21, pattern
+	shiftleft t.21, t.21, 1
+	move t.20, t.21
+	and t.20, t.20, 7
+	move t.25, j
+	add t.25, t.25, 1
+	cast t.24(i64), t.25(u8)
+	addrof t.23, [board]
+	add t.23, t.23, t.24
+	load t.22, [t.23]
+	move pattern, t.20
+	or pattern, pattern, t.22
+	const t.28, 110
+	move t.27, t.28
+	shiftright t.27, t.27, pattern
+	move t.26, t.27
+	and t.26, t.26, 1
+	cast t.30(i64), j(u8)
+	addrof t.29, [board]
+	add t.29, t.29, t.30
+	store [t.29], t.26
+@for_6_continue:
+	add j, j, 1
+	jump @for_6
+@for_6_break:
+	call printBoard[]
+@for_5_continue:
+	add i, i, 1
+	jump @for_5
+@main_ret:
+
+@printStringLength@@u8@i64:
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 1
+	mov rax, 1
+	syscall
+	ret
+
+Global variables
+	0: board[] (u8*/240)
+
+String literals
+	string lit 0 "|\n\0"

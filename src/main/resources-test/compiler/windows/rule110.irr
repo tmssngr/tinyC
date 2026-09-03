@@ -24,7 +24,7 @@
 	arg 0: str (u8*/8)
 	; 7 pc
 	const length{r0}, 0
-	; 64:2 for *str != 0
+	; 69:2 for *str != 0
 	jump @for_1
 @for_1_body:
 	add length{r0}, length{r0}, 1
@@ -33,7 +33,7 @@
 	load t.3{r2}, [str{r1}]
 	notequals t.2{r2}, t.3{r2}, 0
 	branch t.2{r2}, true, @for_1_body, @for_1_break
-	; 67:9 return length
+	; 72:9 return length
 
 @printStringLength@@u8@u8:
  Local variables
