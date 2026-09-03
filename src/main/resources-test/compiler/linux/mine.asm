@@ -93,16 +93,16 @@ _start:
         ; move remainder{r0}, remainder{r5}
         mov rax, r8
         ; mod remainder{r3}, remainder{r0}, 10
-        mov rcx, 10
         cqo
+        mov rcx, 10
         idiv rcx
         ; move remainder{r5}, remainder{r3}
         mov r8, rdx
         ; move number{r0}, number{r1}
         mov rax, rdi
         ; div number{r0}, number{r0}, 10
-        mov rcx, 10
         cqo
+        mov rcx, 10
         idiv rcx
         ; move number{r1}, number{r0}
         mov rdi, rax
@@ -1038,8 +1038,8 @@ _start:
         mov ax, di
         ; div value{r0}, value{r0}, 10
         movsx rax, ax
-        mov rcx, 10
         cqo
+        mov rcx, 10
         idiv rcx
         ; move value{r1}, value{r0}
         mov di, ax
@@ -1357,8 +1357,8 @@ _start:
         mov eax, edi
         ; mod t.7{r3}, t.7{r0}, 20
         movsxd rax, eax
-        mov rcx, 20
         cqo
+        mov rcx, 20
         idiv rcx
         ; move t.7{r1}, t.7{r3}
         mov edi, edx
@@ -1375,8 +1375,8 @@ _start:
         mov eax, esi
         ; mod t.9{r3}, t.9{r0}, 40
         movsxd rax, eax
-        mov rcx, 40
         cqo
+        mov rcx, 40
         idiv rcx
         ; move t.9{r2}, t.9{r3}
         mov esi, edx
@@ -1835,8 +1835,8 @@ _start:
         mov ax, di
         ; mod curr_r{r3}, curr_r{r0}, 20
         movsx rax, ax
-        mov rcx, 20
         cqo
+        mov rcx, 20
         idiv rcx
         ; move curr_r{r1}, curr_r{r3}
         mov di, dx
@@ -1875,8 +1875,8 @@ _start:
         mov ax, di
         ; mod curr_r{r3}, curr_r{r0}, 20
         movsx rax, ax
-        mov rcx, 20
         cqo
+        mov rcx, 20
         idiv rcx
         ; move curr_r{r1}, curr_r{r3}
         mov di, dx
@@ -1913,8 +1913,8 @@ _start:
         mov ax, si
         ; mod curr_c{r3}, curr_c{r0}, 40
         movsx rax, ax
-        mov rcx, 40
         cqo
+        mov rcx, 40
         idiv rcx
         ; move curr_c{r2}, curr_c{r3}
         mov si, dx
@@ -1959,8 +1959,8 @@ _start:
         mov ax, si
         ; mod curr_c{r3}, curr_c{r0}, 40
         movsx rax, ax
-        mov rcx, 40
         cqo
+        mov rcx, 40
         idiv rcx
         ; move curr_c{r2}, curr_c{r3}
         mov si, dx
@@ -1995,8 +1995,8 @@ _start:
         mov ax, si
         ; mod curr_c{r3}, curr_c{r0}, 40
         movsx rax, ax
-        mov rcx, 40
         cqo
+        mov rcx, 40
         idiv rcx
         ; move curr_c{r2}, curr_c{r3}
         mov si, dx
