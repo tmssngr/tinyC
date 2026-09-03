@@ -82,16 +82,16 @@ _start:
         ; move remainder{r0}, remainder{r5}
         mov rax, r8
         ; mod remainder{r3}, remainder{r0}, 10
-        mov rcx, 10
         cqo
+        mov rcx, 10
         idiv rcx
         ; move remainder{r5}, remainder{r3}
         mov r8, rdx
         ; move number{r0}, number{r1}
         mov rax, rdi
         ; div number{r0}, number{r0}, 10
-        mov rcx, 10
         cqo
+        mov rcx, 10
         idiv rcx
         ; move number{r1}, number{r0}
         mov rdi, rax
