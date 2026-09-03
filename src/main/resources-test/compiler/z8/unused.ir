@@ -1,0 +1,11 @@
+@unusedArg@u8:
+ Local variables
+	arg 0: a (u8/1)
+	; 0 pc
+@unusedArg@u8_ret:
+
+@main:
+	; 1 pc
+	call unusedArg@u8[0]
+@main_ret:
+

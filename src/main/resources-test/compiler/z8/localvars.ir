@@ -1,0 +1,14 @@
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+	; 0 pc
+@printIntLf@u8_ret:
+
+@main:
+ Local variables
+	var 0: a (u8/1)
+	; 5 pc
+	const a, 10
+	call printIntLf@u8[a]
+@main_ret:
+

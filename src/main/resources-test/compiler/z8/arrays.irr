@@ -1,0 +1,38 @@
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+
+@main:
+	; 27 pc
+	const chr{r8}, 32
+	const t.3{r9}, 0
+	addrof t.2{r12}, [chars]
+	add t.2{r12}, t.2{r12}, t.3{r9}
+	store [t.2{r12}], chr{r8}
+	const t.7{r8}, 0
+	addrof t.6{r10}, [chars]
+	add t.6{r10}, t.6{r10}, t.7{r8}
+	load t.5{r8}, [t.6{r10}]
+	add t.4{r8}, t.4{r8}, 1
+	const t.9{r9}, 1
+	addrof t.8{r12}, [chars]
+	add t.8{r12}, t.8{r12}, t.9{r9}
+	store [t.8{r12}], t.4{r8}
+	const t.13{r8}, 1
+	addrof t.12{r10}, [chars]
+	add t.12{r10}, t.12{r10}, t.13{r8}
+	load t.11{r8}, [t.12{r10}]
+	add t.10{r8}, t.10{r8}, 2
+	const t.15{r9}, 2
+	addrof t.14{r12}, [chars]
+	add t.14{r12}, t.14{r12}, t.15{r9}
+	store [t.14{r12}], t.10{r8}
+	const t.17{r8}, 2
+	addrof t.16{r10}, [chars]
+	add t.16{r10}, t.16{r10}, t.17{r8}
+	load result{r0}, [t.16{r10}]
+	call printIntLf@u8[result{r0}]
+
+Global variables
+	0: chars[] (u8*/512)
+

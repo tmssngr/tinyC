@@ -1,0 +1,47 @@
+void printString@@u8(u8* str) asm {
+}
+
+void printIntLf@bool(bool number) {
+}
+
+void main() {
+	i16 a;
+	i16 b;
+	u8 c;
+	u8 d;
+
+	printString@@u8("< (signed)\n");
+	a = 1;
+	b = 2;
+	printIntLf@bool(a < b);
+	printIntLf@bool(b < a);
+	printString@@u8("< (unsigned)\n");
+	c = 0;
+	d = 128;
+	printIntLf@bool(c < d);
+	printIntLf@bool(d < c);
+	printString@@u8("<= (signed)\n");
+	printIntLf@bool(a <= b);
+	printIntLf@bool(b <= a);
+	printString@@u8("<= (unsigned)\n");
+	printIntLf@bool(c <= d);
+	printIntLf@bool(d <= c);
+	printString@@u8("==\n");
+	printIntLf@bool(a == b);
+	printIntLf@bool(b == a);
+	printString@@u8("!=\n");
+	printIntLf@bool(a != b);
+	printIntLf@bool(b != a);
+	printString@@u8(">= (signed)\n");
+	printIntLf@bool(a >= b);
+	printIntLf@bool(b >= a);
+	printString@@u8(">= (unsigned)\n");
+	printIntLf@bool(c >= d);
+	printIntLf@bool(d >= c);
+	printString@@u8("> (signed)\n");
+	printIntLf@bool(a > b);
+	printIntLf@bool(b > a);
+	printString@@u8("> (unsigned)\n");
+	printIntLf@bool(c > d);
+	printIntLf@bool(d > c);
+}

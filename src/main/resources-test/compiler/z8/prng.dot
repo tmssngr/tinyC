@@ -1,0 +1,33 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printIntLf_Au8 {
+		BasicBlock_0_printIntLf_Au8 [label="printIntLf_Au8",shape=box];
+		BasicBlock_0_printIntLf_Au8 -> BasicBlock_0_printIntLf_Au8__ret;
+		BasicBlock_0_printIntLf_Au8__ret [label="printIntLf_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_initRandom_Ai32 {
+		BasicBlock_1_initRandom_Ai32 [label="initRandom_Ai32",shape=box];
+		BasicBlock_1_initRandom_Ai32 -> BasicBlock_1_initRandom_Ai32__ret;
+		BasicBlock_1_initRandom_Ai32__ret [label="initRandom_Ai32__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_random {
+		BasicBlock_2_random [label="random",shape=box];
+		BasicBlock_2_random -> BasicBlock_2_random__ret;
+		BasicBlock_2_random__ret [label="random__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_randomU8 {
+		BasicBlock_3_randomU8 [label="randomU8",shape=box];
+		BasicBlock_3_randomU8 -> BasicBlock_3_randomU8__ret;
+		BasicBlock_3_randomU8__ret [label="randomU8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_4_main [label="main",shape=box];
+		BasicBlock_4_main -> BasicBlock_4_for__1 [label="(i)"];
+		BasicBlock_4_for__1__body [label="for__1__body",shape=box];
+		BasicBlock_4_for__1__body -> BasicBlock_4_for__1 [label="(i)"];
+		BasicBlock_4_for__1 [label="for__1",shape=hexagon];
+		BasicBlock_4_for__1 -> BasicBlock_4_main__ret;
+		BasicBlock_4_for__1 -> BasicBlock_4_for__1__body [label="(i)"];
+		BasicBlock_4_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

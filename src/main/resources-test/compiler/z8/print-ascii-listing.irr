@@ -1,0 +1,106 @@
+@printNibble@u8:
+ Local variables
+	arg 0: x (u8/1)
+	; 6 pc
+	and param.x{r0}, param.x{r0}, 15
+	; 5:2 if x > 9
+	gt t.1{r8}, param.x{r0}, 9
+	branch t.1{r8}, false, @if_1_end, @if_1_then
+	add param.x{r0}, param.x{r0}, 7
+@if_1_end:
+	add param.x{r0}, param.x{r0}, 48
+	call printChar@u8[param.x{r0}]
+
+@printHex2@u8:
+ Local variables
+	arg 0: x (u8/1)
+	; 6 pc
+	move param.x{r8}, x{r0}
+	move t.1{r0}, param.x{r8}
+	shiftright t.1{r0}, t.1{r0}, 4
+	call printNibble@u8[t.1{r0}]
+	move param.x{r0}, param.x{r8}
+	call printNibble@u8[param.x{r0}]
+
+@main:
+	; 36 pc
+	const t.2{r0}, [string-0]
+	call printString@@u8[t.2{r0}]
+	const i{r8}, 0
+	; 19:2 for i < 16
+	jump @for_2
+@for_2_body:
+	; 20:3 if i & 7 == 0
+	move t.5{r9}, i{r8}
+	and t.5{r9}, t.5{r9}, 7
+	equals t.4{r9}, t.5{r9}, 0
+	branch t.4{r9}, false, @if_3_end, @if_3_then
+	const arg.1.0{r0}, 32
+	call printChar@u8[arg.1.0{r0}]
+@if_3_end:
+	move i{r0}, i{r8}
+	call printNibble@u8[i{r0}]
+	add i{r8}, i{r8}, 1
+@for_2:
+	lt t.3{r9}, i{r8}, 16
+	branch t.3{r9}, true, @for_2_body, @for_2_break
+	const arg.3.0{r0}, 10
+	call printChar@u8[arg.3.0{r0}]
+	const i{r8}, 32
+	; 27:2 for i < 128
+	jump @for_4
+@for_4_body:
+	; 28:3 if i & 15 == 0
+	move t.8{r9}, i{r8}
+	and t.8{r9}, t.8{r9}, 15
+	equals t.7{r9}, t.8{r9}, 0
+	branch t.7{r9}, false, @if_5_end, @if_5_then
+	move i{r0}, i{r8}
+	call printHex2@u8[i{r0}]
+@if_5_end:
+	; 31:3 if i & 7 == 0
+	move t.10{r9}, i{r8}
+	and t.10{r9}, t.10{r9}, 7
+	equals t.9{r9}, t.10{r9}, 0
+	branch t.9{r9}, false, @if_6_end, @if_6_then
+	const arg.5.0{r0}, 32
+	call printChar@u8[arg.5.0{r0}]
+@if_6_end:
+	move i{r0}, i{r8}
+	call printChar@u8[i{r0}]
+	; 35:3 if i & 15 == 15
+	move t.12{r9}, i{r8}
+	and t.12{r9}, t.12{r9}, 15
+	equals t.11{r9}, t.12{r9}, 15
+	branch t.11{r9}, false, @for_4_continue, @if_7_then
+	const arg.7.0{r0}, 10
+	call printChar@u8[arg.7.0{r0}]
+@for_4_continue:
+	add i{r8}, i{r8}, 1
+@for_4:
+	lt t.6{r0}, i{r8}, 128
+	branch t.6{r0}, true, @for_4_body, @main_ret
+
+@printString@@u8:
+	ld   r2, r0
+	ld   r3, r1
+	jr   .loop
+	.print:
+	call printChar_Pu8
+	incw r2
+	.loop:
+	lde  r0, @rr2
+	or   r0, r0
+	jr   nz, .print
+	ret
+
+@printChar@u8:
+	cp    r0, #%0a
+	jr    ne, .1
+	ld    r0, #%0d
+	.1:
+	ld    %15, r0
+	jp    %0818
+
+String literals
+	string lit 0 " x\0"

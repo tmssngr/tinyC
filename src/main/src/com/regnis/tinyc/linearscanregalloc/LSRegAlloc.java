@@ -25,12 +25,13 @@ public final class LSRegAlloc {
 		final int registeredCount = architecture.registerCount();
 		final LSCallingConventionProvider callingConventionProvider = architecture.getCallingConventionProvider();
 		final Type pointerIntType = architecture.getPointerIntType();
-		return process(function, x86Registers, registeredCount, callingConventionProvider, pointerIntType);
+		final boolean hasStackSlotsForRegisterVars = x86Registers != null;
+		return process(function, x86Registers, hasStackSlotsForRegisterVars, registeredCount, callingConventionProvider, pointerIntType);
 	}
 
 	@NotNull
-	public static IRFunction process(@NotNull IRFunction function, @Nullable X86Registers x86Registers, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull Type pointerIntType) {
-		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, x86Registers, pointerIntType);
+	public static IRFunction process(@NotNull IRFunction function, @Nullable X86Registers x86Registers, boolean hasStackSlotsForRegisterVars, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull Type pointerIntType) {
+		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, x86Registers, hasStackSlotsForRegisterVars, pointerIntType);
 		IRVarInfos varInfos = preprocessorResult.first();
 		final List<IRInstruction> instructions = preprocessorResult.second();
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), instructions);
@@ -41,7 +42,8 @@ public final class LSRegAlloc {
 			LSIntervalFactory.printInstructions(instructions);
 		}
 
-		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, x86Registers, null);
+		final Type z8PointerIntType = x86Registers != null ? null : pointerIntType;
+		final LSIntervalFactory intervalFactory = new LSIntervalFactory(varInfos, callingConventionProvider, registerCount, x86Registers, z8PointerIntType);
 		intervalFactory.handleBlocks(blocks);
 		final Map<String, LSIntervalFactory.Indices> blockToIndex = intervalFactory.getBlockToIndex();
 		final List<LSIntervalFactory.Indices> blockBoundaries = intervalFactory.getBlockIndices();
@@ -55,15 +57,19 @@ public final class LSRegAlloc {
 
 		Map<IRVar, LSInterval> varToInterval = null;
 		if (!containsNonRegisterVars(varInfos, instructions2)) {
-			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount, null, logger);
+			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount, z8PointerIntType, logger);
 		}
 		IRVar spillHelper = null;
 		if (varToInterval == null || containsSpills(varToInterval)) {
 			final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(varInfos, pointerIntType);
+			int spillHelperRegister = registerCount - 1;
+			if (z8PointerIntType != null && (spillHelperRegister & 1) != 0) {
+				spillHelperRegister--;
+			}
 			spillHelper = tempVarFactory.createPointerVar(MEM_VAR_ADDRESS)
-					.asRegister(registerCount - 1);
+					.asRegister(spillHelperRegister);
 			varInfos = tempVarFactory.createVarInfos();
-			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount - 1, null, logger);
+			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount - 1, z8PointerIntType, logger);
 		}
 
 		if (debug) {

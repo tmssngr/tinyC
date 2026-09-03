@@ -1,0 +1,25 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printUint_Ai16 {
+		BasicBlock_0_printUint_Ai16 [label="printUint_Ai16",shape=box];
+		BasicBlock_0_printUint_Ai16 -> BasicBlock_0_printUint_Ai16__ret;
+		BasicBlock_0_printUint_Ai16__ret [label="printUint_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf_Ai16 {
+		BasicBlock_1_printIntLf_Ai16 [label="printIntLf_Ai16",shape=hexagon];
+		BasicBlock_1_printIntLf_Ai16 -> BasicBlock_1_no__critical__edge__4 [label="(number)"];
+		BasicBlock_1_printIntLf_Ai16 -> BasicBlock_1_if__1__then [label="(number)"];
+		BasicBlock_1_no__critical__edge__4 [label="no__critical__edge__4",shape=box];
+		BasicBlock_1_no__critical__edge__4 -> BasicBlock_1_if__1__end [label="(number)"];
+		BasicBlock_1_if__1__then [label="if__1__then",shape=box];
+		BasicBlock_1_if__1__then -> BasicBlock_1_if__1__end [label="(number)"];
+		BasicBlock_1_if__1__end [label="if__1__end",shape=box];
+		BasicBlock_1_if__1__end -> BasicBlock_1_printIntLf_Ai16__ret;
+		BasicBlock_1_printIntLf_Ai16__ret [label="printIntLf_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_2_main [label="main",shape=box];
+		BasicBlock_2_main -> BasicBlock_2_main__ret [label="(a,c)"];
+		BasicBlock_2_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

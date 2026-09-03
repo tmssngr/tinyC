@@ -1,0 +1,20 @@
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+
+@main:
+	; 8 pc
+	const i{r8}, 250
+	; 4:3 for i != 2
+	jump @for_1
+@for_1_body:
+	move i{r0}, i{r8}
+	call printIntLf@u8[i{r0}]
+	add i{r8}, i{r8}, 1
+@for_1:
+	notequals t.2{r9}, i{r8}, 2
+	branch t.2{r9}, true, @for_1_body, @for_1_break
+	const v{r8}, 260
+	cast t.3{r0}(u8), v{r8}(i16)
+	call printIntLf@u8[t.3{r0}]
+
