@@ -65,4 +65,25 @@ public interface LSArchitecture {
 			return argRegisterCount;
 		}
 	}
+
+	class Z8 implements LSArchitecture {
+		public Z8() {
+		}
+
+		@Override
+		public Type getPointerIntType() {
+			return Z8CallingConventionProvider.POINTER_INT_TYPE;
+		}
+
+		@NotNull
+		@Override
+		public LSCallingConventionProvider getCallingConventionProvider() {
+			return Z8CallingConventionProvider.INSTANCE;
+		}
+
+		@Override
+		public int registerCount() {
+			return 16;
+		}
+	}
 }

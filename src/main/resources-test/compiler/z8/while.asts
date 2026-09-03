@@ -1,0 +1,23 @@
+void printIntLf@u8(u8 number) {
+}
+
+void main() {
+	u8 i;
+
+	i = 5;
+	while (i > 0) {
+		printIntLf@u8(i);
+		i = i - 1;
+	}
+	while (true) {
+		printIntLf@u8(i);
+		i = i + 1;
+		if (i < 5) {
+			continue;
+		}
+		break;
+	}
+	while (true) {
+		return;
+	}
+}

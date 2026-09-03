@@ -1,0 +1,9 @@
+void printIntLf@u8(u8 number) {
+}
+
+void main() {
+	u8 a;
+
+	a = 10;
+	printIntLf@u8(a);
+}

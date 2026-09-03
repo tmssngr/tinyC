@@ -1,0 +1,34 @@
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+
+@main:
+ Local variables
+	var 0: pos (u8/2)
+	; 36 pc
+	const t.2{r8}, 1
+	; 9:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=9:2].x
+	addrof t.3{r10}, pos
+	store [t.3{r10}], t.2{r8}
+	; 10:14 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:10].x
+	addrof t.6{r8}, pos
+	load t.5{r8}, [t.6{r8}]
+	add t.4{r8}, t.4{r8}, 1
+	; 10:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:2].y
+	addrof t.7{r10}, pos
+	add t.7{r10}, t.7{r10}, 1
+	store [t.7{r10}], t.4{r8}
+	; 11:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=11:13].x
+	addrof t.9{r8}, pos
+	load t.8{r0}, [t.9{r8}]
+	call printIntLf@u8[t.8{r0}]
+	; 12:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=12:13].y
+	addrof t.11{r8}, pos
+	add t.11{r8}, t.11{r8}, 1
+	load t.10{r0}, [t.11{r8}]
+	call printIntLf@u8[t.10{r0}]
+	; 13:15 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=13:11].x
+	addrof x{r8}, pos
+	load t.12{r0}, [x{r8}]
+	call printIntLf@u8[t.12{r0}]
+

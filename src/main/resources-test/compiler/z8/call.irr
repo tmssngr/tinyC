@@ -1,0 +1,61 @@
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+
+@main:
+	; 20 pc
+	; begin initialize global variables
+	const tmp.i{r8}, 0
+	; end initialize global variables
+	addrof memVarAddr{r14}, i
+	store [memVarAddr{r14}], tmp.i{r8}
+	call t.0{r0} = next[] -> u8
+	move t.0{r8}, t.0{r0}
+	call t.1{r0} = next[] -> u8
+	move t.1{r9}, t.1{r0}
+	call t.2{r0} = next[] -> u8
+	move t.2{r10}, t.2{r0}
+	call t.3{r0} = next[] -> u8
+	move t.3{r11}, t.3{r0}
+	call t.4{r0} = next[] -> u8
+	move t.4{r4}, t.4{r0}
+	move t.0{r0}, t.0{r8}
+	move t.1{r1}, t.1{r9}
+	move t.2{r2}, t.2{r10}
+	move t.3{r3}, t.3{r11}
+	call doPrint@u8@u8@u8@u8@u8[t.0{r0}, t.1{r1}, t.2{r2}, t.3{r3}, t.4{r4}]
+
+@next:
+	; 11 pc
+	addrof memVarAddr{r14}, i
+	load tmp.i{r0}, [memVarAddr{r14}]
+	add tmp.i{r0}, tmp.i{r0}, 1
+	; 11:9 return i
+	addrof memVarAddr{r14}, i
+	store [memVarAddr{r14}], tmp.i{r0}
+
+@doPrint@u8@u8@u8@u8@u8:
+ Local variables
+	arg 0: a (u8/1)
+	arg 1: b (u8/1)
+	arg 2: c (u8/1)
+	arg 3: d (u8/1)
+	arg 4: e (u8/1)
+	; 13 pc
+	move param.b{r8}, b{r1}
+	move param.c{r9}, c{r2}
+	move param.d{r10}, d{r3}
+	move param.e{r11}, e{r4}
+	call printIntLf@u8[param.a{r0}]
+	move param.b{r0}, param.b{r8}
+	call printIntLf@u8[param.b{r0}]
+	move param.c{r0}, param.c{r9}
+	call printIntLf@u8[param.c{r0}]
+	move param.d{r0}, param.d{r10}
+	call printIntLf@u8[param.d{r0}]
+	move param.e{r0}, param.e{r11}
+	call printIntLf@u8[param.e{r0}]
+
+Global variables
+	0: i (u8/1)
+

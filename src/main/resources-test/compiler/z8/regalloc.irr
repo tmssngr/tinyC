@@ -1,0 +1,65 @@
+@simple:
+	; 2 pc
+	const four{r1}, 4
+	const three{r2}, 3
+	move one{r0}, four{r1}
+	sub one{r0}, one{r0}, three{r2}
+	; 5:9 return one
+
+@registerHint@u8@u8:
+ Local variables
+	arg 0: a (u8/1)
+	arg 1: b (u8/1)
+	; 1 pc
+	; 9:11 return a + b
+	add t.2{r0}, t.2{r0}, param.b{r1}
+
+@max@u8@u8:
+ Local variables
+	arg 0: a (u8/1)
+	arg 1: b (u8/1)
+	; 4 pc
+	; 13:2 if a < b
+	lt t.2{r2}, param.a{r0}, param.b{r1}
+	branch t.2{r2}, true, @if_1_then, @if_1_end
+	; 16:9 return a
+	jump @max@u8@u8_ret
+@if_1_then:
+	; 14:10 return b
+	move param.b{r0}, param.b{r1}
+@max@u8@u8_ret:
+
+@fibonacci@u8:
+ Local variables
+	arg 0: i (u8/1)
+	; 9 pc
+	const a{r2}, 0
+	const b{r4}, 1
+	; 22:2 while i > 0
+	jump @while_2
+@while_2_body:
+	sub param.i{r0}, param.i{r0}, 1
+	move c{r6}, a{r2}
+	add c{r6}, c{r6}, b{r4}
+	move a{r2}, b{r4}
+	move b{r4}, c{r6}
+@while_2:
+	gt t.4{r6}, param.i{r0}, 0
+	branch t.4{r6}, true, @while_2_body, @while_2_break
+	; 28:9 return a
+	move a{r0}, a{r2}
+
+@main:
+	; 9 pc
+	call one{r0} = simple[] -> u8
+	move one{r8}, one{r0}
+	const two{r9}, 2
+	move one{r0}, one{r8}
+	move two{r1}, two{r9}
+	call _ = registerHint@u8@u8[one{r0}, two{r1}] -> u8
+	move one{r0}, one{r8}
+	move two{r1}, two{r9}
+	call _ = max@u8@u8[one{r0}, two{r1}] -> u8
+	const arg.3.0{r0}, 5
+	call _ = fibonacci@u8[arg.3.0{r0}] -> i16
+

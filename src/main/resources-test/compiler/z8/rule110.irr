@@ -1,0 +1,120 @@
+@printBoard:
+	; 17 pc
+	const arg.0.0{r0}, 124
+	call printChar@u8[arg.0.0{r0}]
+	const i{r8}, 0
+	; 11:2 for i < 30
+	jump @for_1
+@for_1_body:
+	; 12:3 if [...] == 0
+	cast t.5{r9}(i16), i{r8}(u8)
+	addrof t.4{r12}, [board]
+	add t.4{r12}, t.4{r12}, t.5{r9}
+	load t.3{r9}, [t.4{r12}]
+	equals t.2{r9}, t.3{r9}, 0
+	branch t.2{r9}, true, @if_2_then, @if_2_else
+	const arg.2.0{r0}, 42
+	call printChar@u8[arg.2.0{r0}]
+	jump @for_1_continue
+@if_2_then:
+	const arg.1.0{r0}, 32
+	call printChar@u8[arg.1.0{r0}]
+@for_1_continue:
+	add i{r8}, i{r8}, 1
+@for_1:
+	lt t.1{r9}, i{r8}, 30
+	branch t.1{r9}, true, @for_1_body, @for_1_break
+	const t.6{r0}, [string-0]
+	call printString@@u8[t.6{r0}]
+
+@main:
+	; 50 pc
+	const i{r8}, 0
+	; 23:2 for i < 30
+	jump @for_3
+@for_3_body:
+	const t.5{r9}, 0
+	cast t.7{r10}(i16), i{r8}(u8)
+	addrof t.6{r12}, [board]
+	add t.6{r12}, t.6{r12}, t.7{r10}
+	store [t.6{r12}], t.5{r9}
+	add i{r8}, i{r8}, 1
+@for_3:
+	lt t.4{r9}, i{r8}, 30
+	branch t.4{r9}, true, @for_3_body, @for_3_break
+	const t.8{r8}, 1
+	const t.10{r9}, 29
+	addrof t.9{r12}, [board]
+	add t.9{r12}, t.9{r12}, t.10{r9}
+	store [t.9{r12}], t.8{r8}
+	call printBoard[]
+	const i{r8}, 0
+	; 30:2 for i < 28
+	jump @for_4
+@for_4_body:
+	const t.15{r9}, 0
+	addrof t.14{r12}, [board]
+	add t.14{r12}, t.14{r12}, t.15{r9}
+	load t.13{r9}, [t.14{r12}]
+	shiftleft t.12{r9}, t.12{r9}, 1
+	const t.18{r10}, 1
+	addrof t.17{r12}, [board]
+	add t.17{r12}, t.17{r12}, t.18{r10}
+	load t.16{r10}, [t.17{r12}]
+	or pattern{r9}, pattern{r9}, t.16{r10}
+	const j{r10}, 1
+	; 32:3 for j < 29
+	jump @for_5
+@for_5_body:
+	shiftleft t.21{r9}, t.21{r9}, 1
+	and t.20{r9}, t.20{r9}, 7
+	move t.25{r11}, j{r10}
+	add t.25{r11}, t.25{r11}, 1
+	cast t.24{r11}(i16), t.25{r11}(u8)
+	addrof t.23{r14}, [board]
+	add t.23{r14}, t.23{r14}, t.24{r11}
+	load t.22{r11}, [t.23{r14}]
+	or pattern{r9}, pattern{r9}, t.22{r11}
+	const t.28{r11}, 110
+	shiftright t.27{r11}, t.27{r11}, pattern{r9}
+	and t.26{r11}, t.26{r11}, 1
+	cast t.30{r12}(i16), j{r10}(u8)
+	addrof t.29{r14}, [board]
+	add t.29{r14}, t.29{r14}, t.30{r12}
+	store [t.29{r14}], t.26{r11}
+	add j{r10}, j{r10}, 1
+@for_5:
+	lt t.19{r11}, j{r10}, 29
+	branch t.19{r11}, true, @for_5_body, @for_5_break
+	call printBoard[]
+	add i{r8}, i{r8}, 1
+@for_4:
+	lt t.11{r0}, i{r8}, 28
+	branch t.11{r0}, true, @for_4_body, @main_ret
+
+@printString@@u8:
+	ld   r2, r0
+	ld   r3, r1
+	jr   .loop
+	.print:
+	call printChar_Pu8
+	incw r2
+	.loop:
+	lde  r0, @rr2
+	or   r0, r0
+	jr   nz, .print
+	ret
+
+@printChar@u8:
+	cp    r0, #%0a
+	jr    ne, .1
+	ld    r0, #%0d
+	.1:
+	ld    %15, r0
+	jp    %0818
+
+Global variables
+	0: board[] (u8*/60)
+
+String literals
+	string lit 0 "|\n\0"

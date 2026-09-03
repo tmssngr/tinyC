@@ -1,0 +1,51 @@
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+	; 0 pc
+@printIntLf@u8_ret:
+
+@main:
+ Local variables
+	var 0: t.0 (u8/1)
+	var 1: t.1 (u8/1)
+	var 2: t.2 (u8/1)
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8/1)
+	; 28 pc
+	; begin initialize global variables
+	const i, 0
+	; end initialize global variables
+	call t.0 = next[] -> u8
+	call t.1 = next[] -> u8
+	call t.2 = next[] -> u8
+	call t.3 = next[] -> u8
+	call t.4 = next[] -> u8
+	call doPrint@u8@u8@u8@u8@u8[t.0, t.1, t.2, t.3, t.4]
+@main_ret:
+
+@next:
+	; 9 pc
+	add i, i, 1
+	; 11:9 return i
+	ret i
+	jump @next_ret
+@next_ret:
+
+@doPrint@u8@u8@u8@u8@u8:
+ Local variables
+	arg 0: a (u8/1)
+	arg 1: b (u8/1)
+	arg 2: c (u8/1)
+	arg 3: d (u8/1)
+	arg 4: e (u8/1)
+	; 15 pc
+	call printIntLf@u8[a]
+	call printIntLf@u8[b]
+	call printIntLf@u8[c]
+	call printIntLf@u8[d]
+	call printIntLf@u8[e]
+@doPrint@u8@u8@u8@u8@u8_ret:
+
+Global variables
+	0: i (u8/1)
+

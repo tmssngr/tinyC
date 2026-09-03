@@ -1,0 +1,14 @@
+void printIntLf@u8(u8 number) {
+}
+
+void main() {
+	Pos pos;
+	u8* x;
+
+	pos.x = 1;
+	pos.y = (pos.x) + 1;
+	printIntLf@u8(pos.x);
+	printIntLf@u8(pos.y);
+	x = &(pos.x);
+	printIntLf@u8(*x);
+}

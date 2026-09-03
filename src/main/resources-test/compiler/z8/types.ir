@@ -1,0 +1,29 @@
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+	; 0 pc
+@printIntLf@u8_ret:
+
+@main:
+ Local variables
+	var 0: i (u8/1)
+	var 1: v (i16/2)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (u8/1)
+	; 29 pc
+	const i, 250
+	; 4:3 for i != 2
+@for_1:
+	notequals t.2, i, 2
+	branch t.2, false, @for_1_break, @for_1_body
+@for_1_body:
+	call printIntLf@u8[i]
+@for_1_continue:
+	add i, i, 1
+	jump @for_1
+@for_1_break:
+	const v, 260
+	cast t.3(u8), v(i16)
+	call printIntLf@u8[t.3]
+@main_ret:
+

@@ -1,0 +1,297 @@
+@printUint@i16:
+ Local variables
+	arg 0: number (i16/2)
+	; 2 pc
+	cast t.1{r0}(i32), param.number{r0}(i16)
+	call printUint@i32[t.1{r0}]
+
+@printIntLf@bool:
+ Local variables
+	arg 0: number (bool/1)
+
+@printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+
+@printIntLf@i16:
+ Local variables
+	arg 0: number (i16/2)
+	; 8 pc
+	move param.number{r8}, number{r0}
+	; 127:2 if number < 0
+	lt t.1{r10}, param.number{r8}, 0
+	branch t.1{r10}, false, @if_1_end, @if_1_then
+	const arg.0.0{r0}, 45
+	call printChar@u8[arg.0.0{r0}]
+	neg param.number{r8}, param.number{r8}
+@if_1_end:
+	move param.number{r0}, param.number{r8}
+	call printUint@i16[param.number{r0}]
+	const arg.2.0{r0}, 13
+	call printChar@u8[arg.2.0{r0}]
+
+@main:
+ Local variables
+	var 0: d (i16/2)
+	var 1: f (bool/1)
+	; 129 pc
+	const t.9{r0}, [string-0]
+	call printString@@u8[t.9{r0}]
+	const a{r8}, 0
+	const b{r10}, 1
+	const c{r12}, 2
+	const d{r2}, 3
+	addrof memVarAddr{r14}, d
+	store [memVarAddr{r14}], d{r2}
+	const t{r14}, 1
+	const f{r2}, 0
+	addrof memVarAddr{r14}, f
+	store [memVarAddr{r14}], f{r2}
+	move t.10{r0}, a{r8}
+	and t.10{r0}, t.10{r0}, a{r8}
+	call printIntLf@i16[t.10{r0}]
+	move t.11{r0}, a{r8}
+	and t.11{r0}, t.11{r0}, b{r10}
+	call printIntLf@i16[t.11{r0}]
+	move t.12{r0}, b{r10}
+	and t.12{r0}, t.12{r0}, a{r8}
+	call printIntLf@i16[t.12{r0}]
+	move t.13{r0}, b{r10}
+	and t.13{r0}, t.13{r0}, b{r10}
+	call printIntLf@i16[t.13{r0}]
+	const t.14{r0}, [string-1]
+	call printString@@u8[t.14{r0}]
+	move t.15{r0}, a{r8}
+	or t.15{r0}, t.15{r0}, a{r8}
+	call printIntLf@i16[t.15{r0}]
+	move t.16{r0}, a{r8}
+	or t.16{r0}, t.16{r0}, b{r10}
+	call printIntLf@i16[t.16{r0}]
+	move t.17{r0}, b{r10}
+	or t.17{r0}, t.17{r0}, a{r8}
+	call printIntLf@i16[t.17{r0}]
+	move t.18{r0}, b{r10}
+	or t.18{r0}, t.18{r0}, b{r10}
+	call printIntLf@i16[t.18{r0}]
+	const t.19{r0}, [string-2]
+	call printString@@u8[t.19{r0}]
+	move t.20{r0}, a{r8}
+	xor t.20{r0}, t.20{r0}, a{r8}
+	call printIntLf@i16[t.20{r0}]
+	move t.21{r0}, a{r8}
+	xor t.21{r0}, t.21{r0}, c{r12}
+	call printIntLf@i16[t.21{r0}]
+	move t.22{r0}, b{r10}
+	xor t.22{r0}, t.22{r0}, a{r8}
+	call printIntLf@i16[t.22{r0}]
+	move t.23{r0}, b{r10}
+	xor t.23{r0}, t.23{r0}, c{r12}
+	call printIntLf@i16[t.23{r0}]
+	const t.24{r0}, [string-3]
+	call printString@@u8[t.24{r0}]
+	; 26:15 logic and
+	addrof memVarAddr{r14}, f
+	load f{r8}, [memVarAddr{r14}]
+	move t.25{r0}, f{r8}
+	branch t.25{r0}, false, @and_next_2, @and_2nd_2
+	move t.25{r0}, f{r8}
+@and_next_2:
+	call printIntLf@bool[t.25{r0}]
+	; 27:15 logic and
+	move t.26{r0}, f{r8}
+	branch t.26{r0}, false, @and_next_3, @and_2nd_3
+	move t.26{r0}, t{r14}
+@and_next_3:
+	call printIntLf@bool[t.26{r0}]
+	; 28:15 logic and
+	move t.27{r0}, t{r14}
+	branch t.27{r0}, false, @and_next_4, @and_2nd_4
+	move t.27{r0}, f{r8}
+@and_next_4:
+	call printIntLf@bool[t.27{r0}]
+	; 29:15 logic and
+	move t.28{r0}, t{r14}
+	branch t.28{r0}, false, @and_next_5, @and_2nd_5
+	move t.28{r0}, t{r14}
+@and_next_5:
+	call printIntLf@bool[t.28{r0}]
+	const t.29{r0}, [string-4]
+	call printString@@u8[t.29{r0}]
+	; 31:15 logic or
+	move t.30{r0}, f{r8}
+	branch t.30{r0}, true, @or_next_6, @or_2nd_6
+	move t.30{r0}, f{r8}
+@or_next_6:
+	call printIntLf@bool[t.30{r0}]
+	; 32:15 logic or
+	move t.31{r0}, f{r8}
+	branch t.31{r0}, true, @or_next_7, @or_2nd_7
+	move t.31{r0}, t{r14}
+@or_next_7:
+	call printIntLf@bool[t.31{r0}]
+	; 33:15 logic or
+	move t.32{r0}, t{r14}
+	branch t.32{r0}, true, @or_next_8, @or_2nd_8
+	move t.32{r0}, f{r8}
+@or_next_8:
+	call printIntLf@bool[t.32{r0}]
+	; 34:15 logic or
+	move t.33{r0}, t{r14}
+	branch t.33{r0}, true, @or_next_9, @or_2nd_9
+	move t.33{r0}, t{r14}
+@or_next_9:
+	call printIntLf@bool[t.33{r0}]
+	const t.34{r0}, [string-5]
+	call printString@@u8[t.34{r0}]
+	notlog t.35{r0}, f{r8}
+	call printIntLf@bool[t.35{r0}]
+	notlog t.36{r0}, t{r14}
+	call printIntLf@bool[t.36{r0}]
+	const t.37{r0}, [string-6]
+	call printString@@u8[t.37{r0}]
+	const b10{r8}, 10
+	const b6{r9}, 6
+	const b1{r14}, 1
+	and t.39{r8}, t.39{r8}, b6{r9}
+	move t.38{r0}, t.39{r8}
+	or t.38{r0}, t.38{r0}, b1{r14}
+	call printIntLf@u8[t.38{r0}]
+	; 43:20 logic or
+	equals t.40{r0}, b{r10}, c{r12}
+	branch t.40{r0}, false, @or_2nd_10, @no_critical_edge_30
+	addrof memVarAddr{r14}, d
+	load d{r8}, [memVarAddr{r14}]
+	jump @or_next_10
+@or_2nd_10:
+	addrof memVarAddr{r14}, d
+	load d{r8}, [memVarAddr{r14}]
+	lt t.40{r0}, c{r12}, d{r8}
+@or_next_10:
+	call printIntLf@bool[t.40{r0}]
+	; 44:20 logic and
+	equals t.41{r0}, b{r10}, c{r12}
+	branch t.41{r0}, false, @and_next_11, @and_2nd_11
+	lt t.41{r0}, c{r12}, d{r8}
+@and_next_11:
+	call printIntLf@bool[t.41{r0}]
+	const arg.32.0{r0}, -1
+	call printIntLf@i16[arg.32.0{r0}]
+	neg t.42{r0}, b{r10}
+	call printIntLf@i16[t.42{r0}]
+	not t.43{r0}, b1{r14}
+	call printIntLf@u8[t.43{r0}]
+
+@printString@@u8:
+	ld   r2, r0
+	ld   r3, r1
+	jr   .loop
+	.print:
+	call printChar_Pu8
+	incw r2
+	.loop:
+	lde  r0, @rr2
+	or   r0, r0
+	jr   nz, .print
+	ret
+
+@printChar@u8:
+	cp    r0, #%0a
+	jr    ne, .1
+	ld    r0, #%0d
+	.1:
+	ld    %15, r0
+	jp    %0818
+
+@printUint@i32:
+	ld   r4, #1
+	ld   r5, #%28
+	ld   r6, #8
+	.push:
+	push @r5
+	inc  r5
+	djnz r6, .push
+	; result
+	clr     r11
+	clr     r12
+	clr     r13
+	clr     r14
+	clr     r15
+	; summand (bcd-shifted power of 2)
+	clr     r6
+	clr     r7
+	clr     r8
+	clr     r9
+	ld      r10, #1
+	; counter
+	ld      r5, #%20
+	.1:
+	sra     r0
+	rrc     r1
+	rrc     r2
+	rrc     r3
+	jr      nc, .2
+	add     r15, r10
+	da      r15
+	adc     r14, r9
+	da      r14
+	adc     r13, r8
+	da      r13
+	adc     r12, r7
+	da      r12
+	adc     r11, r6
+	da      r11
+	.2:
+	add     r10, r10
+	da      r10
+	adc     r9, r9
+	da      r9
+	adc     r8, r8
+	da      r8
+	adc     r7, r7
+	da      r7
+	adc     r6, r6
+	da      r6
+	djnz    r5, .1
+	ld      r6, #%2b
+	; counter
+	ld      r7, #10
+	.loop:
+	ld      r5, @r6
+	tm      r7, #1
+	jr      nz, .4
+	swap    r5
+	.4:
+	and     r5, #%0f
+	or      r4, r4
+	jr      z, .5
+	cp      r7, #1
+	jr      eq, .5
+	or      r5, r5
+	jr      z, .6
+	clr     r4
+	.5:
+	ld      %15, r5
+	add     %15, #'0'
+	call    %0818
+	.6:
+	tm      r7, #1
+	jr      z, .7
+	inc     r6
+	.7:
+	djnz    r7, .loop
+	ld   r5, #%2f
+	ld   r6, #8
+	.pop:
+	pop  @r5
+	dec  r5
+	djnz r6, .pop
+	ret
+
+String literals
+	string lit 0 "Bit-&:\n\0"
+	string lit 1 "\nBit-|:\n\0"
+	string lit 2 "\nBit-^:\n\0"
+	string lit 3 "\nLogic-&&:\n\0"
+	string lit 4 "\nLogic-||:\n\0"
+	string lit 5 "\nLogic-!:\n\0"
+	string lit 6 "\nmisc:\n\0"

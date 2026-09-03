@@ -1,0 +1,59 @@
+@next:
+ Local variables
+	var 0: copy (u8/1)
+	; 14 pc
+	move copy, global
+	add global, global, 1
+	; 8:9 return copy
+	ret copy
+	jump @next_ret
+@next_ret:
+
+@main:
+ Local variables
+	var 0: n (u8/1)
+	var 1: t.1 (u8*/2)
+	var 2: t.2 (bool/1)
+	var 3: t.3 (bool/1)
+	var 4: t.4 (u8*/2)
+	; 34 pc
+	; begin initialize global variables
+	const global, 0
+	; end initialize global variables
+	; 12:2 while true
+@while_1:
+	const t.1, [string-0]
+	call printString@@u8[t.1]
+	call n = next[] -> u8
+	; 15:3 if n == 3
+	equals t.2, n, 3
+	branch t.2, true, @main_ret, @if_2_end
+@if_2_end:
+	; 19:3 if n < 2
+	lt t.3, n, 2
+	branch t.3, false, @while_1, @if_3_then
+@if_3_then:
+	const t.4, [string-1]
+	call printString@@u8[t.4]
+	jump @while_1
+@main_ret:
+
+@printString@@u8:
+	ld   r2, r0
+	ld   r3, r1
+	jr   .loop
+	.print:
+	call printChar_Pu8
+	incw r2
+	.loop:
+	lde  r0, @rr2
+	or   r0, r0
+	jr   nz, .print
+	ret
+
+Global variables
+	0: global (u8/1)
+
+String literals
+	string lit 0 "loop\n\0"
+	string lit 1 "<2\n\0"
