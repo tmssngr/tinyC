@@ -545,7 +545,7 @@ public final class IRGenerator {
 
 	private void writeCompare(IRCompare.Op op, IRVar var, ExprBinary binary) {
 		final IRVar left = writeExpression(binary.left());
-		final IRVar right = writeExpression(binary.right());
+		final IRValue right = writeExpressionAsValue(binary.right());
 		write(new IRCompare(var, op, left, right, binary.location()));
 	}
 

@@ -12,8 +12,7 @@
 	var 1: length (i64/8)
 	var 2: t.2 (bool/1)
 	var 3: t.3 (u8/1)
-	var 4: t.4 (u8/1)
-	; 34 pc
+	; 30 pc
 	const length, 0
 	; 64:2 for *str != 0
 	jump @for_1
@@ -22,8 +21,7 @@
 	add str, str, 1
 @for_1:
 	load t.3, [str]
-	const t.4, 0
-	notequals t.2, t.3, t.4
+	notequals t.2, t.3, 0
 	branch t.2, true, @for_1_body, @for_1_break
 	; 67:9 return length
 	ret length
@@ -42,11 +40,9 @@
 	var 0: n (u8/1)
 	var 1: t.1 (u8*/8)
 	var 2: t.2 (bool/1)
-	var 3: t.3 (u8/1)
-	var 4: t.4 (bool/1)
-	var 5: t.5 (u8/1)
-	var 6: t.6 (u8*/8)
-	; 42 pc
+	var 3: t.3 (bool/1)
+	var 4: t.4 (u8*/8)
+	; 34 pc
 	; begin initialize global variables
 	const global, 0
 	; end initialize global variables
@@ -54,18 +50,16 @@
 	jump @while_2
 @if_3_end:
 	; 19:3 if n < 2
-	const t.5, 2
-	lt t.4, n, t.5
-	branch t.4, false, @while_2, @if_4_then
-	const t.6, [string-1]
-	call printString@@u8[t.6]
+	lt t.3, n, 2
+	branch t.3, false, @while_2, @if_4_then
+	const t.4, [string-1]
+	call printString@@u8[t.4]
 @while_2:
 	const t.1, [string-0]
 	call printString@@u8[t.1]
 	call n = next[] -> u8
 	; 15:3 if n == 3
-	const t.3, 3
-	equals t.2, n, t.3
+	equals t.2, n, 3
 	branch t.2, false, @if_3_end, @main_ret
 
 @printStringLength@@u8@i64:

@@ -82,7 +82,6 @@ start:
         ;   rsp+0: var length
         ;   rsp+8: var t.2
         ;   rsp+9: var t.3
-        ;   rsp+10: var t.4
 @strlen@@u8:
         ; reserve space for local variables
         sub rsp, 16
@@ -112,16 +111,10 @@ start:
         mov al, [rbx]
         lea rbx, [rsp+9]
         mov [rbx], al
-        ; const t.4, 0
-        mov al, 0
-        lea rbx, [rsp+10]
-        mov [rbx], al
-        ; notequals t.2, t.3, t.4
+        ; notequals t.2, t.3, 0
         lea rax, [rsp+9]
         mov bl, [rax]
-        lea rax, [rsp+10]
-        mov cl, [rax]
-        cmp bl, cl
+        cmp bl, 0
         setne bl
         lea rax, [rsp+8]
         mov [rax], bl
@@ -169,7 +162,6 @@ start:
         ; void printNibble@u8
         ;   rsp+24: arg x
         ;   rsp+0: var t.1
-        ;   rsp+1: var t.2
 @printNibble@u8:
         ; reserve space for local variables
         sub rsp, 16
@@ -180,16 +172,10 @@ start:
         lea rax, [rsp+24]
         mov [rax], bl
         ; 5:2 if x > 9
-        ; const t.2, 9
-        mov al, 9
-        lea rbx, [rsp+1]
-        mov [rbx], al
-        ; gt t.1, x, t.2
+        ; gt t.1, x, 9
         lea rax, [rsp+24]
         mov bl, [rax]
-        lea rax, [rsp+1]
-        mov cl, [rax]
-        cmp bl, cl
+        cmp bl, 9
         seta bl
         lea rax, [rsp+0]
         mov [rax], bl
@@ -272,15 +258,9 @@ start:
         ;   rsp+27: var t.14
         ;   rsp+28: var t.15
         ;   rsp+29: var t.16
-        ;   rsp+30: var t.17
-        ;   rsp+31: var t.18
-        ;   rsp+32: var t.19
-        ;   rsp+33: var t.20
-        ;   rsp+34: var t.21
-        ;   rsp+35: var t.22
 @main:
         ; reserve space for local variables
-        sub rsp, 48
+        sub rsp, 32
         ; const t.2, [string-0]
         lea rax, [string_0]
         lea rbx, [rsp+8]
@@ -299,41 +279,35 @@ start:
         jmp @for_3
 @for_3_body:
         ; 20:3 if i & 7 == 0
-        ; move t.6, i
+        ; move t.5, i
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+19]
+        lea rax, [rsp+18]
         mov [rax], bl
-        ; and t.6, t.6, 7
-        lea rax, [rsp+19]
+        ; and t.5, t.5, 7
+        lea rax, [rsp+18]
         mov bl, [rax]
         and bl, 7
-        lea rax, [rsp+19]
+        lea rax, [rsp+18]
         mov [rax], bl
-        ; const t.7, 0
-        mov al, 0
-        lea rbx, [rsp+20]
-        mov [rbx], al
-        ; equals t.5, t.6, t.7
-        lea rax, [rsp+19]
+        ; equals t.4, t.5, 0
+        lea rax, [rsp+18]
         mov bl, [rax]
-        lea rax, [rsp+20]
-        mov cl, [rax]
-        cmp bl, cl
+        cmp bl, 0
         sete bl
-        lea rax, [rsp+18]
+        lea rax, [rsp+17]
         mov [rax], bl
-        ; branch t.5, false, @if_4_end, @if_4_then
-        lea rax, [rsp+18]
+        ; branch t.4, false, @if_4_end, @if_4_then
+        lea rax, [rsp+17]
         mov bl, [rax]
         or bl, bl
         jz @if_4_end
-        ; const t.8, 32
+        ; const t.6, 32
         mov al, 32
-        lea rbx, [rsp+21]
+        lea rbx, [rsp+19]
         mov [rbx], al
-        ; call printChar@u8[t.8]
-        lea rax, [rsp+21]
+        ; call printChar@u8[t.6]
+        lea rax, [rsp+19]
         mov bl, [rax]
         push rbx
           call @printChar@u8
@@ -352,16 +326,10 @@ start:
         lea rax, [rsp+0]
         mov [rax], bl
 @for_3:
-        ; const t.4, 16
-        mov al, 16
-        lea rbx, [rsp+17]
-        mov [rbx], al
-        ; lt t.3, i, t.4
+        ; lt t.3, i, 16
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+17]
-        mov cl, [rax]
-        cmp bl, cl
+        cmp bl, 16
         setb bl
         lea rax, [rsp+16]
         mov [rax], bl
@@ -370,12 +338,12 @@ start:
         mov bl, [rax]
         or bl, bl
         jnz @for_3_body
-        ; const t.9, 10
+        ; const t.7, 10
         mov al, 10
-        lea rbx, [rsp+22]
+        lea rbx, [rsp+20]
         mov [rbx], al
-        ; call printChar@u8[t.9]
-        lea rax, [rsp+22]
+        ; call printChar@u8[t.7]
+        lea rax, [rsp+20]
         mov bl, [rax]
         push rbx
           call @printChar@u8
@@ -388,32 +356,26 @@ start:
         jmp @for_5
 @for_5_body:
         ; 28:3 if i & 15 == 0
-        ; move t.13, i
+        ; move t.10, i
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+26]
+        lea rax, [rsp+23]
         mov [rax], bl
-        ; and t.13, t.13, 15
-        lea rax, [rsp+26]
+        ; and t.10, t.10, 15
+        lea rax, [rsp+23]
         mov bl, [rax]
         and bl, 15
-        lea rax, [rsp+26]
+        lea rax, [rsp+23]
         mov [rax], bl
-        ; const t.14, 0
-        mov al, 0
-        lea rbx, [rsp+27]
-        mov [rbx], al
-        ; equals t.12, t.13, t.14
-        lea rax, [rsp+26]
+        ; equals t.9, t.10, 0
+        lea rax, [rsp+23]
         mov bl, [rax]
-        lea rax, [rsp+27]
-        mov cl, [rax]
-        cmp bl, cl
+        cmp bl, 0
         sete bl
-        lea rax, [rsp+25]
+        lea rax, [rsp+22]
         mov [rax], bl
-        ; branch t.12, false, @if_6_end, @if_6_then
-        lea rax, [rsp+25]
+        ; branch t.9, false, @if_6_end, @if_6_then
+        lea rax, [rsp+22]
         mov bl, [rax]
         or bl, bl
         jz @if_6_end
@@ -425,41 +387,35 @@ start:
         add rsp, 8
 @if_6_end:
         ; 31:3 if i & 7 == 0
-        ; move t.16, i
+        ; move t.12, i
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+29]
+        lea rax, [rsp+25]
         mov [rax], bl
-        ; and t.16, t.16, 7
-        lea rax, [rsp+29]
+        ; and t.12, t.12, 7
+        lea rax, [rsp+25]
         mov bl, [rax]
         and bl, 7
-        lea rax, [rsp+29]
+        lea rax, [rsp+25]
         mov [rax], bl
-        ; const t.17, 0
-        mov al, 0
-        lea rbx, [rsp+30]
-        mov [rbx], al
-        ; equals t.15, t.16, t.17
-        lea rax, [rsp+29]
+        ; equals t.11, t.12, 0
+        lea rax, [rsp+25]
         mov bl, [rax]
-        lea rax, [rsp+30]
-        mov cl, [rax]
-        cmp bl, cl
+        cmp bl, 0
         sete bl
-        lea rax, [rsp+28]
+        lea rax, [rsp+24]
         mov [rax], bl
-        ; branch t.15, false, @if_7_end, @if_7_then
-        lea rax, [rsp+28]
+        ; branch t.11, false, @if_7_end, @if_7_then
+        lea rax, [rsp+24]
         mov bl, [rax]
         or bl, bl
         jz @if_7_end
-        ; const t.18, 32
+        ; const t.13, 32
         mov al, 32
-        lea rbx, [rsp+31]
+        lea rbx, [rsp+26]
         mov [rbx], al
-        ; call printChar@u8[t.18]
-        lea rax, [rsp+31]
+        ; call printChar@u8[t.13]
+        lea rax, [rsp+26]
         mov bl, [rax]
         push rbx
           call @printChar@u8
@@ -472,41 +428,35 @@ start:
           call @printChar@u8
         add rsp, 8
         ; 35:3 if i & 15 == 15
-        ; move t.20, i
+        ; move t.15, i
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+33]
+        lea rax, [rsp+28]
         mov [rax], bl
-        ; and t.20, t.20, 15
-        lea rax, [rsp+33]
+        ; and t.15, t.15, 15
+        lea rax, [rsp+28]
         mov bl, [rax]
         and bl, 15
-        lea rax, [rsp+33]
+        lea rax, [rsp+28]
         mov [rax], bl
-        ; const t.21, 15
-        mov al, 15
-        lea rbx, [rsp+34]
-        mov [rbx], al
-        ; equals t.19, t.20, t.21
-        lea rax, [rsp+33]
+        ; equals t.14, t.15, 15
+        lea rax, [rsp+28]
         mov bl, [rax]
-        lea rax, [rsp+34]
-        mov cl, [rax]
-        cmp bl, cl
+        cmp bl, 15
         sete bl
-        lea rax, [rsp+32]
+        lea rax, [rsp+27]
         mov [rax], bl
-        ; branch t.19, false, @for_5_continue, @if_8_then
-        lea rax, [rsp+32]
+        ; branch t.14, false, @for_5_continue, @if_8_then
+        lea rax, [rsp+27]
         mov bl, [rax]
         or bl, bl
         jz @for_5_continue
-        ; const t.22, 10
+        ; const t.16, 10
         mov al, 10
-        lea rbx, [rsp+35]
+        lea rbx, [rsp+29]
         mov [rbx], al
-        ; call printChar@u8[t.22]
-        lea rax, [rsp+35]
+        ; call printChar@u8[t.16]
+        lea rax, [rsp+29]
         mov bl, [rax]
         push rbx
           call @printChar@u8
@@ -519,26 +469,20 @@ start:
         lea rax, [rsp+1]
         mov [rax], bl
 @for_5:
-        ; const t.11, 128
-        mov al, 128
-        lea rbx, [rsp+24]
-        mov [rbx], al
-        ; lt t.10, i, t.11
+        ; lt t.8, i, 128
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+24]
-        mov cl, [rax]
-        cmp bl, cl
+        cmp bl, 128
         setb bl
-        lea rax, [rsp+23]
+        lea rax, [rsp+21]
         mov [rax], bl
-        ; branch t.10, true, @for_5_body, @main_ret
-        lea rax, [rsp+23]
+        ; branch t.8, true, @for_5_body, @main_ret
+        lea rax, [rsp+21]
         mov bl, [rax]
         or bl, bl
         jnz @for_5_body
         ; release space for local variables
-        add rsp, 48
+        add rsp, 32
         ret
 
         ; void printStringLength@@u8@i64

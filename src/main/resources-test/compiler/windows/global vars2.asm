@@ -53,7 +53,6 @@ start:
         ;   rsp+0: var length
         ;   rsp+8: var t.2
         ;   rsp+9: var t.3
-        ;   rsp+10: var t.4
 @strlen@@u8:
         ; reserve space for local variables
         sub rsp, 16
@@ -83,16 +82,10 @@ start:
         mov al, [rbx]
         lea rbx, [rsp+9]
         mov [rbx], al
-        ; const t.4, 0
-        mov al, 0
-        lea rbx, [rsp+10]
-        mov [rbx], al
-        ; notequals t.2, t.3, t.4
+        ; notequals t.2, t.3, 0
         lea rax, [rsp+9]
         mov bl, [rax]
-        lea rax, [rsp+10]
-        mov cl, [rax]
-        cmp bl, cl
+        cmp bl, 0
         setne bl
         lea rax, [rsp+8]
         mov [rax], bl
@@ -140,9 +133,7 @@ start:
         ;   rsp+8: var t.1
         ;   rsp+16: var t.2
         ;   rsp+17: var t.3
-        ;   rsp+18: var t.4
-        ;   rsp+19: var t.5
-        ;   rsp+24: var t.6
+        ;   rsp+24: var t.4
 @main:
         ; reserve space for local variables
         sub rsp, 32
@@ -156,29 +147,23 @@ start:
         jmp @while_2
 @if_3_end:
         ; 19:3 if n < 2
-        ; const t.5, 2
-        mov al, 2
-        lea rbx, [rsp+19]
-        mov [rbx], al
-        ; lt t.4, n, t.5
+        ; lt t.3, n, 2
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+19]
-        mov cl, [rax]
-        cmp bl, cl
+        cmp bl, 2
         setb bl
-        lea rax, [rsp+18]
+        lea rax, [rsp+17]
         mov [rax], bl
-        ; branch t.4, false, @while_2, @if_4_then
-        lea rax, [rsp+18]
+        ; branch t.3, false, @while_2, @if_4_then
+        lea rax, [rsp+17]
         mov bl, [rax]
         or bl, bl
         jz @while_2
-        ; const t.6, [string-1]
+        ; const t.4, [string-1]
         lea rax, [string_1]
         lea rbx, [rsp+24]
         mov [rbx], rax
-        ; call printString@@u8[t.6]
+        ; call printString@@u8[t.4]
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
@@ -202,16 +187,10 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 15:3 if n == 3
-        ; const t.3, 3
-        mov al, 3
-        lea rbx, [rsp+17]
-        mov [rbx], al
-        ; equals t.2, n, t.3
+        ; equals t.2, n, 3
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+17]
-        mov cl, [rax]
-        cmp bl, cl
+        cmp bl, 3
         sete bl
         lea rax, [rsp+16]
         mov [rax], bl

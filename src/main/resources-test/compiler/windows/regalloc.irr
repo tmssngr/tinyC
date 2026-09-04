@@ -46,8 +46,7 @@
 	var 2: b (i16/2)
 	var 3: c (i16/2)
 	var 4: t.4 (bool/1)
-	var 5: t.5 (u8/1)
-	; 47 pc
+	; 43 pc
 	const a, 0
 	const b, 1
 	; 22:2 while i > 0
@@ -59,8 +58,7 @@
 	move a, b
 	move b, c
 @while_2:
-	const t.5, 0
-	gt t.4, i, t.5
+	gt t.4, i, 0
 	branch t.4, true, @while_2_body, @while_2_break
 	; 28:9 return a
 	ret a

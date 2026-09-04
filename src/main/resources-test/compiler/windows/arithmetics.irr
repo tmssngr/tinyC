@@ -19,12 +19,11 @@
 	var 6: t.6 (u8*/8)
 	var 7: t.7 (i64/8)
 	var 8: t.8 (bool/1)
-	var 9: t.9 (i64/8)
-	var 10: t.10 (u8*/8)
-	var 11: t.11 (i64/8)
+	var 9: t.9 (u8*/8)
+	var 10: t.10 (i64/8)
+	var 11: t.11 (u8/1)
 	var 12: t.12 (u8/1)
-	var 13: t.13 (u8/1)
-	; 104 pc
+	; 100 pc
 	const pos, 20
 	; 28:2 while true
 @while_1:
@@ -40,16 +39,15 @@
 	add t.6, t.6, t.7
 	store [t.6], digit
 	; 34:3 if number == 0
-	const t.9, 0
-	equals t.8, number, t.9
+	equals t.8, number, 0
 	branch t.8, false, @while_1, @while_1_break
-	cast t.11(i64), pos(u8)
-	addrof t.10, [buffer]
-	add t.10, t.10, t.11
-	const t.13, 20
-	move t.12, t.13
-	sub t.12, t.12, pos
-	call printStringLength@@u8@u8[t.10, t.12]
+	cast t.10(i64), pos(u8)
+	addrof t.9, [buffer]
+	add t.9, t.9, t.10
+	const t.12, 20
+	move t.11, t.12
+	sub t.11, t.11, pos
+	call printStringLength@@u8@u8[t.9, t.11]
 
 @printIntLf@i16:
  Local variables
@@ -63,21 +61,19 @@
  Local variables
 	arg 0: number (i64/8)
 	var 1: t.1 (bool/1)
-	var 2: t.2 (i64/8)
+	var 2: t.2 (u8/1)
 	var 3: t.3 (u8/1)
-	var 4: t.4 (u8/1)
-	; 30 pc
+	; 26 pc
 	; 54:2 if number < 0
-	const t.2, 0
-	lt t.1, number, t.2
+	lt t.1, number, 0
 	branch t.1, false, @if_3_end, @if_3_then
-	const t.3, 45
-	call printChar@u8[t.3]
+	const t.2, 45
+	call printChar@u8[t.2]
 	neg number, number
 @if_3_end:
 	call printUint@i64[number]
-	const t.4, 10
-	call printChar@u8[t.4]
+	const t.3, 10
+	call printChar@u8[t.3]
 
 @printStringLength@@u8@u8:
  Local variables
