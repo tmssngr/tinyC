@@ -110,7 +110,10 @@ public final class DetectVarLiveness {
 		case IRCompare compare -> {
 			defined(compare.target(), defines);
 			uses(compare.left(), uses);
-			uses(compare.right(), uses);
+			final IRVar rightVar = compare.right().var();
+			if (rightVar != null) {
+				uses(rightVar, uses);
+			}
 		}
 		case IRJump ignored -> {
 		}
