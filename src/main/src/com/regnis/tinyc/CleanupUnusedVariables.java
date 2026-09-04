@@ -35,7 +35,16 @@ public abstract class CleanupUnusedVariables {
 		case IRCast cast -> readWrite(cast.target(), List.of(cast.source()));
 		case IRComment ignored -> {
 		}
-		case IRCompare compare -> readWrite(compare.target(), List.of(compare.left(), compare.right()));
+		case IRCompare compare -> {
+			final IRValue right = compare.right();
+			final IRVar rightVar = right.var();
+			if (rightVar != null) {
+				readWrite(compare.target(), List.of(compare.left(), rightVar));
+			}
+			else {
+				readWrite(compare.target(), List.of(compare.left()));
+			}
+		}
 		case IRLabel ignored -> {
 		}
 		case IRJump ignored -> {
