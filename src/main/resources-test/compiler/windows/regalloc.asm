@@ -131,7 +131,6 @@ start:
         ;   rsp+2: var b
         ;   rsp+4: var c
         ;   rsp+6: var t.4
-        ;   rsp+7: var t.5
 @fibonacci@u8:
         ; reserve space for local variables
         sub rsp, 16
@@ -176,16 +175,10 @@ start:
         lea rax, [rsp+2]
         mov [rax], bx
 @while_2:
-        ; const t.5, 0
-        mov al, 0
-        lea rbx, [rsp+7]
-        mov [rbx], al
-        ; gt t.4, i, t.5
+        ; gt t.4, i, 0
         lea rax, [rsp+24]
         mov bl, [rax]
-        lea rax, [rsp+7]
-        mov cl, [rax]
-        cmp bl, cl
+        cmp bl, 0
         seta bl
         lea rax, [rsp+6]
         mov [rax], bl

@@ -590,13 +590,23 @@ public final class X86Win64 extends AsmWriter {
 	private void writeCompare(String command, IRCompare compare) throws IOException {
 		final int leftReg = loadVar(compare.left());
 		final String leftRegName = getRegName(leftReg, compare.left());
-		final int rightReg = loadVar(compare.right());
-		final String rightRegName = getRegName(rightReg, compare.right());
-		writeIndented("cmp " + leftRegName + ", " + rightRegName);
-		writeIndented(command + " " + getRegName(leftReg, 1));
-		storeVar(compare.target(), leftReg);
-		free(rightReg);
-		free(leftReg);
+		final IRValue right = compare.right();
+		final IRVar rightVar = right.var();
+		if (rightVar != null) {
+			final int rightReg = loadVar(rightVar);
+			final String rightRegName = getRegName(rightReg, rightVar);
+			writeIndented("cmp " + leftRegName + ", " + rightRegName);
+			writeIndented(command + " " + getRegName(leftReg, 1));
+			storeVar(compare.target(), leftReg);
+			free(rightReg);
+			free(leftReg);
+		}
+		else {
+			writeIndented("cmp " + leftRegName + ", " + right.value());
+			writeIndented(command + " " + getRegName(leftReg, 1));
+			storeVar(compare.target(), leftReg);
+			free(leftReg);
+		}
 	}
 
 	private void writeMovx(String targetRegName, int sourceReg, IRVar sourceVar, boolean signed) throws IOException {

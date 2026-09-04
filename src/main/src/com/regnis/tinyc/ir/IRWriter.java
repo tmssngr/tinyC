@@ -183,7 +183,11 @@ public final class IRWriter extends TextWriter {
 			}
 			case IRCompare i -> {
 				sum += getInstructionTime(i.left());
-				sum += getInstructionTime(i.right());
+				final IRValue right = i.right();
+				final IRVar rightVar = right.var();
+				if (rightVar != null) {
+					sum += getInstructionTime(rightVar);
+				}
 				sum++;
 				sum += getInstructionTime(i.target());
 			}
