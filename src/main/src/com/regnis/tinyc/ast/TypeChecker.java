@@ -192,6 +192,9 @@ public final class TypeChecker {
 
 			for (Statement statement : statements) {
 				processStatement(statement);
+				if (statement instanceof StmtBreakContinue) {
+					break;
+				}
 			}
 
 			return this.statements;

@@ -573,6 +573,59 @@ public class TypeCheckerTest {
 				            }""");
 	}
 
+	@Test
+	public void testBreakContinue() {
+		assertEquals(new Program(List.of(),
+		                         List.of(),
+		                         List.of(
+				                         Function.typedInstance("print", "void", Type.VOID, List.of(),
+				                                                List.of(),
+				                                                List.of(
+				                                                ),
+				                                                List.of(), loc(0, 0)),
+				                         Function.typedInstance("breakTest", "void", Type.VOID, List.of(),
+				                                                List.of(),
+				                                                List.of(
+						                                                new StmtLoop(new ExprBoolLiteral(true, loc(3, 9)),
+						                                                             List.of(
+								                                                             new StmtExpr(new ExprFuncCall("print", Type.VOID, List.of(), loc(4, 4))),
+								                                                             new StmtBreakContinue(true, loc(5, 4))
+						                                                             ), List.of(), loc(3, 2))
+				                                                ),
+				                                                List.of(), loc(2, 0)),
+				                         Function.typedInstance("continueTest", "void", Type.VOID, List.of(),
+				                                                List.of(),
+				                                                List.of(
+						                                                new StmtLoop(new ExprBoolLiteral(true, loc(10, 9)),
+						                                                             List.of(
+								                                                             new StmtExpr(new ExprFuncCall("print", Type.VOID, List.of(), loc(11, 4))),
+								                                                             new StmtBreakContinue(false, loc(12, 4))
+						                                                             ), List.of(), loc(10, 2))
+				                                                ),
+				                                                List.of(), loc(9, 0))
+		                         ),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             checkType("""
+				                       void print() {
+				                       }
+				                       void breakTest() {
+				                         while (true) {
+				                           print();
+				                           break;
+				                           print();
+				                         }
+				                       }
+				                       void continueTest() {
+				                         while (true) {
+				                           print();
+				                           continue;
+				                           print();
+				                         }
+				                       }"""));
+	}
+
 	private void testIllegalStatement(String expectedMessage, int column, String illegalOperation) {
 		try {
 			testStatement(illegalOperation);
