@@ -2,11 +2,9 @@
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
-	var 2: t.2 (u8/1)
-	; 12 pc
+	; 8 pc
 	addrof t.1, chr
-	const t.2, 1
-	call printStringLength@@u8@u8[t.1, t.2]
+	call printStringLength@@u8@u8[t.1, 1]
 @printChar@u8_ret:
 
 @printUint@u8:
@@ -90,16 +88,12 @@
 	var 0: c (i64/8)
 	var 1: onePtr (u8*/8)
 	var 2: twoPtr (u8*/8)
-	var 3: t.3 (u8/1)
-	var 4: t.4 (bool/1)
+	var 3: t.3 (bool/1)
+	var 4: t.4 (u8/1)
 	var 5: t.5 (u8/1)
-	var 6: t.6 (u8/1)
-	var 7: t.7 (u8/1)
-	var 8: t.8 (u8/1)
-	var 9: t.9 (u8*/8)
-	var 10: t.10 (i64/8)
-	var 11: t.11 (u8/1)
-	; 80 pc
+	var 6: t.6 (u8*/8)
+	var 7: t.7 (i64/8)
+	; 64 pc
 	; begin initialize global variables
 	const zero, 48
 	const one, 49
@@ -107,23 +101,19 @@
 	const threeFour, 34
 	; end initialize global variables
 	const t.3, 1
-	const t.4, 1
-	const t.5, 2
-	const t.6, 3
-	call c = unusedArgs@u8@bool@u8@u8[t.3, t.4, t.5, t.6] -> i64
+	call c = unusedArgs@u8@bool@u8@u8[1, t.3, 2, 3] -> i64
 	call printChar@u8[zero]
 	addrof onePtr, one
-	load t.7, [onePtr]
-	call printChar@u8[t.7]
+	load t.4, [onePtr]
+	call printChar@u8[t.4]
 	addrof twoPtr, two
-	const t.10, 0
-	move t.9, twoPtr
-	add t.9, t.9, t.10
-	load t.8, [t.9]
-	call printChar@u8[t.8]
+	const t.7, 0
+	move t.6, twoPtr
+	add t.6, t.6, t.7
+	load t.5, [t.6]
+	call printChar@u8[t.5]
 	call printUint@u8[threeFour]
-	const t.11, 10
-	call printChar@u8[t.11]
+	call printChar@u8[10]
 @main_ret:
 
 @printStringLength@@u8@i64:

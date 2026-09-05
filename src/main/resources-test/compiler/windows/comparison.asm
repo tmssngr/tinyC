@@ -51,7 +51,6 @@ start:
         ; void printChar@u8
         ;   rsp+24: arg chr
         ;   rsp+0: var t.1
-        ;   rsp+8: var t.2
 @printChar@u8:
         ; reserve space for local variables
         sub rsp, 16
@@ -59,17 +58,12 @@ start:
         lea rax, [rsp+24]
         lea rbx, [rsp+0]
         mov [rbx], rax
-        ; const t.2, 1
-        mov al, 1
-        lea rbx, [rsp+8]
-        mov [rbx], al
-        ; call printStringLength@@u8@u8[t.1, t.2]
+        ; call printStringLength@@u8@u8[t.1, 1]
         lea rax, [rsp+0]
         mov rbx, [rax]
         push rbx
-        lea rax, [rsp+16]
-        mov bl, [rax]
-        push rbx
+        mov  rax, 1
+        push rax
         sub rsp, 8
           call @printStringLength@@u8@u8
         add rsp, 24
@@ -258,8 +252,6 @@ start:
         ; void printIntLf@i64
         ;   rsp+24: arg number
         ;   rsp+0: var t.1
-        ;   rsp+1: var t.2
-        ;   rsp+2: var t.3
 @printIntLf@i64:
         ; reserve space for local variables
         sub rsp, 16
@@ -276,14 +268,9 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_3_end
-        ; const t.2, 45
-        mov al, 45
-        lea rbx, [rsp+1]
-        mov [rbx], al
-        ; call printChar@u8[t.2]
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        push rbx
+        ; call printChar@u8[45]
+        mov  rax, 45
+        push rax
           call @printChar@u8
         add rsp, 8
         ; neg number, number
@@ -299,14 +286,9 @@ start:
         push rbx
           call @printUint@i64
         add rsp, 8
-        ; const t.3, 10
-        mov al, 10
-        lea rbx, [rsp+2]
-        mov [rbx], al
-        ; call printChar@u8[t.3]
-        lea rax, [rsp+2]
-        mov bl, [rax]
-        push rbx
+        ; call printChar@u8[10]
+        mov  rax, 10
+        push rax
           call @printChar@u8
         add rsp, 8
         ; release space for local variables

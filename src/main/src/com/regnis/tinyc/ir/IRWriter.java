@@ -168,8 +168,11 @@ public final class IRWriter extends TextWriter {
 				sum++;
 			}
 			case IRCall i -> {
-				for (IRVar arg : i.args()) {
-					sum += getInstructionTime(arg);
+				for (IRValue arg : i.args()) {
+					final IRVar var = arg.var();
+					if (var != null) {
+						sum += getInstructionTime(var);
+					}
 				}
 				sum++;
 				if (i.target() != null) {

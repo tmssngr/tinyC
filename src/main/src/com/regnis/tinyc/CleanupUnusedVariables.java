@@ -26,7 +26,14 @@ public abstract class CleanupUnusedVariables {
 		}
 		case IRBranch branch -> read(List.of(branch.conditionVar()));
 		case IRCall call -> {
-			read(call.args());
+			final List<IRVar> argVars = new ArrayList<>();
+			for (IRValue arg : call.args()) {
+				final IRVar var = arg.var();
+				if (var != null) {
+					argVars.add(var);
+				}
+			}
+			read(argVars);
 			final IRVar target = call.target();
 			if (target != null) {
 				write(target);

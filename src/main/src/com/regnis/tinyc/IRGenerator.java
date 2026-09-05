@@ -580,9 +580,9 @@ public final class IRGenerator {
 	}
 
 	private void writeCall(@Nullable IRVar var, ExprFuncCall call) {
-		final List<IRVar> args = new ArrayList<>();
+		final List<IRValue> args = new ArrayList<>();
 		for (Expression expression : call.argExpressions()) {
-			args.add(writeExpression(expression));
+			args.add(writeExpressionAsValue(expression));
 		}
 		write(new IRCall(var, Objects.requireNonNull(call.type()), call.name(), args, call.location()));
 	}
