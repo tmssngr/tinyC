@@ -26,9 +26,13 @@ public abstract class IRVarReplacer {
 			}
 			case IRBranch branch -> new IRBranch(replace(branch.conditionVar()), branch.jumpOnTrue(), branch.target(), branch.nextLabel());
 			case IRCall call -> {
-				final List<IRVar> args = new ArrayList<>();
-				for (IRVar arg : call.args()) {
-					args.add(replace(arg));
+				final List<IRValue> args = new ArrayList<>();
+				for (IRValue arg : call.args()) {
+					final IRVar argVar = arg.var();
+					if (argVar != null) {
+						replace(argVar);
+					}
+					args.add(arg);
 				}
 				IRVar target = call.target();
 				if (target != null) {
