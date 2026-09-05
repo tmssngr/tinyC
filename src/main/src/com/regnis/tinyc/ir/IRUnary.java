@@ -17,7 +17,12 @@ public record IRUnary(@NotNull Op op, @NotNull IRVar target, @NotNull IRVar sour
 	@NotNull
 	@Override
 	public String toString() {
-		return op.toString().toLowerCase() + " " + target + ", " + source;
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
+		return op.toString().toLowerCase() + " " + target.toString(comment) + ", " + source.toString(comment);
 	}
 
 	public enum Op {

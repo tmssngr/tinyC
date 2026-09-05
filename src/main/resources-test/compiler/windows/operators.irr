@@ -1,550 +1,452 @@
 printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	var 1: length (i64/8)
-	; 10 pc
-	call length = strlen@@u8[str] -> i64
-	call printStringLength@@u8@i64[str, length]
+	; 6 pc
+	move str{r6}, str{r1}
+	move str{r1}, str{r6}
+	call length{r0} = strlen@@u8[str{r1}] -> i64
+	move str{r1}, str{r6}
+	move length{r2}, length{r0}
+	call printStringLength@@u8@i64[str{r1}, length{r2}]
 
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	var 1: t.1 (u8*/8)
-	; 8 pc
-	addrof t.1, chr
-	call printStringLength@@u8@u8[t.1, 1]
+	; 7 pc
+	move chr, chr{r1}
+	addrof t.1{r1}, chr
+	const arg.0.1{r2}, 1
+	call printStringLength@@u8@u8[t.1{r1}, arg.0.1{r2}]
 
 printUint@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
-	var 2: pos (u8/1)
-	var 3: remainder (i64/8)
-	var 4: digit (u8/1)
-	var 5: t.5 (u8/1)
-	var 6: t.6 (u8*/8)
-	var 7: t.7 (i64/8)
-	var 8: t.8 (u8*/8)
-	var 9: t.9 (i64/8)
-	var 10: t.10 (u8/1)
-	var 11: t.11 (u8/1)
-	; 95 pc
-	const pos, 20
+	; 23 pc
+	move number{r6}, number{r1}
+	const pos{r7}, 20
 	; 28:2 while true
 while_1:
-	sub pos, pos, 1
-	move remainder, number
-	mod remainder, remainder, 10
-	div number, number, 10
-	cast t.5(u8), remainder(i64)
-	move digit, t.5
-	add digit, digit, 48
-	cast t.7(i64), pos(u8)
-	addrof t.6, [buffer]
-	add t.6, t.6, t.7
-	store [t.6], digit
+	sub pos{r7}, pos{r7}, 1
+	move remainder{r3}, number{r6}
+	move remainder{r0}, remainder{r3}
+	mod remainder{r2}, remainder{r0}, 10
+	move remainder{r3}, remainder{r2}
+	move number{r0}, number{r6}
+	div number{r0}, number{r0}, 10
+	move number{r6}, number{r0}
+	cast t.5{r0}(u8), remainder{r3}(i64)
+	add digit{r0}, digit{r0}, 48
+	cast t.7{r3}(i64), pos{r7}(u8)
+	addrof t.6{r4}, [buffer]
+	add t.6{r4}, t.6{r4}, t.7{r3}
+	store [t.6{r4}], digit{r0}
 	; 34:3 if number == 0
-	branch number notequals 0: while_1, while_1_break
-	cast t.9(i64), pos(u8)
-	addrof t.8, [buffer]
-	add t.8, t.8, t.9
-	const t.11, 20
-	move t.10, t.11
-	sub t.10, t.10, pos
-	call printStringLength@@u8@u8[t.8, t.10]
+	branch number{r6} notequals 0: while_1, while_1_break
+	cast t.9{r6}(i64), pos{r7}(u8)
+	addrof t.8{r1}, [buffer]
+	add t.8{r1}, t.8{r1}, t.9{r6}
+	const t.11{r6}, 20
+	move t.10{r2}, t.11{r6}
+	sub t.10{r2}, t.10{r2}, pos{r7}
+	call printStringLength@@u8@u8[t.8{r1}, t.10{r2}]
 
 printIntLf@bool:
  Local variables
 	arg 0: number (bool/1)
-	var 1: t.1 (i64/8)
-	; 8 pc
-	cast t.1(i64), number(bool)
-	call printIntLf@i64[t.1]
+	; 2 pc
+	cast t.1{r1}(i64), number{r1}(bool)
+	call printIntLf@i64[t.1{r1}]
 
 printIntLf@u8:
  Local variables
 	arg 0: number (u8/1)
-	var 1: t.1 (i64/8)
-	; 8 pc
-	cast t.1(i64), number(u8)
-	call printIntLf@i64[t.1]
+	; 2 pc
+	cast t.1{r1}(i64), number{r1}(u8)
+	call printIntLf@i64[t.1{r1}]
 
 printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
-	var 1: t.1 (i64/8)
-	; 8 pc
-	cast t.1(i64), number(i16)
-	call printIntLf@i64[t.1]
+	; 2 pc
+	cast t.1{r1}(i64), number{r1}(i16)
+	call printIntLf@i64[t.1{r1}]
 
 printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
-	; 13 pc
-	branch number gteq 0: if_3_end, if_3_then
-	call printChar@u8[45]
-	neg number, number
+	; 7 pc
+	move number{r6}, number{r1}
+	; 54:2 if number < 0
+	branch number{r6} gteq 0: if_3_end, if_3_then
+	const arg.0.0{r1}, 45
+	call printChar@u8[arg.0.0{r1}]
+	neg number{r6}, number{r6}
 if_3_end:
-	call printUint@i64[number]
-	call printChar@u8[10]
+	move number{r1}, number{r6}
+	call printUint@i64[number{r1}]
+	const arg.2.0{r1}, 10
+	call printChar@u8[arg.2.0{r1}]
 
 strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	var 1: length (i64/8)
-	var 2: t.2 (u8/1)
-	; 25 pc
-	const length, 0
+	; 6 pc
+	const length{r0}, 0
 	; 64:2 for *str != 0
 	jump for_4
 for_4_body:
-	add length, length, 1
-	add str, str, 1
+	add length{r0}, length{r0}, 1
+	add str{r1}, str{r1}, 1
 for_4:
-	load t.2, [str]
-	branch t.2 notequals 0: for_4_body, for_4_break
+	load t.2{r2}, [str{r1}]
+	branch t.2{r2} notequals 0: for_4_body, for_4_break
 	; 67:9 return length
-	ret length
 
 printStringLength@@u8@u8:
  Local variables
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
-	var 2: t.2 (i64/8)
-	; 10 pc
-	cast t.2(i64), length(u8)
-	call printStringLength@@u8@i64[str, t.2]
+	; 2 pc
+	cast t.2{r2}(i64), length{r2}(u8)
+	call printStringLength@@u8@i64[str{r1}, t.2{r2}]
 
 getTrue:
- Local variables
-	var 0: t.0 (u8*/8)
-	var 1: t.1 (bool/1)
-	; 11 pc
-	const t.0, [string-0]
-	call printString@@u8[t.0]
+	; 2 pc
+	const t.0{r1}, [string-0]
+	call printString@@u8[t.0{r1}]
 	; 3:49 return true
-	const t.1, 1
-	ret t.1
+	const t.1{r0}, 1
 
 getFalse:
- Local variables
-	var 0: t.0 (u8*/8)
-	var 1: t.1 (bool/1)
-	; 11 pc
-	const t.0, [string-1]
-	call printString@@u8[t.0]
+	; 2 pc
+	const t.0{r1}, [string-1]
+	call printString@@u8[t.0{r1}]
 	; 4:49 return false
-	const t.1, 0
-	ret t.1
+	const t.1{r0}, 0
 
 printPass:
- Local variables
-	var 0: t.0 (u8*/8)
-	; 6 pc
-	const t.0, [string-2]
-	call printString@@u8[t.0]
+	; 2 pc
+	const t.0{r1}, [string-2]
+	call printString@@u8[t.0{r1}]
 
 printError:
- Local variables
-	var 0: t.0 (u8*/8)
-	; 6 pc
-	const t.0, [string-3]
-	call printString@@u8[t.0]
+	; 2 pc
+	const t.0{r1}, [string-3]
+	call printString@@u8[t.0{r1}]
 
 logicNot:
- Local variables
-	var 0: t (bool/1)
-	var 1: f (bool/1)
-	var 2: t.2 (u8*/8)
-	var 3: t.3 (bool/1)
-	var 4: t.4 (bool/1)
-	var 5: t.5 (bool/1)
-	var 6: t.6 (bool/1)
-	; 44 pc
-	const t.2, [string-4]
-	call printString@@u8[t.2]
-	const t, 1
-	const f, 0
+	; 16 pc
+	const t.2{r1}, [string-4]
+	call printString@@u8[t.2{r1}]
+	const t{r6}, 1
+	const f{r7}, 0
 	; 13:2 if !getFalse([])
-	call t.3 = getFalse[] -> bool
-	branch t.3 equals 0: if_5_then, if_5_else
+	call t.3{r0} = getFalse[] -> bool
+	branch t.3{r0} equals 0: if_5_then, if_5_else
 	call printError[]
 	jump if_5_end
 if_5_then:
 	call printPass[]
 if_5_end:
-	notlog t.4, f
-	call printIntLf@bool[t.4]
+	notlog t.4{r1}, f{r7}
+	call printIntLf@bool[t.4{r1}]
 	; 15:2 if !getTrue([])
-	call t.5 = getTrue[] -> bool
-	branch t.5 equals 0: if_6_then, if_6_else
+	call t.5{r0} = getTrue[] -> bool
+	branch t.5{r0} equals 0: if_6_then, if_6_else
 	call printPass[]
 	jump if_6_end
 if_6_then:
 	call printError[]
 if_6_end:
-	notlog t.6, t
-	call printIntLf@bool[t.6]
+	notlog t.6{r1}, t{r6}
+	call printIntLf@bool[t.6{r1}]
 
 logicAnd:
- Local variables
-	var 0: t (bool/1)
-	var 1: f (bool/1)
-	var 2: t.2 (u8*/8)
-	var 3: t.3 (bool/1)
-	var 4: t.4 (bool/1)
-	var 5: t.5 (bool/1)
-	var 6: t.6 (bool/1)
-	var 7: t.7 (bool/1)
-	var 8: t.8 (bool/1)
-	var 9: t.9 (bool/1)
-	var 10: t.10 (bool/1)
-	var 11: t.11 (bool/1)
-	var 12: t.12 (bool/1)
-	var 13: t.13 (bool/1)
-	var 14: t.14 (bool/1)
-	var 15: t.15 (bool/1)
-	var 16: t.16 (bool/1)
-	var 17: t.17 (bool/1)
-	var 18: t.18 (bool/1)
-	var 19: t.19 (bool/1)
-	var 20: t.20 (bool/1)
-	var 21: t.21 (bool/1)
-	var 22: t.22 (bool/1)
-	var 23: t.23 (bool/1)
-	var 24: t.24 (bool/1)
-	var 25: t.25 (bool/1)
-	var 26: t.26 (bool/1)
-	var 27: t.27 (bool/1)
-	var 28: t.28 (bool/1)
-	var 29: t.29 (bool/1)
-	var 30: t.30 (bool/1)
-	; 278 pc
-	const t.2, [string-5]
-	call printString@@u8[t.2]
-	const t, 1
-	const f, 0
+	; 94 pc
+	const t.2{r1}, [string-5]
+	call printString@@u8[t.2{r1}]
+	const t{r6}, 1
+	const f{r7}, 0
 	; 23:2 if getFalse([]) && getFalse([])
-	call t.3 = getFalse[] -> bool
-	branch t.3 equals 0: if_7_else, @and_8
-	call t.4 = getFalse[] -> bool
-	branch t.4 equals 0: if_7_else, if_7_then
+	call t.3{r0} = getFalse[] -> bool
+	branch t.3{r0} equals 0: if_7_else, and_8
+	call t.4{r0} = getFalse[] -> bool
+	branch t.4{r0} equals 0: if_7_else, if_7_then
 	call printError[]
 	jump if_7_end
 if_7_else:
 	call printPass[]
 if_7_end:
 	; 24:15 logic and
-	move t.5, f
-	branch t.5 equals 0: and_next_9, and_2nd_9
-	move t.5, f
+	move t.5{r1}, f{r7}
+	branch t.5{r1} equals 0: and_next_9, and_2nd_9
+	move t.5{r1}, f{r7}
 and_next_9:
-	call printIntLf@bool[t.5]
+	call printIntLf@bool[t.5{r1}]
 	; 25:2 if getFalse([]) && getTrue([])
-	call t.6 = getFalse[] -> bool
-	branch t.6 equals 0: if_10_else, @and_11
-	call t.7 = getTrue[] -> bool
-	branch t.7 equals 0: if_10_else, if_10_then
+	call t.6{r0} = getFalse[] -> bool
+	branch t.6{r0} equals 0: if_10_else, and_11
+	call t.7{r0} = getTrue[] -> bool
+	branch t.7{r0} equals 0: if_10_else, if_10_then
 	call printError[]
 	jump if_10_end
 if_10_else:
 	call printPass[]
 if_10_end:
 	; 26:15 logic and
-	move t.8, f
-	branch t.8 equals 0: and_next_12, and_2nd_12
-	move t.8, t
+	move t.8{r1}, f{r7}
+	branch t.8{r1} equals 0: and_next_12, and_2nd_12
+	move t.8{r1}, t{r6}
 and_next_12:
-	call printIntLf@bool[t.8]
+	call printIntLf@bool[t.8{r1}]
 	; 27:2 if getTrue([]) && getFalse([])
-	call t.9 = getTrue[] -> bool
-	branch t.9 equals 0: if_13_else, @and_14
-	call t.10 = getFalse[] -> bool
-	branch t.10 equals 0: if_13_else, if_13_then
+	call t.9{r0} = getTrue[] -> bool
+	branch t.9{r0} equals 0: if_13_else, and_14
+	call t.10{r0} = getFalse[] -> bool
+	branch t.10{r0} equals 0: if_13_else, if_13_then
 	call printError[]
 	jump if_13_end
 if_13_else:
 	call printPass[]
 if_13_end:
 	; 28:15 logic and
-	move t.11, t
-	branch t.11 equals 0: and_next_15, and_2nd_15
-	move t.11, f
+	move t.11{r1}, t{r6}
+	branch t.11{r1} equals 0: and_next_15, and_2nd_15
+	move t.11{r1}, f{r7}
 and_next_15:
-	call printIntLf@bool[t.11]
+	call printIntLf@bool[t.11{r1}]
 	; 29:2 if getTrue([]) && getTrue([])
-	call t.12 = getTrue[] -> bool
-	branch t.12 equals 0: if_16_else, @and_17
-	call t.13 = getTrue[] -> bool
-	branch t.13 equals 0: if_16_else, if_16_then
+	call t.12{r0} = getTrue[] -> bool
+	branch t.12{r0} equals 0: if_16_else, and_17
+	call t.13{r0} = getTrue[] -> bool
+	branch t.13{r0} equals 0: if_16_else, if_16_then
 	call printPass[]
 	jump if_16_end
 if_16_else:
 	call printError[]
 if_16_end:
 	; 30:15 logic and
-	move t.14, t
-	branch t.14 equals 0: and_next_18, and_2nd_18
-	move t.14, t
+	move t.14{r1}, t{r6}
+	branch t.14{r1} equals 0: and_next_18, and_2nd_18
+	move t.14{r1}, t{r6}
 and_next_18:
-	call printIntLf@bool[t.14]
+	call printIntLf@bool[t.14{r1}]
 	; 32:2 if !getFalse([]) && getFalse([])
-	call t.15 = getFalse[] -> bool
-	branch t.15 equals 0: if_19_then, @and_20
-	call t.16 = getFalse[] -> bool
-	branch t.16 equals 0: if_19_then, if_19_else
+	call t.15{r0} = getFalse[] -> bool
+	branch t.15{r0} equals 0: if_19_then, and_20
+	call t.16{r0} = getFalse[] -> bool
+	branch t.16{r0} equals 0: if_19_then, if_19_else
 	call printError[]
 	jump if_19_end
 if_19_then:
 	call printPass[]
 if_19_end:
 	; 33:17 logic and
-	move t.18, f
-	branch t.18 equals 0: and_next_21, and_2nd_21
-	move t.18, f
+	move t.18{r0}, f{r7}
+	branch t.18{r0} equals 0: and_next_21, and_2nd_21
+	move t.18{r0}, f{r7}
 and_next_21:
-	notlog t.17, t.18
-	call printIntLf@bool[t.17]
+	notlog t.17{r1}, t.18{r0}
+	call printIntLf@bool[t.17{r1}]
 	; 34:2 if !getFalse([]) && getTrue([])
-	call t.19 = getFalse[] -> bool
-	branch t.19 equals 0: if_22_then, @and_23
-	call t.20 = getTrue[] -> bool
-	branch t.20 equals 0: if_22_then, if_22_else
+	call t.19{r0} = getFalse[] -> bool
+	branch t.19{r0} equals 0: if_22_then, and_23
+	call t.20{r0} = getTrue[] -> bool
+	branch t.20{r0} equals 0: if_22_then, if_22_else
 	call printError[]
 	jump if_22_end
 if_22_then:
 	call printPass[]
 if_22_end:
 	; 35:17 logic and
-	move t.22, f
-	branch t.22 equals 0: and_next_24, and_2nd_24
-	move t.22, t
+	move t.22{r0}, f{r7}
+	branch t.22{r0} equals 0: and_next_24, and_2nd_24
+	move t.22{r0}, t{r6}
 and_next_24:
-	notlog t.21, t.22
-	call printIntLf@bool[t.21]
+	notlog t.21{r1}, t.22{r0}
+	call printIntLf@bool[t.21{r1}]
 	; 36:2 if !getTrue([]) && getFalse([])
-	call t.23 = getTrue[] -> bool
-	branch t.23 equals 0: if_25_then, @and_26
-	call t.24 = getFalse[] -> bool
-	branch t.24 equals 0: if_25_then, if_25_else
+	call t.23{r0} = getTrue[] -> bool
+	branch t.23{r0} equals 0: if_25_then, and_26
+	call t.24{r0} = getFalse[] -> bool
+	branch t.24{r0} equals 0: if_25_then, if_25_else
 	call printError[]
 	jump if_25_end
 if_25_then:
 	call printPass[]
 if_25_end:
 	; 37:17 logic and
-	move t.26, t
-	branch t.26 equals 0: and_next_27, and_2nd_27
-	move t.26, f
+	move t.26{r0}, t{r6}
+	branch t.26{r0} equals 0: and_next_27, and_2nd_27
+	move t.26{r0}, f{r7}
 and_next_27:
-	notlog t.25, t.26
-	call printIntLf@bool[t.25]
+	notlog t.25{r1}, t.26{r0}
+	call printIntLf@bool[t.25{r1}]
 	; 38:2 if !getTrue([]) && getTrue([])
-	call t.27 = getTrue[] -> bool
-	branch t.27 equals 0: if_28_then, @and_29
-	call t.28 = getTrue[] -> bool
-	branch t.28 equals 0: if_28_then, if_28_else
+	call t.27{r0} = getTrue[] -> bool
+	branch t.27{r0} equals 0: if_28_then, and_29
+	call t.28{r0} = getTrue[] -> bool
+	branch t.28{r0} equals 0: if_28_then, if_28_else
 	call printPass[]
 	jump if_28_end
 if_28_then:
 	call printError[]
 if_28_end:
 	; 39:17 logic and
-	move t.30, t
-	branch t.30 equals 0: and_next_30, and_2nd_30
-	move t.30, t
+	move t.30{r7}, t{r6}
+	branch t.30{r7} equals 0: and_next_30, and_2nd_30
+	move t.30{r7}, t{r6}
 and_next_30:
-	notlog t.29, t.30
-	call printIntLf@bool[t.29]
+	notlog t.29{r1}, t.30{r7}
+	call printIntLf@bool[t.29{r1}]
 
 logicOr:
- Local variables
-	var 0: t (bool/1)
-	var 1: f (bool/1)
-	var 2: t.2 (u8*/8)
-	var 3: t.3 (bool/1)
-	var 4: t.4 (bool/1)
-	var 5: t.5 (bool/1)
-	var 6: t.6 (bool/1)
-	var 7: t.7 (bool/1)
-	var 8: t.8 (bool/1)
-	var 9: t.9 (bool/1)
-	var 10: t.10 (bool/1)
-	var 11: t.11 (bool/1)
-	var 12: t.12 (bool/1)
-	var 13: t.13 (bool/1)
-	var 14: t.14 (bool/1)
-	; 134 pc
-	const t.2, [string-6]
-	call printString@@u8[t.2]
-	const t, 1
-	const f, 0
+	; 46 pc
+	const t.2{r1}, [string-6]
+	call printString@@u8[t.2{r1}]
+	const t{r6}, 1
+	const f{r7}, 0
 	; 46:2 if getFalse([]) || getFalse([])
-	call t.3 = getFalse[] -> bool
-	branch t.3 notequals 0: if_31_then, @or_32
-	call t.4 = getFalse[] -> bool
-	branch t.4 notequals 0: if_31_then, if_31_else
+	call t.3{r0} = getFalse[] -> bool
+	branch t.3{r0} notequals 0: if_31_then, or_32
+	call t.4{r0} = getFalse[] -> bool
+	branch t.4{r0} notequals 0: if_31_then, if_31_else
 	call printPass[]
 	jump if_31_end
 if_31_then:
 	call printError[]
 if_31_end:
 	; 47:15 logic or
-	move t.5, f
-	branch t.5 notequals 0: or_next_33, or_2nd_33
-	move t.5, f
+	move t.5{r1}, f{r7}
+	branch t.5{r1} notequals 0: or_next_33, or_2nd_33
+	move t.5{r1}, f{r7}
 or_next_33:
-	call printIntLf@bool[t.5]
+	call printIntLf@bool[t.5{r1}]
 	; 48:2 if getFalse([]) || getTrue([])
-	call t.6 = getFalse[] -> bool
-	branch t.6 notequals 0: if_34_then, @or_35
-	call t.7 = getTrue[] -> bool
-	branch t.7 notequals 0: if_34_then, if_34_else
+	call t.6{r0} = getFalse[] -> bool
+	branch t.6{r0} notequals 0: if_34_then, or_35
+	call t.7{r0} = getTrue[] -> bool
+	branch t.7{r0} notequals 0: if_34_then, if_34_else
 	call printError[]
 	jump if_34_end
 if_34_then:
 	call printPass[]
 if_34_end:
 	; 49:15 logic or
-	move t.8, f
-	branch t.8 notequals 0: or_next_36, or_2nd_36
-	move t.8, t
+	move t.8{r1}, f{r7}
+	branch t.8{r1} notequals 0: or_next_36, or_2nd_36
+	move t.8{r1}, t{r6}
 or_next_36:
-	call printIntLf@bool[t.8]
+	call printIntLf@bool[t.8{r1}]
 	; 50:2 if getTrue([]) || getFalse([])
-	call t.9 = getTrue[] -> bool
-	branch t.9 notequals 0: if_37_then, @or_38
-	call t.10 = getFalse[] -> bool
-	branch t.10 notequals 0: if_37_then, if_37_else
+	call t.9{r0} = getTrue[] -> bool
+	branch t.9{r0} notequals 0: if_37_then, or_38
+	call t.10{r0} = getFalse[] -> bool
+	branch t.10{r0} notequals 0: if_37_then, if_37_else
 	call printError[]
 	jump if_37_end
 if_37_then:
 	call printPass[]
 if_37_end:
 	; 51:15 logic or
-	move t.11, t
-	branch t.11 notequals 0: or_next_39, or_2nd_39
-	move t.11, f
+	move t.11{r1}, t{r6}
+	branch t.11{r1} notequals 0: or_next_39, or_2nd_39
+	move t.11{r1}, f{r7}
 or_next_39:
-	call printIntLf@bool[t.11]
+	call printIntLf@bool[t.11{r1}]
 	; 52:2 if getTrue([]) || getTrue([])
-	call t.12 = getTrue[] -> bool
-	branch t.12 notequals 0: if_40_then, @or_41
-	call t.13 = getTrue[] -> bool
-	branch t.13 notequals 0: if_40_then, if_40_else
+	call t.12{r0} = getTrue[] -> bool
+	branch t.12{r0} notequals 0: if_40_then, or_41
+	call t.13{r0} = getTrue[] -> bool
+	branch t.13{r0} notequals 0: if_40_then, if_40_else
 	call printError[]
 	jump if_40_end
 if_40_then:
 	call printPass[]
 if_40_end:
 	; 53:15 logic or
-	move t.14, t
-	branch t.14 notequals 0: or_next_42, or_2nd_42
-	move t.14, t
+	move t.14{r1}, t{r6}
+	branch t.14{r1} notequals 0: or_next_42, or_2nd_42
+	move t.14{r1}, t{r6}
 or_next_42:
-	call printIntLf@bool[t.14]
+	call printIntLf@bool[t.14{r1}]
 
 main:
  Local variables
-	var 0: a (i16/2)
-	var 1: b (i16/2)
-	var 2: c (i16/2)
-	var 3: d (i16/2)
-	var 4: t (bool/1)
-	var 5: f (bool/1)
-	var 6: b10 (u8/1)
-	var 7: b6 (u8/1)
-	var 8: b1 (u8/1)
-	var 9: t.9 (u8*/8)
-	var 10: t.10 (i16/2)
-	var 11: t.11 (i16/2)
-	var 12: t.12 (i16/2)
-	var 13: t.13 (i16/2)
-	var 14: t.14 (u8*/8)
-	var 15: t.15 (i16/2)
-	var 16: t.16 (i16/2)
-	var 17: t.17 (i16/2)
-	var 18: t.18 (i16/2)
-	var 19: t.19 (u8*/8)
-	var 20: t.20 (i16/2)
-	var 21: t.21 (i16/2)
-	var 22: t.22 (i16/2)
-	var 23: t.23 (i16/2)
-	var 24: t.24 (bool/1)
-	var 25: t.25 (bool/1)
-	var 26: t.26 (bool/1)
-	var 27: t.27 (bool/1)
-	var 28: t.28 (bool/1)
-	var 29: t.29 (bool/1)
-	var 30: t.30 (bool/1)
-	var 31: t.31 (u8*/8)
-	var 32: t.32 (u8/1)
-	var 33: t.33 (u8/1)
-	var 34: t.34 (bool/1)
-	var 35: t.35 (bool/1)
-	var 36: t.36 (i16/2)
-	var 37: t.37 (u8/1)
-	; 378 pc
-	const t.9, [string-7]
-	call printString@@u8[t.9]
-	const a, 0
-	const b, 1
-	const c, 2
-	const d, 3
-	const t, 1
-	const f, 0
-	move t.10, a
-	and t.10, t.10, a
-	call printIntLf@i16[t.10]
-	move t.11, a
-	and t.11, t.11, b
-	call printIntLf@i16[t.11]
-	move t.12, b
-	and t.12, t.12, a
-	call printIntLf@i16[t.12]
-	move t.13, b
-	and t.13, t.13, b
-	call printIntLf@i16[t.13]
-	const t.14, [string-8]
-	call printString@@u8[t.14]
-	move t.15, a
-	or t.15, t.15, a
-	call printIntLf@i16[t.15]
-	move t.16, a
-	or t.16, t.16, b
-	call printIntLf@i16[t.16]
-	move t.17, b
-	or t.17, t.17, a
-	call printIntLf@i16[t.17]
-	move t.18, b
-	or t.18, t.18, b
-	call printIntLf@i16[t.18]
-	const t.19, [string-9]
-	call printString@@u8[t.19]
-	move t.20, a
-	xor t.20, t.20, a
-	call printIntLf@i16[t.20]
-	move t.21, a
-	xor t.21, t.21, c
-	call printIntLf@i16[t.21]
-	move t.22, b
-	xor t.22, t.22, a
-	call printIntLf@i16[t.22]
-	move t.23, b
-	xor t.23, t.23, c
-	call printIntLf@i16[t.23]
+	var 0: c (i16/2)
+	var 1: d (i16/2)
+	var 2: t (bool/1)
+	var 3: f (bool/1)
+	var 4: b1 (u8/1)
+	; 127 pc
+	const t.9{r1}, [string-7]
+	call printString@@u8[t.9{r1}]
+	const a{r6}, 0
+	const b{r7}, 1
+	const c{r0}, 2
+	move c, c{r0}
+	const d{r0}, 3
+	move d, d{r0}
+	const t{r0}, 1
+	move t, t{r0}
+	const f{r0}, 0
+	move f, f{r0}
+	move t.10{r1}, a{r6}
+	and t.10{r1}, t.10{r1}, a{r6}
+	call printIntLf@i16[t.10{r1}]
+	move t.11{r1}, a{r6}
+	and t.11{r1}, t.11{r1}, b{r7}
+	call printIntLf@i16[t.11{r1}]
+	move t.12{r1}, b{r7}
+	and t.12{r1}, t.12{r1}, a{r6}
+	call printIntLf@i16[t.12{r1}]
+	move t.13{r1}, b{r7}
+	and t.13{r1}, t.13{r1}, b{r7}
+	call printIntLf@i16[t.13{r1}]
+	const t.14{r1}, [string-8]
+	call printString@@u8[t.14{r1}]
+	move t.15{r1}, a{r6}
+	or t.15{r1}, t.15{r1}, a{r6}
+	call printIntLf@i16[t.15{r1}]
+	move t.16{r1}, a{r6}
+	or t.16{r1}, t.16{r1}, b{r7}
+	call printIntLf@i16[t.16{r1}]
+	move t.17{r1}, b{r7}
+	or t.17{r1}, t.17{r1}, a{r6}
+	call printIntLf@i16[t.17{r1}]
+	move t.18{r1}, b{r7}
+	or t.18{r1}, t.18{r1}, b{r7}
+	call printIntLf@i16[t.18{r1}]
+	const t.19{r1}, [string-9]
+	call printString@@u8[t.19{r1}]
+	move t.20{r1}, a{r6}
+	xor t.20{r1}, t.20{r1}, a{r6}
+	call printIntLf@i16[t.20{r1}]
+	move t.21{r1}, a{r6}
+	move c{r0}, c
+	xor t.21{r1}, t.21{r1}, c{r0}
+	move c, c{r0}
+	call printIntLf@i16[t.21{r1}]
+	move t.22{r1}, b{r7}
+	xor t.22{r1}, t.22{r1}, a{r6}
+	call printIntLf@i16[t.22{r1}]
+	move t.23{r1}, b{r7}
+	move c{r6}, c
+	xor t.23{r1}, t.23{r1}, c{r6}
+	call printIntLf@i16[t.23{r1}]
 	call logicNot[]
 	call logicAnd[]
 	call logicOr[]
 	; 82:2 if !getTrue([]) && getTrue([]) || !getFalse([]) && getFalse([])
-	call t.24 = getTrue[] -> bool
-	branch t.24 equals 0: if_43_then, @and_45
-	call t.25 = getTrue[] -> bool
-	branch t.25 equals 0: if_43_then, @or_44
-	call t.26 = getFalse[] -> bool
-	branch t.26 equals 0: if_43_then, @and_46
-	call t.27 = getFalse[] -> bool
-	branch t.27 equals 0: if_43_then, if_43_else
+	call t.24{r0} = getTrue[] -> bool
+	branch t.24{r0} equals 0: if_43_then, and_45
+	call t.25{r0} = getTrue[] -> bool
+	branch t.25{r0} equals 0: if_43_then, or_44
+	call t.26{r0} = getFalse[] -> bool
+	branch t.26{r0} equals 0: if_43_then, and_46
+	call t.27{r0} = getFalse[] -> bool
+	branch t.27{r0} equals 0: if_43_then, if_43_else
 	call printError[]
 	jump if_43_end
 if_43_then:
@@ -552,55 +454,62 @@ if_43_then:
 if_43_end:
 	; 88:23 logic or
 	; 88:17 logic and
-	move t.29, t
-	branch t.29 equals 0: and_next_48, and_2nd_48
-	move t.29, t
+	move t{r0}, t
+	move t.29{r2}, t{r0}
+	branch t.29{r2} equals 0: and_next_48, and_2nd_48
+	move t.29{r2}, t{r0}
 and_next_48:
-	notlog t.28, t.29
-	branch t.28 notequals 0: or_next_47, or_2nd_47
+	notlog t.28{r1}, t.29{r2}
+	branch t.28{r1} notequals 0: or_next_47, or_2nd_47
 	; 88:30 logic and
-	move t.30, f
-	branch t.30 equals 0: and_next_49, and_2nd_49
-	move t.30, f
+	move f{r0}, f
+	move t.30{r2}, f{r0}
+	branch t.30{r2} equals 0: and_next_49, and_2nd_49
+	move t.30{r2}, f{r0}
 and_next_49:
-	notlog t.28, t.30
+	notlog t.28{r1}, t.30{r2}
 or_next_47:
-	call printIntLf@bool[t.28]
-	const t.31, [string-10]
-	call printString@@u8[t.31]
-	const b10, 10
-	const b6, 6
-	const b1, 1
-	move t.33, b10
-	and t.33, t.33, b6
-	move t.32, t.33
-	or t.32, t.32, b1
-	call printIntLf@u8[t.32]
+	call printIntLf@bool[t.28{r1}]
+	const t.31{r1}, [string-10]
+	call printString@@u8[t.31{r1}]
+	const b10{r0}, 10
+	const b6{r2}, 6
+	const b1{r3}, 1
+	and t.33{r0}, t.33{r0}, b6{r2}
+	move t.32{r1}, t.33{r0}
+	or t.32{r1}, t.32{r1}, b1{r3}
+	move b1, b1{r3}
+	call printIntLf@u8[t.32{r1}]
 	; 95:20 logic or
-	equals t.34, b, c
-	branch t.34 notequals 0: or_next_50, or_2nd_50
-	lt t.34, c, d
+	equals t.34{r1}, b{r7}, c{r6}
+	branch t.34{r1} notequals 0: or_next_50, or_2nd_50
+	move d{r1}, d
+	lt t.34{r1}, c{r6}, d{r1}
+	move d, d{r1}
 or_next_50:
-	call printIntLf@bool[t.34]
+	call printIntLf@bool[t.34{r1}]
 	; 96:20 logic and
-	equals t.35, b, c
-	branch t.35 equals 0: and_next_51, and_2nd_51
-	lt t.35, c, d
+	equals t.35{r1}, b{r7}, c{r6}
+	branch t.35{r1} equals 0: and_next_51, and_2nd_51
+	move d{r0}, d
+	lt t.35{r1}, c{r6}, d{r0}
 and_next_51:
-	call printIntLf@bool[t.35]
-	call printIntLf@i16[-1]
-	neg t.36, b
-	call printIntLf@i16[t.36]
-	not t.37, b1
-	call printIntLf@u8[t.37]
+	call printIntLf@bool[t.35{r1}]
+	const arg.29.0{r1}, -1
+	call printIntLf@i16[arg.29.0{r1}]
+	neg t.36{r1}, b{r7}
+	call printIntLf@i16[t.36{r1}]
+	move b1{r6}, b1
+	not t.37{r1}, b1{r6}
+	call printIntLf@u8[t.37{r1}]
 
 printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
+	mov     r8, rdx
+	mov     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
 	xor     r9, r9
 	push    0
 	sub     rsp, 20h

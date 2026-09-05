@@ -44,13 +44,18 @@ public record IRBranch(@NotNull IRCompare.Op op, @NotNull IRVar left, @NotNull I
 	@NotNull
 	@Override
 	public String toString() {
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
 		final StringBuilder buffer = new StringBuilder();
 		buffer.append("branch ");
-		buffer.append(left);
+		buffer.append(left.toString(comment));
 		buffer.append(" ");
 		buffer.append(op.toString().toLowerCase());
 		buffer.append(" ");
-		buffer.append(right);
+		buffer.append(right.toString(comment));
 		buffer.append(": ");
 		buffer.append(target);
 		if (nextLabel.length() > 0) {

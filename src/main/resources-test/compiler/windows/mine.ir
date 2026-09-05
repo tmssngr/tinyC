@@ -620,8 +620,8 @@ for_30_body:
 	move t.10, row
 	sub t.10, t.10, curr_r
 	call t.9 = abs@i16[t.10] -> i16
-	branch t.9 gt 1: if_31_then, @or_32
-@or_32:
+	branch t.9 gt 1: if_31_then, or_32
+or_32:
 	move t.12, column
 	sub t.12, t.12, curr_c
 	call t.11 = abs@i16[t.12] -> i16
@@ -667,8 +667,8 @@ for_35:
 	branch dc gt 1: for_34_continue, for_35_body
 for_35_body:
 	; 193:4 if dr == 0 && dc == 0
-	branch dr notequals 0: if_36_end, @and_37
-@and_37:
+	branch dr notequals 0: if_36_end, and_37
+and_37:
 	branch dc equals 0: for_35_continue, if_36_end
 if_36_end:
 	move c, column
@@ -831,10 +831,10 @@ main_ret:
 printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
+	mov     r8, rdx
+	mov     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
 	xor     r9, r9
 	push    0
 	sub     rsp, 20h
@@ -859,17 +859,15 @@ getChar:
 	ret
 
 setCursor@i16@i16:
-	mov     rdi, rsp
-	and     spl, 0xf0
-	
+	sub     rsp, 28h
+	shl     rcx, 16
+	movsxd  rcx, ecx
+	movsx   rdx, dx
+	add     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     dx, [rdi+10h]
-	shl     rdx, 16
-	mov     dx, [rdi+18h]
-	sub     rsp, 20h
-	  call   [SetConsoleCursorPosition]
-	mov     rsp, rdi
+	call   [SetConsoleCursorPosition]
+	add     rsp, 28h
 	ret
 
 Global variables

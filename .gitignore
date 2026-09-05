@@ -1,5 +1,6 @@
 .*
 *.exe
 *.svg
+*.backup
 
 !**/.git*
