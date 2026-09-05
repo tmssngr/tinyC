@@ -33,9 +33,14 @@ public record IRMove(@NotNull IRVar target, @NotNull IRValue source, @NotNull Lo
 	@NotNull
 	@Override
 	public String toString() {
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
 		if (source.var() != null) {
-			return "move " + target.toString() + ", " + source.toString();
+			return "move " + target.toString(comment) + ", " + source.toString(comment);
 		}
-		return "const " + target.toString() + ", " + source.toString();
+		return "const " + target.toString(comment) + ", " + source.toString(comment);
 	}
 }
