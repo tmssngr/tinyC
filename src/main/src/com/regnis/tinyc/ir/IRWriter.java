@@ -129,12 +129,7 @@ public final class IRWriter extends TextWriter {
 				else {
 					writeln(instruction.toString());
 					if (block != null) {
-						try {
-							write(block.getLiveAfter(i));
-						}
-						catch (NullPointerException e) {
-							writeln("##########################");
-						}
+						write(block.getLiveAfter(i));
 					}
 				}
 			}
