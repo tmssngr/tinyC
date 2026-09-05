@@ -1,74 +1,68 @@
 @printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	var 1: length (i64/8)
-	; 10 pc
-	call length = strlen@@u8[str] -> i64
-	call printStringLength@@u8@i64[str, length]
+	; 6 pc
+	move str{r6}, str{r1}
+	move str{r1}, str{r6}
+	call length{r0} = strlen@@u8[str{r1}] -> i64
+	move str{r1}, str{r6}
+	move length{r2}, length{r0}
+	call printStringLength@@u8@i64[str{r1}, length{r2}]
 
 @strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	var 1: length (i64/8)
-	var 2: t.2 (bool/1)
-	var 3: t.3 (u8/1)
-	; 30 pc
-	const length, 0
+	; 7 pc
+	const length{r0}, 0
 	; 64:2 for *str != 0
 	jump @for_1
 @for_1_body:
-	add length, length, 1
-	add str, str, 1
+	add length{r0}, length{r0}, 1
+	add str{r1}, str{r1}, 1
 @for_1:
-	load t.3, [str]
-	notequals t.2, t.3, 0
-	branch t.2, true, @for_1_body, @for_1_break
+	load t.3{r2}, [str{r1}]
+	notequals t.2{r2}, t.3{r2}, 0
+	branch t.2{r2}, true, @for_1_body, @for_1_break
 	; 67:9 return length
-	ret length
 
 @next:
- Local variables
-	var 0: copy (u8/1)
-	; 13 pc
-	move copy, global
-	add global, global, 1
+	; 8 pc
+	move tmp.global{r1}, global
+	move copy{r0}, tmp.global{r1}
+	add tmp.global{r1}, tmp.global{r1}, 1
 	; 8:9 return copy
-	ret copy
+	move global, tmp.global{r1}
 
 @main:
- Local variables
-	var 0: n (u8/1)
-	var 1: t.1 (u8*/8)
-	var 2: t.2 (bool/1)
-	var 3: t.3 (bool/1)
-	var 4: t.4 (u8*/8)
-	; 34 pc
+	; 14 pc
 	; begin initialize global variables
-	const global, 0
+	const tmp.global{r6}, 0
 	; end initialize global variables
 	; 12:2 while true
+	move global, tmp.global{r6}
 	jump @while_2
 @if_3_end:
 	; 19:3 if n < 2
-	lt t.3, n, 2
-	branch t.3, false, @while_2, @if_4_then
-	const t.4, [string-1]
-	call printString@@u8[t.4]
+	lt t.3{r6}, n{r6}, 2
+	branch t.3{r6}, false, @while_2, @if_4_then
+	const t.4{r1}, [string-1]
+	call printString@@u8[t.4{r1}]
 @while_2:
-	const t.1, [string-0]
-	call printString@@u8[t.1]
-	call n = next[] -> u8
+	const t.1{r1}, [string-0]
+	call printString@@u8[t.1{r1}]
+	call n{r0} = next[] -> u8
+	move n{r6}, n{r0}
 	; 15:3 if n == 3
-	equals t.2, n, 3
-	branch t.2, false, @if_3_end, @main_ret
+	equals t.2{r0}, n{r6}, 3
+	branch t.2{r0}, false, @if_3_end, @main_ret
 
 @printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
+	mov     r8, rdx
+	mov     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
 	xor     r9, r9
 	push    0
 	sub     rsp, 20h
