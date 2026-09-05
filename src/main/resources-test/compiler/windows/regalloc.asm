@@ -132,7 +132,6 @@ _max@u8@u8_ret:
         ;   rsp+4: var c
         ;   rsp+6: var t.4
         ;   rsp+7: var t.5
-        ;   rsp+8: var t.6
 _fibonacci@u8:
         ; reserve space for local variables
         sub rsp, 16
@@ -147,16 +146,10 @@ _fibonacci@u8:
         ; 22:2 while i > 0
         jmp _while_2
 _while_2_body:
-        ; const t.6, 1
-        mov al, 1
-        lea rbx, [rsp+8]
-        mov [rbx], al
-        ; sub i, i, t.6
+        ; sub i, i, 1
         lea rax, [rsp+24]
         mov bl, [rax]
-        lea rax, [rsp+8]
-        mov cl, [rax]
-        sub bl, cl
+        sub bl, 1
         lea rax, [rsp+24]
         mov [rax], bl
         ; move c, a
