@@ -97,8 +97,11 @@ public final class DetectVarLiveness {
 			if (target != null) {
 				defined(target, defines);
 			}
-			for (IRVar arg : call.args()) {
-				uses(arg, uses);
+			for (IRValue arg : call.args()) {
+				final IRVar var = arg.var();
+				if (var != null) {
+					uses(var, uses);
+				}
 			}
 		}
 		case IRCast cast -> {
