@@ -298,6 +298,14 @@ public final class IRGenerator {
 		}
 	}
 
+	private IRValue writeExpressionAsValue(Expression expression) {
+		if (expression instanceof ExprIntLiteral literal) {
+			return new IRValue(literal.value(), expression.typeNotNull());
+		}
+
+		return new IRValue(writeExpression(expression));
+	}
+
 	private IRVar writeExpression(Expression expression) {
 		return switch (expression) {
 			case ExprVarAccess access -> {
@@ -351,9 +359,7 @@ public final class IRGenerator {
 		writeAddrOf(addr, access.expression(), access.location());
 		final int offset = getMemberOffset(access);
 		if (offset != 0) {
-			final IRVar offsetVar = createTempVar(pointerIntType);
-			write(new IRMove(offsetVar, offset, access.location()));
-			write(new IRBinary(addr, IRBinary.Op.Add, addr, offsetVar, access.location()));
+			write(new IRBinary(addr, IRBinary.Op.Add, addr, new IRValue(offset, pointerIntType), access.location()));
 		}
 	}
 
@@ -519,13 +525,13 @@ public final class IRGenerator {
 
 	private void writeBinary(IRBinary.Op op, IRVar var, ExprBinary binary) {
 		final IRVar left = writeExpression(binary.left());
-		final IRVar right = writeExpression(binary.right());
 		Utils.assertTrue(var.type().equals(left.type()));
+		final IRValue right = writeExpressionAsValue(binary.right());
 		final Location location = binary.location();
 		if (Objects.equals(var, left)) {
 			write(new IRBinary(var, op, var, right, location));
 		}
-		else if (Objects.equals(var, right)) {
+		else if (Objects.equals(var, right.var())) {
 			final IRVar tmp = createTempVar(var.type());
 			write(new IRMove(tmp, left, location));
 			write(new IRBinary(tmp, op, tmp, right, location));

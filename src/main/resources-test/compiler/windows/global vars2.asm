@@ -49,16 +49,14 @@ start:
         ret
 
         ; i64 strlen@@u8
-        ;   rsp+40: arg str
+        ;   rsp+24: arg str
         ;   rsp+0: var length
         ;   rsp+8: var t.2
         ;   rsp+9: var t.3
         ;   rsp+10: var t.4
-        ;   rsp+16: var t.5
-        ;   rsp+24: var t.6
 @strlen@@u8:
         ; reserve space for local variables
-        sub rsp, 32
+        sub rsp, 16
         ; const length, 0
         mov rax, 0
         lea rbx, [rsp+0]
@@ -66,33 +64,21 @@ start:
         ; 64:2 for *str != 0
         jmp @for_1
 @for_1_body:
-        ; const t.5, 1
-        mov rax, 1
-        lea rbx, [rsp+16]
-        mov [rbx], rax
-        ; add length, length, t.5
+        ; add length, length, 1
         lea rax, [rsp+0]
         mov rbx, [rax]
-        lea rax, [rsp+16]
-        mov rcx, [rax]
-        add rbx, rcx
+        add rbx, 1
         lea rax, [rsp+0]
         mov [rax], rbx
-        ; const t.6, 1
-        mov rax, 1
-        lea rbx, [rsp+24]
-        mov [rbx], rax
-        ; add str, str, t.6
-        lea rax, [rsp+40]
-        mov rbx, [rax]
+        ; add str, str, 1
         lea rax, [rsp+24]
-        mov rcx, [rax]
-        add rbx, rcx
-        lea rax, [rsp+40]
+        mov rbx, [rax]
+        add rbx, 1
+        lea rax, [rsp+24]
         mov [rax], rbx
 @for_1:
         ; load t.3, [str]
-        lea rax, [rsp+40]
+        lea rax, [rsp+24]
         mov rbx, [rax]
         mov al, [rbx]
         lea rbx, [rsp+9]
@@ -121,12 +107,11 @@ start:
         mov rbx, [rax]
         mov rax, rbx
         ; release space for local variables
-        add rsp, 32
+        add rsp, 16
         ret
 
         ; u8 next
         ;   rsp+0: var copy
-        ;   rsp+1: var t.1
 @next:
         ; reserve space for local variables
         sub rsp, 16
@@ -135,16 +120,10 @@ start:
         mov bl, [rax]
         lea rax, [rsp+0]
         mov [rax], bl
-        ; const t.1, 1
-        mov al, 1
-        lea rbx, [rsp+1]
-        mov [rbx], al
-        ; add global, global, t.1
+        ; add global, global, 1
         lea rax, [var_0]
         mov bl, [rax]
-        lea rax, [rsp+1]
-        mov cl, [rax]
-        add bl, cl
+        add bl, 1
         lea rax, [var_0]
         mov [rax], bl
         ; 8:9 return copy
