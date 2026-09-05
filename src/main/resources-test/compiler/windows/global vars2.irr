@@ -13,17 +13,13 @@
 	var 2: t.2 (bool/1)
 	var 3: t.3 (u8/1)
 	var 4: t.4 (u8/1)
-	var 5: t.5 (i64/8)
-	var 6: t.6 (i64/8)
-	; 42 pc
+	; 34 pc
 	const length, 0
 	; 64:2 for *str != 0
 	jump @for_1
 @for_1_body:
-	const t.5, 1
-	add length, length, t.5
-	const t.6, 1
-	add str, str, t.6
+	add length, length, 1
+	add str, str, 1
 @for_1:
 	load t.3, [str]
 	const t.4, 0
@@ -35,11 +31,9 @@
 @next:
  Local variables
 	var 0: copy (u8/1)
-	var 1: t.1 (u8/1)
-	; 17 pc
+	; 13 pc
 	move copy, global
-	const t.1, 1
-	add global, global, t.1
+	add global, global, 1
 	; 8:9 return copy
 	ret copy
 

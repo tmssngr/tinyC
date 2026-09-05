@@ -245,94 +245,169 @@ public final class X86Win64 extends AsmWriter {
 
 	protected void writeBinary(IRBinary binary) throws IOException {
 		final boolean signed = binary.left().type() != Type.U8;
+		final IRValue right = binary.right();
+		final IRVar rightVar = right.var();
 		switch (binary.op()) {
 		case Add -> writeBinary("add", binary);
 		case Sub -> writeBinary("sub", binary);
 		case Mul -> {
-			final int leftReg = loadVar(binary.left());
-			final String leftRegName = getRegName(leftReg);
-			final int rightReg = loadVar(binary.right());
-			final String rightRegName = getRegName(rightReg);
-			if (getTypeSize(binary.left().type()) != 8) {
-				writeMovx(leftRegName, leftReg, binary.left(), true);
-			}
-			if (getTypeSize(binary.right().type()) != 8) {
-				writeMovx(rightRegName, rightReg, binary.right(), true);
-			}
-			writeIndented("imul " + " " + leftRegName + ", " + rightRegName);
-			storeVar(binary.target(), leftReg);
-			free(rightReg);
-			free(leftReg);
-		}
-		case Div, Mod -> {
-			final Type type = binary.left().type();
-			Utils.assertTrue(Objects.equals(type, binary.right().type()));
-			final int size = getTypeSize(type);
-			// https://www.felixcloutier.com/x86/idiv
-			// (edx eax) / %reg -> eax
-			// (edx eax) % %reg -> edx
-			final int leftReg = loadVar(binary.left());
-			final String leftRegName = getRegName(leftReg);
-			Utils.assertTrue("rbx".equals(leftRegName));
-
-			final int rightReg = loadVar(binary.right());
-			final String rightRegName = getRegName(rightReg);
-			Utils.assertTrue("rcx".equals(rightRegName));
-
-			final int rax = getFreeReg();
-			Utils.assertTrue("rax".equals(getRegName(rax)));
-
-			if (size == 8) {
-				writeIndented("mov rax, " + leftRegName);
-			}
-			else if (type.equals(Type.U8)) {
-				writeIndented("movzx rax, " + getRegName(leftReg, size));
-				writeIndented("movzx rcx, " + getRegName(rightReg, size));
+			if (rightVar != null) {
+				final int leftReg = loadVar(binary.left());
+				final String leftRegName = getRegName(leftReg);
+				final int rightReg = loadVar(rightVar);
+				final String rightRegName = getRegName(rightReg);
+				if (getTypeSize(binary.left().type()) != 8) {
+					writeMovx(leftRegName, leftReg, binary.left(), true);
+				}
+				if (getTypeSize(binary.right().type()) != 8) {
+					writeMovx(rightRegName, rightReg, rightVar, true);
+				}
+				writeIndented("imul " + " " + leftRegName + ", " + rightRegName);
+				storeVar(binary.target(), leftReg);
+				free(rightReg);
+				free(leftReg);
 			}
 			else {
-				writeMovx("rax", leftReg, binary.left(), signed);
-				writeMovx("rcx", rightReg, binary.right(), signed);
+				final int leftReg = loadVar(binary.left());
+				final String leftRegName = getRegName(leftReg);
+				if (getTypeSize(binary.left().type()) != 8) {
+					writeMovx(leftRegName, leftReg, binary.left(), true);
+				}
+				writeIndented("imul " + " " + leftRegName + ", " + right.value());
+				storeVar(binary.target(), leftReg);
+				free(leftReg);
 			}
-			writeIndented("cqo"); // rdx := signbit(rax)
-			writeIndented("idiv " + rightRegName);
-			writeIndented("mov rbx, " + (binary.op() == IRBinary.Op.Mod ? "rdx" : "rax"));
-			storeVar(binary.target(), leftReg);
-			free(rax);
-			free(rightReg);
-			free(leftReg);
+		}
+		case Div, Mod -> {
+			if (rightVar != null) {
+				final Type type = binary.left().type();
+				Utils.assertTrue(Objects.equals(type, binary.right().type()));
+				final int size = getTypeSize(type);
+				// https://www.felixcloutier.com/x86/idiv
+				// (edx eax) / %reg -> eax
+				// (edx eax) % %reg -> edx
+				final int leftReg = loadVar(binary.left());
+				final String leftRegName = getRegName(leftReg);
+				Utils.assertTrue("rbx".equals(leftRegName));
+
+				final int rightReg = loadVar(rightVar);
+				final String rightRegName = getRegName(rightReg);
+				Utils.assertTrue("rcx".equals(rightRegName));
+
+				final int rax = getFreeReg();
+				Utils.assertTrue("rax".equals(getRegName(rax)));
+
+				if (size == 8) {
+					writeIndented("mov rax, " + leftRegName);
+				}
+				else if (type.equals(Type.U8)) {
+					writeIndented("movzx rax, " + getRegName(leftReg, size));
+					writeIndented("movzx rcx, " + getRegName(rightReg, size));
+				}
+				else {
+					writeMovx("rax", leftReg, binary.left(), signed);
+					writeMovx("rcx", rightReg, rightVar, signed);
+				}
+				writeIndented("cqo"); // rdx := signbit(rax)
+				writeIndented("idiv " + rightRegName);
+				writeIndented("mov rbx, " + (binary.op() == IRBinary.Op.Mod ? "rdx" : "rax"));
+				storeVar(binary.target(), leftReg);
+				free(rax);
+				free(rightReg);
+				free(leftReg);
+			}
+			else {
+				final Type type = binary.left().type();
+				Utils.assertTrue(Objects.equals(type, binary.right().type()));
+				final int size = getTypeSize(type);
+				// https://www.felixcloutier.com/x86/idiv
+				// (edx eax) / %reg -> eax
+				// (edx eax) % %reg -> edx
+				final int leftReg = loadVar(binary.left());
+				final String leftRegName = getRegName(leftReg);
+				Utils.assertTrue("rbx".equals(leftRegName));
+
+				final int rax = getFreeReg();
+				Utils.assertTrue("rax".equals(getRegName(rax)));
+
+				if (size == 8) {
+					writeIndented("mov rax, " + leftRegName);
+				}
+				else if (type.equals(Type.U8)) {
+					writeIndented("movzx rax, " + getRegName(leftReg, size));
+				}
+				else {
+					writeMovx("rax", leftReg, binary.left(), signed);
+				}
+				writeIndented("mov rcx, " + right.value());
+				writeIndented("cqo"); // rdx := signbit(rax)
+				writeIndented("idiv rcx");
+				writeIndented("mov rbx, " + (binary.op() == IRBinary.Op.Mod ? "rdx" : "rax"));
+				storeVar(binary.target(), leftReg);
+				free(rax);
+				free(leftReg);
+			}
 		}
 
 		case ShiftLeft -> {
-			final int leftReg = loadVar(binary.left());
-			final String leftRegName = getRegName(leftReg, binary.left());
-			final int rightReg = loadVar(binary.right());
-			final String rightRegName = getRegName(rightReg, 1);
-			Utils.assertTrue("cl".equals(rightRegName));
-			if (signed) {
-				writeIndented("sal" + " " + leftRegName + ", cl");
+			if (rightVar != null) {
+				final int leftReg = loadVar(binary.left());
+				final String leftRegName = getRegName(leftReg, binary.left());
+				final int rightReg = loadVar(rightVar);
+				final String rightRegName = getRegName(rightReg, 1);
+				Utils.assertTrue("cl".equals(rightRegName));
+				if (signed) {
+					writeIndented("sal" + " " + leftRegName + ", cl");
+				}
+				else {
+					writeIndented("shl" + " " + leftRegName + ", cl");
+				}
+				storeVar(binary.target(), leftReg);
+				free(rightReg);
+				free(leftReg);
 			}
 			else {
-				writeIndented("shl" + " " + leftRegName + ", cl");
+				final int leftReg = loadVar(binary.left());
+				final String leftRegName = getRegName(leftReg, binary.left());
+				if (signed) {
+					writeIndented("sal" + " " + leftRegName + ", " + right.value());
+				}
+				else {
+					writeIndented("shl" + " " + leftRegName + ", " + right.value());
+				}
+				storeVar(binary.target(), leftReg);
+				free(leftReg);
 			}
-			storeVar(binary.target(), leftReg);
-			free(rightReg);
-			free(leftReg);
 		}
 		case ShiftRight -> {
-			final int leftReg = loadVar(binary.left());
-			final String leftRegName = getRegName(leftReg, binary.left());
-			final int rightReg = loadVar(binary.right());
-			final String rightRegName = getRegName(rightReg, 1);
-			Utils.assertTrue("cl".equals(rightRegName));
-			if (signed) {
-				writeIndented("sar" + " " + leftRegName + ", cl");
+			if (rightVar != null) {
+				final int leftReg = loadVar(binary.left());
+				final String leftRegName = getRegName(leftReg, binary.left());
+				final int rightReg = loadVar(rightVar);
+				final String rightRegName = getRegName(rightReg, 1);
+				Utils.assertTrue("cl".equals(rightRegName));
+				if (signed) {
+					writeIndented("sar" + " " + leftRegName + ", cl");
+				}
+				else {
+					writeIndented("shr" + " " + leftRegName + ", cl");
+				}
+				storeVar(binary.target(), leftReg);
+				free(rightReg);
+				free(leftReg);
 			}
 			else {
-				writeIndented("shr" + " " + leftRegName + ", cl");
+				final int leftReg = loadVar(binary.left());
+				final String leftRegName = getRegName(leftReg, binary.left());
+				if (signed) {
+					writeIndented("sar" + " " + leftRegName + ", " + right.value());
+				}
+				else {
+					writeIndented("shr" + " " + leftRegName + ", " + right.value());
+				}
+				storeVar(binary.target(), leftReg);
+				free(leftReg);
 			}
-			storeVar(binary.target(), leftReg);
-			free(rightReg);
-			free(leftReg);
 		}
 
 		case And -> writeBinary("and", binary);
@@ -491,14 +566,25 @@ public final class X86Win64 extends AsmWriter {
 	}
 
 	private void writeBinary(String op, IRBinary binary) throws IOException {
-		final int leftReg = loadVar(binary.left());
-		final String leftRegName = getRegName(leftReg, binary.left());
-		final int rightReg = loadVar(binary.right());
-		final String rightRegName = getRegName(rightReg, binary.right());
-		writeIndented(op + " " + leftRegName + ", " + rightRegName);
-		storeVar(binary.target(), leftReg);
-		free(rightReg);
-		free(leftReg);
+		final IRValue right = binary.right();
+		final IRVar rightVar = right.var();
+		if (rightVar != null) {
+			final int leftReg = loadVar(binary.left());
+			final String leftRegName = getRegName(leftReg, binary.left());
+			final int rightReg = loadVar(rightVar);
+			final String rightRegName = getRegName(rightReg, rightVar);
+			writeIndented(op + " " + leftRegName + ", " + rightRegName);
+			storeVar(binary.target(), leftReg);
+			free(rightReg);
+			free(leftReg);
+		}
+		else {
+			final int leftReg = loadVar(binary.left());
+			final String leftRegName = getRegName(leftReg, binary.left());
+			writeIndented(op + " " + leftRegName + ", " + right.value());
+			storeVar(binary.target(), leftReg);
+			free(leftReg);
+		}
 	}
 
 	private void writeCompare(String command, IRCompare compare) throws IOException {
