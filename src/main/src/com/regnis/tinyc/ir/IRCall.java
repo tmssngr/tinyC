@@ -10,8 +10,8 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRCall(@Nullable IRVar target, @NotNull Type type, @NotNull String name, @NotNull List<IRVar> args, @NotNull Location location) implements IRInstruction {
-	public IRCall(@Nullable IRVar target, @NotNull Type type, @NotNull String name, @NotNull List<IRVar> args) {
+public record IRCall(@Nullable IRVar target, @NotNull Type type, @NotNull String name, @NotNull List<IRValue> args, @NotNull Location location) implements IRInstruction {
+	public IRCall(@Nullable IRVar target, @NotNull Type type, @NotNull String name, @NotNull List<IRValue> args) {
 		this(target, type, name, args, Location.DUMMY);
 	}
 

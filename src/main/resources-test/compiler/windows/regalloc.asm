@@ -201,7 +201,6 @@ _while_2:
         ;   rsp+1: var two
         ;   rsp+2: var oneOrTwo
         ;   rsp+4: var f5
-        ;   rsp+6: var t.4
 _main:
         ; reserve space for local variables
         sub rsp, 16
@@ -235,14 +234,9 @@ _main:
         sub rsp, 8
           call _max@u8@u8
         add rsp, 24
-        ; const t.4, 5
-        mov al, 5
-        lea rbx, [rsp+6]
-        mov [rbx], al
-        ; call _ = fibonacci@u8[t.4] -> i16
-        lea rax, [rsp+6]
-        mov bl, [rax]
-        push rbx
+        ; call _ = fibonacci@u8[5] -> i16
+        mov  rax, 5
+        push rax
           call _fibonacci@u8
         add rsp, 8
         ; release space for local variables
