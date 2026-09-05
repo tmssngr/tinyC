@@ -218,6 +218,7 @@ void main() {
 	i16 curr_r = (i16)(height / 2);
 	while (true) {
 		printField(curr_r, curr_c);
+		break;
 		if (!needsInitialize) {
 			if (printLeft()) {
 				printString(" You've cleaned the field!");
