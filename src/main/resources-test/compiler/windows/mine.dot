@@ -7,7 +7,7 @@ digraph program {
 	}
 	subgraph fn_printChar_Au8 {
 		BasicBlock_1_printChar_Au8 [label="printChar_Au8",shape=box];
-		BasicBlock_1_printChar_Au8 -> BasicBlock_1_printChar_Au8__ret;
+		BasicBlock_1_printChar_Au8 -> BasicBlock_1_printChar_Au8__ret [label="(chr)"];
 		BasicBlock_1_printChar_Au8__ret [label="printChar_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printUint_Ai16 {
@@ -17,14 +17,14 @@ digraph program {
 	}
 	subgraph fn_printUint_Ai64 {
 		BasicBlock_3_printUint_Ai64 [label="printUint_Ai64",shape=box];
-		BasicBlock_3_printUint_Ai64 -> BasicBlock_3_while__1 [label="(number,pos)"];
+		BasicBlock_3_printUint_Ai64 -> BasicBlock_3_while__1 [label="(buffer,number,pos)"];
 		BasicBlock_3_printUint_Ai64_dno__critical__edge__4 [label="printUint_Ai64_dno__critical__edge__4",shape=box];
-		BasicBlock_3_printUint_Ai64_dno__critical__edge__4 -> BasicBlock_3_while__1 [label="(number,pos)"];
+		BasicBlock_3_printUint_Ai64_dno__critical__edge__4 -> BasicBlock_3_while__1 [label="(buffer,number,pos)"];
 		BasicBlock_3_while__1 [label="while__1",shape=hexagon];
-		BasicBlock_3_while__1 -> BasicBlock_3_printUint_Ai64_dno__critical__edge__4 [label="(number,pos)"];
-		BasicBlock_3_while__1 -> BasicBlock_3_while__1__break [label="(pos)"];
+		BasicBlock_3_while__1 -> BasicBlock_3_printUint_Ai64_dno__critical__edge__4 [label="(buffer,number,pos)"];
+		BasicBlock_3_while__1 -> BasicBlock_3_while__1__break [label="(buffer,pos)"];
 		BasicBlock_3_while__1__break [label="while__1__break",shape=box];
-		BasicBlock_3_while__1__break -> BasicBlock_3_printUint_Ai64__ret;
+		BasicBlock_3_while__1__break -> BasicBlock_3_printUint_Ai64__ret [label="(buffer)"];
 		BasicBlock_3_printUint_Ai64__ret [label="printUint_Ai64__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_strlen_A_Au8 {
@@ -299,12 +299,12 @@ digraph program {
 		BasicBlock_25_initField_Ai16_Ai16 -> BasicBlock_25_for__30 [label="(bombs,curr_c,curr_r)"];
 		BasicBlock_25_for__30__body [label="for__30__body",shape=hexagon];
 		BasicBlock_25_for__30__body -> BasicBlock_25_initField_Ai16_Ai16_dno__critical__edge__7 [label="(bombs,column,curr_c,curr_r,row)"];
-		BasicBlock_25_for__30__body -> BasicBlock_25__Aor__32 [label="(bombs,column,curr_c,curr_r,row)"];
+		BasicBlock_25_for__30__body -> BasicBlock_25_or__32 [label="(bombs,column,curr_c,curr_r,row)"];
 		BasicBlock_25_initField_Ai16_Ai16_dno__critical__edge__7 [label="initField_Ai16_Ai16_dno__critical__edge__7",shape=box];
 		BasicBlock_25_initField_Ai16_Ai16_dno__critical__edge__7 -> BasicBlock_25_if__31__then [label="(bombs,column,curr_c,curr_r,row)"];
-		BasicBlock_25__Aor__32 [label="_Aor__32",shape=hexagon];
-		BasicBlock_25__Aor__32 -> BasicBlock_25_initField_Ai16_Ai16_dno__critical__edge__8 [label="(bombs,curr_c,curr_r)"];
-		BasicBlock_25__Aor__32 -> BasicBlock_25_initField_Ai16_Ai16_dno__critical__edge__9 [label="(bombs,column,curr_c,curr_r,row)"];
+		BasicBlock_25_or__32 [label="or__32",shape=hexagon];
+		BasicBlock_25_or__32 -> BasicBlock_25_initField_Ai16_Ai16_dno__critical__edge__8 [label="(bombs,curr_c,curr_r)"];
+		BasicBlock_25_or__32 -> BasicBlock_25_initField_Ai16_Ai16_dno__critical__edge__9 [label="(bombs,column,curr_c,curr_r,row)"];
 		BasicBlock_25_initField_Ai16_Ai16_dno__critical__edge__8 [label="initField_Ai16_Ai16_dno__critical__edge__8",shape=box];
 		BasicBlock_25_initField_Ai16_Ai16_dno__critical__edge__8 -> BasicBlock_25_for__30__continue [label="(bombs,curr_c,curr_r)"];
 		BasicBlock_25_initField_Ai16_Ai16_dno__critical__edge__9 [label="initField_Ai16_Ai16_dno__critical__edge__9",shape=box];
@@ -328,12 +328,12 @@ digraph program {
 		BasicBlock_26_for__34__body -> BasicBlock_26_for__35 [label="(column,dc,dr,r,row)"];
 		BasicBlock_26_for__35__body [label="for__35__body",shape=hexagon];
 		BasicBlock_26_for__35__body -> BasicBlock_26_maybeRevealAround_Ai16_Ai16_dno__critical__edge__15 [label="(column,dc,dr,r,row)"];
-		BasicBlock_26_for__35__body -> BasicBlock_26__Aand__37 [label="(column,dc,dr,r,row)"];
+		BasicBlock_26_for__35__body -> BasicBlock_26_and__37 [label="(column,dc,dr,r,row)"];
 		BasicBlock_26_maybeRevealAround_Ai16_Ai16_dno__critical__edge__15 [label="maybeRevealAround_Ai16_Ai16_dno__critical__edge__15",shape=box];
 		BasicBlock_26_maybeRevealAround_Ai16_Ai16_dno__critical__edge__15 -> BasicBlock_26_if__36__end [label="(column,dc,dr,r,row)"];
-		BasicBlock_26__Aand__37 [label="_Aand__37",shape=hexagon];
-		BasicBlock_26__Aand__37 -> BasicBlock_26_maybeRevealAround_Ai16_Ai16_dno__critical__edge__18 [label="(column,dc,dr,r,row)"];
-		BasicBlock_26__Aand__37 -> BasicBlock_26_maybeRevealAround_Ai16_Ai16_dno__critical__edge__19 [label="(column,dc,dr,r,row)"];
+		BasicBlock_26_and__37 [label="and__37",shape=hexagon];
+		BasicBlock_26_and__37 -> BasicBlock_26_maybeRevealAround_Ai16_Ai16_dno__critical__edge__18 [label="(column,dc,dr,r,row)"];
+		BasicBlock_26_and__37 -> BasicBlock_26_maybeRevealAround_Ai16_Ai16_dno__critical__edge__19 [label="(column,dc,dr,r,row)"];
 		BasicBlock_26_maybeRevealAround_Ai16_Ai16_dno__critical__edge__18 [label="maybeRevealAround_Ai16_Ai16_dno__critical__edge__18",shape=box];
 		BasicBlock_26_maybeRevealAround_Ai16_Ai16_dno__critical__edge__18 -> BasicBlock_26_for__35__continue [label="(column,dc,dr,r,row)"];
 		BasicBlock_26_maybeRevealAround_Ai16_Ai16_dno__critical__edge__19 [label="maybeRevealAround_Ai16_Ai16_dno__critical__edge__19",shape=box];

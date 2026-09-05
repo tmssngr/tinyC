@@ -103,6 +103,26 @@ public final class IRVarInfos implements IRCanBeRegister {
 		throw new IllegalStateException("Unknown var " + var);
 	}
 
+	public List<Type> getArgumentTypes() {
+		final List<Type> types = new ArrayList<>();
+		int expectedIndex = 0;
+		for (IRVarDef varDef : vars) {
+			final IRVar var = varDef.var();
+			if (var.scope() != VariableScope.parameter) {
+				continue;
+			}
+
+			if (var.index() != expectedIndex) {
+				throw new IllegalStateException();
+			}
+
+			types.add(var.type());
+
+			expectedIndex++;
+		}
+		return types;
+	}
+
 	@NotNull
 	public IRVarInfos derive(IRVarInfos newParent) {
 		return new IRVarInfos(vars, cantBeRegister, newParent);

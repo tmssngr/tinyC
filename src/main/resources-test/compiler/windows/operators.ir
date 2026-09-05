@@ -250,8 +250,8 @@ logicAnd:
 	const f, 0
 	; 23:2 if getFalse([]) && getFalse([])
 	call t.3 = getFalse[] -> bool
-	branch t.3 equals 0: if_7_else, @and_8
-@and_8:
+	branch t.3 equals 0: if_7_else, and_8
+and_8:
 	call t.4 = getFalse[] -> bool
 	branch t.4 equals 0: if_7_else, if_7_then
 if_7_then:
@@ -269,8 +269,8 @@ and_next_9:
 	call printIntLf@bool[t.5]
 	; 25:2 if getFalse([]) && getTrue([])
 	call t.6 = getFalse[] -> bool
-	branch t.6 equals 0: if_10_else, @and_11
-@and_11:
+	branch t.6 equals 0: if_10_else, and_11
+and_11:
 	call t.7 = getTrue[] -> bool
 	branch t.7 equals 0: if_10_else, if_10_then
 if_10_then:
@@ -288,8 +288,8 @@ and_next_12:
 	call printIntLf@bool[t.8]
 	; 27:2 if getTrue([]) && getFalse([])
 	call t.9 = getTrue[] -> bool
-	branch t.9 equals 0: if_13_else, @and_14
-@and_14:
+	branch t.9 equals 0: if_13_else, and_14
+and_14:
 	call t.10 = getFalse[] -> bool
 	branch t.10 equals 0: if_13_else, if_13_then
 if_13_then:
@@ -307,8 +307,8 @@ and_next_15:
 	call printIntLf@bool[t.11]
 	; 29:2 if getTrue([]) && getTrue([])
 	call t.12 = getTrue[] -> bool
-	branch t.12 equals 0: if_16_else, @and_17
-@and_17:
+	branch t.12 equals 0: if_16_else, and_17
+and_17:
 	call t.13 = getTrue[] -> bool
 	branch t.13 equals 0: if_16_else, if_16_then
 if_16_then:
@@ -326,8 +326,8 @@ and_next_18:
 	call printIntLf@bool[t.14]
 	; 32:2 if !getFalse([]) && getFalse([])
 	call t.15 = getFalse[] -> bool
-	branch t.15 equals 0: if_19_then, @and_20
-@and_20:
+	branch t.15 equals 0: if_19_then, and_20
+and_20:
 	call t.16 = getFalse[] -> bool
 	branch t.16 notequals 0: if_19_else, if_19_then
 if_19_then:
@@ -346,8 +346,8 @@ and_next_21:
 	call printIntLf@bool[t.17]
 	; 34:2 if !getFalse([]) && getTrue([])
 	call t.19 = getFalse[] -> bool
-	branch t.19 equals 0: if_22_then, @and_23
-@and_23:
+	branch t.19 equals 0: if_22_then, and_23
+and_23:
 	call t.20 = getTrue[] -> bool
 	branch t.20 notequals 0: if_22_else, if_22_then
 if_22_then:
@@ -366,8 +366,8 @@ and_next_24:
 	call printIntLf@bool[t.21]
 	; 36:2 if !getTrue([]) && getFalse([])
 	call t.23 = getTrue[] -> bool
-	branch t.23 equals 0: if_25_then, @and_26
-@and_26:
+	branch t.23 equals 0: if_25_then, and_26
+and_26:
 	call t.24 = getFalse[] -> bool
 	branch t.24 notequals 0: if_25_else, if_25_then
 if_25_then:
@@ -386,8 +386,8 @@ and_next_27:
 	call printIntLf@bool[t.25]
 	; 38:2 if !getTrue([]) && getTrue([])
 	call t.27 = getTrue[] -> bool
-	branch t.27 equals 0: if_28_then, @and_29
-@and_29:
+	branch t.27 equals 0: if_28_then, and_29
+and_29:
 	call t.28 = getTrue[] -> bool
 	branch t.28 notequals 0: if_28_else, if_28_then
 if_28_then:
@@ -430,8 +430,8 @@ logicOr:
 	const f, 0
 	; 46:2 if getFalse([]) || getFalse([])
 	call t.3 = getFalse[] -> bool
-	branch t.3 notequals 0: if_31_then, @or_32
-@or_32:
+	branch t.3 notequals 0: if_31_then, or_32
+or_32:
 	call t.4 = getFalse[] -> bool
 	branch t.4 equals 0: if_31_else, if_31_then
 if_31_then:
@@ -449,8 +449,8 @@ or_next_33:
 	call printIntLf@bool[t.5]
 	; 48:2 if getFalse([]) || getTrue([])
 	call t.6 = getFalse[] -> bool
-	branch t.6 notequals 0: if_34_then, @or_35
-@or_35:
+	branch t.6 notequals 0: if_34_then, or_35
+or_35:
 	call t.7 = getTrue[] -> bool
 	branch t.7 equals 0: if_34_else, if_34_then
 if_34_then:
@@ -468,8 +468,8 @@ or_next_36:
 	call printIntLf@bool[t.8]
 	; 50:2 if getTrue([]) || getFalse([])
 	call t.9 = getTrue[] -> bool
-	branch t.9 notequals 0: if_37_then, @or_38
-@or_38:
+	branch t.9 notequals 0: if_37_then, or_38
+or_38:
 	call t.10 = getFalse[] -> bool
 	branch t.10 equals 0: if_37_else, if_37_then
 if_37_then:
@@ -487,8 +487,8 @@ or_next_39:
 	call printIntLf@bool[t.11]
 	; 52:2 if getTrue([]) || getTrue([])
 	call t.12 = getTrue[] -> bool
-	branch t.12 notequals 0: if_40_then, @or_41
-@or_41:
+	branch t.12 notequals 0: if_40_then, or_41
+or_41:
 	call t.13 = getTrue[] -> bool
 	branch t.13 equals 0: if_40_else, if_40_then
 if_40_then:
@@ -600,14 +600,14 @@ main:
 	call logicOr[]
 	; 82:2 if !getTrue([]) && getTrue([]) || !getFalse([]) && getFalse([])
 	call t.24 = getTrue[] -> bool
-	branch t.24 equals 0: if_43_then, @and_45
-@and_45:
+	branch t.24 equals 0: if_43_then, and_45
+and_45:
 	call t.25 = getTrue[] -> bool
-	branch t.25 equals 0: if_43_then, @or_44
-@or_44:
+	branch t.25 equals 0: if_43_then, or_44
+or_44:
 	call t.26 = getFalse[] -> bool
-	branch t.26 equals 0: if_43_then, @and_46
-@and_46:
+	branch t.26 equals 0: if_43_then, and_46
+and_46:
 	call t.27 = getFalse[] -> bool
 	branch t.27 notequals 0: if_43_else, if_43_then
 if_43_then:
@@ -669,10 +669,10 @@ main_ret:
 printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
+	mov     r8, rdx
+	mov     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
 	xor     r9, r9
 	push    0
 	sub     rsp, 20h
