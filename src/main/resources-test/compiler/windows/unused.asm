@@ -26,22 +26,12 @@ start:
         ret
 
         ; void main
-        ;   rsp+0: var t.0
 @main:
-        ; reserve space for local variables
-        sub rsp, 16
-        ; const t.0, 0
-        mov al, 0
-        lea rbx, [rsp+0]
-        mov [rbx], al
-        ; call unusedArg@u8[t.0]
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        push rbx
+        ; call unusedArg@u8[0]
+        mov  rax, 0
+        push rax
           call @unusedArg@u8
         add rsp, 8
-        ; release space for local variables
-        add rsp, 16
         ret
 init:
         sub rsp, 20h

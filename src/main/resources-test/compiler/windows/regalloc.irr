@@ -69,12 +69,10 @@
 	var 1: two (u8/1)
 	var 2: oneOrTwo (u8/1)
 	var 3: f5 (i16/2)
-	var 4: t.4 (u8/1)
-	; 20 pc
+	; 16 pc
 	call one = simple[] -> u8
 	const two, 2
 	call _ = registerHint@u8@u8[one, two] -> u8
 	call _ = max@u8@u8[one, two] -> u8
-	const t.4, 5
-	call _ = fibonacci@u8[t.4] -> i16
+	call _ = fibonacci@u8[5] -> i16
 

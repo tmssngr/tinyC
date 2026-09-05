@@ -23,7 +23,6 @@ start:
         ; void printChar@u8
         ;   rsp+24: arg chr
         ;   rsp+0: var t.1
-        ;   rsp+8: var t.2
 @printChar@u8:
         ; reserve space for local variables
         sub rsp, 16
@@ -31,17 +30,12 @@ start:
         lea rax, [rsp+24]
         lea rbx, [rsp+0]
         mov [rbx], rax
-        ; const t.2, 1
-        mov al, 1
-        lea rbx, [rsp+8]
-        mov [rbx], al
-        ; call printStringLength@@u8@u8[t.1, t.2]
+        ; call printStringLength@@u8@u8[t.1, 1]
         lea rax, [rsp+0]
         mov rbx, [rax]
         push rbx
-        lea rax, [rsp+16]
-        mov bl, [rax]
-        push rbx
+        mov  rax, 1
+        push rax
         sub rsp, 8
           call @printStringLength@@u8@u8
         add rsp, 24
@@ -230,8 +224,6 @@ start:
         ; void printIntLf@i64
         ;   rsp+24: arg number
         ;   rsp+0: var t.1
-        ;   rsp+1: var t.2
-        ;   rsp+2: var t.3
 @printIntLf@i64:
         ; reserve space for local variables
         sub rsp, 16
@@ -248,14 +240,9 @@ start:
         mov bl, [rax]
         or bl, bl
         jz @if_3_end
-        ; const t.2, 45
-        mov al, 45
-        lea rbx, [rsp+1]
-        mov [rbx], al
-        ; call printChar@u8[t.2]
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        push rbx
+        ; call printChar@u8[45]
+        mov  rax, 45
+        push rax
           call @printChar@u8
         add rsp, 8
         ; neg number, number
@@ -271,14 +258,9 @@ start:
         push rbx
           call @printUint@i64
         add rsp, 8
-        ; const t.3, 10
-        mov al, 10
-        lea rbx, [rsp+2]
-        mov [rbx], al
-        ; call printChar@u8[t.3]
-        lea rax, [rsp+2]
-        mov bl, [rax]
-        push rbx
+        ; call printChar@u8[10]
+        mov  rax, 10
+        push rax
           call @printChar@u8
         add rsp, 8
         ; release space for local variables
@@ -521,8 +503,7 @@ start:
         ; void main
         ;   rsp+0: var i
         ;   rsp+1: var r
-        ;   rsp+4: var t.2
-        ;   rsp+8: var t.3
+        ;   rsp+2: var t.2
 @main:
         ; reserve space for local variables
         sub rsp, 16
@@ -532,14 +513,9 @@ start:
         lea rbx, [var_0]
         mov [rbx], eax
         ; end initialize global variables
-        ; const t.2, 7439742
-        mov eax, 7439742
-        lea rbx, [rsp+4]
-        mov [rbx], eax
-        ; call initRandom@i32[t.2]
-        lea rax, [rsp+4]
-        mov ebx, [rax]
-        push rbx
+        ; call initRandom@i32[7439742]
+        mov  rax, 7439742
+        push rax
           call @initRandom@i32
         add rsp, 8
         ; const i, 0
@@ -568,15 +544,15 @@ start:
         lea rax, [rsp+0]
         mov [rax], bl
 @for_4:
-        ; lt t.3, i, 50
+        ; lt t.2, i, 50
         lea rax, [rsp+0]
         mov bl, [rax]
         cmp bl, 50
         setb bl
-        lea rax, [rsp+8]
+        lea rax, [rsp+2]
         mov [rax], bl
-        ; branch t.3, true, @for_4_body, @main_ret
-        lea rax, [rsp+8]
+        ; branch t.2, true, @for_4_body, @main_ret
+        lea rax, [rsp+2]
         mov bl, [rax]
         or bl, bl
         jnz @for_4_body

@@ -10,11 +10,9 @@
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
-	var 2: t.2 (u8/1)
-	; 12 pc
+	; 8 pc
 	addrof t.1, chr
-	const t.2, 1
-	call printStringLength@@u8@u8[t.1, t.2]
+	call printStringLength@@u8@u8[t.1, 1]
 
 @strlen@@u8:
  Local variables
@@ -77,18 +75,14 @@
 	var 3: t.3 (bool/1)
 	var 4: t.4 (bool/1)
 	var 5: t.5 (u8/1)
-	var 6: t.6 (u8/1)
-	var 7: t.7 (u8/1)
-	var 8: t.8 (bool/1)
+	var 6: t.6 (bool/1)
+	var 7: t.7 (bool/1)
+	var 8: t.8 (u8/1)
 	var 9: t.9 (bool/1)
 	var 10: t.10 (u8/1)
 	var 11: t.11 (bool/1)
 	var 12: t.12 (u8/1)
-	var 13: t.13 (u8/1)
-	var 14: t.14 (bool/1)
-	var 15: t.15 (u8/1)
-	var 16: t.16 (u8/1)
-	; 139 pc
+	; 123 pc
 	const t.2, [string-0]
 	call printString@@u8[t.2]
 	const i, 0
@@ -100,48 +94,44 @@
 	and t.5, t.5, 7
 	equals t.4, t.5, 0
 	branch t.4, false, @if_4_end, @if_4_then
-	const t.6, 32
-	call printChar@u8[t.6]
+	call printChar@u8[32]
 @if_4_end:
 	call printNibble@u8[i]
 	add i, i, 1
 @for_3:
 	lt t.3, i, 16
 	branch t.3, true, @for_3_body, @for_3_break
-	const t.7, 10
-	call printChar@u8[t.7]
+	call printChar@u8[10]
 	const i, 32
 	; 27:2 for i < 128
 	jump @for_5
 @for_5_body:
 	; 28:3 if i & 15 == 0
-	move t.10, i
-	and t.10, t.10, 15
-	equals t.9, t.10, 0
-	branch t.9, false, @if_6_end, @if_6_then
+	move t.8, i
+	and t.8, t.8, 15
+	equals t.7, t.8, 0
+	branch t.7, false, @if_6_end, @if_6_then
 	call printHex2@u8[i]
 @if_6_end:
 	; 31:3 if i & 7 == 0
-	move t.12, i
-	and t.12, t.12, 7
-	equals t.11, t.12, 0
-	branch t.11, false, @if_7_end, @if_7_then
-	const t.13, 32
-	call printChar@u8[t.13]
+	move t.10, i
+	and t.10, t.10, 7
+	equals t.9, t.10, 0
+	branch t.9, false, @if_7_end, @if_7_then
+	call printChar@u8[32]
 @if_7_end:
 	call printChar@u8[i]
 	; 35:3 if i & 15 == 15
-	move t.15, i
-	and t.15, t.15, 15
-	equals t.14, t.15, 15
-	branch t.14, false, @for_5_continue, @if_8_then
-	const t.16, 10
-	call printChar@u8[t.16]
+	move t.12, i
+	and t.12, t.12, 15
+	equals t.11, t.12, 15
+	branch t.11, false, @for_5_continue, @if_8_then
+	call printChar@u8[10]
 @for_5_continue:
 	add i, i, 1
 @for_5:
-	lt t.8, i, 128
-	branch t.8, true, @for_5_body, @main_ret
+	lt t.6, i, 128
+	branch t.6, true, @for_5_body, @main_ret
 
 @printStringLength@@u8@i64:
 	mov     rdi, rsp

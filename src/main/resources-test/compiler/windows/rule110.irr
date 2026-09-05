@@ -10,11 +10,9 @@
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
-	var 2: t.2 (u8/1)
-	; 12 pc
+	; 8 pc
 	addrof t.1, chr
-	const t.2, 1
-	call printStringLength@@u8@u8[t.1, t.2]
+	call printStringLength@@u8@u8[t.1, 1]
 
 @strlen@@u8:
  Local variables
@@ -48,42 +46,36 @@
 @printBoard:
  Local variables
 	var 0: i (u8/1)
-	var 1: t.1 (u8/1)
+	var 1: t.1 (bool/1)
 	var 2: t.2 (bool/1)
-	var 3: t.3 (bool/1)
-	var 4: t.4 (u8/1)
-	var 5: t.5 (u8*/8)
-	var 6: t.6 (i64/8)
-	var 7: t.7 (u8/1)
-	var 8: t.8 (u8/1)
-	var 9: t.9 (u8*/8)
-	; 67 pc
-	const t.1, 124
-	call printChar@u8[t.1]
+	var 3: t.3 (u8/1)
+	var 4: t.4 (u8*/8)
+	var 5: t.5 (i64/8)
+	var 6: t.6 (u8*/8)
+	; 55 pc
+	call printChar@u8[124]
 	const i, 0
 	; 11:2 for i < 30
 	jump @for_2
 @for_2_body:
 	; 12:3 if [...] == 0
-	cast t.6(i64), i(u8)
-	addrof t.5, [board]
-	add t.5, t.5, t.6
-	load t.4, [t.5]
-	equals t.3, t.4, 0
-	branch t.3, true, @if_3_then, @if_3_else
-	const t.8, 42
-	call printChar@u8[t.8]
+	cast t.5(i64), i(u8)
+	addrof t.4, [board]
+	add t.4, t.4, t.5
+	load t.3, [t.4]
+	equals t.2, t.3, 0
+	branch t.2, true, @if_3_then, @if_3_else
+	call printChar@u8[42]
 	jump @for_2_continue
 @if_3_then:
-	const t.7, 32
-	call printChar@u8[t.7]
+	call printChar@u8[32]
 @for_2_continue:
 	add i, i, 1
 @for_2:
-	lt t.2, i, 30
-	branch t.2, true, @for_2_body, @for_2_break
-	const t.9, [string-0]
-	call printString@@u8[t.9]
+	lt t.1, i, 30
+	branch t.1, true, @for_2_body, @for_2_break
+	const t.6, [string-0]
+	call printString@@u8[t.6]
 
 @main:
  Local variables
