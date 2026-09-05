@@ -1,0 +1,283 @@
+package com.regnis.tinyc.linearscanregalloc;
+
+import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.ir.*;
+
+import java.util.*;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+
+/**
+ * @author Thomas Singer
+ */
+public class LSRegAllocTest {
+
+	private static final int U8_SIZE = 1;
+
+	@Test
+	public void testSimplest() {
+		final int r0 = 0;
+		final int r1 = 1;
+		final int r2 = 2;
+		final IRVar varFour = new IRVar("four", 0, VariableScope.function, Type.U8);
+		final IRVar varThree = new IRVar("three", 1, VariableScope.function, Type.U8);
+		final IRVar varOne = new IRVar("one", 2, VariableScope.function, Type.U8);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRFunction function = new IRFunction(
+				"simple", "@simple", Type.U8,
+				new IRVarInfos(List.of(
+						new IRVarDef(varFour, U8_SIZE),
+						new IRVarDef(varThree, U8_SIZE),
+						new IRVarDef(varOne, U8_SIZE)
+				), Set.of(), globalVarInfos),
+				List.of(
+						new IRMove(varFour, 4),
+						new IRMove(varThree, 3),
+						new IRMove(varOne, varFour),
+						new IRBinary(varOne, IRBinary.Op.Sub, varOne, varThree),
+						new IRRetValue(varOne)
+				)
+		);
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
+		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
+		assertEquals(new IRMove(varFour.asRegister(r1), 4), it.next());
+		assertEquals(new IRMove(varThree.asRegister(r2), 3), it.next());
+		assertEquals(new IRMove(varOne.asRegister(r0), varFour.asRegister(r1)), it.next());
+		assertEquals(new IRBinary(varOne.asRegister(r0), IRBinary.Op.Sub, varOne.asRegister(r0), varThree.asRegister(r2)), it.next());
+		assertFalse(it.hasNext());
+	}
+
+	@Test
+	public void testRegisterHint() {
+		final int rRet = 0;
+		final int rArg1 = 1;
+		final int rArg2 = 2;
+		final IRVar argA = new IRVar("a", 0, VariableScope.parameter, Type.U8);
+		final IRVar argB = new IRVar("b", 1, VariableScope.parameter, Type.U8);
+		final IRVar varT2 = new IRVar("t2", 2, VariableScope.function, Type.U8);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRFunction function = new IRFunction(
+				"simple", "@simple", Type.U8,
+				new IRVarInfos(List.of(
+						new IRVarDef(argA, U8_SIZE),
+						new IRVarDef(argB, U8_SIZE),
+						new IRVarDef(varT2, U8_SIZE)
+				), Set.of(), globalVarInfos),
+				List.of(
+						new IRMove(varT2, argA),
+						new IRBinary(varT2, IRBinary.Op.Add, varT2, argB),
+						new IRRetValue(varT2)
+				)
+		);
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
+		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
+		assertEquals(new IRMove(varT2.asRegister(rRet), argA.asRegister(rArg1)), it.next());
+		assertEquals(new IRBinary(varT2.asRegister(rRet), IRBinary.Op.Add, varT2.asRegister(rRet), argB.asRegister(rArg2)), it.next());
+		assertFalse(it.hasNext());
+	}
+
+	@Test
+	public void testSplitLiveInterval() {
+		final int rRet = 0;
+		final int rArg1 = 1;
+		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.U8);
+		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.U8);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRFunction function = new IRFunction(
+				"simple", "@simple", Type.U8,
+				new IRVarInfos(List.of(
+						new IRVarDef(varA, U8_SIZE),
+						new IRVarDef(varB, U8_SIZE)
+				), Set.of(), globalVarInfos),
+				List.of(
+						new IRMove(varA, 1),
+						new IRCall(varB, Type.U8, "foo", IRValue.toValues(varA)),
+						new IRBinary(varA, IRBinary.Op.Add, varA, varB),
+						new IRRetValue(varA)
+				)
+		);
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(1, 0);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 2, callingConventionProvider, Type.I64);
+		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
+		assertEquals(new IRMove(varA.asRegister(rArg1), 1), it.next());
+		assertEquals(new IRMove(varA, varA.asRegister(rArg1)), it.next());
+		assertEquals(new IRCall(varB.asRegister(rRet), Type.U8, "foo", IRValue.toValues(varA.asRegister(rArg1))), it.next());
+		assertEquals(new IRMove(varA.asRegister(rArg1), varA), it.next());
+		assertEquals(new IRBinary(varA.asRegister(rArg1), IRBinary.Op.Add, varA.asRegister(rArg1), varB.asRegister(rRet)), it.next());
+		assertEquals(new IRMove(varA.asRegister(rRet), varA.asRegister(rArg1)), it.next());
+		assertFalse(it.hasNext());
+	}
+
+	@Test
+	public void testIf() {
+		final int rRet = 0;
+		final int rArg1 = 1;
+		final int rArg2 = 2;
+		final IRVar varA = new IRVar("a", 0, VariableScope.parameter, Type.U8);
+		final IRVar varB = new IRVar("b", 1, VariableScope.parameter, Type.U8);
+		final IRVar varTmp = new IRVar("tmp", 2, VariableScope.function, Type.BOOL);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRFunction function = new IRFunction(
+				"if", "@if", Type.U8,
+				new IRVarInfos(List.of(
+						new IRVarDef(varA, U8_SIZE),
+						new IRVarDef(varB, U8_SIZE),
+						new IRVarDef(varTmp, U8_SIZE)
+				), Set.of(), globalVarInfos),
+				List.of(
+						new IRCompare(varTmp, IRCompare.Op.Lt, varA, varB),
+						new IRBranch(varTmp, false, "@if_1_end", "@if_1_then"),
+						new IRLabel("@if_1_then"),
+						new IRRetValue(varB),
+						new IRJump("@ret"),
+						new IRLabel("@if_1_end"),
+						new IRRetValue(varA),
+						new IRLabel("@ret")
+				)
+		);
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
+		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
+		assertEquals(new IRCompare(varTmp.asRegister(rRet), IRCompare.Op.Lt, varA.asRegister(rArg1), varB.asRegister(rArg2)), it.next());
+		assertEquals(new IRBranch(varTmp.asRegister(rRet), false, "@if_1_end", "@if_1_then"), it.next());
+		assertEquals(new IRJump("@if_1_then"), it.next());
+		assertEquals(new IRLabel("@if_1_end"), it.next());
+		assertEquals(new IRMove(varA.asRegister(rRet), varA.asRegister(rArg1)), it.next());
+		assertEquals(new IRJump("@ret"), it.next());
+		assertEquals(new IRLabel("@if_1_then"), it.next());
+		assertEquals(new IRMove(varB.asRegister(rRet), varB.asRegister(rArg2)), it.next());
+		assertEquals(new IRJump("@ret"), it.next());
+		assertEquals(new IRLabel("@ret"), it.next());
+		assertFalse(it.hasNext());
+	}
+
+	@Test
+	public void testPrintString() {
+		final int rRet = 0;
+		final int rArg1 = 1;
+		final int rArg2 = 2;
+		final int rNV1 = 3;
+		final IRVar varStr = new IRVar("str", 0, VariableScope.parameter, Type.U8);
+		final IRVar varLength = new IRVar("length", 1, VariableScope.function, Type.U8);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRFunction function = new IRFunction(
+				"printString", "@printString", Type.U8,
+				new IRVarInfos(List.of(
+						new IRVarDef(varStr, 8),
+						new IRVarDef(varLength, 2)
+				), Set.of(), globalVarInfos),
+				List.of(
+						new IRCall(varLength, Type.U8, "strlen", IRValue.toValues(varStr)),
+						new IRCall(null, Type.VOID, "printStringLength", IRValue.toValues(varStr, varLength))
+				)
+		);
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 5, callingConventionProvider, Type.I64);
+		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
+		assertEquals(new IRMove(varStr.asRegister(rNV1), varStr.asRegister(rArg1)), it.next());
+		// todo
+		assertEquals(new IRMove(varStr.asRegister(rArg1), varStr.asRegister(rNV1)), it.next());
+		assertEquals(new IRCall(varLength.asRegister(rRet), Type.U8, "strlen", IRValue.toValues(varStr.asRegister(rArg1))), it.next());
+		assertEquals(new IRMove(varStr.asRegister(rArg1), varStr.asRegister(rNV1)), it.next());
+		assertEquals(new IRMove(varLength.asRegister(rArg2), varLength.asRegister(rRet)), it.next());
+		assertEquals(new IRCall(null, Type.VOID, "printStringLength", IRValue.toValues(varStr.asRegister(rArg1), varLength.asRegister(rArg2))), it.next());
+		assertFalse(it.hasNext());
+	}
+
+	@Test
+	public void testGlobalVar() {
+		final int rRet = 0;
+		final int rArg1 = 1;
+		final IRVar varGlobal = new IRVar("global", 0, VariableScope.global, Type.U8);
+		final IRVar varOne = new IRVar("one", 0, VariableScope.function, Type.U8);
+		final IRVar varLocalGlobal = new IRVar(LSPreprocessorCachedVarLayer.TMP_PREFIX + "global", 1, VariableScope.global, Type.U8);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(
+				new IRVarDef(varGlobal, 1)
+		), Set.of(), null);
+		final IRVarInfos localVarInfos = new IRVarInfos(List.of(
+				new IRVarDef(varOne, 1)
+		), Set.of(), globalVarInfos);
+		final IRFunction function = new IRFunction(
+				"nextIndex", "@nextIndex", Type.U8,
+				localVarInfos,
+				List.of(
+						new IRMove(varOne, 1),
+						new IRBinary(varGlobal, IRBinary.Op.Add, varGlobal, varOne),
+						new IRRetValue(varGlobal)
+				)
+		);
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
+		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
+		assertEquals(new IRMove(varOne.asRegister(rArg1), 1), it.next());
+		assertEquals(new IRMove(varLocalGlobal.asRegister(rRet), varGlobal), it.next());
+		assertEquals(new IRBinary(varLocalGlobal.asRegister(rRet), IRBinary.Op.Add, varLocalGlobal.asRegister(rRet), varOne.asRegister(rArg1)), it.next());
+		assertEquals(new IRMove(varGlobal, varLocalGlobal.asRegister(rRet)), it.next());
+		assertFalse(it.hasNext());
+	}
+
+	@Test
+	public void testStackVar() {
+		final int r0 = 0;
+		final int r1 = 1;
+		final int r2 = 2;
+		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.U8);
+		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.U8);
+		final IRVar varC = new IRVar("c", 2, VariableScope.function, Type.U8);
+		final IRVar varT = new IRVar("t", 3, VariableScope.function, Type.U8);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRFunction function = new IRFunction(
+				"simple", "@simple", Type.U8,
+				new IRVarInfos(List.of(
+						new IRVarDef(varA, U8_SIZE),
+						new IRVarDef(varB, U8_SIZE),
+						new IRVarDef(varC, U8_SIZE),
+						new IRVarDef(varT, U8_SIZE)
+				), Set.of(), globalVarInfos),
+				List.of(
+						new IRMove(varA, 1),
+						new IRMove(varB, 2),
+						new IRMove(varC, 3),
+						new IRCall(null, Type.VOID, "print", IRValue.toValues(varA)),
+						new IRCall(null, Type.VOID, "print", IRValue.toValues(varB)),
+						new IRMove(varT, varA),
+						new IRBinary(varT, IRBinary.Op.Add, varT, varC),
+						new IRCall(null, Type.VOID, "print", IRValue.toValues(varT)),
+						new IRCall(null, Type.VOID, "print", IRValue.toValues(varC))
+				)
+		);
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
+		final IRVar varA0 = varA.asRegister(0);
+		final IRVar varA1 = varA.asRegister(1);
+		final IRVar varB0 = varB.asRegister(0);
+		final IRVar varB1 = varB.asRegister(1);
+		final IRVar varC0 = varC.asRegister(0);
+		final IRVar varC1 = varC.asRegister(1);
+		final IRVar varT1 = varT.asRegister(1);
+		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
+		assertEquals(new IRMove(varA1, 1), it.next());
+		assertEquals(new IRMove(varB0, 2), it.next());
+		assertEquals(new IRMove(varB, varB0), it.next());
+		assertEquals(new IRMove(varC0, 3), it.next());
+		assertEquals(new IRMove(varC, varC0), it.next());
+		assertEquals(new IRMove(varA, varA1), it.next());
+		assertEquals(new IRCall(null, Type.VOID, "print", IRValue.toValues(varA1)), it.next());
+		assertEquals(new IRMove(varB1, varB), it.next());
+		assertEquals(new IRCall(null, Type.VOID, "print", IRValue.toValues(varB1)), it.next());
+		assertEquals(new IRMove(varA0, varA), it.next());
+		assertEquals(new IRMove(varT1, varA0), it.next());
+		assertEquals(new IRMove(varC0, varC), it.next());
+		assertEquals(new IRBinary(varT1, IRBinary.Op.Add, varT1, varC0), it.next());
+		assertEquals(new IRMove(varC, varC0), it.next());
+		assertEquals(new IRCall(null, Type.VOID, "print", IRValue.toValues(varT1)), it.next());
+		assertEquals(new IRMove(varC1, varC), it.next());
+		assertEquals(new IRCall(null, Type.VOID, "print", IRValue.toValues(varC1)), it.next());
+		assertFalse(it.hasNext());
+	}
+}

@@ -127,7 +127,7 @@ public final class IRWriter extends TextWriter {
 					writeln("; " + c.comment());
 				}
 				else {
-					writeln(instruction.toString());
+					writeln(instruction.toString(true));
 					if (block != null) {
 						write(block.getLiveAfter(i));
 					}
@@ -235,7 +235,7 @@ public final class IRWriter extends TextWriter {
 	}
 
 	private int getInstructionTime(IRVar var) {
-		return 2;
+		return var.scope() != VariableScope.register ? 2 : 0;
 	}
 
 	private void writeGlobalVars(List<IRVarDef> globalVars) throws IOException {

@@ -11,4 +11,9 @@ public record IRLabel(@NotNull String label) implements IRInstruction {
 	public String toString() {
 		return label + ":";
 	}
+
+	@Override
+	public String toString(boolean comment) {
+		return toString();
+	}
 }

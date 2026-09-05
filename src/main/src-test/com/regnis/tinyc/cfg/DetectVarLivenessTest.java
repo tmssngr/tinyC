@@ -33,7 +33,7 @@ public class DetectVarLivenessTest {
 				new IRJump("loop"),
 				new IRLabel("exit")
 		));
-		DetectVarLiveness.process(cfg);
+		DetectVarLiveness.process(cfg, Set.of(), false);
 		final Iterator<BasicBlock> it = cfg.blocks().iterator();
 		assertBlock("main", List.of(
 				            new IRMove(bool_needsInitialize, 1),

@@ -30,7 +30,7 @@ public abstract class IRVarReplacer {
 				for (IRValue arg : call.args()) {
 					final IRVar argVar = arg.var();
 					if (argVar != null) {
-						replace(argVar);
+						arg = new IRValue(replace(argVar));
 					}
 					args.add(arg);
 				}

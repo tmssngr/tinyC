@@ -30,8 +30,13 @@ public record IRValue(@Nullable IRVar var, int value, @NotNull Type type) {
 	@NotNull
 	@Override
 	public String toString() {
+		return toString(false);
+	}
+
+	@NotNull
+	public String toString(boolean comment) {
 		if (var != null) {
-			return var.toString();
+			return var.toString(comment);
 		}
 		return String.valueOf(value);
 	}
