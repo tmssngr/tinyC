@@ -432,13 +432,22 @@ public final class X86Win64 extends AsmWriter {
 	}
 
 	protected void writeCall(IRCall call) throws IOException {
-		final List<IRVar> args = call.args();
+		final List<IRValue> args = call.args();
 		final int argsSize = args.size() * 8;
 		final int offset = (args.size() + 1) % 2 * 8;
-		for (IRVar arg : args) {
-			final int argValue = loadVar(arg);
-			writeIndented("push " + getRegName(argValue));
-			free(argValue);
+		for (IRValue arg : args) {
+			final IRVar var = arg.var();
+			if (var != null) {
+				final int argValue = loadVar(var);
+				writeIndented("push " + getRegName(argValue));
+				free(argValue);
+			}
+			else {
+				final int valueReg = getFreeReg();
+				writeIndented("mov  " + getRegName(valueReg) + ", " + arg.value());
+				writeIndented("push " + getRegName(valueReg));
+				free(valueReg);
+			}
 			this.rspOffset += 8;
 		}
 		this.rspOffset = 0;
