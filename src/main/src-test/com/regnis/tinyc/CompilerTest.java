@@ -12,33 +12,18 @@ import org.junit.*;
 public class CompilerTest {
 
 	@Test
-	public void testBasics() throws IOException, InterruptedException {
-		compileAndRun("basics.c");
-	}
-
-	@Test
 	public void testArithmetics() throws IOException, InterruptedException {
 		compileAndRun("arithmetics.c");
 	}
 
 	@Test
-	public void testComparison() throws IOException, InterruptedException {
-		compileAndRun("comparison.c");
+	public void testArrays() throws IOException, InterruptedException {
+		compileAndRun("arrays.c");
 	}
 
 	@Test
-	public void testIfElse() throws IOException, InterruptedException {
-		compileAndRun("ifelse.c");
-	}
-
-	@Test
-	public void testWhile() throws IOException, InterruptedException {
-		compileAndRun("while.c");
-	}
-
-	@Test
-	public void testTypes() throws IOException, InterruptedException {
-		compileAndRun("types.c");
+	public void testBasics() throws IOException, InterruptedException {
+		compileAndRun("basics.c");
 	}
 
 	@Test
@@ -47,8 +32,13 @@ public class CompilerTest {
 	}
 
 	@Test
-	public void testPointers() throws IOException, InterruptedException {
-		compileAndRun("pointers.c");
+	public void testComparison() throws IOException, InterruptedException {
+		compileAndRun("comparison.c");
+	}
+
+	@Test
+	public void testFibonacci() throws IOException, InterruptedException {
+		compileAndRun("fibonacci.c");
 	}
 
 	@Test
@@ -62,18 +52,8 @@ public class CompilerTest {
 	}
 
 	@Test
-	public void testArrays() throws IOException, InterruptedException {
-		compileAndRun("arrays.c");
-	}
-
-	@Test
-	public void testStrings() throws IOException, InterruptedException {
-		compileAndRun("strings.c");
-	}
-
-	@Test
-	public void testOperators() throws IOException, InterruptedException {
-		compileAndRun("operators.c");
+	public void testIfElse() throws IOException, InterruptedException {
+		compileAndRun("ifelse.c");
 	}
 
 	@Test
@@ -82,8 +62,19 @@ public class CompilerTest {
 	}
 
 	@Test
-	public void testStructs() throws IOException, InterruptedException {
-		compileAndRun("structs.c");
+	public void testMine() throws IOException, InterruptedException {
+		final Path inputFile = absolutePath("mine.c");
+		Compiler.compile(inputFile);
+	}
+
+	@Test
+	public void testOperators() throws IOException, InterruptedException {
+		compileAndRun("operators.c");
+	}
+
+	@Test
+	public void testPointers() throws IOException, InterruptedException {
+		compileAndRun("pointers.c");
 	}
 
 	@Test
@@ -92,18 +83,28 @@ public class CompilerTest {
 	}
 
 	@Test
-	public void testRule110() throws IOException, InterruptedException {
-		compileAndRun("rule110.c");
-	}
-
-	@Test
 	public void testPrng() throws IOException, InterruptedException {
 		compileAndRun("prng.c");
 	}
 
 	@Test
-	public void testFibonacci() throws IOException, InterruptedException {
-		compileAndRun("fibonacci.c");
+	public void testRule110() throws IOException, InterruptedException {
+		compileAndRun("rule110.c");
+	}
+
+	@Test
+	public void testStrings() throws IOException, InterruptedException {
+		compileAndRun("strings.c");
+	}
+
+	@Test
+	public void testStructs() throws IOException, InterruptedException {
+		compileAndRun("structs.c");
+	}
+
+	@Test
+	public void testTypes() throws IOException, InterruptedException {
+		compileAndRun("types.c");
 	}
 
 	@Test
@@ -112,9 +113,8 @@ public class CompilerTest {
 	}
 
 	@Test
-	public void testMine() throws IOException, InterruptedException {
-		final Path inputFile = absolutePath("mine.c");
-		Compiler.compile(inputFile);
+	public void testWhile() throws IOException, InterruptedException {
+		compileAndRun("while.c");
 	}
 
 	@Test
