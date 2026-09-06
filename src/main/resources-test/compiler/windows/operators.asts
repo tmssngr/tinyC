@@ -67,6 +67,149 @@ void printStringLength@@u8@u8(u8* str, u8 length) {
 	printStringLength@@u8@i64(str, (i64)length);
 }
 
+bool getTrue() {
+	printString@@u8(" true");
+	return true;
+}
+
+bool getFalse() {
+	printString@@u8(" false");
+	return false;
+}
+
+void printPass() {
+	printString@@u8(" -> pass ");
+}
+
+void printError() {
+	printString@@u8(" -> ERROR ");
+}
+
+void logicNot() {
+	bool t;
+	bool f;
+
+	printString@@u8("\nLogic-!:\n");
+	t = true;
+	f = false;
+	if (!(getFalse())) {
+		printPass();
+	}
+	else {
+		printError();
+	}
+	printIntLf@bool(!f);
+	if (!(getTrue())) {
+		printError();
+	}
+	else {
+		printPass();
+	}
+	printIntLf@bool(!t);
+}
+
+void logicAnd() {
+	bool t;
+	bool f;
+
+	printString@@u8("\nLogic-&&:\n");
+	t = true;
+	f = false;
+	if ((getFalse()) && (getFalse())) {
+		printError();
+	}
+	else {
+		printPass();
+	}
+	printIntLf@bool(f && f);
+	if ((getFalse()) && (getTrue())) {
+		printError();
+	}
+	else {
+		printPass();
+	}
+	printIntLf@bool(f && t);
+	if ((getTrue()) && (getFalse())) {
+		printError();
+	}
+	else {
+		printPass();
+	}
+	printIntLf@bool(t && f);
+	if ((getTrue()) && (getTrue())) {
+		printPass();
+	}
+	else {
+		printError();
+	}
+	printIntLf@bool(t && t);
+	if (!((getFalse()) && (getFalse()))) {
+		printPass();
+	}
+	else {
+		printError();
+	}
+	printIntLf@bool(!(f && f));
+	if (!((getFalse()) && (getTrue()))) {
+		printPass();
+	}
+	else {
+		printError();
+	}
+	printIntLf@bool(!(f && t));
+	if (!((getTrue()) && (getFalse()))) {
+		printPass();
+	}
+	else {
+		printError();
+	}
+	printIntLf@bool(!(t && f));
+	if (!((getTrue()) && (getTrue()))) {
+		printError();
+	}
+	else {
+		printPass();
+	}
+	printIntLf@bool(!(t && t));
+}
+
+void logicOr() {
+	bool t;
+	bool f;
+
+	printString@@u8("\nLogic-||:\n");
+	t = true;
+	f = false;
+	if ((getFalse()) || (getFalse())) {
+		printError();
+	}
+	else {
+		printPass();
+	}
+	printIntLf@bool(f || f);
+	if ((getFalse()) || (getTrue())) {
+		printPass();
+	}
+	else {
+		printError();
+	}
+	printIntLf@bool(f || t);
+	if ((getTrue()) || (getFalse())) {
+		printPass();
+	}
+	else {
+		printError();
+	}
+	printIntLf@bool(t || f);
+	if ((getTrue()) || (getTrue())) {
+		printPass();
+	}
+	else {
+		printError();
+	}
+	printIntLf@bool(t || t);
+}
+
 void main() {
 	i16 a;
 	i16 b;
@@ -99,20 +242,17 @@ void main() {
 	printIntLf@i16(a ^ c);
 	printIntLf@i16(b ^ a);
 	printIntLf@i16(b ^ c);
-	printString@@u8("\nLogic-&&:\n");
-	printIntLf@bool(f && f);
-	printIntLf@bool(f && t);
-	printIntLf@bool(t && f);
-	printIntLf@bool(t && t);
-	printString@@u8("\nLogic-||:\n");
-	printIntLf@bool(f || f);
-	printIntLf@bool(f || t);
-	printIntLf@bool(t || f);
-	printIntLf@bool(t || t);
-	printString@@u8("\nLogic-!:\n");
-	printIntLf@bool(!f);
-	printIntLf@bool(!t);
-	printString@@u8("\nmisc:\n");
+	logicNot();
+	logicAnd();
+	logicOr();
+	if ((!((getTrue()) && (getTrue()))) || (!((getFalse()) && (getFalse())))) {
+		printPass();
+	}
+	else {
+		printError();
+	}
+	printIntLf@bool((!(t && t)) || (!(f && f)));
+	printString@@u8("\n\nmisc:\n");
 	b10 = 10;
 	b6 = 6;
 	b1 = 1;
