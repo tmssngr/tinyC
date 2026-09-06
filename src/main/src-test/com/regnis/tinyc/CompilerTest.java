@@ -177,21 +177,27 @@ public class CompilerTest {
 				             1
 				             3
 
+				             Logic-!:
+				              false -> pass 1
+				              true -> pass 0
+
 				             Logic-&&:
-				             0
-				             0
-				             0
-				             1
+				              false -> pass 0
+				              false -> pass 0
+				              true false -> pass 0
+				              true true -> pass 1
+				              false -> pass 1
+				              false -> pass 1
+				              true false -> pass 1
+				              true true -> pass 0
 
 				             Logic-||:
-				             0
-				             1
-				             1
-				             1
+				              false false -> pass 0
+				              false true -> pass 1
+				              true -> pass 1
+				              true -> pass 1
+				              true true false -> pass 1
 
-				             Logic-!:
-				             1
-				             0
 
 				             misc:
 				             3
