@@ -74,6 +74,78 @@ final class X86StackOffsets {
 		return new X86StackOffsets(callArgSpace, localVarOffsets, rspOffset);
 	}
 
+	public static X86StackOffsets createLinuxInstance(@NotNull List<IRVarDef> localVars, @NotNull List<List<IRVar>> callsArgs, int argCountInRegisters, int pushedNonvolatileRegisterCount) {
+		checkLocalVars(localVars);
+
+		final Map<IRVar, Integer> stackArgToOffset = new HashMap<>();
+		final int callArgSpace = determineSpaceForCallArgs(callsArgs, argCountInRegisters, false, stackArgToOffset);
+
+		//  8h 8th argument
+		//  8h 7th argument
+		// -- aligned to 10h
+		//  8h return address
+		//                                                                                     -,
+		//     free space for alignment                                                          > rspOffset
+		//     local vars                                                                       |
+		//                                                                                     -'
+		//     pushed clobbered non-volatile regs
+		//     space for call arguments passed on stack                                            callArgSpace
+		// -- aligned to 10h
+
+		final int localVarAreaBegin = callArgSpace + pushedNonvolatileRegisterCount * 8;
+		final int[] localVarOffsets = new int[localVars.size()];
+		int offset = localVarAreaBegin;
+		// local vars
+		for (IRVarDef def : localVars) {
+			final IRVar var = def.var();
+			final int index = var.index();
+			if (var.scope() == VariableScope.function) {
+				final Integer stackArgOffset = stackArgToOffset.get(var);
+				if (stackArgOffset != null) {
+					localVarOffsets[index] = stackArgOffset;
+					continue;
+				}
+			}
+			else if (var.scope() == VariableScope.parameter) {
+				if (index >= argCountInRegisters) {
+					continue;
+				}
+			}
+			else {
+				continue;
+			}
+
+			Utils.assertTrue(stackArgToOffset.get(var) == null);
+
+			final int varSize = def.size();
+			offset = alignTo(offset, varSize);
+			localVarOffsets[index] = offset;
+			offset += varSize;
+		}
+
+		final int returnAddressSize = 8;
+		final int argStartOffset = alignTo16(offset + returnAddressSize);
+		int nextStackArgOffset = argStartOffset;
+		// argument offsets
+		for (IRVarDef def : localVars) {
+			final IRVar var = def.var();
+			final VariableScope scope = var.scope();
+			if (scope != VariableScope.parameter) {
+				Utils.assertTrue(scope == VariableScope.function);
+				break;
+			}
+
+			final int index = var.index();
+			if (index >= argCountInRegisters) {
+				localVarOffsets[index] = nextStackArgOffset;
+				nextStackArgOffset += 8;
+			}
+		}
+
+		final int rspOffset = argStartOffset - localVarAreaBegin - returnAddressSize;
+		return new X86StackOffsets(callArgSpace, localVarOffsets, rspOffset);
+	}
+
 	private final int[] localVarOffsets;
 	private final int rspOffset;
 	private final int callArgSpace;
