@@ -32,7 +32,7 @@ printUint@i64:
 	var 11: t.11 (u8/1)
 	; 95 pc
 	const pos, 20
-	; 28:2 while true
+	; 33:2 while true
 while_1:
 	sub pos, pos, 1
 	move remainder, number
@@ -45,7 +45,7 @@ while_1:
 	addrof t.6, [buffer]
 	add t.6, t.6, t.7
 	store [t.6], digit
-	; 34:3 if number == 0
+	; 39:3 if number == 0
 	branch number notequals 0: while_1, while_1_break
 while_1_break:
 	cast t.9(i64), pos(u8)
@@ -70,7 +70,7 @@ printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
 	; 13 pc
-	; 54:2 if number < 0
+	; 59:2 if number < 0
 	branch number gteq 0: if_3_end, if_3_then
 if_3_then:
 	call printChar@u8[45]
@@ -87,7 +87,7 @@ strlen@@u8:
 	var 2: t.2 (u8/1)
 	; 26 pc
 	const length, 0
-	; 64:2 for *str != 0
+	; 69:2 for *str != 0
 for_4:
 	load t.2, [str]
 	branch t.2 equals 0: for_4_break, for_4_body
@@ -97,7 +97,7 @@ for_4_continue:
 	add str, str, 1
 	jump for_4
 for_4_break:
-	; 67:9 return length
+	; 72:9 return length
 	ret length
 	jump strlen@@u8_ret
 strlen@@u8_ret:
