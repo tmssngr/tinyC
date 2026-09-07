@@ -52,7 +52,6 @@ _printString@@u8:
         ;   rsp+24: arg str
         ;   rsp+0: var length
         ;   rsp+8: var t.2
-        ;   rsp+9: var t.3
 _strlen@@u8:
         ; reserve space for local variables
         sub rsp, 16
@@ -76,24 +75,17 @@ _for_1_body:
         lea rax, [rsp+24]
         mov [rax], rbx
 _for_1:
-        ; load t.3, [str]
+        ; load t.2, [str]
         lea rax, [rsp+24]
         mov rbx, [rax]
         mov al, [rbx]
-        lea rbx, [rsp+9]
+        lea rbx, [rsp+8]
         mov [rbx], al
-        ; notequals t.2, t.3, 0
-        lea rax, [rsp+9]
+        ; branch t.2 notequals 0: for_1_body, for_1_break
+        lea rax, [rsp+8]
         mov bl, [rax]
         cmp bl, 0
-        setne bl
-        lea rax, [rsp+8]
-        mov [rax], bl
-        ; branch t.2, true, for_1_body, for_1_break
-        lea rax, [rsp+8]
-        mov bl, [rax]
-        or bl, bl
-        jnz _for_1_body
+        jne _for_1_body
         ; 67:9 return length
         ; ret length
         lea rax, [rsp+0]
@@ -132,8 +124,6 @@ _next:
         ;   rsp+0: var n
         ;   rsp+8: var t.1
         ;   rsp+16: var t.2
-        ;   rsp+17: var t.3
-        ;   rsp+24: var t.4
 _main:
         ; reserve space for local variables
         sub rsp, 32
@@ -146,25 +136,17 @@ _main:
         ; 12:2 while true
         jmp _while_2
 _if_3_end:
-        ; 19:3 if n < 2
-        ; lt t.3, n, 2
+        ; branch n gteq 2: while_2, if_4_then
         lea rax, [rsp+0]
         mov bl, [rax]
         cmp bl, 2
-        setb bl
-        lea rax, [rsp+17]
-        mov [rax], bl
-        ; branch t.3, false, while_2, if_4_then
-        lea rax, [rsp+17]
-        mov bl, [rax]
-        or bl, bl
-        jz _while_2
-        ; const t.4, [string-1]
+        jae _while_2
+        ; const t.2, [string-1]
         lea rax, [string_1]
-        lea rbx, [rsp+24]
+        lea rbx, [rsp+16]
         mov [rbx], rax
-        ; call printString@@u8[t.4]
-        lea rax, [rsp+24]
+        ; call printString@@u8[t.2]
+        lea rax, [rsp+16]
         mov rbx, [rax]
         push rbx
           call _printString@@u8
@@ -187,18 +169,11 @@ _while_2:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 15:3 if n == 3
-        ; equals t.2, n, 3
+        ; branch n notequals 3: if_3_end, main_ret
         lea rax, [rsp+0]
         mov bl, [rax]
         cmp bl, 3
-        sete bl
-        lea rax, [rsp+16]
-        mov [rax], bl
-        ; branch t.2, false, if_3_end, main_ret
-        lea rax, [rsp+16]
-        mov bl, [rax]
-        or bl, bl
-        jz _if_3_end
+        jne _if_3_end
         ; release space for local variables
         add rsp, 32
         ret

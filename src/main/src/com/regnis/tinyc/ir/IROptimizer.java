@@ -91,7 +91,7 @@ public class IROptimizer {
 			case IRBranch branch -> {
 				final String newTarget = getNewTarget(branch.target(), oldToNewTarget);
 				final String newNextLabel = getNewTarget(branch.nextLabel(), oldToNewTarget);
-				newInstructions.add(new IRBranch(branch.conditionVar(), branch.jumpOnTrue(), newTarget, newNextLabel));
+				newInstructions.add(new IRBranch(branch.op(), branch.left(), branch.right(), newTarget, newNextLabel, branch.location()));
 			}
 			default -> newInstructions.add(instruction);
 			}
@@ -144,7 +144,7 @@ public class IROptimizer {
 				    && item2 instanceof IRLabel(String label)
 				    && Objects.equals(branch.target(), label)) {
 					remove();
-					insert(new IRBranch(branch.conditionVar(), !branch.jumpOnTrue(), branch.nextLabel(), label));
+					insert(new IRBranch(branch.op().invert(), branch.left(), branch.right(), branch.nextLabel(), label));
 				}
 			}
 		}.process();
@@ -158,9 +158,9 @@ public class IROptimizer {
 				    && item2 instanceof IRJump(String jumpTarget)
 				    && item3 instanceof IRLabel(String label)
 				    && Objects.equals(branch.target(), label)) {
-					remove();
-					remove();
-					insert(new IRBranch(branch.conditionVar(), !branch.jumpOnTrue(), jumpTarget, branch.target()));
+					remove(); // conditional branch
+					remove(); // jump
+					insert(new IRBranch(branch.op().invert(), branch.left(), branch.right(), jumpTarget, label, branch.location()));
 				}
 			}
 		}.process();
