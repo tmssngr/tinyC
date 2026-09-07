@@ -214,17 +214,12 @@ public final class IRGenerator {
 		final String labelElse = "if_" + labelIndex + "_else";
 		final String labelEnd = "if_" + labelIndex + "_end";
 		writeComment("if " + condition.toUserString(), statement.location());
-		final IRVar conditionVar = writeExpression(condition);
 		if (elseStatements.isEmpty()) {
-			write(new IRBranch(conditionVar, false, labelEnd,
-			                   labelThen));
-			writeLabel(labelThen);
+			writeBoolExpression(condition, labelEnd, labelThen);
 			writeStatements(thenStatements);
 		}
 		else {
-			write(new IRBranch(conditionVar, false, labelElse,
-			                   labelThen));
-			writeLabel(labelThen);
+			writeBoolExpression(condition, labelElse, labelThen);
 			writeStatements(thenStatements);
 			write(new IRJump(labelEnd));
 
@@ -257,10 +252,7 @@ public final class IRGenerator {
 		writeComment(loopName + " " + condition.toUserString(), loop.location());
 		writeLabel(label);
 		if (!endlessLoop) {
-			final IRVar conditionVar = writeExpression(condition);
-			write(new IRBranch(conditionVar, false, breakLabel,
-			                   bodyLabel));
-			writeLabel(bodyLabel);
+			writeBoolExpression(condition, breakLabel, bodyLabel);
 		}
 
 		final BreakContinueLabels prevBreakContinueLabels = this.breakContinueLabels;
@@ -291,6 +283,135 @@ public final class IRGenerator {
 		}
 		default -> throw new UnsupportedOperationException(String.valueOf(stmt));
 		}
+	}
+
+	private void writeBoolExpression(Expression expression, String targetLabel, String nextLabel) {
+		writeBoolExpression(expression, true, targetLabel, nextLabel);
+	}
+
+	private void writeBoolExpression(Expression expression, boolean invert, String targetLabel, String nextLabel) {
+		Utils.assertTrue(expression.typeNotNull() == Type.BOOL);
+		if (expression instanceof ExprBinary binary) {
+			switch (binary.op()) {
+			case Lt -> {
+				writeBoolExpression(IRCompare.Op.Lt, binary, invert, targetLabel, nextLabel);
+				return;
+			}
+			case LtEq -> {
+				writeBoolExpression(IRCompare.Op.LtEq, binary, invert, targetLabel, nextLabel);
+				return;
+			}
+			case Equals -> {
+				writeBoolExpression(IRCompare.Op.Equals, binary, invert, targetLabel, nextLabel);
+				return;
+			}
+			case NotEquals -> {
+				writeBoolExpression(IRCompare.Op.NotEquals, binary, invert, targetLabel, nextLabel);
+				return;
+			}
+			case GtEq -> {
+				writeBoolExpression(IRCompare.Op.GtEq, binary, invert, targetLabel, nextLabel);
+				return;
+			}
+			case Gt -> {
+				writeBoolExpression(IRCompare.Op.Gt, binary, invert, targetLabel, nextLabel);
+				return;
+			}
+			case AndLog -> {
+				if (invert) {
+					// `if a && b then else` will be translated to
+					// ```
+					//   branch a == 0 else, @and
+					// @and:
+					//   branch b == 0 else, then
+					// then:
+					// ...
+					// else:
+					// ```
+					writeBoolExpression(binary.left(), true, targetLabel, "@and_" + nextLabelIndex());
+					writeBoolExpression(binary.right(), true, targetLabel, nextLabel);
+				}
+				else {
+					// `if !(a && b) then else` will be translated to
+					// ```
+					//   branch a == 0 then, @and
+					// @and:
+					//   branch b != 0 else, then
+					// then:
+					// ...
+					// else:
+					// ```
+					writeBoolExpression(binary.left(), true, nextLabel, "@and_" + nextLabelIndex());
+					writeBoolExpression(binary.right(), false, targetLabel, nextLabel);
+				}
+				return;
+			}
+			case OrLog -> {
+				if (invert) {
+					// `if a || b then else` will be translated to
+					// ```
+					//   branch a != 0 then, @or
+					// @or:
+					//   branch b == 0 else, then
+					// then:
+					// ...
+					// else:
+					// ```
+					writeBoolExpression(binary.left(), false, nextLabel, "@or_" + nextLabelIndex());
+					writeBoolExpression(binary.right(), true, targetLabel, nextLabel);
+				}
+				else {
+					// `if !(a || b) then else` will be translated to
+					// ```
+					//   branch a != 0 else, @or
+					// @or:
+					//   branch b != 0 else, then
+					// then:
+					// ...
+					// else:
+					// ```
+					writeBoolExpression(binary.left(), false, targetLabel, "@or_" + nextLabelIndex());
+					writeBoolExpression(binary.right(), false, targetLabel, nextLabel);
+				}
+				return;
+			}
+			default -> throw new UnsupportedOperationException(binary.op().toString());
+			}
+		}
+		else if (expression instanceof ExprUnary unary) {
+			if (unary.op() == ExprUnary.Op.NotLog) {
+				writeBoolExpression(unary.expression(), !invert, targetLabel, nextLabel);
+				return;
+			}
+		}
+
+
+		// `if a then else` will be translated to
+		// ```
+		//   branch a == 0 else, then
+		// then:
+		// ...
+		// else:
+		// ```
+		// ---------------------------------------
+		// `if !a then else` will be translated to
+		// ```
+		//   branch a != 0 else, then
+		// then:
+		// ...
+		// else:
+		// ```
+		final IRVar conditionVar = writeExpression(expression);
+		final IRCompare.Op op = invert ? IRCompare.Op.Equals : IRCompare.Op.NotEquals;
+		write(new IRBranch(op, conditionVar, new IRValue(0, Type.BOOL), targetLabel, nextLabel, expression.location()));
+		writeLabel(nextLabel);
+	}
+
+	private void writeBoolExpression(IRCompare.Op op, ExprBinary binary, boolean invert, String targetLabel, String nextLabel) {
+		final IRVar left = writeExpression(binary.left());
+		final IRValue right = writeExpressionAsValue(binary.right());
+		write(new IRBranch(invert ? op.invert() : op, left, right, targetLabel, nextLabel, binary.location()));
+		writeLabel(nextLabel);
 	}
 
 	private IRValue writeExpressionAsValue(Expression expression) {
