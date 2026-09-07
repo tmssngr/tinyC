@@ -78,7 +78,7 @@ _printUint@i64:
         mov rbx, rcx
         ; const pos{r3}, 20
         mov r8b, 20
-        ; 28:2 while true
+        ; 33:2 while true
 _while_1:
         ; sub pos{r3}, pos{r3}, 1
         sub r8b, 1
@@ -112,7 +112,7 @@ _while_1:
         add r10, r9
         ; store [t.6{r5}], digit{r0}
         mov [r10], al
-        ; 34:3 if number == 0
+        ; 39:3 if number == 0
         ; branch number{r6} notequals 0: while_1, while_1_break
         cmp rbx, 0
         jne _while_1
@@ -157,7 +157,7 @@ _printIntLf@i64:
         sub rsp, 32
         ; move number{r6}, number{r1}
         mov rbx, rcx
-        ; 54:2 if number < 0
+        ; 59:2 if number < 0
         ; branch number{r6} gteq 0: if_3_end, if_3_then
         cmp rbx, 0
         jge _if_3_end
@@ -187,7 +187,7 @@ _strlen@@u8:
         sub rsp, 8
         ; const length{r0}, 0
         mov rax, 0
-        ; 64:2 for *str != 0
+        ; 69:2 for *str != 0
         jmp _for_4
 _for_4_body:
         ; add length{r0}, length{r0}, 1
@@ -200,7 +200,7 @@ _for_4:
         ; branch t.2{r2} notequals 0: for_4_body, for_4_break
         cmp dl, 0
         jne _for_4_body
-        ; 67:9 return length
+        ; 72:9 return length
         add rsp, 8
         ret
 
