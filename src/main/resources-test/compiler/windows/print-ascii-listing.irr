@@ -24,7 +24,7 @@ strlen@@u8:
 	arg 0: str (u8*/8)
 	; 6 pc
 	const length{r0}, 0
-	; 64:2 for *str != 0
+	; 69:2 for *str != 0
 	jump for_1
 for_1_body:
 	add length{r0}, length{r0}, 1
@@ -32,7 +32,7 @@ for_1_body:
 for_1:
 	load t.2{r2}, [str{r1}]
 	branch t.2{r2} notequals 0: for_1_body, for_1_break
-	; 67:9 return length
+	; 72:9 return length
 
 printStringLength@@u8@u8:
  Local variables

@@ -14,7 +14,7 @@ strlen@@u8:
 	var 2: t.2 (u8/1)
 	; 26 pc
 	const length, 0
-	; 64:2 for *str != 0
+	; 69:2 for *str != 0
 for_1:
 	load t.2, [str]
 	branch t.2 equals 0: for_1_break, for_1_body
@@ -24,7 +24,7 @@ for_1_continue:
 	add str, str, 1
 	jump for_1
 for_1_break:
-	; 67:9 return length
+	; 72:9 return length
 	ret length
 	jump strlen@@u8_ret
 strlen@@u8_ret:
