@@ -15,7 +15,7 @@ import org.jetbrains.annotations.*;
 public final class LSPreprocessor {
 
 	@NotNull
-	public static Pair<IRVarInfos, List<IRInstruction>> process(@NotNull IRFunction function, @NotNull LSCallingConventionProvider callingConventionProvider, boolean isX86, Type pointerIntType) {
+	public static Pair<IRVarInfos, List<IRInstruction>> process(@NotNull IRFunction function, @NotNull LSCallingConventionProvider callingConventionProvider, @Nullable X86Registers x86Registers, @NotNull Type pointerIntType) {
 		final List<IRInstruction> instructions = function.instructions();
 
 		final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(function.returnType(), function.varInfos().getArgumentTypes());
@@ -27,8 +27,8 @@ public final class LSPreprocessor {
 		storeRegisterArgsInVars(function.varInfos(), callingConvention.argRegisters(), instructions, resultLayer);
 
 		LSPreprocessorLayer nextLayer = new LSPreprocessorCallingConventionLayer(function.varInfos(), tempVarFactory, callingConventionProvider, resultLayer);
-		if (isX86) {
-			nextLayer = new LSPreprocessorX86OperationsLayer(nextLayer);
+		if (x86Registers != null) {
+			nextLayer = new LSPreprocessorX86OperationsLayer(x86Registers, nextLayer);
 		}
 
 		final var globalVarPreprocessor = new LSPreprocessorCachedVarLayer(function.varInfos(), tempVarFactory, nextLayer);

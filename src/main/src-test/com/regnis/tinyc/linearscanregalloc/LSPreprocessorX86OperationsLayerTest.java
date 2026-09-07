@@ -58,7 +58,7 @@ public class LSPreprocessorX86OperationsLayerTest {
 
 	private static void check(List<IRInstruction> expectedOutput, List<IRInstruction> input) {
 		final LSPreprocessorResultLayer resultLayer = new LSPreprocessorResultLayer();
-		LSPreprocessorLayer.process(new LSPreprocessorX86OperationsLayer(resultLayer),
+		LSPreprocessorLayer.process(new LSPreprocessorX86OperationsLayer(X86Registers.WINDOWS, resultLayer),
 		                            input);
 		IRTestUtils.assertEqualsInstructions(expectedOutput, resultLayer.instructions);
 	}
