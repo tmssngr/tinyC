@@ -226,6 +226,22 @@ abstract class AsmWriter {
 		write(System.lineSeparator());
 	}
 
+	protected List<List<IRVar>> getCallArgs(List<IRInstruction> instructions) {
+		final List<List<IRVar>> calls = new ArrayList<>();
+		instructions.forEach(instruction -> {
+			if (instruction instanceof IRCall call) {
+				final List<IRVar> args = new ArrayList<>();
+				for (IRValue arg : call.args()) {
+					final IRVar var = arg.var();
+					Utils.assertTrue(var != null);
+					args.add(var);
+				}
+				calls.add(args);
+			}
+		});
+		return calls;
+	}
+
 	private void writeLines(String text, @Nullable String leading) throws IOException {
 		final String[] lines = text.split("\\r?\\n");
 		for (String line : lines) {

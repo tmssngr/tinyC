@@ -1,0 +1,138 @@
+@printString@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	; 6 pc
+	move str{r8}, str{r1}
+	move str{r1}, str{r8}
+	call length{r0} = strlen@@u8[str{r1}] -> i64
+	move str{r1}, str{r8}
+	move length{r2}, length{r0}
+	call printStringLength@@u8@i64[str{r1}, length{r2}]
+
+@printChar@u8:
+ Local variables
+	arg 0: chr (u8/1)
+	; 9 pc
+	addrof memVarAddr{r9}, chr
+	store [memVarAddr{r9}], chr{r1}
+	addrof t.1{r1}, chr
+	const arg.0.1{r2}, 1
+	call printStringLength@@u8@u8[t.1{r1}, arg.0.1{r2}]
+
+@strlen@@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	; 7 pc
+	const length{r0}, 0
+	; 69:2 for *str != 0
+	jump @for_1
+@for_1_body:
+	add length{r0}, length{r0}, 1
+	add str{r1}, str{r1}, 1
+@for_1:
+	load t.3{r2}, [str{r1}]
+	notequals t.2{r2}, t.3{r2}, 0
+	branch t.2{r2}, true, @for_1_body, @for_1_break
+	; 72:9 return length
+
+@printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	; 2 pc
+	cast t.2{r2}(i64), length{r2}(u8)
+	call printStringLength@@u8@i64[str{r1}, t.2{r2}]
+
+@printNibble@u8:
+ Local variables
+	arg 0: x (u8/1)
+	; 6 pc
+	and x{r1}, x{r1}, 15
+	; 5:2 if x > 9
+	gt t.1{r8}, x{r1}, 9
+	branch t.1{r8}, false, @if_2_end, @if_2_then
+	add x{r1}, x{r1}, 7
+@if_2_end:
+	add x{r1}, x{r1}, 48
+	call printChar@u8[x{r1}]
+
+@printHex2@u8:
+ Local variables
+	arg 0: x (u8/1)
+	; 6 pc
+	move x{r8}, x{r1}
+	move t.1{r1}, x{r8}
+	shiftright t.1{r1}, t.1{r1}, 4
+	call printNibble@u8[t.1{r1}]
+	move x{r1}, x{r8}
+	call printNibble@u8[x{r1}]
+
+@main:
+	; 36 pc
+	const t.2{r1}, [string-0]
+	call printString@@u8[t.2{r1}]
+	const i{r8}, 0
+	; 19:2 for i < 16
+	jump @for_3
+@for_3_body:
+	; 20:3 if i & 7 == 0
+	move t.5{r9}, i{r8}
+	and t.5{r9}, t.5{r9}, 7
+	equals t.4{r9}, t.5{r9}, 0
+	branch t.4{r9}, false, @if_4_end, @if_4_then
+	const arg.1.0{r1}, 32
+	call printChar@u8[arg.1.0{r1}]
+@if_4_end:
+	move i{r1}, i{r8}
+	call printNibble@u8[i{r1}]
+	add i{r8}, i{r8}, 1
+@for_3:
+	lt t.3{r9}, i{r8}, 16
+	branch t.3{r9}, true, @for_3_body, @for_3_break
+	const arg.3.0{r1}, 10
+	call printChar@u8[arg.3.0{r1}]
+	const i{r8}, 32
+	; 27:2 for i < 128
+	jump @for_5
+@for_5_body:
+	; 28:3 if i & 15 == 0
+	move t.8{r9}, i{r8}
+	and t.8{r9}, t.8{r9}, 15
+	equals t.7{r9}, t.8{r9}, 0
+	branch t.7{r9}, false, @if_6_end, @if_6_then
+	move i{r1}, i{r8}
+	call printHex2@u8[i{r1}]
+@if_6_end:
+	; 31:3 if i & 7 == 0
+	move t.10{r9}, i{r8}
+	and t.10{r9}, t.10{r9}, 7
+	equals t.9{r9}, t.10{r9}, 0
+	branch t.9{r9}, false, @if_7_end, @if_7_then
+	const arg.5.0{r1}, 32
+	call printChar@u8[arg.5.0{r1}]
+@if_7_end:
+	move i{r1}, i{r8}
+	call printChar@u8[i{r1}]
+	; 35:3 if i & 15 == 15
+	move t.12{r9}, i{r8}
+	and t.12{r9}, t.12{r9}, 15
+	equals t.11{r9}, t.12{r9}, 15
+	branch t.11{r9}, false, @for_5_continue, @if_8_then
+	const arg.7.0{r1}, 10
+	call printChar@u8[arg.7.0{r1}]
+@for_5_continue:
+	add i{r8}, i{r8}, 1
+@for_5:
+	lt t.6{r0}, i{r8}, 128
+	branch t.6{r0}, true, @for_5_body, @main_ret
+
+@printStringLength@@u8@i64:
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 1
+	mov rax, 1
+	syscall
+	ret
+
+String literals
+	string lit 0 " x\0"

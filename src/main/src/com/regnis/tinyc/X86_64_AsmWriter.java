@@ -35,7 +35,7 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 		final List<IRInstruction> instructions = function.instructions();
 		final int nonvolatileRegistersToPushPop = getNonVolatileRegistersToPushPop(instructions);
 		final List<IRVarDef> localVars = function.varInfos().vars();
-		final List<List<IRVar>> callsArgs = getCallsArgs(instructions);
+		final List<List<IRVar>> callsArgs = getCallArgs(instructions);
 		stackOffsets = createX86StackOffsets(localVars, callsArgs, nonvolatileRegistersToPushPop);
 		final int rspOffset = stackOffsets.getRspOffset();
 		final int callArgSpace = stackOffsets.getCallArgSpace();
@@ -335,22 +335,6 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 			case GtEq -> signed ? "setge" : "setae"; // setae (above or equal) = setnc (not carry)
 			case Gt -> signed ? "setg" : "seta"; // seta (above)
 		};
-	}
-
-	private List<List<IRVar>> getCallsArgs(List<IRInstruction> instructions) {
-		final List<List<IRVar>> calls = new ArrayList<>();
-		instructions.forEach(instruction -> {
-			if (instruction instanceof IRCall call) {
-				final List<IRVar> args = new ArrayList<>();
-				for (IRValue arg : call.args()) {
-					final IRVar var = arg.var();
-					Utils.assertTrue(var != null);
-					args.add(var);
-				}
-				calls.add(args);
-			}
-		});
-		return calls;
 	}
 
 	private int getNonVolatileRegistersToPushPop(List<IRInstruction> instructions) {

@@ -1,0 +1,40 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_simple {
+		BasicBlock_0_simple [label="simple",shape=box];
+		BasicBlock_0_simple -> BasicBlock_0_simple__ret;
+		BasicBlock_0_simple__ret [label="simple__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_registerHint_Au8_Au8 {
+		BasicBlock_1_registerHint_Au8_Au8 [label="registerHint_Au8_Au8",shape=box];
+		BasicBlock_1_registerHint_Au8_Au8 -> BasicBlock_1_registerHint_Au8_Au8__ret;
+		BasicBlock_1_registerHint_Au8_Au8__ret [label="registerHint_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_max_Au8_Au8 {
+		BasicBlock_2_max_Au8_Au8 [label="max_Au8_Au8",shape=hexagon];
+		BasicBlock_2_max_Au8_Au8 -> BasicBlock_2_if__1__end [label="(a)"];
+		BasicBlock_2_max_Au8_Au8 -> BasicBlock_2_if__1__then [label="(b)"];
+		BasicBlock_2_if__1__end [label="if__1__end",shape=box];
+		BasicBlock_2_if__1__end -> BasicBlock_2_max_Au8_Au8__ret;
+		BasicBlock_2_if__1__then [label="if__1__then",shape=box];
+		BasicBlock_2_if__1__then -> BasicBlock_2_max_Au8_Au8__ret;
+		BasicBlock_2_max_Au8_Au8__ret [label="max_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_fibonacci_Au8 {
+		BasicBlock_3_fibonacci_Au8 [label="fibonacci_Au8",shape=box];
+		BasicBlock_3_fibonacci_Au8 -> BasicBlock_3_while__2 [label="(a,b,i)"];
+		BasicBlock_3_while__2__body [label="while__2__body",shape=box];
+		BasicBlock_3_while__2__body -> BasicBlock_3_while__2 [label="(a,b,i)"];
+		BasicBlock_3_while__2 [label="while__2",shape=hexagon];
+		BasicBlock_3_while__2 -> BasicBlock_3_while__2__break [label="(a)"];
+		BasicBlock_3_while__2 -> BasicBlock_3_while__2__body [label="(a,b,i)"];
+		BasicBlock_3_while__2__break [label="while__2__break",shape=box];
+		BasicBlock_3_while__2__break -> BasicBlock_3_fibonacci_Au8__ret;
+		BasicBlock_3_fibonacci_Au8__ret [label="fibonacci_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_4_main [label="main",shape=box];
+		BasicBlock_4_main -> BasicBlock_4_main__ret;
+		BasicBlock_4_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

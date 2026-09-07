@@ -22,7 +22,7 @@
 	; 24 pc
 	move number{r6}, number{r1}
 	const pos{r3}, 20
-	; 28:2 while true
+	; 33:2 while true
 @while_1:
 	sub pos{r3}, pos{r3}, 1
 	move remainder{r4}, number{r6}
@@ -38,7 +38,7 @@
 	addrof t.6{r5}, [buffer]
 	add t.6{r5}, t.6{r5}, t.7{r4}
 	store [t.6{r5}], digit{r0}
-	; 34:3 if number == 0
+	; 39:3 if number == 0
 	equals t.8{r0}, number{r6}, 0
 	branch t.8{r0}, false, @while_1, @while_1_break
 	cast t.10{r6}(i64), pos{r3}(u8)
