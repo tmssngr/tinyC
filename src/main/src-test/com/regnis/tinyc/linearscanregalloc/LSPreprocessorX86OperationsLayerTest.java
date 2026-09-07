@@ -28,7 +28,7 @@ public class LSPreprocessorX86OperationsLayerTest {
 		final IRVar varT32 = new IRVar("t32", 3, VariableScope.function, Type.I16);
 
 		final IRConverterResultLayer resultLayer = new IRConverterResultLayer();
-		IRConverterLayer.process(new LSPreprocessorX86OperationsLayer(resultLayer),
+		IRConverterLayer.process(new LSPreprocessorX86OperationsLayer(X86Registers.WINDOWS, resultLayer),
 		                         List.of(
 				                         new IRMove(varT32, 1),
 				                         new IRMove(varT31, varPattern),
@@ -48,7 +48,7 @@ public class LSPreprocessorX86OperationsLayerTest {
 		final IRVar varNumber = new IRVar("number", 6, VariableScope.function, Type.I64);
 
 		final IRConverterResultLayer resultLayer = new IRConverterResultLayer();
-		IRConverterLayer.process(new LSPreprocessorX86OperationsLayer(resultLayer),
+		IRConverterLayer.process(new LSPreprocessorX86OperationsLayer(X86Registers.WINDOWS, resultLayer),
 		                         List.of(
 				                         new IRMove(varT6, 10),
 				                         new IRMove(varRemainder, varNumber),

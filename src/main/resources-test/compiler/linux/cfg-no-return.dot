@@ -1,0 +1,9 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_main {
+		BasicBlock_0_main [label="main",shape=box];
+		BasicBlock_0_main -> BasicBlock_0_while__1 [label="(i)"];
+		BasicBlock_0_while__1 [label="while__1",shape=box];
+		BasicBlock_0_while__1 -> BasicBlock_0_while__1 [label="(i)"];
+	}
+}
