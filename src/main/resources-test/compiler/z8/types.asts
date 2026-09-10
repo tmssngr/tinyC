@@ -1,0 +1,14 @@
+void printIntLf@u8(u8 number) {
+}
+
+void main() {
+	u8 i;
+	i16 v;
+
+	i = 250;
+	for (; i != 2; i = i + 1) {
+		printIntLf@u8(i);
+	}
+	v = 260;
+	printIntLf@u8((u8)v);
+}

@@ -193,13 +193,16 @@ abstract class AsmWriter {
 			Utils.assertTrue(target.scope() == VariableScope.register);
 			final IRValue source = move.source();
 			final IRVar sourceVar = source.var();
+			final int targetReg = target.index();
 			if (sourceVar != null) {
 				Utils.assertTrue(sourceVar.scope() == VariableScope.register);
 				Utils.assertTrue(source.type().equals(target.type()));
-				writeMove(target.index(), sourceVar.index(), target.type());
+				final int sourceReg = sourceVar.index();
+				Utils.assertTrue(sourceReg != targetReg);
+				writeMove(targetReg, sourceReg, target.type());
 			}
 			else {
-				writeLiteral(target.index(), target.type(), source.value());
+				writeLiteral(targetReg, target.type(), source.value());
 			}
 		}
 		case IRRetValue ignored -> throw new UnsupportedOperationException("must not be possible");
