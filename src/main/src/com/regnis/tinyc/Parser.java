@@ -24,7 +24,8 @@ public final class Parser {
 
 			@Override
 			public void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
-				final Parser parser = new Parser(new Lexer(input), this, defines);
+				final Map<String, Expression> constants = new HashMap<>();
+				final Parser parser = new Parser(new Lexer(input), this, defines, constants);
 				parser.parse(typeDefs, globalVars, functions);
 			}
 		});
@@ -32,14 +33,15 @@ public final class Parser {
 
 	public static Program parse(Path inputFile, Set<String> defines) throws IOException {
 		try {
-			return parse(new FileIncludeHandler(inputFile, null, defines));
+			final Map<String, Expression> constants = new HashMap<>();
+			return parse(new FileIncludeHandler(inputFile, null, defines, constants));
 		}
 		catch (UncheckedIOException e) {
 			throw e.getCause();
 		}
 	}
 
-	private final Map<String, Expression> constants = new HashMap<>();
+	private final Map<String, Expression> constants;
 	private final Lexer lexer;
 	private final IncludeHandler includeHandler;
 	private final Set<String> defines;
@@ -48,10 +50,11 @@ public final class Parser {
 	private int skipIfDef;
 	private TokenType token;
 
-	private Parser(@NotNull Lexer lexer, @NotNull IncludeHandler includeHandler, @NotNull Set<String> defines) {
+	private Parser(@NotNull Lexer lexer, @NotNull IncludeHandler includeHandler, @NotNull Set<String> defines, @NotNull Map<String, Expression> constants) {
 		this.lexer = lexer;
 		this.includeHandler = includeHandler;
 		this.defines = defines;
+		this.constants = constants;
 
 		consume();
 	}
@@ -825,11 +828,13 @@ public final class Parser {
 		private final Path file;
 		private final FileIncludeHandler parent;
 		private final Set<String> defines;
+		private final Map<String, Expression> constants;
 
-		public FileIncludeHandler(@NotNull Path file, @Nullable FileIncludeHandler parent, @NotNull Set<String> defines) {
+		public FileIncludeHandler(@NotNull Path file, @Nullable FileIncludeHandler parent, @NotNull Set<String> defines, @NotNull Map<String, Expression> constants) {
 			this.file = file;
 			this.parent = parent;
 			this.defines = defines;
+			this.constants = constants;
 		}
 
 		@Override
@@ -839,20 +844,21 @@ public final class Parser {
 				throw new SyntaxException("File '" + fileName + "' is included recursively", location);
 			}
 
-			final FileIncludeHandler handler = new FileIncludeHandler(includeFile, this, defines);
+			final FileIncludeHandler handler = new FileIncludeHandler(includeFile, this, defines, constants);
 			handler.parse(typeDefs, globalVars, functions);
 		}
 
 		public void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
 			try (final BufferedReader reader = Files.newBufferedReader(file)) {
-				new Parser(new Lexer(() -> {
+				final Parser parser = new Parser(new Lexer(() -> {
 					try {
 						return reader.read();
 					}
 					catch (IOException ex) {
 						throw new UncheckedIOException(ex);
 					}
-				}), this, defines).parse(typeDefs, globalVars, functions);
+				}), this, defines, constants);
+				parser.parse(typeDefs, globalVars, functions);
 			}
 			catch (IOException e) {
 				throw new UncheckedIOException(e);
