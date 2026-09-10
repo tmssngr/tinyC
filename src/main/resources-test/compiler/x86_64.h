@@ -24,6 +24,12 @@ void printStringLength(u8* str, i64 length) asm {
 	"ret"
 }
 
+const ESCAPE = 0x1b;
+const CURSOR_UP = (i16)0xE048;
+const CURSOR_LEFT = (i16)0xE04B;
+const CURSOR_RIGHT = (i16)0xE04D;
+const CURSOR_DOWN = (i16)0xE050;
+
 i16 getChar() asm {
 	"sub    rsp, 28h" // 8h to compensate for return address, 20h for calling _getch
 	"  call [_getch]"

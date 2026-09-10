@@ -226,24 +226,24 @@ void main() {
 		}
 
 		i16 chr = getChar();
-		if (chr == 0x1b) {
+		if (chr == ESCAPE) {
 			break;
 		}
 
 		// cursor up
-		if (chr == (i16)0xE048) {
+		if (chr == CURSOR_UP) {
 			curr_r = (curr_r + height - 1) % height;
 		}
 		// cursor down
-		else if (chr == (i16)0xE050) {
+		else if (chr == CURSOR_DOWN) {
 			curr_r = (curr_r + 1) % height;
 		}
 		// cursor left
-		else if (chr == (i16)0xE04B) {
+		else if (chr == CURSOR_LEFT) {
 			curr_c = (curr_c + width - 1) % width;
 		}
 		// cursor right
-		else if (chr == (i16)0xE04D) {
+		else if (chr == CURSOR_RIGHT) {
 			curr_c = (curr_c + 1) % width;
 		}
 		// space = flag
