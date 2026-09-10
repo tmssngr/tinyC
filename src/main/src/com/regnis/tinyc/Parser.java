@@ -290,6 +290,16 @@ public final class Parser {
 			}
 		}
 
+		if (expression instanceof ExprCast cast) {
+			final String s = cast.typeString();
+			if (Type.getIntType(s) == null) {
+				throw new SyntaxException(Messages.expressionNotSupportedInConstant(), expression.location());
+			}
+
+			final Expression subExpression = resolveConstExpression(cast.expression());
+			return new ExprCast(s, subExpression, null, cast.location());
+		}
+
 		throw new SyntaxException(Messages.expressionNotSupportedInConstant(), expression.location());
 	}
 
@@ -688,6 +698,9 @@ public final class Parser {
 			}
 			if (constantExpression instanceof ExprIntLiteral literal) {
 				return ExprIntLiteral.autoType(literal.value(), location);
+			}
+			if (constantExpression instanceof ExprCast cast) {
+				return new ExprCast(cast.typeString(), cast.expression(), null, location);
 			}
 			throw new IllegalStateException(String.valueOf(constantExpression));
 		}
