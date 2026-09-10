@@ -954,28 +954,21 @@
 	var 33: t.33 (i16/2)
 	var 34: t.34 (i16/2)
 	var 35: t.35 (i16/2)
-	var 36: t.36 (i16/2)
+	var 36: t.36 (bool/1)
 	var 37: t.37 (i16/2)
 	var 38: t.38 (bool/1)
-	var 39: t.39 (i16/2)
-	var 40: t.40 (i16/2)
-	var 41: t.41 (i16/2)
-	var 42: t.42 (i16/2)
-	var 43: t.43 (bool/1)
-	var 44: t.44 (i16/2)
+	var 39: t.39 (bool/1)
+	var 40: t.40 (bool/1)
+	var 41: t.41 (u8/1)
+	var 42: t.42 (bool/1)
+	var 43: t.43 (i16/2)
+	var 44: t.44 (bool/1)
 	var 45: t.45 (bool/1)
-	var 46: t.46 (bool/1)
-	var 47: t.47 (bool/1)
-	var 48: t.48 (u8/1)
-	var 49: t.49 (bool/1)
-	var 50: t.50 (i16/2)
-	var 51: t.51 (bool/1)
-	var 52: t.52 (bool/1)
-	var 53: t.53 (u8/1)
-	var 54: t.54 (u8/1)
-	var 55: t.55 (bool/1)
-	var 56: t.56 (u8*/8)
-	; 448 pc
+	var 46: t.46 (u8/1)
+	var 47: t.47 (u8/1)
+	var 48: t.48 (bool/1)
+	var 49: t.49 (u8*/8)
+	; 393 pc
 	; begin initialize global variables
 	const __random__, 0
 	; end initialize global variables
@@ -1051,86 +1044,70 @@
 	mod curr_c, curr_c, t.30
 	jump @while_40
 @if_46_else:
-	; 246:8 if chr == -8117
-	const t.32, -8117
+	; 246:8 if chr == -8115
+	const t.32, -8115
 	equals t.31, chr, t.32
 	branch t.31, false, @if_47_else, @if_47_then
 @if_47_then:
+	const t.34, 1
+	move t.33, curr_c
+	add t.33, t.33, t.34
 	const t.35, 40
-	move t.34, curr_c
-	add t.34, t.34, t.35
-	const t.36, 1
-	move t.33, t.34
-	sub t.33, t.33, t.36
-	const t.37, 40
 	move curr_c, t.33
-	mod curr_c, curr_c, t.37
+	mod curr_c, curr_c, t.35
 	jump @while_40
 @if_47_else:
-	; 250:8 if chr == -8115
-	const t.39, -8115
-	equals t.38, chr, t.39
-	branch t.38, false, @if_48_else, @if_48_then
+	; 250:8 if chr == 32
+	const t.37, 32
+	equals t.36, chr, t.37
+	branch t.36, false, @if_48_else, @if_48_then
 @if_48_then:
-	const t.41, 1
-	move t.40, curr_c
-	add t.40, t.40, t.41
-	const t.42, 40
-	move curr_c, t.40
-	mod curr_c, curr_c, t.42
-	jump @while_40
-@if_48_else:
-	; 254:8 if chr == 32
-	const t.44, 32
-	equals t.43, chr, t.44
-	branch t.43, false, @if_49_else, @if_49_then
+	; 251:4 if !needsInitialize
+	notlog t.38, needsInitialize
+	branch t.38, false, @while_40, @if_49_then
 @if_49_then:
-	; 255:4 if !needsInitialize
-	notlog t.45, needsInitialize
-	branch t.45, false, @while_40, @if_50_then
-@if_50_then:
 	call cell = getCell@i16@i16[curr_r, curr_c] -> u8
-	; 257:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=257:17]])
-	call t.47 = isOpen@u8[cell] -> bool
-	notlog t.46, t.47
-	branch t.46, false, @while_40, @if_51_then
-@if_51_then:
-	const t.48, 4
-	xor cell, cell, t.48
+	; 253:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=253:17]])
+	call t.40 = isOpen@u8[cell] -> bool
+	notlog t.39, t.40
+	branch t.39, false, @while_40, @if_50_then
+@if_50_then:
+	const t.41, 4
+	xor cell, cell, t.41
 	call setCell@i16@i16@u8[curr_r, curr_c, cell]
 	jump @while_40
-@if_49_else:
-	; 263:8 if chr == 13
-	const t.50, 13
-	equals t.49, chr, t.50
-	branch t.49, false, @while_40, @if_52_then
+@if_48_else:
+	; 259:8 if chr == 13
+	const t.43, 13
+	equals t.42, chr, t.43
+	branch t.42, false, @while_40, @if_51_then
+@if_51_then:
+	; 260:4 if needsInitialize
+	branch needsInitialize, false, @if_52_end, @if_52_then
 @if_52_then:
-	; 264:4 if needsInitialize
-	branch needsInitialize, false, @if_53_end, @if_53_then
-@if_53_then:
 	const needsInitialize, 0
 	call initField@i16@i16[curr_r, curr_c]
-@if_53_end:
+@if_52_end:
 	call cell = getCell@i16@i16[curr_r, curr_c] -> u8
-	; 269:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=269:16]])
-	call t.52 = isOpen@u8[cell] -> bool
-	notlog t.51, t.52
-	branch t.51, false, @if_54_end, @if_54_then
+	; 265:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=265:16]])
+	call t.45 = isOpen@u8[cell] -> bool
+	notlog t.44, t.45
+	branch t.44, false, @if_53_end, @if_53_then
+@if_53_then:
+	const t.47, 2
+	move t.46, cell
+	or t.46, t.46, t.47
+	call setCell@i16@i16@u8[curr_r, curr_c, t.46]
+@if_53_end:
+	; 268:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=268:15]])
+	call t.48 = isBomb@u8[cell] -> bool
+	branch t.48, false, @if_54_end, @if_54_then
 @if_54_then:
-	const t.54, 2
-	move t.53, cell
-	or t.53, t.53, t.54
-	call setCell@i16@i16@u8[curr_r, curr_c, t.53]
-@if_54_end:
-	; 272:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=272:15]])
-	call t.55 = isBomb@u8[cell] -> bool
-	branch t.55, false, @if_55_end, @if_55_then
-@if_55_then:
 	call printField@i16@i16[curr_r, curr_c]
-	const t.56, [string-3]
-	call printString@@u8[t.56]
+	const t.49, [string-3]
+	call printString@@u8[t.49]
 	jump @main_ret
-@if_55_end:
+@if_54_end:
 	call maybeRevealAround@i16@i16[curr_r, curr_c]
 	jump @while_40
 @main_ret:

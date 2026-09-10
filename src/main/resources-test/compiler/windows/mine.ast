@@ -358,40 +358,35 @@ void main() {
 					curr_c = ((curr_c + 40) - 1) % 40;
 				}
 				else {
-					if (chr == ((i16)57419)) {
-						curr_c = ((curr_c + 40) - 1) % 40;
+					if (chr == ((i16)57421)) {
+						curr_c = (curr_c + 1) % 40;
 					}
 					else {
-						if (chr == ((i16)57421)) {
-							curr_c = (curr_c + 1) % 40;
-						}
-						else {
-							if (chr == 32) {
-								if (!needsInitialize) {
-									cell = getCell@i16@i16(curr_r, curr_c);
-									if (!(isOpen@u8(cell))) {
-										cell = cell ^ 4;
-										setCell@i16@i16@u8(curr_r, curr_c, cell);
-									}
+						if (chr == 32) {
+							if (!needsInitialize) {
+								cell = getCell@i16@i16(curr_r, curr_c);
+								if (!(isOpen@u8(cell))) {
+									cell = cell ^ 4;
+									setCell@i16@i16@u8(curr_r, curr_c, cell);
 								}
 							}
-							else {
-								if (chr == 13) {
-									if (needsInitialize) {
-										needsInitialize = false;
-										initField@i16@i16(curr_r, curr_c);
-									}
-									cell = getCell@i16@i16(curr_r, curr_c);
-									if (!(isOpen@u8(cell))) {
-										setCell@i16@i16@u8(curr_r, curr_c, cell | 2);
-									}
-									if (isBomb@u8(cell)) {
-										printField@i16@i16(curr_r, curr_c);
-										printString@@u8("boom! you've lost");
-										break;
-									}
-									maybeRevealAround@i16@i16(curr_r, curr_c);
+						}
+						else {
+							if (chr == 13) {
+								if (needsInitialize) {
+									needsInitialize = false;
+									initField@i16@i16(curr_r, curr_c);
 								}
+								cell = getCell@i16@i16(curr_r, curr_c);
+								if (!(isOpen@u8(cell))) {
+									setCell@i16@i16@u8(curr_r, curr_c, cell | 2);
+								}
+								if (isBomb@u8(cell)) {
+									printField@i16@i16(curr_r, curr_c);
+									printString@@u8("boom! you've lost");
+									break;
+								}
+								maybeRevealAround@i16@i16(curr_r, curr_c);
 							}
 						}
 					}

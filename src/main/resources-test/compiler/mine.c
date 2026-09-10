@@ -242,10 +242,6 @@ void main() {
 		else if (chr == (i16)0xE04B) {
 			curr_c = (curr_c + width - 1) % width;
 		}
-		// cursor left
-		else if (chr == (i16)0xE04B) {
-			curr_c = (curr_c + width - 1) % width;
-		}
 		// cursor right
 		else if (chr == (i16)0xE04D) {
 			curr_c = (curr_c + 1) % width;
