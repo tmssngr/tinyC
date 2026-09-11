@@ -92,19 +92,38 @@ void printCell(u8 cell, i16 row, i16 column) {
 	printChar(chr);
 }
 
-void printField(i16 rowCursor, i16 columnCursor) {
+void printField() {
 	setCursor(0i16, 0i16);
 	for (i16 row = 0; row < height; row = row + 1) {
 		printChar('|');
 		for (i16 column = 0; column < width; column = column + 1) {
-			u8 spacer = getSpacer(row, column, rowCursor, columnCursor);
-			printChar(spacer);
+			printChar(' ');
 			u8 cell = getCell(row, column);
 			printCell(cell, row, column);
 		}
-		u8 spacer = getSpacer(row, width, rowCursor, columnCursor);
-		printChar(spacer);
-		printString("|\n");
+		printString(" |\n");
+	}
+}
+
+i16 getX(i16 column) {
+	return (column + 1) * 2;
+}
+
+void printCursor(i16 row, i16 column, bool show) {
+	i16 x = getX(column);
+	setCursor(row, x - 1);
+	if (show) {
+		printChar('[');
+	}
+	else {
+		printChar(' ');
+	}
+	setCursor(row, x + 1);
+	if (show) {
+		printChar(']');
+	}
+	else {
+		printChar(' ');
 	}
 }
 
@@ -150,7 +169,7 @@ bool printLeft() {
 
 	i16 leftDigits = (i16)getDigitCount(count);
 	i16 bombDigits = (i16)getDigitCount(bombCount);
-	printString("Left: ");
+	setCursor(height, 6);
 	printSpaces(bombDigits - leftDigits);
 	printUint(count);
 	return count == 0;
@@ -183,11 +202,13 @@ void initField(i16 curr_r, i16 curr_c) {
 }
 
 void revealCells(i16 row, i16 left, i16 right) {
-	setCursor((left << 1i16) + 2, row);
+	setCursor(row, getX(left));
 	for (i16 c = left; c <= right; c = c + 1) {
 		u8 cell = getCell(row, c);
-		setCell(row, c, cell | maskOpen);
+		cell = cell | maskOpen;
+		setCell(row, c, cell);
 		printCell(cell, row, c);
+		printChar(' ');
 	}
 }
 
@@ -200,18 +221,25 @@ void maybeRevealAround(i16 row, i16 column) {
 	while (left > 0) {
 		left = left - 1;
 		if (getBombCountAround(row, left) != 0) {
+			left = left + 1;
 			break;
 		}
 	}
 
 	i16 right = column;
-	while (right < width) {
+	while (true) {
 		right = right + 1;
-		if (getBombCountAround(row, right) != 0) {
+		if (right >= width
+		 || getBombCountAround(row, right) != 0) {
+			right = right - 1;
 			break;
 		}
 	}
-
+/*
+	printIntLf(row);
+	printIntLf(left);
+	printIntLf(right);
+	*/
 	revealCells(row, left, right);
 
 	for (i16 dr = -1; dr <= 1; dr = dr + 1) {
@@ -243,8 +271,10 @@ void main() {
 	clearField();
 	i16 curr_c = (i16)(width / 2);
 	i16 curr_r = (i16)(height / 2);
+	printField();
+	setCursor(height, 0);
+	printString("Left:");
 	while (true) {
-		printField(curr_r, curr_c);
 		if (!needsInitialize) {
 			if (printLeft()) {
 				printString(" You've cleaned the field!");
@@ -252,7 +282,9 @@ void main() {
 			}
 		}
 
+		printCursor(curr_r, curr_c, true);
 		i16 chr = getChar();
+		printCursor(curr_r, curr_c, false);
 		if (chr == ESCAPE) {
 			break;
 		}
@@ -293,7 +325,7 @@ void main() {
 				setCell(curr_r, curr_c, cell | maskOpen);
 			}
 			if (isBomb(cell)) {
-				printField(curr_r, curr_c);
+				printField();
 				printString("boom! you've lost");
 				break;
 			}

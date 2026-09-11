@@ -47,7 +47,7 @@ i16 getChar() asm {
 	"ret"
 }
 
-void setCursor(i16 x, i16 y) asm {
+void setCursor(i16 row, i16 column) asm {
 	// rcx      y
 	// rdx      x
 	// BOOL WINAPI SetConsoleCursorPosition(
