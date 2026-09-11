@@ -293,7 +293,22 @@ void initField@i16@i16(i16 curr_r, i16 curr_c) {
 	}
 }
 
+void revealCells@i16@i16@i16(i16 row, i16 left, i16 right) {
+	i16 c;
+	u8 cell;
+
+	setCursor@i16@i16((left << 1) + 2, row);
+	c = left;
+	for (; c <= right; c = c + 1) {
+		cell = getCell@i16@i16(row, c);
+		setCell@i16@i16@u8(row, c, cell | 2);
+		printCell@u8@i16@i16(cell, row, c);
+	}
+}
+
 void maybeRevealAround@i16@i16(i16 row, i16 column) {
+	i16 left;
+	i16 right;
 	i16 dr;
 	i16 r;
 	i16 dc;
@@ -303,6 +318,21 @@ void maybeRevealAround@i16@i16(i16 row, i16 column) {
 	if ((getBombCountAround@i16@i16(row, column)) != 0) {
 		return;
 	}
+	left = column;
+	while (left > 0) {
+		left = left - 1;
+		if ((getBombCountAround@i16@i16(row, left)) != 0) {
+			break;
+		}
+	}
+	right = column;
+	while (right < 17) {
+		right = right + 1;
+		if ((getBombCountAround@i16@i16(row, right)) != 0) {
+			break;
+		}
+	}
+	revealCells@i16@i16@i16(row, left, right);
 	dr = -1;
 	for (; dr <= 1; dr = dr + 1) {
 		r = row + dr;
