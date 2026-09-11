@@ -182,10 +182,37 @@ void initField(i16 curr_r, i16 curr_c) {
 	}
 }
 
+void revealCells(i16 row, i16 left, i16 right) {
+	setCursor((left << 1i16) + 2, row);
+	for (i16 c = left; c <= right; c = c + 1) {
+		u8 cell = getCell(row, c);
+		setCell(row, c, cell | maskOpen);
+		printCell(cell, row, c);
+	}
+}
+
 void maybeRevealAround(i16 row, i16 column) {
 	if (getBombCountAround(row, column) != 0) {
 		return;
 	}
+
+	i16 left = column;
+	while (left > 0) {
+		left = left - 1;
+		if (getBombCountAround(row, left) != 0) {
+			break;
+		}
+	}
+
+	i16 right = column;
+	while (right < width) {
+		right = right + 1;
+		if (getBombCountAround(row, right) != 0) {
+			break;
+		}
+	}
+
+	revealCells(row, left, right);
 
 	for (i16 dr = -1; dr <= 1; dr = dr + 1) {
 		i16 r = row + dr;

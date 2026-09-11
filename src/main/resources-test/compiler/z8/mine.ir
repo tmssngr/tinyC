@@ -482,65 +482,121 @@ for_27_continue:
 	jump for_27
 initField@i16@i16_ret:
 
+revealCells@i16@i16@i16:
+ Local variables
+	arg 0: row (i16/2)
+	arg 1: left (i16/2)
+	arg 2: right (i16/2)
+	var 3: c (i16/2)
+	var 4: cell (u8/1)
+	var 5: t.5 (i16/2)
+	var 6: t.6 (i16/2)
+	var 7: t.7 (u8/1)
+	; 72 pc
+	move t.6, left
+	shiftleft t.6, t.6, 1
+	move t.5, t.6
+	add t.5, t.5, 2
+	call setCursor@i16@i16[t.5, row]
+	move c, left
+	; 187:2 for c <= right
+for_30:
+	branch c gt right: revealCells@i16@i16@i16_ret, for_30_body
+for_30_body:
+	call cell = getCell@i16@i16[row, c] -> u8
+	move t.7, cell
+	or t.7, t.7, 2
+	call setCell@i16@i16@u8[row, c, t.7]
+	call printCell@u8@i16@i16[cell, row, c]
+for_30_continue:
+	add c, c, 1
+	jump for_30
+revealCells@i16@i16@i16_ret:
+
 maybeRevealAround@i16@i16:
  Local variables
 	arg 0: row (i16/2)
 	arg 1: column (i16/2)
-	var 2: dr (i16/2)
-	var 3: r (i16/2)
-	var 4: dc (i16/2)
-	var 5: c (i16/2)
-	var 6: cell (u8/1)
-	var 7: t.7 (u8/1)
-	var 8: t.8 (bool/1)
-	var 9: t.9 (bool/1)
+	var 2: left (i16/2)
+	var 3: right (i16/2)
+	var 4: dr (i16/2)
+	var 5: r (i16/2)
+	var 6: dc (i16/2)
+	var 7: c (i16/2)
+	var 8: cell (u8/1)
+	var 9: t.9 (u8/1)
 	var 10: t.10 (u8/1)
-	; 110 pc
-	; 186:2 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=186:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=186:30]]) != 0
-	call t.7 = getBombCountAround@i16@i16[row, column] -> u8
-	branch t.7 equals 0: if_30_end, if_30_then
-if_30_then:
-	; 187:3 return
+	var 11: t.11 (u8/1)
+	var 12: t.12 (bool/1)
+	var 13: t.13 (bool/1)
+	var 14: t.14 (u8/1)
+	; 163 pc
+	; 195:2 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=195:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=195:30]]) != 0
+	call t.9 = getBombCountAround@i16@i16[row, column] -> u8
+	branch t.9 equals 0: if_31_end, if_31_then
+if_31_then:
+	; 196:3 return
 	jump maybeRevealAround@i16@i16_ret
-if_30_end:
+if_31_end:
+	move left, column
+	; 200:2 while left > 0
+while_32:
+	branch left lteq 0: while_32_break, while_32_body
+while_32_body:
+	sub left, left, 1
+	; 202:3 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=202:26], ExprVarAccess[varName=left, index=2, scope=function, type=i16, varIsArray=false, location=202:31]]) != 0
+	call t.10 = getBombCountAround@i16@i16[row, left] -> u8
+	branch t.10 equals 0: while_32, while_32_break
+while_32_break:
+	move right, column
+	; 208:2 while right < 17
+while_34:
+	branch right gteq 17: while_34_break, while_34_body
+while_34_body:
+	add right, right, 1
+	; 210:3 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=210:26], ExprVarAccess[varName=right, index=3, scope=function, type=i16, varIsArray=false, location=210:31]]) != 0
+	call t.11 = getBombCountAround@i16@i16[row, right] -> u8
+	branch t.11 equals 0: while_34, while_34_break
+while_34_break:
+	call revealCells@i16@i16@i16[row, left, right]
 	const dr, -1
-	; 190:2 for dr <= 1
-for_31:
-	branch dr gt 1: maybeRevealAround@i16@i16_ret, for_31_body
-for_31_body:
+	; 217:2 for dr <= 1
+for_36:
+	branch dr gt 1: maybeRevealAround@i16@i16_ret, for_36_body
+for_36_body:
 	move r, row
 	add r, r, dr
 	const dc, -1
-	; 192:3 for dc <= 1
-for_32:
-	branch dc gt 1: for_31_continue, for_32_body
-for_32_body:
-	; 193:4 if dr == 0 && dc == 0
-	branch dr notequals 0: if_33_end, and_34
-and_34:
-	branch dc equals 0: for_32_continue, if_33_end
-if_33_end:
+	; 219:3 for dc <= 1
+for_37:
+	branch dc gt 1: for_36_continue, for_37_body
+for_37_body:
+	; 220:4 if dr == 0 && dc == 0
+	branch dr notequals 0: if_38_end, and_39
+and_39:
+	branch dc equals 0: for_37_continue, if_38_end
+if_38_end:
 	move c, column
 	add c, c, dc
-	; 198:4 if !checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=198:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=198:28]])
-	call t.8 = checkCellBounds@i16@i16[r, c] -> bool
-	branch t.8 equals 0: for_32_continue, if_35_end
-if_35_end:
+	; 225:4 if !checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=5, scope=function, type=i16, varIsArray=false, location=225:25], ExprVarAccess[varName=c, index=7, scope=function, type=i16, varIsArray=false, location=225:28]])
+	call t.12 = checkCellBounds@i16@i16[r, c] -> bool
+	branch t.12 equals 0: for_37_continue, if_40_end
+if_40_end:
 	call cell = getCell@i16@i16[r, c] -> u8
-	; 203:4 if isOpen@u8([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=203:15]])
-	call t.9 = isOpen@u8[cell] -> bool
-	branch t.9 notequals 0: for_32_continue, if_36_end
-if_36_end:
-	move t.10, cell
-	or t.10, t.10, 2
-	call setCell@i16@i16@u8[r, c, t.10]
+	; 230:4 if isOpen@u8([ExprVarAccess[varName=cell, index=8, scope=function, type=u8, varIsArray=false, location=230:15]])
+	call t.13 = isOpen@u8[cell] -> bool
+	branch t.13 notequals 0: for_37_continue, if_41_end
+if_41_end:
+	move t.14, cell
+	or t.14, t.14, 2
+	call setCell@i16@i16@u8[r, c, t.14]
 	call maybeRevealAround@i16@i16[r, c]
-for_32_continue:
+for_37_continue:
 	add dc, dc, 1
-	jump for_32
-for_31_continue:
+	jump for_37
+for_36_continue:
 	add dr, dr, 1
-	jump for_31
+	jump for_36
 maybeRevealAround@i16@i16_ret:
 
 main:
@@ -570,108 +626,108 @@ main:
 	call clearField[]
 	const curr_c, 8
 	const curr_r, 10
-	; 219:2 while true
-while_37:
+	; 246:2 while true
+while_42:
 	call printField@i16@i16[curr_r, curr_c]
-	; 221:3 if !needsInitialize
-	branch needsInitialize notequals 0: if_38_end, if_38_then
-if_38_then:
-	; 222:4 if printLeft([])
+	; 248:3 if !needsInitialize
+	branch needsInitialize notequals 0: if_43_end, if_43_then
+if_43_then:
+	; 249:4 if printLeft([])
 	call t.6 = printLeft[] -> bool
-	branch t.6 equals 0: if_38_end, if_39_then
-if_39_then:
+	branch t.6 equals 0: if_43_end, if_44_then
+if_44_then:
 	const t.7, [string-2]
 	call printString@@u8[t.7]
 	jump main_ret
-if_38_end:
+if_43_end:
 	call chr = getChar[] -> i16
-	; 229:3 if chr == 27
-	branch chr equals 27: main_ret, if_40_end
-if_40_end:
-	; 234:3 if chr == 3
-	branch chr notequals 3: if_41_else, if_41_then
-if_41_then:
+	; 256:3 if chr == 27
+	branch chr equals 27: main_ret, if_45_end
+if_45_end:
+	; 261:3 if chr == 3
+	branch chr notequals 3: if_46_else, if_46_then
+if_46_then:
 	move t.9, curr_r
 	add t.9, t.9, 20
 	move t.8, t.9
 	sub t.8, t.8, 1
 	move curr_r, t.8
 	mod curr_r, curr_r, 20
-	jump while_37
-if_41_else:
-	; 238:8 if chr == 4
-	branch chr notequals 4: if_42_else, if_42_then
-if_42_then:
+	jump while_42
+if_46_else:
+	; 265:8 if chr == 4
+	branch chr notequals 4: if_47_else, if_47_then
+if_47_then:
 	move t.10, curr_r
 	add t.10, t.10, 1
 	move curr_r, t.10
 	mod curr_r, curr_r, 20
-	jump while_37
-if_42_else:
-	; 242:8 if chr == 1
-	branch chr notequals 1: if_43_else, if_43_then
-if_43_then:
+	jump while_42
+if_47_else:
+	; 269:8 if chr == 1
+	branch chr notequals 1: if_48_else, if_48_then
+if_48_then:
 	move t.12, curr_c
 	add t.12, t.12, 17
 	move t.11, t.12
 	sub t.11, t.11, 1
 	move curr_c, t.11
 	mod curr_c, curr_c, 17
-	jump while_37
-if_43_else:
-	; 246:8 if chr == 2
-	branch chr notequals 2: if_44_else, if_44_then
-if_44_then:
+	jump while_42
+if_48_else:
+	; 273:8 if chr == 2
+	branch chr notequals 2: if_49_else, if_49_then
+if_49_then:
 	move t.13, curr_c
 	add t.13, t.13, 1
 	move curr_c, t.13
 	mod curr_c, curr_c, 17
-	jump while_37
-if_44_else:
-	; 250:8 if chr == 32
-	branch chr notequals 32: if_45_else, if_45_then
-if_45_then:
-	; 251:4 if !needsInitialize
-	branch needsInitialize notequals 0: while_37, if_46_then
-if_46_then:
+	jump while_42
+if_49_else:
+	; 277:8 if chr == 32
+	branch chr notequals 32: if_50_else, if_50_then
+if_50_then:
+	; 278:4 if !needsInitialize
+	branch needsInitialize notequals 0: while_42, if_51_then
+if_51_then:
 	call cell = getCell@i16@i16[curr_r, curr_c] -> u8
-	; 253:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=253:17]])
+	; 280:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=280:17]])
 	call t.14 = isOpen@u8[cell] -> bool
-	branch t.14 notequals 0: while_37, if_47_then
-if_47_then:
+	branch t.14 notequals 0: while_42, if_52_then
+if_52_then:
 	xor cell, cell, 4
 	call setCell@i16@i16@u8[curr_r, curr_c, cell]
-	jump while_37
-if_45_else:
-	; 259:8 if chr == 13
-	branch chr notequals 13: while_37, if_48_then
-if_48_then:
-	; 260:4 if needsInitialize
-	branch needsInitialize equals 0: if_49_end, if_49_then
-if_49_then:
+	jump while_42
+if_50_else:
+	; 286:8 if chr == 13
+	branch chr notequals 13: while_42, if_53_then
+if_53_then:
+	; 287:4 if needsInitialize
+	branch needsInitialize equals 0: if_54_end, if_54_then
+if_54_then:
 	const needsInitialize, 0
 	call initField@i16@i16[curr_r, curr_c]
-if_49_end:
+if_54_end:
 	call cell = getCell@i16@i16[curr_r, curr_c] -> u8
-	; 265:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=265:16]])
+	; 292:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=292:16]])
 	call t.15 = isOpen@u8[cell] -> bool
-	branch t.15 notequals 0: if_50_end, if_50_then
-if_50_then:
+	branch t.15 notequals 0: if_55_end, if_55_then
+if_55_then:
 	move t.16, cell
 	or t.16, t.16, 2
 	call setCell@i16@i16@u8[curr_r, curr_c, t.16]
-if_50_end:
-	; 268:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=268:15]])
+if_55_end:
+	; 295:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=295:15]])
 	call t.17 = isBomb@u8[cell] -> bool
-	branch t.17 equals 0: if_51_end, if_51_then
-if_51_then:
+	branch t.17 equals 0: if_56_end, if_56_then
+if_56_then:
 	call printField@i16@i16[curr_r, curr_c]
 	const t.18, [string-3]
 	call printString@@u8[t.18]
 	jump main_ret
-if_51_end:
+if_56_end:
 	call maybeRevealAround@i16@i16[curr_r, curr_c]
-	jump while_37
+	jump while_42
 main_ret:
 
 printString@@u8:

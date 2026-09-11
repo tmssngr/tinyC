@@ -1200,12 +1200,111 @@ for____27:
         pop  r8
         ret
 
+        ; void revealCells@i16@i16@i16
+        ; arg row (i16): r0
+        ; arg left (i16): r2
+        ; arg right (i16): r4
+revealCells__Pi16__Pi16__Pi16:
+        ; save clobbered non-volatile registers
+        push r8
+        push r9
+        push r10
+        push r11
+        push r12
+        push r13
+        push r14
+        push r15
+        ; move param.row{r8}, row{r0}
+        ld   r9, r1
+        ld   r8, r0
+        ; move param.left{r10}, left{r2}
+        ld   r11, r3
+        ld   r10, r2
+        ; move param.right{r12}, right{r4}
+        ld   r13, r5
+        ld   r12, r4
+        ; move t.6{r14}, param.left{r10}
+        ld   r15, r11
+        ld   r14, r10
+        ; shiftleft t.6{r14}, t.6{r14}, 1
+        rcf
+        rlc  r15
+        rlc  r14
+        ; move t.5{r0}, t.6{r14}
+        ld   r0, r14
+        ld   r1, r15
+        ; add t.5{r0}, t.5{r0}, 2
+        add  r1, #%02
+        adc  r0, #%00
+        ; move param.row{r2}, param.row{r8}
+        ld   r2, r8
+        ld   r3, r9
+        ; call setCursor@i16@i16[t.5{r0}, param.row{r2}]
+        call setCursor_Pi16_Pi16
+        ; 187:2 for c <= right
+        jr   for__30
+
+for____30____body:
+        ; move param.row{r0}, param.row{r8}
+        ld   r0, r8
+        ld   r1, r9
+        ; move c{r2}, c{r10}
+        ld   r2, r10
+        ld   r3, r11
+        ; call cell{r0} = getCell@i16@i16[param.row{r0}, c{r2}] -> u8
+        call getCell_Pi16_Pi16
+        ; move cell{r14}, cell{r0}
+        ld   r14, r0
+        ; move t.7{r4}, cell{r14}
+        ld   r4, r14
+        ; or t.7{r4}, t.7{r4}, 2
+        or  r4, #%02
+        ; move param.row{r0}, param.row{r8}
+        ld   r0, r8
+        ld   r1, r9
+        ; move c{r2}, c{r10}
+        ld   r2, r10
+        ld   r3, r11
+        ; call setCell@i16@i16@u8[param.row{r0}, c{r2}, t.7{r4}]
+        call setCell_Pi16_Pi16_Pu8
+        ; move cell{r0}, cell{r14}
+        ld   r0, r14
+        ; move param.row{r1}, param.row{r8}
+        ld   r1, r8
+        ld   r2, r9
+        ; move c{r3}, c{r10}
+        ld   r3, r10
+        ld   r4, r11
+        ; call printCell@u8@i16@i16[cell{r0}, param.row{r1}, c{r3}]
+        call printCell_Pu8_Pi16_Pi16
+        ; add c{r10}, c{r10}, 1
+        incw r10
+for____30:
+        ; branch c{r10} lteq param.right{r12}: for_30_body, revealCells@i16@i16@i16_ret
+        cp   r10, r12
+        jr   le, .37
+        jr   ne, for__30__body
+        cp   r11, r13
+        jr   ule, for__30__body
+.37:
+        ; restore clobbered non-volatile registers
+        pop  r15
+        pop  r14
+        pop  r13
+        pop  r12
+        pop  r11
+        pop  r10
+        pop  r9
+        pop  r8
+        ret
+
         ; void maybeRevealAround@i16@i16
         ; arg row (i16): r0
         ; arg column (i16): r2
-        ; var r (i16): SP+8
-        ; var dc (i16): SP+10
-        ; var c (i16): SP+12
+        ; var right (i16): SP+8
+        ; var r (i16): SP+10
+        ; var dc (i16): SP+12
+        ; var c (i16): SP+14
 maybeRevealAround__Pi16__Pi16:
         ; save clobbered non-volatile registers
         push r8
@@ -1222,26 +1321,135 @@ maybeRevealAround__Pi16__Pi16:
         ; move param.column{r10}, column{r2}
         ld   r11, r3
         ld   r10, r2
-        ; 186:2 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=186:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=186:30]]) != 0
+        ; 195:2 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=195:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=195:30]]) != 0
         ; move param.row{r0}, param.row{r8}
         ld   r0, r8
         ld   r1, r9
         ; move param.column{r2}, param.column{r10}
         ld   r2, r10
         ld   r3, r11
-        ; call t.7{r0} = getBombCountAround@i16@i16[param.row{r0}, param.column{r2}] -> u8
+        ; call t.9{r0} = getBombCountAround@i16@i16[param.row{r0}, param.column{r2}] -> u8
         call getBombCountAround_Pi16_Pi16
-        ; branch t.7{r0} notequals 0: maybeRevealAround@i16@i16_ret, if_30_end
+        ; branch t.9{r0} notequals 0: maybeRevealAround@i16@i16_ret, if_31_end
         cp   r0, #%00
         jr   ne, maybeRevealAround_Pi16_Pi16__ret
-.37:
+.38:
+        ; move left{r12}, param.column{r10}
+        ld   r13, r11
+        ld   r12, r10
+        ; 200:2 while left > 0
+        jr   while__32
+
+while____32____body:
+        ; sub left{r12}, left{r12}, 1
+        decw r12
+        ; 202:3 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=202:26], ExprVarAccess[varName=left, index=2, scope=function, type=i16, varIsArray=false, location=202:31]]) != 0
+        ; move param.row{r0}, param.row{r8}
+        ld   r0, r8
+        ld   r1, r9
+        ; move left{r2}, left{r12}
+        ld   r2, r12
+        ld   r3, r13
+        ; call t.10{r0} = getBombCountAround@i16@i16[param.row{r0}, left{r2}] -> u8
+        call getBombCountAround_Pi16_Pi16
+        ; branch t.10{r0} notequals 0: while_32_break, while_32
+        cp   r0, #%00
+        jr   ne, while__32__break
+.39:
+while____32:
+        ; branch left{r12} gt 0: while_32_body, while_32_break
+        cp   r12, #%00
+        jr   gt, .40
+        jr   ne, while__32__body
+        cp   r13, #%00
+        jr   ugt, while__32__body
+.40:
+while____32____break:
+        ; move right{r2}, param.column{r10}
+        ld   r2, r10
+        ld   r3, r11
+        ; 208:2 while right < 17
+        ; addrof memVarAddr{r14}, right
+        ld   r14, SPH
+        ld   r15, SPL
+        add  r15, #%08
+        adc  r14, #%00
+        ; store [memVarAddr{r14}], right{r2}
+        lde  @rr14, r2
+        incw r14
+        lde  @rr14, r3
+        jr   while__34
+
+while____34____body:
+        ; move right{r2}, right{r4}
+        ld   r2, r4
+        ld   r3, r5
+        ; add right{r2}, right{r2}, 1
+        incw r2
+        ; 210:3 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=210:26], ExprVarAccess[varName=right, index=3, scope=function, type=i16, varIsArray=false, location=210:31]]) != 0
+        ; move param.row{r0}, param.row{r8}
+        ld   r0, r8
+        ld   r1, r9
+        ; addrof memVarAddr{r14}, right
+        ld   r14, SPH
+        ld   r15, SPL
+        add  r15, #%08
+        adc  r14, #%00
+        ; store [memVarAddr{r14}], right{r2}
+        lde  @rr14, r2
+        incw r14
+        lde  @rr14, r3
+        ; call t.11{r0} = getBombCountAround@i16@i16[param.row{r0}, right{r2}] -> u8
+        call getBombCountAround_Pi16_Pi16
+        ; branch t.11{r0} notequals 0: maybeRevealAround@i16@i16.no_critical_edge_29, while_34
+        cp   r0, #%00
+        jr   ne, maybeRevealAround_Pi16_Pi16_2eno__critical__edge__29
+.41:
+while____34:
+        ; addrof memVarAddr{r14}, right
+        ld   r14, SPH
+        ld   r15, SPL
+        add  r15, #%08
+        adc  r14, #%00
+        ; load right{r4}, [memVarAddr{r14}]
+        lde  r4, @rr14
+        incw r14
+        lde  r5, @rr14
+        ; branch right{r4} gteq 17: while_34_break, while_34_body
+        cp   r4, #%00
+        jr   ge, .42
+        jr   ne, while__34__break
+        cp   r5, #%11
+        jr   uge, while__34__break
+.42:
+        jr   while__34__body
+
+maybeRevealAround__Pi16__Pi16__2eno____critical____edge____29:
+        ; addrof memVarAddr{r14}, right
+        ld   r14, SPH
+        ld   r15, SPL
+        add  r15, #%08
+        adc  r14, #%00
+        ; load right{r4}, [memVarAddr{r14}]
+        lde  r4, @rr14
+        incw r14
+        lde  r5, @rr14
+while____34____break:
+        ; move param.row{r0}, param.row{r8}
+        ld   r0, r8
+        ld   r1, r9
+        ; move left{r2}, left{r12}
+        ld   r2, r12
+        ld   r3, r13
+        ; call revealCells@i16@i16@i16[param.row{r0}, left{r2}, right{r4}]
+        call revealCells_Pi16_Pi16_Pi16
         ; const dr{r12}, -1
         ld   r12, #%ff
         ld   r13, #%ff
-        ; 190:2 for dr <= 1
-        jr   for__31
+        ; 217:2 for dr <= 1
+        jr   for__36
 
-for____31____body:
+for____36____body:
         ; move r{r0}, param.row{r8}
         ld   r0, r8
         ld   r1, r9
@@ -1251,11 +1459,11 @@ for____31____body:
         ; const dc{r4}, -1
         ld   r4, #%ff
         ld   r5, #%ff
-        ; 192:3 for dc <= 1
+        ; 219:3 for dc <= 1
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%08
+        add  r15, #%0a
         adc  r14, #%00
         ; store [memVarAddr{r14}], r{r0}
         lde  @rr14, r0
@@ -1264,37 +1472,37 @@ for____31____body:
         ; move dc{r0}, dc{r4}
         ld   r0, r4
         ld   r1, r5
-        jr   for__32
+        jr   for__37
 
-for____32____body:
+for____37____body:
         ; move dc{r4}, dc{r0}
         ld   r5, r1
         ld   r4, r0
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%08
+        add  r15, #%0a
         adc  r14, #%00
         ; load r{r0}, [memVarAddr{r14}]
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
-        ; branch dr{r12} notequals 0: if_33_end, and_34
+        ; branch dr{r12} notequals 0: if_38_end, and_39
         cp   r13, #%00
-        jr   ne, if__33__end
+        jr   ne, if__38__end
         cp   r12, #%00
-        jr   ne, if__33__end
-.38:
-        ; branch dc{r4} notequals 0: if_33_end, maybeRevealAround@i16@i16.no_critical_edge_18
+        jr   ne, if__38__end
+.43:
+        ; branch dc{r4} notequals 0: if_38_end, maybeRevealAround@i16@i16.no_critical_edge_26
         cp   r5, #%00
-        jr   ne, if__33__end
+        jr   ne, if__38__end
         cp   r4, #%00
-        jr   ne, if__33__end
-.39:
+        jr   ne, if__38__end
+.44:
         ; addrof memVarAddr{r14}, dc
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%0a
+        add  r15, #%0c
         adc  r14, #%00
         ; store [memVarAddr{r14}], dc{r4}
         lde  @rr14, r4
@@ -1303,15 +1511,15 @@ for____32____body:
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%08
+        add  r15, #%0a
         adc  r14, #%00
         ; store [memVarAddr{r14}], r{r0}
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
-        jr   for__32__continue
+        jr   for__37__continue
 
-if____33____end:
+if____38____end:
         ; move c{r2}, param.column{r10}
         ld   r2, r10
         ld   r3, r11
@@ -1321,17 +1529,17 @@ if____33____end:
         ; addrof memVarAddr{r14}, dc
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%0a
+        add  r15, #%0c
         adc  r14, #%00
         ; store [memVarAddr{r14}], dc{r4}
         lde  @rr14, r4
         incw r14
         lde  @rr14, r5
-        ; 198:4 if !checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=198:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=198:28]])
+        ; 225:4 if !checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=5, scope=function, type=i16, varIsArray=false, location=225:25], ExprVarAccess[varName=c, index=7, scope=function, type=i16, varIsArray=false, location=225:28]])
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%08
+        add  r15, #%0a
         adc  r14, #%00
         ; store [memVarAddr{r14}], r{r0}
         lde  @rr14, r0
@@ -1340,22 +1548,22 @@ if____33____end:
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%0c
+        add  r15, #%0e
         adc  r14, #%00
         ; store [memVarAddr{r14}], c{r2}
         lde  @rr14, r2
         incw r14
         lde  @rr14, r3
-        ; call t.8{r0} = checkCellBounds@i16@i16[r{r0}, c{r2}] -> bool
+        ; call t.12{r0} = checkCellBounds@i16@i16[r{r0}, c{r2}] -> bool
         call checkCellBounds_Pi16_Pi16
-        ; branch t.8{r0} equals 0: for_32_continue, if_35_end
+        ; branch t.12{r0} equals 0: for_37_continue, if_40_end
         cp   r0, #%00
-        jr   eq, for__32__continue
-.40:
+        jr   eq, for__37__continue
+.45:
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%08
+        add  r15, #%0a
         adc  r14, #%00
         ; load r{r0}, [memVarAddr{r14}]
         lde  r0, @rr14
@@ -1364,7 +1572,7 @@ if____33____end:
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%08
+        add  r15, #%0a
         adc  r14, #%00
         ; store [memVarAddr{r14}], r{r0}
         lde  @rr14, r0
@@ -1373,7 +1581,7 @@ if____33____end:
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%0c
+        add  r15, #%0e
         adc  r14, #%00
         ; load c{r2}, [memVarAddr{r14}]
         lde  r2, @rr14
@@ -1382,7 +1590,7 @@ if____33____end:
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%0c
+        add  r15, #%0e
         adc  r14, #%00
         ; store [memVarAddr{r14}], c{r2}
         lde  @rr14, r2
@@ -1392,23 +1600,23 @@ if____33____end:
         call getCell_Pi16_Pi16
         ; move cell{r14}, cell{r0}
         ld   r14, r0
-        ; 203:4 if isOpen@u8([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=203:15]])
+        ; 230:4 if isOpen@u8([ExprVarAccess[varName=cell, index=8, scope=function, type=u8, varIsArray=false, location=230:15]])
         ; move cell{r0}, cell{r14}
         ld   r0, r14
-        ; call t.9{r0} = isOpen@u8[cell{r0}] -> bool
+        ; call t.13{r0} = isOpen@u8[cell{r0}] -> bool
         call isOpen_Pu8
-        ; branch t.9{r0} notequals 0: for_32_continue, if_36_end
+        ; branch t.13{r0} notequals 0: for_37_continue, if_41_end
         cp   r0, #%00
-        jr   ne, for__32__continue
-.41:
-        ; move t.10{r4}, cell{r14}
+        jr   ne, for__37__continue
+.46:
+        ; move t.14{r4}, cell{r14}
         ld   r4, r14
-        ; or t.10{r4}, t.10{r4}, 2
+        ; or t.14{r4}, t.14{r4}, 2
         or  r4, #%02
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%08
+        add  r15, #%0a
         adc  r14, #%00
         ; load r{r0}, [memVarAddr{r14}]
         lde  r0, @rr14
@@ -1417,7 +1625,7 @@ if____33____end:
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%08
+        add  r15, #%0a
         adc  r14, #%00
         ; store [memVarAddr{r14}], r{r0}
         lde  @rr14, r0
@@ -1426,7 +1634,7 @@ if____33____end:
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%0c
+        add  r15, #%0e
         adc  r14, #%00
         ; load c{r2}, [memVarAddr{r14}]
         lde  r2, @rr14
@@ -1435,18 +1643,18 @@ if____33____end:
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%0c
+        add  r15, #%0e
         adc  r14, #%00
         ; store [memVarAddr{r14}], c{r2}
         lde  @rr14, r2
         incw r14
         lde  @rr14, r3
-        ; call setCell@i16@i16@u8[r{r0}, c{r2}, t.10{r4}]
+        ; call setCell@i16@i16@u8[r{r0}, c{r2}, t.14{r4}]
         call setCell_Pi16_Pi16_Pu8
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%08
+        add  r15, #%0a
         adc  r14, #%00
         ; load r{r0}, [memVarAddr{r14}]
         lde  r0, @rr14
@@ -1455,7 +1663,7 @@ if____33____end:
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%08
+        add  r15, #%0a
         adc  r14, #%00
         ; store [memVarAddr{r14}], r{r0}
         lde  @rr14, r0
@@ -1464,7 +1672,7 @@ if____33____end:
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%0c
+        add  r15, #%0e
         adc  r14, #%00
         ; load c{r2}, [memVarAddr{r14}]
         lde  r2, @rr14
@@ -1472,11 +1680,11 @@ if____33____end:
         lde  r3, @rr14
         ; call maybeRevealAround@i16@i16[r{r0}, c{r2}]
         call maybeRevealAround_Pi16_Pi16
-for____32____continue:
+for____37____continue:
         ; addrof memVarAddr{r14}, dc
         ld   r14, SPH
         ld   r15, SPL
-        add  r15, #%0a
+        add  r15, #%0c
         adc  r14, #%00
         ; load dc{r0}, [memVarAddr{r14}]
         lde  r0, @rr14
@@ -1484,24 +1692,24 @@ for____32____continue:
         lde  r1, @rr14
         ; add dc{r0}, dc{r0}, 1
         incw r0
-for____32:
-        ; branch dc{r0} lteq 1: for_32_body, for_31_continue
+for____37:
+        ; branch dc{r0} lteq 1: for_37_body, for_36_continue
         cp   r0, #%00
-        jr   le, .42
-        jr   ne, for__32__body
+        jr   le, .47
+        jr   ne, for__37__body
         cp   r1, #%01
-        jr   ule, for__32__body
-.42:
+        jr   ule, for__37__body
+.47:
         ; add dr{r12}, dr{r12}, 1
         incw r12
-for____31:
-        ; branch dr{r12} lteq 1: for_31_body, maybeRevealAround@i16@i16_ret
+for____36:
+        ; branch dr{r12} lteq 1: for_36_body, maybeRevealAround@i16@i16_ret
         cp   r12, #%00
-        jr   le, .43
-        jr   ne, for__31__body
+        jr   le, .48
+        jr   ne, for__36__body
         cp   r13, #%01
-        jr   ule, for__31__body
-.43:
+        jr   ule, for__36__body
+.48:
 maybeRevealAround__Pi16__Pi16____ret:
         ; restore clobbered non-volatile registers
         pop  r15
@@ -1540,42 +1748,42 @@ main:
         ; const curr_r{r11}, 10
         ld   r11, #%00
         ld   r12, #%0a
-        ; 219:2 while true
-        jr   while__37
+        ; 246:2 while true
+        jr   while__42
 
-if____38____then:
-        ; 222:4 if printLeft([])
+if____43____then:
+        ; 249:4 if printLeft([])
         ; call t.6{r0} = printLeft[] -> bool
         call printLeft
-        ; branch t.6{r0} notequals 0: if_39_then, if_38_end
+        ; branch t.6{r0} notequals 0: if_44_then, if_43_end
         cp   r0, #%00
-        jr   ne, if__39__then
-.44:
-if____38____end:
+        jr   ne, if__44__then
+.49:
+if____43____end:
         ; call chr{r0} = getChar[] -> i16
         call getChar
-        ; 229:3 if chr == 27
-        ; branch chr{r0} equals 27: main_ret, if_40_end
+        ; 256:3 if chr == 27
+        ; branch chr{r0} equals 27: main_ret, if_45_end
         cp   r1, #%1b
-        jr   ne, .45
+        jr   ne, .50
         cp   r0, #%00
         jr   eq, main__ret
-.45:
-        ; branch chr{r0} equals 3: if_41_then, if_41_else
+.50:
+        ; branch chr{r0} equals 3: if_46_then, if_46_else
         cp   r1, #%03
-        jr   ne, .46
+        jr   ne, .51
         cp   r0, #%00
-        jr   eq, if__41__then
-.46:
-        ; branch chr{r0} notequals 4: if_42_else, if_42_then
+        jr   eq, if__46__then
+.51:
+        ; branch chr{r0} notequals 4: if_47_else, if_47_then
         cp   r1, #%04
-        jr   ne, if__42__else
+        jr   ne, if__47__else
         cp   r0, #%00
-        jr   ne, if__42__else
-.47:
-        jr   if__42__then
+        jr   ne, if__47__else
+.52:
+        jr   if__47__then
 
-if____41____then:
+if____46____then:
         ; add t.9{r11}, t.9{r11}, 20
         add  r12, #%14
         adc  r11, #%00
@@ -1592,18 +1800,18 @@ if____41____then:
         srp  #%20
         ld   r11, %12
         ld   r12, %13
-        jr   while__37
+        jr   while__42
 
-if____42____else:
-        ; branch chr{r0} notequals 1: if_43_else, if_43_then
+if____47____else:
+        ; branch chr{r0} notequals 1: if_48_else, if_48_then
         cp   r1, #%01
-        jr   ne, if__43__else
+        jr   ne, if__48__else
         cp   r0, #%00
-        jr   ne, if__43__else
-.48:
-        jr   if__43__then
+        jr   ne, if__48__else
+.53:
+        jr   if__48__then
 
-if____42____then:
+if____47____then:
         ; add t.10{r11}, t.10{r11}, 1
         add  r12, #%01
         adc  r11, #%00
@@ -1617,18 +1825,18 @@ if____42____then:
         srp  #%20
         ld   r11, %12
         ld   r12, %13
-        jr   while__37
+        jr   while__42
 
-if____43____else:
-        ; branch chr{r0} notequals 2: if_44_else, if_44_then
+if____48____else:
+        ; branch chr{r0} notequals 2: if_49_else, if_49_then
         cp   r1, #%02
-        jr   ne, if__44__else
+        jr   ne, if__49__else
         cp   r0, #%00
-        jr   ne, if__44__else
-.49:
-        jr   if__44__then
+        jr   ne, if__49__else
+.54:
+        jr   if__49__then
 
-if____43____then:
+if____48____then:
         ; add t.12{r9}, t.12{r9}, 17
         add  r10, #%11
         adc  r9, #%00
@@ -1645,18 +1853,18 @@ if____43____then:
         srp  #%20
         ld   r9, %12
         ld   r10, %13
-        jr   while__37
+        jr   while__42
 
-if____44____else:
-        ; branch chr{r0} notequals 32: if_45_else, if_45_then
+if____49____else:
+        ; branch chr{r0} notequals 32: if_50_else, if_50_then
         cp   r1, #%20
-        jr   ne, if__45__else
+        jr   ne, if__50__else
         cp   r0, #%00
-        jr   ne, if__45__else
-.50:
-        jr   if__45__then
+        jr   ne, if__50__else
+.55:
+        jr   if__50__then
 
-if____44____then:
+if____49____then:
         ; add t.13{r9}, t.13{r9}, 1
         add  r10, #%01
         adc  r9, #%00
@@ -1670,32 +1878,32 @@ if____44____then:
         srp  #%20
         ld   r9, %12
         ld   r10, %13
-        jr   while__37
+        jr   while__42
 
-if____45____else:
-        ; branch chr{r0} notequals 13: while_37, if_48_then
+if____50____else:
+        ; branch chr{r0} notequals 13: while_42, if_53_then
         cp   r1, #%0d
-        jr   ne, while__37
+        jr   ne, while__42
         cp   r0, #%00
-        jr   ne, while__37
-.51:
-        jr   if__48__then
+        jr   ne, while__42
+.56:
+        jr   if__53__then
 
-if____45____then:
-        ; branch needsInitialize{r8} notequals 0: while_37, if_46_then
+if____50____then:
+        ; branch needsInitialize{r8} notequals 0: while_42, if_51_then
         cp   r8, #%00
-        jr   ne, while__37
-.52:
-        jr   if__46__then
+        jr   ne, while__42
+.57:
+        jr   if__51__then
 
-if____48____then:
-        ; branch needsInitialize{r8} equals 0: if_49_end, if_49_then
+if____53____then:
+        ; branch needsInitialize{r8} equals 0: if_54_end, if_54_then
         cp   r8, #%00
-        jr   eq, if__49__end
-.53:
-        jr   if__49__then
+        jr   eq, if__54__end
+.58:
+        jr   if__54__then
 
-if____46____then:
+if____51____then:
         ; move curr_r{r0}, curr_r{r11}
         ld   r0, r11
         ld   r1, r12
@@ -1706,18 +1914,18 @@ if____46____then:
         call getCell_Pi16_Pi16
         ; move cell{r13}, cell{r0}
         ld   r13, r0
-        ; 253:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=253:17]])
+        ; 280:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=280:17]])
         ; move cell{r0}, cell{r13}
         ld   r0, r13
         ; call t.14{r0} = isOpen@u8[cell{r0}] -> bool
         call isOpen_Pu8
-        ; branch t.14{r0} notequals 0: while_37, if_47_then
+        ; branch t.14{r0} notequals 0: while_42, if_52_then
         cp   r0, #%00
-        jr   ne, while__37
-.54:
-        jr   if__47__then
+        jr   ne, while__42
+.59:
+        jr   if__52__then
 
-if____49____then:
+if____54____then:
         ; const needsInitialize{r8}, 0
         ld   r8, #%00
         ; move curr_r{r0}, curr_r{r11}
@@ -1728,9 +1936,9 @@ if____49____then:
         ld   r3, r10
         ; call initField@i16@i16[curr_r{r0}, curr_c{r2}]
         call initField_Pi16_Pi16
-        jr   if__49__end
+        jr   if__54__end
 
-if____47____then:
+if____52____then:
         ; xor cell{r13}, cell{r13}, 4
         xor r13, #%04
         ; move curr_r{r0}, curr_r{r11}
@@ -1743,9 +1951,9 @@ if____47____then:
         ld   r4, r13
         ; call setCell@i16@i16@u8[curr_r{r0}, curr_c{r2}, cell{r4}]
         call setCell_Pi16_Pi16_Pu8
-        jr   while__37
+        jr   while__42
 
-if____49____end:
+if____54____end:
         ; move curr_r{r0}, curr_r{r11}
         ld   r0, r11
         ld   r1, r12
@@ -1756,15 +1964,15 @@ if____49____end:
         call getCell_Pi16_Pi16
         ; move cell{r13}, cell{r0}
         ld   r13, r0
-        ; 265:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=265:16]])
+        ; 292:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=292:16]])
         ; move cell{r0}, cell{r13}
         ld   r0, r13
         ; call t.15{r0} = isOpen@u8[cell{r0}] -> bool
         call isOpen_Pu8
-        ; branch t.15{r0} notequals 0: if_50_end, if_50_then
+        ; branch t.15{r0} notequals 0: if_55_end, if_55_then
         cp   r0, #%00
-        jr   ne, if__50__end
-.55:
+        jr   ne, if__55__end
+.60:
         ; move t.16{r4}, cell{r13}
         ld   r4, r13
         ; or t.16{r4}, t.16{r4}, 2
@@ -1777,16 +1985,16 @@ if____49____end:
         ld   r3, r10
         ; call setCell@i16@i16@u8[curr_r{r0}, curr_c{r2}, t.16{r4}]
         call setCell_Pi16_Pi16_Pu8
-if____50____end:
-        ; 268:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=268:15]])
+if____55____end:
+        ; 295:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=295:15]])
         ; move cell{r0}, cell{r13}
         ld   r0, r13
         ; call t.17{r0} = isBomb@u8[cell{r0}] -> bool
         call isBomb_Pu8
-        ; branch t.17{r0} notequals 0: if_51_then, if_51_end
+        ; branch t.17{r0} notequals 0: if_56_then, if_56_end
         cp   r0, #%00
-        jr   ne, if__51__then
-.56:
+        jr   ne, if__56__then
+.61:
         ; move curr_r{r0}, curr_r{r11}
         ld   r0, r11
         ld   r1, r12
@@ -1795,7 +2003,7 @@ if____50____end:
         ld   r3, r10
         ; call maybeRevealAround@i16@i16[curr_r{r0}, curr_c{r2}]
         call maybeRevealAround_Pi16_Pi16
-while____37:
+while____42:
         ; move curr_r{r0}, curr_r{r11}
         ld   r0, r11
         ld   r1, r12
@@ -1804,14 +2012,14 @@ while____37:
         ld   r3, r10
         ; call printField@i16@i16[curr_r{r0}, curr_c{r2}]
         call printField_Pi16_Pi16
-        ; 221:3 if !needsInitialize
-        ; branch needsInitialize{r8} notequals 0: if_38_end, if_38_then
+        ; 248:3 if !needsInitialize
+        ; branch needsInitialize{r8} notequals 0: if_43_end, if_43_then
         cp   r8, #%00
-        jr   ne, if__38__end
-.57:
-        jr   if__38__then
+        jr   ne, if__43__end
+.62:
+        jr   if__43__then
 
-if____39____then:
+if____44____then:
         ; const t.7{r0}, [string-2]
         ld   r0, #hi(string__2)
         ld   r1, #lo(string__2)
@@ -1819,7 +2027,7 @@ if____39____then:
         call printString_P_Pu8
         jr   main__ret
 
-if____51____then:
+if____56____then:
         ; move curr_r{r0}, curr_r{r11}
         ld   r0, r11
         ld   r1, r12
