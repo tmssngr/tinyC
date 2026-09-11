@@ -166,7 +166,14 @@ public final class Cfg {
 	private void eliminateCriticalEdge(CriticalEdge criticalEdge) {
 		final String from = criticalEdge.predecessor;
 		final String to = criticalEdge.successor;
-		final String name = "@no_critical_edge_" + nameToBlock.size();
+		final StringBuilder buffer = new StringBuilder();
+		if (!root.startsWith("@")) {
+			buffer.append("@");
+		}
+		buffer.append(root);
+		buffer.append(".no_critical_edge_");
+		buffer.append(nameToBlock.size());
+		final String name = buffer.toString();
 		final BasicBlock newBlock = new BasicBlock(name, List.of(new IRJump(to)), List.of(from), List.of(to));
 		add(newBlock);
 		final BasicBlock fromBlock = get(from);

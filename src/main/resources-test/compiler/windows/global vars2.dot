@@ -26,10 +26,10 @@ digraph program {
 		BasicBlock_3_main [label="main",shape=box];
 		BasicBlock_3_main -> BasicBlock_3_while__2;
 		BasicBlock_3_if__3__end [label="if__3__end",shape=hexagon];
-		BasicBlock_3_if__3__end -> BasicBlock_3_no__critical__edge__5;
+		BasicBlock_3_if__3__end -> BasicBlock_3_main_dno__critical__edge__5;
 		BasicBlock_3_if__3__end -> BasicBlock_3_if__4__then;
-		BasicBlock_3_no__critical__edge__5 [label="no__critical__edge__5",shape=box];
-		BasicBlock_3_no__critical__edge__5 -> BasicBlock_3_while__2;
+		BasicBlock_3_main_dno__critical__edge__5 [label="main_dno__critical__edge__5",shape=box];
+		BasicBlock_3_main_dno__critical__edge__5 -> BasicBlock_3_while__2;
 		BasicBlock_3_if__4__then [label="if__4__then",shape=box];
 		BasicBlock_3_if__4__then -> BasicBlock_3_while__2;
 		BasicBlock_3_while__2 [label="while__2",shape=hexagon];

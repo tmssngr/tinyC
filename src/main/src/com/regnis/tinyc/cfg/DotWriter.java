@@ -112,6 +112,11 @@ public final class DotWriter extends TextWriter {
 					buffer.append("_A");
 				}
 			}
+			case '.' -> {
+				if (i > 0) {
+					buffer.append("_d");
+				}
+			}
 			default -> buffer.append(chr);
 			}
 		}

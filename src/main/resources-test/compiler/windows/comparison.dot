@@ -13,10 +13,10 @@ digraph program {
 	subgraph fn_printUint_Ai64 {
 		BasicBlock_2_printUint_Ai64 [label="printUint_Ai64",shape=box];
 		BasicBlock_2_printUint_Ai64 -> BasicBlock_2_while__1 [label="(number,pos)"];
-		BasicBlock_2_no__critical__edge__4 [label="no__critical__edge__4",shape=box];
-		BasicBlock_2_no__critical__edge__4 -> BasicBlock_2_while__1 [label="(number,pos)"];
+		BasicBlock_2_printUint_Ai64_dno__critical__edge__4 [label="printUint_Ai64_dno__critical__edge__4",shape=box];
+		BasicBlock_2_printUint_Ai64_dno__critical__edge__4 -> BasicBlock_2_while__1 [label="(number,pos)"];
 		BasicBlock_2_while__1 [label="while__1",shape=hexagon];
-		BasicBlock_2_while__1 -> BasicBlock_2_no__critical__edge__4 [label="(number,pos)"];
+		BasicBlock_2_while__1 -> BasicBlock_2_printUint_Ai64_dno__critical__edge__4 [label="(number,pos)"];
 		BasicBlock_2_while__1 -> BasicBlock_2_while__1__break [label="(pos)"];
 		BasicBlock_2_while__1__break [label="while__1__break",shape=box];
 		BasicBlock_2_while__1__break -> BasicBlock_2_printUint_Ai64__ret;
@@ -29,10 +29,10 @@ digraph program {
 	}
 	subgraph fn_printIntLf_Ai64 {
 		BasicBlock_4_printIntLf_Ai64 [label="printIntLf_Ai64",shape=hexagon];
-		BasicBlock_4_printIntLf_Ai64 -> BasicBlock_4_no__critical__edge__4 [label="(number)"];
+		BasicBlock_4_printIntLf_Ai64 -> BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 [label="(number)"];
 		BasicBlock_4_printIntLf_Ai64 -> BasicBlock_4_if__3__then [label="(number)"];
-		BasicBlock_4_no__critical__edge__4 [label="no__critical__edge__4",shape=box];
-		BasicBlock_4_no__critical__edge__4 -> BasicBlock_4_if__3__end [label="(number)"];
+		BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 [label="printIntLf_Ai64_dno__critical__edge__4",shape=box];
+		BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 -> BasicBlock_4_if__3__end [label="(number)"];
 		BasicBlock_4_if__3__then [label="if__3__then",shape=box];
 		BasicBlock_4_if__3__then -> BasicBlock_4_if__3__end [label="(number)"];
 		BasicBlock_4_if__3__end [label="if__3__end",shape=box];
