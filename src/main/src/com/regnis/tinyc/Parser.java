@@ -6,7 +6,6 @@ import com.regnis.tinyc.ast.Function;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -16,57 +15,58 @@ import org.jetbrains.annotations.*;
 public final class Parser {
 
 	public static Program parse(String input, Set<String> defines) {
-		return parse(new IncludeHandler() {
+		final Project project = new Project(defines);
+		new IncludeHandler() {
 			@Override
-			public void parse(@NotNull String fileName, @NotNull Location location, @NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
+			public void parse(@NotNull String fileName, @NotNull Location location) {
 				throw new RuntimeException("Includes are not supported");
 			}
 
 			@Override
-			public void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
-				final Map<String, Expression> constants = new HashMap<>();
-				final Parser parser = new Parser(new Lexer(input), this, defines, constants);
-				parser.parse(typeDefs, globalVars, functions);
+			public void parse() {
+				final Parser parser = new Parser(new Lexer(input), this, project);
+				parser.parse();
 			}
-		});
+		}.parse();
+		return project.createProgram();
 	}
 
 	public static Program parse(Path inputFile, Set<String> defines) throws IOException {
+		final Project project = new Project(defines);
+		final FileIncludeHandler handler = new FileIncludeHandler(inputFile, null, project);
 		try {
-			final Map<String, Expression> constants = new HashMap<>();
-			return parse(new FileIncludeHandler(inputFile, null, defines, constants));
+			handler.parse();
 		}
 		catch (UncheckedIOException e) {
 			throw e.getCause();
 		}
+		return project.createProgram();
 	}
 
-	private final Map<String, Expression> constants;
+	private final List<Location> openIfDefLocations = new ArrayList<>();
 	private final Lexer lexer;
 	private final IncludeHandler includeHandler;
-	private final Set<String> defines;
-	private final List<Location> openIfDefLocations = new ArrayList<>();
+	private final Project project;
 
 	private int skipIfDef;
 	private TokenType token;
 
-	private Parser(@NotNull Lexer lexer, @NotNull IncludeHandler includeHandler, @NotNull Set<String> defines, @NotNull Map<String, Expression> constants) {
+	private Parser(@NotNull Lexer lexer, @NotNull IncludeHandler includeHandler, @NotNull Project project) {
 		this.lexer = lexer;
 		this.includeHandler = includeHandler;
-		this.defines = defines;
-		this.constants = constants;
+		this.project = project;
 
 		consume();
 	}
 
-	public void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
+	public void parse() {
 		while (token != TokenType.EOF) {
 			Location location = getLocation();
 			if (isConsume(TokenType.IFDEF)) {
 				openIfDefLocations.add(location);
 				if (skipIfDef == 0) {
 					final String name = consumeIdentifier();
-					if (!defines.contains(name)) {
+					if (!project.isDef(name)) {
 						skipIfDef = openIfDefLocations.size();
 					}
 				}
@@ -109,29 +109,29 @@ public final class Parser {
 
 					if (isConsume(TokenType.ASM)) {
 						final List<String> asmLines = getAsmLines();
-						functions.accept(Function.createAsmInstance(name, typeString, args, asmLines, location));
+						project.addFunction(Function.createAsmInstance(name, typeString, args, asmLines, location));
 						continue;
 					}
 
 					final List<Statement> statements = getStatements();
-					functions.accept(Function.createInstance(name, typeString, args, statements, location));
+					project.addFunction(Function.createInstance(name, typeString, args, statements, location));
 					continue;
 				}
 
 				if (isConsume(TokenType.EQUAL)) {
 					final Expression expression = getExpression();
 					consume(TokenType.SEMI);
-					globalVars.accept(new StmtVarDeclaration(typeString, name, expression, location));
+					project.addGlobalVar(new StmtVarDeclaration(typeString, name, expression, location));
 					continue;
 				}
 				if (isConsume(TokenType.SEMI)) {
-					globalVars.accept(new StmtVarDeclaration(typeString, name, null, location));
+					project.addGlobalVar(new StmtVarDeclaration(typeString, name, null, location));
 					continue;
 				}
 				if (isConsume(TokenType.L_BRACKET)) {
 					final StmtArrayDeclaration array = getArrayDeclaration(typeString, name, location);
 					consume(TokenType.SEMI);
-					globalVars.accept(array);
+					project.addGlobalVar(array);
 					continue;
 				}
 			}
@@ -150,19 +150,19 @@ public final class Parser {
 				while (isConsume(TokenType.COMMA));
 				consume(TokenType.R_PAREN);
 				consume(TokenType.SEMI);
-				typeDefs.accept(new TypeDef(typeName, null, parts, location));
+				project.addTypeDef(new TypeDef(typeName, null, parts, location));
 				continue;
 			}
 			else if (isConsume(TokenType.INCLUDE)) {
 				expectType(TokenType.STRING, null);
 				final String fileName = consumeText();
-				includeHandler.parse(fileName, location, typeDefs, globalVars, functions);
+				includeHandler.parse(fileName, location);
 				continue;
 			}
 			else if (isConsume(TokenType.CONST)) {
 				location = getLocation();
 				final String name = consumeIdentifier();
-				final Expression prevExpr = constants.get(name);
+				final Expression prevExpr = project.getConstant(name);
 				if (prevExpr != null) {
 					throw new SyntaxException(Messages.constantAlreadyDefinedAt(name, prevExpr.location()), location);
 				}
@@ -170,7 +170,7 @@ public final class Parser {
 				final Expression expression = getExpression();
 				consume(TokenType.SEMI);
 				final Expression resolvedExpression = resolveConstExpression(expression);
-				constants.put(name, resolvedExpression);
+				project.setConst(name, resolvedExpression);
 				continue;
 			}
 
@@ -190,7 +190,7 @@ public final class Parser {
 
 		if (expression instanceof ExprVarAccess access) {
 			final String name = access.varName();
-			final Expression result = constants.get(name);
+			final Expression result = project.getConstant(name);
 			if (result == null) {
 				throw new SyntaxException(Messages.unknownConstant(name), access.location());
 			}
@@ -691,7 +691,7 @@ public final class Parser {
 			return new ExprFuncCall(identifier, args, location);
 		}
 
-		final Expression constantExpression = constants.get(identifier);
+		final Expression constantExpression = project.getConstant(identifier);
 		if (constantExpression != null) {
 			return switch (constantExpression) {
 				case ExprBoolLiteral literal -> new ExprBoolLiteral(literal.value(), location);
@@ -818,46 +818,35 @@ public final class Parser {
 		};
 	}
 
-	@NotNull
-	private static Program parse(IncludeHandler handler) {
-		final List<TypeDef> typeDefs = new ArrayList<>();
-		final List<Statement> globalVars = new ArrayList<>();
-		final List<Function> functions = new ArrayList<>();
-		handler.parse(typeDefs::add, globalVars::add, functions::add);
-		return new Program(typeDefs, globalVars, functions, List.of(), List.of());
-	}
-
 	private interface IncludeHandler {
-		void parse(@NotNull String fileName, @NotNull Location location, @NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions);
+		void parse(@NotNull String fileName, @NotNull Location location);
 
-		void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions);
+		void parse();
 	}
 
 	private static final class FileIncludeHandler implements IncludeHandler {
 		private final Path file;
 		private final FileIncludeHandler parent;
-		private final Set<String> defines;
-		private final Map<String, Expression> constants;
+		private final Project args;
 
-		public FileIncludeHandler(@NotNull Path file, @Nullable FileIncludeHandler parent, @NotNull Set<String> defines, @NotNull Map<String, Expression> constants) {
+		public FileIncludeHandler(@NotNull Path file, @Nullable FileIncludeHandler parent, @NotNull Project args) {
 			this.file = file;
 			this.parent = parent;
-			this.defines = defines;
-			this.constants = constants;
+			this.args = args;
 		}
 
 		@Override
-		public void parse(@NotNull String fileName, @NotNull Location location, @NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
+		public void parse(@NotNull String fileName, @NotNull Location location) {
 			final Path includeFile = file.resolveSibling(fileName);
 			if (alreadyIncluded(includeFile)) {
 				throw new SyntaxException("File '" + fileName + "' is included recursively", location);
 			}
 
-			final FileIncludeHandler handler = new FileIncludeHandler(includeFile, this, defines, constants);
-			handler.parse(typeDefs, globalVars, functions);
+			final FileIncludeHandler handler = new FileIncludeHandler(includeFile, this, args);
+			handler.parse();
 		}
 
-		public void parse(@NotNull Consumer<TypeDef> typeDefs, @NotNull Consumer<Statement> globalVars, @NotNull Consumer<Function> functions) {
+		public void parse() {
 			try (final BufferedReader reader = Files.newBufferedReader(file)) {
 				final Parser parser = new Parser(new Lexer(() -> {
 					try {
@@ -866,8 +855,8 @@ public final class Parser {
 					catch (IOException ex) {
 						throw new UncheckedIOException(ex);
 					}
-				}), this, defines, constants);
-				parser.parse(typeDefs, globalVars, functions);
+				}), this, args);
+				parser.parse();
 			}
 			catch (IOException e) {
 				throw new UncheckedIOException(e);
@@ -881,6 +870,48 @@ public final class Parser {
 				}
 			}
 			return false;
+		}
+	}
+
+	private static final class Project {
+		private final Map<String, Expression> constants = new HashMap<>();
+		private final List<TypeDef> typeDefs = new ArrayList<>();
+		private final List<Statement> globalVars = new ArrayList<>();
+		private final List<Function> functions = new ArrayList<>();
+		private final Set<String> defines;
+
+		public Project(@NotNull Set<String> defines) {
+			this.defines = defines;
+		}
+
+		public boolean isDef(@NotNull String name) {
+			return defines.contains(name);
+		}
+
+		@Nullable
+		public Expression getConstant(@NotNull String name) {
+			return constants.get(name);
+		}
+
+		public void setConst(@NotNull String name, @NotNull Expression expression) {
+			final Expression prev = constants.put(name, expression);
+			Utils.assertTrue(prev == null);
+		}
+
+		public void addFunction(@NotNull Function function) {
+			functions.add(function);
+		}
+
+		public void addGlobalVar(@NotNull Statement declaration) {
+			globalVars.add(declaration);
+		}
+
+		public void addTypeDef(@NotNull TypeDef typeDef) {
+			typeDefs.add(typeDef);
+		}
+
+		public Program createProgram() {
+			return new Program(typeDefs, globalVars, functions, List.of(), List.of());
 		}
 	}
 }
