@@ -14,7 +14,8 @@ import org.jetbrains.annotations.*;
  */
 public final class Parser {
 
-	public static Program parse(String input, Set<String> defines) {
+	@NotNull
+	public static Program parse(@NotNull String input, @NotNull Set<String> defines) {
 		final Project project = new Project(defines);
 		new IncludeHandler() {
 			@Override
@@ -31,7 +32,8 @@ public final class Parser {
 		return project.createProgram();
 	}
 
-	public static Program parse(Path inputFile, Set<String> defines) throws IOException {
+	@NotNull
+	public static Program parse(@NotNull Path inputFile, @NotNull Set<String> defines) throws IOException {
 		final Project project = new Project(defines);
 		final FileIncludeHandler handler = new FileIncludeHandler(inputFile, null, project);
 		try {
