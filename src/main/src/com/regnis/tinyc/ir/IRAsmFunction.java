@@ -9,7 +9,7 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public record IRAsmFunction(@NotNull String name, @NotNull String label, @NotNull Type returnType, @NotNull List<String> asmLines) {
+public record IRAsmFunction(@NotNull String name, @NotNull Type returnType, @NotNull List<String> asmLines) {
 
 	@NotNull
 	@Override

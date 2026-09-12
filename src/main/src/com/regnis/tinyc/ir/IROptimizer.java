@@ -34,7 +34,7 @@ public class IROptimizer {
 		final List<IRFunction> functions = new ArrayList<>();
 		for (IRFunction function : program.functions()) {
 			final List<IRInstruction> instructions = branchAndLabelOptimizations(function.instructions());
-			functions.add(new IRFunction(function.name(), function.label(), function.returnType(), function.varInfos(), instructions));
+			functions.add(new IRFunction(function.name(), function.returnType(), function.varInfos(), instructions));
 		}
 		return new IRProgram(functions, program.asmFunctions(), program.varInfos(), program.stringLiterals());
 	}

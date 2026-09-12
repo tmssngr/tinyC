@@ -167,9 +167,6 @@ public final class Cfg {
 		final String from = criticalEdge.predecessor;
 		final String to = criticalEdge.successor;
 		final StringBuilder buffer = new StringBuilder();
-		if (!root.startsWith("@")) {
-			buffer.append("@");
-		}
 		buffer.append(root);
 		buffer.append(".no_critical_edge_");
 		buffer.append(nameToBlock.size());

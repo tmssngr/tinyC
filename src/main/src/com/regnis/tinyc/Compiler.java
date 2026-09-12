@@ -118,7 +118,7 @@ public class Compiler {
 	private static List<IRInstruction> getFlattenInstructions(@NotNull List<BasicBlock> blocks) {
 		final List<IRInstruction> instructions = new ArrayList<>();
 		for (BasicBlock block : blocks) {
-			if (block.name.startsWith("@")) {
+			if (instructions.size() > 0) {
 				instructions.add(new IRLabel(block.name));
 			}
 			instructions.addAll(block.instructions());

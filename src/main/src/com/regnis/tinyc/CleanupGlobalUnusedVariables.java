@@ -62,7 +62,7 @@ public class CleanupGlobalUnusedVariables extends CleanupUnusedVariables {
 
 	@NotNull
 	private IRFunction derive(IRFunction function, List<IRInstruction> instructions, IRVarInfos varInfos) {
-		return new IRFunction(function.name(), function.label(), function.returnType(), varInfos, instructions);
+		return new IRFunction(function.name(), function.returnType(), varInfos, instructions);
 	}
 
 	private static final class GlobalVarReplacer extends IRVarReplacer {

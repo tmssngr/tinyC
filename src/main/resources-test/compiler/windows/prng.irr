@@ -1,4 +1,4 @@
-@printChar@u8:
+printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
@@ -8,7 +8,7 @@
 	const t.2, 1
 	call printStringLength@@u8@u8[t.1, t.2]
 
-@printUint@i64:
+printUint@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
@@ -31,7 +31,7 @@
 	; 120 pc
 	const pos, 20
 	; 28:2 while true
-@while_1:
+while_1:
 	const t.5, 1
 	sub pos, pos, t.5
 	const t.6, 10
@@ -50,7 +50,7 @@
 	; 34:3 if number == 0
 	const t.13, 0
 	equals t.12, number, t.13
-	branch t.12, false, @while_1, @while_1_break
+	branch t.12, false, while_1, while_1_break
 	cast t.15(i64), pos(u8)
 	addrof t.14, [buffer]
 	add t.14, t.14, t.15
@@ -59,7 +59,7 @@
 	sub t.16, t.16, pos
 	call printStringLength@@u8@u8[t.14, t.16]
 
-@printIntLf@u8:
+printIntLf@u8:
  Local variables
 	arg 0: number (u8/1)
 	var 1: t.1 (i64/8)
@@ -67,7 +67,7 @@
 	cast t.1(i64), number(u8)
 	call printIntLf@i64[t.1]
 
-@printIntLf@i64:
+printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: t.1 (bool/1)
@@ -78,16 +78,16 @@
 	; 54:2 if number < 0
 	const t.2, 0
 	lt t.1, number, t.2
-	branch t.1, false, @if_3_end, @if_3_then
+	branch t.1, false, if_3_end, if_3_then
 	const t.3, 45
 	call printChar@u8[t.3]
 	neg number, number
-@if_3_end:
+if_3_end:
 	call printUint@i64[number]
 	const t.4, 10
 	call printChar@u8[t.4]
 
-@printStringLength@@u8@u8:
+printStringLength@@u8@u8:
  Local variables
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
@@ -96,13 +96,13 @@
 	cast t.2(i64), length(u8)
 	call printStringLength@@u8@i64[str, t.2]
 
-@initRandom@i32:
+initRandom@i32:
  Local variables
 	arg 0: salt (i32/4)
 	; 5 pc
 	move __random__, salt
 
-@random:
+random:
  Local variables
 	var 0: r (i32/4)
 	var 1: b (i32/4)
@@ -163,7 +163,7 @@
 	; 15:9 return __random__
 	ret __random__
 
-@randomU8:
+randomU8:
  Local variables
 	var 0: t.0 (u8/1)
 	var 1: t.1 (i32/4)
@@ -173,7 +173,7 @@
 	cast t.0(u8), t.1(i32)
 	ret t.0
 
-@main:
+main:
  Local variables
 	var 0: i (u8/1)
 	var 1: r (u8/1)
@@ -189,18 +189,18 @@
 	call initRandom@i32[t.2]
 	const i, 0
 	; 6:2 for i < 50
-	jump @for_4
-@for_4_body:
+	jump for_4
+for_4_body:
 	call r = randomU8[] -> u8
 	call printIntLf@u8[r]
 	const t.5, 1
 	add i, i, t.5
-@for_4:
+for_4:
 	const t.4, 50
 	lt t.3, i, t.4
-	branch t.3, true, @for_4_body, @main_ret
+	branch t.3, true, for_4_body, main_ret
 
-@printStringLength@@u8@i64:
+printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
 	lea     rcx, [hStdOut]

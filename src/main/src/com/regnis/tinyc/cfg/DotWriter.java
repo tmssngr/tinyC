@@ -108,9 +108,7 @@ public final class DotWriter extends TextWriter {
 			switch (chr) {
 			case '_' -> buffer.append("__");
 			case '@' -> {
-				if (i > 0) {
-					buffer.append("_A");
-				}
+				buffer.append("_A");
 			}
 			case '.' -> {
 				if (i > 0) {

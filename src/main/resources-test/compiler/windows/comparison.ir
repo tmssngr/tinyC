@@ -1,13 +1,13 @@
-@printString@@u8:
+printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
 	; 10 pc
 	call length = strlen@@u8[str] -> i64
 	call printStringLength@@u8@i64[str, length]
-@printString@@u8_ret:
+printString@@u8_ret:
 
-@printChar@u8:
+printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
@@ -16,9 +16,9 @@
 	addrof t.1, chr
 	const t.2, 1
 	call printStringLength@@u8@u8[t.1, t.2]
-@printChar@u8_ret:
+printChar@u8_ret:
 
-@printUint@i64:
+printUint@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
@@ -41,7 +41,7 @@
 	; 120 pc
 	const pos, 20
 	; 28:2 while true
-@while_1:
+while_1:
 	const t.5, 1
 	sub pos, pos, t.5
 	const t.6, 10
@@ -60,8 +60,8 @@
 	; 34:3 if number == 0
 	const t.13, 0
 	equals t.12, number, t.13
-	branch t.12, false, @while_1, @while_1_break
-@while_1_break:
+	branch t.12, false, while_1, while_1_break
+while_1_break:
 	cast t.15(i64), pos(u8)
 	addrof t.14, [buffer]
 	add t.14, t.14, t.15
@@ -69,18 +69,18 @@
 	move t.16, t.17
 	sub t.16, t.16, pos
 	call printStringLength@@u8@u8[t.14, t.16]
-@printUint@i64_ret:
+printUint@i64_ret:
 
-@printIntLf@bool:
+printIntLf@bool:
  Local variables
 	arg 0: number (bool/1)
 	var 1: t.1 (i64/8)
 	; 8 pc
 	cast t.1(i64), number(bool)
 	call printIntLf@i64[t.1]
-@printIntLf@bool_ret:
+printIntLf@bool_ret:
 
-@printIntLf@i64:
+printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: t.1 (bool/1)
@@ -91,18 +91,18 @@
 	; 54:2 if number < 0
 	const t.2, 0
 	lt t.1, number, t.2
-	branch t.1, false, @if_3_end, @if_3_then
-@if_3_then:
+	branch t.1, false, if_3_end, if_3_then
+if_3_then:
 	const t.3, 45
 	call printChar@u8[t.3]
 	neg number, number
-@if_3_end:
+if_3_end:
 	call printUint@i64[number]
 	const t.4, 10
 	call printChar@u8[t.4]
-@printIntLf@i64_ret:
+printIntLf@i64_ret:
 
-@strlen@@u8:
+strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
@@ -114,25 +114,25 @@
 	; 43 pc
 	const length, 0
 	; 64:2 for *str != 0
-@for_4:
+for_4:
 	load t.3, [str]
 	const t.4, 0
 	notequals t.2, t.3, t.4
-	branch t.2, false, @for_4_break, @for_4_body
-@for_4_body:
+	branch t.2, false, for_4_break, for_4_body
+for_4_body:
 	const t.5, 1
 	add length, length, t.5
-@for_4_continue:
+for_4_continue:
 	const t.6, 1
 	add str, str, t.6
-	jump @for_4
-@for_4_break:
+	jump for_4
+for_4_break:
 	; 67:9 return length
 	ret length
-	jump @strlen@@u8_ret
-@strlen@@u8_ret:
+	jump strlen@@u8_ret
+strlen@@u8_ret:
 
-@printStringLength@@u8@u8:
+printStringLength@@u8@u8:
  Local variables
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
@@ -140,9 +140,9 @@
 	; 10 pc
 	cast t.2(i64), length(u8)
 	call printStringLength@@u8@i64[str, t.2]
-@printStringLength@@u8@u8_ret:
+printStringLength@@u8@u8_ret:
 
-@main:
+main:
  Local variables
 	var 0: a (i16/2)
 	var 1: b (i16/2)
@@ -243,9 +243,9 @@
 	call printIntLf@bool[t.32]
 	gt t.33, d, c
 	call printIntLf@bool[t.33]
-@main_ret:
+main_ret:
 
-@printStringLength@@u8@i64:
+printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
 	lea     rcx, [hStdOut]
