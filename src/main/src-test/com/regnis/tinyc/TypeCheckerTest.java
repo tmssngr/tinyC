@@ -1,8 +1,10 @@
 package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.ast.Function;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 import org.junit.*;
@@ -654,6 +656,39 @@ public class TypeCheckerTest {
 				), List.of(), loc(2, 0))
 		), List.of(), List.of()), program);
 	}
+
+	@Test
+	public void testStatementsFollowReturn() {
+		Program program = Parser.parse(SNIPPET_STATEMENTS_FOLLOW_RETURN, Set.of());
+		final List<Message> messages = new ArrayList<>();
+		final TypeChecker checker = new TypeChecker(Type.I64, messages::add);
+		program = checker.check(program);
+		Assert.assertEquals(List.of(
+				Message.warn(Messages.skippingAllAfterReturn(), loc(2, 2)),
+				Message.warn(Messages.skippingAllAfterReturn(), loc(8, 4))
+		), messages);
+		assertEquals(new Program(List.of(), List.of(), List.of(
+				new Function("f1", "void", Type.VOID, List.of(), List.of(
+						new Variable("a", 0, VariableScope.function, Type.I16, 0, true, loc(1, 2))
+				), List.of(
+						new StmtExpr(new ExprBinary(ExprBinary.Op.Assign, Type.I16,
+						                            new ExprVarAccess("a", 0, VariableScope.function, Type.I16, false, loc(1, 2)),
+						                            new ExprIntLiteral(1, Type.I16, loc(1, 10)),
+						                            loc(1, 2))),
+						new StmtReturn(null, loc(2, 2))
+				), List.of(), loc(0, 0)),
+				new Function("f2", "void", Type.VOID, List.of(), List.of(
+						new Variable("a", 0, VariableScope.function, Type.I16, 0, true, loc(6, 2))
+				), List.of(
+						new StmtExpr(new ExprBinary(ExprBinary.Op.Assign, Type.I16,
+						                            new ExprVarAccess("a", 0, VariableScope.function, Type.I16, false, loc(6, 2)),
+						                            new ExprIntLiteral(1, Type.I16, loc(6, 10)),
+						                            loc(6, 2))),
+						new StmtReturn(null, loc(8, 4))
+				), List.of(), loc(5, 0))
+		), List.of(), List.of()), program);
+	}
+
 
 	private void testIllegalStatement(String expectedMessage, int column, String illegalOperation) {
 		try {

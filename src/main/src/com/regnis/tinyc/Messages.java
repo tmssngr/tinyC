@@ -210,6 +210,11 @@ public class Messages {
 		return "The cast to " + type + " is redundant";
 	}
 
+	@NotNull
+	public static String skippingAllAfterReturn() {
+		return "Skipping all statements in a {}-block after a `return`";
+	}
+
 	private static void functionWithType(String name, List<Type> argTypes, StringBuilder buffer) {
 		buffer.append(name);
 		buffer.append("(");
