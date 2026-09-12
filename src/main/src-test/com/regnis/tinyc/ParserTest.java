@@ -695,11 +695,11 @@ public class ParserTest {
 				#ifdef X86_64
 				void print(i64 a) {
 				}
-				#end
+				#endif
 				#ifdef Z8
 				void print(i16 a) {
 				}
-				#end
+				#endif
 				""";
 		assertEquals(new Program(List.of(),
 		                         List.of(),
@@ -736,11 +736,11 @@ public class ParserTest {
 				            #ifdef X86_64
 				            void main() {
 				            }""", Set.of("X86_64"));
-		testIllegal(Messages.endWithoutIfdef(), loc(2, 0),
+		testIllegal(Messages.endifWithoutIfdef(), loc(2, 0),
 		            """
 				            void main() {
 				            }
-				            #end
+				            #endif
 				            """);
 	}
 
@@ -750,11 +750,11 @@ public class ParserTest {
 				#ifdef X86_64
 				      #ifdef __WINDOWS
 				        void print(i64 a) {}
-				      #end
+				      #endif
 				      #ifdef __LINUX
 				        void print(i16 a) {}
-				      #end
-				#end
+				      #endif
+				#endif
 				""";
 		assertEquals(new Program(List.of(),
 		                         List.of(),

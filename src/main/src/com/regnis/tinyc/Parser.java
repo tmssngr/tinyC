@@ -75,9 +75,9 @@ public final class Parser {
 				continue;
 			}
 
-			if (isConsume(TokenType.END)) {
+			if (isConsume(TokenType.ENDIF)) {
 				if (openIfDefLocations.isEmpty()) {
-					throw new SyntaxException(Messages.endWithoutIfdef(), location);
+					throw new SyntaxException(Messages.endifWithoutIfdef(), location);
 				}
 
 				if (openIfDefLocations.size() == skipIfDef) {

@@ -191,8 +191,8 @@ public class Messages {
 	}
 
 	@NotNull
-	public static String endWithoutIfdef() {
-		return "#end without belonging #ifdef";
+	public static String endifWithoutIfdef() {
+		return "#endif without belonging #ifdef";
 	}
 
 	@NotNull
