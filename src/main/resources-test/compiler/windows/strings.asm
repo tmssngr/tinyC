@@ -15,7 +15,7 @@ start:
         sub rsp, 8
           call init
         add rsp, 8
-          call @main
+          call _main
         mov rcx, 0
         sub rsp, 0x20
           call [ExitProcess]
@@ -23,14 +23,14 @@ start:
         ; void printString@@u8
         ;   rsp+24: arg str
         ;   rsp+0: var length
-@printString@@u8:
+_printString@@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; call length = strlen@@u8[str] -> i64
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
-          call @strlen@@u8
+          call _strlen@@u8
         add rsp, 8
         lea rbx, [rsp+0]
         mov [rbx], rax
@@ -42,7 +42,7 @@ start:
         mov rbx, [rax]
         push rbx
         sub rsp, 8
-          call @printStringLength@@u8@i64
+          call _printStringLength@@u8@i64
         add rsp, 24
         ; release space for local variables
         add rsp, 16
@@ -52,7 +52,7 @@ start:
         ;   rsp+24: arg chr
         ;   rsp+0: var t.1
         ;   rsp+8: var t.2
-@printChar@u8:
+_printChar@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; addrof t.1, chr
@@ -71,7 +71,7 @@ start:
         mov bl, [rax]
         push rbx
         sub rsp, 8
-          call @printStringLength@@u8@u8
+          call _printStringLength@@u8@u8
         add rsp, 24
         ; release space for local variables
         add rsp, 16
@@ -96,7 +96,7 @@ start:
         ;   rsp+104: var t.15
         ;   rsp+112: var t.16
         ;   rsp+113: var t.17
-@printUint@i64:
+_printUint@i64:
         ; reserve space for local variables
         sub rsp, 128
         ; const pos, 20
@@ -104,7 +104,7 @@ start:
         lea rbx, [rsp+20]
         mov [rbx], al
         ; 28:2 while true
-@while_1:
+_while_1:
         ; const t.5, 1
         mov al, 1
         lea rbx, [rsp+33]
@@ -212,11 +212,11 @@ start:
         sete bl
         lea rax, [rsp+80]
         mov [rax], bl
-        ; branch t.12, false, @while_1, @while_1_break
+        ; branch t.12, false, while_1, while_1_break
         lea rax, [rsp+80]
         mov bl, [rax]
         or bl, bl
-        jz @while_1
+        jz _while_1
         ; cast t.15(i64), pos(u8)
         lea rax, [rsp+20]
         mov bl, [rax]
@@ -260,7 +260,7 @@ start:
         mov bl, [rax]
         push rbx
         sub rsp, 8
-          call @printStringLength@@u8@u8
+          call _printStringLength@@u8@u8
         add rsp, 24
         ; release space for local variables
         add rsp, 128
@@ -269,7 +269,7 @@ start:
         ; void printIntLf@u8
         ;   rsp+24: arg number
         ;   rsp+0: var t.1
-@printIntLf@u8:
+_printIntLf@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; cast t.1(i64), number(u8)
@@ -282,7 +282,7 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         push rbx
-          call @printIntLf@i64
+          call _printIntLf@i64
         add rsp, 8
         ; release space for local variables
         add rsp, 16
@@ -291,7 +291,7 @@ start:
         ; void printIntLf@i16
         ;   rsp+24: arg number
         ;   rsp+0: var t.1
-@printIntLf@i16:
+_printIntLf@i16:
         ; reserve space for local variables
         sub rsp, 16
         ; cast t.1(i64), number(i16)
@@ -304,7 +304,7 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         push rbx
-          call @printIntLf@i64
+          call _printIntLf@i64
         add rsp, 8
         ; release space for local variables
         add rsp, 16
@@ -316,7 +316,7 @@ start:
         ;   rsp+8: var t.2
         ;   rsp+16: var t.3
         ;   rsp+17: var t.4
-@printIntLf@i64:
+_printIntLf@i64:
         ; reserve space for local variables
         sub rsp, 32
         ; 54:2 if number < 0
@@ -333,11 +333,11 @@ start:
         setl bl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; branch t.1, false, @if_3_end, @if_3_then
+        ; branch t.1, false, if_3_end, if_3_then
         lea rax, [rsp+0]
         mov bl, [rax]
         or bl, bl
-        jz @if_3_end
+        jz _if_3_end
         ; const t.3, 45
         mov al, 45
         lea rbx, [rsp+16]
@@ -346,7 +346,7 @@ start:
         lea rax, [rsp+16]
         mov bl, [rax]
         push rbx
-          call @printChar@u8
+          call _printChar@u8
         add rsp, 8
         ; neg number, number
         lea rax, [rsp+40]
@@ -354,12 +354,12 @@ start:
         neg rbx
         lea rax, [rsp+40]
         mov [rax], rbx
-@if_3_end:
+_if_3_end:
         ; call printUint@i64[number]
         lea rax, [rsp+40]
         mov rbx, [rax]
         push rbx
-          call @printUint@i64
+          call _printUint@i64
         add rsp, 8
         ; const t.4, 10
         mov al, 10
@@ -369,7 +369,7 @@ start:
         lea rax, [rsp+17]
         mov bl, [rax]
         push rbx
-          call @printChar@u8
+          call _printChar@u8
         add rsp, 8
         ; release space for local variables
         add rsp, 32
@@ -383,7 +383,7 @@ start:
         ;   rsp+10: var t.4
         ;   rsp+16: var t.5
         ;   rsp+24: var t.6
-@strlen@@u8:
+_strlen@@u8:
         ; reserve space for local variables
         sub rsp, 32
         ; const length, 0
@@ -391,8 +391,8 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], rax
         ; 64:2 for *str != 0
-        jmp @for_4
-@for_4_body:
+        jmp _for_4
+_for_4_body:
         ; const t.5, 1
         mov rax, 1
         lea rbx, [rsp+16]
@@ -417,7 +417,7 @@ start:
         add rbx, rcx
         lea rax, [rsp+40]
         mov [rax], rbx
-@for_4:
+_for_4:
         ; load t.3, [str]
         lea rax, [rsp+40]
         mov rbx, [rax]
@@ -437,11 +437,11 @@ start:
         setne bl
         lea rax, [rsp+8]
         mov [rax], bl
-        ; branch t.2, true, @for_4_body, @for_4_break
+        ; branch t.2, true, for_4_body, for_4_break
         lea rax, [rsp+8]
         mov bl, [rax]
         or bl, bl
-        jnz @for_4_body
+        jnz _for_4_body
         ; 67:9 return length
         ; ret length
         lea rax, [rsp+0]
@@ -455,7 +455,7 @@ start:
         ;   rsp+40: arg str
         ;   rsp+32: arg length
         ;   rsp+0: var t.2
-@printStringLength@@u8@u8:
+_printStringLength@@u8@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; cast t.2(i64), length(u8)
@@ -472,7 +472,7 @@ start:
         mov rbx, [rax]
         push rbx
         sub rsp, 8
-          call @printStringLength@@u8@i64
+          call _printStringLength@@u8@i64
         add rsp, 24
         ; release space for local variables
         add rsp, 16
@@ -482,7 +482,7 @@ start:
         ;   rsp+0: var second
         ;   rsp+8: var chr
         ;   rsp+16: var t.2
-@main:
+_main:
         ; reserve space for local variables
         sub rsp, 32
         ; begin initialize global variables
@@ -495,11 +495,11 @@ start:
         lea rax, [var_0]
         mov rbx, [rax]
         push rbx
-          call @printString@@u8
+          call _printString@@u8
         add rsp, 8
         ; call printLength[]
         sub rsp, 8
-          call @printLength
+          call _printLength
         add rsp, 8
         ; const t.2, 1
         mov rax, 1
@@ -522,7 +522,7 @@ start:
         lea rax, [rsp+0]
         mov rbx, [rax]
         push rbx
-          call @printString@@u8
+          call _printString@@u8
         add rsp, 8
         ; load chr, [text]
         lea rax, [var_0]
@@ -534,7 +534,7 @@ start:
         lea rax, [rsp+8]
         mov bl, [rax]
         push rbx
-          call @printIntLf@u8
+          call _printIntLf@u8
         add rsp, 8
         ; release space for local variables
         add rsp, 32
@@ -548,7 +548,7 @@ start:
         ;   rsp+18: var t.4
         ;   rsp+20: var t.5
         ;   rsp+24: var t.6
-@printLength:
+_printLength:
         ; reserve space for local variables
         sub rsp, 32
         ; const length, 0
@@ -561,8 +561,8 @@ start:
         lea rax, [rsp+8]
         mov [rax], rbx
         ; 16:2 for *ptr != 0
-        jmp @for_5
-@for_5_body:
+        jmp _for_5
+_for_5_body:
         ; const t.5, 1
         mov ax, 1
         lea rbx, [rsp+20]
@@ -587,7 +587,7 @@ start:
         add rbx, rcx
         lea rax, [rsp+8]
         mov [rax], rbx
-@for_5:
+_for_5:
         ; load t.3, [ptr]
         lea rax, [rsp+8]
         mov rbx, [rax]
@@ -607,23 +607,23 @@ start:
         setne bl
         lea rax, [rsp+16]
         mov [rax], bl
-        ; branch t.2, true, @for_5_body, @for_5_break
+        ; branch t.2, true, for_5_body, for_5_break
         lea rax, [rsp+16]
         mov bl, [rax]
         or bl, bl
-        jnz @for_5_body
+        jnz _for_5_body
         ; call printIntLf@i16[length]
         lea rax, [rsp+0]
         mov bx, [rax]
         push rbx
-          call @printIntLf@i16
+          call _printIntLf@i16
         add rsp, 8
         ; release space for local variables
         add rsp, 32
         ret
 
         ; void printStringLength@@u8@i64
-@printStringLength@@u8@i64:
+_printStringLength@@u8@i64:
         mov     rdi, rsp
 
         lea     rcx, [hStdOut]

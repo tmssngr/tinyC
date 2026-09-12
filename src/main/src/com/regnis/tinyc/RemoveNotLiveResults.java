@@ -17,10 +17,13 @@ public class RemoveNotLiveResults {
 
 			final RemoveNotLiveResults command = new RemoveNotLiveResults();
 			final List<BasicBlock> blocks = cfg.blocks();
+			boolean addLabel = false;
 			for (BasicBlock block : blocks) {
-				if (block.name.startsWith("@")) {
+				if (addLabel) {
 					command.add(new IRLabel(block.name));
 				}
+
+				addLabel = true;
 
 				final List<IRInstruction> instructions = block.instructions();
 				for (int i = 0; i < instructions.size(); i++) {

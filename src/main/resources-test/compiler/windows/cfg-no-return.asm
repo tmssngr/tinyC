@@ -15,7 +15,7 @@ start:
         sub rsp, 8
           call init
         add rsp, 8
-          call @main
+          call _main
         mov rcx, 0
         sub rsp, 0x20
           call [ExitProcess]
@@ -23,7 +23,7 @@ start:
         ; void main
         ;   rsp+0: var i
         ;   rsp+1: var t.1
-@main:
+_main:
         ; reserve space for local variables
         sub rsp, 16
         ; const i, 0
@@ -31,7 +31,7 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 3:2 while true
-@while_1:
+_while_1:
         ; const t.1, 1
         mov al, 1
         lea rbx, [rsp+1]
@@ -44,7 +44,7 @@ start:
         add bl, cl
         lea rax, [rsp+0]
         mov [rax], bl
-        jmp @while_1
+        jmp _while_1
         ; release space for local variables
         add rsp, 16
         ret

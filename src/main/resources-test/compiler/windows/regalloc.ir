@@ -1,4 +1,4 @@
-@simple:
+simple:
  Local variables
 	var 0: four (u8/1)
 	var 1: three (u8/1)
@@ -10,10 +10,10 @@
 	sub one, one, three
 	; 5:9 return one
 	ret one
-	jump @simple_ret
-@simple_ret:
+	jump simple_ret
+simple_ret:
 
-@registerHint@u8@u8:
+registerHint@u8@u8:
  Local variables
 	arg 0: a (u8/1)
 	arg 1: b (u8/1)
@@ -23,10 +23,10 @@
 	move t.2, a
 	add t.2, t.2, b
 	ret t.2
-	jump @registerHint@u8@u8_ret
-@registerHint@u8@u8_ret:
+	jump registerHint@u8@u8_ret
+registerHint@u8@u8_ret:
 
-@max@u8@u8:
+max@u8@u8:
  Local variables
 	arg 0: a (u8/1)
 	arg 1: b (u8/1)
@@ -34,18 +34,18 @@
 	; 18 pc
 	; 13:2 if a < b
 	lt t.2, a, b
-	branch t.2, false, @if_1_end, @if_1_then
-@if_1_then:
+	branch t.2, false, if_1_end, if_1_then
+if_1_then:
 	; 14:10 return b
 	ret b
-	jump @max@u8@u8_ret
-@if_1_end:
+	jump max@u8@u8_ret
+if_1_end:
 	; 16:9 return a
 	ret a
-	jump @max@u8@u8_ret
-@max@u8@u8_ret:
+	jump max@u8@u8_ret
+max@u8@u8_ret:
 
-@fibonacci@u8:
+fibonacci@u8:
  Local variables
 	arg 0: i (u8/1)
 	var 1: a (i16/2)
@@ -58,25 +58,25 @@
 	const a, 0
 	const b, 1
 	; 22:2 while i > 0
-@while_2:
+while_2:
 	const t.5, 0
 	gt t.4, i, t.5
-	branch t.4, false, @while_2_break, @while_2_body
-@while_2_body:
+	branch t.4, false, while_2_break, while_2_body
+while_2_body:
 	const t.6, 1
 	sub i, i, t.6
 	move c, a
 	add c, c, b
 	move a, b
 	move b, c
-	jump @while_2
-@while_2_break:
+	jump while_2
+while_2_break:
 	; 28:9 return a
 	ret a
-	jump @fibonacci@u8_ret
-@fibonacci@u8_ret:
+	jump fibonacci@u8_ret
+fibonacci@u8_ret:
 
-@main:
+main:
  Local variables
 	var 0: one (u8/1)
 	var 1: two (u8/1)
@@ -90,5 +90,5 @@
 	call oneOrTwo = max@u8@u8[one, two] -> u8
 	const t.4, 5
 	call f5 = fibonacci@u8[t.4] -> i16
-@main_ret:
+main_ret:
 

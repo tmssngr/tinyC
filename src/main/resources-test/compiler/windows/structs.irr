@@ -1,4 +1,4 @@
-@printChar@u8:
+printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
@@ -8,7 +8,7 @@
 	const t.2, 1
 	call printStringLength@@u8@u8[t.1, t.2]
 
-@printUint@i64:
+printUint@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
@@ -31,7 +31,7 @@
 	; 120 pc
 	const pos, 20
 	; 28:2 while true
-@while_1:
+while_1:
 	const t.5, 1
 	sub pos, pos, t.5
 	const t.6, 10
@@ -50,7 +50,7 @@
 	; 34:3 if number == 0
 	const t.13, 0
 	equals t.12, number, t.13
-	branch t.12, false, @while_1, @while_1_break
+	branch t.12, false, while_1, while_1_break
 	cast t.15(i64), pos(u8)
 	addrof t.14, [buffer]
 	add t.14, t.14, t.15
@@ -59,7 +59,7 @@
 	sub t.16, t.16, pos
 	call printStringLength@@u8@u8[t.14, t.16]
 
-@printIntLf@u8:
+printIntLf@u8:
  Local variables
 	arg 0: number (u8/1)
 	var 1: t.1 (i64/8)
@@ -67,7 +67,7 @@
 	cast t.1(i64), number(u8)
 	call printIntLf@i64[t.1]
 
-@printIntLf@i64:
+printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: t.1 (bool/1)
@@ -78,16 +78,16 @@
 	; 54:2 if number < 0
 	const t.2, 0
 	lt t.1, number, t.2
-	branch t.1, false, @if_3_end, @if_3_then
+	branch t.1, false, if_3_end, if_3_then
 	const t.3, 45
 	call printChar@u8[t.3]
 	neg number, number
-@if_3_end:
+if_3_end:
 	call printUint@i64[number]
 	const t.4, 10
 	call printChar@u8[t.4]
 
-@printStringLength@@u8@u8:
+printStringLength@@u8@u8:
  Local variables
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
@@ -96,7 +96,7 @@
 	cast t.2(i64), length(u8)
 	call printStringLength@@u8@i64[str, t.2]
 
-@main:
+main:
  Local variables
 	var 0: pos (u8/2)
 	var 1: x (u8*/8)
@@ -145,7 +145,7 @@
 	load t.15, [x]
 	call printIntLf@u8[t.15]
 
-@printStringLength@@u8@i64:
+printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
 	lea     rcx, [hStdOut]

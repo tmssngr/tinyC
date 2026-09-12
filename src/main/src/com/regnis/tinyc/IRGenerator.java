@@ -70,18 +70,17 @@ public final class IRGenerator {
 
 	private void convertFunction(Function function, List<IRFunction> functions, List<IRAsmFunction> asmFunctions, List<Statement> declarations) {
 		final String name = function.name();
-		final String functionLabel = getFunctionLabel(name);
 		if (function.asmLines().size() > 0) {
 			Utils.assertTrue(function.localVars().isEmpty());
 			Utils.assertTrue(function.statements().isEmpty());
-			asmFunctions.add(new IRAsmFunction(name, functionLabel, function.returnTypeNotNull(), function.asmLines()));
+			asmFunctions.add(new IRAsmFunction(name, function.returnTypeNotNull(), function.asmLines()));
 			return;
 		}
 
 		final Set<IRVar> localVarsCantBeRegister = processLocalVars(function);
 		instructions = new ArrayList<>();
 		try {
-			functionRetLabel = functionLabel + "_ret";
+			functionRetLabel = name + "_ret";
 			if (name.equals("main")) {
 				writeInit(declarations);
 			}
@@ -90,7 +89,7 @@ public final class IRGenerator {
 			writeLabel(functionRetLabel);
 
 			final IRVarInfos varInfos = new IRVarInfos(localVars, localVarsCantBeRegister, Objects.requireNonNull(globalVars));
-			functions.add(new IRFunction(name, functionLabel, Objects.requireNonNull(function.returnType()), varInfos, instructions));
+			functions.add(new IRFunction(name, Objects.requireNonNull(function.returnType()), varInfos, instructions));
 		}
 		finally {
 			localVars = List.of();
@@ -174,10 +173,6 @@ public final class IRGenerator {
 		return irStringLiterals;
 	}
 
-	private String getFunctionLabel(String name) {
-		return "@" + name;
-	}
-
 	private void writeStatements(List<Statement> statements) {
 		for (Statement statement : statements) {
 			writeStatement(statement);
@@ -215,9 +210,9 @@ public final class IRGenerator {
 		final List<Statement> thenStatements = statement.thenStatements();
 		final List<Statement> elseStatements = statement.elseStatements();
 		final int labelIndex = nextLabelIndex();
-		final String labelThen = "@if_" + labelIndex + "_then";
-		final String labelElse = "@if_" + labelIndex + "_else";
-		final String labelEnd = "@if_" + labelIndex + "_end";
+		final String labelThen = "if_" + labelIndex + "_then";
+		final String labelElse = "if_" + labelIndex + "_else";
+		final String labelEnd = "if_" + labelIndex + "_end";
 		writeComment("if " + condition.toUserString(), statement.location());
 		final IRVar conditionVar = writeExpression(condition);
 		if (elseStatements.isEmpty()) {
@@ -251,10 +246,10 @@ public final class IRGenerator {
 		final List<Statement> iteration = loop.iteration();
 		final String loopName = iteration.isEmpty() ? "while" : "for";
 		final int labelIndex = nextLabelIndex();
-		final String label = "@" + loopName + "_" + labelIndex;
-		final String bodyLabel = "@" + loopName + "_" + labelIndex + "_body";
-		final String continueLabel = iteration.isEmpty() ? label : "@" + loopName + "_" + labelIndex + "_continue";
-		final String breakLabel = "@" + loopName + "_" + labelIndex + "_break";
+		final String label = loopName + "_" + labelIndex;
+		final String bodyLabel = loopName + "_" + labelIndex + "_body";
+		final String continueLabel = iteration.isEmpty() ? label : loopName + "_" + labelIndex + "_continue";
+		final String breakLabel = loopName + "_" + labelIndex + "_break";
 
 		final Expression condition = loop.condition();
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
@@ -483,8 +478,8 @@ public final class IRGenerator {
 
 		case AndLog -> {
 			final int labelIndex = nextLabelIndex();
-			final String secondLabel = "@and_2nd_" + labelIndex;
-			final String nextLabel = "@and_next_" + labelIndex;
+			final String secondLabel = "and_2nd_" + labelIndex;
+			final String nextLabel = "and_next_" + labelIndex;
 			writeComment("logic and", binary.location());
 			writeExpression(var, binary.left());
 			write(new IRBranch(var, false, nextLabel,
@@ -496,8 +491,8 @@ public final class IRGenerator {
 
 		case OrLog -> {
 			final int labelIndex = nextLabelIndex();
-			final String secondLabel = "@or_2nd_" + labelIndex;
-			final String nextLabel = "@or_next_" + labelIndex;
+			final String secondLabel = "or_2nd_" + labelIndex;
+			final String nextLabel = "or_next_" + labelIndex;
 			writeComment("logic or", binary.location());
 			writeExpression(var, binary.left());
 			write(new IRBranch(var, true, nextLabel,

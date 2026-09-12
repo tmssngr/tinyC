@@ -15,7 +15,7 @@ start:
         sub rsp, 8
           call init
         add rsp, 8
-          call @main
+          call _main
         mov rcx, 0
         sub rsp, 0x20
           call [ExitProcess]
@@ -24,7 +24,7 @@ start:
         ;   rsp+0: var four
         ;   rsp+1: var three
         ;   rsp+2: var one
-@simple:
+_simple:
         ; reserve space for local variables
         sub rsp, 16
         ; const four, 4
@@ -61,7 +61,7 @@ start:
         ;   rsp+40: arg a
         ;   rsp+32: arg b
         ;   rsp+0: var t.2
-@registerHint@u8@u8:
+_registerHint@u8@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; 9:11 return a + b
@@ -90,7 +90,7 @@ start:
         ;   rsp+40: arg a
         ;   rsp+32: arg b
         ;   rsp+0: var t.2
-@max@u8@u8:
+_max@u8@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; 13:2 if a < b
@@ -103,24 +103,24 @@ start:
         setb bl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; branch t.2, true, @if_1_then, @if_1_end
+        ; branch t.2, true, if_1_then, if_1_end
         lea rax, [rsp+0]
         mov bl, [rax]
         or bl, bl
-        jnz @if_1_then
+        jnz _if_1_then
         ; 16:9 return a
         ; ret a
         lea rax, [rsp+40]
         mov bl, [rax]
         mov rax, rbx
-        jmp @max@u8@u8_ret
-@if_1_then:
+        jmp _max@u8@u8_ret
+_if_1_then:
         ; 14:10 return b
         ; ret b
         lea rax, [rsp+32]
         mov bl, [rax]
         mov rax, rbx
-@max@u8@u8_ret:
+_max@u8@u8_ret:
         ; release space for local variables
         add rsp, 16
         ret
@@ -133,7 +133,7 @@ start:
         ;   rsp+6: var t.4
         ;   rsp+7: var t.5
         ;   rsp+8: var t.6
-@fibonacci@u8:
+_fibonacci@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; const a, 0
@@ -145,8 +145,8 @@ start:
         lea rbx, [rsp+2]
         mov [rbx], ax
         ; 22:2 while i > 0
-        jmp @while_2
-@while_2_body:
+        jmp _while_2
+_while_2_body:
         ; const t.6, 1
         mov al, 1
         lea rbx, [rsp+8]
@@ -182,7 +182,7 @@ start:
         mov bx, [rax]
         lea rax, [rsp+2]
         mov [rax], bx
-@while_2:
+_while_2:
         ; const t.5, 0
         mov al, 0
         lea rbx, [rsp+7]
@@ -196,11 +196,11 @@ start:
         seta bl
         lea rax, [rsp+6]
         mov [rax], bl
-        ; branch t.4, true, @while_2_body, @while_2_break
+        ; branch t.4, true, while_2_body, while_2_break
         lea rax, [rsp+6]
         mov bl, [rax]
         or bl, bl
-        jnz @while_2_body
+        jnz _while_2_body
         ; 28:9 return a
         ; ret a
         lea rax, [rsp+0]
@@ -216,12 +216,12 @@ start:
         ;   rsp+2: var oneOrTwo
         ;   rsp+4: var f5
         ;   rsp+6: var t.4
-@main:
+_main:
         ; reserve space for local variables
         sub rsp, 16
         ; call one = simple[] -> u8
         sub rsp, 8
-          call @simple
+          call _simple
         add rsp, 8
         lea rbx, [rsp+0]
         mov [rbx], al
@@ -237,7 +237,7 @@ start:
         mov bl, [rax]
         push rbx
         sub rsp, 8
-          call @registerHint@u8@u8
+          call _registerHint@u8@u8
         add rsp, 24
         ; call _ = max@u8@u8[one, two] -> u8
         lea rax, [rsp+0]
@@ -247,7 +247,7 @@ start:
         mov bl, [rax]
         push rbx
         sub rsp, 8
-          call @max@u8@u8
+          call _max@u8@u8
         add rsp, 24
         ; const t.4, 5
         mov al, 5
@@ -257,7 +257,7 @@ start:
         lea rax, [rsp+6]
         mov bl, [rax]
         push rbx
-          call @fibonacci@u8
+          call _fibonacci@u8
         add rsp, 8
         ; release space for local variables
         add rsp, 16

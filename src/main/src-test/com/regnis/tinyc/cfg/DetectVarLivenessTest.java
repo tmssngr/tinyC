@@ -41,12 +41,12 @@ public class DetectVarLivenessTest {
 		            Set.of(),
 		            Set.of(bool_needsInitialize), it.next());
 		assertBlock("1", List.of(
-				            new IRBranch(bool_needsInitialize, false, "@main.no_critical_edge_6", "2"),
+				            new IRBranch(bool_needsInitialize, false, "main.no_critical_edge_6", "2"),
 				            new IRJump("2")
 		            ),
 		            Set.of(bool_needsInitialize),
 		            Set.of(bool_needsInitialize), it.next());
-		assertBlock("@main.no_critical_edge_6", List.of(
+		assertBlock("main.no_critical_edge_6", List.of(
 				            new IRJump("3")
 		            ),
 		            Set.of(bool_needsInitialize),

@@ -15,7 +15,7 @@ start:
         sub rsp, 8
           call init
         add rsp, 8
-          call @main
+          call _main
         mov rcx, 0
         sub rsp, 0x20
           call [ExitProcess]
@@ -23,14 +23,14 @@ start:
         ; void printString@@u8
         ;   rsp+24: arg str
         ;   rsp+0: var length
-@printString@@u8:
+_printString@@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; call length = strlen@@u8[str] -> i64
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
-          call @strlen@@u8
+          call _strlen@@u8
         add rsp, 8
         lea rbx, [rsp+0]
         mov [rbx], rax
@@ -42,7 +42,7 @@ start:
         mov rbx, [rax]
         push rbx
         sub rsp, 8
-          call @printStringLength@@u8@i64
+          call _printStringLength@@u8@i64
         add rsp, 24
         ; release space for local variables
         add rsp, 16
@@ -56,7 +56,7 @@ start:
         ;   rsp+10: var t.4
         ;   rsp+16: var t.5
         ;   rsp+24: var t.6
-@strlen@@u8:
+_strlen@@u8:
         ; reserve space for local variables
         sub rsp, 32
         ; const length, 0
@@ -64,8 +64,8 @@ start:
         lea rbx, [rsp+0]
         mov [rbx], rax
         ; 64:2 for *str != 0
-        jmp @for_1
-@for_1_body:
+        jmp _for_1
+_for_1_body:
         ; const t.5, 1
         mov rax, 1
         lea rbx, [rsp+16]
@@ -90,7 +90,7 @@ start:
         add rbx, rcx
         lea rax, [rsp+40]
         mov [rax], rbx
-@for_1:
+_for_1:
         ; load t.3, [str]
         lea rax, [rsp+40]
         mov rbx, [rax]
@@ -110,11 +110,11 @@ start:
         setne bl
         lea rax, [rsp+8]
         mov [rax], bl
-        ; branch t.2, true, @for_1_body, @for_1_break
+        ; branch t.2, true, for_1_body, for_1_break
         lea rax, [rsp+8]
         mov bl, [rax]
         or bl, bl
-        jnz @for_1_body
+        jnz _for_1_body
         ; 67:9 return length
         ; ret length
         lea rax, [rsp+0]
@@ -127,7 +127,7 @@ start:
         ; u8 next
         ;   rsp+0: var copy
         ;   rsp+1: var t.1
-@next:
+_next:
         ; reserve space for local variables
         sub rsp, 16
         ; move copy, global
@@ -164,7 +164,7 @@ start:
         ;   rsp+18: var t.4
         ;   rsp+19: var t.5
         ;   rsp+24: var t.6
-@main:
+_main:
         ; reserve space for local variables
         sub rsp, 32
         ; begin initialize global variables
@@ -174,8 +174,8 @@ start:
         mov [rbx], al
         ; end initialize global variables
         ; 12:2 while true
-        jmp @while_2
-@if_3_end:
+        jmp _while_2
+_if_3_end:
         ; 19:3 if n < 2
         ; const t.5, 2
         mov al, 2
@@ -190,11 +190,11 @@ start:
         setb bl
         lea rax, [rsp+18]
         mov [rax], bl
-        ; branch t.4, false, @while_2, @if_4_then
+        ; branch t.4, false, while_2, if_4_then
         lea rax, [rsp+18]
         mov bl, [rax]
         or bl, bl
-        jz @while_2
+        jz _while_2
         ; const t.6, [string-1]
         lea rax, [string_1]
         lea rbx, [rsp+24]
@@ -203,9 +203,9 @@ start:
         lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
-          call @printString@@u8
+          call _printString@@u8
         add rsp, 8
-@while_2:
+_while_2:
         ; const t.1, [string-0]
         lea rax, [string_0]
         lea rbx, [rsp+8]
@@ -214,11 +214,11 @@ start:
         lea rax, [rsp+8]
         mov rbx, [rax]
         push rbx
-          call @printString@@u8
+          call _printString@@u8
         add rsp, 8
         ; call n = next[] -> u8
         sub rsp, 8
-          call @next
+          call _next
         add rsp, 8
         lea rbx, [rsp+0]
         mov [rbx], al
@@ -236,17 +236,17 @@ start:
         sete bl
         lea rax, [rsp+16]
         mov [rax], bl
-        ; branch t.2, false, @if_3_end, @main_ret
+        ; branch t.2, false, if_3_end, main_ret
         lea rax, [rsp+16]
         mov bl, [rax]
         or bl, bl
-        jz @if_3_end
+        jz _if_3_end
         ; release space for local variables
         add rsp, 32
         ret
 
         ; void printStringLength@@u8@i64
-@printStringLength@@u8@i64:
+_printStringLength@@u8@i64:
         mov     rdi, rsp
 
         lea     rcx, [hStdOut]

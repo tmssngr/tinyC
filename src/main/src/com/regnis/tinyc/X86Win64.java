@@ -68,7 +68,7 @@ public final class X86Win64 extends AsmWriter {
 		writeIndented("sub rsp, 8");
 		writeIndented("  call init");
 		writeIndented("add rsp, 8");
-		writeIndented("  call @main");
+		writeIndented("  call " + escapeLabel("main"));
 		writeIndented("mov rcx, 0");
 		writeIndented("sub rsp, 0x20");
 		writeIndented("  call [ExitProcess]");
@@ -147,7 +147,7 @@ public final class X86Win64 extends AsmWriter {
 		final List<IRVarDef> localVars = function.varInfos().vars();
 		final int size = prepareLocalVarsOffsets(localVars);
 		writeVarOffsets(localVars);
-		writeLabel(function.label());
+		writeLabel(escapeLabel(function.name()));
 		writeFunctionProlog(size);
 
 		writeInstructions(function.instructions());
@@ -349,10 +349,10 @@ public final class X86Win64 extends AsmWriter {
 		writeIndented("or " + conditionRegName + ", " + conditionRegName);
 		free(conditionReg);
 		if (branch.jumpOnTrue()) {
-			writeIndented("jnz " + branch.target());
+			writeIndented("jnz " + escapeLabel(branch.target()));
 		}
 		else {
-			writeIndented("jz " + branch.target());
+			writeIndented("jz " + escapeLabel(branch.target()));
 		}
 	}
 
@@ -371,7 +371,7 @@ public final class X86Win64 extends AsmWriter {
 		if (offset != 0) {
 			writeIndented("sub rsp, " + offset);
 		}
-		writeIndented("  call @" + call.name());
+		writeIndented("  call " + escapeLabel(call.name()));
 		writeIndented("add rsp, " + (offset + argsSize));
 
 		final IRVar target = call.target();
@@ -487,6 +487,12 @@ public final class X86Win64 extends AsmWriter {
 		}
 	}
 
+	@Override
+	@NotNull
+	protected String escapeLabel(String target) {
+		return "_" + target;
+	}
+
 	private void writeBinary(String op, IRBinary binary) throws IOException {
 		final int leftReg = loadVar(binary.left());
 		final String leftRegName = getRegName(leftReg, binary.left());
@@ -560,7 +566,7 @@ public final class X86Win64 extends AsmWriter {
 	}
 
 	protected void writeJump(IRJump jump) throws IOException {
-		writeIndented("jmp " + jump.label());
+		writeIndented("jmp " + escapeLabel(jump.label()));
 	}
 
 	@NotNull

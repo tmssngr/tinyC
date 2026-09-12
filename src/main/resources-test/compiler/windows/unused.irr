@@ -1,8 +1,8 @@
-@unusedArg@u8:
+unusedArg@u8:
  Local variables
 	arg 0: a (u8/1)
 
-@main:
+main:
  Local variables
 	var 0: t.0 (u8/1)
 	; 5 pc

@@ -82,7 +82,7 @@ public final class IRWriter extends TextWriter {
 	}
 
 	private void writeFunction(IRFunction function) throws IOException {
-		writeln(function.label() + ":");
+		writeln(function.name() + ":");
 		final List<IRVarDef> localVars = function.varInfos().vars();
 		if (localVars.size() > 0) {
 			writeln(" Local variables");
@@ -98,7 +98,7 @@ public final class IRWriter extends TextWriter {
 	}
 
 	private void writeAsmFunction(IRAsmFunction function) throws IOException {
-		writeln(function.label() + ":");
+		writeln(function.name() + ":");
 		for (String asmLine : function.asmLines()) {
 			writeIndentation();
 			writeln(asmLine);

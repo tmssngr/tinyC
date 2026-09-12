@@ -44,6 +44,9 @@ abstract class AsmWriter {
 
 	protected abstract void writeUnary(IRUnary unary) throws IOException;
 
+	@NotNull
+	protected abstract String escapeLabel(String label) throws IOException;
+
 	private static final String INDENTATION = "        ";
 
 	private final BufferedWriter writer;
@@ -56,7 +59,7 @@ abstract class AsmWriter {
 	protected void writeAsmFunction(IRAsmFunction function) throws IOException {
 		writeComment(function.toString());
 
-		writeLabel(function.label());
+		writeLabel(escapeLabel(function.name()));
 		for (String line : function.asmLines()) {
 			writeLines(line, line.contains(":") ? "" : INDENTATION);
 		}
@@ -85,7 +88,7 @@ abstract class AsmWriter {
 		case IRComment comment -> writeComment(comment.comment());
 		case IRCompare compare -> writeCompare(compare);
 		case IRJump jump -> writeJump(jump);
-		case IRLabel label -> writeLabel(label.label());
+		case IRLabel label -> writeLabel(escapeLabel(label.label()));
 		case IRLiteral literal -> writeLiteral(literal);
 		case IRMemLoad load -> writeMemLoad(load);
 		case IRMemStore store -> writeMemStore(store);
