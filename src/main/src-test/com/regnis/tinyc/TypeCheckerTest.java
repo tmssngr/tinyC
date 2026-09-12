@@ -626,6 +626,35 @@ public class TypeCheckerTest {
 				                       }"""));
 	}
 
+	@Test
+	public void testRedundantCast() {
+		Program program = Parser.parse("""
+				                               void foo(u8 a) {
+				                               }
+				                               void main() {
+				                                 foo((u8)1);
+				                               }""", Set.of());
+		final List<Message> messages = new ArrayList<>();
+		final TypeChecker checker = new TypeChecker(Type.I64, messages::add);
+		program = checker.check(program);
+		Assert.assertEquals(List.of(
+				Message.warn(Messages.redundantCast(Type.U8), loc(3, 7))
+		), messages);
+		assertEquals(new Program(List.of(), List.of(), List.of(
+				new Function("foo@u8", "void", Type.VOID, List.of(
+						new Function.Parameter("u8", Type.U8, "a", loc(0, 9))
+				), List.of(
+						new Variable("a", 0, VariableScope.parameter, Type.U8, 0, true, loc(0, 9))
+				), List.of(), List.of(), loc(0, 0)),
+
+				new Function("main", "void", Type.VOID, List.of(), List.of(), List.of(
+						new StmtExpr(new ExprFuncCall("foo@u8", Type.VOID, List.of(
+								new ExprIntLiteral(1, Type.U8, loc(3, 10))
+						), loc(3, 2)))
+				), List.of(), loc(2, 0))
+		), List.of(), List.of()), program);
+	}
+
 	private void testIllegalStatement(String expectedMessage, int column, String illegalOperation) {
 		try {
 			testStatement(illegalOperation);

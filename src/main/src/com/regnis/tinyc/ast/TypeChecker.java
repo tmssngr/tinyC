@@ -555,12 +555,12 @@ public final class TypeChecker {
 			if (expressions.size() == parameterTypes.size()) {
 				for (int i = 0; i < expressions.size(); i++) {
 					final Type type = parameterTypes.get(i);
-					final Expression expression = expressions.get(i);
+					Expression expression = expressions.get(i);
 					if (expression instanceof ExprCast cast) {
 						final Type castType = cast.typeNotNull();
 						if (castType.equals(expression.typeNotNull())) {
-							// todo should later become a warning
-							throw new SyntaxException(Messages.redundantCast(castType), expression.location());
+							messages.accept(Message.warn(Messages.redundantCast(castType), expression.location()));
+							expression = cast.expression();
 						}
 					}
 					final Expression castExpression = simpleCast(type, expression, expression.location());
