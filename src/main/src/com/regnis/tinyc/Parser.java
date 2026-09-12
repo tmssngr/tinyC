@@ -693,16 +693,12 @@ public final class Parser {
 
 		final Expression constantExpression = constants.get(identifier);
 		if (constantExpression != null) {
-			if (constantExpression instanceof ExprBoolLiteral literal) {
-				return new ExprBoolLiteral(literal.value(), location);
-			}
-			if (constantExpression instanceof ExprIntLiteral literal) {
-				return ExprIntLiteral.autoType(literal.value(), location);
-			}
-			if (constantExpression instanceof ExprCast cast) {
-				return new ExprCast(cast.typeString(), cast.expression(), null, location);
-			}
-			throw new IllegalStateException(String.valueOf(constantExpression));
+			return switch (constantExpression) {
+				case ExprBoolLiteral literal -> new ExprBoolLiteral(literal.value(), location);
+				case ExprIntLiteral literal -> ExprIntLiteral.autoType(literal.value(), location);
+				case ExprCast cast -> new ExprCast(cast.typeString(), cast.expression(), null, location);
+				default -> throw new IllegalStateException(String.valueOf(constantExpression));
+			};
 		}
 
 		final ExprVarAccess varAccess = new ExprVarAccess(identifier, location);
