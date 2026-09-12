@@ -8,6 +8,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -35,7 +36,14 @@ public class Compiler {
 	private static Path compile(@NotNull Path inputFile, String subdir) throws IOException, InterruptedException {
 		final Program parsedProgram = Parser.parse(inputFile, Set.of("X86_64"));
 
-		final TypeChecker checker = new TypeChecker(Type.I64);
+		final TypeChecker checker = new TypeChecker(Type.I64, message -> {
+			if (message.isError()) {
+				System.err.println(message);
+			}
+			else {
+				System.out.println(message);
+			}
+		});
 		final Program typedProgram = checker.check(parsedProgram);
 
 		Program program = UnusedFunctionRemover.removeUnusedFunctions(typedProgram);

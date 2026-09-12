@@ -4,6 +4,7 @@ import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 import org.junit.*;
@@ -163,7 +164,7 @@ public class IRGeneratorTest {
 	private IRProgram convert(String input) {
 		final Program rawProgram = Parser.parse(input, Set.of());
 		final Type pointerIntType = Type.I64;
-		final TypeChecker checker = new TypeChecker(pointerIntType);
+		final TypeChecker checker = new TypeChecker(pointerIntType, message -> Assert.fail("no message expected"));
 		final Program program = checker.check(rawProgram);
 		return IRGenerator.convert(program, pointerIntType);
 	}

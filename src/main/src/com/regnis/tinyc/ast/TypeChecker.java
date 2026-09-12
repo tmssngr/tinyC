@@ -3,6 +3,7 @@ package com.regnis.tinyc.ast;
 import com.regnis.tinyc.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -18,14 +19,16 @@ public final class TypeChecker {
 	private final Map<String, StringLiteral> stringLiteralMap = new HashMap<>();
 	private final List<StringLiteral> stringLiterals = new ArrayList<>();
 	private final Type pointerIntType;
+	private final Consumer<Message> messages;
 
 	private List<Statement> statements = List.of();
 	@Nullable private Type expectedReturnType;
 	@Nullable private LocalVars localVars;
 
-	public TypeChecker(@NotNull Type pointerIntType) {
+	public TypeChecker(@NotNull Type pointerIntType, @NotNull Consumer<Message> messages) {
 		Utils.assertTrue(pointerIntType.isInt());
 		this.pointerIntType = pointerIntType;
+		this.messages = messages;
 	}
 
 	@NotNull

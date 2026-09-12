@@ -661,7 +661,7 @@ public class TypeCheckerTest {
 	@NotNull
 	private Program checkType(String input) {
 		final Program program = Parser.parse(input, Set.of());
-		final TypeChecker checker = new TypeChecker(Type.I64);
+		final TypeChecker checker = new TypeChecker(Type.I64, message -> Assert.fail("no message expected"));
 		return checker.check(program);
 	}
 
