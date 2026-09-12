@@ -24,6 +24,7 @@ public class CfgGeneratorTest {
 				new IRLiteral(new IRVar("b", 1, VariableScope.function, Type.BOOL), 0, new Location(1, 1)),
 				new IRLabel("end")
 		));
+		final List<BasicBlock> blocks = cfg.blocks();
 		assertEquals(List.of(
 				new BasicBlock("start", List.of(
 						new IRJump("end")
@@ -31,7 +32,8 @@ public class CfgGeneratorTest {
 
 				new BasicBlock("end", List.of(
 				), List.of("start"), List.of())
-		), cfg.blocks());
+		), blocks);
+		assertEquals("start -> end", CfgVisualizer.visualize(blocks));
 	}
 
 	@Test
@@ -40,6 +42,7 @@ public class CfgGeneratorTest {
 				new IRLabel("endlessloop"),
 				new IRJump("endlessloop")
 		));
+		final List<BasicBlock> blocks = cfg.blocks();
 		assertEquals(List.of(
 				new BasicBlock("start", List.of(
 						new IRJump("endlessloop")
@@ -48,7 +51,11 @@ public class CfgGeneratorTest {
 				new BasicBlock("endlessloop", List.of(
 						new IRJump("endlessloop")
 				), List.of("start", "endlessloop"), List.of("endlessloop"))
-		), cfg.blocks());
+		), blocks);
+		assertEquals("""
+				                      ----------
+				                      v         |
+				             start -> endlessloop""", CfgVisualizer.visualize(blocks));
 	}
 
 	@Test
@@ -60,6 +67,7 @@ public class CfgGeneratorTest {
 				new IRBranch(cond, false, "loop", "break"),
 				new IRLabel("break")
 		));
+		final List<BasicBlock> blocks = cfg.blocks();
 		assertEqualsBlocks(List.of(
 				new BasicBlock("start", List.of(
 						new IRJump("loop")
@@ -77,7 +85,13 @@ public class CfgGeneratorTest {
 
 				new BasicBlock("break", List.of(
 				), List.of("loop"), List.of())
-		), cfg.blocks());
+		), blocks);
+		assertEquals("""
+				                      -------------------------------
+				                      v                              |
+				             start    start.no_critical_edge_3 -> loop -> break
+				                 |                                ^
+				                 ---------------------------------""", CfgVisualizer.visualize(blocks));
 	}
 
 	private void assertEqualsBlocks(List<BasicBlock> expected, List<BasicBlock> actual) {
