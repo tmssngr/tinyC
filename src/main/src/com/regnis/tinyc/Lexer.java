@@ -196,7 +196,7 @@ public final class Lexer {
 			case "struct" -> TokenType.STRUCT;
 			case "#include" -> TokenType.INCLUDE;
 			case "#ifdef" -> TokenType.IFDEF;
-			case "#end" -> TokenType.END;
+			case "#endif" -> TokenType.ENDIF;
 			case "asm" -> TokenType.ASM;
 			case "const" -> TokenType.CONST;
 			default -> TokenType.IDENTIFIER;

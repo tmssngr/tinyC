@@ -71,4 +71,4 @@ void printStringLength(u8* str, u8 length) {
 	printStringLength(str, (i64)length);
 }
 
-#end
+#endif
