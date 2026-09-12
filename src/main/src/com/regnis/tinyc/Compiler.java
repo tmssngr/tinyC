@@ -90,6 +90,10 @@ public class Compiler {
 					irWriter.write(cfg);
 					dotWriter.writeCfg(cfg);
 					final List<BasicBlock> blocks = cfg.blocks();
+
+					System.out.println(function.name() + ":");
+					System.out.println(CfgVisualizer.visualize(blocks));
+
 					final List<IRInstruction> instructions = getFlattenInstructions(blocks);
 
 					final IRFunction optimizedFunction = function.derive(instructions);
