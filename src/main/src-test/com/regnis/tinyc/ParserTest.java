@@ -12,6 +12,22 @@ import org.junit.*;
  */
 public class ParserTest {
 
+	public static final String SNIPPET_STATEMENTS_FOLLOW_RETURN = """
+			                                     void f1() {
+			                                       i16 a = 1;
+			                                       return;
+			                                       a = 2;
+			                                     }
+			                                     void f2() {
+			                                       i16 a = 1;
+			                                       {
+			                                         return;
+			                                         a = 2;
+			                                       }
+			                                       a = 3;
+			                                     }
+			                                     """;
+
 	public static void assertEquals(@NotNull Program expectedProgram, @NotNull Program currentProgram) {
 		assertEquals(expectedProgram.globalVars(), currentProgram.globalVars());
 		TestUtils.assertEquals(expectedProgram.functions(), currentProgram.functions(),
@@ -771,6 +787,35 @@ public class ParserTest {
 		                         List.of()
 		             ),
 		             parseProgram(input, Set.of("Z8")));
+	}
+
+	@Test
+	public void testStatementsFollowReturn() {
+		final Program program = Parser.parse(SNIPPET_STATEMENTS_FOLLOW_RETURN, Set.of());
+		assertEquals(new Program(List.of(), List.of(), List.of(
+				new Function("f1", "void", null, List.of(), List.of(), List.of(
+						new StmtVarDeclaration("i16", "a", new ExprIntLiteral(1, Type.U8, loc(1, 10)), loc(1, 2)),
+						new StmtReturn(null, loc(2, 2)),
+						new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
+						                            new ExprVarAccess("a", loc(3, 2)),
+						                            new ExprIntLiteral(2, Type.U8, loc(3, 6)),
+						                            loc(3, 4)))
+				), List.of(), loc(0, 0)),
+				new Function("f2", "void", null, List.of(), List.of(), List.of(
+						new StmtVarDeclaration("i16", "a", new ExprIntLiteral(1, Type.U8, loc(6, 10)), loc(6, 2)),
+						new StmtCompound(List.of(
+								new StmtReturn(null, loc(8, 4)),
+								new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
+								                            new ExprVarAccess("a", loc(9, 4)),
+								                            new ExprIntLiteral(2, Type.U8, loc(9, 8)),
+								                            loc(9, 6)))
+						)),
+						new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
+						                            new ExprVarAccess("a", loc(11, 2)),
+						                            new ExprIntLiteral(3, Type.U8, loc(11, 6)),
+						                            loc(11, 4)))
+						), List.of(), loc(5, 0))
+		), List.of(), List.of()), program);
 	}
 
 	private static void testIllegal(String expectedMessage, Location expectedLocation, String input) {

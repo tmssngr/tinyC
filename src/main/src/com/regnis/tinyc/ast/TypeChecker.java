@@ -179,6 +179,7 @@ public final class TypeChecker {
 					throw new SyntaxException(Messages.functionMustReturnType(expectedReturnType), function.location());
 				}
 			}
+			skipAllAfterReturn(statements);
 			return Function.typedInstance(function.name(), function.typeString(), function.returnTypeNotNull(), function.parameters(), localVars.toList(), statements, List.of(), function.location());
 		}
 		finally {
@@ -204,6 +205,27 @@ public final class TypeChecker {
 		}
 		finally {
 			this.statements = prevStatements;
+		}
+	}
+
+	private void skipAllAfterReturn(List<Statement> statements) {
+		Location returnLocation = null;
+		boolean reported = false;
+		final Iterator<Statement> it = statements.iterator();
+		while (it.hasNext()) {
+			final Statement statement = it.next();
+			if (statement instanceof StmtReturn stmtReturn) {
+				returnLocation = stmtReturn.location();
+				continue;
+			}
+
+			if (returnLocation != null) {
+				if (!reported) {
+					messages.accept(Message.warn(Messages.skippingAllAfterReturn(), returnLocation));
+					reported = true;
+				}
+				it.remove();
+			}
 		}
 	}
 
@@ -279,7 +301,9 @@ public final class TypeChecker {
 	private void processIf(StmtIf ifStmt) {
 		final Expression condition = checkBooleanCondition(ifStmt.condition());
 		final List<Statement> thenStatements = processStatementsWithLocalScope(ifStmt.thenStatements());
+		skipAllAfterReturn(thenStatements);
 		final List<Statement> elseStatements = processStatementsWithLocalScope(ifStmt.elseStatements());
+		skipAllAfterReturn(elseStatements);
 		add(new StmtIf(condition, thenStatements, elseStatements, ifStmt.location()));
 	}
 
@@ -289,6 +313,7 @@ public final class TypeChecker {
 		final List<Statement> iteration = processStatements(forStmt.iteration());
 
 		final List<Statement> bodyStatements = processStatementsWithLocalScope(forStmt.bodyStatements());
+		skipAllAfterReturn(bodyStatements);
 		add(new StmtLoop(condition, bodyStatements, iteration, forStmt.location()));
 	}
 
