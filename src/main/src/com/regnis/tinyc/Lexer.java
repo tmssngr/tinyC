@@ -1,5 +1,7 @@
 package com.regnis.tinyc;
 
+import java.util.function.*;
+
 import org.jetbrains.annotations.*;
 
 /**
@@ -45,8 +47,12 @@ public final class Lexer {
 		}
 
 		if (isWhitespace()) {
-			text = detectWhitespace();
+			text = detect(this::isWhitespace);
 			return TokenType.WHITESPACE;
+		}
+		if (isLineBreak()) {
+			text = detect(this::isLineBreak);
+			return TokenType.LINEBREAK;
 		}
 		if (isConsume('/')) {
 			if (chr == '/') {
@@ -284,13 +290,13 @@ public final class Lexer {
 		}
 	}
 
-	private String detectWhitespace() {
+	private String detect(BooleanSupplier predicate) {
 		final StringBuilder buffer = new StringBuilder();
 		do {
 			append(buffer);
 			consume();
 		}
-		while (isWhitespace());
+		while (predicate.getAsBoolean());
 		return buffer.toString();
 	}
 
@@ -438,7 +444,7 @@ public final class Lexer {
 	}
 
 	private boolean isWhitespace() {
-		return " \t\r\n".indexOf(chr) >= 0;
+		return " \t".indexOf(chr) >= 0;
 	}
 
 	private boolean isLineBreak() {
