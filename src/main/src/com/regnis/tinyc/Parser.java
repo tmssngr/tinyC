@@ -799,7 +799,9 @@ public final class Parser {
 		do {
 			token = lexer.next();
 		}
-		while (token == TokenType.WHITESPACE || token == TokenType.COMMENT);
+		while (token == TokenType.WHITESPACE
+		       || token == TokenType.LINEBREAK
+		       || token == TokenType.COMMENT);
 	}
 
 	// see https://en.cppreference.com/w/c/language/operator_precedence
