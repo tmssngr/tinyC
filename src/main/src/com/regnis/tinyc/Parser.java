@@ -61,6 +61,17 @@ public final class Parser {
 		consume();
 	}
 
+	@Override
+	public String toString() {
+		final StringBuilder buffer = new StringBuilder();
+		buffer.append(token.toString());
+		if (token == TokenType.IDENTIFIER) {
+			buffer.append(": ");
+			buffer.append(getText());
+		}
+		return buffer.toString();
+	}
+
 	public void parse() {
 		while (token != TokenType.EOF) {
 			Location location = getLocation();
@@ -93,9 +104,12 @@ public final class Parser {
 			}
 
 			if (token == TokenType.IDENTIFIER) {
-				final String type = consumeIdentifier();
+				final String type = getText();
+				consume(false);
 				final String typeString = getTypeString(type);
-				final String name = consumeIdentifier();
+				expectType(TokenType.IDENTIFIER, null);
+				final String name = getText();
+				consume(false);
 				if (isConsume(TokenType.L_PAREN)) {
 					final List<Function.Parameter> args = new ArrayList<>();
 					while (!isConsume(TokenType.R_PAREN)) {
@@ -122,17 +136,19 @@ public final class Parser {
 
 				if (isConsume(TokenType.EQUAL)) {
 					final Expression expression = getExpression();
-					consume(TokenType.SEMI);
+					consumeSemiOrLineBreak();
 					project.addGlobalVar(new StmtVarDeclaration(typeString, name, expression, location));
 					continue;
 				}
-				if (isConsume(TokenType.SEMI)) {
+				if (isConsume(TokenType.SEMI) || isConsume(TokenType.LINEBREAK) || token == TokenType.EOF) {
 					project.addGlobalVar(new StmtVarDeclaration(typeString, name, null, location));
 					continue;
 				}
 				if (isConsume(TokenType.L_BRACKET)) {
 					final StmtArrayDeclaration array = getArrayDeclaration(typeString, name, location);
-					consume(TokenType.SEMI);
+					if (token != TokenType.EOF) {
+						consumeSemiOrLineBreak();
+					}
 					project.addGlobalVar(array);
 					continue;
 				}
@@ -150,8 +166,11 @@ public final class Parser {
 					parts.add(new TypeDef.Part(partName, partType, null, partLocation));
 				}
 				while (isConsume(TokenType.COMMA));
-				consume(TokenType.R_PAREN);
-				consume(TokenType.SEMI);
+				expectType(TokenType.R_PAREN, null);
+				consume(false);
+				if (token != TokenType.EOF) {
+					consumeSemiOrLineBreak();
+				}
 				project.addTypeDef(new TypeDef(typeName, null, parts, location));
 				continue;
 			}
@@ -170,7 +189,7 @@ public final class Parser {
 				}
 				consume(TokenType.EQUAL);
 				final Expression expression = getExpression();
-				consume(TokenType.SEMI);
+				consumeSemiOrLineBreak();
 				final Expression resolvedExpression = resolveConstExpression(expression);
 				project.setConst(name, resolvedExpression);
 				continue;
@@ -317,14 +336,22 @@ public final class Parser {
 		return lines;
 	}
 
+	@NotNull
 	private List<Statement> getStatements() {
-		final Statement statement = getStatement();
-		if (statement == null) {
-			throw new SyntaxException(Messages.expectedStatement(), getLocation());
+		expectType(TokenType.L_BRACE, Messages.expected("{"));
+		consume();
+		final List<Statement> statements = new ArrayList<>();
+		while (true) {
+			final Statement statement = getStatement();
+			if (statement == null) {
+				break;
+			}
+
+			statements.add(statement);
 		}
-		return statement instanceof StmtCompound c
-				? c.statements()
-				: List.of(statement);
+		expectType(TokenType.R_BRACE, Messages.expectedStatementOrClosingBrace());
+		consume();
+		return statements;
 	}
 
 	@Nullable
@@ -336,7 +363,10 @@ public final class Parser {
 			case RETURN -> handleReturn();
 			case BREAK -> handleBreak();
 			case CONTINUE -> handleContinue();
-			case L_BRACE -> handleCompound();
+			case L_BRACE -> {
+				final List<Statement> statements = getStatements();
+				yield new StmtCompound(statements);
+			}
 			default -> {
 				final Location location = getLocation();
 				final Statement statement = getVarDeclarationOrExpressionStatement(location);
@@ -347,20 +377,20 @@ public final class Parser {
 
 				if (statement instanceof StmtVarDeclaration
 				    || statement instanceof StmtArrayDeclaration) {
-					consume(TokenType.SEMI);
+					consumeSemiOrLineBreak();
 					yield statement;
 				}
 
 				if (statement instanceof StmtExpr expr) {
 					final Expression expression = expr.expression();
 					if (expression instanceof ExprFuncCall) {
-						consume(TokenType.SEMI);
+						consumeSemiOrLineBreak();
 						yield statement;
 					}
 
 					if (expression instanceof ExprBinary binary
 					    && binary.op().kind == ExprBinary.OpKind.Assign) {
-						consume(TokenType.SEMI);
+						consumeSemiOrLineBreak();
 						yield statement;
 					}
 				}
@@ -372,14 +402,19 @@ public final class Parser {
 	@NotNull
 	private List<Expression> getCallArgExpressions() {
 		final List<Expression> argExpressions = new ArrayList<>();
-		while (!isConsume(TokenType.R_PAREN)) {
+		while (true) {
+			if (token == TokenType.R_PAREN) {
+				consume(false);
+				return argExpressions;
+			}
+
 			final Expression expression = getExpression();
 			argExpressions.add(expression);
 			if (token != TokenType.R_PAREN) {
-				consume(TokenType.COMMA);
+				expectType(TokenType.COMMA, Messages.expected(", or )"));
+				consume();
 			}
 		}
-		return argExpressions;
 	}
 
 	@Nullable
@@ -403,10 +438,12 @@ public final class Parser {
 	private Statement getVarDeclarationOrExpressionStatement(Location location) {
 		final Expression primary;
 		if (token == TokenType.IDENTIFIER) {
-			final String identifier1 = consumeIdentifier();
+			final String identifier1 = getText();
+			consume(false);
 			final String typeString = getTypeString(identifier1);
 			if (token == TokenType.IDENTIFIER) {
-				final String identifier2 = consumeIdentifier();
+				final String identifier2 = getText();
+				consume(false);
 				if (isConsume(TokenType.L_BRACKET)) {
 					return getArrayDeclaration(typeString, identifier2, location);
 				}
@@ -438,7 +475,8 @@ public final class Parser {
 		if (resolvedExpression instanceof ExprIntLiteral literal) {
 			final int size = literal.value();
 			if (size > 0) {
-				consume(TokenType.R_BRACKET);
+				expectType(TokenType.R_BRACKET, null);
+				consume(false);
 				return new StmtArrayDeclaration(typeString, name, size, location);
 			}
 		}
@@ -455,32 +493,22 @@ public final class Parser {
 		return typeBuilder.toString();
 	}
 
-	private Statement handleCompound() {
-		consume(TokenType.L_BRACE);
-		final List<Statement> statements = new ArrayList<>();
-		while (true) {
-			final Statement statement = getStatement();
-			if (statement == null) {
-				break;
-			}
-
-			statements.add(statement);
-		}
-		consume(TokenType.R_BRACE, Messages.expectedStatement());
-		return new StmtCompound(statements);
-	}
-
 	@NotNull
 	private StmtIf handleIf() {
 		final Location location = getLocation();
 		consume(TokenType.IF);
-		consume(TokenType.L_PAREN);
+
 		final Expression condition = getExpression();
-		consume(TokenType.R_PAREN);
+
 		final List<Statement> thenStatements = getStatements();
 		List<Statement> elseStatements = List.of();
 		if (isConsume(TokenType.ELSE)) {
-			elseStatements = getStatements();
+			if (token == TokenType.IF) {
+				elseStatements = List.of(handleIf());
+			}
+			else {
+				elseStatements = getStatements();
+			}
 		}
 		return new StmtIf(condition, thenStatements, elseStatements, location);
 	}
@@ -489,7 +517,8 @@ public final class Parser {
 	private Statement handleFor() {
 		final Location location = getLocation();
 		consume(TokenType.FOR);
-		consume(TokenType.L_PAREN);
+
+		final boolean isParen = isConsume(TokenType.L_PAREN);
 		final List<Statement> initialization = getCommaSeparatedSimpleStatements();
 		consume(TokenType.SEMI);
 		final Expression condition;
@@ -501,7 +530,10 @@ public final class Parser {
 			consume(TokenType.SEMI);
 		}
 		final List<Statement> iterate = getCommaSeparatedSimpleStatements();
-		consume(TokenType.R_PAREN);
+		if (isParen) {
+			consume(TokenType.R_PAREN);
+		}
+
 		final List<Statement> bodyStatements = getStatements();
 		if (initialization.isEmpty()) {
 			return new StmtLoop(condition, bodyStatements, iterate, location);
@@ -532,9 +564,9 @@ public final class Parser {
 	private Statement handleWhile() {
 		final Location location = getLocation();
 		consume(TokenType.WHILE);
-		consume(TokenType.L_PAREN);
+
 		final Expression condition = getExpression();
-		consume(TokenType.R_PAREN);
+
 		final List<Statement> bodyStatements = getStatements();
 		return new StmtLoop(condition, bodyStatements, List.of(), location);
 	}
@@ -543,7 +575,7 @@ public final class Parser {
 	private StmtBreakContinue handleBreak() {
 		final Location location = getLocation();
 		consume(TokenType.BREAK);
-		consume(TokenType.SEMI);
+		consumeSemiOrLineBreak();
 		return new StmtBreakContinue(true, location);
 	}
 
@@ -551,7 +583,7 @@ public final class Parser {
 	private StmtBreakContinue handleContinue() {
 		final Location location = getLocation();
 		consume(TokenType.CONTINUE);
-		consume(TokenType.SEMI);
+		consumeSemiOrLineBreak();
 		return new StmtBreakContinue(false, location);
 	}
 
@@ -562,7 +594,7 @@ public final class Parser {
 		Expression expression = null;
 		if (!isConsume(TokenType.SEMI)) {
 			expression = getExpression();
-			consume(TokenType.SEMI);
+			consumeSemiOrLineBreak();
 		}
 		return new StmtReturn(expression, location);
 	}
@@ -632,8 +664,9 @@ public final class Parser {
 	private Expression getExpressionPrimary(Location location) {
 		return switch (token) {
 			case INT_LITERAL -> {
+				final int value = getIntValue();
 				final String text = getText();
-				final int value = consumeIntValue();
+				consume(false);
 				if (text.isEmpty()) {
 					yield ExprIntLiteral.autoType(value, location);
 				}
@@ -649,13 +682,18 @@ public final class Parser {
 			}
 			case TRUE, FALSE -> {
 				final boolean value = token == TokenType.TRUE;
-				consume();
+				consume(false);
 				yield new ExprBoolLiteral(value, location);
 			}
-			case STRING -> new ExprStringLiteral(consumeText(), -1, location);
+			case STRING -> {
+				final String text = getText();
+				consume(false);
+				yield new ExprStringLiteral(text, -1, location);
+			}
 			case L_PAREN -> getExpressionInParenthesis();
 			case IDENTIFIER -> {
-				final String identifier = consumeIdentifier();
+				final String identifier = getText();
+				consume(false);
 				yield getExpressionPrimaryDot(identifier, location);
 			}
 			case AMP -> getUnary(ExprUnary.Op.AddrOf, location);
@@ -680,7 +718,9 @@ public final class Parser {
 		Expression expression = getExpressionPrimary(identifier, location);
 		if (isConsume(TokenType.DOT)) {
 			final Location memberLocation = getLocation();
-			final String member = consumeIdentifier();
+			expectType(TokenType.IDENTIFIER, null);
+			final String member = getText();
+			consume(false);
 			expression = new ExprMemberAccess(expression, member, null, memberLocation);
 		}
 		return expression;
@@ -693,6 +733,19 @@ public final class Parser {
 			return new ExprFuncCall(identifier, args, location);
 		}
 
+		final Expression expression = getExpressionIdentifier(identifier, location);
+		if (expression instanceof ExprVarAccess varAccess
+		    && isConsume(TokenType.L_BRACKET)) {
+			final Expression bracketExpression = getExpression();
+			expectType(TokenType.R_BRACKET, null);
+			consume(false);
+			return new ExprArrayAccess(varAccess, null, bracketExpression);
+		}
+		return expression;
+	}
+
+	@NotNull
+	private Expression getExpressionIdentifier(String identifier, Location location) {
 		final Expression constantExpression = project.getConstant(identifier);
 		if (constantExpression != null) {
 			return switch (constantExpression) {
@@ -703,25 +756,28 @@ public final class Parser {
 			};
 		}
 
-		final ExprVarAccess varAccess = new ExprVarAccess(identifier, location);
-		if (isConsume(TokenType.L_BRACKET)) {
-			final Expression expression = getExpression();
-			consume(TokenType.R_BRACKET);
-			return new ExprArrayAccess(varAccess, null, expression);
-		}
-		return varAccess;
+		return new ExprVarAccess(identifier, location);
 	}
 
 	@NotNull
 	private Expression getExpressionInParenthesis() {
-		consume(TokenType.L_PAREN);
+		Utils.assertTrue(token == TokenType.L_PAREN);
+		consume(false);
 		final Location location = getLocation();
 		final Expression primary;
 		if (token == TokenType.IDENTIFIER) {
-			final String identifier = consumeIdentifier();
-			if (isConsume(TokenType.R_PAREN)) {
-				final Expression expression = getExpressionPrimaryNotNull(getLocation());
-				return ExprCast.cast(identifier, expression, location);
+			final String identifier = getText();
+			consume(false);
+			if (token == TokenType.R_PAREN) {
+				consume(false);
+				final Expression expression = getExpressionPrimary(getLocation());
+				if (expression != null) {
+					return ExprCast.cast(identifier, expression, location);
+				}
+
+				// just a braced expression like in
+				// if (foo) { }
+				return getExpressionIdentifier(identifier, location);
 			}
 
 			primary = getExpressionPrimaryDot(identifier, location);
@@ -730,14 +786,9 @@ public final class Parser {
 			primary = getExpressionPrimaryNotNull(location);
 		}
 		final Expression expression = getExpression(primary, 0);
-		consume(TokenType.R_PAREN);
+		expectType(TokenType.R_PAREN, Messages.expected(")"));
+		consume(false);
 		return expression;
-	}
-
-	private int consumeIntValue() {
-		final int value = getIntValue();
-		consume();
-		return value;
 	}
 
 	@NotNull
@@ -785,8 +836,10 @@ public final class Parser {
 		return true;
 	}
 
-	private void consume(@NotNull TokenType type, @NotNull String errorMessage) {
-		expectType(type, errorMessage);
+	private void consumeSemiOrLineBreak() {
+		if (token != TokenType.SEMI && token != TokenType.LINEBREAK) {
+			throw new SyntaxException("Expected line-break or semicolon but got " + token, getLocation());
+		}
 		consume();
 	}
 
@@ -796,12 +849,21 @@ public final class Parser {
 	}
 
 	private void consume() {
-		do {
+		consume(true);
+	}
+
+	private void consume(boolean skipLineBreaks) {
+		while (true) {
 			token = lexer.next();
+			if (token == TokenType.WHITESPACE
+			    || token == TokenType.COMMENT) {
+				continue;
+			}
+			if (token == TokenType.LINEBREAK && skipLineBreaks) {
+				continue;
+			}
+			return;
 		}
-		while (token == TokenType.WHITESPACE
-		       || token == TokenType.LINEBREAK
-		       || token == TokenType.COMMENT);
 	}
 
 	// see https://en.cppreference.com/w/c/language/operator_precedence

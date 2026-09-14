@@ -293,7 +293,7 @@ checkCellBounds@i16@i16:
 	; 49 pc
 	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
 	; 37:21 logic and
-	; 37:6 logic and
+	; 36:40 logic and
 	; 36:21 logic and
 	const t.3, 0
 	gteq t.2, row, t.3
@@ -802,7 +802,7 @@ for_30_body:
 	mod t.10, t.10, t.12
 	cast column(i16), t.10(i32)
 	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
-	; 179:4 logic or
+	; 178:32 logic or
 	move t.15, row
 	sub t.15, t.15, curr_r
 	call t.14 = abs@i16[t.15] -> i16

@@ -898,7 +898,7 @@ _checkCellBounds@i16@i16:
         sub rsp, 16
         ; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
         ; 37:21 logic and
-        ; 37:6 logic and
+        ; 36:40 logic and
         ; 36:21 logic and
         ; const t.3, 0
         mov ax, 0
@@ -2390,7 +2390,7 @@ _for_30_body:
         lea rax, [rsp+4]
         mov [rax], bx
         ; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
-        ; 179:4 logic or
+        ; 178:32 logic or
         ; move t.15, row
         lea rax, [rsp+2]
         mov bx, [rax]

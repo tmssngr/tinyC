@@ -33,8 +33,8 @@ bool isFlag(u8 cell) {
 }
 
 bool checkCellBounds(i16 row, i16 column) {
-	return 0 <= row    && row    < height
-	    && 0 <= column && column < width;
+	return 0 <= row    && row    < height &&
+	       0 <= column && column < width;
 }
 
 void setCell(i16 row, i16 column, u8 cell) {
@@ -175,8 +175,8 @@ void initField(i16 curr_r, i16 curr_c) {
 	for (i16 bombs = bombCount; bombs > 0; bombs = bombs - 1) {
 		i16 row = (i16)(random() % height);
 		i16 column = (i16)(random() % width);
-		if (abs(row    - curr_r) > 1
-		 || abs(column - curr_c) > 1) {
+		if (abs(row    - curr_r) > 1 ||
+		    abs(column - curr_c) > 1) {
 			setCell(row, column, maskBomb);
 		}
 	}
