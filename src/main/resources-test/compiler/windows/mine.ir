@@ -795,7 +795,8 @@ printStringLength@@u8@i64:
 	ret
 
 getChar:
-	sub    rsp, 28h
+	push   rbx
+	sub    rsp, 20h
 	  call [_getch]
 	  test al, al
 	  js   .1
@@ -807,7 +808,8 @@ getChar:
 	  call [_getch]
 	  or   rax, rbx
 	.2:
-	add    rsp, 28h
+	add    rsp, 20h
+	pop    rbx
 	ret
 
 setCursor@i16@i16:
