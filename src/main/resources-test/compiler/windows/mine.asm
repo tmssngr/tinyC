@@ -2048,7 +2048,8 @@ _printStringLength@@u8@i64:
 
         ; i16 getChar
 _getChar:
-        sub    rsp, 28h
+        push   rbx
+        sub    rsp, 20h
           call [_getch]
           test al, al
           js   .1
@@ -2060,7 +2061,8 @@ _getChar:
           call [_getch]
           or   rax, rbx
 .2:
-        add    rsp, 28h
+        add    rsp, 20h
+        pop    rbx
         ret
 
         ; void setCursor@i16@i16

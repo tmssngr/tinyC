@@ -31,7 +31,8 @@ const CURSOR_RIGHT = (i16)0xE04D;
 const CURSOR_DOWN = (i16)0xE050;
 
 i16 getChar() asm {
-	"sub    rsp, 28h" // 8h to compensate for return address, 20h for calling _getch
+	"push   rbx"
+	"sub    rsp, 20h" // 20h for calling _getch
 	"  call [_getch]"
 	"  test al, al"
 	"  js   .1"
@@ -43,7 +44,8 @@ i16 getChar() asm {
 	"  call [_getch]"
 	"  or   rax, rbx"
 	".2:"
-	"add    rsp, 28h"
+	"add    rsp, 20h"
+	"pop    rbx"
 	"ret"
 }
 
