@@ -150,7 +150,7 @@ bool printLeft() {
 
 	i16 leftDigits = (i16)getDigitCount(count);
 	i16 bombDigits = (i16)getDigitCount(bombCount);
-	printString("Left: ");
+	setCursor(height, 6);
 	printSpaces(bombDigits - leftDigits);
 	printUint(count);
 	return count == 0;
@@ -216,6 +216,8 @@ void main() {
 	clearField();
 	i16 curr_c = (i16)(width / 2);
 	i16 curr_r = (i16)(height / 2);
+	setCursor(height, 0);
+	printString("Left:");
 	while (true) {
 		printField(curr_r, curr_c);
 		if (!needsInitialize) {

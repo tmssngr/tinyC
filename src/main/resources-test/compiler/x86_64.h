@@ -47,7 +47,7 @@ i16 getChar() asm {
 	"ret"
 }
 
-void setCursor(i16 x, i16 y) asm {
+void setCursor(i16 row, i16 column) asm {
 	// rsp+0    calling address
 	// rsp+8    nothing (offset to get rsp % 10 == 0)
 	// rsp+10h  y
@@ -65,9 +65,9 @@ void setCursor(i16 x, i16 y) asm {
 	""
 	"lea     rcx, [hStdOut]"
 	"mov     rcx, [rcx]"
-	"mov     dx, [rdi+10h]"
-	"shl     rdx, 16"
 	"mov     dx, [rdi+18h]"
+	"shl     rdx, 16"
+	"mov     dx, [rdi+10h]"
 	"sub     rsp, 20h"
 	"  call   [SetConsoleCursorPosition]"
 	"mov     rsp, rdi"
