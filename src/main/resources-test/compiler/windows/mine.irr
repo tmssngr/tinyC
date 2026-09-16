@@ -621,27 +621,29 @@ printLeft:
 	var 3: t.3 (u8/1)
 	var 4: t.4 (u8/1)
 	var 5: t.5 (i16/2)
-	var 6: t.6 (u8*/8)
+	var 6: t.6 (i16/2)
 	var 7: t.7 (i16/2)
-	var 8: t.8 (bool/1)
-	var 9: t.9 (i16/2)
-	; 61 pc
+	var 8: t.8 (i16/2)
+	var 9: t.9 (bool/1)
+	var 10: t.10 (i16/2)
+	; 64 pc
 	call count = getHiddenCount[] -> i16
 	call t.3 = getDigitCount@i16[count] -> u8
 	cast leftDigits(i16), t.3(u8)
 	const t.5, 40
 	call t.4 = getDigitCount@i16[t.5] -> u8
 	cast bombDigits(i16), t.4(u8)
-	const t.6, [string-1]
-	call printString@@u8[t.6]
-	move t.7, bombDigits
-	sub t.7, t.7, leftDigits
-	call printSpaces@i16[t.7]
+	const t.6, 20
+	const t.7, 6
+	call setCursor@i16@i16[t.6, t.7]
+	move t.8, bombDigits
+	sub t.8, t.8, leftDigits
+	call printSpaces@i16[t.8]
 	call printUint@i16[count]
 	; 156:15 return count == 0
-	const t.9, 0
-	equals t.8, count, t.9
-	ret t.8
+	const t.10, 0
+	equals t.9, count, t.10
+	ret t.9
 
 abs@i16:
  Local variables
@@ -852,50 +854,53 @@ main:
 	var 4: cell (u8/1)
 	var 5: cell (u8/1)
 	var 6: t.6 (i32/4)
-	var 7: t.7 (bool/1)
-	var 8: t.8 (bool/1)
+	var 7: t.7 (i16/2)
+	var 8: t.8 (i16/2)
 	var 9: t.9 (u8*/8)
 	var 10: t.10 (bool/1)
-	var 11: t.11 (i16/2)
-	var 12: t.12 (bool/1)
-	var 13: t.13 (i16/2)
+	var 11: t.11 (bool/1)
+	var 12: t.12 (u8*/8)
+	var 13: t.13 (bool/1)
 	var 14: t.14 (i16/2)
-	var 15: t.15 (i16/2)
+	var 15: t.15 (bool/1)
 	var 16: t.16 (i16/2)
 	var 17: t.17 (i16/2)
 	var 18: t.18 (i16/2)
-	var 19: t.19 (bool/1)
+	var 19: t.19 (i16/2)
 	var 20: t.20 (i16/2)
 	var 21: t.21 (i16/2)
-	var 22: t.22 (i16/2)
+	var 22: t.22 (bool/1)
 	var 23: t.23 (i16/2)
-	var 24: t.24 (bool/1)
+	var 24: t.24 (i16/2)
 	var 25: t.25 (i16/2)
 	var 26: t.26 (i16/2)
-	var 27: t.27 (i16/2)
+	var 27: t.27 (bool/1)
 	var 28: t.28 (i16/2)
 	var 29: t.29 (i16/2)
 	var 30: t.30 (i16/2)
-	var 31: t.31 (bool/1)
+	var 31: t.31 (i16/2)
 	var 32: t.32 (i16/2)
 	var 33: t.33 (i16/2)
-	var 34: t.34 (i16/2)
+	var 34: t.34 (bool/1)
 	var 35: t.35 (i16/2)
-	var 36: t.36 (bool/1)
+	var 36: t.36 (i16/2)
 	var 37: t.37 (i16/2)
-	var 38: t.38 (bool/1)
+	var 38: t.38 (i16/2)
 	var 39: t.39 (bool/1)
-	var 40: t.40 (bool/1)
-	var 41: t.41 (u8/1)
+	var 40: t.40 (i16/2)
+	var 41: t.41 (bool/1)
 	var 42: t.42 (bool/1)
-	var 43: t.43 (i16/2)
-	var 44: t.44 (bool/1)
+	var 43: t.43 (bool/1)
+	var 44: t.44 (u8/1)
 	var 45: t.45 (bool/1)
-	var 46: t.46 (u8/1)
-	var 47: t.47 (u8/1)
+	var 46: t.46 (i16/2)
+	var 47: t.47 (bool/1)
 	var 48: t.48 (bool/1)
-	var 49: t.49 (u8*/8)
-	; 402 pc
+	var 49: t.49 (u8/1)
+	var 50: t.50 (u8/1)
+	var 51: t.51 (bool/1)
+	var 52: t.52 (u8*/8)
+	; 417 pc
 	; begin initialize global variables
 	const __random__, 0
 	; end initialize global variables
@@ -905,142 +910,147 @@ main:
 	call clearField[]
 	const curr_c, 20
 	const curr_r, 10
-	; 219:2 while true
+	const t.7, 20
+	const t.8, 0
+	call setCursor@i16@i16[t.7, t.8]
+	const t.9, [string-1]
+	call printString@@u8[t.9]
+	; 221:2 while true
 	jump while_40
 if_41_then:
-	; 222:4 if printLeft([])
-	call t.8 = printLeft[] -> bool
-	branch t.8, true, if_42_then, if_41_end
+	; 224:4 if printLeft([])
+	call t.11 = printLeft[] -> bool
+	branch t.11, true, if_42_then, if_41_end
 if_41_end:
 	call chr = getChar[] -> i16
-	; 229:3 if chr == 27
-	const t.11, 27
-	equals t.10, chr, t.11
-	branch t.10, true, main_ret, if_43_end
-	; 234:3 if chr == -8120
-	const t.13, -8120
-	equals t.12, chr, t.13
-	branch t.12, true, if_44_then, if_44_else
-	; 238:8 if chr == -8112
-	const t.20, -8112
-	equals t.19, chr, t.20
-	branch t.19, false, if_45_else, if_45_then
+	; 231:3 if chr == 27
+	const t.14, 27
+	equals t.13, chr, t.14
+	branch t.13, true, main_ret, if_43_end
+	; 236:3 if chr == -8120
+	const t.16, -8120
+	equals t.15, chr, t.16
+	branch t.15, true, if_44_then, if_44_else
+	; 240:8 if chr == -8112
+	const t.23, -8112
+	equals t.22, chr, t.23
+	branch t.22, false, if_45_else, if_45_then
 	jump if_45_then
 if_44_then:
-	const t.16, 20
-	move t.15, curr_r
-	add t.15, t.15, t.16
-	const t.17, 1
-	move t.14, t.15
-	sub t.14, t.14, t.17
-	const t.18, 20
-	move curr_r, t.14
-	mod curr_r, curr_r, t.18
+	const t.19, 20
+	move t.18, curr_r
+	add t.18, t.18, t.19
+	const t.20, 1
+	move t.17, t.18
+	sub t.17, t.17, t.20
+	const t.21, 20
+	move curr_r, t.17
+	mod curr_r, curr_r, t.21
 	jump while_40
 if_45_else:
-	; 242:8 if chr == -8117
-	const t.25, -8117
-	equals t.24, chr, t.25
-	branch t.24, false, if_46_else, if_46_then
+	; 244:8 if chr == -8117
+	const t.28, -8117
+	equals t.27, chr, t.28
+	branch t.27, false, if_46_else, if_46_then
 	jump if_46_then
 if_45_then:
-	const t.22, 1
-	move t.21, curr_r
-	add t.21, t.21, t.22
-	const t.23, 20
-	move curr_r, t.21
-	mod curr_r, curr_r, t.23
+	const t.25, 1
+	move t.24, curr_r
+	add t.24, t.24, t.25
+	const t.26, 20
+	move curr_r, t.24
+	mod curr_r, curr_r, t.26
 	jump while_40
 if_46_else:
-	; 246:8 if chr == -8115
-	const t.32, -8115
-	equals t.31, chr, t.32
-	branch t.31, false, if_47_else, if_47_then
+	; 248:8 if chr == -8115
+	const t.35, -8115
+	equals t.34, chr, t.35
+	branch t.34, false, if_47_else, if_47_then
 	jump if_47_then
 if_46_then:
-	const t.28, 40
-	move t.27, curr_c
-	add t.27, t.27, t.28
-	const t.29, 1
-	move t.26, t.27
-	sub t.26, t.26, t.29
-	const t.30, 40
-	move curr_c, t.26
-	mod curr_c, curr_c, t.30
+	const t.31, 40
+	move t.30, curr_c
+	add t.30, t.30, t.31
+	const t.32, 1
+	move t.29, t.30
+	sub t.29, t.29, t.32
+	const t.33, 40
+	move curr_c, t.29
+	mod curr_c, curr_c, t.33
 	jump while_40
 if_47_else:
-	; 250:8 if chr == 32
-	const t.37, 32
-	equals t.36, chr, t.37
-	branch t.36, false, if_48_else, if_48_then
+	; 252:8 if chr == 32
+	const t.40, 32
+	equals t.39, chr, t.40
+	branch t.39, false, if_48_else, if_48_then
 	jump if_48_then
 if_47_then:
-	const t.34, 1
-	move t.33, curr_c
-	add t.33, t.33, t.34
-	const t.35, 40
-	move curr_c, t.33
-	mod curr_c, curr_c, t.35
+	const t.37, 1
+	move t.36, curr_c
+	add t.36, t.36, t.37
+	const t.38, 40
+	move curr_c, t.36
+	mod curr_c, curr_c, t.38
 	jump while_40
 if_48_else:
-	; 259:8 if chr == 13
-	const t.43, 13
-	equals t.42, chr, t.43
-	branch t.42, false, while_40, if_51_then
+	; 261:8 if chr == 13
+	const t.46, 13
+	equals t.45, chr, t.46
+	branch t.45, false, while_40, if_51_then
 	jump if_51_then
 if_48_then:
-	; 251:4 if !needsInitialize
-	notlog t.38, needsInitialize
-	branch t.38, false, while_40, if_49_then
+	; 253:4 if !needsInitialize
+	notlog t.41, needsInitialize
+	branch t.41, false, while_40, if_49_then
 	jump if_49_then
 if_51_then:
 	branch needsInitialize, false, if_52_end, if_52_then
 	jump if_52_then
 if_49_then:
 	call cell = getCell@i16@i16[curr_r, curr_c] -> u8
-	; 253:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=253:17]])
-	call t.40 = isOpen@u8[cell] -> bool
-	notlog t.39, t.40
-	branch t.39, false, while_40, if_50_then
+	; 255:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=255:17]])
+	call t.43 = isOpen@u8[cell] -> bool
+	notlog t.42, t.43
+	branch t.42, false, while_40, if_50_then
 	jump if_50_then
 if_52_then:
 	const needsInitialize, 0
 	call initField@i16@i16[curr_r, curr_c]
 	jump if_52_end
 if_50_then:
-	const t.41, 4
-	xor cell, cell, t.41
+	const t.44, 4
+	xor cell, cell, t.44
 	call setCell@i16@i16@u8[curr_r, curr_c, cell]
 	jump while_40
 if_52_end:
 	call cell = getCell@i16@i16[curr_r, curr_c] -> u8
-	; 265:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=265:16]])
-	call t.45 = isOpen@u8[cell] -> bool
-	notlog t.44, t.45
-	branch t.44, false, if_53_end, if_53_then
-	const t.47, 2
-	move t.46, cell
-	or t.46, t.46, t.47
-	call setCell@i16@i16@u8[curr_r, curr_c, t.46]
+	; 267:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=267:16]])
+	call t.48 = isOpen@u8[cell] -> bool
+	notlog t.47, t.48
+	branch t.47, false, if_53_end, if_53_then
+	const t.50, 2
+	move t.49, cell
+	or t.49, t.49, t.50
+	call setCell@i16@i16@u8[curr_r, curr_c, t.49]
 if_53_end:
-	; 268:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=268:15]])
-	call t.48 = isBomb@u8[cell] -> bool
-	branch t.48, true, if_54_then, if_54_end
+	; 270:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=270:15]])
+	call t.51 = isBomb@u8[cell] -> bool
+	branch t.51, true, if_54_then, if_54_end
 	call maybeRevealAround@i16@i16[curr_r, curr_c]
 while_40:
 	call printField@i16@i16[curr_r, curr_c]
-	; 221:3 if !needsInitialize
-	notlog t.7, needsInitialize
-	branch t.7, false, if_41_end, if_41_then
+	; 223:3 if !needsInitialize
+	notlog t.10, needsInitialize
+	branch t.10, false, if_41_end, if_41_then
 	jump if_41_then
 if_42_then:
-	const t.9, [string-2]
-	call printString@@u8[t.9]
+	const t.12, [string-2]
+	call printString@@u8[t.12]
 	jump main_ret
 if_54_then:
 	call printField@i16@i16[curr_r, curr_c]
-	const t.49, [string-3]
-	call printString@@u8[t.49]
+	const t.52, [string-3]
+	call printString@@u8[t.52]
 main_ret:
 
 printStringLength@@u8@i64:
@@ -1079,9 +1089,9 @@ setCursor@i16@i16:
 	
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     dx, [rdi+10h]
-	shl     rdx, 16
 	mov     dx, [rdi+18h]
+	shl     rdx, 16
+	mov     dx, [rdi+10h]
 	sub     rsp, 20h
 	  call   [SetConsoleCursorPosition]
 	mov     rsp, rdi
@@ -1093,6 +1103,6 @@ Global variables
 
 String literals
 	string lit 0 "|\n\0"
-	string lit 1 "Left: \0"
+	string lit 1 "Left:\0"
 	string lit 2 " You've cleaned the field!\0"
 	string lit 3 "boom! you've lost\0"
