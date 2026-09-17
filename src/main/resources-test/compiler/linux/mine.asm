@@ -2136,7 +2136,7 @@ segment readable writable
 
 segment readable
         string_0 db '|', 0x0a, 0x00
-        string_1 db 'Left: ', 0x00
+        string_1 db 'Left:', 0x00
         string_2 db ' You', 0x27, 've cleaned the field!', 0x00
         string_3 db 'boom! you', 0x27, 've lost', 0x00
 

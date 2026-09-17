@@ -1,0 +1,31 @@
+printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+	; 0 pc
+printIntLf@u8_ret:
+
+main:
+ Local variables
+	var 0: i (u8/1)
+	; 25 pc
+	const i, 5
+	; 5:2 while i > 0
+while_1:
+	branch i lteq 0: while_1_break, while_1_body
+while_1_body:
+	call printIntLf@u8[i]
+	sub i, i, 1
+	jump while_1
+while_1_break:
+	; 10:2 while true
+while_2:
+	call printIntLf@u8[i]
+	add i, i, 1
+	; 13:3 if i < 5
+	branch i lt 5: while_2, while_2_break
+while_2_break:
+	; 19:2 while true
+while_4:
+	; 20:3 return
+main_ret:
+

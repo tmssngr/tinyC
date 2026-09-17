@@ -335,7 +335,7 @@ void main() {
 	curr_c = 20;
 	curr_r = 10;
 	setCursor@i16@i16(20, 0);
-	printString@@u8("Left: ");
+	printString@@u8("Left:");
 	while (true) {
 		printField@i16@i16(curr_r, curr_c);
 		if (!needsInitialize) {
