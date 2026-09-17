@@ -120,15 +120,17 @@ public class TypeCheckerTest {
 		            """
 				            u8 a = 1;
 				            u8 foo() {
-				              if (a > 0)
+				              if (a > 0) {
 				                return;
+				              }
 				            }""");
 		testIllegal(Messages.cantReturnAnythingFromVoidFunction(), 3, 4,
 		            """
 				            u8 a = 1;
 				            void foo() {
-				              if (a > 0)
+				              if (a > 0) {
 				                return a;
+				              }
 				            }""");
 		testIllegal(Messages.undeclaredFunction("bar", List.of(), List.of()), 1, 2,
 		            """
