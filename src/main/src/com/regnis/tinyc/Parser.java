@@ -915,6 +915,7 @@ public final class Parser {
 		}
 
 		public void parse() {
+			System.out.println("Reading " + file.toAbsolutePath());
 			try (final BufferedReader reader = Files.newBufferedReader(file)) {
 				final Parser parser = new Parser(new Lexer(() -> {
 					try {
