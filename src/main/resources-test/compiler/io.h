@@ -56,12 +56,20 @@ void printIntLf(i16 number) {
 }
 
 void printIntLf(i64 number) {
+	printInt(number)
+	printChar('\n');
+}
+
+void printInt(i16 number) {
+	printInt((i64)number)
+}
+
+void printInt(i64 number) {
 	if (number < 0) {
 		printChar('-');
 		number = -number;
 	}
 	printUint(number);
-	printChar('\n');
 }
 
 i64 strlen(u8* str) {
@@ -79,4 +87,12 @@ void printStringLength(u8* str, u8 length) {
 #endif
 #ifdef Z8
   #include "z8.h"
+
+void printInt(i16 number) {
+	if (number < 0) {
+		printChar('-')
+		number = -number
+	}
+	printUint(number)
+}
 #endif

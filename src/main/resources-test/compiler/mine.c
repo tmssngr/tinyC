@@ -42,16 +42,22 @@ void setCell(i16 row, i16 column, u8 cell) {
 }
 
 u8 getBombCountAround(i16 row, i16 column) {
-	u8 count = 0;
+	u8 count = 0
 	for (i16 dr = -1; dr <= 1; dr = dr + 1) {
-		i16 r = row + dr;
+		i16 r = row + dr
+		if r < 0 || r >= height {
+			continue
+		}
+
 		for (i16 dc = -1; dc <= 1; dc = dc + 1) {
 			i16 c = column + dc;
-			if (checkCellBounds(r, c)) {
-				u8 cell = getCell(r, c);
-				if (isBomb(cell)) {
-					count = count + 1;
-				}
+			if c < 0 || c >= width {
+				continue
+			}
+
+			u8 cell = getCell(r, c);
+			if (isBomb(cell)) {
+				count = count + 1;
 			}
 		}
 	}
@@ -88,6 +94,16 @@ void printCell(u8 cell, i16 row, i16 column) {
 		}
 	}
 	printChar(chr);
+}
+
+void printCellAt(i16 row, i16 column) {
+	u8 cell = getCell(row, column)
+	printCellAt(cell, row, column)
+}
+
+void printCellAt(u8 cell, i16 row, i16 column) {
+	setCursor(row, getX(column))
+	printCell(cell, row, column)
 }
 
 void printField() {
@@ -199,70 +215,86 @@ void initField(i16 curr_r, i16 curr_c) {
 	}
 }
 
-void revealCells(i16 row, i16 left, i16 right) {
-	setCursor(row, getX(left));
-	for (i16 c = left; c <= right; c = c + 1) {
-		u8 cell = getCell(row, c);
-		cell = cell | maskOpen;
-		setCell(row, c, cell);
-		printCell(cell, row, c);
-		printChar(' ');
-	}
-}
-
 void maybeRevealAround(i16 row, i16 column) {
+	printCellAt(row, column)
 	if getBombCountAround(row, column) != 0 {
 		return;
 	}
 
-	i16 left = column
-	while left > 0 {
-		left = left - 1
-		if getBombCountAround(row, left) != 0 {
-			left = left + 1
-			break;
-		}
-	}
+	i16 left = revealToLeft(row, column)
+	i16 right = revealToRight(row, column)
 
-	i16 right = column
-	while true {
+	i16 prevRow = row - 1
+	if prevRow >= 0 {
+		revealAround(prevRow, left, right, true)
+	}
+	i16 nextRow = row + 1
+	if nextRow < height {
+		revealAround(nextRow, left, right, false)
+	}
+}
+
+void revealAround(i16 row, i16 prevLeft, i16 prevRight, bool upwards) {
+	i16 left = revealToLeft(row, prevLeft)
+	i16 right = revealToRight(row, prevLeft)
+
+	while right < prevRight {
 		right = right + 1
-		if right >= width ||
-		   getBombCountAround(row, right) != 0 {
-			right = right - 1
-			break;
+		isRevealCell(row, right)
+	}
+}
+
+u8 isRevealCell(i16 row, i16 column) {
+	u8 cell = getCell(row, column)
+	if isOpen(cell) {
+		return 0
+	}
+	
+	cell = cell | maskOpen
+	setCell(row, column, cell)
+	printCellAt(cell, row, column)
+	return getBombCountAround(row, column) + 1
+}
+
+
+i16 revealToLeft(i16 row, i16 column) {
+	isRevealCell(row, column)
+	while true {
+		column = column - 1
+		if column < 0 {
+			break
+		}
+
+		if isRevealCell(row, column) != 1 {
+			break
 		}
 	}
-/*
-	printIntLf(row);
-	printIntLf(left);
-	printIntLf(right);
-	*/
-	revealCells(row, left, right)
+	return column + 1
+}
 
-/*
-	for (i16 dr = -1; dr <= 1; dr = dr + 1) {
-		i16 r = row + dr;
-		for (i16 dc = -1; dc <= 1; dc = dc + 1) {
-			if (dr == 0 && dc == 0) {
-				continue;
-			}
+i16 revealToRight(i16 row, i16 column) {
+	isRevealCell(row, column)
+	while true {
+		column = column + 1
+		if column >= width {
+			break
+		}
 
-			i16 c = column + dc;
-			if (!checkCellBounds(r, c)) {
-				continue;
-			}
-
-			u8 cell = getCell(r, c);
-			if (isOpen(cell)) {
-				continue;
-			}
-
-			setCell(r, c, cell | maskOpen);
-			maybeRevealAround(r, c);
+		if isRevealCell(row, column) != 1 {
+			break
 		}
 	}
-*/
+	return column - 1
+}
+
+void printCellDetails(i16 row, i16 column) {
+	setCursor(height, 10)
+	printInt(row)
+	printChar('x')
+	printInt(column)
+	printChar(':')
+	printUint(getCell(row, column))
+	printChar(' ')
 }
 
 void main() {
@@ -282,6 +314,7 @@ void main() {
 			}
 		}
 
+		printCellDetails(curr_r, curr_c)
 		printCursor(curr_r, curr_c, true);
 		i16 chr = getChar();
 		printCursor(curr_r, curr_c, false);
