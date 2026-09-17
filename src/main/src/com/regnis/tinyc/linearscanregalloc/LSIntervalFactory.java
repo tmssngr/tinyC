@@ -471,7 +471,7 @@ final class LSIntervalFactory {
 				// no range yet?
 				if (interval.getFrom() < 0) {
 					Utils.assertTrue(var.index() == 0);
-					setRegisterInterval(var, interval, pos, pos + 1);
+					interval.add(pos, pos + 1);
 				}
 				else {
 					interval.truncateFirstRangeTo(pos);
@@ -496,22 +496,6 @@ final class LSIntervalFactory {
 		return pointerIntType != null
 				? Type.getSize(var.type(), pointerIntType)
 				: 1;
-	}
-
-	private void setRegisterInterval(IRVar var, LSInterval interval, int from, int to) {
-		Utils.assertTrue(var.scope() == VariableScope.register);
-		Utils.assertTrue(var.index() == interval.register());
-		interval.add(from, to);
-		if (pointerIntType == null) {
-			return;
-		}
-
-		int size = Type.getSize(var.type(), pointerIntType);
-		int register = interval.register() + 1;
-		for (size--; size > 0; size--, register++) {
-			interval = getRegisterInterval(register);
-			interval.add(from, to);
-		}
 	}
 
 	@NotNull

@@ -872,6 +872,6 @@ Global variables
 
 String literals
 	string lit 0 "|\n\0"
-	string lit 1 "Left: \0"
+	string lit 1 "Left:\0"
 	string lit 2 " You've cleaned the field!\0"
 	string lit 3 "boom! you've lost\0"

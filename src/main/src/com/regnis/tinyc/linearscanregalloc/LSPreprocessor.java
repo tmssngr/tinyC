@@ -6,6 +6,7 @@ import com.regnis.tinyc.cfg.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.*;
 public final class LSPreprocessor {
 
 	@NotNull
-	public static Pair<IRVarInfos, List<IRInstruction>> process(@NotNull IRFunction function, @NotNull LSCallingConventionProvider callingConventionProvider, @Nullable X86Registers x86Registers, @NotNull Type pointerIntType) {
+	public static Pair<IRVarInfos, List<IRInstruction>> process(@NotNull IRFunction function, @NotNull LSCallingConventionProvider callingConventionProvider, @Nullable X86Registers x86Registers, boolean hasStackSlotsForRegisterVars, @NotNull Type pointerIntType) {
 		final List<IRInstruction> instructions = function.instructions();
 
 		final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(function.returnType(), function.varInfos().getArgumentTypes());
@@ -23,22 +24,53 @@ public final class LSPreprocessor {
 		final IRLocalVarFactory tempVarFactory = new IRLocalVarFactory(function.varInfos(), pointerIntType);
 
 		final var resultLayer = new LSPreprocessorResultLayer();
-		// storing register parameters on the stack is done before any other processing
-		storeRegisterArgsInVars(function.varInfos(), callingConvention.argRegisters(), instructions, resultLayer);
+
+		Map<IRVar, IRVar> varToNewVar = Map.of();
+		if (hasStackSlotsForRegisterVars) {
+			// storing register parameters on the stack is done before any other processing
+			storeRegisterArgsInVars(function.varInfos(), callingConvention.argRegisters(), instructions, resultLayer);
+		}
+		else {
+			varToNewVar = storeRegisterArgsInNewVars(function.varInfos(), callingConvention.argRegisters(), instructions, tempVarFactory, resultLayer);
+		}
 
 		LSPreprocessorLayer nextLayer = new LSPreprocessorCallingConventionLayer(function.varInfos(), tempVarFactory, callingConventionProvider, resultLayer);
 		if (x86Registers != null) {
 			nextLayer = new LSPreprocessorX86OperationsLayer(x86Registers, nextLayer);
 		}
 
-		final var globalVarPreprocessor = new LSPreprocessorCachedVarLayer(function.varInfos(), tempVarFactory, nextLayer);
-		LSPreprocessorLayer.process(globalVarPreprocessor, instructions);
+		nextLayer = new LSPreprocessorCachedVarLayer(function.varInfos(), tempVarFactory, nextLayer);
+
+		if (varToNewVar.size() > 0) {
+			nextLayer = new LSPreprocessorReplaceVarLayer(varToNewVar, nextLayer);
+		}
+
+		LSPreprocessorLayer.process(nextLayer, instructions);
 
 		final IRVarInfos varInfos = tempVarFactory.createVarInfos();
 		return new Pair<>(varInfos, resultLayer.instructions);
 	}
 
 	private static void storeRegisterArgsInVars(IRVarInfos varInfos, List<Integer> argRegisters, List<IRInstruction> instructions, LSPreprocessorLayer layer) {
+		foreachRegisterParameter(varInfos, argRegisters, instructions, var -> {
+			final int argRegister = argRegisters.get(var.index());
+			layer.process(new IRMove(var, var.asRegister(argRegister)));
+		});
+	}
+
+	private static Map<IRVar, IRVar> storeRegisterArgsInNewVars(IRVarInfos varInfos, List<Integer> argRegisters, List<IRInstruction> instructions, IRLocalVarFactory tempVarFactory, LSPreprocessorLayer layer) {
+		final Map<IRVar, IRVar> registerArgToVarMap = new HashMap<>();
+		foreachRegisterParameter(varInfos, argRegisters, instructions, var -> {
+			final IRVar functionVar = tempVarFactory.createVar(var, "param." + var.name());
+			final int argRegister = argRegisters.get(var.index());
+			layer.process(new IRMove(functionVar, var.asRegister(argRegister)));
+			final IRVar prev = registerArgToVarMap.put(var, functionVar);
+			Utils.assertTrue(prev == null);
+		});
+		return registerArgToVarMap;
+	}
+
+	private static void foreachRegisterParameter(IRVarInfos varInfos, List<Integer> argRegisters, List<IRInstruction> instructions, Consumer<IRVar> consumer) {
 		final ControlFlowGraph cfg = CfgGenerator.create("name", instructions);
 		DetectVarLiveness.process(cfg, varInfos.cantBeRegister(), false);
 		final Set<IRVar> liveBefore = cfg.blocks().getFirst().getLiveBefore();
@@ -58,8 +90,7 @@ public final class LSPreprocessor {
 				continue;
 			}
 
-			final int argRegister = argRegisters.get(index);
-			layer.process(new IRMove(var, var.asRegister(argRegister)));
+			consumer.accept(var);
 		}
 	}
 }
