@@ -186,8 +186,18 @@ public class Messages {
 	}
 
 	@NotNull
+	public static String expected(String chr) {
+		return "Expected " + chr;
+	}
+
+	@NotNull
 	public static String expectedStatement() {
 		return "Expected statement";
+	}
+
+	@NotNull
+	public static String expectedStatementOrClosingBrace() {
+		return "Expected statement or }";
 	}
 
 	@NotNull
