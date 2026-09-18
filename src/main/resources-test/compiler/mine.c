@@ -3,7 +3,7 @@
 
 const width = 17;
 const height = 20;
-const bombRatio = 50;
+const bombRatio = 70;
 const bombCount = height * width * bombRatio / 1000;
 
 const maskBomb = 1;
@@ -16,26 +16,6 @@ i16 rowColumnToCell(u8 row, u8 column) {
 	i16 r = (i16)row
 	i16 c = (i16)column
 	return r * width + c;
-}
-
-u8 getCell(u8 row, u8 column) {
-	return field[rowColumnToCell(row, column)];
-}
-
-bool isBomb(u8 cell) {
-	return (cell & maskBomb) != 0;
-}
-
-bool isOpen(u8 cell) {
-	return (cell & maskOpen) != 0;
-}
-
-bool isFlag(u8 cell) {
-	return (cell & maskFlag) != 0;
-}
-
-void setCell(u8 row, u8 column, u8 cell) {
-	field[rowColumnToCell(row, column)] = cell;
 }
 
 u8 getBombCountAround(u8 row, u8 column) {
@@ -58,16 +38,19 @@ u8 getBombCountAround(u8 row, u8 column) {
 	}
 	
 	u8 count = 0;
+	i16 index = rowColumnToCell(rowFrom, colFrom)
 	for (u8 r = rowFrom; r <= rowTo; r = r + 1) {
-		for (u8 c = colFrom; c <= colTo; c = c + 1) {
+		for (u8 c = colFrom; c <= colTo; c = c + 1, index = index + 1) {
 			if r == row && c == column {
 				continue
 			}
-			u8 cell = getCell(r, c)
-			if isBomb(cell) {
+
+			u8 cell = field[index]
+			if (cell & maskBomb) != 0 {
 				count = count + 1;
 			}
 		}
+		index = index - (i16)colTo + (i16)colFrom + width - 1
 	}
 	return count;
 }
@@ -78,7 +61,7 @@ i16 columnToX(u8 column) {
 }
 
 void printCellAt(u8 row, u8 column) {
-	u8 cell = getCell(row, column)
+	u8 cell = field[rowColumnToCell(row, column)]
 	printCellAt(cell, row, column)
 }
 
@@ -90,8 +73,8 @@ void printCellAt(u8 cell, u8 row, u8 column) {
 
 void printCell(u8 cell, u8 row, u8 column) {
 	u8 chr = '.';
-	if (isOpen(cell)) {
-		if (isBomb(cell)) {
+	if (cell & maskOpen) != 0 {
+		if (cell & maskBomb) != 0 {
 			chr = '*';
 		}
 		else {
@@ -104,7 +87,7 @@ void printCell(u8 cell, u8 row, u8 column) {
 			}
 		}
 	}
-	else if (isFlag(cell)) {
+	else if ((cell & maskFlag) != 0) {
 		chr = '#';
 	}
 	printChar(chr);
@@ -116,7 +99,7 @@ void printField() {
 		printChar('|');
 		for (u8 column = 0; column < width; column = column + 1) {
 			printChar(' ');
-			u8 cell = getCell(row, column);
+			u8 cell = field[rowColumnToCell(row, column)]
 			printCell(cell, row, column);
 		}
 		printString(" |\n");
@@ -167,7 +150,7 @@ i16 getHiddenCount() {
 	i16 count = 0;
 	for (u8 r = 0; r < height; r = r + 1) {
 		for (u8 c = 0; c < width; c = c + 1) {
-			u8 cell = getCell(r, c);
+			u8 cell = field[rowColumnToCell(r, c)]
 			if ((cell & (maskFlag | maskOpen)) == 0) {
 				count = count + 1;
 			}
@@ -195,10 +178,9 @@ i16 abs(i16 a) {
 }
 
 void clearField() {
-	for (u8 r = 0; r < height; r = r + 1) {
-		for (u8 c = 0; c < width; c = c + 1) {
-			setCell(r, c, 0);
-		}
+	i16 index = 0
+	for (i16 i = (i16)width * (i16)height; i > 0; i = i - 1) {
+		field[index] = 0
 	}
 }
 
@@ -210,7 +192,7 @@ void initField(u8 curr_r, u8 curr_c) {
 		i16 column = random16() % width;
 		if (abs(row    - r) > 1 ||
 		    abs(column - c) > 1) {
-			setCell((u8)row, (u8)column, maskBomb);
+			field[rowColumnToCell((u8)row, (u8)column)] = maskBomb
 		}
 	}
 }
@@ -238,20 +220,22 @@ void maybeRevealAround(u8 row, u8 column) {
 	if colTo >= width {
 		colTo = colTo - 1
 	}
+	i16 index = rowColumnToCell(rowFrom, colFrom)
 	for (u8 r = rowFrom; r <= rowTo; r = r + 1) {
-		for (u8 c = colFrom; c <= colTo; c = c + 1) {
+		for (u8 c = colFrom; c <= colTo; c = c + 1, index = index + 1) {
 			if (r == row && c == column) {
 				continue;
 			}
 
-			u8 cell = getCell(r, c);
-			if (isOpen(cell)) {
+			u8 cell = field[index]
+			if (cell & maskOpen) != 0 {
 				continue;
 			}
 
-			setCell(r, c, cell | maskOpen);
+			field[index] = cell | maskOpen
 			maybeRevealAround(r, c);
 		}
+		index = index - (i16)colTo + (i16)colFrom + width - 1
 	}
 }
 
@@ -284,11 +268,12 @@ void main() {
 				needsInitialize = false;
 				initField(curr_r, curr_c);
 			}
-			u8 cell = getCell(curr_r, curr_c);
-			if (!isOpen(cell)) {
-				setCell(curr_r, curr_c, cell | maskOpen);
+			i16 index = rowColumnToCell(curr_r, curr_c)
+			u8 cell = field[index]
+			if (cell & maskOpen) == 0 {
+				field[index] = cell | maskOpen
 			}
-			if (isBomb(cell)) {
+			if (cell & maskBomb) != 0 {
 				printCellAt(curr_r, curr_c)
 				printString("boom! you've lost");
 				break;
@@ -322,10 +307,11 @@ void main() {
 		// space = flag
 		else if (chr == 0x20) {
 			if (!needsInitialize) {
-				u8 cell = getCell(curr_r, curr_c);
-				if (!isOpen(cell)) {
+				i16 index = rowColumnToCell(curr_r, curr_c)
+				u8 cell = field[index]
+				if (cell & maskOpen) == 0 {
 					cell = cell ^ maskFlag;
-					setCell(curr_r, curr_c, cell);
+					field[index] = cell
 					printCellAt(cell, curr_r, curr_c)
 				}
 			}
