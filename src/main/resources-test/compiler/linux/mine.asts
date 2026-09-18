@@ -92,32 +92,13 @@ i16 rowColumnToCell@u8@u8(u8 row, u8 column) {
 	return (r * 17) + c;
 }
 
-u8 getCell@u8@u8(u8 row, u8 column) {
-	return field[(i64)(rowColumnToCell@u8@u8(row, column))];
-}
-
-bool isBomb@u8(u8 cell) {
-	return (cell & 1) != 0;
-}
-
-bool isOpen@u8(u8 cell) {
-	return (cell & 2) != 0;
-}
-
-bool isFlag@u8(u8 cell) {
-	return (cell & 4) != 0;
-}
-
-void setCell@u8@u8@u8(u8 row, u8 column, u8 cell) {
-	field[(i64)(rowColumnToCell@u8@u8(row, column))] = cell;
-}
-
 u8 getBombCountAround@u8@u8(u8 row, u8 column) {
 	u8 rowFrom;
 	u8 rowTo;
 	u8 colFrom;
 	u8 colTo;
 	u8 count;
+	i16 index;
 	u8 r;
 	u8 c;
 	u8 cell;
@@ -139,18 +120,20 @@ u8 getBombCountAround@u8@u8(u8 row, u8 column) {
 		colTo = colTo - 1;
 	}
 	count = 0;
+	index = rowColumnToCell@u8@u8(rowFrom, colFrom);
 	r = rowFrom;
 	for (; r <= rowTo; r = r + 1) {
 		c = colFrom;
-		for (; c <= colTo; c = c + 1) {
+		for (; c <= colTo; c = c + 1, index = index + 1) {
 			if ((r == row) && (c == column)) {
 				continue;
 			}
-			cell = getCell@u8@u8(r, c);
-			if (isBomb@u8(cell)) {
+			cell = field[(i64)index];
+			if ((cell & 1) != 0) {
 				count = count + 1;
 			}
 		}
+		index = (((index - ((i16)colTo)) + ((i16)colFrom)) + 17) - 1;
 	}
 	return count;
 }
@@ -165,7 +148,7 @@ i16 columnToX@u8(u8 column) {
 void printCellAt@u8@u8(u8 row, u8 column) {
 	u8 cell;
 
-	cell = getCell@u8@u8(row, column);
+	cell = field[(i64)(rowColumnToCell@u8@u8(row, column))];
 	printCellAt@u8@u8@u8(cell, row, column);
 }
 
@@ -182,8 +165,8 @@ void printCell@u8@u8@u8(u8 cell, u8 row, u8 column) {
 	u8 count;
 
 	chr = 46;
-	if (isOpen@u8(cell)) {
-		if (isBomb@u8(cell)) {
+	if ((cell & 2) != 0) {
+		if ((cell & 1) != 0) {
 			chr = 42;
 		}
 		else {
@@ -197,7 +180,7 @@ void printCell@u8@u8@u8(u8 cell, u8 row, u8 column) {
 		}
 	}
 	else {
-		if (isFlag@u8(cell)) {
+		if ((cell & 4) != 0) {
 			chr = 35;
 		}
 	}
@@ -216,7 +199,7 @@ void printField() {
 		column = 0;
 		for (; column < 17; column = column + 1) {
 			printChar@u8(32);
-			cell = getCell@u8@u8(row, column);
+			cell = field[(i64)(rowColumnToCell@u8@u8(row, column))];
 			printCell@u8@u8@u8(cell, row, column);
 		}
 		printString@@u8(" |\n");
@@ -276,7 +259,7 @@ i16 getHiddenCount() {
 	for (; r < 20; r = r + 1) {
 		c = 0;
 		for (; c < 17; c = c + 1) {
-			cell = getCell@u8@u8(r, c);
+			cell = field[(i64)(rowColumnToCell@u8@u8(r, c))];
 			if ((cell & 6) == 0) {
 				count = count + 1;
 			}
@@ -292,7 +275,7 @@ bool printLeft() {
 
 	count = getHiddenCount();
 	leftDigits = (i16)(getDigitCount@i16(count));
-	bombDigits = (i16)(getDigitCount@i16(17));
+	bombDigits = (i16)(getDigitCount@i16(23));
 	setCursor@i16@i16(20, 6);
 	printSpaces@i16(bombDigits - leftDigits);
 	printUint@i16(count);
@@ -307,15 +290,13 @@ i16 abs@i16(i16 a) {
 }
 
 void clearField() {
-	u8 r;
-	u8 c;
+	i16 index;
+	i16 i;
 
-	r = 0;
-	for (; r < 20; r = r + 1) {
-		c = 0;
-		for (; c < 17; c = c + 1) {
-			setCell@u8@u8@u8(r, c, 0);
-		}
+	index = 0;
+	i = 340;
+	for (; i > 0; i = i - 1) {
+		field[(i64)index] = 0;
 	}
 }
 
@@ -328,12 +309,12 @@ void initField@u8@u8(u8 curr_r, u8 curr_c) {
 
 	r = (i16)curr_r;
 	c = (i16)curr_c;
-	bombs = 17;
+	bombs = 23;
 	for (; bombs > 0; bombs = bombs - 1) {
 		row = (random16()) % 20;
 		column = (random16()) % 17;
 		if (((abs@i16(row - r)) > 1) || ((abs@i16(column - c)) > 1)) {
-			setCell@u8@u8@u8((u8)row, (u8)column, 1);
+			field[(i64)(rowColumnToCell@u8@u8((u8)row, (u8)column))] = 1;
 		}
 	}
 }
@@ -343,6 +324,7 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 	u8 rowTo;
 	u8 colFrom;
 	u8 colTo;
+	i16 index;
 	u8 r;
 	u8 c;
 	u8 cell;
@@ -367,20 +349,22 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 	if (colTo >= 17) {
 		colTo = colTo - 1;
 	}
+	index = rowColumnToCell@u8@u8(rowFrom, colFrom);
 	r = rowFrom;
 	for (; r <= rowTo; r = r + 1) {
 		c = colFrom;
-		for (; c <= colTo; c = c + 1) {
+		for (; c <= colTo; c = c + 1, index = index + 1) {
 			if ((r == row) && (c == column)) {
 				continue;
 			}
-			cell = getCell@u8@u8(r, c);
-			if (isOpen@u8(cell)) {
+			cell = field[(i64)index];
+			if ((cell & 2) != 0) {
 				continue;
 			}
-			setCell@u8@u8@u8(r, c, cell | 2);
+			field[(i64)index] = cell | 2;
 			maybeRevealAround@u8@u8(r, c);
 		}
+		index = (((index - ((i16)colTo)) + ((i16)colFrom)) + 17) - 1;
 	}
 }
 
@@ -389,7 +373,9 @@ void main() {
 	u8 curr_c;
 	u8 curr_r;
 	i16 chr;
+	i16 index;
 	u8 cell;
+	i16 index;
 	u8 cell;
 
 	initRandom@i32(7439742);
@@ -418,11 +404,12 @@ void main() {
 				needsInitialize = false;
 				initField@u8@u8(curr_r, curr_c);
 			}
-			cell = getCell@u8@u8(curr_r, curr_c);
-			if (!(isOpen@u8(cell))) {
-				setCell@u8@u8@u8(curr_r, curr_c, cell | 2);
+			index = rowColumnToCell@u8@u8(curr_r, curr_c);
+			cell = field[(i64)index];
+			if ((cell & 2) == 0) {
+				field[(i64)index] = cell | 2;
 			}
-			if (isBomb@u8(cell)) {
+			if ((cell & 1) != 0) {
 				printCellAt@u8@u8(curr_r, curr_c);
 				printString@@u8("boom! you've lost");
 				break;
@@ -456,10 +443,11 @@ void main() {
 						else {
 							if (chr == 32) {
 								if (!needsInitialize) {
-									cell = getCell@u8@u8(curr_r, curr_c);
-									if (!(isOpen@u8(cell))) {
+									index = rowColumnToCell@u8@u8(curr_r, curr_c);
+									cell = field[(i64)index];
+									if ((cell & 2) == 0) {
 										cell = cell ^ 4;
-										setCell@u8@u8@u8(curr_r, curr_c, cell);
+										field[(i64)index] = cell;
 										printCellAt@u8@u8@u8(cell, curr_r, curr_c);
 									}
 								}
