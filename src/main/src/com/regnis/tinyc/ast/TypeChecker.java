@@ -418,6 +418,11 @@ public final class TypeChecker {
 			throw new SyntaxException(Messages.cantCastFromTo(expressionType, type), location);
 		}
 
+		if (type.equals(expressionType)) {
+			messages.accept(Message.warn(Messages.redundantCast(type), location));
+			return expression;
+		}
+
 		return new ExprCast(typeString, expression, type, location);
 	}
 
@@ -556,13 +561,6 @@ public final class TypeChecker {
 				for (int i = 0; i < expressions.size(); i++) {
 					final Type type = parameterTypes.get(i);
 					final Expression expression = expressions.get(i);
-					if (expression instanceof ExprCast cast) {
-						final Type castType = cast.typeNotNull();
-						if (castType.equals(expression.typeNotNull())) {
-							// todo should later become a warning
-							throw new SyntaxException(Messages.redundantCast(castType), expression.location());
-						}
-					}
 					final Expression castExpression = simpleCast(type, expression, expression.location());
 					expressions.set(i, castExpression);
 				}
