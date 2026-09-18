@@ -83,12 +83,17 @@ i16 random16() {
 	return ((i16)(random())) & 32767;
 }
 
-i16 rowColumnToCell@i16@i16(i16 row, i16 column) {
-	return (row * 17) + column;
+i16 rowColumnToCell@u8@u8(u8 row, u8 column) {
+	i16 r;
+	i16 c;
+
+	r = (i16)row;
+	c = (i16)column;
+	return (r * 17) + c;
 }
 
-u8 getCell@i16@i16(i16 row, i16 column) {
-	return field[(i64)(rowColumnToCell@i16@i16(row, column))];
+u8 getCell@u8@u8(u8 row, u8 column) {
+	return field[(i64)(rowColumnToCell@u8@u8(row, column))];
 }
 
 bool isBomb@u8(u8 cell) {
@@ -103,53 +108,76 @@ bool isFlag@u8(u8 cell) {
 	return (cell & 4) != 0;
 }
 
-bool checkCellBounds@i16@i16(i16 row, i16 column) {
-	return (((row >= 0) && (row < 20)) && (column >= 0)) && (column < 17);
+void setCell@u8@u8@u8(u8 row, u8 column, u8 cell) {
+	field[(i64)(rowColumnToCell@u8@u8(row, column))] = cell;
 }
 
-void setCell@i16@i16@u8(i16 row, i16 column, u8 cell) {
-	field[(i64)(rowColumnToCell@i16@i16(row, column))] = cell;
-}
-
-u8 getBombCountAround@i16@i16(i16 row, i16 column) {
+u8 getBombCountAround@u8@u8(u8 row, u8 column) {
+	u8 rowFrom;
+	u8 rowTo;
+	u8 colFrom;
+	u8 colTo;
 	u8 count;
-	i16 dr;
-	i16 r;
-	i16 dc;
-	i16 c;
+	u8 r;
+	u8 c;
 	u8 cell;
 
+	rowFrom = row;
+	if (rowFrom > 0) {
+		rowFrom = row - 1;
+	}
+	rowTo = row + 1;
+	if (rowTo >= 20) {
+		rowTo = rowTo - 1;
+	}
+	colFrom = column;
+	if (colFrom > 0) {
+		colFrom = colFrom - 1;
+	}
+	colTo = column + 1;
+	if (colTo >= 17) {
+		colTo = colTo - 1;
+	}
 	count = 0;
-	dr = -1;
-	for (; dr <= 1; dr = dr + 1) {
-		r = row + dr;
-		dc = -1;
-		for (; dc <= 1; dc = dc + 1) {
-			c = column + dc;
-			if (checkCellBounds@i16@i16(r, c)) {
-				cell = getCell@i16@i16(r, c);
-				if (isBomb@u8(cell)) {
-					count = count + 1;
-				}
+	r = rowFrom;
+	for (; r <= rowTo; r = r + 1) {
+		c = colFrom;
+		for (; c <= colTo; c = c + 1) {
+			if ((r == row) && (c == column)) {
+				continue;
+			}
+			cell = getCell@u8@u8(r, c);
+			if (isBomb@u8(cell)) {
+				count = count + 1;
 			}
 		}
 	}
 	return count;
 }
 
-u8 getSpacer@i16@i16@i16@i16(i16 row, i16 column, i16 rowCursor, i16 columnCursor) {
-	if (rowCursor == row) {
-		if (columnCursor == column) {
-			return 91;
-		}
-		if (columnCursor == (column - 1)) {
-			return 93;
-		}
-	}
-	return 32;
+i16 columnToX@u8(u8 column) {
+	i16 c;
+
+	c = (i16)column;
+	return (c + 1) << 1;
 }
 
-void printCell@u8@i16@i16(u8 cell, i16 row, i16 column) {
+void printCellAt@u8@u8(u8 row, u8 column) {
+	u8 cell;
+
+	cell = getCell@u8@u8(row, column);
+	printCellAt@u8@u8@u8(cell, row, column);
+}
+
+void printCellAt@u8@u8@u8(u8 cell, u8 row, u8 column) {
+	i16 x;
+
+	x = columnToX@u8(column);
+	setCursor@i16@i16((i16)row, x);
+	printCell@u8@u8@u8(cell, row, column);
+}
+
+void printCell@u8@u8@u8(u8 cell, u8 row, u8 column) {
 	u8 chr;
 	u8 count;
 
@@ -159,7 +187,7 @@ void printCell@u8@i16@i16(u8 cell, i16 row, i16 column) {
 			chr = 42;
 		}
 		else {
-			count = getBombCountAround@i16@i16(row, column);
+			count = getBombCountAround@u8@u8(row, column);
 			if (count > 0) {
 				chr = count + 48;
 			}
@@ -176,12 +204,10 @@ void printCell@u8@i16@i16(u8 cell, i16 row, i16 column) {
 	printChar@u8(chr);
 }
 
-void printField@i16@i16(i16 rowCursor, i16 columnCursor) {
-	i16 row;
-	i16 column;
-	u8 spacer;
+void printField() {
+	u8 row;
+	u8 column;
 	u8 cell;
-	u8 spacer;
 
 	setCursor@i16@i16(0, 0);
 	row = 0;
@@ -189,15 +215,30 @@ void printField@i16@i16(i16 rowCursor, i16 columnCursor) {
 		printChar@u8(124);
 		column = 0;
 		for (; column < 17; column = column + 1) {
-			spacer = getSpacer@i16@i16@i16@i16(row, column, rowCursor, columnCursor);
-			printChar@u8(spacer);
-			cell = getCell@i16@i16(row, column);
-			printCell@u8@i16@i16(cell, row, column);
+			printChar@u8(32);
+			cell = getCell@u8@u8(row, column);
+			printCell@u8@u8@u8(cell, row, column);
 		}
-		spacer = getSpacer@i16@i16@i16@i16(row, 17, rowCursor, columnCursor);
-		printChar@u8(spacer);
-		printString@@u8("|\n");
+		printString@@u8(" |\n");
 	}
+}
+
+void showCursor@u8@u8@bool(u8 row, u8 column, bool show) {
+	i16 x;
+	u8 chr;
+
+	x = columnToX@u8(column);
+	setCursor@i16@i16((i16)row, x - 1);
+	chr = 32;
+	if (show) {
+		chr = 91;
+	}
+	printChar@u8(chr);
+	setCursor@i16@i16((i16)row, x + 1);
+	if (show) {
+		chr = 93;
+	}
+	printChar@u8(chr);
 }
 
 void printSpaces@i16(i16 i) {
@@ -226,8 +267,8 @@ u8 getDigitCount@i16(i16 value) {
 
 i16 getHiddenCount() {
 	i16 count;
-	i16 r;
-	i16 c;
+	u8 r;
+	u8 c;
 	u8 cell;
 
 	count = 0;
@@ -235,7 +276,7 @@ i16 getHiddenCount() {
 	for (; r < 20; r = r + 1) {
 		c = 0;
 		for (; c < 17; c = c + 1) {
-			cell = getCell@i16@i16(r, c);
+			cell = getCell@u8@u8(r, c);
 			if ((cell & 6) == 0) {
 				count = count + 1;
 			}
@@ -266,69 +307,87 @@ i16 abs@i16(i16 a) {
 }
 
 void clearField() {
-	i16 r;
-	i16 c;
+	u8 r;
+	u8 c;
 
 	r = 0;
 	for (; r < 20; r = r + 1) {
 		c = 0;
 		for (; c < 17; c = c + 1) {
-			setCell@i16@i16@u8(r, c, 0);
+			setCell@u8@u8@u8(r, c, 0);
 		}
 	}
 }
 
-void initField@i16@i16(i16 curr_r, i16 curr_c) {
+void initField@u8@u8(u8 curr_r, u8 curr_c) {
+	i16 r;
+	i16 c;
 	i16 bombs;
 	i16 row;
 	i16 column;
 
+	r = (i16)curr_r;
+	c = (i16)curr_c;
 	bombs = 17;
 	for (; bombs > 0; bombs = bombs - 1) {
 		row = (random16()) % 20;
 		column = (random16()) % 17;
-		if (((abs@i16(row - curr_r)) > 1) || ((abs@i16(column - curr_c)) > 1)) {
-			setCell@i16@i16@u8(row, column, 1);
+		if (((abs@i16(row - r)) > 1) || ((abs@i16(column - c)) > 1)) {
+			setCell@u8@u8@u8((u8)row, (u8)column, 1);
 		}
 	}
 }
 
-void maybeRevealAround@i16@i16(i16 row, i16 column) {
-	i16 dr;
-	i16 r;
-	i16 dc;
-	i16 c;
+void maybeRevealAround@u8@u8(u8 row, u8 column) {
+	u8 rowFrom;
+	u8 rowTo;
+	u8 colFrom;
+	u8 colTo;
+	u8 r;
+	u8 c;
 	u8 cell;
 
-	if ((getBombCountAround@i16@i16(row, column)) != 0) {
+	printCellAt@u8@u8(row, column);
+	if ((getBombCountAround@u8@u8(row, column)) != 0) {
 		return;
 	}
-	dr = -1;
-	for (; dr <= 1; dr = dr + 1) {
-		r = row + dr;
-		dc = -1;
-		for (; dc <= 1; dc = dc + 1) {
-			if ((dr == 0) && (dc == 0)) {
+	rowFrom = row;
+	if (rowFrom > 0) {
+		rowFrom = row - 1;
+	}
+	rowTo = row + 1;
+	if (rowTo >= 20) {
+		rowTo = rowTo - 1;
+	}
+	colFrom = column;
+	if (colFrom > 0) {
+		colFrom = colFrom - 1;
+	}
+	colTo = column + 1;
+	if (colTo >= 17) {
+		colTo = colTo - 1;
+	}
+	r = rowFrom;
+	for (; r <= rowTo; r = r + 1) {
+		c = colFrom;
+		for (; c <= colTo; c = c + 1) {
+			if ((r == row) && (c == column)) {
 				continue;
 			}
-			c = column + dc;
-			if (!(checkCellBounds@i16@i16(r, c))) {
-				continue;
-			}
-			cell = getCell@i16@i16(r, c);
+			cell = getCell@u8@u8(r, c);
 			if (isOpen@u8(cell)) {
 				continue;
 			}
-			setCell@i16@i16@u8(r, c, cell | 2);
-			maybeRevealAround@i16@i16(r, c);
+			setCell@u8@u8@u8(r, c, cell | 2);
+			maybeRevealAround@u8@u8(r, c);
 		}
 	}
 }
 
 void main() {
 	bool needsInitialize;
-	i16 curr_c;
-	i16 curr_r;
+	u8 curr_c;
+	u8 curr_r;
 	i16 chr;
 	u8 cell;
 	u8 cell;
@@ -336,63 +395,74 @@ void main() {
 	initRandom@i32(7439742);
 	needsInitialize = true;
 	clearField();
-	curr_c = 8;
-	curr_r = 10;
+	printField();
 	setCursor@i16@i16(20, 0);
 	printString@@u8("Left:");
+	curr_c = 8;
+	curr_r = 10;
 	while (true) {
-		printField@i16@i16(curr_r, curr_c);
 		if (!needsInitialize) {
 			if (printLeft()) {
 				printString@@u8(" You've cleaned the field!");
 				break;
 			}
 		}
+		showCursor@u8@u8@bool(curr_r, curr_c, true);
 		chr = getChar();
+		showCursor@u8@u8@bool(curr_r, curr_c, false);
 		if (chr == 27) {
 			break;
 		}
-		if (chr == -8120) {
-			curr_r = ((curr_r + 20) - 1) % 20;
+		if (chr == 13) {
+			if (needsInitialize) {
+				needsInitialize = false;
+				initField@u8@u8(curr_r, curr_c);
+			}
+			cell = getCell@u8@u8(curr_r, curr_c);
+			if (!(isOpen@u8(cell))) {
+				setCell@u8@u8@u8(curr_r, curr_c, cell | 2);
+			}
+			if (isBomb@u8(cell)) {
+				printCellAt@u8@u8(curr_r, curr_c);
+				printString@@u8("boom! you've lost");
+				break;
+			}
+			maybeRevealAround@u8@u8(curr_r, curr_c);
 		}
 		else {
-			if (chr == -8112) {
-				curr_r = (curr_r + 1) % 20;
+			if (chr == -8120) {
+				if (curr_r > 0) {
+					curr_r = curr_r - 1;
+				}
 			}
 			else {
-				if (chr == -8117) {
-					curr_c = ((curr_c + 17) - 1) % 17;
+				if (chr == -8112) {
+					if (curr_r < 19) {
+						curr_r = curr_r + 1;
+					}
 				}
 				else {
-					if (chr == -8115) {
-						curr_c = (curr_c + 1) % 17;
+					if (chr == -8117) {
+						if (curr_c > 0) {
+							curr_c = curr_c - 1;
+						}
 					}
 					else {
-						if (chr == 32) {
-							if (!needsInitialize) {
-								cell = getCell@i16@i16(curr_r, curr_c);
-								if (!(isOpen@u8(cell))) {
-									cell = cell ^ 4;
-									setCell@i16@i16@u8(curr_r, curr_c, cell);
-								}
+						if (chr == -8115) {
+							if (curr_c < 16) {
+								curr_c = curr_c + 1;
 							}
 						}
 						else {
-							if (chr == 13) {
-								if (needsInitialize) {
-									needsInitialize = false;
-									initField@i16@i16(curr_r, curr_c);
+							if (chr == 32) {
+								if (!needsInitialize) {
+									cell = getCell@u8@u8(curr_r, curr_c);
+									if (!(isOpen@u8(cell))) {
+										cell = cell ^ 4;
+										setCell@u8@u8@u8(curr_r, curr_c, cell);
+										printCellAt@u8@u8@u8(cell, curr_r, curr_c);
+									}
 								}
-								cell = getCell@i16@i16(curr_r, curr_c);
-								if (!(isOpen@u8(cell))) {
-									setCell@i16@i16@u8(curr_r, curr_c, cell | 2);
-								}
-								if (isBomb@u8(cell)) {
-									printField@i16@i16(curr_r, curr_c);
-									printString@@u8("boom! you've lost");
-									break;
-								}
-								maybeRevealAround@i16@i16(curr_r, curr_c);
 							}
 						}
 					}

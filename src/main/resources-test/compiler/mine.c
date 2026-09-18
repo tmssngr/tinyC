@@ -12,11 +12,13 @@ const maskFlag = 4;
 
 u8 field[width * height];
 
-i16 rowColumnToCell(i16 row, i16 column) {
-	return row * width + column;
+i16 rowColumnToCell(u8 row, u8 column) {
+	i16 r = (i16)row
+	i16 c = (i16)column
+	return r * width + c;
 }
 
-u8 getCell(i16 row, i16 column) {
+u8 getCell(u8 row, u8 column) {
 	return field[rowColumnToCell(row, column)];
 }
 
@@ -32,45 +34,61 @@ bool isFlag(u8 cell) {
 	return (cell & maskFlag) != 0;
 }
 
-bool checkCellBounds(i16 row, i16 column) {
-	return 0 <= row    && row    < height &&
-	       0 <= column && column < width;
-}
-
-void setCell(i16 row, i16 column, u8 cell) {
+void setCell(u8 row, u8 column, u8 cell) {
 	field[rowColumnToCell(row, column)] = cell;
 }
 
-u8 getBombCountAround(i16 row, i16 column) {
+u8 getBombCountAround(u8 row, u8 column) {
+	u8 rowFrom = row
+	if rowFrom > 0 {
+		rowFrom = row - 1
+	}
+	u8 rowTo = row + 1
+	if rowTo >= height {
+		rowTo = rowTo - 1
+	}
+
+	u8 colFrom = column
+	if colFrom > 0 {
+		colFrom = colFrom - 1
+	}
+	u8 colTo = column + 1
+	if colTo >= width {
+		colTo = colTo - 1
+	}
+	
 	u8 count = 0;
-	for (i16 dr = -1; dr <= 1; dr = dr + 1) {
-		i16 r = row + dr;
-		for (i16 dc = -1; dc <= 1; dc = dc + 1) {
-			i16 c = column + dc;
-			if (checkCellBounds(r, c)) {
-				u8 cell = getCell(r, c);
-				if (isBomb(cell)) {
-					count = count + 1;
-				}
+	for (u8 r = rowFrom; r <= rowTo; r = r + 1) {
+		for (u8 c = colFrom; c <= colTo; c = c + 1) {
+			if r == row && c == column {
+				continue
+			}
+			u8 cell = getCell(r, c)
+			if isBomb(cell) {
+				count = count + 1;
 			}
 		}
 	}
 	return count;
 }
 
-u8 getSpacer(i16 row, i16 column, i16 rowCursor, i16 columnCursor) {
-	if (rowCursor == row) {
-		if (columnCursor == column) {
-			return '[';
-		}
-		if (columnCursor == column - 1) {
-			return ']';
-		}
-	}
-	return ' ';
+i16 columnToX(u8 column) {
+	i16 c = (i16)column
+	return (c + 1) * 2
 }
 
-void printCell(u8 cell, i16 row, i16 column) {
+void printCellAt(u8 row, u8 column) {
+	u8 cell = getCell(row, column)
+	printCellAt(cell, row, column)
+}
+
+void printCellAt(u8 cell, u8 row, u8 column) {
+	i16 x = columnToX(column)
+	setCursor((i16)row, x)
+	printCell(cell, row, column)
+}
+
+void printCell(u8 cell, u8 row, u8 column) {
 	u8 chr = '.';
 	if (isOpen(cell)) {
 		if (isBomb(cell)) {
@@ -92,20 +110,33 @@ void printCell(u8 cell, i16 row, i16 column) {
 	printChar(chr);
 }
 
-void printField(i16 rowCursor, i16 columnCursor) {
+void printField() {
 	setCursor(0i16, 0i16);
-	for (i16 row = 0; row < height; row = row + 1) {
+	for (u8 row = 0; row < height; row = row + 1) {
 		printChar('|');
-		for (i16 column = 0; column < width; column = column + 1) {
-			u8 spacer = getSpacer(row, column, rowCursor, columnCursor);
-			printChar(spacer);
+		for (u8 column = 0; column < width; column = column + 1) {
+			printChar(' ');
 			u8 cell = getCell(row, column);
 			printCell(cell, row, column);
 		}
-		u8 spacer = getSpacer(row, width, rowCursor, columnCursor);
-		printChar(spacer);
-		printString("|\n");
+		printString(" |\n");
 	}
+}
+
+void showCursor(u8 row, u8 column, bool show) {
+	i16 x = columnToX(column)
+	setCursor((i16)row, x - 1)
+	u8 chr = ' '
+	if show {
+		chr = '['
+	}
+	printChar(chr)
+	
+	setCursor((i16)row, x + 1)
+	if show {
+		chr = ']'
+	}
+	printChar(chr)
 }
 
 void printSpaces(i16 i) {
@@ -134,8 +165,8 @@ u8 getDigitCount(i16 value) {
 
 i16 getHiddenCount() {
 	i16 count = 0;
-	for (i16 r = 0; r < height; r = r + 1) {
-		for (i16 c = 0; c < width; c = c + 1) {
+	for (u8 r = 0; r < height; r = r + 1) {
+		for (u8 c = 0; c < width; c = c + 1) {
 			u8 cell = getCell(r, c);
 			if ((cell & (maskFlag | maskOpen)) == 0) {
 				count = count + 1;
@@ -164,38 +195,52 @@ i16 abs(i16 a) {
 }
 
 void clearField() {
-	for (i16 r = 0; r < height; r = r + 1) {
-		for (i16 c = 0; c < width; c = c + 1) {
+	for (u8 r = 0; r < height; r = r + 1) {
+		for (u8 c = 0; c < width; c = c + 1) {
 			setCell(r, c, 0);
 		}
 	}
 }
 
-void initField(i16 curr_r, i16 curr_c) {
+void initField(u8 curr_r, u8 curr_c) {
+	i16 r = (i16)curr_r
+	i16 c = (i16)curr_c
 	for (i16 bombs = bombCount; bombs > 0; bombs = bombs - 1) {
 		i16 row = random16() % height;
 		i16 column = random16() % width;
-		if (abs(row    - curr_r) > 1 ||
-		    abs(column - curr_c) > 1) {
-			setCell(row, column, maskBomb);
+		if (abs(row    - r) > 1 ||
+		    abs(column - c) > 1) {
+			setCell((u8)row, (u8)column, maskBomb);
 		}
 	}
 }
 
-void maybeRevealAround(i16 row, i16 column) {
+void maybeRevealAround(u8 row, u8 column) {
+	printCellAt(row, column)
 	if (getBombCountAround(row, column) != 0) {
 		return;
 	}
 
-	for (i16 dr = -1; dr <= 1; dr = dr + 1) {
-		i16 r = row + dr;
-		for (i16 dc = -1; dc <= 1; dc = dc + 1) {
-			if (dr == 0 && dc == 0) {
-				continue;
-			}
+	u8 rowFrom = row
+	if rowFrom > 0 {
+		rowFrom = row - 1
+	}
+	u8 rowTo = row + 1
+	if rowTo >= height {
+		rowTo = rowTo - 1
+	}
 
-			i16 c = column + dc;
-			if (!checkCellBounds(r, c)) {
+	u8 colFrom = column
+	if colFrom > 0 {
+		colFrom = colFrom - 1
+	}
+	u8 colTo = column + 1
+	if colTo >= width {
+		colTo = colTo - 1
+	}
+	for (u8 r = rowFrom; r <= rowTo; r = r + 1) {
+		for (u8 c = colFrom; c <= colTo; c = c + 1) {
+			if (r == row && c == column) {
 				continue;
 			}
 
@@ -214,12 +259,12 @@ void main() {
 	initRandom(7439742);
 	bool needsInitialize = true;
 	clearField();
-	i16 curr_c = (i16)(width / 2);
-	i16 curr_r = (i16)(height / 2);
+	printField();
 	setCursor(height, 0);
 	printString("Left:");
+	u8 curr_c = width / 2;
+	u8 curr_r = height / 2;
 	while (true) {
-		printField(curr_r, curr_c);
 		if (!needsInitialize) {
 			if (printLeft()) {
 				printString(" You've cleaned the field!");
@@ -227,38 +272,14 @@ void main() {
 			}
 		}
 
+		showCursor(curr_r, curr_c, true)
 		i16 chr = getChar();
+		showCursor(curr_r, curr_c, false)
 		if (chr == ESCAPE) {
 			break;
 		}
 
-		// cursor up
-		if (chr == CURSOR_UP) {
-			curr_r = (curr_r + height - 1) % height;
-		}
-		// cursor down
-		else if (chr == CURSOR_DOWN) {
-			curr_r = (curr_r + 1) % height;
-		}
-		// cursor left
-		else if (chr == CURSOR_LEFT) {
-			curr_c = (curr_c + width - 1) % width;
-		}
-		// cursor right
-		else if (chr == CURSOR_RIGHT) {
-			curr_c = (curr_c + 1) % width;
-		}
-		// space = flag
-		else if (chr == 0x20) {
-			if (!needsInitialize) {
-				u8 cell = getCell(curr_r, curr_c);
-				if (!isOpen(cell)) {
-					cell = cell ^ maskFlag;
-					setCell(curr_r, curr_c, cell);
-				}
-			}
-		}
-		else if (chr == 0x0D) {
+		if (chr == 0x0D) {
 			if (needsInitialize) {
 				needsInitialize = false;
 				initField(curr_r, curr_c);
@@ -268,11 +289,46 @@ void main() {
 				setCell(curr_r, curr_c, cell | maskOpen);
 			}
 			if (isBomb(cell)) {
-				printField(curr_r, curr_c);
+				printCellAt(curr_r, curr_c)
 				printString("boom! you've lost");
 				break;
 			}
 			maybeRevealAround(curr_r, curr_c);
+		}
+		// cursor up
+		else if (chr == CURSOR_UP) {
+			if curr_r > 0 {
+				curr_r = curr_r - 1
+			}
+		}
+		// cursor down
+		else if (chr == CURSOR_DOWN) {
+			if curr_r < height - 1 {
+				curr_r = curr_r + 1
+			}
+		}
+		// cursor left
+		else if (chr == CURSOR_LEFT) {
+			if curr_c > 0 {
+				curr_c = curr_c - 1
+			}
+		}
+		// cursor right
+		else if (chr == CURSOR_RIGHT) {
+			if curr_c < width - 1 {
+				curr_c = curr_c + 1
+			}
+		}
+		// space = flag
+		else if (chr == 0x20) {
+			if (!needsInitialize) {
+				u8 cell = getCell(curr_r, curr_c);
+				if (!isOpen(cell)) {
+					cell = cell ^ maskFlag;
+					setCell(curr_r, curr_c, cell);
+					printCellAt(cell, curr_r, curr_c)
+				}
+			}
 		}
 	}
 }
