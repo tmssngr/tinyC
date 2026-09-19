@@ -19,8 +19,7 @@ public final class SsaFactory {
 		return new Pair<>(instructions, factory.varFactory.createVarInfos());
 	}
 
-
-	private final Map<String, Map<IRVar, IRVar[]>> phiNodes = new HashMap<>();
+	private final Map<String, Map<IRVar, Phi>> phiNodes = new HashMap<>();
 	private final Map<IRVar, VarReplacement> varMapping = new HashMap<>();
 	private final Map<String, List<IRInstruction>> newInstructions = new HashMap<>();
 	private final ControlFlowGraph cfg;
@@ -33,8 +32,9 @@ public final class SsaFactory {
 	}
 
 	private List<IRInstruction> convert() {
+		final BasicBlock first = cfg.blocks().getFirst();
 		final List<String> pending = new ArrayList<>();
-		pending.add(cfg.blocks().getFirst().name);
+		pending.add(first.name);
 
 		while (pending.size() > 0) {
 			final String name = pending.removeFirst();
@@ -49,22 +49,42 @@ public final class SsaFactory {
 			final List<String> successors = block.successors();
 			pending.addAll(successors);
 
-			for (int i = 0; i < successors.size(); i++) {
-				final String successor = successors.get(i);
-				final Map<IRVar, IRVar[]> phiNodes = this.phiNodes.get(successor);
-				for (Map.Entry<IRVar, IRVar[]> entry : phiNodes.entrySet()) {
+			for (String successor : successors) {
+				final Map<IRVar, Phi> phiNodes = this.phiNodes.get(successor);
+				if (phiNodes == null) {
+					continue;
+				}
+
+				final BasicBlock successorBlock = cfg.get(successor);
+				final int i = successorBlock.predecessors().indexOf(name);
+				Utils.assertTrue(i >= 0);
+
+				for (Map.Entry<IRVar, Phi> entry : phiNodes.entrySet()) {
 					final IRVar var = entry.getKey();
 					final VarReplacement replacement = varMapping.get(var);
-					final IRVar[] value = entry.getValue();
-					Utils.assertTrue(value[i] == null);
-					value[i] = replacement != null ? replacement.current() : var;
+					final Phi phi = entry.getValue();
+					Utils.assertTrue(phi.input[i] == null);
+					phi.input[i] = replacement != null ? replacement.current() : var;
 				}
 			}
 		}
 
 		final List<IRInstruction> instructions = new ArrayList<>();
 		for (BasicBlock block : cfg.blocks()) {
-			instructions.addAll(newInstructions.get(block.name));
+			final String name = block.name;
+			if (block != first) {
+				instructions.add(new IRLabel(name));
+			}
+			final Map<IRVar, Phi> phiNodes = this.phiNodes.get(name);
+			if (phiNodes != null) {
+				final List<IRVar> sortedVars = new ArrayList<>(phiNodes.keySet());
+				sortedVars.sort(Comparator.comparingInt(IRVar::index));
+				for (IRVar var : sortedVars) {
+					final Phi phi = phiNodes.get(var);
+					instructions.add(new IRPhi(phi.replacement, List.of(phi.input)));
+				}
+			}
+			instructions.addAll(newInstructions.get(name));
 		}
 		return instructions;
 	}
@@ -158,9 +178,10 @@ public final class SsaFactory {
 
 	@NotNull
 	private IRValue source(IRValue value) {
-		final IRVar var = value.var();
+		IRVar var = value.var();
 		if (var != null) {
-			value = new IRValue(source(var));
+			var = source(var);
+			value = new IRValue(var);
 		}
 		return value;
 	}
@@ -190,15 +211,23 @@ public final class SsaFactory {
 		for (BasicBlock block : cfg.blocks()) {
 			final int predecessorCount = block.predecessors().size();
 			if (predecessorCount > 1) {
-				final Map<IRVar, IRVar[]> phiNodes = new HashMap<>();
+				final Map<IRVar, Phi> phiNodes = new HashMap<>();
 				for (IRVar var : block.getLiveBefore()) {
-					final var prev = phiNodes.put(var, new IRVar[predecessorCount]);
+					if (var.scope() == VariableScope.global) {
+						continue;
+					}
+
+					final IRVar replacementVar = target(var);
+					final var prev = phiNodes.put(var, new Phi(replacementVar, new IRVar[predecessorCount]));
 					Utils.assertTrue(prev == null);
 				}
 				final var prev = this.phiNodes.put(block.name, phiNodes);
 				Utils.assertTrue(prev == null);
 			}
 		}
+	}
+
+	private record Phi(IRVar replacement, IRVar[] input) {
 	}
 
 	private record VarReplacement(@NotNull IRVar current, int nextIndex) {

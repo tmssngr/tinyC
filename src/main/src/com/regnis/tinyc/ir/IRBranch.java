@@ -20,6 +20,10 @@ public record IRBranch(@NotNull IRCompare.Op op, @NotNull IRVar left, @NotNull I
 		this(op, left, new IRValue(right), target, nextLabel, location);
 	}
 
+	public IRBranch(@NotNull IRCompare.Op op, @NotNull IRVar left, int rightValue, @NotNull String target, @NotNull String nextLabel) {
+		this(op, left, rightValue, target, nextLabel, Location.DUMMY);
+	}
+
 	public IRBranch(@NotNull IRCompare.Op op, @NotNull IRVar left, int rightValue, @NotNull String target, @NotNull String nextLabel, @NotNull Location location) {
 		this(op, left, new IRValue(rightValue, left.type()), target, nextLabel, location);
 	}
