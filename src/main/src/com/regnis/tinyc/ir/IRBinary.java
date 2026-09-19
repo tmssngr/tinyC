@@ -22,6 +22,10 @@ public record IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar lef
 		this(target, op, left, new IRValue(right), location);
 	}
 
+	public IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar left, int rightValue) {
+		this(target, op, left, rightValue, Location.DUMMY);
+	}
+
 	public IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar left, int rightValue, @NotNull Location location) {
 		this(target, op, left, new IRValue(rightValue, left.type()), location);
 	}
