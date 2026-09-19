@@ -83,7 +83,11 @@ public final class DetectVarLiveness {
 		case IRBinary binary -> {
 			defined(binary.target(), defines);
 			uses(binary.left(), uses);
-			uses(binary.right(), uses);
+			final IRValue right = binary.right();
+			final IRVar rightVar = right.var();
+			if (rightVar != null) {
+				uses(rightVar, uses);
+			}
 		}
 		case IRBranch branch -> {
 			uses(branch.conditionVar(), uses);

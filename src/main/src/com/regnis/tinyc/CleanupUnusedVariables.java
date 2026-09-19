@@ -14,7 +14,16 @@ public abstract class CleanupUnusedVariables {
 		switch (instruction) {
 		case IRAddrOf addrOf -> readWrite(addrOf.target(), List.of(addrOf.source()));
 		case IRAddrOfArray addrOf -> readWrite(addrOf.addr(), List.of(addrOf.array()));
-		case IRBinary binary -> readWrite(binary.target(), List.of(binary.left(), binary.right()));
+		case IRBinary binary -> {
+			final IRValue right = binary.right();
+			final IRVar rightVar = right.var();
+			if (rightVar != null) {
+				readWrite(binary.target(), List.of(binary.left(), rightVar));
+			}
+			else {
+				readWrite(binary.target(), List.of(binary.left()));
+			}
+		}
 		case IRBranch branch -> read(List.of(branch.conditionVar()));
 		case IRCall call -> {
 			read(call.args());
