@@ -431,7 +431,7 @@ maybeRevealAround@u8@u8:
 	arg 1: column (u8/1)
 	var 2: index (i16/2)
 	var 3: c (u8/1)
-	; 108 pc
+	; 106 pc
 	move param.row{r8}, row{r0}
 	move param.column{r9}, column{r1}
 	move param.row{r0}, param.row{r8}
@@ -440,8 +440,8 @@ maybeRevealAround@u8@u8:
 	; 202:2 if getBombCountAround@u8@u8([ExprVarAccess[varName=row, index=0, scope=parameter, type=u8, varIsArray=false, location=202:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=u8, varIsArray=false, location=202:30]]) != 0
 	move param.row{r0}, param.row{r8}
 	move param.column{r1}, param.column{r9}
-	call t.10{r0} = getBombCountAround@u8@u8[param.row{r0}, param.column{r1}] -> u8
-	branch t.10{r0} notequals 0: maybeRevealAround@u8@u8_ret, if_30_end
+	call t.11{r0} = getBombCountAround@u8@u8[param.row{r0}, param.column{r1}] -> u8
+	branch t.11{r0} notequals 0: maybeRevealAround@u8@u8_ret, if_30_end
 	move rowFrom{r10}, param.row{r8}
 	; 207:2 if rowFrom > 0
 	branch rowFrom{r10} lteq 0: if_31_end, if_31_then
@@ -489,25 +489,25 @@ for_36_body:
 	store [memVarAddr{r14}], index{r0}
 	jump for_36_continue
 if_37_end:
-	addrof t.11{r4}, [field]
-	add t.11{r4}, t.11{r4}, index{r0}
-	load cell{r3}, [t.11{r4}]
+	addrof t.12{r4}, [field]
+	add t.12{r4}, t.12{r4}, index{r0}
+	load cell{r3}, [t.12{r4}]
 	; 231:4 if cell & 2 != 0
-	move t.12{r4}, cell{r3}
-	and t.12{r4}, t.12{r4}, 2
-	branch t.12{r4} equals 0: if_39_end, maybeRevealAround@u8@u8.no_critical_edge_28
+	move t.13{r4}, cell{r3}
+	and t.13{r4}, t.13{r4}, 2
+	branch t.13{r4} equals 0: if_39_end, maybeRevealAround@u8@u8.no_critical_edge_28
 	addrof memVarAddr{r14}, c
 	store [memVarAddr{r14}], c{r2}
 	addrof memVarAddr{r14}, index
 	store [memVarAddr{r14}], index{r0}
 	jump for_36_continue
 if_39_end:
-	or t.13{r3}, t.13{r3}, 2
-	addrof t.14{r4}, [field]
-	add t.14{r4}, t.14{r4}, index{r0}
+	or t.14{r3}, t.14{r3}, 2
+	addrof t.15{r4}, [field]
+	add t.15{r4}, t.15{r4}, index{r0}
 	addrof memVarAddr{r14}, index
 	store [memVarAddr{r14}], index{r0}
-	store [t.14{r4}], t.13{r3}
+	store [t.15{r4}], t.14{r3}
 	move r{r0}, r{r10}
 	move c{r1}, c{r2}
 	addrof memVarAddr{r14}, c
@@ -522,14 +522,12 @@ for_36_continue:
 	add index{r2}, index{r2}, 1
 for_36:
 	branch c{r1} lteq colTo{r13}: for_36_body, for_36_break
-	cast t.18{r0}(i16), colTo{r13}(u8)
-	sub t.17{r2}, t.17{r2}, t.18{r0}
-	cast t.19{r0}(i16), colFrom{r12}(u8)
-	add t.16{r2}, t.16{r2}, t.19{r0}
-	move t.15{r0}, t.16{r2}
-	add t.15{r0}, t.15{r0}, 17
-	move index{r2}, t.15{r0}
-	sub index{r2}, index{r2}, 1
+	move t.17{r0}, colTo{r13}
+	sub t.17{r0}, t.17{r0}, colFrom{r12}
+	add t.16{r0}, t.16{r0}, 1
+	cast colCount{r0}(i16), t.16{r0}(u8)
+	sub t.18{r2}, t.18{r2}, colCount{r0}
+	add index{r2}, index{r2}, 17
 	add r{r10}, r{r10}, 1
 for_35:
 	branch r{r10} lteq rowTo{r11}: for_35_body, maybeRevealAround@u8@u8_ret
@@ -549,10 +547,10 @@ main:
 	call printString@@u8[t.8{r0}]
 	const curr_c{r9}, 8
 	const curr_r{r10}, 10
-	; 251:2 while true
+	; 253:2 while true
 	jump while_40
 if_41_then:
-	; 253:4 if printLeft([])
+	; 255:4 if printLeft([])
 	call t.9{r0} = printLeft[] -> bool
 	branch t.9{r0} notequals 0: if_42_then, if_41_end
 if_41_end:
@@ -566,7 +564,7 @@ if_41_end:
 	move curr_r{r0}, curr_r{r10}
 	move curr_c{r1}, curr_c{r9}
 	call showCursor@u8@u8@bool[curr_r{r0}, curr_c{r1}, t.12{r2}]
-	; 262:3 if chr == 27
+	; 264:3 if chr == 27
 	branch chr{r11} equals 27: main_ret, if_43_end
 	branch chr{r11} equals 13: if_44_then, if_44_else
 	branch chr{r11} notequals 3: if_48_else, if_48_then
@@ -602,7 +600,7 @@ if_45_end:
 	addrof t.13{r12}, [field]
 	add t.13{r12}, t.13{r12}, index{r0}
 	load cell{r11}, [t.13{r12}]
-	; 273:4 if cell & 2 == 0
+	; 275:4 if cell & 2 == 0
 	move t.14{r12}, cell{r11}
 	and t.14{r12}, t.14{r12}, 2
 	branch t.14{r12} notequals 0: if_46_end, if_46_then
@@ -633,7 +631,7 @@ if_53_then:
 	sub curr_c{r9}, curr_c{r9}, 1
 	jump while_40
 if_46_end:
-	; 276:4 if cell & 1 != 0
+	; 278:4 if cell & 1 != 0
 	and t.17{r11}, t.17{r11}, 1
 	branch t.17{r11} equals 0: if_47_end, if_47_then
 	jump if_47_then
@@ -655,7 +653,7 @@ if_57_then:
 	addrof t.19{r12}, [field]
 	add t.19{r12}, t.19{r12}, index{r0}
 	load cell{r11}, [t.19{r12}]
-	; 312:5 if cell & 2 == 0
+	; 314:5 if cell & 2 == 0
 	move t.20{r12}, cell{r11}
 	and t.20{r12}, t.20{r12}, 2
 	branch t.20{r12} notequals 0: while_40, if_58_then

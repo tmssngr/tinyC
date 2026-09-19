@@ -1395,9 +1395,9 @@ _maybeRevealAround@u8@u8:
         lea r12, [rsp+72]
         ; store [memVarAddr{r7}], column{r2}
         mov [r12], dl
-        ; call t.10{r0} = getBombCountAround@u8@u8[row{r1}, column{r2}] -> u8
+        ; call t.11{r0} = getBombCountAround@u8@u8[row{r1}, column{r2}] -> u8
         call _getBombCountAround@u8@u8
-        ; branch t.10{r0} notequals 0: maybeRevealAround@u8@u8_ret, if_33_end
+        ; branch t.11{r0} notequals 0: maybeRevealAround@u8@u8_ret, if_33_end
         cmp al, 0
         jne _maybeRevealAround@u8@u8_ret
         ; move rowFrom{r1}, row{r6}
@@ -1487,12 +1487,12 @@ _if_37_end:
         ; load rowFrom{r1}, [memVarAddr{r7}]
         mov cl, [r12]
         ; 224:2 for r <= rowTo
-        ; move r{r3}, r{r1}
-        mov r8b, cl
+        ; move r{r2}, r{r1}
+        mov dl, cl
         ; addrof memVarAddr{r7}, colFrom
         lea r12, [rsp+50]
-        ; load colFrom{r2}, [memVarAddr{r7}]
-        mov dl, [r12]
+        ; load colFrom{r3}, [memVarAddr{r7}]
+        mov r8b, [r12]
         ; addrof memVarAddr{r7}, colTo
         lea r12, [rsp+51]
         ; load colTo{r1}, [memVarAddr{r7}]
@@ -1505,8 +1505,8 @@ _for_38_body:
         mov dl, [r12]
         ; addrof memVarAddr{r7}, colFrom
         lea r12, [rsp+50]
-        ; store [memVarAddr{r7}], colFrom{r2}
-        mov [r12], dl
+        ; store [memVarAddr{r7}], colFrom{r3}
+        mov [r12], r8b
         ; addrof memVarAddr{r7}, colTo
         lea r12, [rsp+51]
         ; store [memVarAddr{r7}], colTo{r1}
@@ -1515,8 +1515,8 @@ _for_38_body:
         lea r12, [rsp+49]
         ; store [memVarAddr{r7}], rowTo{r4}
         mov [r12], r9b
-        ; move r{r1}, r{r3}
-        mov cl, r8b
+        ; move r{r1}, r{r2}
+        mov cl, dl
         ; move c{r3}, colFrom{r2}
         mov r8b, dl
         ; addrof memVarAddr{r7}, colFrom
@@ -1581,20 +1581,20 @@ _maybeRevealAround@u8@u8.no_critical_edge_30:
         ; store [memVarAddr{r7}], column{r2}
         mov [r12], dl
 _if_40_end:
-        ; cast t.12{r4}(i64), index{r0}(i16)
+        ; cast t.13{r4}(i64), index{r0}(i16)
         movsx r9, ax
-        ; addrof t.11{r5}, [field]
+        ; addrof t.12{r5}, [field]
         lea r10, [var_1]
-        ; add t.11{r5}, t.11{r5}, t.12{r4}
+        ; add t.12{r5}, t.12{r5}, t.13{r4}
         add r10, r9
-        ; load cell{r4}, [t.11{r5}]
+        ; load cell{r4}, [t.12{r5}]
         mov r9b, [r10]
         ; 231:4 if cell & 2 != 0
-        ; move t.13{r5}, cell{r4}
+        ; move t.14{r5}, cell{r4}
         mov r10b, r9b
-        ; and t.13{r5}, t.13{r5}, 2
+        ; and t.14{r5}, t.14{r5}, 2
         and r10b, 2
-        ; branch t.13{r5} equals 0: if_42_end, maybeRevealAround@u8@u8.no_critical_edge_28
+        ; branch t.14{r5} equals 0: if_42_end, maybeRevealAround@u8@u8.no_critical_edge_28
         cmp r10b, 0
         je _if_42_end
         ; addrof memVarAddr{r7}, c
@@ -1611,19 +1611,19 @@ _if_40_end:
         mov [r12], cl
         jmp _for_39_continue
 _if_42_end:
-        ; or t.14{r4}, t.14{r4}, 2
+        ; or t.15{r4}, t.15{r4}, 2
         or r9b, 2
-        ; cast t.16{r5}(i64), index{r0}(i16)
+        ; cast t.17{r5}(i64), index{r0}(i16)
         movsx r10, ax
         ; addrof memVarAddr{r7}, index
         lea r12, [rsp+52]
         ; store [memVarAddr{r7}], index{r0}
         mov [r12], ax
-        ; addrof t.15{r0}, [field]
+        ; addrof t.16{r0}, [field]
         lea rax, [var_1]
-        ; add t.15{r0}, t.15{r0}, t.16{r5}
+        ; add t.16{r0}, t.16{r0}, t.17{r5}
         add rax, r10
-        ; store [t.15{r0}], t.14{r4}
+        ; store [t.16{r0}], t.15{r4}
         mov [rax], r9b
         ; addrof memVarAddr{r7}, r
         lea r12, [rsp+54]
@@ -1658,35 +1658,35 @@ _for_39:
         ; branch c{r2} lteq colTo{r1}: for_39_body, for_39_break
         cmp dl, cl
         jbe _for_39_body
-        ; cast t.20{r2}(i16), colTo{r1}(u8)
-        movzx dx, cl
-        ; sub t.19{r0}, t.19{r0}, t.20{r2}
-        sub ax, dx
+        ; move t.19{r2}, colTo{r1}
+        mov dl, cl
         ; addrof memVarAddr{r7}, colFrom
         lea r12, [rsp+50]
-        ; load colFrom{r2}, [memVarAddr{r7}]
-        mov dl, [r12]
-        ; cast t.21{r3}(i16), colFrom{r2}(u8)
-        movzx r8w, dl
-        ; add t.18{r0}, t.18{r0}, t.21{r3}
-        add ax, r8w
-        ; add t.17{r0}, t.17{r0}, 17
+        ; load colFrom{r3}, [memVarAddr{r7}]
+        mov r8b, [r12]
+        ; sub t.19{r2}, t.19{r2}, colFrom{r3}
+        sub dl, r8b
+        ; add t.18{r2}, t.18{r2}, 1
+        add dl, 1
+        ; cast colCount{r2}(i16), t.18{r2}(u8)
+        movzx dx, dl
+        ; sub t.20{r0}, t.20{r0}, colCount{r2}
+        sub ax, dx
+        ; add index{r0}, index{r0}, 17
         add ax, 17
-        ; sub index{r0}, index{r0}, 1
-        sub ax, 1
         ; addrof memVarAddr{r7}, r
         lea r12, [rsp+54]
-        ; load r{r3}, [memVarAddr{r7}]
-        mov r8b, [r12]
-        ; add r{r3}, r{r3}, 1
-        add r8b, 1
+        ; load r{r2}, [memVarAddr{r7}]
+        mov dl, [r12]
+        ; add r{r2}, r{r2}, 1
+        add dl, 1
 _for_38:
         ; addrof memVarAddr{r7}, rowTo
         lea r12, [rsp+49]
         ; load rowTo{r4}, [memVarAddr{r7}]
         mov r9b, [r12]
-        ; branch r{r3} lteq rowTo{r4}: for_38_body, maybeRevealAround@u8@u8_ret
-        cmp r8b, r9b
+        ; branch r{r2} lteq rowTo{r4}: for_38_body, maybeRevealAround@u8@u8_ret
+        cmp dl, r9b
         jbe _for_38_body
 _maybeRevealAround@u8@u8_ret:
         add rsp, 32
@@ -1746,10 +1746,10 @@ _main:
         lea r12, [rsp+49]
         ; store [memVarAddr{r7}], curr_r{r1}
         mov [r12], cl
-        ; 251:2 while true
+        ; 253:2 while true
         jmp _while_43
 _if_44_then:
-        ; 253:4 if printLeft([])
+        ; 255:4 if printLeft([])
         ; call t.9{r0} = printLeft[] -> bool
         call _printLeft
         ; branch t.9{r0} notequals 0: if_45_then, if_44_end
@@ -1802,7 +1802,7 @@ _if_44_end:
         mov [r12], dl
         ; call showCursor@u8@u8@bool[curr_r{r1}, curr_c{r2}, t.12{r3}]
         call _showCursor@u8@u8@bool
-        ; 262:3 if chr == 27
+        ; 264:3 if chr == 27
         ; addrof memVarAddr{r7}, chr
         lea r12, [rsp+50]
         ; load chr{r0}, [memVarAddr{r7}]
@@ -1935,7 +1935,7 @@ _if_48_end:
         add r9, r8
         ; load cell{r3}, [t.13{r4}]
         mov r8b, [r9]
-        ; 273:4 if cell & 2 == 0
+        ; 275:4 if cell & 2 == 0
         ; move t.15{r4}, cell{r3}
         mov r9b, r8b
         ; and t.15{r4}, t.15{r4}, 2
@@ -2093,7 +2093,7 @@ _if_56_then:
         mov [r12], cl
         jmp _while_43
 _if_49_end:
-        ; 276:4 if cell & 1 != 0
+        ; 278:4 if cell & 1 != 0
         ; move t.19{r0}, cell{r3}
         mov al, r8b
         ; and t.19{r0}, t.19{r0}, 1
@@ -2196,7 +2196,7 @@ _if_60_then:
         add r10, r9
         ; load cell{r1}, [t.21{r5}]
         mov cl, [r10]
-        ; 312:5 if cell & 2 == 0
+        ; 314:5 if cell & 2 == 0
         ; move t.23{r4}, cell{r1}
         mov r9b, cl
         ; and t.23{r4}, t.23{r4}, 2
