@@ -49,6 +49,10 @@ public record IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar lef
 	public enum Op {
 		Add, Sub, Mul, Div, Mod,
 		ShiftLeft, ShiftRight,
-		And, Or, Xor,
+		And, Or, Xor;
+
+		public boolean isCommutative() {
+			return this == Add || this == Mul || this == And || this == Or || this == Xor;
+		}
 	}
 }
