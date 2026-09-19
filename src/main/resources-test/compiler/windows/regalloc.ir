@@ -3,11 +3,10 @@ simple:
 	var 0: four (u8/1)
 	var 1: three (u8/1)
 	var 2: one (u8/1)
-	; 20 pc
+	; 15 pc
 	const four, 4
 	const three, 3
-	move one, four
-	sub one, one, three
+	sub one, four, three
 	; 5:9 return one
 	ret one
 	jump simple_ret
@@ -18,10 +17,9 @@ registerHint@u8@u8:
 	arg 0: a (u8/1)
 	arg 1: b (u8/1)
 	var 2: t.2 (u8/1)
-	; 16 pc
+	; 11 pc
 	; 9:11 return a + b
-	move t.2, a
-	add t.2, t.2, b
+	add t.2, a, b
 	ret t.2
 	jump registerHint@u8@u8_ret
 registerHint@u8@u8_ret:
@@ -49,7 +47,7 @@ fibonacci@u8:
 	var 1: a (i16/2)
 	var 2: b (i16/2)
 	var 3: c (i16/2)
-	; 39 pc
+	; 34 pc
 	const a, 0
 	const b, 1
 	; 22:2 while i > 0
@@ -57,8 +55,7 @@ while_2:
 	branch i lteq 0: while_2_break, while_2_body
 while_2_body:
 	sub i, i, 1
-	move c, a
-	add c, c, b
+	add c, a, b
 	move a, b
 	move b, c
 	jump while_2
