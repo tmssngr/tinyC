@@ -235,7 +235,9 @@ void maybeRevealAround(u8 row, u8 column) {
 			field[index] = cell | maskOpen
 			maybeRevealAround(r, c);
 		}
-		index = index - (i16)colTo + (i16)colFrom + width - 1
+//		index = index - (i16)colTo + (i16)colFrom + width - 1
+		i16 colCount = (i16)(colTo - colFrom + 1)
+		index = index - colCount + width
 	}
 }
 

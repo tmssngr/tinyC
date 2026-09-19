@@ -270,6 +270,7 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 	u8 r;
 	u8 c;
 	u8 cell;
+	i16 colCount;
 
 	printCellAt@u8@u8(row, column);
 	if ((getBombCountAround@u8@u8(row, column)) != 0) {
@@ -306,7 +307,8 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 			field[index] = cell | 2;
 			maybeRevealAround@u8@u8(r, c);
 		}
-		index = (((index - ((i16)colTo)) + ((i16)colFrom)) + 17) - 1;
+		colCount = (i16)((colTo - colFrom) + 1);
+		index = (index - colCount) + 17;
 	}
 }
 
