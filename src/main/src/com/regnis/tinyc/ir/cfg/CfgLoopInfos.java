@@ -1,4 +1,4 @@
-package com.regnis.tinyc.cfg;
+package com.regnis.tinyc.ir.cfg;
 
 import java.util.*;
 
