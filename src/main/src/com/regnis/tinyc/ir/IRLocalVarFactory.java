@@ -24,10 +24,8 @@ public final class IRLocalVarFactory {
 
 		for (IRVarDef varDef : varDefs) {
 			final String name = varDef.var().name();
-			final var existing = existingNames.add(name);
-			if (!existing) {
-				throw new IllegalStateException("Duplicate name '" + name + "': " + varDefs);
-			}
+			existingNames.add(name);
+			// there may be duplicate names, e.g. from two different if-scopes
 		}
 	}
 

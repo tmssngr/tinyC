@@ -18,7 +18,12 @@ public record IRFunction(@NotNull String name, @NotNull Type returnType, @NotNul
 	}
 
 	@NotNull
-	public IRFunction derive(List<IRInstruction> instructions) {
+	public IRFunction derive(@NotNull List<IRInstruction> instructions) {
+		return derive(instructions, varInfos);
+	}
+
+	@NotNull
+	public IRFunction derive(@NotNull List<IRInstruction> instructions, @NotNull IRVarInfos varInfos) {
 		return new IRFunction(name, returnType, varInfos,
 		                      instructions);
 	}

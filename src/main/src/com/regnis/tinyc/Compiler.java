@@ -84,6 +84,7 @@ public class Compiler {
 				final DotWriter dotWriter = new DotWriter(writer);
 				dotWriter.begin();
 				for (IRFunction function : irProgram.functions()) {
+					function = IR2OpPreparation.convertTo2Op(function);
 					final Pair<IRFunction, ControlFlowGraph> result = RemoveNotLiveResults.run(function);
 					function = result.first();
 					final ControlFlowGraph cfg = result.second();
