@@ -276,7 +276,7 @@ _printStringLength@@u8@u8:
         ; void main
         ;   rsp+0: var a
         ;   rsp+2: var b
-        ;   rsp+4: var t.2
+        ;   rsp+4: var t.1
 _main:
         ; reserve space for local variables
         sub rsp, 16
@@ -299,12 +299,12 @@ _while_4_body:
         add bx, cx
         lea rax, [rsp+2]
         mov [rax], bx
-        ; move t.2, b
+        ; move t.1, b
         lea rax, [rsp+2]
         mov bx, [rax]
         lea rax, [rsp+4]
         mov [rax], bx
-        ; sub t.2, t.2, a
+        ; sub t.1, t.1, a
         lea rax, [rsp+4]
         mov bx, [rax]
         lea rax, [rsp+0]
@@ -312,7 +312,7 @@ _while_4_body:
         sub bx, cx
         lea rax, [rsp+4]
         mov [rax], bx
-        ; move a, t.2
+        ; move a, t.1
         lea rax, [rsp+4]
         mov bx, [rax]
         lea rax, [rsp+0]
