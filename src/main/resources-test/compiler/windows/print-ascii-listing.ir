@@ -66,9 +66,8 @@ printHex2@u8:
  Local variables
 	arg 0: x (u8/1)
 	var 1: t.1 (u8/1)
-	; 16 pc
-	move t.1, x
-	shiftright t.1, t.1, 4
+	; 11 pc
+	shiftright t.1, x, 4
 	call printNibble@u8[t.1]
 	call printNibble@u8[x]
 printHex2@u8_ret:
@@ -82,7 +81,7 @@ main:
 	var 4: t.4 (u8/1)
 	var 5: t.5 (u8/1)
 	var 6: t.6 (u8/1)
-	; 93 pc
+	; 73 pc
 	const t.2, [string-0]
 	call printString@@u8[t.2]
 	const i, 0
@@ -91,8 +90,7 @@ for_3:
 	branch i gteq 16: for_3_break, for_3_body
 for_3_body:
 	; 20:3 if i & 7 == 0
-	move t.3, i
-	and t.3, t.3, 7
+	and t.3, i, 7
 	branch t.3 notequals 0: if_4_end, if_4_then
 if_4_then:
 	call printChar@u8[32]
@@ -109,23 +107,20 @@ for_5:
 	branch i gteq 128: main_ret, for_5_body
 for_5_body:
 	; 28:3 if i & 15 == 0
-	move t.4, i
-	and t.4, t.4, 15
+	and t.4, i, 15
 	branch t.4 notequals 0: if_6_end, if_6_then
 if_6_then:
 	call printHex2@u8[i]
 if_6_end:
 	; 31:3 if i & 7 == 0
-	move t.5, i
-	and t.5, t.5, 7
+	and t.5, i, 7
 	branch t.5 notequals 0: if_7_end, if_7_then
 if_7_then:
 	call printChar@u8[32]
 if_7_end:
 	call printChar@u8[i]
 	; 35:3 if i & 15 == 15
-	move t.6, i
-	and t.6, t.6, 15
+	and t.6, i, 15
 	branch t.6 notequals 15: for_5_continue, if_8_then
 if_8_then:
 	call printChar@u8[10]
