@@ -4,13 +4,25 @@ import com.regnis.tinyc.ir.*;
 
 import java.util.*;
 
+import org.jetbrains.annotations.*;
+
 /**
  * @author Thomas Singer
  */
-public abstract class CleanupUnusedVariables {
-	protected abstract void process(IRVar var, boolean read);
+public final class VarUseTracker {
+	private final Handler handler;
 
-	protected void process(IRInstruction instruction) {
+	public VarUseTracker(@NotNull Handler handler) {
+		this.handler = handler;
+	}
+
+	public void process(@NotNull List<IRInstruction> instructions) {
+		for (IRInstruction instruction : instructions) {
+			process(instruction);
+		}
+	}
+
+	private void process(@NotNull IRInstruction instruction) {
 		switch (instruction) {
 		case IRAddrOf addrOf -> readWrite(addrOf.target(), List.of(addrOf.source()));
 		case IRAddrOfArray addrOf -> readWrite(addrOf.addr(), List.of(addrOf.array()));
@@ -96,11 +108,19 @@ public abstract class CleanupUnusedVariables {
 
 	private void read(List<IRVar> vars) {
 		for (IRVar var : vars) {
-			process(var, true);
+			handler.read(var);
 		}
 	}
 
 	private void write(IRVar var) {
-		process(var, false);
+		handler.written(var);
+	}
+
+	public interface Handler {
+		default void read(@NotNull IRVar var) {
+		}
+
+		default void written(@NotNull IRVar var) {
+		}
 	}
 }
