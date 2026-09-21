@@ -10,40 +10,31 @@ import org.jetbrains.annotations.*;
 /**
  * @author Thomas Singer
  */
-public class CleanupGlobalUnusedVariables extends CleanupUnusedVariables {
+public class CleanupGlobalUnusedVariables {
 
 	public static IRProgram process(IRProgram program) {
-		final CleanupGlobalUnusedVariables cleanup = new CleanupGlobalUnusedVariables();
+		final Set<Integer> readGlobalVars = new HashSet<>();
+		final VarUseTracker varUseTracker = new VarUseTracker(new VarUseTracker.Handler() {
+			@Override
+			public void read(@NotNull IRVar var) {
+				if (var.scope() == VariableScope.global) {
+					readGlobalVars.add(var.index());
+				}
+			}
+		});
 		for (IRFunction function : program.functions()) {
-			cleanup.process(function);
+			varUseTracker.process(function.instructions());
 		}
 
-		final GlobalVarReplacer replacer = new GlobalVarReplacer(program.varInfos(), cleanup.readGlobalVars);
+		final GlobalVarReplacer replacer = new GlobalVarReplacer(program.varInfos(), readGlobalVars);
 		final List<IRFunction> functions = new ArrayList<>();
 		for (IRFunction function : program.functions()) {
-			functions.add(cleanup.replaceGlobalVars(function, replacer));
+			functions.add(replaceGlobalVars(function, replacer));
 		}
 		return new IRProgram(functions, program.asmFunctions(), replacer.newVarInfos, program.stringLiterals());
 	}
 
-	private final Set<Integer> readGlobalVars = new HashSet<>();
-
-	private CleanupGlobalUnusedVariables() {
-	}
-
-	protected void process(IRVar var, boolean read) {
-		if (read && var.scope() == VariableScope.global) {
-			readGlobalVars.add(var.index());
-		}
-	}
-
-	private void process(IRFunction function) {
-		for (IRInstruction instruction : function.instructions()) {
-			process(instruction);
-		}
-	}
-
-	private IRFunction replaceGlobalVars(IRFunction function, GlobalVarReplacer replacer) {
+	private static IRFunction replaceGlobalVars(IRFunction function, GlobalVarReplacer replacer) {
 		if (function.instructions().isEmpty()) {
 			return function;
 		}
@@ -61,7 +52,7 @@ public class CleanupGlobalUnusedVariables extends CleanupUnusedVariables {
 	}
 
 	@NotNull
-	private IRFunction derive(IRFunction function, List<IRInstruction> instructions, IRVarInfos varInfos) {
+	private static IRFunction derive(IRFunction function, List<IRInstruction> instructions, IRVarInfos varInfos) {
 		return new IRFunction(function.name(), function.returnType(), varInfos, instructions);
 	}
 
