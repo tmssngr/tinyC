@@ -94,7 +94,7 @@ main:
 	var 8: t.8 (i16/2)
 	var 9: t.9 (i16/2)
 	var 10: t.10 (i16/2)
-	; 126 pc
+	; 128 pc
 	const foo, 22
 	move bar, foo
 	mul bar, bar, foo
@@ -104,6 +104,7 @@ main:
 	call printIntLf@i16[t.5]
 	const foo, 21
 	call printIntLf@i16[foo]
+	const bazz, 0
 	call printIntLf@i16[bazz]
 	const a, 1000
 	const b, 10
