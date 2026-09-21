@@ -40,5 +40,16 @@ public record IRCompare(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar le
 
 	public enum Op {
 		Lt, LtEq, Equals, NotEquals, GtEq, Gt;
+
+		public Op invert() {
+			return switch (this) {
+				case Lt -> GtEq;
+				case LtEq -> Gt;
+				case Equals -> NotEquals;
+				case NotEquals -> Equals;
+				case GtEq -> Lt;
+				case Gt -> LtEq;
+			};
+		}
 	}
 }

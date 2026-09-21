@@ -164,7 +164,12 @@ public final class IRWriter extends TextWriter {
 				sum += getInstructionTime(i.target());
 			}
 			case IRBranch i -> {
-				sum += getInstructionTime(i.conditionVar());
+				sum += getInstructionTime(i.left());
+				final IRValue right = i.right();
+				final IRVar rightVar = right.var();
+				if (rightVar != null) {
+					sum += getInstructionTime(rightVar);
+				}
 				sum++;
 			}
 			case IRCall i -> {

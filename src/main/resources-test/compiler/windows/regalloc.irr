@@ -26,11 +26,8 @@ max@u8@u8:
  Local variables
 	arg 0: a (u8/1)
 	arg 1: b (u8/1)
-	var 2: t.2 (bool/1)
-	; 17 pc
-	; 13:2 if a < b
-	lt t.2, a, b
-	branch t.2, true, if_1_then, if_1_end
+	; 12 pc
+	branch a lt b: if_1_then, if_1_end
 	; 16:9 return a
 	ret a
 	jump max@u8@u8_ret
@@ -45,8 +42,7 @@ fibonacci@u8:
 	var 1: a (i16/2)
 	var 2: b (i16/2)
 	var 3: c (i16/2)
-	var 4: t.4 (bool/1)
-	; 43 pc
+	; 38 pc
 	const a, 0
 	const b, 1
 	; 22:2 while i > 0
@@ -58,8 +54,7 @@ while_2_body:
 	move a, b
 	move b, c
 while_2:
-	gt t.4, i, 0
-	branch t.4, true, while_2_body, while_2_break
+	branch i gt 0: while_2_body, while_2_break
 	; 28:9 return a
 	ret a
 

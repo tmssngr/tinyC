@@ -75,7 +75,6 @@ _printChar@u8:
         ;   rsp+24: arg str
         ;   rsp+0: var length
         ;   rsp+8: var t.2
-        ;   rsp+9: var t.3
 _strlen@@u8:
         ; reserve space for local variables
         sub rsp, 16
@@ -99,24 +98,17 @@ _for_1_body:
         lea rax, [rsp+24]
         mov [rax], rbx
 _for_1:
-        ; load t.3, [str]
+        ; load t.2, [str]
         lea rax, [rsp+24]
         mov rbx, [rax]
         mov al, [rbx]
-        lea rbx, [rsp+9]
+        lea rbx, [rsp+8]
         mov [rbx], al
-        ; notequals t.2, t.3, 0
-        lea rax, [rsp+9]
+        ; branch t.2 notequals 0: for_1_body, for_1_break
+        lea rax, [rsp+8]
         mov bl, [rax]
         cmp bl, 0
-        setne bl
-        lea rax, [rsp+8]
-        mov [rax], bl
-        ; branch t.2, true, for_1_body, for_1_break
-        lea rax, [rsp+8]
-        mov bl, [rax]
-        or bl, bl
-        jnz _for_1_body
+        jne _for_1_body
         ; 67:9 return length
         ; ret length
         lea rax, [rsp+0]
@@ -154,51 +146,39 @@ _printStringLength@@u8@u8:
         ret
 
         ; void printNibble@u8
-        ;   rsp+24: arg x
-        ;   rsp+0: var t.1
+        ;   rsp+8: arg x
 _printNibble@u8:
-        ; reserve space for local variables
-        sub rsp, 16
         ; and x, x, 15
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov bl, [rax]
         and bl, 15
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov [rax], bl
         ; 5:2 if x > 9
-        ; gt t.1, x, 9
-        lea rax, [rsp+24]
+        ; branch x lteq 9: if_2_end, if_2_then
+        lea rax, [rsp+8]
         mov bl, [rax]
         cmp bl, 9
-        seta bl
-        lea rax, [rsp+0]
-        mov [rax], bl
-        ; branch t.1, false, if_2_end, if_2_then
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        or bl, bl
-        jz _if_2_end
+        jbe _if_2_end
         ; add x, x, 7
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov bl, [rax]
         add bl, 7
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov [rax], bl
 _if_2_end:
         ; add x, x, 48
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov bl, [rax]
         add bl, 48
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov [rax], bl
         ; call printChar@u8[x]
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov bl, [rax]
         push rbx
           call _printChar@u8
         add rsp, 8
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; void printHex2@u8
@@ -242,12 +222,6 @@ _printHex2@u8:
         ;   rsp+17: var t.4
         ;   rsp+18: var t.5
         ;   rsp+19: var t.6
-        ;   rsp+20: var t.7
-        ;   rsp+21: var t.8
-        ;   rsp+22: var t.9
-        ;   rsp+23: var t.10
-        ;   rsp+24: var t.11
-        ;   rsp+25: var t.12
 _main:
         ; reserve space for local variables
         sub rsp, 32
@@ -269,29 +243,22 @@ _main:
         jmp _for_3
 _for_3_body:
         ; 20:3 if i & 7 == 0
-        ; move t.5, i
+        ; move t.3, i
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+18]
+        lea rax, [rsp+16]
         mov [rax], bl
-        ; and t.5, t.5, 7
-        lea rax, [rsp+18]
+        ; and t.3, t.3, 7
+        lea rax, [rsp+16]
         mov bl, [rax]
         and bl, 7
-        lea rax, [rsp+18]
+        lea rax, [rsp+16]
         mov [rax], bl
-        ; equals t.4, t.5, 0
-        lea rax, [rsp+18]
+        ; branch t.3 notequals 0: if_4_end, if_4_then
+        lea rax, [rsp+16]
         mov bl, [rax]
         cmp bl, 0
-        sete bl
-        lea rax, [rsp+17]
-        mov [rax], bl
-        ; branch t.4, false, if_4_end, if_4_then
-        lea rax, [rsp+17]
-        mov bl, [rax]
-        or bl, bl
-        jz _if_4_end
+        jne _if_4_end
         ; call printChar@u8[32]
         mov  rax, 32
         push rax
@@ -311,18 +278,11 @@ _if_4_end:
         lea rax, [rsp+0]
         mov [rax], bl
 _for_3:
-        ; lt t.3, i, 16
+        ; branch i lt 16: for_3_body, for_3_break
         lea rax, [rsp+0]
         mov bl, [rax]
         cmp bl, 16
-        setb bl
-        lea rax, [rsp+16]
-        mov [rax], bl
-        ; branch t.3, true, for_3_body, for_3_break
-        lea rax, [rsp+16]
-        mov bl, [rax]
-        or bl, bl
-        jnz _for_3_body
+        jb _for_3_body
         ; call printChar@u8[10]
         mov  rax, 10
         push rax
@@ -336,29 +296,22 @@ _for_3:
         jmp _for_5
 _for_5_body:
         ; 28:3 if i & 15 == 0
-        ; move t.8, i
+        ; move t.4, i
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+21]
+        lea rax, [rsp+17]
         mov [rax], bl
-        ; and t.8, t.8, 15
-        lea rax, [rsp+21]
+        ; and t.4, t.4, 15
+        lea rax, [rsp+17]
         mov bl, [rax]
         and bl, 15
-        lea rax, [rsp+21]
+        lea rax, [rsp+17]
         mov [rax], bl
-        ; equals t.7, t.8, 0
-        lea rax, [rsp+21]
+        ; branch t.4 notequals 0: if_6_end, if_6_then
+        lea rax, [rsp+17]
         mov bl, [rax]
         cmp bl, 0
-        sete bl
-        lea rax, [rsp+20]
-        mov [rax], bl
-        ; branch t.7, false, if_6_end, if_6_then
-        lea rax, [rsp+20]
-        mov bl, [rax]
-        or bl, bl
-        jz _if_6_end
+        jne _if_6_end
         ; call printHex2@u8[i]
         lea rax, [rsp+1]
         mov bl, [rax]
@@ -367,29 +320,22 @@ _for_5_body:
         add rsp, 8
 _if_6_end:
         ; 31:3 if i & 7 == 0
-        ; move t.10, i
+        ; move t.5, i
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+23]
+        lea rax, [rsp+18]
         mov [rax], bl
-        ; and t.10, t.10, 7
-        lea rax, [rsp+23]
+        ; and t.5, t.5, 7
+        lea rax, [rsp+18]
         mov bl, [rax]
         and bl, 7
-        lea rax, [rsp+23]
+        lea rax, [rsp+18]
         mov [rax], bl
-        ; equals t.9, t.10, 0
-        lea rax, [rsp+23]
+        ; branch t.5 notequals 0: if_7_end, if_7_then
+        lea rax, [rsp+18]
         mov bl, [rax]
         cmp bl, 0
-        sete bl
-        lea rax, [rsp+22]
-        mov [rax], bl
-        ; branch t.9, false, if_7_end, if_7_then
-        lea rax, [rsp+22]
-        mov bl, [rax]
-        or bl, bl
-        jz _if_7_end
+        jne _if_7_end
         ; call printChar@u8[32]
         mov  rax, 32
         push rax
@@ -403,29 +349,22 @@ _if_7_end:
           call _printChar@u8
         add rsp, 8
         ; 35:3 if i & 15 == 15
-        ; move t.12, i
+        ; move t.6, i
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+25]
+        lea rax, [rsp+19]
         mov [rax], bl
-        ; and t.12, t.12, 15
-        lea rax, [rsp+25]
+        ; and t.6, t.6, 15
+        lea rax, [rsp+19]
         mov bl, [rax]
         and bl, 15
-        lea rax, [rsp+25]
+        lea rax, [rsp+19]
         mov [rax], bl
-        ; equals t.11, t.12, 15
-        lea rax, [rsp+25]
+        ; branch t.6 notequals 15: for_5_continue, if_8_then
+        lea rax, [rsp+19]
         mov bl, [rax]
         cmp bl, 15
-        sete bl
-        lea rax, [rsp+24]
-        mov [rax], bl
-        ; branch t.11, false, for_5_continue, if_8_then
-        lea rax, [rsp+24]
-        mov bl, [rax]
-        or bl, bl
-        jz _for_5_continue
+        jne _for_5_continue
         ; call printChar@u8[10]
         mov  rax, 10
         push rax
@@ -439,18 +378,11 @@ _for_5_continue:
         lea rax, [rsp+1]
         mov [rax], bl
 _for_5:
-        ; lt t.6, i, 128
+        ; branch i lt 128: for_5_body, main_ret
         lea rax, [rsp+1]
         mov bl, [rax]
         cmp bl, 128
-        setb bl
-        lea rax, [rsp+19]
-        mov [rax], bl
-        ; branch t.6, true, for_5_body, main_ret
-        lea rax, [rsp+19]
-        mov bl, [rax]
-        or bl, bl
-        jnz _for_5_body
+        jb _for_5_body
         ; release space for local variables
         add rsp, 32
         ret

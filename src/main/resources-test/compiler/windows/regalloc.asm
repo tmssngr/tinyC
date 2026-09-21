@@ -87,42 +87,29 @@ _registerHint@u8@u8:
         ret
 
         ; u8 max@u8@u8
-        ;   rsp+40: arg a
-        ;   rsp+32: arg b
-        ;   rsp+0: var t.2
+        ;   rsp+24: arg a
+        ;   rsp+16: arg b
 _max@u8@u8:
-        ; reserve space for local variables
-        sub rsp, 16
-        ; 13:2 if a < b
-        ; lt t.2, a, b
-        lea rax, [rsp+40]
+        ; branch a lt b: if_1_then, if_1_end
+        lea rax, [rsp+24]
         mov bl, [rax]
-        lea rax, [rsp+32]
+        lea rax, [rsp+16]
         mov cl, [rax]
         cmp bl, cl
-        setb bl
-        lea rax, [rsp+0]
-        mov [rax], bl
-        ; branch t.2, true, if_1_then, if_1_end
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        or bl, bl
-        jnz _if_1_then
+        jb _if_1_then
         ; 16:9 return a
         ; ret a
-        lea rax, [rsp+40]
+        lea rax, [rsp+24]
         mov bl, [rax]
         mov rax, rbx
         jmp _max@u8@u8_ret
 _if_1_then:
         ; 14:10 return b
         ; ret b
-        lea rax, [rsp+32]
+        lea rax, [rsp+16]
         mov bl, [rax]
         mov rax, rbx
 _max@u8@u8_ret:
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; i16 fibonacci@u8
@@ -130,7 +117,6 @@ _max@u8@u8_ret:
         ;   rsp+0: var a
         ;   rsp+2: var b
         ;   rsp+4: var c
-        ;   rsp+6: var t.4
 _fibonacci@u8:
         ; reserve space for local variables
         sub rsp, 16
@@ -175,18 +161,11 @@ _while_2_body:
         lea rax, [rsp+2]
         mov [rax], bx
 _while_2:
-        ; gt t.4, i, 0
+        ; branch i gt 0: while_2_body, while_2_break
         lea rax, [rsp+24]
         mov bl, [rax]
         cmp bl, 0
-        seta bl
-        lea rax, [rsp+6]
-        mov [rax], bl
-        ; branch t.4, true, while_2_body, while_2_break
-        lea rax, [rsp+6]
-        mov bl, [rax]
-        or bl, bl
-        jnz _while_2_body
+        ja _while_2_body
         ; 28:9 return a
         ; ret a
         lea rax, [rsp+0]
