@@ -28,6 +28,26 @@ public class TypeCheckerTest {
 
 	@Test
 	public void testVarDeclaration() {
+		assertEquals(new Program(List.of(), List.of(),
+		                         List.of(
+				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
+				                                                List.of(
+						                                                new Variable("i", 0, VariableScope.function, Type.U8, 0, true, loc(1, 2)),
+						                                                new Variable("b", 1, VariableScope.function, Type.BOOL, 0, true, loc(2, 2)),
+						                                                new Variable("p", 2, VariableScope.function, Type.POINTER_U8, 0, true, loc(3, 2))
+				                                                ),
+				                                                List.of(),
+				                                                List.of(), loc(0, 0))
+		                         ),
+		                         List.of(), List.of()
+		             ),
+		             checkType("""
+				                       void main() {
+				                         u8 i;
+				                         bool b;
+				                         u8* p;
+				                       }"""));
+
 		testIllegal(Messages.undeclaredVariable("a"), 1, 9,
 		            """
 				            void main() {
