@@ -36,7 +36,17 @@ public class TypeCheckerTest {
 						                                                new Variable("b", 1, VariableScope.function, Type.BOOL, 0, true, loc(2, 2)),
 						                                                new Variable("p", 2, VariableScope.function, Type.POINTER_U8, 0, true, loc(3, 2))
 				                                                ),
-				                                                List.of(),
+				                                                List.of(
+						                                                assign("i", 0, VariableScope.function, Type.U8,
+						                                                       new ExprIntLiteral(0, Type.U8, loc(1, 2)),
+						                                                       loc(1, 2)),
+						                                                assign("b", 1, VariableScope.function, Type.BOOL,
+						                                                       new ExprBoolLiteral(false, loc(2, 2)),
+						                                                       loc(2, 2)),
+						                                                assign("p", 2, VariableScope.function, Type.POINTER_U8,
+						                                                       new ExprIntLiteral(0, Type.POINTER_U8, loc(3, 2)),
+						                                                       loc(3, 2))
+				                                                ),
 				                                                List.of(), loc(0, 0))
 		                         ),
 		                         List.of(), List.of()
