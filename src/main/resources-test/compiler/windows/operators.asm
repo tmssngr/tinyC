@@ -72,7 +72,7 @@ _printChar@u8:
         ret
 
         ; void printUint@i64
-        ;   rsp+104: arg number
+        ;   rsp+88: arg number
         ;   rsp+0: var buffer
         ;   rsp+20: var pos
         ;   rsp+24: var remainder
@@ -83,11 +83,10 @@ _printChar@u8:
         ;   rsp+56: var t.8
         ;   rsp+64: var t.9
         ;   rsp+72: var t.10
-        ;   rsp+80: var t.11
-        ;   rsp+81: var t.12
+        ;   rsp+73: var t.11
 _printUint@i64:
         ; reserve space for local variables
-        sub rsp, 96
+        sub rsp, 80
         ; const pos, 20
         mov al, 20
         lea rbx, [rsp+20]
@@ -101,7 +100,7 @@ _while_1:
         lea rax, [rsp+20]
         mov [rax], bl
         ; move remainder, number
-        lea rax, [rsp+104]
+        lea rax, [rsp+88]
         mov rbx, [rax]
         lea rax, [rsp+24]
         mov [rax], rbx
@@ -116,14 +115,14 @@ _while_1:
         lea rcx, [rsp+24]
         mov [rcx], rbx
         ; div number, number, 10
-        lea rax, [rsp+104]
+        lea rax, [rsp+88]
         mov rbx, [rax]
         mov rax, rbx
         mov rcx, 10
         cqo
         idiv rcx
         mov rbx, rax
-        lea rcx, [rsp+104]
+        lea rcx, [rsp+88]
         mov [rcx], rbx
         ; cast t.5(u8), remainder(i64)
         lea rax, [rsp+24]
@@ -166,65 +165,58 @@ _while_1:
         mov cl, [rax]
         mov [rbx], cl
         ; 34:3 if number == 0
-        ; equals t.8, number, 0
-        lea rax, [rsp+104]
+        ; branch number notequals 0: while_1, while_1_break
+        lea rax, [rsp+88]
         mov rbx, [rax]
         cmp rbx, 0
-        sete bl
-        lea rax, [rsp+56]
-        mov [rax], bl
-        ; branch t.8, false, while_1, while_1_break
-        lea rax, [rsp+56]
-        mov bl, [rax]
-        or bl, bl
-        jz _while_1
-        ; cast t.10(i64), pos(u8)
+        jne _while_1
+        ; cast t.9(i64), pos(u8)
         lea rax, [rsp+20]
         mov bl, [rax]
         movzx rbx, bl
-        lea rax, [rsp+72]
-        mov [rax], rbx
-        ; addrof t.9, [buffer]
-        lea rax, [rsp+0]
-        lea rbx, [rsp+64]
-        mov [rbx], rax
-        ; add t.9, t.9, t.10
         lea rax, [rsp+64]
+        mov [rax], rbx
+        ; addrof t.8, [buffer]
+        lea rax, [rsp+0]
+        lea rbx, [rsp+56]
+        mov [rbx], rax
+        ; add t.8, t.8, t.9
+        lea rax, [rsp+56]
         mov rbx, [rax]
-        lea rax, [rsp+72]
+        lea rax, [rsp+64]
         mov rcx, [rax]
         add rbx, rcx
-        lea rax, [rsp+64]
+        lea rax, [rsp+56]
         mov [rax], rbx
-        ; const t.12, 20
+        ; const t.11, 20
         mov al, 20
-        lea rbx, [rsp+81]
+        lea rbx, [rsp+73]
         mov [rbx], al
-        ; move t.11, t.12
-        lea rax, [rsp+81]
+        ; move t.10, t.11
+        lea rax, [rsp+73]
         mov bl, [rax]
-        lea rax, [rsp+80]
+        lea rax, [rsp+72]
         mov [rax], bl
-        ; sub t.11, t.11, pos
-        lea rax, [rsp+80]
+        ; sub t.10, t.10, pos
+        lea rax, [rsp+72]
         mov bl, [rax]
         lea rax, [rsp+20]
         mov cl, [rax]
         sub bl, cl
-        lea rax, [rsp+80]
+        lea rax, [rsp+72]
         mov [rax], bl
-        ; call printStringLength@@u8@u8[t.9, t.11]
-        lea rax, [rsp+64]
+        ; call printStringLength@@u8@u8[t.8, t.10]
+        lea rax, [rsp+56]
         mov rbx, [rax]
         push rbx
-        lea rax, [rsp+88]
+        lea rax, [rsp+80]
         mov bl, [rax]
         push rbx
         sub rsp, 8
           call _printStringLength@@u8@u8
         add rsp, 24
         ; release space for local variables
-        add rsp, 96
+        add rsp, 80
         ret
 
         ; void printIntLf@bool
@@ -294,38 +286,27 @@ _printIntLf@i16:
         ret
 
         ; void printIntLf@i64
-        ;   rsp+24: arg number
-        ;   rsp+0: var t.1
+        ;   rsp+8: arg number
 _printIntLf@i64:
-        ; reserve space for local variables
-        sub rsp, 16
-        ; 54:2 if number < 0
-        ; lt t.1, number, 0
-        lea rax, [rsp+24]
+        ; branch number gteq 0: if_3_end, if_3_then
+        lea rax, [rsp+8]
         mov rbx, [rax]
         cmp rbx, 0
-        setl bl
-        lea rax, [rsp+0]
-        mov [rax], bl
-        ; branch t.1, false, if_3_end, if_3_then
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        or bl, bl
-        jz _if_3_end
+        jge _if_3_end
         ; call printChar@u8[45]
         mov  rax, 45
         push rax
           call _printChar@u8
         add rsp, 8
         ; neg number, number
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov rbx, [rax]
         neg rbx
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov [rax], rbx
 _if_3_end:
         ; call printUint@i64[number]
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov rbx, [rax]
         push rbx
           call _printUint@i64
@@ -335,15 +316,12 @@ _if_3_end:
         push rax
           call _printChar@u8
         add rsp, 8
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; i64 strlen@@u8
         ;   rsp+24: arg str
         ;   rsp+0: var length
         ;   rsp+8: var t.2
-        ;   rsp+9: var t.3
 _strlen@@u8:
         ; reserve space for local variables
         sub rsp, 16
@@ -367,24 +345,17 @@ _for_4_body:
         lea rax, [rsp+24]
         mov [rax], rbx
 _for_4:
-        ; load t.3, [str]
+        ; load t.2, [str]
         lea rax, [rsp+24]
         mov rbx, [rax]
         mov al, [rbx]
-        lea rbx, [rsp+9]
+        lea rbx, [rsp+8]
         mov [rbx], al
-        ; notequals t.2, t.3, 0
-        lea rax, [rsp+9]
+        ; branch t.2 notequals 0: for_4_body, for_4_break
+        lea rax, [rsp+8]
         mov bl, [rax]
         cmp bl, 0
-        setne bl
-        lea rax, [rsp+8]
-        mov [rax], bl
-        ; branch t.2, true, for_4_body, for_4_break
-        lea rax, [rsp+8]
-        mov bl, [rax]
-        or bl, bl
-        jnz _for_4_body
+        jne _for_4_body
         ; 67:9 return length
         ; ret length
         lea rax, [rsp+0]
@@ -525,8 +496,6 @@ _printError:
         ;   rsp+17: var t.4
         ;   rsp+18: var t.5
         ;   rsp+19: var t.6
-        ;   rsp+20: var t.7
-        ;   rsp+21: var t.8
 _logicNot:
         ; reserve space for local variables
         sub rsp, 32
@@ -549,24 +518,17 @@ _logicNot:
         lea rbx, [rsp+1]
         mov [rbx], al
         ; 13:2 if !getFalse([])
-        ; call t.4 = getFalse[] -> bool
+        ; call t.3 = getFalse[] -> bool
         sub rsp, 8
           call _getFalse
         add rsp, 8
-        lea rbx, [rsp+17]
+        lea rbx, [rsp+16]
         mov [rbx], al
-        ; notlog t.3, t.4
-        lea rax, [rsp+17]
-        mov bl, [rax]
-        or bl, bl
-        sete bl
-        lea rax, [rsp+16]
-        mov [rax], bl
-        ; branch t.3, true, if_5_then, if_5_else
+        ; branch t.3 equals 0: if_5_then, if_5_else
         lea rax, [rsp+16]
         mov bl, [rax]
-        or bl, bl
-        jnz _if_5_then
+        cmp bl, 0
+        je _if_5_then
         ; call printError[]
         sub rsp, 8
           call _printError
@@ -578,38 +540,31 @@ _if_5_then:
           call _printPass
         add rsp, 8
 _if_5_end:
-        ; notlog t.5, f
+        ; notlog t.4, f
         lea rax, [rsp+1]
         mov bl, [rax]
         or bl, bl
         sete bl
-        lea rax, [rsp+18]
+        lea rax, [rsp+17]
         mov [rax], bl
-        ; call printIntLf@bool[t.5]
-        lea rax, [rsp+18]
+        ; call printIntLf@bool[t.4]
+        lea rax, [rsp+17]
         mov bl, [rax]
         push rbx
           call _printIntLf@bool
         add rsp, 8
         ; 15:2 if !getTrue([])
-        ; call t.7 = getTrue[] -> bool
+        ; call t.5 = getTrue[] -> bool
         sub rsp, 8
           call _getTrue
         add rsp, 8
-        lea rbx, [rsp+20]
+        lea rbx, [rsp+18]
         mov [rbx], al
-        ; notlog t.6, t.7
-        lea rax, [rsp+20]
+        ; branch t.5 equals 0: if_6_then, if_6_else
+        lea rax, [rsp+18]
         mov bl, [rax]
-        or bl, bl
-        sete bl
-        lea rax, [rsp+19]
-        mov [rax], bl
-        ; branch t.6, true, if_6_then, if_6_else
-        lea rax, [rsp+19]
-        mov bl, [rax]
-        or bl, bl
-        jnz _if_6_then
+        cmp bl, 0
+        je _if_6_then
         ; call printPass[]
         sub rsp, 8
           call _printPass
@@ -621,15 +576,15 @@ _if_6_then:
           call _printError
         add rsp, 8
 _if_6_end:
-        ; notlog t.8, t
+        ; notlog t.6, t
         lea rax, [rsp+0]
         mov bl, [rax]
         or bl, bl
         sete bl
-        lea rax, [rsp+21]
+        lea rax, [rsp+19]
         mov [rax], bl
-        ; call printIntLf@bool[t.8]
-        lea rax, [rsp+21]
+        ; call printIntLf@bool[t.6]
+        lea rax, [rsp+19]
         mov bl, [rax]
         push rbx
           call _printIntLf@bool
@@ -666,6 +621,10 @@ _if_6_end:
         ;   rsp+37: var t.24
         ;   rsp+38: var t.25
         ;   rsp+39: var t.26
+        ;   rsp+40: var t.27
+        ;   rsp+41: var t.28
+        ;   rsp+42: var t.29
+        ;   rsp+43: var t.30
 _logicAnd:
         ; reserve space for local variables
         sub rsp, 48
@@ -688,273 +647,256 @@ _logicAnd:
         lea rbx, [rsp+1]
         mov [rbx], al
         ; 23:2 if getFalse([]) && getFalse([])
-        ; 23:17 logic and
         ; call t.3 = getFalse[] -> bool
         sub rsp, 8
           call _getFalse
         add rsp, 8
         lea rbx, [rsp+16]
         mov [rbx], al
-        ; branch t.3, false, and_next_8, and_2nd_8
+        ; branch t.3 equals 0: if_7_else, @and_8
         lea rax, [rsp+16]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_8
-        ; call t.3 = getFalse[] -> bool
+        cmp bl, 0
+        je _if_7_else
+        ; call t.4 = getFalse[] -> bool
         sub rsp, 8
           call _getFalse
         add rsp, 8
-        lea rbx, [rsp+16]
+        lea rbx, [rsp+17]
         mov [rbx], al
-_and_next_8:
-        ; branch t.3, true, if_7_then, if_7_else
-        lea rax, [rsp+16]
+        ; branch t.4 equals 0: if_7_else, if_7_then
+        lea rax, [rsp+17]
         mov bl, [rax]
-        or bl, bl
-        jnz _if_7_then
-        ; call printPass[]
-        sub rsp, 8
-          call _printPass
-        add rsp, 8
-        jmp _if_7_end
-_if_7_then:
+        cmp bl, 0
+        je _if_7_else
         ; call printError[]
         sub rsp, 8
           call _printError
         add rsp, 8
+        jmp _if_7_end
+_if_7_else:
+        ; call printPass[]
+        sub rsp, 8
+          call _printPass
+        add rsp, 8
 _if_7_end:
         ; 24:15 logic and
-        ; move t.4, f
+        ; move t.5, f
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+17]
+        lea rax, [rsp+18]
         mov [rax], bl
-        ; branch t.4, false, and_next_9, and_2nd_9
-        lea rax, [rsp+17]
+        ; branch t.5 equals 0: and_next_9, and_2nd_9
+        lea rax, [rsp+18]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_9
-        ; move t.4, f
+        cmp bl, 0
+        je _and_next_9
+        ; move t.5, f
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+17]
+        lea rax, [rsp+18]
         mov [rax], bl
 _and_next_9:
-        ; call printIntLf@bool[t.4]
-        lea rax, [rsp+17]
+        ; call printIntLf@bool[t.5]
+        lea rax, [rsp+18]
         mov bl, [rax]
         push rbx
           call _printIntLf@bool
         add rsp, 8
         ; 25:2 if getFalse([]) && getTrue([])
-        ; 25:17 logic and
-        ; call t.5 = getFalse[] -> bool
+        ; call t.6 = getFalse[] -> bool
         sub rsp, 8
           call _getFalse
         add rsp, 8
-        lea rbx, [rsp+18]
+        lea rbx, [rsp+19]
         mov [rbx], al
-        ; branch t.5, false, and_next_11, and_2nd_11
-        lea rax, [rsp+18]
-        mov bl, [rax]
-        or bl, bl
-        jz _and_next_11
-        ; call t.5 = getTrue[] -> bool
-        sub rsp, 8
-          call _getTrue
-        add rsp, 8
-        lea rbx, [rsp+18]
-        mov [rbx], al
-_and_next_11:
-        ; branch t.5, true, if_10_then, if_10_else
-        lea rax, [rsp+18]
-        mov bl, [rax]
-        or bl, bl
-        jnz _if_10_then
-        ; call printPass[]
-        sub rsp, 8
-          call _printPass
-        add rsp, 8
-        jmp _if_10_end
-_if_10_then:
-        ; call printError[]
-        sub rsp, 8
-          call _printError
-        add rsp, 8
-_if_10_end:
-        ; 26:15 logic and
-        ; move t.6, f
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        lea rax, [rsp+19]
-        mov [rax], bl
-        ; branch t.6, false, and_next_12, and_2nd_12
+        ; branch t.6 equals 0: if_10_else, @and_11
         lea rax, [rsp+19]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_12
-        ; move t.6, t
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+19]
-        mov [rax], bl
-_and_next_12:
-        ; call printIntLf@bool[t.6]
-        lea rax, [rsp+19]
-        mov bl, [rax]
-        push rbx
-          call _printIntLf@bool
-        add rsp, 8
-        ; 27:2 if getTrue([]) && getFalse([])
-        ; 27:16 logic and
+        cmp bl, 0
+        je _if_10_else
         ; call t.7 = getTrue[] -> bool
         sub rsp, 8
           call _getTrue
         add rsp, 8
         lea rbx, [rsp+20]
         mov [rbx], al
-        ; branch t.7, false, and_next_14, and_2nd_14
+        ; branch t.7 equals 0: if_10_else, if_10_then
         lea rax, [rsp+20]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_14
-        ; call t.7 = getFalse[] -> bool
-        sub rsp, 8
-          call _getFalse
-        add rsp, 8
-        lea rbx, [rsp+20]
-        mov [rbx], al
-_and_next_14:
-        ; branch t.7, true, if_13_then, if_13_else
-        lea rax, [rsp+20]
-        mov bl, [rax]
-        or bl, bl
-        jnz _if_13_then
-        ; call printPass[]
-        sub rsp, 8
-          call _printPass
-        add rsp, 8
-        jmp _if_13_end
-_if_13_then:
+        cmp bl, 0
+        je _if_10_else
         ; call printError[]
         sub rsp, 8
           call _printError
         add rsp, 8
-_if_13_end:
-        ; 28:15 logic and
-        ; move t.8, t
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+21]
-        mov [rax], bl
-        ; branch t.8, false, and_next_15, and_2nd_15
-        lea rax, [rsp+21]
-        mov bl, [rax]
-        or bl, bl
-        jz _and_next_15
+        jmp _if_10_end
+_if_10_else:
+        ; call printPass[]
+        sub rsp, 8
+          call _printPass
+        add rsp, 8
+_if_10_end:
+        ; 26:15 logic and
         ; move t.8, f
         lea rax, [rsp+1]
         mov bl, [rax]
         lea rax, [rsp+21]
         mov [rax], bl
-_and_next_15:
+        ; branch t.8 equals 0: and_next_12, and_2nd_12
+        lea rax, [rsp+21]
+        mov bl, [rax]
+        cmp bl, 0
+        je _and_next_12
+        ; move t.8, t
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        lea rax, [rsp+21]
+        mov [rax], bl
+_and_next_12:
         ; call printIntLf@bool[t.8]
         lea rax, [rsp+21]
         mov bl, [rax]
         push rbx
           call _printIntLf@bool
         add rsp, 8
-        ; 29:2 if getTrue([]) && getTrue([])
-        ; 29:16 logic and
+        ; 27:2 if getTrue([]) && getFalse([])
         ; call t.9 = getTrue[] -> bool
         sub rsp, 8
           call _getTrue
         add rsp, 8
         lea rbx, [rsp+22]
         mov [rbx], al
-        ; branch t.9, false, and_next_17, and_2nd_17
+        ; branch t.9 equals 0: if_13_else, @and_14
         lea rax, [rsp+22]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_17
-        ; call t.9 = getTrue[] -> bool
+        cmp bl, 0
+        je _if_13_else
+        ; call t.10 = getFalse[] -> bool
         sub rsp, 8
-          call _getTrue
+          call _getFalse
         add rsp, 8
-        lea rbx, [rsp+22]
+        lea rbx, [rsp+23]
         mov [rbx], al
-_and_next_17:
-        ; branch t.9, true, if_16_then, if_16_else
-        lea rax, [rsp+22]
+        ; branch t.10 equals 0: if_13_else, if_13_then
+        lea rax, [rsp+23]
         mov bl, [rax]
-        or bl, bl
-        jnz _if_16_then
+        cmp bl, 0
+        je _if_13_else
         ; call printError[]
         sub rsp, 8
           call _printError
         add rsp, 8
-        jmp _if_16_end
-_if_16_then:
+        jmp _if_13_end
+_if_13_else:
         ; call printPass[]
         sub rsp, 8
           call _printPass
         add rsp, 8
+_if_13_end:
+        ; 28:15 logic and
+        ; move t.11, t
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        lea rax, [rsp+24]
+        mov [rax], bl
+        ; branch t.11 equals 0: and_next_15, and_2nd_15
+        lea rax, [rsp+24]
+        mov bl, [rax]
+        cmp bl, 0
+        je _and_next_15
+        ; move t.11, f
+        lea rax, [rsp+1]
+        mov bl, [rax]
+        lea rax, [rsp+24]
+        mov [rax], bl
+_and_next_15:
+        ; call printIntLf@bool[t.11]
+        lea rax, [rsp+24]
+        mov bl, [rax]
+        push rbx
+          call _printIntLf@bool
+        add rsp, 8
+        ; 29:2 if getTrue([]) && getTrue([])
+        ; call t.12 = getTrue[] -> bool
+        sub rsp, 8
+          call _getTrue
+        add rsp, 8
+        lea rbx, [rsp+25]
+        mov [rbx], al
+        ; branch t.12 equals 0: if_16_else, @and_17
+        lea rax, [rsp+25]
+        mov bl, [rax]
+        cmp bl, 0
+        je _if_16_else
+        ; call t.13 = getTrue[] -> bool
+        sub rsp, 8
+          call _getTrue
+        add rsp, 8
+        lea rbx, [rsp+26]
+        mov [rbx], al
+        ; branch t.13 equals 0: if_16_else, if_16_then
+        lea rax, [rsp+26]
+        mov bl, [rax]
+        cmp bl, 0
+        je _if_16_else
+        ; call printPass[]
+        sub rsp, 8
+          call _printPass
+        add rsp, 8
+        jmp _if_16_end
+_if_16_else:
+        ; call printError[]
+        sub rsp, 8
+          call _printError
+        add rsp, 8
 _if_16_end:
         ; 30:15 logic and
-        ; move t.10, t
+        ; move t.14, t
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+23]
+        lea rax, [rsp+27]
         mov [rax], bl
-        ; branch t.10, false, and_next_18, and_2nd_18
-        lea rax, [rsp+23]
+        ; branch t.14 equals 0: and_next_18, and_2nd_18
+        lea rax, [rsp+27]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_18
-        ; move t.10, t
+        cmp bl, 0
+        je _and_next_18
+        ; move t.14, t
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+23]
+        lea rax, [rsp+27]
         mov [rax], bl
 _and_next_18:
-        ; call printIntLf@bool[t.10]
-        lea rax, [rsp+23]
+        ; call printIntLf@bool[t.14]
+        lea rax, [rsp+27]
         mov bl, [rax]
         push rbx
           call _printIntLf@bool
         add rsp, 8
         ; 32:2 if !getFalse([]) && getFalse([])
-        ; 32:19 logic and
-        ; call t.12 = getFalse[] -> bool
+        ; call t.15 = getFalse[] -> bool
         sub rsp, 8
           call _getFalse
         add rsp, 8
-        lea rbx, [rsp+25]
+        lea rbx, [rsp+28]
         mov [rbx], al
-        ; branch t.12, false, and_next_20, and_2nd_20
-        lea rax, [rsp+25]
+        ; branch t.15 equals 0: if_19_then, @and_20
+        lea rax, [rsp+28]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_20
-        ; call t.12 = getFalse[] -> bool
+        cmp bl, 0
+        je _if_19_then
+        ; call t.16 = getFalse[] -> bool
         sub rsp, 8
           call _getFalse
         add rsp, 8
-        lea rbx, [rsp+25]
+        lea rbx, [rsp+29]
         mov [rbx], al
-_and_next_20:
-        ; notlog t.11, t.12
-        lea rax, [rsp+25]
+        ; branch t.16 equals 0: if_19_then, if_19_else
+        lea rax, [rsp+29]
         mov bl, [rax]
-        or bl, bl
-        sete bl
-        lea rax, [rsp+24]
-        mov [rax], bl
-        ; branch t.11, true, if_19_then, if_19_else
-        lea rax, [rsp+24]
-        mov bl, [rax]
-        or bl, bl
-        jnz _if_19_then
+        cmp bl, 0
+        je _if_19_then
         ; call printError[]
         sub rsp, 8
           call _printError
@@ -967,95 +909,22 @@ _if_19_then:
         add rsp, 8
 _if_19_end:
         ; 33:17 logic and
-        ; move t.14, f
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        lea rax, [rsp+27]
-        mov [rax], bl
-        ; branch t.14, false, and_next_21, and_2nd_21
-        lea rax, [rsp+27]
-        mov bl, [rax]
-        or bl, bl
-        jz _and_next_21
-        ; move t.14, f
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        lea rax, [rsp+27]
-        mov [rax], bl
-_and_next_21:
-        ; notlog t.13, t.14
-        lea rax, [rsp+27]
-        mov bl, [rax]
-        or bl, bl
-        sete bl
-        lea rax, [rsp+26]
-        mov [rax], bl
-        ; call printIntLf@bool[t.13]
-        lea rax, [rsp+26]
-        mov bl, [rax]
-        push rbx
-          call _printIntLf@bool
-        add rsp, 8
-        ; 34:2 if !getFalse([]) && getTrue([])
-        ; 34:19 logic and
-        ; call t.16 = getFalse[] -> bool
-        sub rsp, 8
-          call _getFalse
-        add rsp, 8
-        lea rbx, [rsp+29]
-        mov [rbx], al
-        ; branch t.16, false, and_next_23, and_2nd_23
-        lea rax, [rsp+29]
-        mov bl, [rax]
-        or bl, bl
-        jz _and_next_23
-        ; call t.16 = getTrue[] -> bool
-        sub rsp, 8
-          call _getTrue
-        add rsp, 8
-        lea rbx, [rsp+29]
-        mov [rbx], al
-_and_next_23:
-        ; notlog t.15, t.16
-        lea rax, [rsp+29]
-        mov bl, [rax]
-        or bl, bl
-        sete bl
-        lea rax, [rsp+28]
-        mov [rax], bl
-        ; branch t.15, true, if_22_then, if_22_else
-        lea rax, [rsp+28]
-        mov bl, [rax]
-        or bl, bl
-        jnz _if_22_then
-        ; call printError[]
-        sub rsp, 8
-          call _printError
-        add rsp, 8
-        jmp _if_22_end
-_if_22_then:
-        ; call printPass[]
-        sub rsp, 8
-          call _printPass
-        add rsp, 8
-_if_22_end:
-        ; 35:17 logic and
         ; move t.18, f
         lea rax, [rsp+1]
         mov bl, [rax]
         lea rax, [rsp+31]
         mov [rax], bl
-        ; branch t.18, false, and_next_24, and_2nd_24
+        ; branch t.18 equals 0: and_next_21, and_2nd_21
         lea rax, [rsp+31]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_24
-        ; move t.18, t
-        lea rax, [rsp+0]
+        cmp bl, 0
+        je _and_next_21
+        ; move t.18, f
+        lea rax, [rsp+1]
         mov bl, [rax]
         lea rax, [rsp+31]
         mov [rax], bl
-_and_next_24:
+_and_next_21:
         ; notlog t.17, t.18
         lea rax, [rsp+31]
         mov bl, [rax]
@@ -1069,66 +938,57 @@ _and_next_24:
         push rbx
           call _printIntLf@bool
         add rsp, 8
-        ; 36:2 if !getTrue([]) && getFalse([])
-        ; 36:18 logic and
+        ; 34:2 if !getFalse([]) && getTrue([])
+        ; call t.19 = getFalse[] -> bool
+        sub rsp, 8
+          call _getFalse
+        add rsp, 8
+        lea rbx, [rsp+32]
+        mov [rbx], al
+        ; branch t.19 equals 0: if_22_then, @and_23
+        lea rax, [rsp+32]
+        mov bl, [rax]
+        cmp bl, 0
+        je _if_22_then
         ; call t.20 = getTrue[] -> bool
         sub rsp, 8
           call _getTrue
         add rsp, 8
         lea rbx, [rsp+33]
         mov [rbx], al
-        ; branch t.20, false, and_next_26, and_2nd_26
+        ; branch t.20 equals 0: if_22_then, if_22_else
         lea rax, [rsp+33]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_26
-        ; call t.20 = getFalse[] -> bool
-        sub rsp, 8
-          call _getFalse
-        add rsp, 8
-        lea rbx, [rsp+33]
-        mov [rbx], al
-_and_next_26:
-        ; notlog t.19, t.20
-        lea rax, [rsp+33]
-        mov bl, [rax]
-        or bl, bl
-        sete bl
-        lea rax, [rsp+32]
-        mov [rax], bl
-        ; branch t.19, true, if_25_then, if_25_else
-        lea rax, [rsp+32]
-        mov bl, [rax]
-        or bl, bl
-        jnz _if_25_then
+        cmp bl, 0
+        je _if_22_then
         ; call printError[]
         sub rsp, 8
           call _printError
         add rsp, 8
-        jmp _if_25_end
-_if_25_then:
+        jmp _if_22_end
+_if_22_then:
         ; call printPass[]
         sub rsp, 8
           call _printPass
         add rsp, 8
-_if_25_end:
-        ; 37:17 logic and
-        ; move t.22, t
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+35]
-        mov [rax], bl
-        ; branch t.22, false, and_next_27, and_2nd_27
-        lea rax, [rsp+35]
-        mov bl, [rax]
-        or bl, bl
-        jz _and_next_27
+_if_22_end:
+        ; 35:17 logic and
         ; move t.22, f
         lea rax, [rsp+1]
         mov bl, [rax]
         lea rax, [rsp+35]
         mov [rax], bl
-_and_next_27:
+        ; branch t.22 equals 0: and_next_24, and_2nd_24
+        lea rax, [rsp+35]
+        mov bl, [rax]
+        cmp bl, 0
+        je _and_next_24
+        ; move t.22, t
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        lea rax, [rsp+35]
+        mov [rax], bl
+_and_next_24:
         ; notlog t.21, t.22
         lea rax, [rsp+35]
         mov bl, [rax]
@@ -1142,38 +1002,93 @@ _and_next_27:
         push rbx
           call _printIntLf@bool
         add rsp, 8
-        ; 38:2 if !getTrue([]) && getTrue([])
-        ; 38:18 logic and
-        ; call t.24 = getTrue[] -> bool
+        ; 36:2 if !getTrue([]) && getFalse([])
+        ; call t.23 = getTrue[] -> bool
         sub rsp, 8
           call _getTrue
         add rsp, 8
+        lea rbx, [rsp+36]
+        mov [rbx], al
+        ; branch t.23 equals 0: if_25_then, @and_26
+        lea rax, [rsp+36]
+        mov bl, [rax]
+        cmp bl, 0
+        je _if_25_then
+        ; call t.24 = getFalse[] -> bool
+        sub rsp, 8
+          call _getFalse
+        add rsp, 8
         lea rbx, [rsp+37]
         mov [rbx], al
-        ; branch t.24, false, and_next_29, and_2nd_29
+        ; branch t.24 equals 0: if_25_then, if_25_else
         lea rax, [rsp+37]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_29
-        ; call t.24 = getTrue[] -> bool
+        cmp bl, 0
+        je _if_25_then
+        ; call printError[]
         sub rsp, 8
-          call _getTrue
+          call _printError
         add rsp, 8
-        lea rbx, [rsp+37]
-        mov [rbx], al
-_and_next_29:
-        ; notlog t.23, t.24
-        lea rax, [rsp+37]
+        jmp _if_25_end
+_if_25_then:
+        ; call printPass[]
+        sub rsp, 8
+          call _printPass
+        add rsp, 8
+_if_25_end:
+        ; 37:17 logic and
+        ; move t.26, t
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        lea rax, [rsp+39]
+        mov [rax], bl
+        ; branch t.26 equals 0: and_next_27, and_2nd_27
+        lea rax, [rsp+39]
+        mov bl, [rax]
+        cmp bl, 0
+        je _and_next_27
+        ; move t.26, f
+        lea rax, [rsp+1]
+        mov bl, [rax]
+        lea rax, [rsp+39]
+        mov [rax], bl
+_and_next_27:
+        ; notlog t.25, t.26
+        lea rax, [rsp+39]
         mov bl, [rax]
         or bl, bl
         sete bl
-        lea rax, [rsp+36]
+        lea rax, [rsp+38]
         mov [rax], bl
-        ; branch t.23, true, if_28_then, if_28_else
-        lea rax, [rsp+36]
+        ; call printIntLf@bool[t.25]
+        lea rax, [rsp+38]
         mov bl, [rax]
-        or bl, bl
-        jnz _if_28_then
+        push rbx
+          call _printIntLf@bool
+        add rsp, 8
+        ; 38:2 if !getTrue([]) && getTrue([])
+        ; call t.27 = getTrue[] -> bool
+        sub rsp, 8
+          call _getTrue
+        add rsp, 8
+        lea rbx, [rsp+40]
+        mov [rbx], al
+        ; branch t.27 equals 0: if_28_then, @and_29
+        lea rax, [rsp+40]
+        mov bl, [rax]
+        cmp bl, 0
+        je _if_28_then
+        ; call t.28 = getTrue[] -> bool
+        sub rsp, 8
+          call _getTrue
+        add rsp, 8
+        lea rbx, [rsp+41]
+        mov [rbx], al
+        ; branch t.28 equals 0: if_28_then, if_28_else
+        lea rax, [rsp+41]
+        mov bl, [rax]
+        cmp bl, 0
+        je _if_28_then
         ; call printPass[]
         sub rsp, 8
           call _printPass
@@ -1186,31 +1101,31 @@ _if_28_then:
         add rsp, 8
 _if_28_end:
         ; 39:17 logic and
-        ; move t.26, t
+        ; move t.30, t
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+39]
+        lea rax, [rsp+43]
         mov [rax], bl
-        ; branch t.26, false, and_next_30, and_2nd_30
-        lea rax, [rsp+39]
+        ; branch t.30 equals 0: and_next_30, and_2nd_30
+        lea rax, [rsp+43]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_30
-        ; move t.26, t
+        cmp bl, 0
+        je _and_next_30
+        ; move t.30, t
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+39]
+        lea rax, [rsp+43]
         mov [rax], bl
 _and_next_30:
-        ; notlog t.25, t.26
-        lea rax, [rsp+39]
+        ; notlog t.29, t.30
+        lea rax, [rsp+43]
         mov bl, [rax]
         or bl, bl
         sete bl
-        lea rax, [rsp+38]
+        lea rax, [rsp+42]
         mov [rax], bl
-        ; call printIntLf@bool[t.25]
-        lea rax, [rsp+38]
+        ; call printIntLf@bool[t.29]
+        lea rax, [rsp+42]
         mov bl, [rax]
         push rbx
           call _printIntLf@bool
@@ -1231,6 +1146,10 @@ _and_next_30:
         ;   rsp+21: var t.8
         ;   rsp+22: var t.9
         ;   rsp+23: var t.10
+        ;   rsp+24: var t.11
+        ;   rsp+25: var t.12
+        ;   rsp+26: var t.13
+        ;   rsp+27: var t.14
 _logicOr:
         ; reserve space for local variables
         sub rsp, 32
@@ -1253,30 +1172,28 @@ _logicOr:
         lea rbx, [rsp+1]
         mov [rbx], al
         ; 46:2 if getFalse([]) || getFalse([])
-        ; 46:17 logic or
         ; call t.3 = getFalse[] -> bool
         sub rsp, 8
           call _getFalse
         add rsp, 8
         lea rbx, [rsp+16]
         mov [rbx], al
-        ; branch t.3, true, or_next_32, or_2nd_32
+        ; branch t.3 notequals 0: if_31_then, @or_32
         lea rax, [rsp+16]
         mov bl, [rax]
-        or bl, bl
-        jnz _or_next_32
-        ; call t.3 = getFalse[] -> bool
+        cmp bl, 0
+        jne _if_31_then
+        ; call t.4 = getFalse[] -> bool
         sub rsp, 8
           call _getFalse
         add rsp, 8
-        lea rbx, [rsp+16]
+        lea rbx, [rsp+17]
         mov [rbx], al
-_or_next_32:
-        ; branch t.3, true, if_31_then, if_31_else
-        lea rax, [rsp+16]
+        ; branch t.4 notequals 0: if_31_then, if_31_else
+        lea rax, [rsp+17]
         mov bl, [rax]
-        or bl, bl
-        jnz _if_31_then
+        cmp bl, 0
+        jne _if_31_then
         ; call printPass[]
         sub rsp, 8
           call _printPass
@@ -1289,53 +1206,51 @@ _if_31_then:
         add rsp, 8
 _if_31_end:
         ; 47:15 logic or
-        ; move t.4, f
+        ; move t.5, f
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+17]
+        lea rax, [rsp+18]
         mov [rax], bl
-        ; branch t.4, true, or_next_33, or_2nd_33
-        lea rax, [rsp+17]
+        ; branch t.5 notequals 0: or_next_33, or_2nd_33
+        lea rax, [rsp+18]
         mov bl, [rax]
-        or bl, bl
-        jnz _or_next_33
-        ; move t.4, f
+        cmp bl, 0
+        jne _or_next_33
+        ; move t.5, f
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+17]
+        lea rax, [rsp+18]
         mov [rax], bl
 _or_next_33:
-        ; call printIntLf@bool[t.4]
-        lea rax, [rsp+17]
+        ; call printIntLf@bool[t.5]
+        lea rax, [rsp+18]
         mov bl, [rax]
         push rbx
           call _printIntLf@bool
         add rsp, 8
         ; 48:2 if getFalse([]) || getTrue([])
-        ; 48:17 logic or
-        ; call t.5 = getFalse[] -> bool
+        ; call t.6 = getFalse[] -> bool
         sub rsp, 8
           call _getFalse
         add rsp, 8
-        lea rbx, [rsp+18]
+        lea rbx, [rsp+19]
         mov [rbx], al
-        ; branch t.5, true, or_next_35, or_2nd_35
-        lea rax, [rsp+18]
+        ; branch t.6 notequals 0: if_34_then, @or_35
+        lea rax, [rsp+19]
         mov bl, [rax]
-        or bl, bl
-        jnz _or_next_35
-        ; call t.5 = getTrue[] -> bool
+        cmp bl, 0
+        jne _if_34_then
+        ; call t.7 = getTrue[] -> bool
         sub rsp, 8
           call _getTrue
         add rsp, 8
-        lea rbx, [rsp+18]
+        lea rbx, [rsp+20]
         mov [rbx], al
-_or_next_35:
-        ; branch t.5, true, if_34_then, if_34_else
-        lea rax, [rsp+18]
+        ; branch t.7 notequals 0: if_34_then, if_34_else
+        lea rax, [rsp+20]
         mov bl, [rax]
-        or bl, bl
-        jnz _if_34_then
+        cmp bl, 0
+        jne _if_34_then
         ; call printError[]
         sub rsp, 8
           call _printError
@@ -1348,53 +1263,51 @@ _if_34_then:
         add rsp, 8
 _if_34_end:
         ; 49:15 logic or
-        ; move t.6, f
+        ; move t.8, f
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+19]
+        lea rax, [rsp+21]
         mov [rax], bl
-        ; branch t.6, true, or_next_36, or_2nd_36
-        lea rax, [rsp+19]
+        ; branch t.8 notequals 0: or_next_36, or_2nd_36
+        lea rax, [rsp+21]
         mov bl, [rax]
-        or bl, bl
-        jnz _or_next_36
-        ; move t.6, t
+        cmp bl, 0
+        jne _or_next_36
+        ; move t.8, t
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+19]
+        lea rax, [rsp+21]
         mov [rax], bl
 _or_next_36:
-        ; call printIntLf@bool[t.6]
-        lea rax, [rsp+19]
+        ; call printIntLf@bool[t.8]
+        lea rax, [rsp+21]
         mov bl, [rax]
         push rbx
           call _printIntLf@bool
         add rsp, 8
         ; 50:2 if getTrue([]) || getFalse([])
-        ; 50:16 logic or
-        ; call t.7 = getTrue[] -> bool
+        ; call t.9 = getTrue[] -> bool
         sub rsp, 8
           call _getTrue
         add rsp, 8
-        lea rbx, [rsp+20]
+        lea rbx, [rsp+22]
         mov [rbx], al
-        ; branch t.7, true, or_next_38, or_2nd_38
-        lea rax, [rsp+20]
+        ; branch t.9 notequals 0: if_37_then, @or_38
+        lea rax, [rsp+22]
         mov bl, [rax]
-        or bl, bl
-        jnz _or_next_38
-        ; call t.7 = getFalse[] -> bool
+        cmp bl, 0
+        jne _if_37_then
+        ; call t.10 = getFalse[] -> bool
         sub rsp, 8
           call _getFalse
         add rsp, 8
-        lea rbx, [rsp+20]
+        lea rbx, [rsp+23]
         mov [rbx], al
-_or_next_38:
-        ; branch t.7, true, if_37_then, if_37_else
-        lea rax, [rsp+20]
+        ; branch t.10 notequals 0: if_37_then, if_37_else
+        lea rax, [rsp+23]
         mov bl, [rax]
-        or bl, bl
-        jnz _if_37_then
+        cmp bl, 0
+        jne _if_37_then
         ; call printError[]
         sub rsp, 8
           call _printError
@@ -1407,53 +1320,51 @@ _if_37_then:
         add rsp, 8
 _if_37_end:
         ; 51:15 logic or
-        ; move t.8, t
+        ; move t.11, t
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+21]
+        lea rax, [rsp+24]
         mov [rax], bl
-        ; branch t.8, true, or_next_39, or_2nd_39
-        lea rax, [rsp+21]
+        ; branch t.11 notequals 0: or_next_39, or_2nd_39
+        lea rax, [rsp+24]
         mov bl, [rax]
-        or bl, bl
-        jnz _or_next_39
-        ; move t.8, f
+        cmp bl, 0
+        jne _or_next_39
+        ; move t.11, f
         lea rax, [rsp+1]
         mov bl, [rax]
-        lea rax, [rsp+21]
+        lea rax, [rsp+24]
         mov [rax], bl
 _or_next_39:
-        ; call printIntLf@bool[t.8]
-        lea rax, [rsp+21]
+        ; call printIntLf@bool[t.11]
+        lea rax, [rsp+24]
         mov bl, [rax]
         push rbx
           call _printIntLf@bool
         add rsp, 8
         ; 52:2 if getTrue([]) || getTrue([])
-        ; 52:16 logic or
-        ; call t.9 = getTrue[] -> bool
+        ; call t.12 = getTrue[] -> bool
         sub rsp, 8
           call _getTrue
         add rsp, 8
-        lea rbx, [rsp+22]
+        lea rbx, [rsp+25]
         mov [rbx], al
-        ; branch t.9, true, or_next_41, or_2nd_41
-        lea rax, [rsp+22]
+        ; branch t.12 notequals 0: if_40_then, @or_41
+        lea rax, [rsp+25]
         mov bl, [rax]
-        or bl, bl
-        jnz _or_next_41
-        ; call t.9 = getTrue[] -> bool
+        cmp bl, 0
+        jne _if_40_then
+        ; call t.13 = getTrue[] -> bool
         sub rsp, 8
           call _getTrue
         add rsp, 8
-        lea rbx, [rsp+22]
+        lea rbx, [rsp+26]
         mov [rbx], al
-_or_next_41:
-        ; branch t.9, true, if_40_then, if_40_else
-        lea rax, [rsp+22]
+        ; branch t.13 notequals 0: if_40_then, if_40_else
+        lea rax, [rsp+26]
         mov bl, [rax]
-        or bl, bl
-        jnz _if_40_then
+        cmp bl, 0
+        jne _if_40_then
         ; call printError[]
         sub rsp, 8
           call _printError
@@ -1466,24 +1377,24 @@ _if_40_then:
         add rsp, 8
 _if_40_end:
         ; 53:15 logic or
-        ; move t.10, t
+        ; move t.14, t
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+23]
+        lea rax, [rsp+27]
         mov [rax], bl
-        ; branch t.10, true, or_next_42, or_2nd_42
-        lea rax, [rsp+23]
+        ; branch t.14 notequals 0: or_next_42, or_2nd_42
+        lea rax, [rsp+27]
         mov bl, [rax]
-        or bl, bl
-        jnz _or_next_42
-        ; move t.10, t
+        cmp bl, 0
+        jne _or_next_42
+        ; move t.14, t
         lea rax, [rsp+0]
         mov bl, [rax]
-        lea rax, [rsp+23]
+        lea rax, [rsp+27]
         mov [rax], bl
 _or_next_42:
-        ; call printIntLf@bool[t.10]
-        lea rax, [rsp+23]
+        ; call printIntLf@bool[t.14]
+        lea rax, [rsp+27]
         mov bl, [rax]
         push rbx
           call _printIntLf@bool
@@ -1523,13 +1434,14 @@ _or_next_42:
         ;   rsp+67: var t.27
         ;   rsp+68: var t.28
         ;   rsp+69: var t.29
-        ;   rsp+72: var t.30
-        ;   rsp+80: var t.31
-        ;   rsp+81: var t.32
-        ;   rsp+82: var t.33
-        ;   rsp+83: var t.34
-        ;   rsp+84: var t.35
-        ;   rsp+86: var t.36
+        ;   rsp+70: var t.30
+        ;   rsp+72: var t.31
+        ;   rsp+80: var t.32
+        ;   rsp+81: var t.33
+        ;   rsp+82: var t.34
+        ;   rsp+83: var t.35
+        ;   rsp+84: var t.36
+        ;   rsp+86: var t.37
 _main:
         ; reserve space for local variables
         sub rsp, 96
@@ -1828,70 +1740,50 @@ _main:
           call _logicOr
         add rsp, 8
         ; 82:2 if !getTrue([]) && getTrue([]) || !getFalse([]) && getFalse([])
-        ; 82:32 logic or
-        ; 82:18 logic and
+        ; call t.24 = getTrue[] -> bool
+        sub rsp, 8
+          call _getTrue
+        add rsp, 8
+        lea rbx, [rsp+64]
+        mov [rbx], al
+        ; branch t.24 equals 0: if_43_then, @and_45
+        lea rax, [rsp+64]
+        mov bl, [rax]
+        cmp bl, 0
+        je _if_43_then
         ; call t.25 = getTrue[] -> bool
         sub rsp, 8
           call _getTrue
         add rsp, 8
         lea rbx, [rsp+65]
         mov [rbx], al
-        ; branch t.25, false, and_next_45, and_2nd_45
+        ; branch t.25 equals 0: if_43_then, @or_44
         lea rax, [rsp+65]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_45
-        ; call t.25 = getTrue[] -> bool
-        sub rsp, 8
-          call _getTrue
-        add rsp, 8
-        lea rbx, [rsp+65]
-        mov [rbx], al
-_and_next_45:
-        ; notlog t.24, t.25
-        lea rax, [rsp+65]
-        mov bl, [rax]
-        or bl, bl
-        sete bl
-        lea rax, [rsp+64]
-        mov [rax], bl
-        ; branch t.24, true, or_next_44, or_2nd_44
-        lea rax, [rsp+64]
-        mov bl, [rax]
-        or bl, bl
-        jnz _or_next_44
-        ; 82:48 logic and
+        cmp bl, 0
+        je _if_43_then
         ; call t.26 = getFalse[] -> bool
         sub rsp, 8
           call _getFalse
         add rsp, 8
         lea rbx, [rsp+66]
         mov [rbx], al
-        ; branch t.26, false, and_next_46, and_2nd_46
+        ; branch t.26 equals 0: if_43_then, @and_46
         lea rax, [rsp+66]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_46
-        ; call t.26 = getFalse[] -> bool
+        cmp bl, 0
+        je _if_43_then
+        ; call t.27 = getFalse[] -> bool
         sub rsp, 8
           call _getFalse
         add rsp, 8
-        lea rbx, [rsp+66]
+        lea rbx, [rsp+67]
         mov [rbx], al
-_and_next_46:
-        ; notlog t.24, t.26
-        lea rax, [rsp+66]
+        ; branch t.27 equals 0: if_43_then, if_43_else
+        lea rax, [rsp+67]
         mov bl, [rax]
-        or bl, bl
-        sete bl
-        lea rax, [rsp+64]
-        mov [rax], bl
-_or_next_44:
-        ; branch t.24, true, if_43_then, if_43_else
-        lea rax, [rsp+64]
-        mov bl, [rax]
-        or bl, bl
-        jnz _if_43_then
+        cmp bl, 0
+        je _if_43_then
         ; call printError[]
         sub rsp, 8
           call _printError
@@ -1905,70 +1797,70 @@ _if_43_then:
 _if_43_end:
         ; 88:23 logic or
         ; 88:17 logic and
-        ; move t.28, t
+        ; move t.29, t
         lea rax, [rsp+8]
         mov bl, [rax]
-        lea rax, [rsp+68]
+        lea rax, [rsp+69]
         mov [rax], bl
-        ; branch t.28, false, and_next_48, and_2nd_48
-        lea rax, [rsp+68]
+        ; branch t.29 equals 0: and_next_48, and_2nd_48
+        lea rax, [rsp+69]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_48
-        ; move t.28, t
+        cmp bl, 0
+        je _and_next_48
+        ; move t.29, t
         lea rax, [rsp+8]
         mov bl, [rax]
-        lea rax, [rsp+68]
+        lea rax, [rsp+69]
         mov [rax], bl
 _and_next_48:
-        ; notlog t.27, t.28
+        ; notlog t.28, t.29
+        lea rax, [rsp+69]
+        mov bl, [rax]
+        or bl, bl
+        sete bl
+        lea rax, [rsp+68]
+        mov [rax], bl
+        ; branch t.28 notequals 0: or_next_47, or_2nd_47
         lea rax, [rsp+68]
         mov bl, [rax]
-        or bl, bl
-        sete bl
-        lea rax, [rsp+67]
-        mov [rax], bl
-        ; branch t.27, true, or_next_47, or_2nd_47
-        lea rax, [rsp+67]
-        mov bl, [rax]
-        or bl, bl
-        jnz _or_next_47
+        cmp bl, 0
+        jne _or_next_47
         ; 88:30 logic and
-        ; move t.29, f
+        ; move t.30, f
         lea rax, [rsp+9]
         mov bl, [rax]
-        lea rax, [rsp+69]
+        lea rax, [rsp+70]
         mov [rax], bl
-        ; branch t.29, false, and_next_49, and_2nd_49
-        lea rax, [rsp+69]
+        ; branch t.30 equals 0: and_next_49, and_2nd_49
+        lea rax, [rsp+70]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_49
-        ; move t.29, f
+        cmp bl, 0
+        je _and_next_49
+        ; move t.30, f
         lea rax, [rsp+9]
         mov bl, [rax]
-        lea rax, [rsp+69]
+        lea rax, [rsp+70]
         mov [rax], bl
 _and_next_49:
-        ; notlog t.27, t.29
-        lea rax, [rsp+69]
+        ; notlog t.28, t.30
+        lea rax, [rsp+70]
         mov bl, [rax]
         or bl, bl
         sete bl
-        lea rax, [rsp+67]
+        lea rax, [rsp+68]
         mov [rax], bl
 _or_next_47:
-        ; call printIntLf@bool[t.27]
-        lea rax, [rsp+67]
+        ; call printIntLf@bool[t.28]
+        lea rax, [rsp+68]
         mov bl, [rax]
         push rbx
           call _printIntLf@bool
         add rsp, 8
-        ; const t.30, [string-10]
+        ; const t.31, [string-10]
         lea rax, [string_10]
         lea rbx, [rsp+72]
         mov [rbx], rax
-        ; call printString@@u8[t.30]
+        ; call printString@@u8[t.31]
         lea rax, [rsp+72]
         mov rbx, [rax]
         push rbx
@@ -1986,12 +1878,12 @@ _or_next_47:
         mov al, 1
         lea rbx, [rsp+12]
         mov [rbx], al
-        ; move t.32, b10
+        ; move t.33, b10
         lea rax, [rsp+10]
         mov bl, [rax]
         lea rax, [rsp+81]
         mov [rax], bl
-        ; and t.32, t.32, b6
+        ; and t.33, t.33, b6
         lea rax, [rsp+81]
         mov bl, [rax]
         lea rax, [rsp+11]
@@ -1999,12 +1891,12 @@ _or_next_47:
         and bl, cl
         lea rax, [rsp+81]
         mov [rax], bl
-        ; move t.31, t.32
+        ; move t.32, t.33
         lea rax, [rsp+81]
         mov bl, [rax]
         lea rax, [rsp+80]
         mov [rax], bl
-        ; or t.31, t.31, b1
+        ; or t.32, t.32, b1
         lea rax, [rsp+80]
         mov bl, [rax]
         lea rax, [rsp+12]
@@ -2012,14 +1904,14 @@ _or_next_47:
         or bl, cl
         lea rax, [rsp+80]
         mov [rax], bl
-        ; call printIntLf@u8[t.31]
+        ; call printIntLf@u8[t.32]
         lea rax, [rsp+80]
         mov bl, [rax]
         push rbx
           call _printIntLf@u8
         add rsp, 8
         ; 95:20 logic or
-        ; equals t.33, b, c
+        ; equals t.34, b, c
         lea rax, [rsp+2]
         mov bx, [rax]
         lea rax, [rsp+4]
@@ -2028,12 +1920,12 @@ _or_next_47:
         sete bl
         lea rax, [rsp+82]
         mov [rax], bl
-        ; branch t.33, true, or_next_50, or_2nd_50
+        ; branch t.34 notequals 0: or_next_50, or_2nd_50
         lea rax, [rsp+82]
         mov bl, [rax]
-        or bl, bl
-        jnz _or_next_50
-        ; lt t.33, c, d
+        cmp bl, 0
+        jne _or_next_50
+        ; lt t.34, c, d
         lea rax, [rsp+4]
         mov bx, [rax]
         lea rax, [rsp+6]
@@ -2043,14 +1935,14 @@ _or_next_47:
         lea rax, [rsp+82]
         mov [rax], bl
 _or_next_50:
-        ; call printIntLf@bool[t.33]
+        ; call printIntLf@bool[t.34]
         lea rax, [rsp+82]
         mov bl, [rax]
         push rbx
           call _printIntLf@bool
         add rsp, 8
         ; 96:20 logic and
-        ; equals t.34, b, c
+        ; equals t.35, b, c
         lea rax, [rsp+2]
         mov bx, [rax]
         lea rax, [rsp+4]
@@ -2059,12 +1951,12 @@ _or_next_50:
         sete bl
         lea rax, [rsp+83]
         mov [rax], bl
-        ; branch t.34, false, and_next_51, and_2nd_51
+        ; branch t.35 equals 0: and_next_51, and_2nd_51
         lea rax, [rsp+83]
         mov bl, [rax]
-        or bl, bl
-        jz _and_next_51
-        ; lt t.34, c, d
+        cmp bl, 0
+        je _and_next_51
+        ; lt t.35, c, d
         lea rax, [rsp+4]
         mov bx, [rax]
         lea rax, [rsp+6]
@@ -2074,7 +1966,7 @@ _or_next_50:
         lea rax, [rsp+83]
         mov [rax], bl
 _and_next_51:
-        ; call printIntLf@bool[t.34]
+        ; call printIntLf@bool[t.35]
         lea rax, [rsp+83]
         mov bl, [rax]
         push rbx
@@ -2085,25 +1977,25 @@ _and_next_51:
         push rax
           call _printIntLf@i16
         add rsp, 8
-        ; neg t.35, b
+        ; neg t.36, b
         lea rax, [rsp+2]
         mov bx, [rax]
         neg rbx
         lea rax, [rsp+84]
         mov [rax], bx
-        ; call printIntLf@i16[t.35]
+        ; call printIntLf@i16[t.36]
         lea rax, [rsp+84]
         mov bx, [rax]
         push rbx
           call _printIntLf@i16
         add rsp, 8
-        ; not t.36, b1
+        ; not t.37, b1
         lea rax, [rsp+12]
         mov bl, [rax]
         not rbx
         lea rax, [rsp+86]
         mov [rax], bl
-        ; call printIntLf@u8[t.36]
+        ; call printIntLf@u8[t.37]
         lea rax, [rsp+86]
         mov bl, [rax]
         push rbx
