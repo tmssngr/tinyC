@@ -12,7 +12,20 @@ public abstract class IRVarReplacer {
 	@NotNull
 	protected abstract IRVar replace(@NotNull IRVar var);
 
-	public IRInstruction replaceFor(IRInstruction instruction) {
+	public IRVarReplacer() {
+	}
+
+	@NotNull
+	public List<IRInstruction> replace(@NotNull List<IRInstruction> instructions) {
+		final List<IRInstruction> newInstructions = new ArrayList<>(instructions.size());
+		for (IRInstruction instruction : instructions) {
+			newInstructions.add(replaceFor(instruction));
+		}
+		return newInstructions;
+	}
+
+	@NotNull
+	public IRInstruction replaceFor(@NotNull IRInstruction instruction) {
 		return switch (instruction) {
 			case IRAddrOf addrOf -> new IRAddrOf(replace(addrOf.target()), replace(addrOf.source()), addrOf.location());
 			case IRAddrOfArray addrOf -> new IRAddrOfArray(replace(addrOf.addr()), replace(addrOf.array()), addrOf.location());
