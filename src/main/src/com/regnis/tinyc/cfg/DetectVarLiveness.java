@@ -89,8 +89,12 @@ public final class DetectVarLiveness {
 				uses(rightVar, uses);
 			}
 		}
-		case IRBranch branch -> {
-			uses(branch.conditionVar(), uses);
+		case IRBranch compare -> {
+			uses(compare.left(), uses);
+			final IRVar rightVar = compare.right().var();
+			if (rightVar != null) {
+				uses(rightVar, uses);
+			}
 		}
 		case IRCall call -> {
 			final IRVar target = call.target();

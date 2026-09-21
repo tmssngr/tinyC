@@ -33,7 +33,8 @@ public final class BasicBlock {
 				Utils.assertTrue(instructions.getLast() instanceof IRJump);
 			}
 			else if (successors.size() == 2) {
-				Utils.assertTrue(instructions.get(instructions.size() - 2) instanceof IRBranch);
+				final IRInstruction secondLastInstr = instructions.get(instructions.size() - 2);
+				Utils.assertTrue(secondLastInstr instanceof IRBranch);
 				Utils.assertTrue(instructions.getLast() instanceof IRJump);
 			}
 			else {
@@ -171,9 +172,15 @@ public final class BasicBlock {
 				}
 			}
 			else if (instruction instanceof IRBranch branch) {
-				if (branch.target().equals(from)) {
-					instructions[i] = new IRBranch(branch.conditionVar(), branch.jumpOnTrue(), to, branch.nextLabel());
+				String target = branch.target();
+				String nextLabel = branch.nextLabel();
+				if (target.equals(from)) {
+					target = to;
 				}
+				if (nextLabel.equals(from)) {
+					nextLabel = to;
+				}
+				instructions[i] = new IRBranch(branch.op(), branch.left(), branch.right(), target, nextLabel);
 			}
 			else {
 				break;

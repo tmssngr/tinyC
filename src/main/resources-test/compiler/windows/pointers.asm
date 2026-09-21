@@ -44,7 +44,7 @@ _printChar@u8:
         ret
 
         ; void printUint@i64
-        ;   rsp+104: arg number
+        ;   rsp+88: arg number
         ;   rsp+0: var buffer
         ;   rsp+20: var pos
         ;   rsp+24: var remainder
@@ -55,11 +55,10 @@ _printChar@u8:
         ;   rsp+56: var t.8
         ;   rsp+64: var t.9
         ;   rsp+72: var t.10
-        ;   rsp+80: var t.11
-        ;   rsp+81: var t.12
+        ;   rsp+73: var t.11
 _printUint@i64:
         ; reserve space for local variables
-        sub rsp, 96
+        sub rsp, 80
         ; const pos, 20
         mov al, 20
         lea rbx, [rsp+20]
@@ -73,7 +72,7 @@ _while_1:
         lea rax, [rsp+20]
         mov [rax], bl
         ; move remainder, number
-        lea rax, [rsp+104]
+        lea rax, [rsp+88]
         mov rbx, [rax]
         lea rax, [rsp+24]
         mov [rax], rbx
@@ -88,14 +87,14 @@ _while_1:
         lea rcx, [rsp+24]
         mov [rcx], rbx
         ; div number, number, 10
-        lea rax, [rsp+104]
+        lea rax, [rsp+88]
         mov rbx, [rax]
         mov rax, rbx
         mov rcx, 10
         cqo
         idiv rcx
         mov rbx, rax
-        lea rcx, [rsp+104]
+        lea rcx, [rsp+88]
         mov [rcx], rbx
         ; cast t.5(u8), remainder(i64)
         lea rax, [rsp+24]
@@ -138,65 +137,58 @@ _while_1:
         mov cl, [rax]
         mov [rbx], cl
         ; 34:3 if number == 0
-        ; equals t.8, number, 0
-        lea rax, [rsp+104]
+        ; branch number notequals 0: while_1, while_1_break
+        lea rax, [rsp+88]
         mov rbx, [rax]
         cmp rbx, 0
-        sete bl
-        lea rax, [rsp+56]
-        mov [rax], bl
-        ; branch t.8, false, while_1, while_1_break
-        lea rax, [rsp+56]
-        mov bl, [rax]
-        or bl, bl
-        jz _while_1
-        ; cast t.10(i64), pos(u8)
+        jne _while_1
+        ; cast t.9(i64), pos(u8)
         lea rax, [rsp+20]
         mov bl, [rax]
         movzx rbx, bl
-        lea rax, [rsp+72]
-        mov [rax], rbx
-        ; addrof t.9, [buffer]
-        lea rax, [rsp+0]
-        lea rbx, [rsp+64]
-        mov [rbx], rax
-        ; add t.9, t.9, t.10
         lea rax, [rsp+64]
+        mov [rax], rbx
+        ; addrof t.8, [buffer]
+        lea rax, [rsp+0]
+        lea rbx, [rsp+56]
+        mov [rbx], rax
+        ; add t.8, t.8, t.9
+        lea rax, [rsp+56]
         mov rbx, [rax]
-        lea rax, [rsp+72]
+        lea rax, [rsp+64]
         mov rcx, [rax]
         add rbx, rcx
-        lea rax, [rsp+64]
+        lea rax, [rsp+56]
         mov [rax], rbx
-        ; const t.12, 20
+        ; const t.11, 20
         mov al, 20
-        lea rbx, [rsp+81]
+        lea rbx, [rsp+73]
         mov [rbx], al
-        ; move t.11, t.12
-        lea rax, [rsp+81]
+        ; move t.10, t.11
+        lea rax, [rsp+73]
         mov bl, [rax]
-        lea rax, [rsp+80]
+        lea rax, [rsp+72]
         mov [rax], bl
-        ; sub t.11, t.11, pos
-        lea rax, [rsp+80]
+        ; sub t.10, t.10, pos
+        lea rax, [rsp+72]
         mov bl, [rax]
         lea rax, [rsp+20]
         mov cl, [rax]
         sub bl, cl
-        lea rax, [rsp+80]
+        lea rax, [rsp+72]
         mov [rax], bl
-        ; call printStringLength@@u8@u8[t.9, t.11]
-        lea rax, [rsp+64]
+        ; call printStringLength@@u8@u8[t.8, t.10]
+        lea rax, [rsp+56]
         mov rbx, [rax]
         push rbx
-        lea rax, [rsp+88]
+        lea rax, [rsp+80]
         mov bl, [rax]
         push rbx
         sub rsp, 8
           call _printStringLength@@u8@u8
         add rsp, 24
         ; release space for local variables
-        add rsp, 96
+        add rsp, 80
         ret
 
         ; void printIntLf@i16
@@ -222,38 +214,27 @@ _printIntLf@i16:
         ret
 
         ; void printIntLf@i64
-        ;   rsp+24: arg number
-        ;   rsp+0: var t.1
+        ;   rsp+8: arg number
 _printIntLf@i64:
-        ; reserve space for local variables
-        sub rsp, 16
-        ; 54:2 if number < 0
-        ; lt t.1, number, 0
-        lea rax, [rsp+24]
+        ; branch number gteq 0: if_3_end, if_3_then
+        lea rax, [rsp+8]
         mov rbx, [rax]
         cmp rbx, 0
-        setl bl
-        lea rax, [rsp+0]
-        mov [rax], bl
-        ; branch t.1, false, if_3_end, if_3_then
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        or bl, bl
-        jz _if_3_end
+        jge _if_3_end
         ; call printChar@u8[45]
         mov  rax, 45
         push rax
           call _printChar@u8
         add rsp, 8
         ; neg number, number
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov rbx, [rax]
         neg rbx
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov [rax], rbx
 _if_3_end:
         ; call printUint@i64[number]
-        lea rax, [rsp+24]
+        lea rax, [rsp+8]
         mov rbx, [rax]
         push rbx
           call _printUint@i64
@@ -263,8 +244,6 @@ _if_3_end:
         push rax
           call _printChar@u8
         add rsp, 8
-        ; release space for local variables
-        add rsp, 16
         ret
 
         ; void printStringLength@@u8@u8

@@ -24,7 +24,14 @@ public abstract class IRVarReplacer {
 				}
 				yield new IRBinary(replace(binary.target()), binary.op(), replace(binary.left()), right, binary.location());
 			}
-			case IRBranch branch -> new IRBranch(replace(branch.conditionVar()), branch.jumpOnTrue(), branch.target(), branch.nextLabel());
+			case IRBranch branch -> {
+				IRValue right = branch.right();
+				final IRVar rightVar = right.var();
+				if (rightVar != null) {
+					right = new IRValue(replace(rightVar));
+				}
+				yield new IRBranch(branch.op(), replace(branch.left()), right, branch.target(), branch.nextLabel(), branch.location());
+			}
 			case IRCall call -> {
 				final List<IRValue> args = new ArrayList<>();
 				for (IRValue arg : call.args()) {

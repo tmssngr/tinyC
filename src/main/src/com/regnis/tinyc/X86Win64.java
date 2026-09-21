@@ -418,17 +418,34 @@ public final class X86Win64 extends AsmWriter {
 		}
 	}
 
+	@Override
 	protected void writeBranch(IRBranch branch) throws IOException {
-		final int conditionReg = loadVar(branch.conditionVar());
-		final String conditionRegName = getRegName(conditionReg, 1);
-		writeIndented("or " + conditionRegName + ", " + conditionRegName);
-		free(conditionReg);
-		if (branch.jumpOnTrue()) {
-			writeIndented("jnz " + escapeLabel(branch.target()));
+		final IRCompare.Op op = branch.op();
+		final boolean signed = branch.left().type() != Type.U8;
+		final String command = switch (op) {
+			case Lt -> signed ? "jl" : "jb"; // setb (below) = setc (carry)
+			case LtEq -> signed ? "jle" : "jbe";
+			case Equals -> "je";
+			case NotEquals -> "jne";
+			case GtEq -> signed ? "jge" : "jae"; // setae (above or equal) = setnc (not carry)
+			case Gt -> signed ? "jg" : "ja"; // seta (above)
+		};
+
+		final int leftReg = loadVar(branch.left());
+		final String leftRegName = getRegName(leftReg, branch.left());
+		final IRValue right = branch.right();
+		final IRVar rightVar = right.var();
+		if (rightVar != null) {
+			final int rightReg = loadVar(rightVar);
+			final String rightRegName = getRegName(rightReg, rightVar);
+			writeIndented("cmp " + leftRegName + ", " + rightRegName);
+			free(rightReg);
 		}
 		else {
-			writeIndented("jz " + escapeLabel(branch.target()));
+			writeIndented("cmp " + leftRegName + ", " + right.value());
 		}
+		free(leftReg);
+		writeIndented(command + " " + escapeLabel(branch.target()));
 	}
 
 	protected void writeCall(IRCall call) throws IOException {
