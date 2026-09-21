@@ -55,6 +55,7 @@ void main() {
 	printIntLf@i16(bar + foo);
 	foo = (i16)((1 + 2) * (3 + 4));
 	printIntLf@i16(foo);
+	bazz = 0;
 	printIntLf@i16(bazz);
 	a = 1000;
 	b = 10;

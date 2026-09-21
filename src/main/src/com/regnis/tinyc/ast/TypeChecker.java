@@ -261,6 +261,10 @@ public final class TypeChecker {
 	}
 
 	private void processVarDeclaration(StmtVarDeclaration declaration) {
+		// expression must be evaluated before declaring the var
+		// to make somethinng like
+		//    u8 a = a
+		// an error
 		Expression expression = declaration.expression();
 		if (expression != null) {
 			expression = processExpression(expression);
@@ -270,6 +274,17 @@ public final class TypeChecker {
 		final Location location = declaration.location();
 		final Type type = getType(declaration.typeString(), location);
 		final Var var = addVar(varName, type, 0, location);
+		if (expression == null) {
+			if (type.isInt()) {
+				expression = new ExprIntLiteral(0, type, location);
+			}
+			else if (type == Type.BOOL) {
+				expression = new ExprBoolLiteral(false, location);
+			}
+			else if (type.isPointer()) {
+				expression = new ExprIntLiteral(0, type, location);
+			}
+		}
 		if (expression != null) {
 			expression = simpleCast(type, expression, location);
 			addAssignment(var, expression, location);

@@ -340,6 +340,10 @@ _main:
         push rbx
           call _printIntLf@i16
         add rsp, 8
+        ; const bazz, 0
+        mov ax, 0
+        lea rbx, [rsp+4]
+        mov [rbx], ax
         ; call printIntLf@i16[bazz]
         lea rax, [rsp+4]
         mov bx, [rax]
