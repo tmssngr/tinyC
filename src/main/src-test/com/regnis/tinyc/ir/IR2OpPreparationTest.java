@@ -42,7 +42,7 @@ public class IR2OpPreparationTest {
 
 				new IRBinary(varA, IRBinary.Op.Sub, varA, 1),
 				new IRBinary(varA, IRBinary.Op.Sub, varB, 1)
-		), varInfos);
+		), varInfos, Type.I64);
 
 		final Iterator<IRInstruction> i = result.first().iterator();
 		// new IRBinary(varA, IRBinary.Op.Add, varA, varC)
