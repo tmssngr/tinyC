@@ -70,97 +70,17 @@ public final class DetectVarLiveness {
 		return liveIn;
 	}
 
-	@SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
 	private static void detectLiveness(IRInstruction instruction, Set<IRVar> uses, Set<IRVar> defines) {
-		switch (instruction) {
-		case IRAddrOf addrOf -> {
-			defined(addrOf.target(), defines);
-			uses(addrOf.source(), uses);
-		}
-		case IRAddrOfArray addrOfArray -> {
-			defined(addrOfArray.addr(), defines);
-		}
-		case IRBinary binary -> {
-			defined(binary.target(), defines);
-			uses(binary.left(), uses);
-			final IRValue right = binary.right();
-			final IRVar rightVar = right.var();
-			if (rightVar != null) {
-				uses(rightVar, uses);
-			}
-		}
-		case IRBranch compare -> {
-			uses(compare.left(), uses);
-			final IRVar rightVar = compare.right().var();
-			if (rightVar != null) {
-				uses(rightVar, uses);
-			}
-		}
-		case IRCall call -> {
-			final IRVar target = call.target();
-			if (target != null) {
-				defined(target, defines);
-			}
-			for (IRValue arg : call.args()) {
-				final IRVar var = arg.var();
-				if (var != null) {
-					uses(var, uses);
-				}
-			}
-		}
-		case IRCast cast -> {
-			defined(cast.target(), defines);
-			uses(cast.source(), uses);
-		}
-		case IRComment ignored -> {
-		}
-		case IRCompare compare -> {
-			defined(compare.target(), defines);
-			uses(compare.left(), uses);
-			final IRVar rightVar = compare.right().var();
-			if (rightVar != null) {
-				uses(rightVar, uses);
-			}
-		}
-		case IRJump ignored -> {
-		}
-		case IRMemLoad load -> {
-			defined(load.target(), defines);
-			uses(load.addr(), uses);
-		}
-		case IRMemStore store -> {
-			uses(store.addr(), uses);
-			uses(store.value(), uses);
-		}
-		case IRMove copy -> {
-			defined(copy.target(), defines);
-			final IRValue source = copy.source();
-			final IRVar sourceVar = source.var();
-			if (sourceVar != null) {
-				uses(sourceVar, uses);
-			}
-		}
-		case IRRetValue retValue -> {
-			uses(retValue.var(), uses);
-		}
-		case IRString string -> {
-			defined(string.target(), defines);
-		}
-		case IRUnary unary -> {
-			defined(unary.target(), defines);
-			uses(unary.source(), uses);
-		}
-		default -> {
-			throw new UnsupportedOperationException(instruction.toString());
-		}
-		}
+		IRUtils.getVars(instruction,
+		                var -> uses(var, uses),
+		                var -> defines(var, defines));
 	}
 
 	private static void uses(IRVar var, Set<IRVar> uses) {
 		uses.add(var);
 	}
 
-	private static void defined(IRVar var, Set<IRVar> defines) {
+	private static void defines(IRVar var, Set<IRVar> defines) {
 		defines.add(var);
 	}
 }
