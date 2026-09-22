@@ -1,48 +1,28 @@
 package com.regnis.tinyc.ir;
 
-import com.regnis.tinyc.*;
-import com.regnis.tinyc.ast.*;
-
-import java.util.*;
-
 import org.jetbrains.annotations.*;
 
 /**
  * @author Thomas Singer
  */
-public final class IR2OpPreparation {
+public final class IR2OpPreparation extends IRConverterAbstractLayer {
 
 	static final String TMP_PREFIX = "t.";
 
-	@NotNull
-	public static IRFunction convertTo2Op(@NotNull IRFunction function, @NotNull Type pointerIntType) {
-		final Pair<List<IRInstruction>, IRVarInfos> result = convertTo2Op(function.instructions(), function.varInfos(), pointerIntType);
-		return function.derive(result.first(), result.second());
-	}
-
-	@NotNull
-	static Pair<List<IRInstruction>, IRVarInfos> convertTo2Op(@NotNull List<IRInstruction> instructions, @NotNull IRVarInfos varInfos, @NotNull Type pointerIntType) {
-		final IRLocalVarFactory localVarFactory = new IRLocalVarFactory(varInfos, pointerIntType);
-		final IR2OpPreparation preparation = new IR2OpPreparation(localVarFactory);
-		for (IRInstruction instruction : instructions) {
-			preparation.handle(instruction);
-		}
-		return new Pair<>(preparation.instructions, localVarFactory.createVarInfos());
-	}
-
-	private final List<IRInstruction> instructions = new ArrayList<>();
 	private final IRLocalVarFactory localVarFactory;
 
-	private IR2OpPreparation(@NotNull IRLocalVarFactory localVarFactory) {
+	public IR2OpPreparation(@NotNull IRLocalVarFactory localVarFactory, @NotNull IRConverterLayer nextLayer) {
+		super(nextLayer);
 		this.localVarFactory = localVarFactory;
 	}
 
-	private void handle(@NotNull IRInstruction instruction) {
+	@Override
+	public void process(@NotNull IRInstruction instruction) {
 		if (instruction instanceof IRBinary binary) {
 			handle(binary);
 		}
 		else {
-			add(instruction);
+			forward(instruction);
 		}
 	}
 
@@ -50,7 +30,7 @@ public final class IR2OpPreparation {
 		final IRVar target = binary.target();
 		final IRVar left = binary.left();
 		if (left.equals(target)) {
-			add(binary);
+			forward(binary);
 			return;
 		}
 
@@ -72,9 +52,9 @@ public final class IR2OpPreparation {
 			//   <op> tmp, tmp, a
 			//   move a, tmp
 			final IRVar tmp = localVarFactory.createVar(target, localVarFactory.suggestName(TMP_PREFIX));
-			add(new IRMove(tmp, left));
-			add(new IRBinary(tmp, op, tmp, target));
-			add(new IRMove(target, tmp));
+			forward(new IRMove(tmp, left));
+			forward(new IRBinary(tmp, op, tmp, target));
+			forward(new IRMove(target, tmp));
 			return;
 		}
 
@@ -82,11 +62,7 @@ public final class IR2OpPreparation {
 		// becomes
 		//   move a, b
 		//   <op> a, a, b
-		add(new IRMove(target, left));
-		add(new IRBinary(target, op, target, right));
-	}
-
-	private void add(IRInstruction instruction) {
-		instructions.add(instruction);
+		forward(new IRMove(target, left));
+		forward(new IRBinary(target, op, target, right));
 	}
 }
