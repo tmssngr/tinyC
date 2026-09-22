@@ -1,5 +1,6 @@
 package com.regnis.tinyc.ir;
 
+import com.regnis.tinyc.*;
 import com.regnis.tinyc.ast.*;
 
 import org.jetbrains.annotations.*;
@@ -11,6 +12,12 @@ public record IRVar(@NotNull String name, int index, @NotNull VariableScope scop
 	@NotNull
 	@Override
 	public String toString() {
-		return name;
+		return toString(false);
+	}
+
+	public String toString(boolean comment) {
+		final StringBuilder buffer = new StringBuilder();
+		buffer.append(name);
+		return buffer.toString();
 	}
 }
