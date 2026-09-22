@@ -11,4 +11,9 @@ public record IRJump(@NotNull String label) implements IRInstruction {
 	public String toString() {
 		return "jump " + label;
 	}
+
+	@Override
+	public String toString(boolean comment) {
+		return toString();
+	}
 }
