@@ -1,5 +1,9 @@
 package com.regnis.tinyc.ir.cfg;
 
+import com.regnis.tinyc.*;
+import com.regnis.tinyc.ir.*;
+import jdk.jshell.execution.*;
+
 import java.util.*;
 
 import org.jetbrains.annotations.*;
