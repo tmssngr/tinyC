@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 
 import java.util.*;
 
@@ -14,14 +15,14 @@ public final class IR2OpPreparation {
 	static final String TMP_PREFIX = "t.";
 
 	@NotNull
-	public static IRFunction convertTo2Op(@NotNull IRFunction function) {
-		final Pair<List<IRInstruction>, IRVarInfos> result = convertTo2Op(function.instructions(), function.varInfos());
+	public static IRFunction convertTo2Op(@NotNull IRFunction function, @NotNull Type pointerIntType) {
+		final Pair<List<IRInstruction>, IRVarInfos> result = convertTo2Op(function.instructions(), function.varInfos(), pointerIntType);
 		return function.derive(result.first(), result.second());
 	}
 
 	@NotNull
-	static Pair<List<IRInstruction>, IRVarInfos> convertTo2Op(@NotNull List<IRInstruction> instructions, @NotNull IRVarInfos varInfos) {
-		final IRLocalVarFactory localVarFactory = new IRLocalVarFactory(varInfos);
+	static Pair<List<IRInstruction>, IRVarInfos> convertTo2Op(@NotNull List<IRInstruction> instructions, @NotNull IRVarInfos varInfos, @NotNull Type pointerIntType) {
+		final IRLocalVarFactory localVarFactory = new IRLocalVarFactory(varInfos, pointerIntType);
 		final IR2OpPreparation preparation = new IR2OpPreparation(localVarFactory);
 		for (IRInstruction instruction : instructions) {
 			preparation.handle(instruction);
