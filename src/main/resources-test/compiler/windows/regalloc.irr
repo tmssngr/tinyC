@@ -1,26 +1,26 @@
 simple:
  Local variables
-	var 0: four (u8/1)
-	var 1: three (u8/1)
-	var 2: one (u8/1)
+	var 0: four.1 (u8/1)
+	var 1: three.1 (u8/1)
+	var 2: one.1 (u8/1)
 	; 19 pc
-	const four, 4
-	const three, 3
-	move one, four
-	sub one, one, three
+	const four.1, 4
+	const three.1, 3
+	move one.1, four.1
+	sub one.1, one.1, three.1
 	; 5:9 return one
-	ret one
+	ret one.1
 
 registerHint@u8@u8:
  Local variables
 	arg 0: a (u8/1)
 	arg 1: b (u8/1)
-	var 2: t.2 (u8/1)
+	var 2: t.2.1 (u8/1)
 	; 15 pc
 	; 9:11 return a + b
-	move t.2, a
-	add t.2, t.2, b
-	ret t.2
+	move t.2.1, a
+	add t.2.1, t.2.1, b
+	ret t.2.1
 
 max@u8@u8:
  Local variables
@@ -39,35 +39,48 @@ max@u8@u8_ret:
 fibonacci@u8:
  Local variables
 	arg 0: i (u8/1)
-	var 1: a (i16/2)
-	var 2: b (i16/2)
-	var 3: c (i16/2)
-	; 38 pc
-	const a, 0
-	const b, 1
+	var 1: a.1 (i16/2)
+	var 2: b.1 (i16/2)
+	var 3: i.1 (u8/1)
+	var 4: a.2 (i16/2)
+	var 5: b.2 (i16/2)
+	var 6: i.2 (u8/1)
+	var 7: c.1 (i16/2)
+	var 8: a.3 (i16/2)
+	var 9: b.3 (i16/2)
+	; 73 pc
+	const a.1, 0
+	const b.1, 1
 	; 22:2 while i > 0
+	move i.1, i
+	move a.2, a.1
+	move b.2, b.1
 	jump while_2
 while_2_body:
-	sub i, i, 1
-	move c, a
-	add c, c, b
-	move a, b
-	move b, c
+	move i.2, i.1
+	sub i.2, i.2, 1
+	move c.1, a.2
+	add c.1, c.1, b.2
+	move a.3, b.2
+	move b.3, c.1
+	move i.1, i.2
+	move a.2, a.3
+	move b.2, b.3
 while_2:
-	branch i gt 0: while_2_body, while_2_break
+	branch i.1 gt 0: while_2_body, while_2_break
 	; 28:9 return a
-	ret a
+	ret a.2
 
 main:
  Local variables
-	var 0: one (u8/1)
-	var 1: two (u8/1)
-	var 2: oneOrTwo (u8/1)
-	var 3: f5 (i16/2)
+	var 0: one.1 (u8/1)
+	var 1: two.1 (u8/1)
+	var 2: oneOrTwo.1 (u8/1)
+	var 3: f5.1 (i16/2)
 	; 16 pc
-	call one = simple[] -> u8
-	const two, 2
-	call _ = registerHint@u8@u8[one, two] -> u8
-	call _ = max@u8@u8[one, two] -> u8
+	call one.1 = simple[] -> u8
+	const two.1, 2
+	call _ = registerHint@u8@u8[one.1, two.1] -> u8
+	call _ = max@u8@u8[one.1, two.1] -> u8
 	call _ = fibonacci@u8[5] -> i16
 

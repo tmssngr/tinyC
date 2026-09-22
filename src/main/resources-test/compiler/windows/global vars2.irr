@@ -1,32 +1,42 @@
 printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	var 1: length (i64/8)
+	var 1: length.1 (i64/8)
 	; 10 pc
-	call length = strlen@@u8[str] -> i64
-	call printStringLength@@u8@i64[str, length]
+	call length.1 = strlen@@u8[str] -> i64
+	call printStringLength@@u8@i64[str, length.1]
 
 strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	var 1: length (i64/8)
-	var 2: t.2 (u8/1)
-	; 25 pc
-	const length, 0
+	var 1: length.1 (i64/8)
+	var 2: str.1 (u8*/8)
+	var 3: length.2 (i64/8)
+	var 4: t.2.1 (u8/1)
+	var 5: length.3 (i64/8)
+	var 6: str.2 (u8*/8)
+	; 55 pc
+	const length.1, 0
 	; 64:2 for *str != 0
+	move str.1, str
+	move length.2, length.1
 	jump for_1
 for_1_body:
-	add length, length, 1
-	add str, str, 1
+	move length.3, length.2
+	add length.3, length.3, 1
+	move str.2, str.1
+	add str.2, str.2, 1
+	move str.1, str.2
+	move length.2, length.3
 for_1:
-	load t.2, [str]
-	branch t.2 notequals 0: for_1_body, for_1_break
+	load t.2.1, [str.1]
+	branch t.2.1 notequals 0: for_1_body, for_1_break
 	; 67:9 return length
-	ret length
+	ret length.2
 
 next:
  Local variables
-	var 0: copy (u8/1)
+	var 0: copy.1 (u8/1)
 	var 1: a.global (u8*/8)
 	var 2: t.global (u8/1)
 	var 3: a.global1 (u8*/8)
@@ -36,7 +46,7 @@ next:
 	; 51 pc
 	addrof a.global, global
 	load t.global, [a.global]
-	move copy, t.global
+	move copy.1, t.global
 	addrof a.global1, global
 	load t.global1, [a.global1]
 	move t.global2, t.global1
@@ -44,13 +54,13 @@ next:
 	addrof a.global2, global
 	store [a.global2], t.global2
 	; 8:9 return copy
-	ret copy
+	ret copy.1
 
 main:
  Local variables
-	var 0: n (u8/1)
-	var 1: t.1 (u8*/8)
-	var 2: t.2 (u8*/8)
+	var 0: t.1.1 (u8*/8)
+	var 1: n.1 (u8/1)
+	var 2: t.2.1 (u8*/8)
 	var 3: a.global (u8*/8)
 	var 4: t.global (u8/1)
 	; 35 pc
@@ -62,15 +72,15 @@ main:
 	; 12:2 while true
 	jump while_2
 if_3_end:
-	branch n gteq 2: while_2, if_4_then
-	const t.2, [string-1]
-	call printString@@u8[t.2]
+	branch n.1 gteq 2: while_2, if_4_then
+	const t.2.1, [string-1]
+	call printString@@u8[t.2.1]
 while_2:
-	const t.1, [string-0]
-	call printString@@u8[t.1]
-	call n = next[] -> u8
+	const t.1.1, [string-0]
+	call printString@@u8[t.1.1]
+	call n.1 = next[] -> u8
 	; 15:3 if n == 3
-	branch n notequals 3: if_3_end, main_ret
+	branch n.1 notequals 3: if_3_end, main_ret
 
 printStringLength@@u8@i64:
 	mov     rdi, rsp

@@ -21,26 +21,26 @@ start:
           call [ExitProcess]
 
         ; u8 simple
-        ;   rsp+0: var four
-        ;   rsp+1: var three
-        ;   rsp+2: var one
+        ;   rsp+0: var four.1
+        ;   rsp+1: var three.1
+        ;   rsp+2: var one.1
 _simple:
         ; reserve space for local variables
         sub rsp, 16
-        ; const four, 4
+        ; const four.1, 4
         mov al, 4
         lea rbx, [rsp+0]
         mov [rbx], al
-        ; const three, 3
+        ; const three.1, 3
         mov al, 3
         lea rbx, [rsp+1]
         mov [rbx], al
-        ; move one, four
+        ; move one.1, four.1
         lea rax, [rsp+0]
         mov bl, [rax]
         lea rax, [rsp+2]
         mov [rax], bl
-        ; sub one, one, three
+        ; sub one.1, one.1, three.1
         lea rax, [rsp+2]
         mov bl, [rax]
         lea rax, [rsp+1]
@@ -49,7 +49,7 @@ _simple:
         lea rax, [rsp+2]
         mov [rax], bl
         ; 5:9 return one
-        ; ret one
+        ; ret one.1
         lea rax, [rsp+2]
         mov bl, [rax]
         mov rax, rbx
@@ -60,17 +60,17 @@ _simple:
         ; u8 registerHint@u8@u8
         ;   rsp+40: arg a
         ;   rsp+32: arg b
-        ;   rsp+0: var t.2
+        ;   rsp+0: var t.2.1
 _registerHint@u8@u8:
         ; reserve space for local variables
         sub rsp, 16
         ; 9:11 return a + b
-        ; move t.2, a
+        ; move t.2.1, a
         lea rax, [rsp+40]
         mov bl, [rax]
         lea rax, [rsp+0]
         mov [rax], bl
-        ; add t.2, t.2, b
+        ; add t.2.1, t.2.1, b
         lea rax, [rsp+0]
         mov bl, [rax]
         lea rax, [rsp+32]
@@ -78,7 +78,7 @@ _registerHint@u8@u8:
         add bl, cl
         lea rax, [rsp+0]
         mov [rax], bl
-        ; ret t.2
+        ; ret t.2.1
         lea rax, [rsp+0]
         mov bl, [rax]
         mov rax, rbx
@@ -113,87 +113,128 @@ _max@u8@u8_ret:
         ret
 
         ; i16 fibonacci@u8
-        ;   rsp+24: arg i
-        ;   rsp+0: var a
-        ;   rsp+2: var b
-        ;   rsp+4: var c
+        ;   rsp+40: arg i
+        ;   rsp+0: var a.1
+        ;   rsp+2: var b.1
+        ;   rsp+4: var i.1
+        ;   rsp+6: var a.2
+        ;   rsp+8: var b.2
+        ;   rsp+10: var i.2
+        ;   rsp+12: var c.1
+        ;   rsp+14: var a.3
+        ;   rsp+16: var b.3
 _fibonacci@u8:
         ; reserve space for local variables
-        sub rsp, 16
-        ; const a, 0
+        sub rsp, 32
+        ; const a.1, 0
         mov ax, 0
         lea rbx, [rsp+0]
         mov [rbx], ax
-        ; const b, 1
+        ; const b.1, 1
         mov ax, 1
         lea rbx, [rsp+2]
         mov [rbx], ax
         ; 22:2 while i > 0
+        ; move i.1, i
+        lea rax, [rsp+40]
+        mov bl, [rax]
+        lea rax, [rsp+4]
+        mov [rax], bl
+        ; move a.2, a.1
+        lea rax, [rsp+0]
+        mov bx, [rax]
+        lea rax, [rsp+6]
+        mov [rax], bx
+        ; move b.2, b.1
+        lea rax, [rsp+2]
+        mov bx, [rax]
+        lea rax, [rsp+8]
+        mov [rax], bx
         jmp _while_2
 _while_2_body:
-        ; sub i, i, 1
-        lea rax, [rsp+24]
+        ; move i.2, i.1
+        lea rax, [rsp+4]
+        mov bl, [rax]
+        lea rax, [rsp+10]
+        mov [rax], bl
+        ; sub i.2, i.2, 1
+        lea rax, [rsp+10]
         mov bl, [rax]
         sub bl, 1
-        lea rax, [rsp+24]
+        lea rax, [rsp+10]
         mov [rax], bl
-        ; move c, a
-        lea rax, [rsp+0]
+        ; move c.1, a.2
+        lea rax, [rsp+6]
         mov bx, [rax]
-        lea rax, [rsp+4]
+        lea rax, [rsp+12]
         mov [rax], bx
-        ; add c, c, b
-        lea rax, [rsp+4]
+        ; add c.1, c.1, b.2
+        lea rax, [rsp+12]
         mov bx, [rax]
-        lea rax, [rsp+2]
+        lea rax, [rsp+8]
         mov cx, [rax]
         add bx, cx
-        lea rax, [rsp+4]
+        lea rax, [rsp+12]
         mov [rax], bx
-        ; move a, b
-        lea rax, [rsp+2]
+        ; move a.3, b.2
+        lea rax, [rsp+8]
         mov bx, [rax]
-        lea rax, [rsp+0]
+        lea rax, [rsp+14]
         mov [rax], bx
-        ; move b, c
-        lea rax, [rsp+4]
+        ; move b.3, c.1
+        lea rax, [rsp+12]
         mov bx, [rax]
-        lea rax, [rsp+2]
+        lea rax, [rsp+16]
+        mov [rax], bx
+        ; move i.1, i.2
+        lea rax, [rsp+10]
+        mov bl, [rax]
+        lea rax, [rsp+4]
+        mov [rax], bl
+        ; move a.2, a.3
+        lea rax, [rsp+14]
+        mov bx, [rax]
+        lea rax, [rsp+6]
+        mov [rax], bx
+        ; move b.2, b.3
+        lea rax, [rsp+16]
+        mov bx, [rax]
+        lea rax, [rsp+8]
         mov [rax], bx
 _while_2:
-        ; branch i gt 0: while_2_body, while_2_break
-        lea rax, [rsp+24]
+        ; branch i.1 gt 0: while_2_body, while_2_break
+        lea rax, [rsp+4]
         mov bl, [rax]
         cmp bl, 0
         ja _while_2_body
         ; 28:9 return a
-        ; ret a
-        lea rax, [rsp+0]
+        ; ret a.2
+        lea rax, [rsp+6]
         mov bx, [rax]
         mov rax, rbx
         ; release space for local variables
-        add rsp, 16
+        add rsp, 32
         ret
 
         ; void main
-        ;   rsp+0: var one
-        ;   rsp+1: var two
-        ;   rsp+2: var oneOrTwo
-        ;   rsp+4: var f5
+        ;   rsp+0: var one.1
+        ;   rsp+1: var two.1
+        ;   rsp+2: var oneOrTwo.1
+        ;   rsp+4: var f5.1
 _main:
         ; reserve space for local variables
         sub rsp, 16
-        ; call one = simple[] -> u8
+        ; call one.1 = simple[] -> u8
         sub rsp, 8
           call _simple
         add rsp, 8
         lea rbx, [rsp+0]
         mov [rbx], al
-        ; const two, 2
+        ; const two.1, 2
         mov al, 2
         lea rbx, [rsp+1]
         mov [rbx], al
-        ; call _ = registerHint@u8@u8[one, two] -> u8
+        ; call _ = registerHint@u8@u8[one.1, two.1] -> u8
         lea rax, [rsp+0]
         mov bl, [rax]
         push rbx
@@ -203,7 +244,7 @@ _main:
         sub rsp, 8
           call _registerHint@u8@u8
         add rsp, 24
-        ; call _ = max@u8@u8[one, two] -> u8
+        ; call _ = max@u8@u8[one.1, two.1] -> u8
         lea rax, [rsp+0]
         mov bl, [rax]
         push rbx

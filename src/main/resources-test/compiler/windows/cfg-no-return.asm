@@ -21,21 +21,38 @@ start:
           call [ExitProcess]
 
         ; void main
-        ;   rsp+0: var i
+        ;   rsp+0: var i.1
+        ;   rsp+1: var i.2
+        ;   rsp+2: var i.3
 _main:
         ; reserve space for local variables
         sub rsp, 16
-        ; const i, 0
+        ; const i.1, 0
         mov al, 0
         lea rbx, [rsp+0]
         mov [rbx], al
         ; 3:2 while true
-_while_1:
-        ; add i, i, 1
+        ; move i.2, i.1
         lea rax, [rsp+0]
         mov bl, [rax]
+        lea rax, [rsp+1]
+        mov [rax], bl
+_while_1:
+        ; move i.3, i.2
+        lea rax, [rsp+1]
+        mov bl, [rax]
+        lea rax, [rsp+2]
+        mov [rax], bl
+        ; add i.3, i.3, 1
+        lea rax, [rsp+2]
+        mov bl, [rax]
         add bl, 1
-        lea rax, [rsp+0]
+        lea rax, [rsp+2]
+        mov [rax], bl
+        ; move i.2, i.3
+        lea rax, [rsp+2]
+        mov bl, [rax]
+        lea rax, [rsp+1]
         mov [rax], bl
         jmp _while_1
         ; release space for local variables
