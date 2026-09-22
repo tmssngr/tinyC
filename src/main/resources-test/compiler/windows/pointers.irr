@@ -20,7 +20,7 @@ printUint@i64:
 	var 9: t.9 (i64/8)
 	var 10: t.10 (u8/1)
 	var 11: t.11 (u8/1)
-	; 95 pc
+	; 99 pc
 	const pos, 20
 	; 28:2 while true
 while_1:
@@ -32,13 +32,13 @@ while_1:
 	move digit, t.5
 	add digit, digit, 48
 	cast t.7(i64), pos(u8)
-	addrof t.6, [buffer]
+	addrof t.6, buffer
 	add t.6, t.6, t.7
 	store [t.6], digit
 	; 34:3 if number == 0
 	branch number notequals 0: while_1, while_1_break
 	cast t.9(i64), pos(u8)
-	addrof t.8, [buffer]
+	addrof t.8, buffer
 	add t.8, t.8, t.9
 	const t.11, 20
 	move t.10, t.11
@@ -82,20 +82,40 @@ main:
 	var 4: t.4 (i16/2)
 	var 5: t.5 (i16/2)
 	var 6: t.6 (i16/2)
-	; 59 pc
-	const a, 10
-	call printIntLf@i16[a]
+	var 7: t.1 (i16/2)
+	var 8: a.1 (i16*/8)
+	var 9: a.2 (i16*/8)
+	var 10: t.2 (i16/2)
+	var 11: t.3 (i16/2)
+	var 12: a.3 (i16*/8)
+	var 13: a.4 (i16*/8)
+	var 14: t.7 (i16/2)
+	var 15: a.5 (i16*/8)
+	var 16: t.8 (i16/2)
+	; 114 pc
+	const t.1, 10
+	addrof a.1, a
+	store [a.1], t.1
+	addrof a.2, a
+	load t.2, [a.2]
+	call printIntLf@i16[t.2]
 	addrof b, a
 	load t.4, [b]
-	move c, t.4
-	sub c, c, 1
-	call printIntLf@i16[c]
+	move t.3, t.4
+	sub t.3, t.3, 1
+	addrof a.3, c
+	store [a.3], t.3
+	addrof a.4, c
+	load t.7, [a.4]
+	call printIntLf@i16[t.7]
 	addrof d, c
 	load t.6, [d]
 	move t.5, t.6
 	sub t.5, t.5, 1
 	store [d], t.5
-	call printIntLf@i16[c]
+	addrof a.5, c
+	load t.8, [a.5]
+	call printIntLf@i16[t.8]
 
 printStringLength@@u8@i64:
 	mov     rdi, rsp

@@ -118,7 +118,7 @@ _while_1:
         movzx rbx, bl
         lea rax, [rsp+48]
         mov [rax], rbx
-        ; addrof t.6, [buffer]
+        ; addrof t.6, buffer
         lea rax, [rsp+0]
         lea rbx, [rsp+40]
         mov [rbx], rax
@@ -148,7 +148,7 @@ _while_1:
         movzx rbx, bl
         lea rax, [rsp+64]
         mov [rax], rbx
-        ; addrof t.8, [buffer]
+        ; addrof t.8, buffer
         lea rax, [rsp+0]
         lea rbx, [rsp+56]
         mov [rbx], rax
@@ -281,15 +281,45 @@ _printStringLength@@u8@u8:
         ;   rsp+32: var t.4
         ;   rsp+34: var t.5
         ;   rsp+36: var t.6
+        ;   rsp+38: var t.1
+        ;   rsp+40: var a.1
+        ;   rsp+48: var a.2
+        ;   rsp+56: var t.2
+        ;   rsp+58: var t.3
+        ;   rsp+64: var a.3
+        ;   rsp+72: var a.4
+        ;   rsp+80: var t.7
+        ;   rsp+88: var a.5
+        ;   rsp+96: var t.8
 _main:
         ; reserve space for local variables
-        sub rsp, 48
-        ; const a, 10
+        sub rsp, 112
+        ; const t.1, 10
         mov ax, 10
-        lea rbx, [rsp+0]
+        lea rbx, [rsp+38]
         mov [rbx], ax
-        ; call printIntLf@i16[a]
+        ; addrof a.1, a
         lea rax, [rsp+0]
+        lea rbx, [rsp+40]
+        mov [rbx], rax
+        ; store [a.1], t.1
+        lea rax, [rsp+40]
+        mov rbx, [rax]
+        lea rax, [rsp+38]
+        mov cx, [rax]
+        mov [rbx], cx
+        ; addrof a.2, a
+        lea rax, [rsp+0]
+        lea rbx, [rsp+48]
+        mov [rbx], rax
+        ; load t.2, [a.2]
+        lea rax, [rsp+48]
+        mov rbx, [rax]
+        mov ax, [rbx]
+        lea rbx, [rsp+56]
+        mov [rbx], ax
+        ; call printIntLf@i16[t.2]
+        lea rax, [rsp+56]
         mov bx, [rax]
         push rbx
           call _printIntLf@i16
@@ -304,19 +334,39 @@ _main:
         mov ax, [rbx]
         lea rbx, [rsp+32]
         mov [rbx], ax
-        ; move c, t.4
+        ; move t.3, t.4
         lea rax, [rsp+32]
         mov bx, [rax]
-        lea rax, [rsp+16]
+        lea rax, [rsp+58]
         mov [rax], bx
-        ; sub c, c, 1
-        lea rax, [rsp+16]
+        ; sub t.3, t.3, 1
+        lea rax, [rsp+58]
         mov bx, [rax]
         sub bx, 1
-        lea rax, [rsp+16]
+        lea rax, [rsp+58]
         mov [rax], bx
-        ; call printIntLf@i16[c]
+        ; addrof a.3, c
         lea rax, [rsp+16]
+        lea rbx, [rsp+64]
+        mov [rbx], rax
+        ; store [a.3], t.3
+        lea rax, [rsp+64]
+        mov rbx, [rax]
+        lea rax, [rsp+58]
+        mov cx, [rax]
+        mov [rbx], cx
+        ; addrof a.4, c
+        lea rax, [rsp+16]
+        lea rbx, [rsp+72]
+        mov [rbx], rax
+        ; load t.7, [a.4]
+        lea rax, [rsp+72]
+        mov rbx, [rax]
+        mov ax, [rbx]
+        lea rbx, [rsp+80]
+        mov [rbx], ax
+        ; call printIntLf@i16[t.7]
+        lea rax, [rsp+80]
         mov bx, [rax]
         push rbx
           call _printIntLf@i16
@@ -348,14 +398,24 @@ _main:
         lea rax, [rsp+34]
         mov cx, [rax]
         mov [rbx], cx
-        ; call printIntLf@i16[c]
+        ; addrof a.5, c
         lea rax, [rsp+16]
+        lea rbx, [rsp+88]
+        mov [rbx], rax
+        ; load t.8, [a.5]
+        lea rax, [rsp+88]
+        mov rbx, [rax]
+        mov ax, [rbx]
+        lea rbx, [rsp+96]
+        mov [rbx], ax
+        ; call printIntLf@i16[t.8]
+        lea rax, [rsp+96]
         mov bx, [rax]
         push rbx
           call _printIntLf@i16
         add rsp, 8
         ; release space for local variables
-        add rsp, 48
+        add rsp, 112
         ret
 
         ; void printStringLength@@u8@i64
