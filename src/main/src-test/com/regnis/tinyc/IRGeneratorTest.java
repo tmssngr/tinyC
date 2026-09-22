@@ -107,6 +107,49 @@ public class IRGeneratorTest {
 		             IROptimizer.branchAndLabelOptimizations(program));
 	}
 
+	@Test
+	public void testReferencedLocalVars() {
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRProgram program = convert("""
+				                                  void print(i16 p) {
+				                                  }
+
+				                                  void main() {
+				                                    i16 a = 17
+				                                    print(a)
+				                                    i16* b = &a
+				                                    *b = 10i16
+				                                    print(*b)
+				                                  }""");
+		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.I16);
+		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.pointer(Type.I16));
+		final IRVar varT2 = new IRVar("t.2", 2, VariableScope.function, Type.I16);
+		final IRVar varT3 = new IRVar("t.3", 3, VariableScope.function, Type.I16);
+		assertEquals(new IRProgram(List.of(
+				             new IRFunction("print@i16", Type.VOID, new IRVarInfos(List.of(
+									 new IRVarDef(new IRVar("p", 0, VariableScope.parameter, Type.I16), 2)
+				             ), Set.of(), globalVarInfos), List.of(
+									 new IRLabel("print@i16_ret")
+				             )),
+				             new IRFunction("main", Type.VOID, new IRVarInfos(List.of(
+						             new IRVarDef(varA, 2),
+						             new IRVarDef(varB, 8),
+						             new IRVarDef(varT2, 2),
+						             new IRVarDef(varT3, 2)
+				             ), Set.of(varA), globalVarInfos), List.of(
+									 new IRMove(varA, 17, loc(4, 10)),
+									 new IRCall(null, Type.VOID, "print@i16", List.of(new IRValue(varA)), loc(5, 2)),
+									 new IRAddrOf(varB, varA, loc(6, 11)),
+									 new IRMove(varT2, 10, loc(7, 7)),
+									 new IRMemStore(varB, varT2, loc(7, 2)),
+									 new IRMemLoad(varT3, varB, loc(8, 8)),
+									 new IRCall(null, Type.VOID, "print@i16", List.of(new IRValue(varT3)), loc(8, 2)),
+									 new IRLabel("main_ret")
+				             ))
+		             ), List.of(), globalVarInfos, List.of()),
+		             program);
+	}
+
 	private void assertEquals(IRProgram expected, IRProgram actual) {
 		TestUtils.assertEquals(expected.functions(), actual.functions(),
 		                       this::assertEquals);
