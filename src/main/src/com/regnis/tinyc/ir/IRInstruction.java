@@ -7,6 +7,8 @@ import java.util.*;
  */
 public interface IRInstruction {
 
+	String toString(boolean comment);
+
 	static void print(List<IRInstruction> instructions) {
 		for (IRInstruction instruction : instructions) {
 			if (!(instruction instanceof IRLabel)) {

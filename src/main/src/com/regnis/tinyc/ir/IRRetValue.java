@@ -32,6 +32,11 @@ public record IRRetValue(@NotNull IRValue value, @NotNull Location location) imp
 	@NotNull
 	@Override
 	public String toString() {
-		return "ret " + value;
+		return toString(false);
+	}
+
+	@Override
+	public String toString(boolean comment) {
+		return "ret " + value.toString(comment);
 	}
 }

@@ -11,4 +11,9 @@ public record IRComment(@NotNull String comment) implements IRInstruction {
 	public String toString() {
 		return "; " + comment;
 	}
+
+	@Override
+	public String toString(boolean comment) {
+		return toString();
+	}
 }
