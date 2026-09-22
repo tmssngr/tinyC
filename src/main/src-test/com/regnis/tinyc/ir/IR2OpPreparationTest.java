@@ -26,7 +26,13 @@ public class IR2OpPreparationTest {
 				new IRVarDef(varB, 2),
 				new IRVarDef(varC, 2)
 		), Set.of(), globalVarInfo);
-		final Pair<List<IRInstruction>, IRVarInfos> result = IR2OpPreparation.convertTo2Op(List.of(
+
+		final IRLocalVarFactory localVarFactory = new IRLocalVarFactory(varInfos, Type.I64);
+		final IRConverterResultLayer resultLayer = new IRConverterResultLayer();
+
+		final IRConverterLayer layer = new IR2OpPreparation(localVarFactory, resultLayer);
+
+		IRConverterLayer.process(layer, List.of(
 				new IRBinary(varA, IRBinary.Op.Add, varA, varC),
 				new IRBinary(varA, IRBinary.Op.Add, varA, varA),
 				new IRBinary(varA, IRBinary.Op.Add, varB, varC),
@@ -42,9 +48,11 @@ public class IR2OpPreparationTest {
 
 				new IRBinary(varA, IRBinary.Op.Sub, varA, 1),
 				new IRBinary(varA, IRBinary.Op.Sub, varB, 1)
-		), varInfos, Type.I64);
+		));
 
-		final Iterator<IRInstruction> i = result.first().iterator();
+		final IRVarInfos finalVarInfos = localVarFactory.createVarInfos();
+
+		final Iterator<IRInstruction> i = resultLayer.instructions.iterator();
 		// new IRBinary(varA, IRBinary.Op.Add, varA, varC)
 		assertEquals(new IRBinary(varA, IRBinary.Op.Add, varA, varC), i.next());
 		// new IRBinary(varA, IRBinary.Op.Add, varA, varA)
@@ -80,7 +88,7 @@ public class IR2OpPreparationTest {
 		assertEquals(new IRBinary(varA, IRBinary.Op.Sub, varA, 1), i.next());
 		assertFalse(i.hasNext());
 
-		final Iterator<IRVarDef> d = result.second().vars().iterator();
+		final Iterator<IRVarDef> d = finalVarInfos.vars().iterator();
 		assertEquals(new IRVarDef(varA, 2), d.next());
 		assertEquals(new IRVarDef(varB, 2), d.next());
 		assertEquals(new IRVarDef(varC, 2), d.next());
