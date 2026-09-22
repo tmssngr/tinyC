@@ -70,30 +70,7 @@ public class CleanupGlobalUnusedVariables extends CleanupUnusedVariables {
 		private final IRVarInfos newVarInfos;
 
 		public GlobalVarReplacer(IRVarInfos varInfos, Set<Integer> readGlobalVars) {
-			final List<IRVarDef> globalVars = varInfos.vars();
-
-			final List<IRVarDef> newGlobalVars = new ArrayList<>();
-			final Set<IRVar> newCantBeRegister = new HashSet<>();
-
-			int newIndex = 0;
-			for (IRVarDef def : globalVars) {
-				final IRVar var = def.var();
-				if (!readGlobalVars.contains(var.index())) {
-					continue;
-				}
-
-				final IRVar newVar = new IRVar(var.name(), newIndex, var.scope(), var.type());
-				oldToNewVar.put(var, newVar);
-				if (!varInfos.canBeRegister(var)) {
-					newCantBeRegister.add(newVar);
-				}
-
-				newGlobalVars.add(new IRVarDef(newVar, def.size(), def.isArray()));
-
-				newIndex++;
-			}
-
-			newVarInfos = new IRVarInfos(newGlobalVars, newCantBeRegister, null);
+			newVarInfos = varInfos.removeIf(var -> !readGlobalVars.contains(var.index()), null, oldToNewVar);
 		}
 
 		@NotNull

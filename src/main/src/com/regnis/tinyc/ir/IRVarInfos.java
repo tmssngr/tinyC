@@ -4,6 +4,7 @@ import com.regnis.tinyc.*;
 import com.regnis.tinyc.ast.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -101,6 +102,32 @@ public final class IRVarInfos implements IRCanBeRegister {
 			}
 		}
 		throw new IllegalStateException("Unknown var " + var);
+	}
+
+	@NotNull
+	public IRVarInfos removeIf(@NotNull Predicate<IRVar> predicate, @Nullable IRVarInfos newParent, @NotNull Map<IRVar, IRVar> out_oldToNew) {
+		final List<IRVarDef> newVars = new ArrayList<>();
+		final Set<IRVar> cantBeRegister = new HashSet<>();
+
+		int newIndex = 0;
+		for (IRVarDef def : vars) {
+			final IRVar var = def.var();
+			if (predicate.test(var)) {
+				continue;
+			}
+
+			final IRVar newVar = new IRVar(var.name(), newIndex, var.scope(), var.type());
+			out_oldToNew.put(var, newVar);
+			if (this.cantBeRegister.contains(var)) {
+				cantBeRegister.add(newVar);
+			}
+
+			newVars.add(new IRVarDef(newVar, def.size(), def.isArray()));
+
+			newIndex++;
+		}
+
+		return new IRVarInfos(newVars, cantBeRegister, newParent);
 	}
 
 	@NotNull
