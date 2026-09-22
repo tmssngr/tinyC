@@ -1,63 +1,63 @@
 digraph program {
 	edge[fontsize="10pt"];
 	subgraph fn_printString_A_Au8 {
-		BasicBlock_0_printString_A_Au8 [label="printString_A_Au8\lcall length = strlen_A_Au8[str] -> i64\lcall printStringLength_A_Au8_Ai64[str, length]\ljump printString_A_Au8__ret",shape=box];
+		BasicBlock_0_printString_A_Au8 [label="printString_A_Au8\lcall length_d1 = strlen_A_Au8[str] -> i64\lcall printStringLength_A_Au8_Ai64[str, length_d1]\ljump printString_A_Au8__ret",shape=box];
 		BasicBlock_0_printString_A_Au8 -> BasicBlock_0_printString_A_Au8__ret;
 		BasicBlock_0_printString_A_Au8__ret [label="printString_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printChar_Au8 {
-		BasicBlock_1_printChar_Au8 [label="printChar_Au8\laddrof t_d1, chr\lcall printStringLength_A_Au8_Au8[t_d1, 1]\ljump printChar_Au8__ret",shape=box];
+		BasicBlock_1_printChar_Au8 [label="printChar_Au8\laddrof t_d1_d1, chr\lcall printStringLength_A_Au8_Au8[t_d1_d1, 1]\ljump printChar_Au8__ret",shape=box];
 		BasicBlock_1_printChar_Au8 -> BasicBlock_1_printChar_Au8__ret;
 		BasicBlock_1_printChar_Au8__ret [label="printChar_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printUint_Ai64 {
-		BasicBlock_2_printUint_Ai64 [label="printUint_Ai64\lconst pos, 20\ljump while__1",shape=box];
-		BasicBlock_2_printUint_Ai64 -> BasicBlock_2_while__1 [label="(buffer,number,pos)"];
+		BasicBlock_2_printUint_Ai64 [label="printUint_Ai64\lconst pos_d1, 20\ljump while__1",shape=box];
+		BasicBlock_2_printUint_Ai64 -> BasicBlock_2_while__1 [label="(buffer,number,number.2,pos.1,pos.3)"];
 		BasicBlock_2_printUint_Ai64_dno__critical__edge__4 [label="printUint_Ai64_dno__critical__edge__4\ljump while__1",shape=box];
-		BasicBlock_2_printUint_Ai64_dno__critical__edge__4 -> BasicBlock_2_while__1 [label="(buffer,number,pos)"];
-		BasicBlock_2_while__1 [label="while__1\lsub pos, 1\lmove remainder, number\lmod remainder, 10\ldiv number, 10\lcast t_d5(u8), remainder(i64)\lmove digit, t_d5\ladd digit, 48\lcast t_d7(i64), pos(u8)\laddrof t_d6, buffer\ladd t_d6, t_d7\lstore [t_d6], digit\lbranch number notequals 0: printUint_Ai64_dno__critical__edge__4, while__1__break\ljump while__1__break",shape=box];
-		BasicBlock_2_while__1 -> BasicBlock_2_printUint_Ai64_dno__critical__edge__4 [label="(buffer,number,pos)"];
-		BasicBlock_2_while__1 -> BasicBlock_2_while__1__break [label="(buffer,pos)"];
-		BasicBlock_2_while__1__break [label="while__1__break\lcast t_d9(i64), pos(u8)\laddrof t_d8, buffer\ladd t_d8, t_d9\lconst t_d11, 20\lmove t_d10, t_d11\lsub t_d10, pos\lcall printStringLength_A_Au8_Au8[t_d8, t_d10]\ljump printUint_Ai64__ret",shape=box];
+		BasicBlock_2_printUint_Ai64_dno__critical__edge__4 -> BasicBlock_2_while__1 [label="(buffer,number,number.2,pos.1,pos.3)"];
+		BasicBlock_2_while__1 [label="while__1\lphi number_d1=[number, number_d2]\lphi pos_d2=[pos_d1, pos_d3]\lmove pos_d3, pos_d2\lsub pos_d3, 1\lmove remainder_d1, number_d1\lmod remainder_d1, 10\lmove number_d2, number_d1\ldiv number_d2, 10\lcast t_d5_d1(u8), remainder_d1(i64)\lmove digit_d1, t_d5_d1\ladd digit_d1, 48\lcast t_d7_d1(i64), pos_d3(u8)\laddrof t_d6_d1, buffer\lmove t_d6_d2, t_d6_d1\ladd t_d6_d2, t_d7_d1\lstore [t_d6_d2], digit_d1\lbranch number_d2 notequals 0: printUint_Ai64_dno__critical__edge__4, while__1__break\ljump while__1__break",shape=box];
+		BasicBlock_2_while__1 -> BasicBlock_2_printUint_Ai64_dno__critical__edge__4 [label="(buffer,number,number.2,pos.1,pos.3)"];
+		BasicBlock_2_while__1 -> BasicBlock_2_while__1__break [label="(buffer,pos.3)"];
+		BasicBlock_2_while__1__break [label="while__1__break\lcast t_d9_d1(i64), pos_d3(u8)\laddrof t_d8_d1, buffer\lmove t_d8_d2, t_d8_d1\ladd t_d8_d2, t_d9_d1\lconst t_d11_d1, 20\lmove t_d10_d1, t_d11_d1\lsub t_d10_d1, pos_d3\lcall printStringLength_A_Au8_Au8[t_d8_d2, t_d10_d1]\ljump printUint_Ai64__ret",shape=box];
 		BasicBlock_2_while__1__break -> BasicBlock_2_printUint_Ai64__ret;
 		BasicBlock_2_printUint_Ai64__ret [label="printUint_Ai64__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printIntLf_Abool {
-		BasicBlock_3_printIntLf_Abool [label="printIntLf_Abool\lcast t_d1(i64), number(bool)\lcall printIntLf_Ai64[t_d1]\ljump printIntLf_Abool__ret",shape=box];
+		BasicBlock_3_printIntLf_Abool [label="printIntLf_Abool\lcast t_d1_d1(i64), number(bool)\lcall printIntLf_Ai64[t_d1_d1]\ljump printIntLf_Abool__ret",shape=box];
 		BasicBlock_3_printIntLf_Abool -> BasicBlock_3_printIntLf_Abool__ret;
 		BasicBlock_3_printIntLf_Abool__ret [label="printIntLf_Abool__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printIntLf_Ai64 {
 		BasicBlock_4_printIntLf_Ai64 [label="printIntLf_Ai64\lbranch number gteq 0: printIntLf_Ai64_dno__critical__edge__4, if__3__then\ljump if__3__then",shape=box];
-		BasicBlock_4_printIntLf_Ai64 -> BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 [label="(number)"];
+		BasicBlock_4_printIntLf_Ai64 -> BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 [label="(number,number.2)"];
 		BasicBlock_4_printIntLf_Ai64 -> BasicBlock_4_if__3__then [label="(number)"];
-		BasicBlock_4_if__3__then [label="if__3__then\lcall printChar_Au8[45]\lneg number, number\ljump if__3__end",shape=box];
-		BasicBlock_4_if__3__then -> BasicBlock_4_if__3__end [label="(number)"];
+		BasicBlock_4_if__3__then [label="if__3__then\lcall printChar_Au8[45]\lneg number_d2, number\ljump if__3__end",shape=box];
+		BasicBlock_4_if__3__then -> BasicBlock_4_if__3__end [label="(number,number.2)"];
 		BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 [label="printIntLf_Ai64_dno__critical__edge__4\ljump if__3__end",shape=box];
-		BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 -> BasicBlock_4_if__3__end [label="(number)"];
-		BasicBlock_4_if__3__end [label="if__3__end\lcall printUint_Ai64[number]\lcall printChar_Au8[10]\ljump printIntLf_Ai64__ret",shape=box];
+		BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 -> BasicBlock_4_if__3__end [label="(number,number.2)"];
+		BasicBlock_4_if__3__end [label="if__3__end\lphi number_d1=[number, number_d2]\lcall printUint_Ai64[number_d1]\lcall printChar_Au8[10]\ljump printIntLf_Ai64__ret",shape=box];
 		BasicBlock_4_if__3__end -> BasicBlock_4_printIntLf_Ai64__ret;
 		BasicBlock_4_printIntLf_Ai64__ret [label="printIntLf_Ai64__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_strlen_A_Au8 {
-		BasicBlock_5_strlen_A_Au8 [label="strlen_A_Au8\lconst length, 0\ljump for__4",shape=box];
-		BasicBlock_5_strlen_A_Au8 -> BasicBlock_5_for__4 [label="(length,str)"];
-		BasicBlock_5_for__4__body [label="for__4__body\ladd length, 1\ladd str, 1\ljump for__4",shape=box];
-		BasicBlock_5_for__4__body -> BasicBlock_5_for__4 [label="(length,str)"];
-		BasicBlock_5_for__4 [label="for__4\lload t_d2, [str]\lbranch t_d2 equals 0: for__4__break, for__4__body\ljump for__4__body",shape=box];
-		BasicBlock_5_for__4 -> BasicBlock_5_for__4__break [label="(length)"];
-		BasicBlock_5_for__4 -> BasicBlock_5_for__4__body [label="(length,str)"];
-		BasicBlock_5_for__4__break [label="for__4__break\lret length\ljump strlen_A_Au8__ret",shape=box];
+		BasicBlock_5_strlen_A_Au8 [label="strlen_A_Au8\lconst length_d1, 0\ljump for__4",shape=box];
+		BasicBlock_5_strlen_A_Au8 -> BasicBlock_5_for__4 [label="(length.1,length.3,str,str.2)"];
+		BasicBlock_5_for__4__body [label="for__4__body\lmove length_d3, length_d2\ladd length_d3, 1\lmove str_d2, str_d1\ladd str_d2, 1\ljump for__4",shape=box];
+		BasicBlock_5_for__4__body -> BasicBlock_5_for__4 [label="(length.1,length.3,str,str.2)"];
+		BasicBlock_5_for__4 [label="for__4\lphi str_d1=[str, str_d2]\lphi length_d2=[length_d1, length_d3]\lload t_d2_d1, [str_d1]\lbranch t_d2_d1 equals 0: for__4__break, for__4__body\ljump for__4__body",shape=box];
+		BasicBlock_5_for__4 -> BasicBlock_5_for__4__break [label="(length.2)"];
+		BasicBlock_5_for__4 -> BasicBlock_5_for__4__body [label="(length.1,length.2,str,str.1)"];
+		BasicBlock_5_for__4__break [label="for__4__break\lret length_d2\ljump strlen_A_Au8__ret",shape=box];
 		BasicBlock_5_for__4__break -> BasicBlock_5_strlen_A_Au8__ret;
 		BasicBlock_5_strlen_A_Au8__ret [label="strlen_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printStringLength_A_Au8_Au8 {
-		BasicBlock_6_printStringLength_A_Au8_Au8 [label="printStringLength_A_Au8_Au8\lcast t_d2(i64), length(u8)\lcall printStringLength_A_Au8_Ai64[str, t_d2]\ljump printStringLength_A_Au8_Au8__ret",shape=box];
+		BasicBlock_6_printStringLength_A_Au8_Au8 [label="printStringLength_A_Au8_Au8\lcast t_d2_d1(i64), length(u8)\lcall printStringLength_A_Au8_Ai64[str, t_d2_d1]\ljump printStringLength_A_Au8_Au8__ret",shape=box];
 		BasicBlock_6_printStringLength_A_Au8_Au8 -> BasicBlock_6_printStringLength_A_Au8_Au8__ret;
 		BasicBlock_6_printStringLength_A_Au8_Au8__ret [label="printStringLength_A_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_7_main [label="main\lconst t_d4, [string-0]\lcall printString_A_Au8[t_d4]\lconst a, 1\lconst b, 2\llt t_d5, a, b\lcall printIntLf_Abool[t_d5]\llt t_d6, b, a\lcall printIntLf_Abool[t_d6]\lconst t_d7, [string-1]\lcall printString_A_Au8[t_d7]\lconst c, 0\lconst d, 128\llt t_d8, c, d\lcall printIntLf_Abool[t_d8]\llt t_d9, d, c\lcall printIntLf_Abool[t_d9]\lconst t_d10, [string-2]\lcall printString_A_Au8[t_d10]\llteq t_d11, a, b\lcall printIntLf_Abool[t_d11]\llteq t_d12, b, a\lcall printIntLf_Abool[t_d12]\lconst t_d13, [string-3]\lcall printString_A_Au8[t_d13]\llteq t_d14, c, d\lcall printIntLf_Abool[t_d14]\llteq t_d15, d, c\lcall printIntLf_Abool[t_d15]\lconst t_d16, [string-4]\lcall printString_A_Au8[t_d16]\lequals t_d17, a, b\lcall printIntLf_Abool[t_d17]\lequals t_d18, b, a\lcall printIntLf_Abool[t_d18]\lconst t_d19, [string-5]\lcall printString_A_Au8[t_d19]\lnotequals t_d20, a, b\lcall printIntLf_Abool[t_d20]\lnotequals t_d21, b, a\lcall printIntLf_Abool[t_d21]\lconst t_d22, [string-6]\lcall printString_A_Au8[t_d22]\lgteq t_d23, a, b\lcall printIntLf_Abool[t_d23]\lgteq t_d24, b, a\lcall printIntLf_Abool[t_d24]\lconst t_d25, [string-7]\lcall printString_A_Au8[t_d25]\lgteq t_d26, c, d\lcall printIntLf_Abool[t_d26]\lgteq t_d27, d, c\lcall printIntLf_Abool[t_d27]\lconst t_d28, [string-8]\lcall printString_A_Au8[t_d28]\lgt t_d29, a, b\lcall printIntLf_Abool[t_d29]\lgt t_d30, b, a\lcall printIntLf_Abool[t_d30]\lconst t_d31, [string-9]\lcall printString_A_Au8[t_d31]\lgt t_d32, c, d\lcall printIntLf_Abool[t_d32]\lgt t_d33, d, c\lcall printIntLf_Abool[t_d33]\ljump main__ret",shape=box];
+		BasicBlock_7_main [label="main\lconst t_d4_d1, [string-0]\lcall printString_A_Au8[t_d4_d1]\lconst a_d1, 1\lconst b_d1, 2\llt t_d5_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d5_d1]\llt t_d6_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d6_d1]\lconst t_d7_d1, [string-1]\lcall printString_A_Au8[t_d7_d1]\lconst c_d1, 0\lconst d_d1, 128\llt t_d8_d1, c_d1, d_d1\lcall printIntLf_Abool[t_d8_d1]\llt t_d9_d1, d_d1, c_d1\lcall printIntLf_Abool[t_d9_d1]\lconst t_d10_d1, [string-2]\lcall printString_A_Au8[t_d10_d1]\llteq t_d11_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d11_d1]\llteq t_d12_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d12_d1]\lconst t_d13_d1, [string-3]\lcall printString_A_Au8[t_d13_d1]\llteq t_d14_d1, c_d1, d_d1\lcall printIntLf_Abool[t_d14_d1]\llteq t_d15_d1, d_d1, c_d1\lcall printIntLf_Abool[t_d15_d1]\lconst t_d16_d1, [string-4]\lcall printString_A_Au8[t_d16_d1]\lequals t_d17_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d17_d1]\lequals t_d18_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d18_d1]\lconst t_d19_d1, [string-5]\lcall printString_A_Au8[t_d19_d1]\lnotequals t_d20_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d20_d1]\lnotequals t_d21_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d21_d1]\lconst t_d22_d1, [string-6]\lcall printString_A_Au8[t_d22_d1]\lgteq t_d23_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d23_d1]\lgteq t_d24_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d24_d1]\lconst t_d25_d1, [string-7]\lcall printString_A_Au8[t_d25_d1]\lgteq t_d26_d1, c_d1, d_d1\lcall printIntLf_Abool[t_d26_d1]\lgteq t_d27_d1, d_d1, c_d1\lcall printIntLf_Abool[t_d27_d1]\lconst t_d28_d1, [string-8]\lcall printString_A_Au8[t_d28_d1]\lgt t_d29_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d29_d1]\lgt t_d30_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d30_d1]\lconst t_d31_d1, [string-9]\lcall printString_A_Au8[t_d31_d1]\lgt t_d32_d1, c_d1, d_d1\lcall printIntLf_Abool[t_d32_d1]\lgt t_d33_d1, d_d1, c_d1\lcall printIntLf_Abool[t_d33_d1]\ljump main__ret",shape=box];
 		BasicBlock_7_main -> BasicBlock_7_main__ret;
 		BasicBlock_7_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
