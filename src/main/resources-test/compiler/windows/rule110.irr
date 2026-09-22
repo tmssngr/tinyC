@@ -1,229 +1,149 @@
 printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	var 1: length.1 (i64/8)
-	; 10 pc
-	call length.1 = strlen@@u8[str] -> i64
-	call printStringLength@@u8@i64[str, length.1]
+	; 6 pc
+	move str{r6}, str{r1}
+	move str{r1}, str{r6}
+	call length.1{r0} = strlen@@u8[str{r1}] -> i64
+	move str{r1}, str{r6}
+	move length.1{r2}, length.1{r0}
+	call printStringLength@@u8@i64[str{r1}, length.1{r2}]
 
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	var 1: t.1.1 (u8*/8)
-	; 8 pc
-	addrof t.1.1, chr
-	call printStringLength@@u8@u8[t.1.1, 1]
+	; 7 pc
+	move chr, chr{r1}
+	addrof t.1.1{r1}, chr
+	const arg.0.1{r2}, 1
+	call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
 
 strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	var 1: length.1 (i64/8)
-	var 2: str.1 (u8*/8)
-	var 3: length.2 (i64/8)
-	var 4: t.2.1 (u8/1)
-	var 5: length.3 (i64/8)
-	var 6: str.2 (u8*/8)
-	; 55 pc
-	const length.1, 0
+	; 9 pc
+	const length.1{r2}, 0
 	; 64:2 for *str != 0
-	move str.1, str
-	move length.2, length.1
+	move length.2{r0}, length.1{r2}
 	jump for_1
 for_1_body:
-	move length.3, length.2
-	add length.3, length.3, 1
-	move str.2, str.1
-	add str.2, str.2, 1
-	move str.1, str.2
-	move length.2, length.3
+	move length.3{r2}, length.2{r0}
+	add length.3{r2}, length.3{r2}, 1
+	add str.2{r1}, str.2{r1}, 1
+	move length.2{r0}, length.3{r2}
 for_1:
-	load t.2.1, [str.1]
-	branch t.2.1 notequals 0: for_1_body, for_1_break
+	load t.2.1{r2}, [str.1{r1}]
+	branch t.2.1{r2} notequals 0: for_1_body, for_1_break
 	; 67:9 return length
-	ret length.2
 
 printStringLength@@u8@u8:
  Local variables
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
-	var 2: t.2.1 (i64/8)
-	; 10 pc
-	cast t.2.1(i64), length(u8)
-	call printStringLength@@u8@i64[str, t.2.1]
+	; 2 pc
+	cast t.2.1{r2}(i64), length{r2}(u8)
+	call printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
 
 printBoard:
- Local variables
-	var 0: i.1 (u8/1)
-	var 1: i.2 (u8/1)
-	var 2: t.4.1 (u8*/8)
-	var 3: t.3.1 (i64/8)
-	var 4: t.2.1 (u8*/8)
-	var 5: t.2.2 (u8*/8)
-	var 6: t.1.1 (u8/1)
-	var 7: i.4 (u8/1)
-	; 65 pc
-	call printChar@u8[124]
-	const i.1, 0
+	; 15 pc
+	const arg.0.0{r1}, 124
+	call printChar@u8[arg.0.0{r1}]
+	const i.1{r6}, 0
 	; 11:2 for i < 30
-	move i.2, i.1
 	jump for_2
 for_2_body:
 	; 12:3 if [...] == 0
-	cast t.3.1(i64), i.2(u8)
-	addrof t.2.1, [board]
-	move t.2.2, t.2.1
-	add t.2.2, t.2.2, t.3.1
-	load t.1.1, [t.2.2]
-	branch t.1.1 equals 0: if_3_then, if_3_else
-	call printChar@u8[42]
+	cast t.3.1{r7}(i64), i.2{r6}(u8)
+	addrof t.2.1{r0}, [board]
+	add t.2.2{r0}, t.2.2{r0}, t.3.1{r7}
+	load t.1.1{r7}, [t.2.2{r0}]
+	branch t.1.1{r7} equals 0: if_3_then, if_3_else
+	const arg.1.0{r1}, 42
+	call printChar@u8[arg.1.0{r1}]
 	jump for_2_continue
 if_3_then:
-	call printChar@u8[32]
+	const arg.2.0{r1}, 32
+	call printChar@u8[arg.2.0{r1}]
 for_2_continue:
-	move i.4, i.2
-	add i.4, i.4, 1
-	move i.2, i.4
+	add i.4{r6}, i.4{r6}, 1
 for_2:
-	branch i.2 lt 30: for_2_body, for_2_break
-	const t.4.1, [string-0]
-	call printString@@u8[t.4.1]
+	branch i.2{r6} lt 30: for_2_body, for_2_break
+	const t.4.1{r1}, [string-0]
+	call printString@@u8[t.4.1{r1}]
 
 main:
- Local variables
-	var 0: i.1 (u8/1)
-	var 1: i.2 (u8/1)
-	var 2: t.7.1 (u8/1)
-	var 3: t.9.1 (i64/8)
-	var 4: t.8.1 (u8*/8)
-	var 5: t.8.2 (u8*/8)
-	var 6: i.3 (u8/1)
-	var 7: i.4 (u8/1)
-	var 8: t.4.1 (u8/1)
-	var 9: t.6.1 (i64/8)
-	var 10: t.5.1 (u8*/8)
-	var 11: t.5.2 (u8*/8)
-	var 12: i.5 (u8/1)
-	var 13: t.13.1 (i64/8)
-	var 14: t.12.1 (u8*/8)
-	var 15: t.12.2 (u8*/8)
-	var 16: t.11.1 (u8/1)
-	var 17: t.10.1 (u8/1)
-	var 18: t.16.1 (i64/8)
-	var 19: t.15.1 (u8*/8)
-	var 20: t.15.2 (u8*/8)
-	var 21: t.14.1 (u8/1)
-	var 22: pattern.1 (u8/1)
-	var 23: j.1 (u8/1)
-	var 24: pattern.2 (u8/1)
-	var 25: j.2 (u8/1)
-	var 26: i.7 (u8/1)
-	var 27: t.18.1 (u8/1)
-	var 28: t.17.1 (u8/1)
-	var 29: t.22.1 (u8/1)
-	var 30: t.21.1 (i64/8)
-	var 31: t.20.1 (u8*/8)
-	var 32: t.20.2 (u8*/8)
-	var 33: t.19.1 (u8/1)
-	var 34: pattern.3 (u8/1)
-	var 35: t.25.1 (u8/1)
-	var 36: t.24.1 (u8/1)
-	var 37: t.23.1 (u8/1)
-	var 38: t.27.1 (i64/8)
-	var 39: t.26.1 (u8*/8)
-	var 40: t.26.2 (u8*/8)
-	var 41: j.3 (u8/1)
-	; 329 pc
-	const i.1, 0
+	; 51 pc
+	const i.1{r6}, 0
 	; 23:2 for i < 30
-	move i.2, i.1
 	jump for_4
 for_4_body:
-	const t.4.1, 0
-	cast t.6.1(i64), i.2(u8)
-	addrof t.5.1, [board]
-	move t.5.2, t.5.1
-	add t.5.2, t.5.2, t.6.1
-	store [t.5.2], t.4.1
-	move i.5, i.2
-	add i.5, i.5, 1
-	move i.2, i.5
+	const t.4.1{r7}, 0
+	cast t.6.1{r0}(i64), i.2{r6}(u8)
+	addrof t.5.1{r1}, [board]
+	add t.5.2{r1}, t.5.2{r1}, t.6.1{r0}
+	store [t.5.2{r1}], t.4.1{r7}
+	add i.5{r6}, i.5{r6}, 1
 for_4:
-	branch i.2 lt 30: for_4_body, for_4_break
-	const t.7.1, 1
-	const t.9.1, 29
-	addrof t.8.1, [board]
-	move t.8.2, t.8.1
-	add t.8.2, t.8.2, t.9.1
-	store [t.8.2], t.7.1
+	branch i.2{r6} lt 30: for_4_body, for_4_break
+	const t.7.1{r6}, 1
+	const t.9.1{r7}, 29
+	addrof t.8.1{r0}, [board]
+	add t.8.2{r0}, t.8.2{r0}, t.9.1{r7}
+	store [t.8.2{r0}], t.7.1{r6}
 	call printBoard[]
-	const i.3, 0
+	const i.3{r6}, 0
 	; 30:2 for i < 28
-	move i.4, i.3
 	jump for_5
 for_5_body:
-	const t.13.1, 0
-	addrof t.12.1, [board]
-	move t.12.2, t.12.1
-	add t.12.2, t.12.2, t.13.1
-	load t.11.1, [t.12.2]
-	move t.10.1, t.11.1
-	shiftleft t.10.1, t.10.1, 1
-	const t.16.1, 1
-	addrof t.15.1, [board]
-	move t.15.2, t.15.1
-	add t.15.2, t.15.2, t.16.1
-	load t.14.1, [t.15.2]
-	move pattern.1, t.10.1
-	or pattern.1, pattern.1, t.14.1
-	const j.1, 1
+	const t.13.1{r7}, 0
+	addrof t.12.1{r0}, [board]
+	add t.12.2{r0}, t.12.2{r0}, t.13.1{r7}
+	load t.11.1{r7}, [t.12.2{r0}]
+	shiftleft t.10.1{r7}, t.10.1{r7}, 1
+	const t.16.1{r0}, 1
+	addrof t.15.1{r2}, [board]
+	add t.15.2{r2}, t.15.2{r2}, t.16.1{r0}
+	load t.14.1{r0}, [t.15.2{r2}]
+	or pattern.1{r7}, pattern.1{r7}, t.14.1{r0}
+	const j.1{r0}, 1
 	; 32:3 for j < 29
-	move pattern.2, pattern.1
-	move j.2, j.1
 	jump for_6
 for_6_body:
-	move t.18.1, pattern.2
-	shiftleft t.18.1, t.18.1, 1
-	move t.17.1, t.18.1
-	and t.17.1, t.17.1, 7
-	move t.22.1, j.2
-	add t.22.1, t.22.1, 1
-	cast t.21.1(i64), t.22.1(u8)
-	addrof t.20.1, [board]
-	move t.20.2, t.20.1
-	add t.20.2, t.20.2, t.21.1
-	load t.19.1, [t.20.2]
-	move pattern.3, t.17.1
-	or pattern.3, pattern.3, t.19.1
-	const t.25.1, 110
-	move t.24.1, t.25.1
-	shiftright t.24.1, t.24.1, pattern.3
-	move t.23.1, t.24.1
-	and t.23.1, t.23.1, 1
-	cast t.27.1(i64), j.2(u8)
-	addrof t.26.1, [board]
-	move t.26.2, t.26.1
-	add t.26.2, t.26.2, t.27.1
-	store [t.26.2], t.23.1
-	move j.3, j.2
-	add j.3, j.3, 1
-	move pattern.2, pattern.3
-	move j.2, j.3
+	shiftleft t.18.1{r7}, t.18.1{r7}, 1
+	and t.17.1{r7}, t.17.1{r7}, 7
+	move t.22.1{r2}, j.2{r0}
+	add t.22.1{r2}, t.22.1{r2}, 1
+	cast t.21.1{r2}(i64), t.22.1{r2}(u8)
+	addrof t.20.1{r3}, [board]
+	add t.20.2{r3}, t.20.2{r3}, t.21.1{r2}
+	load t.19.1{r2}, [t.20.2{r3}]
+	or pattern.3{r7}, pattern.3{r7}, t.19.1{r2}
+	const t.25.1{r2}, 110
+	move pattern.3{r1}, pattern.3{r7}
+	shiftright t.24.1{r2}, t.24.1{r2}, pattern.3{r1}
+	move t.23.1{r1}, t.24.1{r2}
+	and t.23.1{r1}, t.23.1{r1}, 1
+	cast t.27.1{r2}(i64), j.2{r0}(u8)
+	addrof t.26.1{r3}, [board]
+	add t.26.2{r3}, t.26.2{r3}, t.27.1{r2}
+	store [t.26.2{r3}], t.23.1{r1}
+	add j.3{r0}, j.3{r0}, 1
 for_6:
-	branch j.2 lt 29: for_6_body, for_6_break
+	branch j.2{r0} lt 29: for_6_body, for_6_break
 	call printBoard[]
-	move i.7, i.4
-	add i.7, i.7, 1
-	move i.4, i.7
+	move i.7{r0}, i.4{r6}
+	add i.7{r0}, i.7{r0}, 1
+	move i.4{r6}, i.7{r0}
 for_5:
-	branch i.4 lt 28: for_5_body, main_ret
+	branch i.4{r6} lt 28: for_5_body, main_ret
 
 printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
+	mov     r8, rdx
+	mov     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
 	xor     r9, r9
 	push    0
 	sub     rsp, 20h

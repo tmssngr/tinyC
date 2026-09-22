@@ -15,12 +15,12 @@ public final class SsaFactory {
 
 	public static IRFunction convert(@NotNull IRFunction function, @NotNull Type pointerIntType) {
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), function.instructions());
-		DetectVarLiveness.process(cfg);
+		DetectVarLiveness.process(cfg, function.varInfos().cantBeRegister(), false);
 		final Pair<List<IRInstruction>, IRVarInfos> result = convert(cfg, function.varInfos(), pointerIntType);
 		return function.derive(result.first(), result.second());
 	}
 
-	public static Pair<List<IRInstruction>, IRVarInfos> convert(@NotNull ControlFlowGraph cfgWithLiveness, @NotNull IRVarInfos varInfos, @NotNull Type pointerIntType) {
+	public static Pair<List<IRInstruction>, IRVarInfos> convert(@NotNull ControlFlowGraph cfgWithLiveness, @NotNull IRVarInfos varInfos, Type pointerIntType) {
 		final IRLocalVarFactory varFactory = new IRLocalVarFactory(varInfos, pointerIntType);
 		final SsaFactory factory = new SsaFactory(cfgWithLiveness, varFactory);
 		return factory.convert();

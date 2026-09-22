@@ -42,7 +42,7 @@ public final class IRLocalVarFactory {
 
 	@NotNull
 	public IRVar createVar(@NotNull IRVar var, @NotNull String name) {
-		name = createUniqueName(name);
+		name = suggestName(name);
 
 		final int size;
 		if (var.scope() == VariableScope.global) {
@@ -57,7 +57,7 @@ public final class IRLocalVarFactory {
 
 	@NotNull
 	public IRVar createVar(@NotNull Type type, @NotNull String name) {
-		name = createUniqueName(name);
+		name = suggestName(name);
 		final int size = Type.getSize(type, pointerIntType);
 		return addVar(name, size, type);
 	}
@@ -71,7 +71,7 @@ public final class IRLocalVarFactory {
 
 	@NotNull
 	public IRVar createPointerVar(@NotNull String prefix) {
-		final String name = createUniqueName(prefix);
+		final String name = suggestName(prefix);
 		final Type type = Type.pointer(Type.VOID);
 		final int size = Type.getSize(type, pointerIntType);
 		return addVar(name, size, type);
@@ -93,24 +93,6 @@ public final class IRLocalVarFactory {
 		varDefs.add(new IRVarDef(localVar, size));
 		existingNames.add(name);
 		return localVar;
-	}
-
-	private String createUniqueName(String prefix) {
-		final Set<String> names = new HashSet<>();
-		// there can already be variables with the same name (and even different type), e.g. from different scopes inside a method
-		varDefs.forEach(vardef -> names.add(vardef.var().name()));
-
-		int i = 0;
-		while (true) {
-			String name = prefix;
-			if (i > 0) {
-				name = name + i;
-			}
-			if (!names.contains(name)) {
-				return name;
-			}
-			i++;
-		}
 	}
 
 	@NotNull

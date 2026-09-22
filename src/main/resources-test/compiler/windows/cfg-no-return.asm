@@ -12,54 +12,27 @@ section '.text' code readable executable
 start:
         ; alignment
         and rsp, -16
-        sub rsp, 8
-          call init
-        add rsp, 8
-          call _main
+        call init
+        call _main
         mov rcx, 0
         sub rsp, 0x20
-          call [ExitProcess]
+        call [ExitProcess]
 
         ; void main
-        ;   rsp+0: var i.1
-        ;   rsp+1: var i.2
-        ;   rsp+2: var i.3
 _main:
-        ; reserve space for local variables
-        sub rsp, 16
-        ; const i.1, 0
+        sub rsp, 8
+        ; const i.1{r0}, 0
         mov al, 0
-        lea rbx, [rsp+0]
-        mov [rbx], al
         ; 3:2 while true
-        ; move i.2, i.1
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        lea rax, [rsp+1]
-        mov [rax], bl
 _while_1:
-        ; move i.3, i.2
-        lea rax, [rsp+1]
-        mov bl, [rax]
-        lea rax, [rsp+2]
-        mov [rax], bl
-        ; add i.3, i.3, 1
-        lea rax, [rsp+2]
-        mov bl, [rax]
-        add bl, 1
-        lea rax, [rsp+2]
-        mov [rax], bl
-        ; move i.2, i.3
-        lea rax, [rsp+2]
-        mov bl, [rax]
-        lea rax, [rsp+1]
-        mov [rax], bl
+        ; add i.3{r0}, i.3{r0}, 1
+        add al, 1
         jmp _while_1
-        ; release space for local variables
-        add rsp, 16
+        add rsp, 8
         ret
+
 init:
-        sub rsp, 20h
+        sub rsp, 28h
           mov rcx, STD_IN_HANDLE
           call [GetStdHandle]
           ; handle in rax, 0 if invalid
@@ -77,7 +50,7 @@ init:
           ; handle in rax, 0 if invalid
           lea rcx, [hStdErr]
           mov qword [rcx], rax
-        add rsp, 20h
+        add rsp, 28h
         ret
 
 section '.data' data readable writeable

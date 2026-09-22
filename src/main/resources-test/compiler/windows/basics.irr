@@ -1,82 +1,60 @@
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	var 1: t.1.1 (u8*/8)
-	; 8 pc
-	addrof t.1.1, chr
-	call printStringLength@@u8@u8[t.1.1, 1]
+	; 7 pc
+	move chr, chr{r1}
+	addrof t.1.1{r1}, chr
+	const arg.0.1{r2}, 1
+	call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
 
 printUint@u8:
  Local variables
 	arg 0: number (u8/1)
-	var 1: t.1.1 (i64/8)
-	; 8 pc
-	cast t.1.1(i64), number(u8)
-	call printUint@i64[t.1.1]
+	; 2 pc
+	cast t.1.1{r1}(i64), number{r1}(u8)
+	call printUint@i64[t.1.1{r1}]
 
 printUint@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
-	var 2: pos.1 (u8/1)
-	var 3: number.1 (i64/8)
-	var 4: pos.2 (u8/1)
-	var 5: pos.3 (u8/1)
-	var 6: remainder.1 (i64/8)
-	var 7: number.2 (i64/8)
-	var 8: t.5.1 (u8/1)
-	var 9: digit.1 (u8/1)
-	var 10: t.7.1 (i64/8)
-	var 11: t.6.1 (u8*/8)
-	var 12: t.6.2 (u8*/8)
-	var 13: t.9.1 (i64/8)
-	var 14: t.8.1 (u8*/8)
-	var 15: t.8.2 (u8*/8)
-	var 16: t.11.1 (u8/1)
-	var 17: t.10.1 (u8/1)
-	; 136 pc
-	const pos.1, 20
+	; 24 pc
+	const pos.1{r6}, 20
 	; 28:2 while true
-	move number.1, number
-	move pos.2, pos.1
-	jump while_1
-printUint@i64.no_critical_edge_4:
-	move number.1, number.2
-	move pos.2, pos.3
+	move number.1{r7}, number{r1}
 while_1:
-	move pos.3, pos.2
-	sub pos.3, pos.3, 1
-	move remainder.1, number.1
-	mod remainder.1, remainder.1, 10
-	move number.2, number.1
-	div number.2, number.2, 10
-	cast t.5.1(u8), remainder.1(i64)
-	move digit.1, t.5.1
-	add digit.1, digit.1, 48
-	cast t.7.1(i64), pos.3(u8)
-	addrof t.6.1, [buffer]
-	move t.6.2, t.6.1
-	add t.6.2, t.6.2, t.7.1
-	store [t.6.2], digit.1
+	sub pos.3{r6}, pos.3{r6}, 1
+	move remainder.1{r3}, number.1{r7}
+	move remainder.1{r0}, remainder.1{r3}
+	mod remainder.1{r2}, remainder.1{r0}, 10
+	move remainder.1{r3}, remainder.1{r2}
+	move number.2{r0}, number.2{r7}
+	div number.2{r0}, number.2{r0}, 10
+	move number.2{r7}, number.2{r0}
+	cast t.5.1{r0}(u8), remainder.1{r3}(i64)
+	add digit.1{r0}, digit.1{r0}, 48
+	cast t.7.1{r3}(i64), pos.3{r6}(u8)
+	addrof t.6.1{r4}, [buffer]
+	add t.6.2{r4}, t.6.2{r4}, t.7.1{r3}
+	store [t.6.2{r4}], digit.1{r0}
 	; 34:3 if number == 0
-	branch number.2 notequals 0: printUint@i64.no_critical_edge_4, while_1_break
-	cast t.9.1(i64), pos.3(u8)
-	addrof t.8.1, [buffer]
-	move t.8.2, t.8.1
-	add t.8.2, t.8.2, t.9.1
-	const t.11.1, 20
-	move t.10.1, t.11.1
-	sub t.10.1, t.10.1, pos.3
-	call printStringLength@@u8@u8[t.8.2, t.10.1]
+	branch number.2{r7} notequals 0: while_1, while_1_break
+	cast t.9.1{r7}(i64), pos.3{r6}(u8)
+	addrof t.8.1{r0}, [buffer]
+	move t.8.2{r1}, t.8.1{r0}
+	add t.8.2{r1}, t.8.2{r1}, t.9.1{r7}
+	const t.11.1{r7}, 20
+	move t.10.1{r2}, t.11.1{r7}
+	sub t.10.1{r2}, t.10.1{r2}, pos.3{r6}
+	call printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
 
 printStringLength@@u8@u8:
  Local variables
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
-	var 2: t.2.1 (i64/8)
-	; 10 pc
-	cast t.2.1(i64), length(u8)
-	call printStringLength@@u8@i64[str, t.2.1]
+	; 2 pc
+	cast t.2.1{r2}(i64), length{r2}(u8)
+	call printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
 
 unusedArgs@u8@bool@u8@u8:
  Local variables
@@ -84,53 +62,50 @@ unusedArgs@u8@bool@u8@u8:
 	arg 1: b (bool/1)
 	arg 2: c (u8/1)
 	arg 3: d (u8/1)
-	var 4: t.4.1 (i64/8)
-	; 8 pc
+	; 1 pc
 	; 9:10 return (i64)
-	cast t.4.1(i64), c(u8)
-	ret t.4.1
+	cast t.4.1{r0}(i64), c{r3}(u8)
 
 main:
- Local variables
-	var 0: t.3.1 (bool/1)
-	var 1: c.1 (i64/8)
-	var 2: onePtr.1 (u8*/8)
-	var 3: t.4.1 (u8/1)
-	var 4: twoPtr.1 (u8*/8)
-	var 5: t.7.1 (i64/8)
-	var 6: t.6.1 (u8*/8)
-	var 7: t.6.2 (u8*/8)
-	var 8: t.5.1 (u8/1)
-	; 67 pc
+	; 36 pc
 	; begin initialize global variables
-	const zero, 48
-	const one, 49
-	const two, 50
-	const threeFour, 34
+	const tmp.zero{r6}, 48
+	const tmp.one{r7}, 49
+	const tmp.two{r0}, 50
+	const tmp.threeFour{r1}, 34
 	; end initialize global variables
-	const t.3.1, 1
-	call _ = unusedArgs@u8@bool@u8@u8[1, t.3.1, 2, 3] -> i64
-	call printChar@u8[zero]
-	addrof onePtr.1, one
-	load t.4.1, [onePtr.1]
-	call printChar@u8[t.4.1]
-	addrof twoPtr.1, two
-	const t.7.1, 0
-	move t.6.1, twoPtr.1
-	move t.6.2, t.6.1
-	add t.6.2, t.6.2, t.7.1
-	load t.5.1, [t.6.2]
-	call printChar@u8[t.5.1]
-	call printUint@u8[threeFour]
-	call printChar@u8[10]
+	const t.3.1{r2}, 1
+	move zero, tmp.zero{r6}
+	move one, tmp.one{r7}
+	move two, tmp.two{r0}
+	move threeFour, tmp.threeFour{r1}
+	const arg.0.0{r1}, 1
+	const arg.0.2{r3}, 2
+	const arg.0.3{r4}, 3
+	call _ = unusedArgs@u8@bool@u8@u8[arg.0.0{r1}, t.3.1{r2}, arg.0.2{r3}, arg.0.3{r4}] -> i64
+	move tmp.zero{r6}, zero
+	move tmp.zero{r1}, tmp.zero{r6}
+	call printChar@u8[tmp.zero{r1}]
+	addrof onePtr.1{r6}, one
+	load t.4.1{r1}, [onePtr.1{r6}]
+	call printChar@u8[t.4.1{r1}]
+	addrof twoPtr.1{r6}, two
+	const t.7.1{r7}, 0
+	add t.6.2{r6}, t.6.2{r6}, t.7.1{r7}
+	load t.5.1{r1}, [t.6.2{r6}]
+	call printChar@u8[t.5.1{r1}]
+	move tmp.threeFour{r1}, threeFour
+	call printUint@u8[tmp.threeFour{r1}]
+	const arg.5.0{r1}, 10
+	call printChar@u8[arg.5.0{r1}]
 
 printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
+	mov     r8, rdx
+	mov     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
 	xor     r9, r9
 	push    0
 	sub     rsp, 20h

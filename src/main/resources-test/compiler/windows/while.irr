@@ -1,137 +1,101 @@
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	var 1: t.1.1 (u8*/8)
-	; 8 pc
-	addrof t.1.1, chr
-	call printStringLength@@u8@u8[t.1.1, 1]
+	; 7 pc
+	move chr, chr{r1}
+	addrof t.1.1{r1}, chr
+	const arg.0.1{r2}, 1
+	call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
 
 printUint@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
-	var 2: pos.1 (u8/1)
-	var 3: number.1 (i64/8)
-	var 4: pos.2 (u8/1)
-	var 5: pos.3 (u8/1)
-	var 6: remainder.1 (i64/8)
-	var 7: number.2 (i64/8)
-	var 8: t.5.1 (u8/1)
-	var 9: digit.1 (u8/1)
-	var 10: t.7.1 (i64/8)
-	var 11: t.6.1 (u8*/8)
-	var 12: t.6.2 (u8*/8)
-	var 13: t.9.1 (i64/8)
-	var 14: t.8.1 (u8*/8)
-	var 15: t.8.2 (u8*/8)
-	var 16: t.11.1 (u8/1)
-	var 17: t.10.1 (u8/1)
-	; 136 pc
-	const pos.1, 20
+	; 24 pc
+	const pos.1{r6}, 20
 	; 28:2 while true
-	move number.1, number
-	move pos.2, pos.1
-	jump while_1
-printUint@i64.no_critical_edge_4:
-	move number.1, number.2
-	move pos.2, pos.3
+	move number.1{r7}, number{r1}
 while_1:
-	move pos.3, pos.2
-	sub pos.3, pos.3, 1
-	move remainder.1, number.1
-	mod remainder.1, remainder.1, 10
-	move number.2, number.1
-	div number.2, number.2, 10
-	cast t.5.1(u8), remainder.1(i64)
-	move digit.1, t.5.1
-	add digit.1, digit.1, 48
-	cast t.7.1(i64), pos.3(u8)
-	addrof t.6.1, [buffer]
-	move t.6.2, t.6.1
-	add t.6.2, t.6.2, t.7.1
-	store [t.6.2], digit.1
+	sub pos.3{r6}, pos.3{r6}, 1
+	move remainder.1{r3}, number.1{r7}
+	move remainder.1{r0}, remainder.1{r3}
+	mod remainder.1{r2}, remainder.1{r0}, 10
+	move remainder.1{r3}, remainder.1{r2}
+	move number.2{r0}, number.2{r7}
+	div number.2{r0}, number.2{r0}, 10
+	move number.2{r7}, number.2{r0}
+	cast t.5.1{r0}(u8), remainder.1{r3}(i64)
+	add digit.1{r0}, digit.1{r0}, 48
+	cast t.7.1{r3}(i64), pos.3{r6}(u8)
+	addrof t.6.1{r4}, [buffer]
+	add t.6.2{r4}, t.6.2{r4}, t.7.1{r3}
+	store [t.6.2{r4}], digit.1{r0}
 	; 34:3 if number == 0
-	branch number.2 notequals 0: printUint@i64.no_critical_edge_4, while_1_break
-	cast t.9.1(i64), pos.3(u8)
-	addrof t.8.1, [buffer]
-	move t.8.2, t.8.1
-	add t.8.2, t.8.2, t.9.1
-	const t.11.1, 20
-	move t.10.1, t.11.1
-	sub t.10.1, t.10.1, pos.3
-	call printStringLength@@u8@u8[t.8.2, t.10.1]
+	branch number.2{r7} notequals 0: while_1, while_1_break
+	cast t.9.1{r7}(i64), pos.3{r6}(u8)
+	addrof t.8.1{r0}, [buffer]
+	move t.8.2{r1}, t.8.1{r0}
+	add t.8.2{r1}, t.8.2{r1}, t.9.1{r7}
+	const t.11.1{r7}, 20
+	move t.10.1{r2}, t.11.1{r7}
+	sub t.10.1{r2}, t.10.1{r2}, pos.3{r6}
+	call printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
 
 printIntLf@u8:
  Local variables
 	arg 0: number (u8/1)
-	var 1: t.1.1 (i64/8)
-	; 8 pc
-	cast t.1.1(i64), number(u8)
-	call printIntLf@i64[t.1.1]
+	; 2 pc
+	cast t.1.1{r1}(i64), number{r1}(u8)
+	call printIntLf@i64[t.1.1{r1}]
 
 printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
-	var 1: number.1 (i64/8)
-	var 2: number.2 (i64/8)
-	; 24 pc
-	branch number lt 0: if_3_then, printIntLf@i64.no_critical_edge_4
-	move number.1, number
-	jump if_3_end
-if_3_then:
-	call printChar@u8[45]
-	neg number.2, number
-	move number.1, number.2
+	; 7 pc
+	move number{r6}, number{r1}
+	branch number{r6} gteq 0: if_3_end, if_3_then
+	const arg.0.0{r1}, 45
+	call printChar@u8[arg.0.0{r1}]
+	neg number.2{r6}, number{r6}
 if_3_end:
-	call printUint@i64[number.1]
-	call printChar@u8[10]
+	move number.1{r1}, number.1{r6}
+	call printUint@i64[number.1{r1}]
+	const arg.2.0{r1}, 10
+	call printChar@u8[arg.2.0{r1}]
 
 printStringLength@@u8@u8:
  Local variables
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
-	var 2: t.2.1 (i64/8)
-	; 10 pc
-	cast t.2.1(i64), length(u8)
-	call printStringLength@@u8@i64[str, t.2.1]
+	; 2 pc
+	cast t.2.1{r2}(i64), length{r2}(u8)
+	call printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
 
 main:
- Local variables
-	var 0: i.1 (u8/1)
-	var 1: i.2 (u8/1)
-	var 2: i.3 (u8/1)
-	var 3: i.4 (u8/1)
-	var 4: i.5 (u8/1)
-	; 56 pc
-	const i.1, 5
+	; 9 pc
+	const i.1{r6}, 5
 	; 5:2 while i > 0
-	move i.2, i.1
 	jump while_4
 while_4_body:
-	call printIntLf@u8[i.2]
-	move i.4, i.2
-	sub i.4, i.4, 1
-	move i.2, i.4
+	move i.2{r1}, i.2{r6}
+	call printIntLf@u8[i.2{r1}]
+	sub i.4{r6}, i.4{r6}, 1
 while_4:
-	branch i.2 gt 0: while_4_body, while_4_break
-	move i.3, i.2
-	jump while_5
-main.no_critical_edge_8:
-	move i.3, i.5
+	branch i.2{r6} gt 0: while_4_body, while_5
 while_5:
-	call printIntLf@u8[i.3]
-	move i.5, i.3
-	add i.5, i.5, 1
+	move i.3{r1}, i.3{r6}
+	call printIntLf@u8[i.3{r1}]
+	add i.5{r6}, i.5{r6}, 1
 	; 13:3 if i < 5
-	branch i.5 lt 5: main.no_critical_edge_8, main_ret
+	branch i.5{r6} lt 5: while_5, main_ret
 
 printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
+	mov     r8, rdx
+	mov     rdx, rcx
 	lea     rcx, [hStdOut]
 	mov     rcx, [rcx]
-	mov     rdx, [rdi+18h]
-	mov     r8, [rdi+10h]
 	xor     r9, r9
 	push    0
 	sub     rsp, 20h

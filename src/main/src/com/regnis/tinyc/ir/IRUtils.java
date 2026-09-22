@@ -100,4 +100,22 @@ public final class IRUtils {
 		default -> throw new UnsupportedOperationException(instruction.toString());
 		}
 	}
+
+	public static int getMaxReg(List<IRInstruction> instructions) {
+		class MaxRegConsumer implements Consumer<IRVar> {
+			private int maxReg;
+
+			@Override
+			public void accept(IRVar var) {
+				if (var.scope() == VariableScope.register) {
+					maxReg = Math.max(maxReg, var.index() + 1);
+				}
+			}
+		}
+		final MaxRegConsumer consumer = new MaxRegConsumer();
+		for (IRInstruction instruction : instructions) {
+			getVars(instruction, consumer, consumer);
+		}
+		return consumer.maxReg;
+	}
 }
