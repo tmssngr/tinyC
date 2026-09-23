@@ -51,13 +51,6 @@ public final class IRLocalVarFactory {
 	}
 
 	@NotNull
-	public IRVar createStackArgVar(@NotNull IRVar var, @NotNull String name) {
-		final IRVar stackVar = createVar(var, name);
-		cantBeRegister.add(stackVar);
-		return stackVar;
-	}
-
-	@NotNull
 	public String suggestName(@NotNull String prefix) {
 		for (int i = 1; true; i++) {
 			final String name = prefix + i;
