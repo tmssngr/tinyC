@@ -273,31 +273,79 @@ _unusedArgs@u8@bool@u8@u8:
         ;   rsp+26: var t.5
         ;   rsp+32: var t.6
         ;   rsp+40: var t.7
+        ;   rsp+48: var a.zero
+        ;   rsp+56: var tmp.zero
+        ;   rsp+64: var a.one
+        ;   rsp+72: var tmp.one
+        ;   rsp+80: var a.two
+        ;   rsp+88: var tmp.two
+        ;   rsp+96: var a.threeFour
+        ;   rsp+104: var tmp.threeFour
 _main:
         ; reserve space for local variables
-        sub rsp, 48
+        sub rsp, 112
         ; begin initialize global variables
-        ; const zero, 48
+        ; const tmp.zero, 48
         mov al, 48
-        lea rbx, [var_0]
+        lea rbx, [rsp+56]
         mov [rbx], al
-        ; const one, 49
+        ; const tmp.one, 49
         mov al, 49
-        lea rbx, [var_1]
+        lea rbx, [rsp+72]
         mov [rbx], al
-        ; const two, 50
+        ; const tmp.two, 50
         mov al, 50
-        lea rbx, [var_2]
+        lea rbx, [rsp+88]
         mov [rbx], al
-        ; const threeFour, 34
+        ; const tmp.threeFour, 34
         mov al, 34
-        lea rbx, [var_3]
+        lea rbx, [rsp+104]
         mov [rbx], al
         ; end initialize global variables
         ; const t.3, 1
         mov al, 1
         lea rbx, [rsp+24]
         mov [rbx], al
+        ; addrof a.zero, zero
+        lea rax, [var_0]
+        lea rbx, [rsp+48]
+        mov [rbx], rax
+        ; store [a.zero], tmp.zero
+        lea rax, [rsp+48]
+        mov rbx, [rax]
+        lea rax, [rsp+56]
+        mov cl, [rax]
+        mov [rbx], cl
+        ; addrof a.one, one
+        lea rax, [var_1]
+        lea rbx, [rsp+64]
+        mov [rbx], rax
+        ; store [a.one], tmp.one
+        lea rax, [rsp+64]
+        mov rbx, [rax]
+        lea rax, [rsp+72]
+        mov cl, [rax]
+        mov [rbx], cl
+        ; addrof a.two, two
+        lea rax, [var_2]
+        lea rbx, [rsp+80]
+        mov [rbx], rax
+        ; store [a.two], tmp.two
+        lea rax, [rsp+80]
+        mov rbx, [rax]
+        lea rax, [rsp+88]
+        mov cl, [rax]
+        mov [rbx], cl
+        ; addrof a.threeFour, threeFour
+        lea rax, [var_3]
+        lea rbx, [rsp+96]
+        mov [rbx], rax
+        ; store [a.threeFour], tmp.threeFour
+        lea rax, [rsp+96]
+        mov rbx, [rax]
+        lea rax, [rsp+104]
+        mov cl, [rax]
+        mov [rbx], cl
         ; call _ = unusedArgs@u8@bool@u8@u8[1, t.3, 2, 3] -> i64
         mov  rax, 1
         push rax
@@ -311,8 +359,18 @@ _main:
         sub rsp, 8
           call _unusedArgs@u8@bool@u8@u8
         add rsp, 40
-        ; call printChar@u8[zero]
+        ; addrof a.zero, zero
         lea rax, [var_0]
+        lea rbx, [rsp+48]
+        mov [rbx], rax
+        ; load tmp.zero, [a.zero]
+        lea rax, [rsp+48]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+56]
+        mov [rbx], al
+        ; call printChar@u8[tmp.zero]
+        lea rax, [rsp+56]
         mov bl, [rax]
         push rbx
           call _printChar@u8
@@ -366,8 +424,18 @@ _main:
         push rbx
           call _printChar@u8
         add rsp, 8
-        ; call printUint@u8[threeFour]
+        ; addrof a.threeFour, threeFour
         lea rax, [var_3]
+        lea rbx, [rsp+96]
+        mov [rbx], rax
+        ; load tmp.threeFour, [a.threeFour]
+        lea rax, [rsp+96]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+104]
+        mov [rbx], al
+        ; call printUint@u8[tmp.threeFour]
+        lea rax, [rsp+104]
         mov bl, [rax]
         push rbx
           call _printUint@u8
@@ -378,7 +446,7 @@ _main:
           call _printChar@u8
         add rsp, 8
         ; release space for local variables
-        add rsp, 48
+        add rsp, 112
         ret
 
         ; void printStringLength@@u8@i64

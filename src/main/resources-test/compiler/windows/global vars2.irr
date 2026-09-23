@@ -27,10 +27,16 @@ for_1:
 next:
  Local variables
 	var 0: copy (u8/1)
-	; 13 pc
-	move copy, global
-	add global, global, 1
+	var 1: a.global (u8*/8)
+	var 2: tmp.global (u8/1)
+	; 35 pc
+	addrof a.global, global
+	load tmp.global, [a.global]
+	move copy, tmp.global
+	add tmp.global, tmp.global, 1
 	; 8:9 return copy
+	addrof a.global, global
+	store [a.global], tmp.global
 	ret copy
 
 main:
@@ -38,11 +44,15 @@ main:
 	var 0: n (u8/1)
 	var 1: t.1 (u8*/8)
 	var 2: t.2 (u8*/8)
-	; 24 pc
+	var 3: a.global (u8*/8)
+	var 4: tmp.global (u8/1)
+	; 35 pc
 	; begin initialize global variables
-	const global, 0
+	const tmp.global, 0
 	; end initialize global variables
 	; 12:2 while true
+	addrof a.global, global
+	store [a.global], tmp.global
 	jump while_2
 if_3_end:
 	branch n gteq 2: while_2, if_4_then

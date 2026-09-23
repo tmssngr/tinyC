@@ -84,16 +84,34 @@ main:
 	var 5: t.5 (u8/1)
 	var 6: t.6 (u8*/8)
 	var 7: t.7 (i64/8)
-	; 62 pc
+	var 8: a.zero (u8*/8)
+	var 9: tmp.zero (u8/1)
+	var 10: a.one (u8*/8)
+	var 11: tmp.one (u8/1)
+	var 12: a.two (u8*/8)
+	var 13: tmp.two (u8/1)
+	var 14: a.threeFour (u8*/8)
+	var 15: tmp.threeFour (u8/1)
+	; 128 pc
 	; begin initialize global variables
-	const zero, 48
-	const one, 49
-	const two, 50
-	const threeFour, 34
+	const tmp.zero, 48
+	const tmp.one, 49
+	const tmp.two, 50
+	const tmp.threeFour, 34
 	; end initialize global variables
 	const t.3, 1
+	addrof a.zero, zero
+	store [a.zero], tmp.zero
+	addrof a.one, one
+	store [a.one], tmp.one
+	addrof a.two, two
+	store [a.two], tmp.two
+	addrof a.threeFour, threeFour
+	store [a.threeFour], tmp.threeFour
 	call _ = unusedArgs@u8@bool@u8@u8[1, t.3, 2, 3] -> i64
-	call printChar@u8[zero]
+	addrof a.zero, zero
+	load tmp.zero, [a.zero]
+	call printChar@u8[tmp.zero]
 	addrof onePtr, one
 	load t.4, [onePtr]
 	call printChar@u8[t.4]
@@ -103,7 +121,9 @@ main:
 	add t.6, t.6, t.7
 	load t.5, [t.6]
 	call printChar@u8[t.5]
-	call printUint@u8[threeFour]
+	addrof a.threeFour, threeFour
+	load tmp.threeFour, [a.threeFour]
+	call printUint@u8[tmp.threeFour]
 	call printChar@u8[10]
 
 printStringLength@@u8@i64:

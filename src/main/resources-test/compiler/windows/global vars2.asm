@@ -97,43 +97,77 @@ _for_1:
 
         ; u8 next
         ;   rsp+0: var copy
+        ;   rsp+8: var a.global
+        ;   rsp+16: var tmp.global
 _next:
         ; reserve space for local variables
-        sub rsp, 16
-        ; move copy, global
+        sub rsp, 32
+        ; addrof a.global, global
         lea rax, [var_0]
+        lea rbx, [rsp+8]
+        mov [rbx], rax
+        ; load tmp.global, [a.global]
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+16]
+        mov [rbx], al
+        ; move copy, tmp.global
+        lea rax, [rsp+16]
         mov bl, [rax]
         lea rax, [rsp+0]
         mov [rax], bl
-        ; add global, global, 1
-        lea rax, [var_0]
+        ; add tmp.global, tmp.global, 1
+        lea rax, [rsp+16]
         mov bl, [rax]
         add bl, 1
-        lea rax, [var_0]
+        lea rax, [rsp+16]
         mov [rax], bl
         ; 8:9 return copy
+        ; addrof a.global, global
+        lea rax, [var_0]
+        lea rbx, [rsp+8]
+        mov [rbx], rax
+        ; store [a.global], tmp.global
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        lea rax, [rsp+16]
+        mov cl, [rax]
+        mov [rbx], cl
         ; ret copy
         lea rax, [rsp+0]
         mov bl, [rax]
         mov rax, rbx
         ; release space for local variables
-        add rsp, 16
+        add rsp, 32
         ret
 
         ; void main
         ;   rsp+0: var n
         ;   rsp+8: var t.1
         ;   rsp+16: var t.2
+        ;   rsp+24: var a.global
+        ;   rsp+32: var tmp.global
 _main:
         ; reserve space for local variables
-        sub rsp, 32
+        sub rsp, 48
         ; begin initialize global variables
-        ; const global, 0
+        ; const tmp.global, 0
         mov al, 0
-        lea rbx, [var_0]
+        lea rbx, [rsp+32]
         mov [rbx], al
         ; end initialize global variables
         ; 12:2 while true
+        ; addrof a.global, global
+        lea rax, [var_0]
+        lea rbx, [rsp+24]
+        mov [rbx], rax
+        ; store [a.global], tmp.global
+        lea rax, [rsp+24]
+        mov rbx, [rax]
+        lea rax, [rsp+32]
+        mov cl, [rax]
+        mov [rbx], cl
         jmp _while_2
 _if_3_end:
         ; branch n gteq 2: while_2, if_4_then
@@ -175,7 +209,7 @@ _while_2:
         cmp bl, 3
         jne _if_3_end
         ; release space for local variables
-        add rsp, 32
+        add rsp, 48
         ret
 
         ; void printStringLength@@u8@i64

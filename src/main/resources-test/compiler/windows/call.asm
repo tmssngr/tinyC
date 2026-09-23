@@ -279,15 +279,27 @@ _printStringLength@@u8@u8:
         ;   rsp+2: var t.2
         ;   rsp+3: var t.3
         ;   rsp+4: var t.4
+        ;   rsp+8: var a.i
+        ;   rsp+16: var tmp.i
 _main:
         ; reserve space for local variables
-        sub rsp, 16
+        sub rsp, 32
         ; begin initialize global variables
-        ; const i, 0
+        ; const tmp.i, 0
         mov al, 0
-        lea rbx, [var_0]
+        lea rbx, [rsp+16]
         mov [rbx], al
         ; end initialize global variables
+        ; addrof a.i, i
+        lea rax, [var_0]
+        lea rbx, [rsp+8]
+        mov [rbx], rax
+        ; store [a.i], tmp.i
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        lea rax, [rsp+16]
+        mov cl, [rax]
+        mov [rbx], cl
         ; call t.0 = next[] -> u8
         sub rsp, 8
           call _next
@@ -337,22 +349,48 @@ _main:
           call _doPrint@u8@u8@u8@u8@u8
         add rsp, 40
         ; release space for local variables
-        add rsp, 16
+        add rsp, 32
         ret
 
         ; u8 next
+        ;   rsp+0: var a.i
+        ;   rsp+8: var tmp.i
 _next:
-        ; add i, i, 1
+        ; reserve space for local variables
+        sub rsp, 16
+        ; addrof a.i, i
         lea rax, [var_0]
+        lea rbx, [rsp+0]
+        mov [rbx], rax
+        ; load tmp.i, [a.i]
+        lea rax, [rsp+0]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+8]
+        mov [rbx], al
+        ; add tmp.i, tmp.i, 1
+        lea rax, [rsp+8]
         mov bl, [rax]
         add bl, 1
-        lea rax, [var_0]
+        lea rax, [rsp+8]
         mov [rax], bl
         ; 11:9 return i
-        ; ret i
+        ; addrof a.i, i
         lea rax, [var_0]
+        lea rbx, [rsp+0]
+        mov [rbx], rax
+        ; store [a.i], tmp.i
+        lea rax, [rsp+0]
+        mov rbx, [rax]
+        lea rax, [rsp+8]
+        mov cl, [rax]
+        mov [rbx], cl
+        ; ret tmp.i
+        lea rax, [rsp+8]
         mov bl, [rax]
         mov rax, rbx
+        ; release space for local variables
+        add rsp, 16
         ret
 
         ; void doPrint@u8@u8@u8@u8@u8

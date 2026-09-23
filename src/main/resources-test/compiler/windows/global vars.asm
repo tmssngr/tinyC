@@ -275,37 +275,93 @@ _printStringLength@@u8@u8:
 
         ; void main
         ;   rsp+0: var t.0
+        ;   rsp+8: var a.space
+        ;   rsp+16: var tmp.space
+        ;   rsp+24: var a.next
+        ;   rsp+32: var tmp.next
+        ;   rsp+40: var a.ptrToSpace
+        ;   rsp+48: var tmp.ptrToSpace
 _main:
         ; reserve space for local variables
-        sub rsp, 16
+        sub rsp, 64
         ; begin initialize global variables
-        ; const space, 32
+        ; const tmp.space, 32
         mov ax, 32
-        lea rbx, [var_0]
+        lea rbx, [rsp+16]
         mov [rbx], ax
-        ; const next, 63
+        ; const tmp.next, 63
         mov ax, 63
-        lea rbx, [var_1]
+        lea rbx, [rsp+32]
         mov [rbx], ax
-        ; addrof ptrToSpace, space
+        ; addrof tmp.ptrToSpace, space
         lea rax, [var_0]
-        lea rbx, [var_2]
+        lea rbx, [rsp+48]
         mov [rbx], rax
         ; end initialize global variables
-        ; call printIntLf@i16[next]
+        ; addrof a.space, space
+        lea rax, [var_0]
+        lea rbx, [rsp+8]
+        mov [rbx], rax
+        ; store [a.space], tmp.space
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        lea rax, [rsp+16]
+        mov cx, [rax]
+        mov [rbx], cx
+        ; addrof a.next, next
         lea rax, [var_1]
+        lea rbx, [rsp+24]
+        mov [rbx], rax
+        ; store [a.next], tmp.next
+        lea rax, [rsp+24]
+        mov rbx, [rax]
+        lea rax, [rsp+32]
+        mov cx, [rax]
+        mov [rbx], cx
+        ; addrof a.ptrToSpace, ptrToSpace
+        lea rax, [var_2]
+        lea rbx, [rsp+40]
+        mov [rbx], rax
+        ; store [a.ptrToSpace], tmp.ptrToSpace
+        lea rax, [rsp+40]
+        mov rbx, [rax]
+        lea rax, [rsp+48]
+        mov rcx, [rax]
+        mov [rbx], rcx
+        ; call printIntLf@i16[tmp.next]
+        lea rax, [rsp+32]
         mov bx, [rax]
         push rbx
           call _printIntLf@i16
         add rsp, 8
-        ; add ptrToSpace, ptrToSpace, 2
+        ; addrof a.ptrToSpace, ptrToSpace
         lea rax, [var_2]
+        lea rbx, [rsp+40]
+        mov [rbx], rax
+        ; load tmp.ptrToSpace, [a.ptrToSpace]
+        lea rax, [rsp+40]
+        mov rbx, [rax]
+        mov rax, [rbx]
+        lea rbx, [rsp+48]
+        mov [rbx], rax
+        ; add tmp.ptrToSpace, tmp.ptrToSpace, 2
+        lea rax, [rsp+48]
         mov rbx, [rax]
         add rbx, 2
-        lea rax, [var_2]
+        lea rax, [rsp+48]
         mov [rax], rbx
-        ; load t.0, [ptrToSpace]
+        ; addrof a.ptrToSpace, ptrToSpace
         lea rax, [var_2]
+        lea rbx, [rsp+40]
+        mov [rbx], rax
+        ; store [a.ptrToSpace], tmp.ptrToSpace
+        lea rax, [rsp+40]
+        mov rbx, [rax]
+        lea rax, [rsp+48]
+        mov rcx, [rax]
+        mov [rbx], rcx
+        ; load t.0, [tmp.ptrToSpace]
+        lea rax, [rsp+48]
         mov rbx, [rax]
         mov ax, [rbx]
         lea rbx, [rsp+0]
@@ -317,7 +373,7 @@ _main:
           call _printIntLf@i16
         add rsp, 8
         ; release space for local variables
-        add rsp, 16
+        add rsp, 64
         ret
 
         ; void printStringLength@@u8@i64
