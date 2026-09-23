@@ -14,7 +14,7 @@ import org.jetbrains.annotations.*;
  */
 public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 
-	static final String TMP_PREFIX = "tmp.";
+	public static final String TMP_PREFIX = "tmp.";
 
 	private final Map<IRVar, LocalVar> globalToLocal = new LinkedHashMap<>();
 	private final IRLocalVarFactory tempVarFactory;
