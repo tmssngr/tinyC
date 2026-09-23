@@ -34,9 +34,13 @@ public final class IRLocalVarFactory {
 		return new IRVarInfos(varDefs, cantBeRegister, varInfos.global());
 	}
 
+	public boolean containsVarWithName(@NotNull String name) {
+		return existingNames.contains(name);
+	}
+
 	@NotNull
 	public IRVar createVar(@NotNull IRVar var, @NotNull String name) {
-		Utils.assertTrue(!existingNames.contains(name));
+		Utils.assertTrue(!containsVarWithName(name));
 
 		IRVarInfos varInfos = this.varInfos;
 		if (var.scope() == VariableScope.global) {
@@ -54,7 +58,7 @@ public final class IRLocalVarFactory {
 	public String suggestName(@NotNull String prefix) {
 		for (int i = 1; true; i++) {
 			final String name = prefix + i;
-			if (!existingNames.contains(name)) {
+			if (!containsVarWithName(name)) {
 				return name;
 			}
 		}
