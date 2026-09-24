@@ -82,20 +82,40 @@ main:
 	var 4: t.4 (i16/2)
 	var 5: t.5 (i16/2)
 	var 6: t.6 (i16/2)
-	; 59 pc
-	const a, 10
-	call printIntLf@i16[a]
+	var 7: a.a (i16*/8)
+	var 8: t.a (i16/2)
+	var 9: a.a1 (i16*/8)
+	var 10: t.a1 (i16/2)
+	var 11: a.c (i16*/8)
+	var 12: t.c (i16/2)
+	var 13: a.c1 (i16*/8)
+	var 14: t.c1 (i16/2)
+	var 15: a.c2 (i16*/8)
+	var 16: t.c2 (i16/2)
+	; 114 pc
+	const t.a, 10
+	addrof a.a, a
+	store [a.a], t.a
+	addrof a.a1, a
+	load t.a1, [a.a1]
+	call printIntLf@i16[t.a1]
 	addrof b, a
 	load t.4, [b]
-	move c, t.4
-	sub c, c, 1
-	call printIntLf@i16[c]
+	move t.c, t.4
+	sub t.c, t.c, 1
+	addrof a.c, c
+	store [a.c], t.c
+	addrof a.c1, c
+	load t.c1, [a.c1]
+	call printIntLf@i16[t.c1]
 	addrof d, c
 	load t.6, [d]
 	move t.5, t.6
 	sub t.5, t.5, 1
 	store [d], t.5
-	call printIntLf@i16[c]
+	addrof a.c2, c
+	load t.c2, [a.c2]
+	call printIntLf@i16[t.c2]
 
 printStringLength@@u8@i64:
 	mov     rdi, rsp

@@ -91,8 +91,12 @@ printStringLength@@u8@u8:
 initRandom@i32:
  Local variables
 	arg 0: salt (i32/4)
-	; 5 pc
-	move __random__, salt
+	var 1: a.__random__ (i32*/8)
+	var 2: t.__random__ (i32/4)
+	; 16 pc
+	move t.__random__, salt
+	addrof a.__random__, __random__
+	store [a.__random__], t.__random__
 
 random:
  Local variables
@@ -108,8 +112,16 @@ random:
 	var 9: t.9 (i32/4)
 	var 10: t.10 (i32/4)
 	var 11: t.11 (i32/4)
-	; 134 pc
-	move r, __random__
+	var 12: a.__random__ (i32*/8)
+	var 13: t.__random__ (i32/4)
+	var 14: a.__random__1 (i32*/8)
+	var 15: t.__random__1 (i32/4)
+	var 16: a.__random__2 (i32*/8)
+	var 17: t.__random__2 (i32/4)
+	; 167 pc
+	addrof a.__random__, __random__
+	load t.__random__, [a.__random__]
+	move r, t.__random__
 	move t.5, r
 	and t.5, t.5, 524287
 	move b, t.5
@@ -132,10 +144,14 @@ random:
 	and t.10, t.10, 2147483647
 	move t.11, e
 	shiftright t.11, t.11, 31
-	move __random__, t.10
-	add __random__, __random__, t.11
+	move t.__random__1, t.10
+	add t.__random__1, t.__random__1, t.11
+	addrof a.__random__1, __random__
+	store [a.__random__1], t.__random__1
 	; 15:9 return __random__
-	ret __random__
+	addrof a.__random__2, __random__
+	load t.__random__2, [a.__random__2]
+	ret t.__random__2
 
 rowColumnToCell@i16@i16:
  Local variables
@@ -633,9 +649,13 @@ main:
 	var 17: t.17 (u8/1)
 	var 18: t.18 (bool/1)
 	var 19: t.19 (u8*/8)
-	; 274 pc
+	var 20: a.__random__ (i32*/8)
+	var 21: t.__random__ (i32/4)
+	; 285 pc
 	; begin initialize global variables
-	const __random__, 0
+	const t.__random__, 0
+	addrof a.__random__, __random__
+	store [a.__random__], t.__random__
 	; end initialize global variables
 	call initRandom@i32[7439742]
 	const needsInitialize, 1

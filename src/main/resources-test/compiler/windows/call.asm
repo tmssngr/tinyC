@@ -279,14 +279,26 @@ _printStringLength@@u8@u8:
         ;   rsp+2: var t.2
         ;   rsp+3: var t.3
         ;   rsp+4: var t.4
+        ;   rsp+8: var a.i
+        ;   rsp+16: var t.i
 _main:
         ; reserve space for local variables
-        sub rsp, 16
+        sub rsp, 32
         ; begin initialize global variables
-        ; const i, 0
+        ; const t.i, 0
         mov al, 0
-        lea rbx, [var_0]
+        lea rbx, [rsp+16]
         mov [rbx], al
+        ; addrof a.i, i
+        lea rax, [var_0]
+        lea rbx, [rsp+8]
+        mov [rbx], rax
+        ; store [a.i], t.i
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        lea rax, [rsp+16]
+        mov cl, [rax]
+        mov [rbx], cl
         ; end initialize global variables
         ; call t.0 = next[] -> u8
         sub rsp, 8
@@ -337,22 +349,67 @@ _main:
           call _doPrint@u8@u8@u8@u8@u8
         add rsp, 40
         ; release space for local variables
-        add rsp, 16
+        add rsp, 32
         ret
 
         ; u8 next
+        ;   rsp+0: var a.i
+        ;   rsp+8: var t.i
+        ;   rsp+16: var a.i1
+        ;   rsp+24: var t.i1
+        ;   rsp+32: var a.i2
+        ;   rsp+40: var t.i2
 _next:
-        ; add i, i, 1
+        ; reserve space for local variables
+        sub rsp, 48
+        ; addrof a.i, i
         lea rax, [var_0]
+        lea rbx, [rsp+0]
+        mov [rbx], rax
+        ; load t.i, [a.i]
+        lea rax, [rsp+0]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+8]
+        mov [rbx], al
+        ; move t.i1, t.i
+        lea rax, [rsp+8]
+        mov bl, [rax]
+        lea rax, [rsp+24]
+        mov [rax], bl
+        ; add t.i1, t.i1, 1
+        lea rax, [rsp+24]
         mov bl, [rax]
         add bl, 1
-        lea rax, [var_0]
+        lea rax, [rsp+24]
         mov [rax], bl
-        ; 11:9 return i
-        ; ret i
+        ; addrof a.i1, i
         lea rax, [var_0]
+        lea rbx, [rsp+16]
+        mov [rbx], rax
+        ; store [a.i1], t.i1
+        lea rax, [rsp+16]
+        mov rbx, [rax]
+        lea rax, [rsp+24]
+        mov cl, [rax]
+        mov [rbx], cl
+        ; 11:9 return i
+        ; addrof a.i2, i
+        lea rax, [var_0]
+        lea rbx, [rsp+32]
+        mov [rbx], rax
+        ; load t.i2, [a.i2]
+        lea rax, [rsp+32]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+40]
+        mov [rbx], al
+        ; ret t.i2
+        lea rax, [rsp+40]
         mov bl, [rax]
         mov rax, rbx
+        ; release space for local variables
+        add rsp, 48
         ret
 
         ; void doPrint@u8@u8@u8@u8@u8

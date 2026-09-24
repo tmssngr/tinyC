@@ -84,16 +84,38 @@ main:
 	var 5: t.5 (u8/1)
 	var 6: t.6 (u8*/8)
 	var 7: t.7 (i64/8)
-	; 62 pc
+	var 8: a.zero (u8*/8)
+	var 9: t.zero (u8/1)
+	var 10: a.one (u8*/8)
+	var 11: t.one (u8/1)
+	var 12: a.two (u8*/8)
+	var 13: t.two (u8/1)
+	var 14: a.threeFour (u8*/8)
+	var 15: t.threeFour (u8/1)
+	var 16: a.zero1 (u8*/8)
+	var 17: t.zero1 (u8/1)
+	var 18: a.threeFour1 (u8*/8)
+	var 19: t.threeFour1 (u8/1)
+	; 128 pc
 	; begin initialize global variables
-	const zero, 48
-	const one, 49
-	const two, 50
-	const threeFour, 34
+	const t.zero, 48
+	addrof a.zero, zero
+	store [a.zero], t.zero
+	const t.one, 49
+	addrof a.one, one
+	store [a.one], t.one
+	const t.two, 50
+	addrof a.two, two
+	store [a.two], t.two
+	const t.threeFour, 34
+	addrof a.threeFour, threeFour
+	store [a.threeFour], t.threeFour
 	; end initialize global variables
 	const t.3, 1
 	call _ = unusedArgs@u8@bool@u8@u8[1, t.3, 2, 3] -> i64
-	call printChar@u8[zero]
+	addrof a.zero1, zero
+	load t.zero1, [a.zero1]
+	call printChar@u8[t.zero1]
 	addrof onePtr, one
 	load t.4, [onePtr]
 	call printChar@u8[t.4]
@@ -103,7 +125,9 @@ main:
 	add t.6, t.6, t.7
 	load t.5, [t.6]
 	call printChar@u8[t.5]
-	call printUint@u8[threeFour]
+	addrof a.threeFour1, threeFour
+	load t.threeFour1, [a.threeFour1]
+	call printUint@u8[t.threeFour1]
 	call printChar@u8[10]
 
 printStringLength@@u8@i64:

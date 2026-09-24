@@ -23,7 +23,8 @@ public final class IRConverter {
 		final IRLocalVarFactory localVarFactory = new IRLocalVarFactory(varInfos, pointerIntType);
 		final IRConverterResultLayer resultLayer = new IRConverterResultLayer();
 
-		final IRConverterLayer layer = new IR2OpPreparation(localVarFactory, resultLayer);
+		IRConverterLayer layer = new IR2OpPreparation(localVarFactory, resultLayer);
+		layer = new IRNonLocalVarLoweringConverterLayer(localVarFactory, layer);
 
 		IRConverterLayer.process(layer, instructions);
 

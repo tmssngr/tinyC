@@ -80,9 +80,13 @@ main:
 	var 2: t.2 (u8/1)
 	var 3: t.3 (u8/1)
 	var 4: t.4 (u8/1)
-	; 28 pc
+	var 5: a.i (u8*/8)
+	var 6: t.i (u8/1)
+	; 39 pc
 	; begin initialize global variables
-	const i, 0
+	const t.i, 0
+	addrof a.i, i
+	store [a.i], t.i
 	; end initialize global variables
 	call t.0 = next[] -> u8
 	call t.1 = next[] -> u8
@@ -92,10 +96,24 @@ main:
 	call doPrint@u8@u8@u8@u8@u8[t.0, t.1, t.2, t.3, t.4]
 
 next:
-	; 8 pc
-	add i, i, 1
+ Local variables
+	var 0: a.i (u8*/8)
+	var 1: t.i (u8/1)
+	var 2: a.i1 (u8*/8)
+	var 3: t.i1 (u8/1)
+	var 4: a.i2 (u8*/8)
+	var 5: t.i2 (u8/1)
+	; 46 pc
+	addrof a.i, i
+	load t.i, [a.i]
+	move t.i1, t.i
+	add t.i1, t.i1, 1
+	addrof a.i1, i
+	store [a.i1], t.i1
 	; 11:9 return i
-	ret i
+	addrof a.i2, i
+	load t.i2, [a.i2]
+	ret t.i2
 
 doPrint@u8@u8@u8@u8@u8:
  Local variables

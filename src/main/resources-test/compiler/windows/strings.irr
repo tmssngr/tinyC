@@ -112,17 +112,33 @@ main:
 	var 0: second (u8*/8)
 	var 1: chr (u8/1)
 	var 2: t.2 (i64/8)
-	; 33 pc
+	var 3: a.text (u8**/8)
+	var 4: t.text (u8*/8)
+	var 5: a.text1 (u8**/8)
+	var 6: t.text1 (u8*/8)
+	var 7: a.text2 (u8**/8)
+	var 8: t.text2 (u8*/8)
+	var 9: a.text3 (u8**/8)
+	var 10: t.text3 (u8*/8)
+	; 77 pc
 	; begin initialize global variables
-	const text, [string-0]
+	const t.text, [string-0]
+	addrof a.text, text
+	store [a.text], t.text
 	; end initialize global variables
-	call printString@@u8[text]
+	addrof a.text1, text
+	load t.text1, [a.text1]
+	call printString@@u8[t.text1]
 	call printLength[]
 	const t.2, 1
-	move second, text
+	addrof a.text2, text
+	load t.text2, [a.text2]
+	move second, t.text2
 	add second, second, t.2
 	call printString@@u8[second]
-	load chr, [text]
+	addrof a.text3, text
+	load t.text3, [a.text3]
+	load chr, [t.text3]
 	call printIntLf@u8[chr]
 
 printLength:
@@ -130,9 +146,13 @@ printLength:
 	var 0: length (i16/2)
 	var 1: ptr (u8*/8)
 	var 2: t.2 (u8/1)
-	; 30 pc
+	var 3: a.text (u8**/8)
+	var 4: t.text (u8*/8)
+	; 41 pc
 	const length, 0
-	move ptr, text
+	addrof a.text, text
+	load t.text, [a.text]
+	move ptr, t.text
 	; 16:2 for *ptr != 0
 	jump for_5
 for_5_body:

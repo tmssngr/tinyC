@@ -316,13 +316,29 @@ _printStringLength@@u8@u8:
         ret
 
         ; void initRandom@i32
-        ;   rsp+8: arg salt
+        ;   rsp+24: arg salt
+        ;   rsp+0: var a.__random__
+        ;   rsp+8: var t.__random__
 _initRandom@i32:
-        ; move __random__, salt
-        lea rax, [rsp+8]
+        ; reserve space for local variables
+        sub rsp, 16
+        ; move t.__random__, salt
+        lea rax, [rsp+24]
         mov ebx, [rax]
-        lea rax, [var_0]
+        lea rax, [rsp+8]
         mov [rax], ebx
+        ; addrof a.__random__, __random__
+        lea rax, [var_0]
+        lea rbx, [rsp+0]
+        mov [rbx], rax
+        ; store [a.__random__], t.__random__
+        lea rax, [rsp+0]
+        mov rbx, [rax]
+        lea rax, [rsp+8]
+        mov ecx, [rax]
+        mov [rbx], ecx
+        ; release space for local variables
+        add rsp, 16
         ret
 
         ; i32 random
@@ -338,11 +354,27 @@ _initRandom@i32:
         ;   rsp+36: var t.9
         ;   rsp+40: var t.10
         ;   rsp+44: var t.11
+        ;   rsp+48: var a.__random__
+        ;   rsp+56: var t.__random__
+        ;   rsp+64: var a.__random__1
+        ;   rsp+72: var t.__random__1
+        ;   rsp+80: var a.__random__2
+        ;   rsp+88: var t.__random__2
 _random:
         ; reserve space for local variables
-        sub rsp, 48
-        ; move r, __random__
+        sub rsp, 96
+        ; addrof a.__random__, __random__
         lea rax, [var_0]
+        lea rbx, [rsp+48]
+        mov [rbx], rax
+        ; load t.__random__, [a.__random__]
+        lea rax, [rsp+48]
+        mov rbx, [rax]
+        mov eax, [rbx]
+        lea rbx, [rsp+56]
+        mov [rbx], eax
+        ; move r, t.__random__
+        lea rax, [rsp+56]
         mov ebx, [rax]
         lea rax, [rsp+0]
         mov [rax], ebx
@@ -473,26 +505,46 @@ _random:
         sar ebx, 31
         lea rax, [rsp+44]
         mov [rax], ebx
-        ; move __random__, t.10
+        ; move t.__random__1, t.10
         lea rax, [rsp+40]
         mov ebx, [rax]
-        lea rax, [var_0]
+        lea rax, [rsp+72]
         mov [rax], ebx
-        ; add __random__, __random__, t.11
-        lea rax, [var_0]
+        ; add t.__random__1, t.__random__1, t.11
+        lea rax, [rsp+72]
         mov ebx, [rax]
         lea rax, [rsp+44]
         mov ecx, [rax]
         add ebx, ecx
-        lea rax, [var_0]
+        lea rax, [rsp+72]
         mov [rax], ebx
-        ; 15:9 return __random__
-        ; ret __random__
+        ; addrof a.__random__1, __random__
         lea rax, [var_0]
+        lea rbx, [rsp+64]
+        mov [rbx], rax
+        ; store [a.__random__1], t.__random__1
+        lea rax, [rsp+64]
+        mov rbx, [rax]
+        lea rax, [rsp+72]
+        mov ecx, [rax]
+        mov [rbx], ecx
+        ; 15:9 return __random__
+        ; addrof a.__random__2, __random__
+        lea rax, [var_0]
+        lea rbx, [rsp+80]
+        mov [rbx], rax
+        ; load t.__random__2, [a.__random__2]
+        lea rax, [rsp+80]
+        mov rbx, [rax]
+        mov eax, [rbx]
+        lea rbx, [rsp+88]
+        mov [rbx], eax
+        ; ret t.__random__2
+        lea rax, [rsp+88]
         mov ebx, [rax]
         mov rax, rbx
         ; release space for local variables
-        add rsp, 48
+        add rsp, 96
         ret
 
         ; i16 rowColumnToCell@i16@i16
@@ -2017,14 +2069,26 @@ _maybeRevealAround@i16@i16_ret:
         ;   rsp+54: var t.17
         ;   rsp+55: var t.18
         ;   rsp+56: var t.19
+        ;   rsp+64: var a.__random__
+        ;   rsp+72: var t.__random__
 _main:
         ; reserve space for local variables
-        sub rsp, 64
+        sub rsp, 80
         ; begin initialize global variables
-        ; const __random__, 0
+        ; const t.__random__, 0
         mov eax, 0
-        lea rbx, [var_0]
+        lea rbx, [rsp+72]
         mov [rbx], eax
+        ; addrof a.__random__, __random__
+        lea rax, [var_0]
+        lea rbx, [rsp+64]
+        mov [rbx], rax
+        ; store [a.__random__], t.__random__
+        lea rax, [rsp+64]
+        mov rbx, [rax]
+        lea rax, [rsp+72]
+        mov ecx, [rax]
+        mov [rbx], ecx
         ; end initialize global variables
         ; call initRandom@i32[7439742]
         mov  rax, 7439742
@@ -2472,7 +2536,7 @@ _if_54_then:
         add rsp, 8
 _main_ret:
         ; release space for local variables
-        add rsp, 64
+        add rsp, 80
         ret
 
         ; void printStringLength@@u8@i64
