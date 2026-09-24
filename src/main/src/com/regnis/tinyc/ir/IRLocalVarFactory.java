@@ -125,4 +125,11 @@ public final class IRLocalVarFactory {
 			}
 		}
 	}
+
+	public boolean canBeRegister(@NotNull IRVar var) {
+		if (cantBeRegister.contains(var)) {
+			return false;
+		}
+		return varInfos.canBeRegister(var);
+	}
 }
