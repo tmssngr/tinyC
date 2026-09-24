@@ -16,7 +16,6 @@ public class IRCachedVarConverterLayerTest {
 	@Test
 	public void testGlobalRead() {
 		final IRVar varGlobal = new IRVar("global", 0, VariableScope.global, Type.I16);
-		final IRVar varLocal = new IRVar(IRCachedVarConverterLayer.TMP_PREFIX + "global", 0, VariableScope.function, Type.I16);
 
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(
 				new IRVarDef(varGlobal, 2)
@@ -31,12 +30,17 @@ public class IRCachedVarConverterLayerTest {
 				new IRRetValue(varGlobal)
 		));
 
+		final IRVar varAddr = new IRVar(IRCachedVarConverterLayer.ADDR_PREFIX + "global", 0, VariableScope.function, Type.pointer(Type.I16));
+		final IRVar varLocal = new IRVar(IRCachedVarConverterLayer.TMP_PREFIX + "global", 1, VariableScope.function, Type.I16);
+
 		final Iterator<IRInstruction> i = result.instructions.iterator();
-		assertEquals(new IRMove(varLocal, varGlobal), i.next());
+		assertEquals(new IRAddrOf(varAddr, varGlobal), i.next());
+		assertEquals(new IRMemLoad(varLocal, varAddr), i.next());
 		assertEquals(new IRRetValue(varLocal), i.next());
 		assertFalse(i.hasNext());
 
 		final Iterator<IRVarDef> d = tempVarFactory.createVarInfos().vars().iterator();
+		assertEquals(new IRVarDef(varAddr, 8), d.next());
 		assertEquals(new IRVarDef(varLocal, 2), d.next());
 		assertFalse(d.hasNext());
 	}
@@ -44,7 +48,6 @@ public class IRCachedVarConverterLayerTest {
 	@Test
 	public void testGlobalWrite() {
 		final IRVar varGlobal = new IRVar("global", 0, VariableScope.global, Type.I16);
-		final IRVar varLocal = new IRVar(IRCachedVarConverterLayer.TMP_PREFIX + "global", 0, VariableScope.function, Type.I16);
 
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(
 				new IRVarDef(varGlobal, 2)
@@ -59,12 +62,17 @@ public class IRCachedVarConverterLayerTest {
 				new IRMove(varGlobal, 999)
 		));
 
+		final IRVar varAddr = new IRVar(IRCachedVarConverterLayer.ADDR_PREFIX + "global", 0, VariableScope.function, Type.pointer(Type.I16));
+		final IRVar varLocal = new IRVar(IRCachedVarConverterLayer.TMP_PREFIX + "global", 1, VariableScope.function, Type.I16);
+
 		final Iterator<IRInstruction> i = result.instructions.iterator();
 		assertEquals(new IRMove(varLocal, 999), i.next());
-		assertEquals(new IRMove(varGlobal, varLocal), i.next());
+		assertEquals(new IRAddrOf(varAddr, varGlobal), i.next());
+		assertEquals(new IRMemStore(varAddr, varLocal), i.next());
 		assertFalse(i.hasNext());
 
 		final Iterator<IRVarDef> d = tempVarFactory.createVarInfos().vars().iterator();
+		assertEquals(new IRVarDef(varAddr, 8), d.next());
 		assertEquals(new IRVarDef(varLocal, 2), d.next());
 		assertFalse(d.hasNext());
 	}
@@ -72,8 +80,8 @@ public class IRCachedVarConverterLayerTest {
 	@Test
 	public void testGlobalReadWrite() {
 		final IRVar varGlobal = new IRVar("global", 0, VariableScope.global, Type.I16);
+
 		final IRVar varOne = new IRVar("one", 0, VariableScope.function, Type.I16);
-		final IRVar varLocal = new IRVar(IRCachedVarConverterLayer.TMP_PREFIX + "global", 1, VariableScope.function, Type.I16);
 
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(
 				new IRVarDef(varGlobal, 2)
@@ -92,16 +100,22 @@ public class IRCachedVarConverterLayerTest {
 				new IRRetValue(varGlobal)
 		));
 
+		final IRVar varAddr = new IRVar(IRCachedVarConverterLayer.ADDR_PREFIX + "global", 1, VariableScope.function, Type.pointer(Type.I16));
+		final IRVar varLocal = new IRVar(IRCachedVarConverterLayer.TMP_PREFIX + "global", 2, VariableScope.function, Type.I16);
+
 		final Iterator<IRInstruction> i = result.instructions.iterator();
 		assertEquals(new IRMove(varOne, 1), i.next());
-		assertEquals(new IRMove(varLocal, varGlobal), i.next());
+		assertEquals(new IRAddrOf(varAddr, varGlobal), i.next());
+		assertEquals(new IRMemLoad(varLocal, varAddr), i.next());
 		assertEquals(new IRBinary(varLocal, IRBinary.Op.Add, varLocal, varOne), i.next());
-		assertEquals(new IRMove(varGlobal, varLocal), i.next());
+		assertEquals(new IRAddrOf(varAddr, varGlobal), i.next());
+		assertEquals(new IRMemStore(varAddr, varLocal), i.next());
 		assertEquals(new IRRetValue(varLocal), i.next());
 		assertFalse(i.hasNext());
 
 		final Iterator<IRVarDef> d = tempVarFactory.createVarInfos().vars().iterator();
 		assertEquals(new IRVarDef(varOne, 2), d.next());
+		assertEquals(new IRVarDef(varAddr, 8), d.next());
 		assertEquals(new IRVarDef(varLocal, 2), d.next());
 		assertFalse(d.hasNext());
 	}
@@ -111,7 +125,6 @@ public class IRCachedVarConverterLayerTest {
 		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.I16);
 		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.I16);
 		final IRVar varAddrA = new IRVar("addrA", 2, VariableScope.function, Type.pointer(Type.I16));
-		final IRVar varTempA = new IRVar(IRCachedVarConverterLayer.TMP_PREFIX + "a", 3, VariableScope.function, Type.I16);
 
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		final IRVarInfos localVarInfos = new IRVarInfos(List.of(
@@ -134,15 +147,20 @@ public class IRCachedVarConverterLayerTest {
 				new IRJump("label")
 		));
 
+		final IRVar varAA = new IRVar(IRCachedVarConverterLayer.ADDR_PREFIX + "a", 3, VariableScope.function, Type.pointer(Type.I16));
+		final IRVar varTempA = new IRVar(IRCachedVarConverterLayer.TMP_PREFIX + "a", 4, VariableScope.function, Type.I16);
+
 		final Iterator<IRInstruction> i = result.instructions.iterator();
 		assertEquals(new IRMove(varTempA, 1), i.next());
 		assertEquals(new IRAddrOf(varAddrA, varA), i.next());
 		assertEquals(new IRMove(varTempA, 2), i.next());
 		assertEquals(new IRMove(varB, 3), i.next());
-		assertEquals(new IRMove(varA, varTempA), i.next());
+		assertEquals(new IRAddrOf(varAA, varA), i.next());
+		assertEquals(new IRMemStore(varAA, varTempA), i.next());
 		assertEquals(new IRMemStore(varAddrA, varB), i.next());
 		assertEquals(new IRMove(varTempA, 4), i.next());
-		assertEquals(new IRMove(varA, varTempA), i.next());
+		assertEquals(new IRAddrOf(varAA, varA), i.next());
+		assertEquals(new IRMemStore(varAA, varTempA), i.next());
 		assertEquals(new IRJump("label"), i.next());
 		assertFalse(i.hasNext());
 
@@ -150,6 +168,7 @@ public class IRCachedVarConverterLayerTest {
 		assertEquals(new IRVarDef(varA, 2), d.next());
 		assertEquals(new IRVarDef(varB, 2), d.next());
 		assertEquals(new IRVarDef(varAddrA, 8), d.next());
+		assertEquals(new IRVarDef(varAA, 8), d.next());
 		assertEquals(new IRVarDef(varTempA, 2), d.next());
 		assertFalse(d.hasNext());
 	}

@@ -57,10 +57,7 @@ public final class IRLocalVarFactory {
 
 	@NotNull
 	public IRVar createVar(@NotNull Type type, @NotNull String name) {
-		for (IRVarDef def : varDefs) {
-			Utils.assertTrue(!def.var().name().equals(name));
-		}
-
+		name = createUniqueName(name);
 		final int size = Type.getSize(type, pointerIntType);
 		return addVar(name, size, type);
 	}

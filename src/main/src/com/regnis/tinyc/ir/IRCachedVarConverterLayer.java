@@ -14,6 +14,7 @@ import org.jetbrains.annotations.*;
  */
 public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 
+	static final String ADDR_PREFIX = "a.";
 	static final String TMP_PREFIX = "tmp.";
 
 	private final Map<IRVar, LocalVar> globalToLocal = new LinkedHashMap<>();
@@ -165,7 +166,8 @@ public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 	private void storeIfModified(LocalVar local, IRVar global) {
 		if (local.modified) {
 			Utils.assertTrue(local.validLocally);
-			forward(new IRMove(global, local.var));
+			forward(new IRAddrOf(local.addr, global));
+			forward(new IRMemStore(local.addr, local.var));
 			local.modified = false;
 		}
 	}
@@ -173,9 +175,10 @@ public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 	private LocalVar getLocal(IRVar var) {
 		LocalVar local = globalToLocal.get(var);
 		if (local == null) {
+			final IRVar addr = tempVarFactory.createVar(Type.pointer(var.type()), ADDR_PREFIX + var.name());
 			final String name = TMP_PREFIX + var.name();
 			final IRVar localVar = tempVarFactory.createVar(var, name);
-			local = new LocalVar(localVar);
+			local = new LocalVar(localVar, addr);
 			globalToLocal.put(var, local);
 		}
 		return local;
@@ -193,7 +196,8 @@ public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 		final LocalVar local = getLocal(var);
 		if (!local.validLocally) {
 			Utils.assertTrue(!local.modified);
-			forward(new IRMove(local.var, var));
+			forward(new IRAddrOf(local.addr, var));
+			forward(new IRMemLoad(local.var, local.addr));
 			local.validLocally = true;
 		}
 		else if (storeIfModified) {
@@ -216,13 +220,17 @@ public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 
 	private static final class LocalVar {
 		public final IRVar var;
+		public final IRVar addr;
 
 		public boolean validLocally;
 		public boolean modified;
 
-		private LocalVar(@NotNull IRVar var) {
+		private LocalVar(@NotNull IRVar var, IRVar addr) {
 			Utils.assertTrue(var.scope() == VariableScope.function);
+			Utils.assertTrue(addr.scope() == VariableScope.function);
+			Utils.assertTrue(addr.type().isPointer());
 			this.var = var;
+			this.addr = addr;
 		}
 	}
 }
