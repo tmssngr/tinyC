@@ -42,7 +42,7 @@ public final class IRLocalVarFactory {
 
 	@NotNull
 	public IRVar createVar(@NotNull IRVar var, @NotNull String name) {
-		Utils.assertTrue(!containsVarWithName(name));
+		name = createUniqueName(name);
 
 		final int size;
 		if (var.scope() == VariableScope.global) {
@@ -57,10 +57,7 @@ public final class IRLocalVarFactory {
 
 	@NotNull
 	public IRVar createVar(@NotNull Type type, @NotNull String name) {
-		for (IRVarDef def : varDefs) {
-			Utils.assertTrue(!def.var().name().equals(name));
-		}
-
+		name = createUniqueName(name);
 		final int size = Type.getSize(type, pointerIntType);
 		return addVar(name, size, type);
 	}
@@ -124,5 +121,12 @@ public final class IRLocalVarFactory {
 				return name;
 			}
 		}
+	}
+
+	public boolean canBeRegister(@NotNull IRVar var) {
+		if (cantBeRegister.contains(var)) {
+			return false;
+		}
+		return varInfos.canBeRegister(var);
 	}
 }
