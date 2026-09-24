@@ -5,6 +5,7 @@ import com.regnis.tinyc.ast.*;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.function.Function;
 
 import org.jetbrains.annotations.*;
 
@@ -27,22 +28,21 @@ public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 	public void process(@NotNull IRInstruction instruction) {
 		switch (instruction) {
 		case IRAddrOf addr -> {
-			final IRVar target = target(addr.target());
-			forward(new IRAddrOf(target, addr.source(), addr.location()));
+			target(addr.target(), target -> new IRAddrOf(target, addr.source(), addr.location()));
 		}
 		case IRAddrOfArray addr -> {
-			final IRVar target = target(addr.addr());
-			forward(new IRAddrOfArray(target, addr.array(), addr.location()));
+			target(addr.addr(), target -> new IRAddrOfArray(target, addr.array(), addr.location()));
 		}
 		case IRBinary binary -> {
 			final IRVar left = source(binary.left());
-			IRValue right = binary.right();
+			final IRValue right = binary.right();
 			final IRVar rightVar = right.var();
 			if (rightVar != null) {
-				right = new IRValue(source(rightVar));
+				target(binary.target(), target -> new IRBinary(target, binary.op(), left, new IRValue(source(rightVar)), binary.location()));
 			}
-			final IRVar target = target(binary.target());
-			forward(new IRBinary(target, binary.op(), left, right, binary.location()));
+			else {
+				target(binary.target(), target -> new IRBinary(target, binary.op(), left, right, binary.location()));
+			}
 		}
 		case IRBranch branch -> {
 			storeAllModified();
@@ -56,8 +56,7 @@ public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 		}
 		case IRCast cast -> {
 			final IRVar source = source(cast.source());
-			final IRVar target = target(cast.target());
-			forward(new IRCast(target, source, cast.location()));
+			target(cast.target(), target -> new IRCast(target, source, cast.location()));
 		}
 		case IRCall call -> {
 			storeAllModified();
@@ -71,24 +70,27 @@ public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 				args.add(arg);
 			}
 
-			IRVar target = call.target();
+			final IRVar target = call.target();
 			if (target != null) {
-				target = target(target);
+				target(target, t -> new IRCall(t, call.type(), call.name(), args, call.location()));
 			}
-			forward(new IRCall(target, call.type(), call.name(), args, call.location()));
+			else {
+				forward(new IRCall(null, call.type(), call.name(), args, call.location()));
+			}
 
 			invalidateAll();
 		}
 		case IRComment c -> forward(c);
 		case IRCompare compare -> {
 			final IRVar left = source(compare.left());
-			IRValue right = compare.right();
+			final IRValue right = compare.right();
 			final IRVar rightVar = right.var();
 			if (rightVar != null) {
-				right = new IRValue(source(rightVar));
+				target(compare.target(), target -> new IRCompare(target, compare.op(), left, new IRValue(source(rightVar)), compare.location()));
 			}
-			final IRVar target = target(compare.target());
-			forward(new IRCompare(target, compare.op(), left, right, compare.location()));
+			else {
+				target(compare.target(), target -> new IRCompare(target, compare.op(), left, right, compare.location()));
+			}
 		}
 		case IRJump jump -> {
 			storeAllModified();
@@ -103,8 +105,7 @@ public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 		case IRMemLoad load -> {
 			storeAllModified();
 			final IRVar source = source(load.addr());
-			final IRVar target = target(load.target());
-			forward(new IRMemLoad(target, source, load.location()));
+			target(load.target(), target -> new IRMemLoad(target, source, load.location()));
 		}
 		case IRMemStore store -> {
 			storeAllModified();
@@ -114,15 +115,12 @@ public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 		}
 		case IRMove move -> {
 			final IRValue source = move.source();
-			IRVar sourceVar = source.var();
+			final IRVar sourceVar = source.var();
 			if (sourceVar != null) {
-				sourceVar = source(sourceVar);
-				final IRVar target = target(move.target());
-				forward(new IRMove(target, sourceVar, move.location()));
+				target(move.target(), target -> new IRMove(target, source(sourceVar), move.location()));
 			}
 			else {
-				final IRVar target = target(move.target());
-				forward(new IRMove(target, source.value(), move.location()));
+				target(move.target(), target -> new IRMove(target, source.value(), move.location()));
 			}
 		}
 		case IRRetValue retValue -> {
@@ -131,13 +129,11 @@ public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 			forward(new IRRetValue(source, retValue.location()));
 		}
 		case IRString literal -> {
-			final IRVar target = target(literal.target());
-			forward(new IRString(target, literal.stringIndex(), literal.location()));
+			target(literal.target(), target -> new IRString(target, literal.stringIndex(), literal.location()));
 		}
 		case IRUnary unary -> {
 			final IRVar source = source(unary.source());
-			final IRVar target = target(unary.target());
-			forward(new IRUnary(unary.op(), target, source));
+			target(unary.target(), target -> new IRUnary(unary.op(), target, source));
 		}
 		default -> throw new UnsupportedOperationException(String.valueOf(instruction));
 		}
@@ -190,29 +186,32 @@ public final class IRCachedVarConverterLayer extends IRConverterAbstractLayer {
 	}
 
 	private IRVar source(IRVar var, boolean storeIfModified) {
-		if (var.scope() == VariableScope.global || !tempVarFactory.canBeRegister(var)) {
-			final LocalVar local = getLocal(var);
-			if (!local.validLocally) {
-				Utils.assertTrue(!local.modified);
-				forward(new IRMove(local.var, var));
-				local.validLocally = true;
-			}
-			else if (storeIfModified) {
-				storeIfModified(local, var);
-			}
-			return local.var;
+		if (var.scope() != VariableScope.global && tempVarFactory.canBeRegister(var)) {
+			return var;
 		}
-		return var;
+
+		final LocalVar local = getLocal(var);
+		if (!local.validLocally) {
+			Utils.assertTrue(!local.modified);
+			forward(new IRMove(local.var, var));
+			local.validLocally = true;
+		}
+		else if (storeIfModified) {
+			storeIfModified(local, var);
+		}
+		return local.var;
 	}
 
-	private IRVar target(IRVar var) {
-		if (var.scope() == VariableScope.global || !tempVarFactory.canBeRegister(var)) {
-			final LocalVar local = getLocal(var);
-			local.validLocally = true;
-			local.modified = true;
-			return local.var;
+	private void target(IRVar var, Function<IRVar, IRInstruction> factory) {
+		if (var.scope() != VariableScope.global && tempVarFactory.canBeRegister(var)) {
+			forward(factory.apply(var));
+			return;
 		}
-		return var;
+
+		final LocalVar local = getLocal(var);
+		local.validLocally = true;
+		local.modified = true;
+		forward(factory.apply(local.var));
 	}
 
 	private static final class LocalVar {
