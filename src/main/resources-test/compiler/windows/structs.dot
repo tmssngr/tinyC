@@ -2,19 +2,19 @@ digraph program {
 	edge[fontsize="10pt"];
 	subgraph fn_printChar_Au8 {
 		BasicBlock_0_printChar_Au8 [label="printChar_Au8\laddrof t_d1_d1, chr\lcall printStringLength_A_Au8_Au8[t_d1_d1, 1]\ljump printChar_Au8__ret",shape=box];
-		BasicBlock_0_printChar_Au8 -> BasicBlock_0_printChar_Au8__ret;
+		BasicBlock_0_printChar_Au8 -> BasicBlock_0_printChar_Au8__ret [label="(chr)"];
 		BasicBlock_0_printChar_Au8__ret [label="printChar_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printUint_Ai64 {
-		BasicBlock_1_printUint_Ai64 [label="printUint_Ai64\lconst pos_d1, 20\ljump while__1",shape=box];
-		BasicBlock_1_printUint_Ai64 -> BasicBlock_1_while__1 [label="(buffer,number,number.2,pos.1,pos.3)"];
-		BasicBlock_1_printUint_Ai64_dno__critical__edge__4 [label="printUint_Ai64_dno__critical__edge__4\ljump while__1",shape=box];
-		BasicBlock_1_printUint_Ai64_dno__critical__edge__4 -> BasicBlock_1_while__1 [label="(buffer,number,number.2,pos.1,pos.3)"];
-		BasicBlock_1_while__1 [label="while__1\lphi number_d1=[number, number_d2]\lphi pos_d2=[pos_d1, pos_d3]\lmove pos_d3, pos_d2\lsub pos_d3, 1\lmove remainder_d1, number_d1\lmod remainder_d1, 10\lmove number_d2, number_d1\ldiv number_d2, 10\lcast t_d5_d1(u8), remainder_d1(i64)\lmove digit_d1, t_d5_d1\ladd digit_d1, 48\lcast t_d7_d1(i64), pos_d3(u8)\laddrof t_d6_d1, buffer\lmove t_d6_d2, t_d6_d1\ladd t_d6_d2, t_d7_d1\lstore [t_d6_d2], digit_d1\lbranch number_d2 notequals 0: printUint_Ai64_dno__critical__edge__4, while__1__break\ljump while__1__break",shape=box];
-		BasicBlock_1_while__1 -> BasicBlock_1_printUint_Ai64_dno__critical__edge__4 [label="(buffer,number,number.2,pos.1,pos.3)"];
+		BasicBlock_1_printUint_Ai64 [label="printUint_Ai64\lconst pos_d1, 20\lmove number_d1, number\lmove pos_d2, pos_d1\ljump while__1",shape=box];
+		BasicBlock_1_printUint_Ai64 -> BasicBlock_1_while__1 [label="(buffer,number.1,pos.2)"];
+		BasicBlock_1_printUint_Ai64_dno__critical__edge__4 [label="printUint_Ai64_dno__critical__edge__4\lmove number_d1, number_d2\lmove pos_d2, pos_d3\ljump while__1",shape=box];
+		BasicBlock_1_printUint_Ai64_dno__critical__edge__4 -> BasicBlock_1_while__1 [label="(buffer,number.1,pos.2)"];
+		BasicBlock_1_while__1 [label="while__1\lmove pos_d3, pos_d2\lsub pos_d3, 1\lmove remainder_d1, number_d1\lmod remainder_d1, 10\lmove number_d2, number_d1\ldiv number_d2, 10\lcast t_d5_d1(u8), remainder_d1(i64)\lmove digit_d1, t_d5_d1\ladd digit_d1, 48\lcast t_d7_d1(i64), pos_d3(u8)\laddrof t_d6_d1, buffer\lmove t_d6_d2, t_d6_d1\ladd t_d6_d2, t_d7_d1\lstore [t_d6_d2], digit_d1\lbranch number_d2 notequals 0: printUint_Ai64_dno__critical__edge__4, while__1__break\ljump while__1__break",shape=box];
+		BasicBlock_1_while__1 -> BasicBlock_1_printUint_Ai64_dno__critical__edge__4 [label="(buffer,number.2,pos.3)"];
 		BasicBlock_1_while__1 -> BasicBlock_1_while__1__break [label="(buffer,pos.3)"];
 		BasicBlock_1_while__1__break [label="while__1__break\lcast t_d9_d1(i64), pos_d3(u8)\laddrof t_d8_d1, buffer\lmove t_d8_d2, t_d8_d1\ladd t_d8_d2, t_d9_d1\lconst t_d11_d1, 20\lmove t_d10_d1, t_d11_d1\lsub t_d10_d1, pos_d3\lcall printStringLength_A_Au8_Au8[t_d8_d2, t_d10_d1]\ljump printUint_Ai64__ret",shape=box];
-		BasicBlock_1_while__1__break -> BasicBlock_1_printUint_Ai64__ret;
+		BasicBlock_1_while__1__break -> BasicBlock_1_printUint_Ai64__ret [label="(buffer)"];
 		BasicBlock_1_printUint_Ai64__ret [label="printUint_Ai64__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printIntLf_Au8 {
@@ -24,13 +24,13 @@ digraph program {
 	}
 	subgraph fn_printIntLf_Ai64 {
 		BasicBlock_3_printIntLf_Ai64 [label="printIntLf_Ai64\lbranch number gteq 0: printIntLf_Ai64_dno__critical__edge__4, if__3__then\ljump if__3__then",shape=box];
-		BasicBlock_3_printIntLf_Ai64 -> BasicBlock_3_printIntLf_Ai64_dno__critical__edge__4 [label="(number,number.2)"];
+		BasicBlock_3_printIntLf_Ai64 -> BasicBlock_3_printIntLf_Ai64_dno__critical__edge__4 [label="(number)"];
 		BasicBlock_3_printIntLf_Ai64 -> BasicBlock_3_if__3__then [label="(number)"];
-		BasicBlock_3_printIntLf_Ai64_dno__critical__edge__4 [label="printIntLf_Ai64_dno__critical__edge__4\ljump if__3__end",shape=box];
-		BasicBlock_3_printIntLf_Ai64_dno__critical__edge__4 -> BasicBlock_3_if__3__end [label="(number,number.2)"];
-		BasicBlock_3_if__3__then [label="if__3__then\lcall printChar_Au8[45]\lneg number_d2, number\ljump if__3__end",shape=box];
-		BasicBlock_3_if__3__then -> BasicBlock_3_if__3__end [label="(number,number.2)"];
-		BasicBlock_3_if__3__end [label="if__3__end\lphi number_d1=[number, number_d2]\lcall printUint_Ai64[number_d1]\lcall printChar_Au8[10]\ljump printIntLf_Ai64__ret",shape=box];
+		BasicBlock_3_printIntLf_Ai64_dno__critical__edge__4 [label="printIntLf_Ai64_dno__critical__edge__4\lmove number_d1, number\ljump if__3__end",shape=box];
+		BasicBlock_3_printIntLf_Ai64_dno__critical__edge__4 -> BasicBlock_3_if__3__end [label="(number.1)"];
+		BasicBlock_3_if__3__then [label="if__3__then\lcall printChar_Au8[45]\lneg number_d2, number\lmove number_d1, number_d2\ljump if__3__end",shape=box];
+		BasicBlock_3_if__3__then -> BasicBlock_3_if__3__end [label="(number.1)"];
+		BasicBlock_3_if__3__end [label="if__3__end\lcall printUint_Ai64[number_d1]\lcall printChar_Au8[10]\ljump printIntLf_Ai64__ret",shape=box];
 		BasicBlock_3_if__3__end -> BasicBlock_3_printIntLf_Ai64__ret;
 		BasicBlock_3_printIntLf_Ai64__ret [label="printIntLf_Ai64__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
@@ -41,7 +41,7 @@ digraph program {
 	}
 	subgraph fn_main {
 		BasicBlock_5_main [label="main\lconst t_d2_d1, 1\laddrof t_d3_d1, pos\lstore [t_d3_d1], t_d2_d1\laddrof t_d6_d1, pos\lload t_d5_d1, [t_d6_d1]\lmove t_d4_d1, t_d5_d1\ladd t_d4_d1, 1\laddrof t_d7_d1, pos\lmove t_d7_d2, t_d7_d1\ladd t_d7_d2, 1\lstore [t_d7_d2], t_d4_d1\laddrof t_d9_d1, pos\lload t_d8_d1, [t_d9_d1]\lcall printIntLf_Au8[t_d8_d1]\laddrof t_d11_d1, pos\lmove t_d11_d2, t_d11_d1\ladd t_d11_d2, 1\lload t_d10_d1, [t_d11_d2]\lcall printIntLf_Au8[t_d10_d1]\laddrof x_d1, pos\lload t_d12_d1, [x_d1]\lcall printIntLf_Au8[t_d12_d1]\ljump main__ret",shape=box];
-		BasicBlock_5_main -> BasicBlock_5_main__ret;
+		BasicBlock_5_main -> BasicBlock_5_main__ret [label="(pos)"];
 		BasicBlock_5_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 }
