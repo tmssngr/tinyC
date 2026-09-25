@@ -22,12 +22,12 @@ digraph program {
 	}
 	subgraph fn_fibonacci_Au8 {
 		BasicBlock_3_fibonacci_Au8 [label="fibonacci_Au8",shape=box];
-		BasicBlock_3_fibonacci_Au8 -> BasicBlock_3_while__2 [label="(a.1,a.3,b.1,b.3,i,i.2)"];
+		BasicBlock_3_fibonacci_Au8 -> BasicBlock_3_while__2 [label="(a.2,b.2,i.1)"];
 		BasicBlock_3_while__2__body [label="while__2__body",shape=box];
-		BasicBlock_3_while__2__body -> BasicBlock_3_while__2 [label="(a.1,a.3,b.1,b.3,i,i.2)"];
+		BasicBlock_3_while__2__body -> BasicBlock_3_while__2 [label="(a.2,b.2,i.1)"];
 		BasicBlock_3_while__2 [label="while__2",shape=hexagon];
 		BasicBlock_3_while__2 -> BasicBlock_3_while__2__break [label="(a.2)"];
-		BasicBlock_3_while__2 -> BasicBlock_3_while__2__body [label="(a.1,a.2,b.1,b.2,i,i.1)"];
+		BasicBlock_3_while__2 -> BasicBlock_3_while__2__body [label="(a.2,b.2,i.1)"];
 		BasicBlock_3_while__2__break [label="while__2__break",shape=box];
 		BasicBlock_3_while__2__break -> BasicBlock_3_fibonacci_Au8__ret;
 		BasicBlock_3_fibonacci_Au8__ret [label="fibonacci_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];

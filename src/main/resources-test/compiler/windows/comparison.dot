@@ -7,19 +7,19 @@ digraph program {
 	}
 	subgraph fn_printChar_Au8 {
 		BasicBlock_1_printChar_Au8 [label="printChar_Au8",shape=box];
-		BasicBlock_1_printChar_Au8 -> BasicBlock_1_printChar_Au8__ret;
+		BasicBlock_1_printChar_Au8 -> BasicBlock_1_printChar_Au8__ret [label="(chr)"];
 		BasicBlock_1_printChar_Au8__ret [label="printChar_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printUint_Ai64 {
 		BasicBlock_2_printUint_Ai64 [label="printUint_Ai64",shape=box];
-		BasicBlock_2_printUint_Ai64 -> BasicBlock_2_while__1 [label="(number,number.2,pos.1,pos.3)"];
+		BasicBlock_2_printUint_Ai64 -> BasicBlock_2_while__1 [label="(buffer,number.1,pos.2)"];
 		BasicBlock_2_printUint_Ai64_dno__critical__edge__4 [label="printUint_Ai64_dno__critical__edge__4",shape=box];
-		BasicBlock_2_printUint_Ai64_dno__critical__edge__4 -> BasicBlock_2_while__1 [label="(number,number.2,pos.1,pos.3)"];
+		BasicBlock_2_printUint_Ai64_dno__critical__edge__4 -> BasicBlock_2_while__1 [label="(buffer,number.1,pos.2)"];
 		BasicBlock_2_while__1 [label="while__1",shape=hexagon];
-		BasicBlock_2_while__1 -> BasicBlock_2_printUint_Ai64_dno__critical__edge__4 [label="(number,number.2,pos.1,pos.3)"];
-		BasicBlock_2_while__1 -> BasicBlock_2_while__1__break [label="(pos.3)"];
+		BasicBlock_2_while__1 -> BasicBlock_2_printUint_Ai64_dno__critical__edge__4 [label="(buffer,number.2,pos.3)"];
+		BasicBlock_2_while__1 -> BasicBlock_2_while__1__break [label="(buffer,pos.3)"];
 		BasicBlock_2_while__1__break [label="while__1__break",shape=box];
-		BasicBlock_2_while__1__break -> BasicBlock_2_printUint_Ai64__ret;
+		BasicBlock_2_while__1__break -> BasicBlock_2_printUint_Ai64__ret [label="(buffer)"];
 		BasicBlock_2_printUint_Ai64__ret [label="printUint_Ai64__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printIntLf_Abool {
@@ -29,24 +29,24 @@ digraph program {
 	}
 	subgraph fn_printIntLf_Ai64 {
 		BasicBlock_4_printIntLf_Ai64 [label="printIntLf_Ai64",shape=hexagon];
-		BasicBlock_4_printIntLf_Ai64 -> BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 [label="(number,number.2)"];
+		BasicBlock_4_printIntLf_Ai64 -> BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 [label="(number)"];
 		BasicBlock_4_printIntLf_Ai64 -> BasicBlock_4_if__3__then [label="(number)"];
 		BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 [label="printIntLf_Ai64_dno__critical__edge__4",shape=box];
-		BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 -> BasicBlock_4_if__3__end [label="(number,number.2)"];
+		BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 -> BasicBlock_4_if__3__end [label="(number.1)"];
 		BasicBlock_4_if__3__then [label="if__3__then",shape=box];
-		BasicBlock_4_if__3__then -> BasicBlock_4_if__3__end [label="(number,number.2)"];
+		BasicBlock_4_if__3__then -> BasicBlock_4_if__3__end [label="(number.1)"];
 		BasicBlock_4_if__3__end [label="if__3__end",shape=box];
 		BasicBlock_4_if__3__end -> BasicBlock_4_printIntLf_Ai64__ret;
 		BasicBlock_4_printIntLf_Ai64__ret [label="printIntLf_Ai64__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_strlen_A_Au8 {
 		BasicBlock_5_strlen_A_Au8 [label="strlen_A_Au8",shape=box];
-		BasicBlock_5_strlen_A_Au8 -> BasicBlock_5_for__4 [label="(length.1,length.3,str,str.2)"];
+		BasicBlock_5_strlen_A_Au8 -> BasicBlock_5_for__4 [label="(length.2,str.1)"];
 		BasicBlock_5_for__4__body [label="for__4__body",shape=box];
-		BasicBlock_5_for__4__body -> BasicBlock_5_for__4 [label="(length.1,length.3,str,str.2)"];
+		BasicBlock_5_for__4__body -> BasicBlock_5_for__4 [label="(length.2,str.1)"];
 		BasicBlock_5_for__4 [label="for__4",shape=hexagon];
 		BasicBlock_5_for__4 -> BasicBlock_5_for__4__break [label="(length.2)"];
-		BasicBlock_5_for__4 -> BasicBlock_5_for__4__body [label="(length.1,length.2,str,str.1)"];
+		BasicBlock_5_for__4 -> BasicBlock_5_for__4__body [label="(length.2,str.1)"];
 		BasicBlock_5_for__4__break [label="for__4__break",shape=box];
 		BasicBlock_5_for__4__break -> BasicBlock_5_strlen_A_Au8__ret;
 		BasicBlock_5_strlen_A_Au8__ret [label="strlen_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];

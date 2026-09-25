@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -67,6 +68,30 @@ public class Utils {
 
 	public static boolean isInInterval(int chr, char from, char to) {
 		return from <= chr && chr <= to;
+	}
+
+	public static <E> int binarySearch(E element, List<E> list, ToIntFunction<E> function) {
+		final int key = function.applyAsInt(element);
+
+		int low = 0;
+		int high = list.size() - 1;
+		while (low <= high) {
+			final int mid = (low + high) >>> 1;
+
+			final E e = list.get(mid);
+			final int midVal = function.applyAsInt(e);
+
+			if (midVal < key) {
+				low = mid + 1;
+			}
+			else if (midVal > key) {
+				high = mid - 1;
+			}
+			else {
+				return mid;
+			}
+		}
+		return low;
 	}
 
 	@NotNull
