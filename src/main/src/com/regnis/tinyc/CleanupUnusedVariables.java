@@ -77,7 +77,12 @@ public abstract class CleanupUnusedVariables {
 				write(move.target());
 			}
 		}
-		case IRRetValue retValue -> read(List.of(retValue.var()));
+		case IRRetValue retValue -> {
+			final IRVar var = retValue.value().var();
+			if (var != null) {
+				read(List.of(var));
+			}
+		}
 		case IRString literal -> write(literal.target());
 		case IRUnary unary -> readWrite(unary.target(), List.of(unary.source()));
 		default -> throw new UnsupportedOperationException(String.valueOf(instruction));

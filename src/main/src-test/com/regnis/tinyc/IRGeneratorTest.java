@@ -46,11 +46,9 @@ public class IRGeneratorTest {
 				                                  }""");
 		assertEquals(new IRProgram(List.of(
 				             new IRFunction("get", Type.U8, new IRVarInfos(List.of(
-						             new IRVarDef(new IRVar("t.0", 0, VariableScope.function, Type.U8), 1)
 				             ), Set.of(), globalVarInfos), List.of(
 						             new IRComment("2:10 return 0"),
-						             new IRMove(tmp(0, Type.U8), 0, loc(1, 9)),
-						             new IRRetValue(tmp(0, Type.U8), loc(1, 2)),
+						             new IRRetValue(new IRValue(0, Type.U8), loc(1, 2)),
 						             new IRJump("get_ret"),
 						             new IRLabel("get_ret")
 				             )),
@@ -81,12 +79,10 @@ public class IRGeneratorTest {
 		assertEquals(new IRProgram(List.of(
 				             new IRFunction("get", Type.U8,
 				                            new IRVarInfos(List.of(
-						                            new IRVarDef(new IRVar("t.0", 0, VariableScope.function, Type.U8), 1)
 				                            ), Set.of(), globalVarInfos),
 				                            List.of(
 						                            new IRComment("2:10 return 0"),
-						                            new IRMove(tmp(0, Type.U8), 0, loc(1, 9)),
-						                            new IRRetValue(tmp(0, Type.U8), loc(1, 2)),
+						                            new IRRetValue(new IRValue(0, Type.U8), loc(1, 2)),
 						                            new IRJump("get_ret"),
 						                            new IRLabel("get_ret")
 				                            )),

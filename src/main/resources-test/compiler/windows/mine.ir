@@ -326,11 +326,8 @@ getSpacer@i16@i16@i16@i16:
 	arg 1: column (i16/2)
 	arg 2: rowCursor (i16/2)
 	arg 3: columnCursor (i16/2)
-	var 4: t.4 (u8/1)
-	var 5: t.5 (i16/2)
-	var 6: t.6 (u8/1)
-	var 7: t.7 (u8/1)
-	; 43 pc
+	var 4: t.4 (i16/2)
+	; 31 pc
 	; 62:2 if rowCursor == row
 	branch rowCursor notequals row: if_11_end, if_11_then
 if_11_then:
@@ -338,23 +335,20 @@ if_11_then:
 	branch columnCursor notequals column: if_12_end, if_12_then
 if_12_then:
 	; 64:11 return 91
-	const t.4, 91
-	ret t.4
+	ret 91
 	jump getSpacer@i16@i16@i16@i16_ret
 if_12_end:
 	; 66:3 if columnCursor == column - 1
-	move t.5, column
-	sub t.5, t.5, 1
-	branch columnCursor notequals t.5: if_11_end, if_13_then
+	move t.4, column
+	sub t.4, t.4, 1
+	branch columnCursor notequals t.4: if_11_end, if_13_then
 if_13_then:
 	; 67:11 return 93
-	const t.6, 93
-	ret t.6
+	ret 93
 	jump getSpacer@i16@i16@i16@i16_ret
 if_11_end:
 	; 70:9 return 32
-	const t.7, 32
-	ret t.7
+	ret 32
 	jump getSpacer@i16@i16@i16@i16_ret
 getSpacer@i16@i16@i16@i16_ret:
 
