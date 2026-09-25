@@ -192,14 +192,23 @@ public final class IRGenerator {
 	}
 
 	private void writeReturn(StmtReturn stmtReturn) {
+		final Location location = stmtReturn.location();
 		final Expression expression = stmtReturn.expression();
 		if (expression != null) {
 			writeComment("return " + expression.toUserString(), expression.location());
-			final IRVar var = writeExpression(expression);
-			write(new IRRetValue(var, stmtReturn.location()));
+			if (expression instanceof ExprBoolLiteral literal) {
+				write(new IRRetValue(literal.value() ? 1 : 0, Type.BOOL, location));
+			}
+			else if (expression instanceof ExprIntLiteral literal) {
+				write(new IRRetValue(literal.value(), literal.typeNotNull(), location));
+			}
+			else {
+				final IRVar var = writeExpression(expression);
+				write(new IRRetValue(var, location));
+			}
 		}
 		else {
-			writeComment("return", stmtReturn.location());
+			writeComment("return", location);
 		}
 		write(new IRJump(functionRetLabel));
 	}

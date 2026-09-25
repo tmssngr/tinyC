@@ -133,26 +133,22 @@ printStringLength@@u8@u8_ret:
 getTrue:
  Local variables
 	var 0: t.0 (u8*/8)
-	var 1: t.1 (bool/1)
-	; 12 pc
+	; 8 pc
 	const t.0, [string-0]
 	call printString@@u8[t.0]
 	; 3:49 return true
-	const t.1, 1
-	ret t.1
+	ret 1
 	jump getTrue_ret
 getTrue_ret:
 
 getFalse:
  Local variables
 	var 0: t.0 (u8*/8)
-	var 1: t.1 (bool/1)
-	; 12 pc
+	; 8 pc
 	const t.0, [string-1]
 	call printString@@u8[t.0]
 	; 4:49 return false
-	const t.1, 0
-	ret t.1
+	ret 0
 	jump getFalse_ret
 getFalse_ret:
 

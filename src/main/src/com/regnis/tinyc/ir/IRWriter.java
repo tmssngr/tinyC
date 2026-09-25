@@ -221,7 +221,11 @@ public final class IRWriter extends TextWriter {
 				sum += 2;
 			}
 			case IRRetValue i -> {
-				sum += getInstructionTime(i.var());
+				final IRValue value = i.value();
+				final IRVar var = value.var();
+				if (var != null) {
+					sum += getInstructionTime(var);
+				}
 				sum++;
 			}
 			case IRString i -> {

@@ -553,9 +553,16 @@ public final class X86Win64 extends AsmWriter {
 	}
 
 	protected void writeRetValue(IRRetValue retValue) throws IOException {
-		final int valueReg = loadVar(retValue.var());
-		writeIndented("mov rax, " + getRegName(valueReg));
-		free(valueReg);
+		final IRValue value = retValue.value();
+		final IRVar var = value.var();
+		if (var != null) {
+			final int valueReg = loadVar(var);
+			writeIndented("mov rax, " + getRegName(valueReg));
+			free(valueReg);
+		}
+		else {
+			writeIndented("mov rax, " + value.value());
+		}
 	}
 
 	protected void writeString(IRString literal) throws IOException {
