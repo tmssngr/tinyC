@@ -220,6 +220,9 @@ public final class IRWriter extends TextWriter {
 				sum += getInstructionTime(i.value());
 				sum += 2;
 			}
+			case IRPhi i -> {
+				sum += 2;
+			}
 			case IRRetValue i -> {
 				final IRValue value = i.value();
 				final IRVar var = value.var();

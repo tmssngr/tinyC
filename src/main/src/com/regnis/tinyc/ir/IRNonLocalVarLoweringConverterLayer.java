@@ -94,6 +94,7 @@ public final class IRNonLocalVarLoweringConverterLayer extends IRConverterAbstra
 				target(move.target(), target -> new IRMove(target, source.value(), move.location()));
 			}
 		}
+		case IRPhi phi -> forward(phi);
 		case IRRetValue retValue -> {
 			final IRValue value = retValue.value();
 			final IRVar var = value.var();
