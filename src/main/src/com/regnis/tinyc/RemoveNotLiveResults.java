@@ -71,6 +71,7 @@ public class RemoveNotLiveResults {
 		case IRMemLoad i -> addIfIsLive(i.target(), i, live);
 		case IRMemStore i -> add(i);
 		case IRMove i -> addIfIsLive(i.target(), i, live);
+		case IRPhi i -> addIfIsLive(i.target(), i, live);
 		case IRRetValue i -> add(i);
 		case IRString i -> addIfIsLive(i.target(), i, live);
 		case IRUnary i -> addIfIsLive(i.target(), i, live);

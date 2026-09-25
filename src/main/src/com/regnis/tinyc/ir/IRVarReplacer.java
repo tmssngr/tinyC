@@ -50,6 +50,13 @@ public abstract class IRVarReplacer {
 			case IRMemLoad load -> new IRMemLoad(replace(load.target()), replace(load.addr()), load.location());
 			case IRMemStore store -> new IRMemStore(replace(store.addr()), replace(store.value()), store.location());
 			case IRMove move -> new IRMove(replace(move.target()), replace(move.source()), move.location());
+			case IRPhi phi -> {
+				final List<IRVar> input = new ArrayList<>();
+				for (IRVar var : phi.sources()) {
+					input.add(replace(var));
+				}
+				yield new IRPhi(replace(phi.target()), input);
+			}
 			case IRRetValue retValue -> new IRRetValue(replace(retValue.value()), retValue.location());
 			case IRString literal -> new IRString(replace(literal.target()), literal.stringIndex(), literal.location());
 			case IRUnary unary -> new IRUnary(unary.op(), replace(unary.target()), replace(unary.source()));

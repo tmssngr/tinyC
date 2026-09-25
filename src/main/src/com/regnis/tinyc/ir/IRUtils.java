@@ -80,6 +80,12 @@ public final class IRUtils {
 				uses.accept(source);
 			}
 		}
+		case IRPhi phi -> {
+			defines.accept(phi.target());
+			for (IRVar source : phi.sources()) {
+				uses.accept(source);
+			}
+		}
 		case IRRetValue retValue -> {
 			final IRVar var = retValue.value().var();
 			if (var != null) {
