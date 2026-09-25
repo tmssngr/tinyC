@@ -96,6 +96,10 @@ public final class VarUseTracker {
 		}
 		case IRString literal -> write(literal.target());
 		case IRUnary unary -> readWrite(unary.target(), List.of(unary.source()));
+		case IRPhi phi -> {
+			read(phi.sources());
+			write(phi.target());
+		}
 		default -> throw new UnsupportedOperationException(String.valueOf(instruction));
 		}
 	}
