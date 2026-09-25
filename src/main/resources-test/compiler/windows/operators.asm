@@ -394,7 +394,6 @@ _printStringLength@@u8@u8:
 
         ; bool getTrue
         ;   rsp+0: var t.0
-        ;   rsp+8: var t.1
 _getTrue:
         ; reserve space for local variables
         sub rsp, 16
@@ -409,21 +408,14 @@ _getTrue:
           call _printString@@u8
         add rsp, 8
         ; 3:49 return true
-        ; const t.1, 1
-        mov al, 1
-        lea rbx, [rsp+8]
-        mov [rbx], al
-        ; ret t.1
-        lea rax, [rsp+8]
-        mov bl, [rax]
-        mov rax, rbx
+        ; ret 1
+        mov rax, 1
         ; release space for local variables
         add rsp, 16
         ret
 
         ; bool getFalse
         ;   rsp+0: var t.0
-        ;   rsp+8: var t.1
 _getFalse:
         ; reserve space for local variables
         sub rsp, 16
@@ -438,14 +430,8 @@ _getFalse:
           call _printString@@u8
         add rsp, 8
         ; 4:49 return false
-        ; const t.1, 0
-        mov al, 0
-        lea rbx, [rsp+8]
-        mov [rbx], al
-        ; ret t.1
-        lea rax, [rsp+8]
-        mov bl, [rax]
-        mov rax, rbx
+        ; ret 0
+        mov rax, 0
         ; release space for local variables
         add rsp, 16
         ret

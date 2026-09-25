@@ -957,9 +957,6 @@ _for_7:
         ;   rsp+40: arg rowCursor
         ;   rsp+32: arg columnCursor
         ;   rsp+0: var t.4
-        ;   rsp+2: var t.5
-        ;   rsp+4: var t.6
-        ;   rsp+5: var t.7
 _getSpacer@i16@i16@i16@i16:
         ; reserve space for local variables
         sub rsp, 16
@@ -978,57 +975,39 @@ _getSpacer@i16@i16@i16@i16:
         cmp bx, cx
         je _if_12_then
         ; 66:3 if columnCursor == column - 1
-        ; move t.5, column
+        ; move t.4, column
         lea rax, [rsp+48]
         mov bx, [rax]
-        lea rax, [rsp+2]
+        lea rax, [rsp+0]
         mov [rax], bx
-        ; sub t.5, t.5, 1
-        lea rax, [rsp+2]
+        ; sub t.4, t.4, 1
+        lea rax, [rsp+0]
         mov bx, [rax]
         sub bx, 1
-        lea rax, [rsp+2]
+        lea rax, [rsp+0]
         mov [rax], bx
-        ; branch columnCursor notequals t.5: if_11_end, if_13_then
+        ; branch columnCursor notequals t.4: if_11_end, if_13_then
         lea rax, [rsp+32]
         mov bx, [rax]
-        lea rax, [rsp+2]
+        lea rax, [rsp+0]
         mov cx, [rax]
         cmp bx, cx
         jne _if_11_end
         jmp _if_13_then
 _if_12_then:
         ; 64:11 return 91
-        ; const t.4, 91
-        mov al, 91
-        lea rbx, [rsp+0]
-        mov [rbx], al
-        ; ret t.4
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        mov rax, rbx
+        ; ret 91
+        mov rax, 91
         jmp _getSpacer@i16@i16@i16@i16_ret
 _if_13_then:
         ; 67:11 return 93
-        ; const t.6, 93
-        mov al, 93
-        lea rbx, [rsp+4]
-        mov [rbx], al
-        ; ret t.6
-        lea rax, [rsp+4]
-        mov bl, [rax]
-        mov rax, rbx
+        ; ret 93
+        mov rax, 93
         jmp _getSpacer@i16@i16@i16@i16_ret
 _if_11_end:
         ; 70:9 return 32
-        ; const t.7, 32
-        mov al, 32
-        lea rbx, [rsp+5]
-        mov [rbx], al
-        ; ret t.7
-        lea rax, [rsp+5]
-        mov bl, [rax]
-        mov rax, rbx
+        ; ret 32
+        mov rax, 32
 _getSpacer@i16@i16@i16@i16_ret:
         ; release space for local variables
         add rsp, 16

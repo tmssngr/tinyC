@@ -141,7 +141,10 @@ public final class DetectVarLiveness {
 			}
 		}
 		case IRRetValue retValue -> {
-			uses(retValue.var(), uses);
+			final IRVar var = retValue.value().var();
+			if (var != null) {
+				uses(var, uses);
+			}
 		}
 		case IRString string -> {
 			defined(string.target(), defines);
