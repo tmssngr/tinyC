@@ -35,7 +35,8 @@ public class LSPreprocessorTest {
 				                                                         new IRBinary(d, IRBinary.Op.Add, a, b),
 				                                                         new IRCall(c, Type.I16, "sub", IRValue.toValues(d, c, b, a)),
 				                                                         new IRRetValue(c)
-		                                                         )), callingConventionProvider, null, Type.I64);
+				                                                         //                           vvvv
+		                                                         )), callingConventionProvider, null, true, Type.I64);
 		assertEquals(new IRVarInfos(List.of(
 				new IRVarDef(a, 2),
 				new IRVarDef(b, 2),
@@ -84,7 +85,7 @@ public class LSPreprocessorTest {
 				                                                         new IRMove(varT2, 1),
 				                                                         new IRCall(null, Type.VOID, "printStringLength", IRValue.toValues(varT1, varT2)),
 				                                                         new IRLabel("printChar_ret")
-		                                                         )), callingConventionProvider, null, Type.I64);
+		                                                         )), callingConventionProvider, null, true, Type.I64);
 		assertEquals(List.of(
 				             new IRVarDef(varChr, 1),
 				             new IRVarDef(varT1, 8),

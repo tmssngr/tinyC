@@ -1,0 +1,21 @@
+u8 i;
+
+void printIntLf@u8(u8 number) {
+}
+
+void main() {
+	doPrint@u8@u8@u8@u8@u8(next(), next(), next(), next(), next());
+}
+
+u8 next() {
+	i = i + 1;
+	return i;
+}
+
+void doPrint@u8@u8@u8@u8@u8(u8 a, u8 b, u8 c, u8 d, u8 e) {
+	printIntLf@u8(a);
+	printIntLf@u8(b);
+	printIntLf@u8(c);
+	printIntLf@u8(d);
+	printIntLf@u8(e);
+}

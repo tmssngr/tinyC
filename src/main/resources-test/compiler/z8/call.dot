@@ -1,0 +1,23 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printIntLf_Au8 {
+		BasicBlock_0_printIntLf_Au8 [label="printIntLf_Au8",shape=box];
+		BasicBlock_0_printIntLf_Au8 -> BasicBlock_0_printIntLf_Au8__ret;
+		BasicBlock_0_printIntLf_Au8__ret [label="printIntLf_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_1_main [label="main",shape=box];
+		BasicBlock_1_main -> BasicBlock_1_main__ret;
+		BasicBlock_1_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_next {
+		BasicBlock_2_next [label="next",shape=box];
+		BasicBlock_2_next -> BasicBlock_2_next__ret;
+		BasicBlock_2_next__ret [label="next__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_doPrint_Au8_Au8_Au8_Au8_Au8 {
+		BasicBlock_3_doPrint_Au8_Au8_Au8_Au8_Au8 [label="doPrint_Au8_Au8_Au8_Au8_Au8",shape=box];
+		BasicBlock_3_doPrint_Au8_Au8_Au8_Au8_Au8 -> BasicBlock_3_doPrint_Au8_Au8_Au8_Au8_Au8__ret;
+		BasicBlock_3_doPrint_Au8_Au8_Au8_Au8_Au8__ret [label="doPrint_Au8_Au8_Au8_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}
