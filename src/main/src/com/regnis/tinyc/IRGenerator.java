@@ -109,7 +109,7 @@ public final class IRGenerator {
 			type = structToU8(type);
 			final IRVar var = new IRVar(variable.name(), variable.index(), variable.scope(), type);
 			localVars.add(new IRVarDef(var, size, isArray));
-			if (!variable.canBeRegister()) {
+			if (!variable.canBeRegister() || type != variable.type()) {
 				localVarsCantBeRegister.add(var);
 			}
 		}

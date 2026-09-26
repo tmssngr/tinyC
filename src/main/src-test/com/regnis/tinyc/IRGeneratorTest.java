@@ -108,8 +108,76 @@ public class IRGeneratorTest {
 	}
 
 	@Test
-	public void testReferencedLocalVars() {
+	public void testStructs() {
+		final IRProgram program = convert("""
+				                                  typedef Pos struct (u8 x, u8 y);
+				                                  void main() {
+				                                  	Pos pos;
+				                                  	pos.x = 1
+				                                  	pos.y = 2
+				                                  	print(pos.x)
+				                                  	print(pos.y)
+				                                  }
+				                                  void print(u8 a) {}""");
+		final IRVar varPos = new IRVar("pos", 0, VariableScope.function, Type.U8);
+		final IRVar varT1 = new IRVar("t.1", 1, VariableScope.function, Type.U8);
+		final IRVar varT2 = new IRVar("t.2", 2, VariableScope.function, Type.POINTER_U8);
+		final IRVar varT3 = new IRVar("t.3", 3, VariableScope.function, Type.U8);
+		final IRVar varT4 = new IRVar("t.4", 4, VariableScope.function, Type.POINTER_U8);
+		final IRVar varT5 = new IRVar("t.5", 5, VariableScope.function, Type.U8);
+		final IRVar varT6 = new IRVar("t.6", 6, VariableScope.function, Type.POINTER_U8);
+		final IRVar varT7 = new IRVar("t.7", 7, VariableScope.function, Type.U8);
+		final IRVar varT8 = new IRVar("t.8", 8, VariableScope.function, Type.POINTER_U8);
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		assertEquals(new IRProgram(List.of(
+				             new IRFunction("main", Type.VOID,
+				                            new IRVarInfos(List.of(
+						                            new IRVarDef(varPos, 2),
+						                            new IRVarDef(varT1, 1),
+						                            new IRVarDef(varT2, 8),
+						                            new IRVarDef(varT3, 1),
+						                            new IRVarDef(varT4, 8),
+						                            new IRVarDef(varT5, 1),
+						                            new IRVarDef(varT6, 8),
+						                            new IRVarDef(varT7, 1),
+						                            new IRVarDef(varT8, 8)
+				                            ), Set.of(varPos), globalVarInfos),
+				                            List.of(
+						                            new IRMove(varT1, 1, loc(3, 9)),
+						                            new IRComment("4:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=4:2].x"),
+						                            new IRAddrOf(varT2, varPos, loc(3, 5)),
+						                            new IRMemStore(varT2, varT1, loc(3, 5)),
+						                            new IRMove(varT3, 2, loc(4, 9)),
+						                            new IRComment("5:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=5:2].y"),
+						                            new IRAddrOf(varT4, varPos, loc(4, 5)),
+						                            new IRBinary(varT4, IRBinary.Op.Add, varT4, new IRValue(1, Type.I64), ParserTest.loc(4, 5)),
+						                            new IRMemStore(varT4, varT3, loc(4, 5)),
+						                            new IRComment("6:12 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=6:8].x"),
+						                            new IRAddrOf(varT6, varPos, loc(5, 11)),
+						                            new IRMemLoad(varT5, varT6, loc(5, 11)),
+						                            new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue(varT5)), loc(5, 1)),
+						                            new IRComment("7:12 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=7:8].y"),
+						                            new IRAddrOf(varT8, varPos, loc(6, 11)),
+						                            new IRBinary(varT8, IRBinary.Op.Add, varT8, new IRValue(1, Type.I64), ParserTest.loc(6, 11)),
+						                            new IRMemLoad(varT7, varT8, loc(6, 11)),
+						                            new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue(varT7)), loc(6, 1)),
+						                            new IRLabel("main_ret")
+				                            )
+				             ),
+				             new IRFunction("print@u8", Type.VOID,
+				                            new IRVarInfos(List.of(
+						                            new IRVarDef(new IRVar("a", 0, VariableScope.parameter, Type.U8), 1)
+				                            ), Set.of(), globalVarInfos),
+				                            List.of(
+						                            new IRLabel("print@u8_ret")
+				                            )
+				             )
+		             ), List.of(), globalVarInfos, List.of()),
+		             program);
+	}
+
+	@Test
+	public void testReferencedLocalVars() {
 		final IRProgram program = convert("""
 				                                  void print(i16 p) {
 				                                  }
@@ -125,6 +193,7 @@ public class IRGeneratorTest {
 		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.pointer(Type.I16));
 		final IRVar varT2 = new IRVar("t.2", 2, VariableScope.function, Type.I16);
 		final IRVar varT3 = new IRVar("t.3", 3, VariableScope.function, Type.I16);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		assertEquals(new IRProgram(List.of(
 				             new IRFunction("print@i16", Type.VOID, new IRVarInfos(List.of(
 									 new IRVarDef(new IRVar("p", 0, VariableScope.parameter, Type.I16), 2)
