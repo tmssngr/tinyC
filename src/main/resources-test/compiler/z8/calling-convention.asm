@@ -100,6 +100,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r12, @rr14
         incw r14
         lde  r13, @rr14
+        decw r14
         ; addrof memVarAddr{r14}, g
         ld   r14, SPH
         ld   r15, SPL
@@ -109,6 +110,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r10, @rr14
         incw r14
         lde  r11, @rr14
+        decw r14
         ; addrof memVarAddr{r14}, h
         ld   r14, SPH
         ld   r15, SPL
@@ -118,6 +120,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r8, @rr14
         incw r14
         lde  r9, @rr14
+        decw r14
         ; addrof memVarAddr{r14}, param.a
         ld   r14, SPH
         ld   r15, SPL
@@ -127,6 +130,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; addrof memVarAddr{r14}, param.b
         ld   r14, SPH
         ld   r15, SPL
@@ -136,6 +140,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  @rr14, r2
         incw r14
         lde  @rr14, r3
+        decw r14
         ; addrof memVarAddr{r14}, param.c
         ld   r14, SPH
         ld   r15, SPL
@@ -145,6 +150,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  @rr14, r4
         incw r14
         lde  @rr14, r5
+        decw r14
         ; addrof memVarAddr{r14}, param.d
         ld   r14, SPH
         ld   r15, SPL
@@ -154,6 +160,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  @rr14, r6
         incw r14
         lde  @rr14, r7
+        decw r14
         ; addrof memVarAddr{r14}, param.a
         ld   r14, SPH
         ld   r15, SPL
@@ -163,6 +170,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
+        decw r14
         ; addrof memVarAddr{r14}, param.a
         ld   r14, SPH
         ld   r15, SPL
@@ -172,6 +180,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; call printIntLf@i16[param.a{r0}]
         call printIntLf_Pi16
         ; addrof memVarAddr{r14}, param.b
@@ -183,6 +192,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r2, @rr14
         incw r14
         lde  r3, @rr14
+        decw r14
         ; move param.b{r0}, param.b{r2}
         ld   r0, r2
         ld   r1, r3
@@ -195,6 +205,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  @rr14, r2
         incw r14
         lde  @rr14, r3
+        decw r14
         ; call printIntLf@i16[param.b{r0}]
         call printIntLf_Pi16
         ; addrof memVarAddr{r14}, param.c
@@ -206,6 +217,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r4, @rr14
         incw r14
         lde  r5, @rr14
+        decw r14
         ; move param.c{r0}, param.c{r4}
         ld   r0, r4
         ld   r1, r5
@@ -218,6 +230,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  @rr14, r4
         incw r14
         lde  @rr14, r5
+        decw r14
         ; call printIntLf@i16[param.c{r0}]
         call printIntLf_Pi16
         ; addrof memVarAddr{r14}, param.d
@@ -229,6 +242,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r6, @rr14
         incw r14
         lde  r7, @rr14
+        decw r14
         ; move param.d{r0}, param.d{r6}
         ld   r0, r6
         ld   r1, r7
@@ -241,6 +255,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  @rr14, r6
         incw r14
         lde  @rr14, r7
+        decw r14
         ; call printIntLf@i16[param.d{r0}]
         call printIntLf_Pi16
         ; addrof memVarAddr{r14}, e
@@ -252,6 +267,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
+        decw r14
         ; addrof memVarAddr{r14}, e
         ld   r14, SPH
         ld   r15, SPL
@@ -261,6 +277,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; call printIntLf@i16[e{r0}]
         call printIntLf_Pi16
         ; move f{r0}, f{r12}
@@ -288,6 +305,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
+        decw r14
         ; move t.14{r2}, param.a{r0}
         ld   r3, r1
         ld   r2, r0
@@ -300,6 +318,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r4, @rr14
         incw r14
         lde  r5, @rr14
+        decw r14
         ; add t.14{r2}, t.14{r2}, param.b{r4}
         add  r3, r5
         adc  r2, r4
@@ -312,6 +331,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r4, @rr14
         incw r14
         lde  r5, @rr14
+        decw r14
         ; add t.13{r2}, t.13{r2}, param.c{r4}
         add  r3, r5
         adc  r2, r4
@@ -324,6 +344,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r6, @rr14
         incw r14
         lde  r7, @rr14
+        decw r14
         ; add t.12{r2}, t.12{r2}, param.d{r6}
         add  r3, r7
         adc  r2, r6
@@ -336,6 +357,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         lde  r4, @rr14
         incw r14
         lde  r5, @rr14
+        decw r14
         ; add t.11{r2}, t.11{r2}, e{r4}
         add  r3, r5
         adc  r2, r4
@@ -393,6 +415,7 @@ main:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; const argLit.0.5{r0}, 6
         ld   r0, #%00
         ld   r1, #%06
@@ -405,6 +428,7 @@ main:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; const argLit.0.6{r0}, 7
         ld   r0, #%00
         ld   r1, #%07
@@ -417,6 +441,7 @@ main:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; const argLit.0.7{r0}, 8
         ld   r0, #%00
         ld   r1, #%08
@@ -429,6 +454,7 @@ main:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; const arg.0.0{r0}, 1
         ld   r0, #%00
         ld   r1, #%01

@@ -89,6 +89,7 @@ main:
         lde  @rr10, r8
         incw r10
         lde  @rr10, r9
+        decw r10
         ; addrof a.a1{r8}, a
         ld   r8, SPH
         ld   r9, SPL
@@ -98,6 +99,7 @@ main:
         lde  r0, @rr8
         incw r8
         lde  r1, @rr8
+        decw r8
         ; call printIntLf@i16[t.a1{r0}]
         call printIntLf_Pi16
         ; addrof b{r8}, a
@@ -109,6 +111,7 @@ main:
         lde  r10, @rr8
         incw r8
         lde  r11, @rr8
+        decw r8
         ; move t.c{r8}, t.4{r10}
         ld   r8, r10
         ld   r9, r11
@@ -123,6 +126,7 @@ main:
         lde  @rr10, r8
         incw r10
         lde  @rr10, r9
+        decw r10
         ; addrof a.c1{r8}, c
         ld   r8, SPH
         ld   r9, SPL
@@ -132,6 +136,7 @@ main:
         lde  r0, @rr8
         incw r8
         lde  r1, @rr8
+        decw r8
         ; call printIntLf@i16[t.c1{r0}]
         call printIntLf_Pi16
         ; addrof d{r8}, c
@@ -143,12 +148,14 @@ main:
         lde  r10, @rr8
         incw r8
         lde  r11, @rr8
+        decw r8
         ; sub t.5{r10}, t.5{r10}, 1
         decw r10
         ; store [d{r8}], t.5{r10}
         lde  @rr8, r10
         incw r8
         lde  @rr8, r11
+        decw r8
         ; addrof a.c2{r8}, c
         ld   r8, SPH
         ld   r9, SPL
@@ -158,6 +165,7 @@ main:
         lde  r0, @rr8
         incw r8
         lde  r1, @rr8
+        decw r8
         ; call printIntLf@i16[t.c2{r0}]
         call printIntLf_Pi16
         ; restore clobbered non-volatile registers

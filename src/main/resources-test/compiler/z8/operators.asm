@@ -648,6 +648,7 @@ main:
         lde  @rr14, r2
         incw r14
         lde  @rr14, r3
+        decw r14
         ; const t{r2}, 1
         ld   r2, #%01
         ; addrof memVarAddr{r14}, t
@@ -907,6 +908,7 @@ or__next__44:
         lde  r8, @rr14
         incw r14
         lde  r9, @rr14
+        decw r14
         jr   or__next__47
 
 or__2nd__47:
@@ -919,6 +921,7 @@ or__2nd__47:
         lde  r8, @rr14
         incw r14
         lde  r9, @rr14
+        decw r14
         ; lt t.34{r0}, c{r12}, d{r8}
         cp   r12, r8
         jr   lt, .true11

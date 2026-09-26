@@ -27,6 +27,8 @@ initRandom_Pi32:
         lde  @rr4, r2
         incw r4
         lde  @rr4, r3
+        add  r5, #3
+        adc  r4, #0
         ret
 
         ; i32 random
@@ -47,6 +49,8 @@ random:
         lde  r8, @rr4
         incw r4
         lde  r9, @rr4
+        add  r5, #3
+        adc  r4, #0
         ; move r{r4}, t.__random__{r6}
         ld   r4, r6
         ld   r5, r7
@@ -432,6 +436,8 @@ random:
         lde  @rr4, r10
         incw r4
         lde  @rr4, r11
+        add  r5, #3
+        adc  r4, #0
         ; 15:9 return __random__
         ; addrof a.__random__2{r4}, __random__
         ld   r4, #hi(var_0)
@@ -444,6 +450,8 @@ random:
         lde  r2, @rr4
         incw r4
         lde  r3, @rr4
+        add  r5, #3
+        adc  r4, #0
         ; restore clobbered non-volatile registers
         pop  r11
         pop  r10
@@ -486,6 +494,8 @@ main:
         lde  @rr12, r10
         incw r12
         lde  @rr12, r11
+        add  r13, #3
+        adc  r12, #0
         ; end initialize global variables
         ; const arg.0.0{r0}, 7439742
         ld   r0, #%00

@@ -80,6 +80,7 @@ main:
         lde  @rr10, r8
         incw r10
         lde  @rr10, r9
+        decw r10
         ; const t.next{r8}, 63
         ld   r8, #%00
         ld   r9, #%3f
@@ -90,6 +91,7 @@ main:
         lde  @rr10, r8
         incw r10
         lde  @rr10, r9
+        decw r10
         ; addrof t.ptrToSpace{r8}, space
         ld   r8, #hi(var_0)
         ld   r9, #lo(var_0)
@@ -100,6 +102,7 @@ main:
         lde  @rr10, r8
         incw r10
         lde  @rr10, r9
+        decw r10
         ; end initialize global variables
         ; addrof a.next1{r8}, next
         ld   r8, #hi(var_1)
@@ -108,6 +111,7 @@ main:
         lde  r0, @rr8
         incw r8
         lde  r1, @rr8
+        decw r8
         ; call printIntLf@i16[t.next1{r0}]
         call printIntLf_Pi16
         ; addrof a.ptrToSpace1{r8}, ptrToSpace
@@ -117,6 +121,7 @@ main:
         lde  r10, @rr8
         incw r8
         lde  r11, @rr8
+        decw r8
         ; move t.ptrToSpace2{r8}, t.ptrToSpace1{r10}
         ld   r8, r10
         ld   r9, r11
@@ -130,6 +135,7 @@ main:
         lde  @rr10, r8
         incw r10
         lde  @rr10, r9
+        decw r10
         ; addrof a.ptrToSpace3{r8}, ptrToSpace
         ld   r8, #hi(var_2)
         ld   r9, #lo(var_2)
@@ -137,10 +143,12 @@ main:
         lde  r10, @rr8
         incw r8
         lde  r11, @rr8
+        decw r8
         ; load t.0{r0}, [t.ptrToSpace3{r10}]
         lde  r0, @rr10
         incw r10
         lde  r1, @rr10
+        decw r10
         ; call printIntLf@i16[t.0{r0}]
         call printIntLf_Pi16
         ; restore clobbered non-volatile registers

@@ -87,6 +87,7 @@ main:
         lde  @rr10, r8
         incw r10
         lde  @rr10, r9
+        decw r10
         ; end initialize global variables
         ; addrof a.text1{r8}, text
         ld   r8, #hi(var_0)
@@ -95,6 +96,7 @@ main:
         lde  r0, @rr8
         incw r8
         lde  r1, @rr8
+        decw r8
         ; call printString@@u8[t.text1{r0}]
         call printString_P_Pu8
         ; call printLength[]
@@ -109,6 +111,7 @@ main:
         lde  r12, @rr10
         incw r10
         lde  r13, @rr10
+        decw r10
         ; move second{r0}, t.text2{r12}
         ld   r0, r12
         ld   r1, r13
@@ -124,6 +127,7 @@ main:
         lde  r10, @rr8
         incw r8
         lde  r11, @rr8
+        decw r8
         ; load chr{r0}, [t.text3{r10}]
         lde  r0, @rr10
         ; call printIntLf@u8[chr{r0}]
@@ -154,6 +158,7 @@ printLength:
         lde  r10, @rr8
         incw r8
         lde  r11, @rr8
+        decw r8
         ; move ptr{r8}, t.text{r10}
         ld   r8, r10
         ld   r9, r11

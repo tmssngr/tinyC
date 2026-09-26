@@ -36,6 +36,8 @@ initRandom_Pi32:
         lde  @rr4, r2
         incw r4
         lde  @rr4, r3
+        add  r5, #3
+        adc  r4, #0
         ret
 
         ; i32 random
@@ -56,6 +58,8 @@ random:
         lde  r8, @rr4
         incw r4
         lde  r9, @rr4
+        add  r5, #3
+        adc  r4, #0
         ; move r{r4}, t.__random__{r6}
         ld   r4, r6
         ld   r5, r7
@@ -441,6 +445,8 @@ random:
         lde  @rr4, r10
         incw r4
         lde  @rr4, r11
+        add  r5, #3
+        adc  r4, #0
         ; 15:9 return __random__
         ; addrof a.__random__2{r4}, __random__
         ld   r4, #hi(var_0)
@@ -453,6 +459,8 @@ random:
         lde  r2, @rr4
         incw r4
         lde  r3, @rr4
+        add  r5, #3
+        adc  r4, #0
         ; restore clobbered non-volatile registers
         pop  r11
         pop  r10
@@ -711,6 +719,7 @@ for__4__body:
         lde  @rr14, r4
         incw r14
         lde  @rr14, r5
+        decw r14
         ; const dc{r4}, -1
         ld   r4, #%ff
         ld   r5, #%ff
@@ -724,6 +733,7 @@ for__4__body:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; move dc{r1}, dc{r4}
         ld   r1, r4
         ld   r2, r5
@@ -742,6 +752,7 @@ for__5__body:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
+        decw r14
         ; move c{r2}, param.column{r10}
         ld   r2, r10
         ld   r3, r11
@@ -757,6 +768,7 @@ for__5__body:
         lde  @rr14, r4
         incw r14
         lde  @rr14, r5
+        decw r14
         ; 50:4 if checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=50:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=50:27]])
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
@@ -767,6 +779,7 @@ for__5__body:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
@@ -776,6 +789,7 @@ for__5__body:
         lde  @rr14, r2
         incw r14
         lde  @rr14, r3
+        decw r14
         ; call t.8{r0} = checkCellBounds@i16@i16[r{r0}, c{r2}] -> bool
         call checkCellBounds_Pi16_Pi16
         ; branch t.8{r0} equals 0: for_5_continue, if_6_then
@@ -790,6 +804,7 @@ for__5__body:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
+        decw r14
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
@@ -799,6 +814,7 @@ for__5__body:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
@@ -808,6 +824,7 @@ for__5__body:
         lde  r2, @rr14
         incw r14
         lde  r3, @rr14
+        decw r14
         ; call cell{r0} = getCell@i16@i16[r{r0}, c{r2}] -> u8
         call getCell_Pi16_Pi16
         ; 52:5 if isBomb@u8([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=52:16]])
@@ -828,6 +845,7 @@ for__5__continue:
         lde  r1, @rr14
         incw r14
         lde  r2, @rr14
+        decw r14
         ; add dc{r1}, dc{r1}, 1
         add  r2, #%01
         adc  r1, #%00
@@ -848,6 +866,7 @@ for__5:
         lde  r1, @rr14
         incw r14
         lde  r2, @rr14
+        decw r14
         ; add dr{r1}, dr{r1}, 1
         add  r2, #%01
         adc  r1, #%00
@@ -1523,6 +1542,7 @@ for__27__body:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; call t.8{r0} = random[] -> i32
         call random
         ; move t.7{r2}, t.8{r0}
@@ -1544,6 +1564,7 @@ for__27__body:
         lde  @rr14, r2
         incw r14
         lde  @rr14, r3
+        decw r14
         ; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
         ; addrof memVarAddr{r14}, row
         ld   r14, SPH
@@ -1554,6 +1575,7 @@ for__27__body:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
+        decw r14
         ; move t.10{r2}, row{r0}
         ld   r3, r1
         ld   r2, r0
@@ -1566,6 +1588,7 @@ for__27__body:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; sub t.10{r2}, t.10{r2}, param.curr_r{r8}
         sub  r3, r9
         sbc  r2, r8
@@ -1590,6 +1613,7 @@ for__27__body:
         lde  r2, @rr14
         incw r14
         lde  r3, @rr14
+        decw r14
         ; move t.12{r0}, column{r2}
         ld   r0, r2
         ld   r1, r3
@@ -1602,6 +1626,7 @@ for__27__body:
         lde  @rr14, r2
         incw r14
         lde  @rr14, r3
+        decw r14
         ; sub t.12{r0}, t.12{r0}, param.curr_c{r10}
         sub  r1, r11
         sbc  r0, r10
@@ -1624,6 +1649,7 @@ if__28__then:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
+        decw r14
         ; addrof memVarAddr{r14}, column
         ld   r14, SPH
         ld   r15, SPL
@@ -1633,6 +1659,7 @@ if__28__then:
         lde  r2, @rr14
         incw r14
         lde  r3, @rr14
+        decw r14
         ; const arg.4.2{r4}, 1
         ld   r4, #%01
         ; call setCell@i16@i16@u8[row{r0}, column{r2}, arg.4.2{r4}]
@@ -1732,6 +1759,7 @@ for__31__body:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; move dc{r0}, dc{r4}
         ld   r0, r4
         ld   r1, r5
@@ -1750,6 +1778,7 @@ for__32__body:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
+        decw r14
         ; branch dr{r12} notequals 0: if_33_end, and_34
         cp   r13, #%00
         jr   ne, if__33__end
@@ -1769,6 +1798,7 @@ for__32__body:
         lde  @rr14, r4
         incw r14
         lde  @rr14, r5
+        decw r14
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
@@ -1778,6 +1808,7 @@ for__32__body:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         jr   for__32__continue
 
 if__33__end:
@@ -1796,6 +1827,7 @@ if__33__end:
         lde  @rr14, r4
         incw r14
         lde  @rr14, r5
+        decw r14
         ; 198:4 if !checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=198:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=198:28]])
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
@@ -1806,6 +1838,7 @@ if__33__end:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
@@ -1815,6 +1848,7 @@ if__33__end:
         lde  @rr14, r2
         incw r14
         lde  @rr14, r3
+        decw r14
         ; call t.8{r0} = checkCellBounds@i16@i16[r{r0}, c{r2}] -> bool
         call checkCellBounds_Pi16_Pi16
         ; branch t.8{r0} equals 0: for_32_continue, if_35_end
@@ -1829,6 +1863,7 @@ if__33__end:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
+        decw r14
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
@@ -1838,6 +1873,7 @@ if__33__end:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
@@ -1847,6 +1883,7 @@ if__33__end:
         lde  r2, @rr14
         incw r14
         lde  r3, @rr14
+        decw r14
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
@@ -1856,6 +1893,7 @@ if__33__end:
         lde  @rr14, r2
         incw r14
         lde  @rr14, r3
+        decw r14
         ; call cell{r0} = getCell@i16@i16[r{r0}, c{r2}] -> u8
         call getCell_Pi16_Pi16
         ; 203:4 if isOpen@u8([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=203:15]])
@@ -1891,6 +1929,7 @@ if__33__end:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
+        decw r14
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
@@ -1900,6 +1939,7 @@ if__33__end:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
@@ -1909,6 +1949,7 @@ if__33__end:
         lde  r2, @rr14
         incw r14
         lde  r3, @rr14
+        decw r14
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
@@ -1918,6 +1959,7 @@ if__33__end:
         lde  @rr14, r2
         incw r14
         lde  @rr14, r3
+        decw r14
         ; call setCell@i16@i16@u8[r{r0}, c{r2}, t.10{r4}]
         call setCell_Pi16_Pi16_Pu8
         ; addrof memVarAddr{r14}, r
@@ -1929,6 +1971,7 @@ if__33__end:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
+        decw r14
         ; addrof memVarAddr{r14}, r
         ld   r14, SPH
         ld   r15, SPL
@@ -1938,6 +1981,7 @@ if__33__end:
         lde  @rr14, r0
         incw r14
         lde  @rr14, r1
+        decw r14
         ; addrof memVarAddr{r14}, c
         ld   r14, SPH
         ld   r15, SPL
@@ -1947,6 +1991,7 @@ if__33__end:
         lde  r2, @rr14
         incw r14
         lde  r3, @rr14
+        decw r14
         ; call maybeRevealAround@i16@i16[r{r0}, c{r2}]
         call maybeRevealAround_Pi16_Pi16
 for__32__continue:
@@ -1959,6 +2004,7 @@ for__32__continue:
         lde  r0, @rr14
         incw r14
         lde  r1, @rr14
+        decw r14
         ; add dc{r0}, dc{r0}, 1
         incw r0
 for__32:
@@ -2023,6 +2069,8 @@ main:
         lde  @rr12, r10
         incw r12
         lde  @rr12, r11
+        add  r13, #3
+        adc  r12, #0
         ; end initialize global variables
         ; const arg.0.0{r0}, 7439742
         ld   r0, #%00

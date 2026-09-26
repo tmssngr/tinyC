@@ -709,6 +709,8 @@ final class Z8AsmWriter extends AsmWriter {
 			getRegisterName(addrReg, buffer);
 			writeIndented(buffer.toString());
 		}
+		// just to be sure (we don't know whether it is reused later)
+		decAddrReg(addrReg, byteCount);
 	}
 
 	@Override
@@ -729,6 +731,8 @@ final class Z8AsmWriter extends AsmWriter {
 			getRegisterName(valueReg, buffer);
 			writeIndented(buffer.toString());
 		}
+		// just to be sure (we don't know whether it is reused later)
+		decAddrReg(addrReg, byteCount);
 	}
 
 	@Override
@@ -1165,6 +1169,21 @@ final class Z8AsmWriter extends AsmWriter {
 			writeIndented("ld   SPH, %30");
 		}
 		writeIndented("ret");
+	}
+
+	private void decAddrReg(int addrReg, int byteCount) throws IOException {
+		int amountToDec = byteCount - 1;
+		if (amountToDec > 0) {
+			if (amountToDec > 2) {
+				writeIndented("add  " + regName(addrReg + 1) + ", #" + amountToDec);
+				writeIndented("adc  " + regName(addrReg) + ", #0");
+			}
+			else {
+				while (amountToDec-- > 0) {
+					writeIndented("decw " + regName(addrReg));
+				}
+			}
+		}
 	}
 
 	private void getRegisterName(int reg, StringBuilder buffer) {
