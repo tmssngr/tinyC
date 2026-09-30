@@ -28,7 +28,6 @@ public final class IRNonLocalVarLoweringConverterLayer extends IRConverterAbstra
 	public void process(@NotNull IRInstruction instruction) {
 		switch (instruction) {
 		case IRAddrOf addr -> target(addr.target(), target -> new IRAddrOf(target, addr.source(), addr.location()));
-		case IRAddrOfArray addr -> target(addr.addr(), target -> new IRAddrOfArray(target, addr.array(), addr.location()));
 		case IRBinary binary -> {
 			final IRVar left = source(binary.left());
 			final IRValue right = binary.right();

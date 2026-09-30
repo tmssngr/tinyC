@@ -28,7 +28,7 @@ printUint@i64:
 	var 9: t.9 (i64/8)
 	var 10: t.10 (u8/1)
 	var 11: t.11 (u8/1)
-	; 95 pc
+	; 99 pc
 	const pos, 20
 	; 28:2 while true
 while_1:
@@ -40,13 +40,13 @@ while_1:
 	move digit, t.5
 	add digit, digit, 48
 	cast t.7(i64), pos(u8)
-	addrof t.6, [buffer]
+	addrof t.6, buffer
 	add t.6, t.6, t.7
 	store [t.6], digit
 	; 34:3 if number == 0
 	branch number notequals 0: while_1, while_1_break
 	cast t.9(i64), pos(u8)
-	addrof t.8, [buffer]
+	addrof t.8, buffer
 	add t.8, t.8, t.9
 	const t.11, 20
 	move t.10, t.11

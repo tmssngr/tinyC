@@ -168,7 +168,7 @@ _while_1:
         movzx rbx, bl
         lea rax, [rsp+48]
         mov [rax], rbx
-        ; addrof t.6, [buffer]
+        ; addrof t.6, buffer
         lea rax, [rsp+0]
         lea rbx, [rsp+40]
         mov [rbx], rax
@@ -198,7 +198,7 @@ _while_1:
         movzx rbx, bl
         lea rax, [rsp+64]
         mov [rax], rbx
-        ; addrof t.8, [buffer]
+        ; addrof t.8, buffer
         lea rax, [rsp+0]
         lea rbx, [rsp+56]
         mov [rbx], rax
@@ -618,7 +618,7 @@ _getCell@i16@i16:
         movsx rbx, bx
         lea rax, [rsp+16]
         mov [rax], rbx
-        ; addrof t.3, [field]
+        ; addrof t.3, field
         lea rax, [var_1]
         lea rbx, [rsp+8]
         mov [rbx], rax
@@ -839,7 +839,7 @@ _setCell@i16@i16@u8:
         movsx rbx, bx
         lea rax, [rsp+8]
         mov [rax], rbx
-        ; addrof t.3, [field]
+        ; addrof t.3, field
         lea rax, [var_1]
         lea rbx, [rsp+0]
         mov [rbx], rax
