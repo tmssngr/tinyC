@@ -51,7 +51,6 @@ public class RemoveNotLiveResults {
 	private void simplify(IRInstruction instruction, Set<IRVar> live) {
 		switch (instruction) {
 		case IRAddrOf i -> addIfIsLive(i.target(), i, live);
-		case IRAddrOfArray i -> addIfIsLive(i.addr(), i, live);
 		case IRBinary i -> addIfIsLive(i.target(), i, live);
 		case IRBranch i -> add(i);
 		case IRCall i -> {

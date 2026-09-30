@@ -25,7 +25,6 @@ public final class VarUseTracker {
 	private void process(@NotNull IRInstruction instruction) {
 		switch (instruction) {
 		case IRAddrOf addrOf -> readWrite(addrOf.target(), List.of(addrOf.source()));
-		case IRAddrOfArray addrOf -> readWrite(addrOf.addr(), List.of(addrOf.array()));
 		case IRBinary binary -> {
 			final IRValue right = binary.right();
 			final IRVar rightVar = right.var();

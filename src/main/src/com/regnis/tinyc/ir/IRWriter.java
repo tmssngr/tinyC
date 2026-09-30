@@ -149,10 +149,6 @@ public final class IRWriter extends TextWriter {
 				sum += getInstructionTime(i.target());
 				sum++;
 			}
-			case IRAddrOfArray i -> {
-				sum += getInstructionTime(i.addr());
-				sum++;
-			}
 			case IRBinary i -> {
 				sum += getInstructionTime(i.left());
 				final IRValue right = i.right();

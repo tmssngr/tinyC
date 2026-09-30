@@ -437,7 +437,7 @@ public final class IRGenerator {
 				final IRVar var = varAccessToVar(access);
 				if (access.varIsArray()) {
 					final IRVar tmp = createTempVar(expression.typeNotNull());
-					write(new IRAddrOfArray(tmp, var, access.location()));
+					write(new IRAddrOf(tmp, var, access.location()));
 					yield tmp;
 				}
 				yield var;
@@ -585,7 +585,7 @@ public final class IRGenerator {
 
 		final ExprVarAccess varAccess = access.varAccess();
 		if (varAccess.varIsArray()) {
-			write(new IRAddrOfArray(var, varAccessToVar(varAccess), location));
+			write(new IRAddrOf(var, varAccessToVar(varAccess), location));
 		}
 		else {
 			write(new IRMove(var, varAccessToVar(varAccess), location));
