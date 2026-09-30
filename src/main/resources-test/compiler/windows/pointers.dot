@@ -40,7 +40,7 @@ digraph program {
 		BasicBlock_4_printStringLength_A_Au8_Au8__ret [label="printStringLength_A_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_5_main [label="main\lconst a, 10\lcall printIntLf_Ai16[a]\laddrof b, a\lload t_d4, [b]\lmove c, t_d4\lsub c, 1\lcall printIntLf_Ai16[c]\laddrof d, c\lload t_d6, [d]\lmove t_d5, t_d6\lsub t_d5, 1\lstore [d], t_d5\lcall printIntLf_Ai16[c]\ljump main__ret",shape=box];
+		BasicBlock_5_main [label="main\lconst t_da, 10\laddrof a_da, a\lstore [a_da], t_da\laddrof a_da1, a\lload t_da1, [a_da1]\lcall printIntLf_Ai16[t_da1]\laddrof b, a\lload t_d4, [b]\lmove t_dc, t_d4\lsub t_dc, 1\laddrof a_dc, c\lstore [a_dc], t_dc\laddrof a_dc1, c\lload t_dc1, [a_dc1]\lcall printIntLf_Ai16[t_dc1]\laddrof d, c\lload t_d6, [d]\lmove t_d5, t_d6\lsub t_d5, 1\lstore [d], t_d5\laddrof a_dc2, c\lload t_dc2, [a_dc2]\lcall printIntLf_Ai16[t_dc2]\ljump main__ret",shape=box];
 		BasicBlock_5_main -> BasicBlock_5_main__ret;
 		BasicBlock_5_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}

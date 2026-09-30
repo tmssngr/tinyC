@@ -62,12 +62,12 @@ digraph program {
 		BasicBlock_7_printStringLength_A_Au8_Au8__ret [label="printStringLength_A_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_8_main [label="main\lconst text, [string-0]\lcall printString_A_Au8[text]\lcall printLength[]\lconst t_d2, 1\lmove second, text\ladd second, t_d2\lcall printString_A_Au8[second]\lload chr, [text]\lcall printIntLf_Au8[chr]\ljump main__ret",shape=box];
+		BasicBlock_8_main [label="main\lconst t_dtext, [string-0]\laddrof a_dtext, text\lstore [a_dtext], t_dtext\laddrof a_dtext1, text\lload t_dtext1, [a_dtext1]\lcall printString_A_Au8[t_dtext1]\lcall printLength[]\lconst t_d2, 1\laddrof a_dtext2, text\lload t_dtext2, [a_dtext2]\lmove second, t_dtext2\ladd second, t_d2\lcall printString_A_Au8[second]\laddrof a_dtext3, text\lload t_dtext3, [a_dtext3]\lload chr, [t_dtext3]\lcall printIntLf_Au8[chr]\ljump main__ret",shape=box];
 		BasicBlock_8_main -> BasicBlock_8_main__ret;
 		BasicBlock_8_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printLength {
-		BasicBlock_9_printLength [label="printLength\lconst length, 0\lmove ptr, text\ljump for__5",shape=box];
+		BasicBlock_9_printLength [label="printLength\lconst length, 0\laddrof a_dtext, text\lload t_dtext, [a_dtext]\lmove ptr, t_dtext\ljump for__5",shape=box];
 		BasicBlock_9_printLength -> BasicBlock_9_for__5 [label="(length,ptr)"];
 		BasicBlock_9_for__5__body [label="for__5__body\ladd length, 1\ladd ptr, 1\ljump for__5",shape=box];
 		BasicBlock_9_for__5__body -> BasicBlock_9_for__5 [label="(length,ptr)"];

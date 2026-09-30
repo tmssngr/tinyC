@@ -18,12 +18,12 @@ digraph program {
 		BasicBlock_1_strlen_A_Au8__ret [label="strlen_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_next {
-		BasicBlock_2_next [label="next\lmove copy, global\ladd global, 1\lret copy\ljump next__ret",shape=box];
+		BasicBlock_2_next [label="next\laddrof a_dglobal, global\lload t_dglobal, [a_dglobal]\lmove copy, t_dglobal\laddrof a_dglobal1, global\lload t_dglobal1, [a_dglobal1]\lmove t_dglobal2, t_dglobal1\ladd t_dglobal2, 1\laddrof a_dglobal2, global\lstore [a_dglobal2], t_dglobal2\lret copy\ljump next__ret",shape=box];
 		BasicBlock_2_next -> BasicBlock_2_next__ret;
 		BasicBlock_2_next__ret [label="next__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_3_main [label="main\lconst global, 0\ljump while__2",shape=box];
+		BasicBlock_3_main [label="main\lconst t_dglobal, 0\laddrof a_dglobal, global\lstore [a_dglobal], t_dglobal\ljump while__2",shape=box];
 		BasicBlock_3_main -> BasicBlock_3_while__2;
 		BasicBlock_3_if__3__end [label="if__3__end\lbranch n gteq 2: main_dno__critical__edge__5, if__4__then\ljump if__4__then",shape=box];
 		BasicBlock_3_if__3__end -> BasicBlock_3_main_dno__critical__edge__5;

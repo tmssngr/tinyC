@@ -40,12 +40,12 @@ digraph program {
 		BasicBlock_4_printStringLength_A_Au8_Au8__ret [label="printStringLength_A_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_5_main [label="main\lconst i, 0\lcall t_d0 = next[] -> u8\lcall t_d1 = next[] -> u8\lcall t_d2 = next[] -> u8\lcall t_d3 = next[] -> u8\lcall t_d4 = next[] -> u8\lcall doPrint_Au8_Au8_Au8_Au8_Au8[t_d0, t_d1, t_d2, t_d3, t_d4]\ljump main__ret",shape=box];
+		BasicBlock_5_main [label="main\lconst t_di, 0\laddrof a_di, i\lstore [a_di], t_di\lcall t_d0 = next[] -> u8\lcall t_d1 = next[] -> u8\lcall t_d2 = next[] -> u8\lcall t_d3 = next[] -> u8\lcall t_d4 = next[] -> u8\lcall doPrint_Au8_Au8_Au8_Au8_Au8[t_d0, t_d1, t_d2, t_d3, t_d4]\ljump main__ret",shape=box];
 		BasicBlock_5_main -> BasicBlock_5_main__ret;
 		BasicBlock_5_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_next {
-		BasicBlock_6_next [label="next\ladd i, 1\lret i\ljump next__ret",shape=box];
+		BasicBlock_6_next [label="next\laddrof a_di, i\lload t_di, [a_di]\lmove t_di1, t_di\ladd t_di1, 1\laddrof a_di1, i\lstore [a_di1], t_di1\laddrof a_di2, i\lload t_di2, [a_di2]\lret t_di2\ljump next__ret",shape=box];
 		BasicBlock_6_next -> BasicBlock_6_next__ret;
 		BasicBlock_6_next__ret [label="next__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
