@@ -28,7 +28,6 @@ public abstract class IRVarReplacer {
 	public IRInstruction replaceFor(@NotNull IRInstruction instruction) {
 		return switch (instruction) {
 			case IRAddrOf addrOf -> new IRAddrOf(replace(addrOf.target()), replace(addrOf.source()), addrOf.location());
-			case IRAddrOfArray addrOf -> new IRAddrOfArray(replace(addrOf.addr()), replace(addrOf.array()), addrOf.location());
 			case IRBinary binary -> new IRBinary(replace(binary.target()), binary.op(), replace(binary.left()), replace(binary.right()), binary.location());
 			case IRBranch branch -> new IRBranch(branch.op(), replace(branch.left()), replace(branch.right()), branch.target(), branch.nextLabel(), branch.location());
 			case IRCall call -> {

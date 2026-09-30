@@ -36,7 +36,7 @@ printUint@i64:
 	var 9: t.9 (i64/8)
 	var 10: t.10 (u8/1)
 	var 11: t.11 (u8/1)
-	; 95 pc
+	; 99 pc
 	const pos, 20
 	; 28:2 while true
 while_1:
@@ -48,13 +48,13 @@ while_1:
 	move digit, t.5
 	add digit, 48
 	cast t.7(i64), pos(u8)
-	addrof t.6, [buffer]
+	addrof t.6, buffer
 	add t.6, t.7
 	store [t.6], digit
 	; 34:3 if number == 0
 	branch number notequals 0: while_1, while_1_break
 	cast t.9(i64), pos(u8)
-	addrof t.8, [buffer]
+	addrof t.8, buffer
 	add t.8, t.9
 	const t.11, 20
 	move t.10, t.11
@@ -159,11 +159,11 @@ getCell@i16@i16:
 	var 3: t.3 (u8*/8)
 	var 4: t.4 (i64/8)
 	var 5: t.5 (i16/2)
-	; 31 pc
+	; 33 pc
 	; 20:15 return [...]
 	call t.5 = rowColumnToCell@i16@i16[row, column] -> i16
 	cast t.4(i64), t.5(i16)
-	addrof t.3, [field]
+	addrof t.3, field
 	add t.3, t.4
 	load t.2, [t.3]
 	ret t.2
@@ -234,10 +234,10 @@ setCell@i16@i16@u8:
 	var 3: t.3 (u8*/8)
 	var 4: t.4 (i64/8)
 	var 5: t.5 (i16/2)
-	; 28 pc
+	; 30 pc
 	call t.5 = rowColumnToCell@i16@i16[row, column] -> i16
 	cast t.4(i64), t.5(i16)
-	addrof t.3, [field]
+	addrof t.3, field
 	add t.3, t.4
 	store [t.3], cell
 

@@ -55,7 +55,7 @@ printBoard:
 	var 2: t.2 (u8*/8)
 	var 3: t.3 (i64/8)
 	var 4: t.4 (u8*/8)
-	; 45 pc
+	; 47 pc
 	call printChar@u8[124]
 	const i, 0
 	; 11:2 for i < 30
@@ -64,7 +64,7 @@ for_2:
 for_2_body:
 	; 12:3 if [...] == 0
 	cast t.3(i64), i(u8)
-	addrof t.2, [board]
+	addrof t.2, board
 	add t.2, t.3
 	load t.1, [t.2]
 	branch t.1 notequals 0: if_3_else, if_3_then
@@ -111,7 +111,7 @@ main:
 	var 25: t.25 (u8/1)
 	var 26: t.26 (u8*/8)
 	var 27: t.27 (i64/8)
-	; 204 pc
+	; 216 pc
 	const i, 0
 	; 23:2 for i < 30
 for_4:
@@ -119,7 +119,7 @@ for_4:
 for_4_body:
 	const t.4, 0
 	cast t.6(i64), i(u8)
-	addrof t.5, [board]
+	addrof t.5, board
 	add t.5, t.6
 	store [t.5], t.4
 for_4_continue:
@@ -128,7 +128,7 @@ for_4_continue:
 for_4_break:
 	const t.7, 1
 	const t.9, 29
-	addrof t.8, [board]
+	addrof t.8, board
 	add t.8, t.9
 	store [t.8], t.7
 	call printBoard[]
@@ -138,12 +138,12 @@ for_5:
 	branch i gteq 28: main_ret, for_5_body
 for_5_body:
 	const t.13, 0
-	addrof t.12, [board]
+	addrof t.12, board
 	add t.12, t.13
 	load t.11, [t.12]
 	shiftleft t.10, t.11, 1
 	const t.16, 1
-	addrof t.15, [board]
+	addrof t.15, board
 	add t.15, t.16
 	load t.14, [t.15]
 	or pattern, t.10, t.14
@@ -156,7 +156,7 @@ for_6_body:
 	and t.17, t.18, 7
 	add t.22, j, 1
 	cast t.21(i64), t.22(u8)
-	addrof t.20, [board]
+	addrof t.20, board
 	add t.20, t.21
 	load t.19, [t.20]
 	or pattern, t.17, t.19
@@ -164,7 +164,7 @@ for_6_body:
 	shiftright t.24, t.25, pattern
 	and t.23, t.24, 1
 	cast t.27(i64), j(u8)
-	addrof t.26, [board]
+	addrof t.26, board
 	add t.26, t.27
 	store [t.26], t.23
 for_6_continue:

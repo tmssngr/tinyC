@@ -16,8 +16,6 @@ abstract class AsmWriter {
 
 	protected abstract void writeAddrOf(IRAddrOf addrOf) throws IOException;
 
-	protected abstract void writeAddrOfArray(IRAddrOfArray addrOf) throws IOException;
-
 	protected abstract void writeBinary(IRBinary binary) throws IOException;
 
 	protected abstract void writeBranch(IRBranch branch) throws IOException;
@@ -78,7 +76,6 @@ abstract class AsmWriter {
 
 		switch (instruction) {
 		case IRAddrOf addrOf -> writeAddrOf(addrOf);
-		case IRAddrOfArray addrOf -> writeAddrOfArray(addrOf);
 		case IRBinary binary -> writeBinary(binary);
 		case IRBranch branch -> writeBranch(branch);
 		case IRCall call -> writeCall(call);

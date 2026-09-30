@@ -18,7 +18,6 @@ public final class IRUtils {
 			defines.accept(addrOf.target());
 			uses.accept(addrOf.source());
 		}
-		case IRAddrOfArray addrOfArray -> defines.accept(addrOfArray.addr());
 		case IRBinary binary -> {
 			defines.accept(binary.target());
 			uses.accept(binary.left());

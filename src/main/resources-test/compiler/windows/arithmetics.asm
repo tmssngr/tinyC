@@ -118,7 +118,7 @@ _while_1:
         movzx rbx, bl
         lea rax, [rsp+48]
         mov [rax], rbx
-        ; addrof t.6, [buffer]
+        ; addrof t.6, buffer
         lea rax, [rsp+0]
         lea rbx, [rsp+40]
         mov [rbx], rax
@@ -148,7 +148,7 @@ _while_1:
         movzx rbx, bl
         lea rax, [rsp+64]
         mov [rax], rbx
-        ; addrof t.8, [buffer]
+        ; addrof t.8, buffer
         lea rax, [rsp+0]
         lea rbx, [rsp+56]
         mov [rbx], rax

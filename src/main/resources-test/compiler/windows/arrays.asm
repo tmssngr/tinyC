@@ -118,7 +118,7 @@ _while_1:
         movzx rbx, bl
         lea rax, [rsp+48]
         mov [rax], rbx
-        ; addrof t.6, [buffer]
+        ; addrof t.6, buffer
         lea rax, [rsp+0]
         lea rbx, [rsp+40]
         mov [rbx], rax
@@ -148,7 +148,7 @@ _while_1:
         movzx rbx, bl
         lea rax, [rsp+64]
         mov [rax], rbx
-        ; addrof t.8, [buffer]
+        ; addrof t.8, buffer
         lea rax, [rsp+0]
         lea rbx, [rsp+56]
         mov [rbx], rax
@@ -303,7 +303,7 @@ _main:
         mov rax, 0
         lea rbx, [rsp+16]
         mov [rbx], rax
-        ; addrof t.2, [chars]
+        ; addrof t.2, chars
         lea rax, [var_0]
         lea rbx, [rsp+8]
         mov [rbx], rax
@@ -325,7 +325,7 @@ _main:
         mov rax, 0
         lea rbx, [rsp+40]
         mov [rbx], rax
-        ; addrof t.6, [chars]
+        ; addrof t.6, chars
         lea rax, [var_0]
         lea rbx, [rsp+32]
         mov [rbx], rax
@@ -358,7 +358,7 @@ _main:
         mov rax, 1
         lea rbx, [rsp+56]
         mov [rbx], rax
-        ; addrof t.8, [chars]
+        ; addrof t.8, chars
         lea rax, [var_0]
         lea rbx, [rsp+48]
         mov [rbx], rax
@@ -380,7 +380,7 @@ _main:
         mov rax, 1
         lea rbx, [rsp+80]
         mov [rbx], rax
-        ; addrof t.12, [chars]
+        ; addrof t.12, chars
         lea rax, [var_0]
         lea rbx, [rsp+72]
         mov [rbx], rax
@@ -413,7 +413,7 @@ _main:
         mov rax, 2
         lea rbx, [rsp+96]
         mov [rbx], rax
-        ; addrof t.14, [chars]
+        ; addrof t.14, chars
         lea rax, [var_0]
         lea rbx, [rsp+88]
         mov [rbx], rax
@@ -435,7 +435,7 @@ _main:
         mov rax, 2
         lea rbx, [rsp+112]
         mov [rbx], rax
-        ; addrof t.16, [chars]
+        ; addrof t.16, chars
         lea rax, [var_0]
         lea rbx, [rsp+104]
         mov [rbx], rax

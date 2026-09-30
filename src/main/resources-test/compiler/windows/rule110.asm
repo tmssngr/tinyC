@@ -173,7 +173,7 @@ _for_2_body:
         movzx rbx, bl
         lea rax, [rsp+16]
         mov [rax], rbx
-        ; addrof t.2, [board]
+        ; addrof t.2, board
         lea rax, [var_0]
         lea rbx, [rsp+8]
         mov [rbx], rax
@@ -284,7 +284,7 @@ _for_4_body:
         movzx rbx, bl
         lea rax, [rsp+16]
         mov [rax], rbx
-        ; addrof t.5, [board]
+        ; addrof t.5, board
         lea rax, [var_0]
         lea rbx, [rsp+8]
         mov [rbx], rax
@@ -322,7 +322,7 @@ _for_4:
         mov rax, 29
         lea rbx, [rsp+40]
         mov [rbx], rax
-        ; addrof t.8, [board]
+        ; addrof t.8, board
         lea rax, [var_0]
         lea rbx, [rsp+32]
         mov [rbx], rax
@@ -355,7 +355,7 @@ _for_5_body:
         mov rax, 0
         lea rbx, [rsp+64]
         mov [rbx], rax
-        ; addrof t.12, [board]
+        ; addrof t.12, board
         lea rax, [var_0]
         lea rbx, [rsp+56]
         mov [rbx], rax
@@ -388,7 +388,7 @@ _for_5_body:
         mov rax, 1
         lea rbx, [rsp+88]
         mov [rbx], rax
-        ; addrof t.15, [board]
+        ; addrof t.15, board
         lea rax, [var_0]
         lea rbx, [rsp+80]
         mov [rbx], rax
@@ -465,7 +465,7 @@ _for_6_body:
         movzx rbx, bl
         lea rax, [rsp+112]
         mov [rax], rbx
-        ; addrof t.20, [board]
+        ; addrof t.20, board
         lea rax, [var_0]
         lea rbx, [rsp+104]
         mov [rbx], rax
@@ -530,7 +530,7 @@ _for_6_body:
         movzx rbx, bl
         lea rax, [rsp+136]
         mov [rax], rbx
-        ; addrof t.26, [board]
+        ; addrof t.26, board
         lea rax, [var_0]
         lea rbx, [rsp+128]
         mov [rbx], rax

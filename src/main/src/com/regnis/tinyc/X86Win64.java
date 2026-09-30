@@ -237,12 +237,6 @@ public final class X86Win64 extends AsmWriter {
 		free(addrReg);
 	}
 
-	protected void writeAddrOfArray(IRAddrOfArray addrOf) throws IOException {
-		final int addrReg = addrOf(addrOf.array());
-		storeVar(addrOf.addr(), addrReg);
-		free(addrReg);
-	}
-
 	protected void writeBinary(IRBinary binary) throws IOException {
 		final boolean signed = binary.left().type() != Type.U8;
 		final IRValue right = binary.right();
