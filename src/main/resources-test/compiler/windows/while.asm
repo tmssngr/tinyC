@@ -90,7 +90,7 @@ _while_1:
         ; store [t.6.2{r5}], digit.1{r0}
         mov [r10], al
         ; 34:3 if number == 0
-        ; branch number.2{r3} notequals 0: while_1, while_1_break
+        ; branch number.2{r3} notequals 0: while_1
         cmp r8, 0
         jne _while_1
         ; cast t.9.1{r0}(i64), pos.3{r6}(u8)
@@ -136,7 +136,7 @@ _printIntLf@i64:
         sub rsp, 32
         ; move number{r6}, number{r1}
         mov rbx, rcx
-        ; branch number{r6} gteq 0: if_3_end, if_3_then
+        ; branch number{r6} gteq 0: if_3_end
         cmp rbx, 0
         jge _if_3_end
         ; const arg.0.0{r1}, 45
@@ -201,7 +201,7 @@ _while_5:
         ; add i.5{r6}, 1
         add bl, 1
         ; 13:3 if i < 5
-        ; branch i.5{r6} lt 5: while_5, main_ret
+        ; branch i.5{r6} lt 5: while_5
         cmp bl, 5
         jb _while_5
         add rsp, 32
