@@ -30,8 +30,8 @@ _printChar@u8:
         lea r12, [rsp+64]
         ; store [memVarAddr{r7}], chr{r1}
         mov [r12], cl
-        ; addrof t.1.1{r1}, chr
-        lea rcx, [rsp+64]
+        ; move t.1.1{r1}, t.1.1{r7}
+        mov rcx, r12
         ; const arg.0.1{r2}, 1
         mov dl, 1
         ; call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
@@ -93,14 +93,14 @@ _while_1:
         ; branch number.2{r3} notequals 0: while_1
         cmp r8, 0
         jne _while_1
-        ; cast t.9.1{r0}(i64), pos.3{r6}(u8)
-        movzx rax, bl
+        ; move t.9.1{r0}, t.9.1{r4}
+        mov rax, r9
         ; addrof t.8.1{r3}, buffer
         lea r8, [rsp+40]
         ; move t.8.2{r1}, t.8.1{r3}
         mov rcx, r8
-        ; add t.8.2{r1}, t.9.1{r0}
-        add rcx, rax
+        ; move t.8.2{r1}, t.8.2{r5}
+        mov rcx, r10
         ; const t.11.1{r0}, 20
         mov al, 20
         ; move t.10.1{r2}, t.11.1{r0}
@@ -204,8 +204,8 @@ _testIf@u8:
         lea rax, [rsp+40]
         ; store [a.4.1{r0}], t.3.1{r6}
         mov [rax], bl
-        ; addrof b_ref.1{r6}, b
-        lea rbx, [rsp+40]
+        ; move b_ref.1{r6}, b_ref.1{r0}
+        mov rbx, rax
         ; 6:2 if a == 0
         ; branch a{r1} notequals 0: if_4_end
         cmp cl, 0
@@ -241,14 +241,12 @@ _main:
         lea rax, [rsp+40]
         ; store [a.5.1{r0}], t.4.1{r6}
         mov [rax], bx
-        ; addrof a.6.1{r6}, a
-        lea rbx, [rsp+40]
+        ; move a.6.1{r6}, a.6.1{r0}
+        mov rbx, rax
         ; load t.7.1{r1}, [a.6.1{r6}]
         mov cx, [rbx]
         ; call printIntLf@i16[t.7.1{r1}]
         call _printIntLf@i16
-        ; addrof b.1{r6}, a
-        lea rbx, [rsp+40]
         ; load t.9.1{r6}, [b.1{r6}]
         mov bx, [rbx]
         ; sub t.8.1{r6}, 1
@@ -257,24 +255,20 @@ _main:
         lea rax, [rsp+42]
         ; store [a.10.1{r0}], t.8.1{r6}
         mov [rax], bx
-        ; addrof a.11.1{r6}, c
-        lea rbx, [rsp+42]
+        ; move a.11.1{r6}, a.11.1{r0}
+        mov rbx, rax
         ; load t.12.1{r1}, [a.11.1{r6}]
         mov cx, [rbx]
         ; call printIntLf@i16[t.12.1{r1}]
         call _printIntLf@i16
-        ; addrof d.1{r6}, c
-        lea rbx, [rsp+42]
         ; load t.14.1{r0}, [d.1{r6}]
         mov ax, [rbx]
         ; sub t.13.1{r0}, 1
         sub ax, 1
         ; store [d.1{r6}], t.13.1{r0}
         mov [rbx], ax
-        ; addrof a.15.1{r6}, c
-        lea rbx, [rsp+42]
-        ; load t.16.1{r1}, [a.15.1{r6}]
-        mov cx, [rbx]
+        ; move t.16.1{r1}, t.16.1{r0}
+        mov cx, ax
         ; call printIntLf@i16[t.16.1{r1}]
         call _printIntLf@i16
         ; const arg.3.0{r1}, 1

@@ -26,8 +26,6 @@ _printString@@u8:
         sub rsp, 32
         ; move str{r6}, str{r1}
         mov rbx, rcx
-        ; move str{r1}, str{r6}
-        mov rcx, rbx
         ; call length.1{r0} = strlen@@u8[str{r1}] -> i64
         call _strlen@@u8
         ; move str{r1}, str{r6}
@@ -53,8 +51,8 @@ _printChar@u8:
         lea r12, [rsp+64]
         ; store [memVarAddr{r7}], chr{r1}
         mov [r12], cl
-        ; addrof t.1.1{r1}, chr
-        lea rcx, [rsp+64]
+        ; move t.1.1{r1}, t.1.1{r7}
+        mov rcx, r12
         ; const arg.0.1{r2}, 1
         mov dl, 1
         ; call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
@@ -116,14 +114,14 @@ _while_1:
         ; branch number.2{r3} notequals 0: while_1
         cmp r8, 0
         jne _while_1
-        ; cast t.9.1{r0}(i64), pos.3{r6}(u8)
-        movzx rax, bl
+        ; move t.9.1{r0}, t.9.1{r4}
+        mov rax, r9
         ; addrof t.8.1{r3}, buffer
         lea r8, [rsp+40]
         ; move t.8.2{r1}, t.8.1{r3}
         mov rcx, r8
-        ; add t.8.2{r1}, t.9.1{r0}
-        add rcx, rax
+        ; move t.8.2{r1}, t.8.2{r5}
+        mov rcx, r10
         ; const t.11.1{r0}, 20
         mov al, 20
         ; move t.10.1{r2}, t.11.1{r0}
@@ -255,8 +253,8 @@ _main:
         ; store [a.3.1{r0}], t.2.1{r6}
         mov [rax], rbx
         ; end initialize global variables
-        ; addrof a.4.1{r6}, text
-        lea rbx, [var_0]
+        ; move a.4.1{r6}, a.4.1{r0}
+        mov rbx, rax
         ; load t.5.1{r1}, [a.4.1{r6}]
         mov rcx, [rbx]
         ; call printString@@u8[t.5.1{r1}]

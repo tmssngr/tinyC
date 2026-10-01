@@ -1,9 +1,8 @@
 printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	; 6 pc
+	; 5 pc
 	move str{r6}, str{r1}
-	move str{r1}, str{r6}
 	call length.1{r0} = strlen@@u8[str{r1}] -> i64
 	move str{r1}, str{r6}
 	move length.1{r2}, length.1{r0}
@@ -12,10 +11,10 @@ printString@@u8:
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 9 pc
+	; 7 pc
 	addrof memVarAddr{r7}, chr
 	store [memVarAddr{r7}], chr{r1}
-	addrof t.1.1{r1}, chr
+	move t.1.1{r1}, t.1.1{r7}
 	const arg.0.1{r2}, 1
 	call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
 
@@ -44,10 +43,10 @@ while_1:
 	store [t.6.2{r5}], digit.1{r0}
 	; 34:3 if number == 0
 	branch number.2{r3} notequals 0: while_1
-	cast t.9.1{r0}(i64), pos.3{r6}(u8)
+	move t.9.1{r0}, t.9.1{r4}
 	addrof t.8.1{r3}, buffer
 	move t.8.2{r1}, t.8.1{r3}
-	add t.8.2{r1}, t.9.1{r0}
+	move t.8.2{r1}, t.8.2{r5}
 	const t.11.1{r0}, 20
 	move t.10.1{r2}, t.11.1{r0}
 	sub t.10.1{r2}, pos.3{r6}
@@ -170,7 +169,7 @@ if_6_end:
 	call printIntLf@bool[t.6.1{r1}]
 
 logicAnd:
-	; 106 pc
+	; 100 pc
 	const t.2.1{r1}, [string-5]
 	call printString@@u8[t.2.1{r1}]
 	const t.1{r6}, 1
@@ -188,7 +187,6 @@ if_7_end:
 	; 24:15 logic and
 	move t.5.1{r0}, f.1{r7}
 	branch t.5.1{r0} equals 0: logicAnd.no_critical_edge_51
-	move t.5.3{r0}, f.1{r7}
 	move t.5.2{r1}, t.5.3{r0}
 	jump and_next_9
 logicAnd.no_critical_edge_51:
@@ -248,7 +246,6 @@ if_16_end:
 	; 30:15 logic and
 	move t.14.1{r0}, t.1{r6}
 	branch t.14.1{r0} equals 0: logicAnd.no_critical_edge_57
-	move t.14.3{r0}, t.1{r6}
 	move t.14.2{r1}, t.14.3{r0}
 	jump and_next_18
 logicAnd.no_critical_edge_57:
@@ -267,9 +264,6 @@ if_19_then:
 if_19_end:
 	; 33:17 logic and
 	move t.18.1{r0}, f.1{r7}
-	branch t.18.1{r0} equals 0: and_next_21
-	move t.18.3{r0}, f.1{r7}
-and_next_21:
 	notlog t.17.1{r1}, t.18.2{r0}
 	call printIntLf@bool[t.17.1{r1}]
 	; 34:2 if !getFalse([]) && getTrue([])
@@ -318,14 +312,11 @@ if_28_then:
 if_28_end:
 	; 39:17 logic and
 	move t.30.1{r7}, t.1{r6}
-	branch t.30.1{r7} notequals 0: and_next_30
-	move t.30.2{r6}, t.30.1{r7}
-and_next_30:
 	notlog t.29.1{r1}, t.30.2{r6}
 	call printIntLf@bool[t.29.1{r1}]
 
 logicOr:
-	; 56 pc
+	; 55 pc
 	const t.2.1{r1}, [string-6]
 	call printString@@u8[t.2.1{r1}]
 	const t.1{r6}, 1
@@ -343,7 +334,6 @@ if_31_end:
 	; 47:15 logic or
 	move t.5.1{r0}, f.1{r7}
 	branch t.5.1{r0} notequals 0: logicOr.no_critical_edge_27
-	move t.5.3{r0}, f.1{r7}
 	move t.5.2{r1}, t.5.3{r0}
 	jump or_next_33
 logicOr.no_critical_edge_27:
@@ -417,7 +407,7 @@ main:
 	var 3: t.1 (bool/1)
 	var 4: f.1 (bool/1)
 	var 5: b1.1 (u8/1)
-	; 269 pc
+	; 198 pc
 	const t.9.1{r1}, [string-7]
 	call printString@@u8[t.9.1{r1}]
 	const a.1{r6}, 0
@@ -443,22 +433,14 @@ main:
 	addrof memVarAddr{r7}, b.1
 	load b.1{r0}, [memVarAddr{r7}]
 	and t.11.1{r1}, b.1{r0}
-	addrof memVarAddr{r7}, b.1
-	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@i16[t.11.1{r1}]
-	addrof memVarAddr{r7}, b.1
 	load b.1{r0}, [memVarAddr{r7}]
 	move t.12.1{r1}, b.1{r0}
-	addrof memVarAddr{r7}, b.1
-	store [memVarAddr{r7}], b.1{r0}
 	and t.12.1{r1}, a.1{r6}
 	call printIntLf@i16[t.12.1{r1}]
-	addrof memVarAddr{r7}, b.1
 	load b.1{r0}, [memVarAddr{r7}]
 	move t.13.1{r1}, b.1{r0}
 	and t.13.1{r1}, b.1{r0}
-	addrof memVarAddr{r7}, b.1
-	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@i16[t.13.1{r1}]
 	const t.14.1{r1}, [string-8]
 	call printString@@u8[t.14.1{r1}]
@@ -466,25 +448,16 @@ main:
 	or t.15.1{r1}, a.1{r6}
 	call printIntLf@i16[t.15.1{r1}]
 	move t.16.1{r1}, a.1{r6}
-	addrof memVarAddr{r7}, b.1
 	load b.1{r0}, [memVarAddr{r7}]
 	or t.16.1{r1}, b.1{r0}
-	addrof memVarAddr{r7}, b.1
-	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@i16[t.16.1{r1}]
-	addrof memVarAddr{r7}, b.1
 	load b.1{r0}, [memVarAddr{r7}]
 	move t.17.1{r1}, b.1{r0}
-	addrof memVarAddr{r7}, b.1
-	store [memVarAddr{r7}], b.1{r0}
 	or t.17.1{r1}, a.1{r6}
 	call printIntLf@i16[t.17.1{r1}]
-	addrof memVarAddr{r7}, b.1
 	load b.1{r0}, [memVarAddr{r7}]
 	move t.18.1{r1}, b.1{r0}
 	or t.18.1{r1}, b.1{r0}
-	addrof memVarAddr{r7}, b.1
-	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@i16[t.18.1{r1}]
 	const t.19.1{r1}, [string-9]
 	call printString@@u8[t.19.1{r1}]
@@ -495,24 +468,17 @@ main:
 	addrof memVarAddr{r7}, c.1
 	load c.1{r0}, [memVarAddr{r7}]
 	xor t.21.1{r1}, c.1{r0}
-	addrof memVarAddr{r7}, c.1
-	store [memVarAddr{r7}], c.1{r0}
 	call printIntLf@i16[t.21.1{r1}]
 	addrof memVarAddr{r7}, b.1
 	load b.1{r0}, [memVarAddr{r7}]
 	move t.22.1{r1}, b.1{r0}
-	addrof memVarAddr{r7}, b.1
-	store [memVarAddr{r7}], b.1{r0}
 	xor t.22.1{r1}, a.1{r6}
 	call printIntLf@i16[t.22.1{r1}]
-	addrof memVarAddr{r7}, b.1
 	load b.1{r6}, [memVarAddr{r7}]
 	move t.23.1{r1}, b.1{r6}
 	addrof memVarAddr{r7}, c.1
 	load c.1{r0}, [memVarAddr{r7}]
 	xor t.23.1{r1}, c.1{r0}
-	addrof memVarAddr{r7}, c.1
-	store [memVarAddr{r7}], c.1{r0}
 	call printIntLf@i16[t.23.1{r1}]
 	call logicNot[]
 	call logicAnd[]
@@ -536,18 +502,12 @@ if_43_end:
 	addrof memVarAddr{r7}, t.1
 	load t.1{r0}, [memVarAddr{r7}]
 	move t.29.1{r2}, t.1{r0}
-	branch t.29.1{r2} notequals 0: and_next_48
-	move t.29.2{r0}, t.29.1{r2}
-and_next_48:
 	notlog t.28.1{r0}, t.29.2{r0}
 	branch t.28.1{r0} notequals 0: main.no_critical_edge_20
 	; 88:30 logic and
 	addrof memVarAddr{r7}, f.1
 	load f.1{r0}, [memVarAddr{r7}]
 	move t.30.1{r2}, f.1{r0}
-	branch t.30.1{r2} notequals 0: and_next_49
-	move t.30.2{r0}, t.30.1{r2}
-and_next_49:
 	notlog t.28.3{r0}, t.30.2{r0}
 	move t.28.2{r1}, t.28.3{r0}
 	jump or_next_47
@@ -575,9 +535,7 @@ or_next_47:
 	load d.1{r3}, [memVarAddr{r7}]
 	lt t.34.3{r2}, c.1{r0}, d.1{r3}
 	addrof memVarAddr{r7}, c.1
-	store [memVarAddr{r7}], c.1{r0}
 	addrof memVarAddr{r7}, d.1
-	store [memVarAddr{r7}], d.1{r3}
 	move t.34.2{r1}, t.34.3{r2}
 	jump or_next_50
 main.no_critical_edge_21:
