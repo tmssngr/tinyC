@@ -30,8 +30,8 @@ _printChar@u8:
         lea r12, [rsp+64]
         ; store [memVarAddr{r7}], chr{r1}
         mov [r12], cl
-        ; addrof t.1{r1}, chr
-        lea rcx, [rsp+64]
+        ; move t.1{r1}, t.1{r7}
+        mov rcx, r12
         ; const arg.0.1{r2}, 1
         mov dl, 1
         ; call printStringLength@@u8@u8[t.1{r1}, arg.0.1{r2}]
@@ -93,12 +93,12 @@ _while_1:
         ; branch number{r6} notequals 0: while_1
         cmp rbx, 0
         jne _while_1
-        ; cast t.9{r6}(i64), pos{r3}(u8)
-        movzx rbx, r8b
+        ; move t.9{r6}, t.9{r4}
+        mov rbx, r9
         ; addrof t.8{r1}, buffer
         lea rcx, [rsp+40]
-        ; add t.8{r1}, t.9{r6}
-        add rcx, rbx
+        ; move t.8{r1}, t.8{r5}
+        mov rcx, r10
         ; const t.11{r6}, 20
         mov bl, 20
         ; move t.10{r2}, t.11{r6}
@@ -187,15 +187,13 @@ _main:
         ; store [t.3{r0}], t.2{r6}
         mov [rax], bl
         ; 10:14 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:10].x
-        ; addrof t.6{r6}, pos
-        lea rbx, [rsp+40]
+        ; move t.6{r6}, t.6{r0}
+        mov rbx, rax
         ; load t.5{r6}, [t.6{r6}]
         mov bl, [rbx]
         ; add t.4{r6}, 1
         add bl, 1
         ; 10:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:2].y
-        ; addrof t.7{r0}, pos
-        lea rax, [rsp+40]
         ; add t.7{r0}, 1
         add rax, 1
         ; store [t.7{r0}], t.4{r6}
@@ -208,8 +206,6 @@ _main:
         ; call printIntLf@u8[t.8{r1}]
         call _printIntLf@u8
         ; 12:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=12:13].y
-        ; addrof t.11{r6}, pos
-        lea rbx, [rsp+40]
         ; add t.11{r6}, 1
         add rbx, 1
         ; load t.10{r1}, [t.11{r6}]

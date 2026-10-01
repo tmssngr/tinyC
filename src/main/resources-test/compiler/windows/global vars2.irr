@@ -1,9 +1,8 @@
 printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	; 6 pc
+	; 5 pc
 	move str{r6}, str{r1}
-	move str{r1}, str{r6}
 	call length{r0} = strlen@@u8[str{r1}] -> i64
 	move str{r1}, str{r6}
 	move length{r2}, length{r0}
@@ -25,11 +24,10 @@ for_1:
 	; 67:9 return length
 
 next:
-	; 16 pc
+	; 12 pc
 	addrof a.1{r1}, global
 	load copy{r0}, [a.1{r1}]
-	addrof a.3{r1}, global
-	load t.4{r1}, [a.3{r1}]
+	move t.4{r1}, t.4{r0}
 	add t.2{r1}, 1
 	addrof a.5{r2}, global
 	store [a.5{r2}], t.2{r1}

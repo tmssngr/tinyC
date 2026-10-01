@@ -1,9 +1,8 @@
 printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	; 6 pc
+	; 5 pc
 	move str{r6}, str{r1}
-	move str{r1}, str{r6}
 	call length{r0} = strlen@@u8[str{r1}] -> i64
 	move str{r1}, str{r6}
 	move length{r2}, length{r0}
@@ -12,10 +11,10 @@ printString@@u8:
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 9 pc
+	; 7 pc
 	addrof memVarAddr{r7}, chr
 	store [memVarAddr{r7}], chr{r1}
-	addrof t.1{r1}, chr
+	move t.1{r1}, t.1{r7}
 	const arg.0.1{r2}, 1
 	call printStringLength@@u8@u8[t.1{r1}, arg.0.1{r2}]
 
@@ -44,9 +43,9 @@ while_1:
 	store [t.6{r5}], digit{r0}
 	; 34:3 if number == 0
 	branch number{r6} notequals 0: while_1
-	cast t.9{r6}(i64), pos{r3}(u8)
+	move t.9{r6}, t.9{r4}
 	addrof t.8{r1}, buffer
-	add t.8{r1}, t.9{r6}
+	move t.8{r1}, t.8{r5}
 	const t.11{r6}, 20
 	move t.10{r2}, t.11{r6}
 	sub t.10{r2}, pos{r3}
@@ -103,7 +102,7 @@ main:
 	var 0: b (i16/2)
 	var 1: c (u8/1)
 	var 2: d (u8/1)
-	; 300 pc
+	; 198 pc
 	const t.4{r1}, [string-0]
 	call printString@@u8[t.4{r1}]
 	const a{r6}, 1
@@ -112,11 +111,8 @@ main:
 	addrof memVarAddr{r7}, b
 	store [memVarAddr{r7}], b{r0}
 	call printIntLf@bool[t.5{r1}]
-	addrof memVarAddr{r7}, b
 	load b{r0}, [memVarAddr{r7}]
 	lt t.6{r1}, b{r0}, a{r6}
-	addrof memVarAddr{r7}, b
-	store [memVarAddr{r7}], b{r0}
 	call printIntLf@bool[t.6{r1}]
 	const t.7{r1}, [string-1]
 	call printString@@u8[t.7{r1}]
@@ -134,23 +130,16 @@ main:
 	load d{r0}, [memVarAddr{r7}]
 	lt t.9{r1}, d{r0}, c{r2}
 	addrof memVarAddr{r7}, c
-	store [memVarAddr{r7}], c{r2}
 	addrof memVarAddr{r7}, d
-	store [memVarAddr{r7}], d{r0}
 	call printIntLf@bool[t.9{r1}]
 	const t.10{r1}, [string-2]
 	call printString@@u8[t.10{r1}]
 	addrof memVarAddr{r7}, b
 	load b{r0}, [memVarAddr{r7}]
 	lteq t.11{r1}, a{r6}, b{r0}
-	addrof memVarAddr{r7}, b
-	store [memVarAddr{r7}], b{r0}
 	call printIntLf@bool[t.11{r1}]
-	addrof memVarAddr{r7}, b
 	load b{r0}, [memVarAddr{r7}]
 	lteq t.12{r1}, b{r0}, a{r6}
-	addrof memVarAddr{r7}, b
-	store [memVarAddr{r7}], b{r0}
 	call printIntLf@bool[t.12{r1}]
 	const t.13{r1}, [string-3]
 	call printString@@u8[t.13{r1}]
@@ -160,9 +149,7 @@ main:
 	load d{r2}, [memVarAddr{r7}]
 	lteq t.14{r1}, c{r0}, d{r2}
 	addrof memVarAddr{r7}, c
-	store [memVarAddr{r7}], c{r0}
 	addrof memVarAddr{r7}, d
-	store [memVarAddr{r7}], d{r2}
 	call printIntLf@bool[t.14{r1}]
 	addrof memVarAddr{r7}, c
 	load c{r2}, [memVarAddr{r7}]
@@ -170,51 +157,32 @@ main:
 	load d{r0}, [memVarAddr{r7}]
 	lteq t.15{r1}, d{r0}, c{r2}
 	addrof memVarAddr{r7}, c
-	store [memVarAddr{r7}], c{r2}
 	addrof memVarAddr{r7}, d
-	store [memVarAddr{r7}], d{r0}
 	call printIntLf@bool[t.15{r1}]
 	const t.16{r1}, [string-4]
 	call printString@@u8[t.16{r1}]
 	addrof memVarAddr{r7}, b
 	load b{r0}, [memVarAddr{r7}]
 	equals t.17{r1}, a{r6}, b{r0}
-	addrof memVarAddr{r7}, b
-	store [memVarAddr{r7}], b{r0}
 	call printIntLf@bool[t.17{r1}]
-	addrof memVarAddr{r7}, b
 	load b{r0}, [memVarAddr{r7}]
 	equals t.18{r1}, b{r0}, a{r6}
-	addrof memVarAddr{r7}, b
-	store [memVarAddr{r7}], b{r0}
 	call printIntLf@bool[t.18{r1}]
 	const t.19{r1}, [string-5]
 	call printString@@u8[t.19{r1}]
-	addrof memVarAddr{r7}, b
 	load b{r0}, [memVarAddr{r7}]
 	notequals t.20{r1}, a{r6}, b{r0}
-	addrof memVarAddr{r7}, b
-	store [memVarAddr{r7}], b{r0}
 	call printIntLf@bool[t.20{r1}]
-	addrof memVarAddr{r7}, b
 	load b{r0}, [memVarAddr{r7}]
 	notequals t.21{r1}, b{r0}, a{r6}
-	addrof memVarAddr{r7}, b
-	store [memVarAddr{r7}], b{r0}
 	call printIntLf@bool[t.21{r1}]
 	const t.22{r1}, [string-6]
 	call printString@@u8[t.22{r1}]
-	addrof memVarAddr{r7}, b
 	load b{r0}, [memVarAddr{r7}]
 	gteq t.23{r1}, a{r6}, b{r0}
-	addrof memVarAddr{r7}, b
-	store [memVarAddr{r7}], b{r0}
 	call printIntLf@bool[t.23{r1}]
-	addrof memVarAddr{r7}, b
 	load b{r0}, [memVarAddr{r7}]
 	gteq t.24{r1}, b{r0}, a{r6}
-	addrof memVarAddr{r7}, b
-	store [memVarAddr{r7}], b{r0}
 	call printIntLf@bool[t.24{r1}]
 	const t.25{r1}, [string-7]
 	call printString@@u8[t.25{r1}]
@@ -224,9 +192,7 @@ main:
 	load d{r2}, [memVarAddr{r7}]
 	gteq t.26{r1}, c{r0}, d{r2}
 	addrof memVarAddr{r7}, c
-	store [memVarAddr{r7}], c{r0}
 	addrof memVarAddr{r7}, d
-	store [memVarAddr{r7}], d{r2}
 	call printIntLf@bool[t.26{r1}]
 	addrof memVarAddr{r7}, c
 	load c{r2}, [memVarAddr{r7}]
@@ -234,19 +200,14 @@ main:
 	load d{r0}, [memVarAddr{r7}]
 	gteq t.27{r1}, d{r0}, c{r2}
 	addrof memVarAddr{r7}, c
-	store [memVarAddr{r7}], c{r2}
 	addrof memVarAddr{r7}, d
-	store [memVarAddr{r7}], d{r0}
 	call printIntLf@bool[t.27{r1}]
 	const t.28{r1}, [string-8]
 	call printString@@u8[t.28{r1}]
 	addrof memVarAddr{r7}, b
 	load b{r0}, [memVarAddr{r7}]
 	gt t.29{r1}, a{r6}, b{r0}
-	addrof memVarAddr{r7}, b
-	store [memVarAddr{r7}], b{r0}
 	call printIntLf@bool[t.29{r1}]
-	addrof memVarAddr{r7}, b
 	load b{r0}, [memVarAddr{r7}]
 	gt t.30{r1}, b{r0}, a{r6}
 	call printIntLf@bool[t.30{r1}]
@@ -257,10 +218,7 @@ main:
 	addrof memVarAddr{r7}, d
 	load d{r0}, [memVarAddr{r7}]
 	gt t.32{r1}, c{r6}, d{r0}
-	addrof memVarAddr{r7}, d
-	store [memVarAddr{r7}], d{r0}
 	call printIntLf@bool[t.32{r1}]
-	addrof memVarAddr{r7}, d
 	load d{r0}, [memVarAddr{r7}]
 	gt t.33{r1}, d{r0}, c{r6}
 	call printIntLf@bool[t.33{r1}]

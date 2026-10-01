@@ -26,8 +26,6 @@ _printString@@u8:
         sub rsp, 32
         ; move str{r6}, str{r1}
         mov rbx, rcx
-        ; move str{r1}, str{r6}
-        mov rcx, rbx
         ; call length{r0} = strlen@@u8[str{r1}] -> i64
         call _strlen@@u8
         ; move str{r1}, str{r6}
@@ -71,10 +69,8 @@ _next:
         lea rcx, [var_0]
         ; load copy{r0}, [a.1{r1}]
         mov al, [rcx]
-        ; addrof a.3{r1}, global
-        lea rcx, [var_0]
-        ; load t.4{r1}, [a.3{r1}]
-        mov cl, [rcx]
+        ; move t.4{r1}, t.4{r0}
+        mov cl, al
         ; add t.2{r1}, 1
         add cl, 1
         ; addrof a.5{r2}, global
