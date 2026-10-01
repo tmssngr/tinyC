@@ -1,0 +1,13 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printIntLf_Au8 {
+		BasicBlock_0_printIntLf_Au8 [label="printIntLf_Au8\ljump printIntLf_Au8__ret",shape=box];
+		BasicBlock_0_printIntLf_Au8 -> BasicBlock_0_printIntLf_Au8__ret;
+		BasicBlock_0_printIntLf_Au8__ret [label="printIntLf_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_1_main [label="main\lconst chr_d1, 32\lconst t_d3_d1, 0\laddrof t_d2_d1, chars\lmove t_d2_d2, t_d2_d1\ladd t_d2_d2, t_d3_d1\lstore [t_d2_d2], chr_d1\lconst t_d7_d1, 0\laddrof t_d6_d1, chars\lmove t_d6_d2, t_d6_d1\ladd t_d6_d2, t_d7_d1\lload t_d5_d1, [t_d6_d2]\lmove t_d4_d1, t_d5_d1\ladd t_d4_d1, 1\lconst t_d9_d1, 1\laddrof t_d8_d1, chars\lmove t_d8_d2, t_d8_d1\ladd t_d8_d2, t_d9_d1\lstore [t_d8_d2], t_d4_d1\lconst t_d13_d1, 1\laddrof t_d12_d1, chars\lmove t_d12_d2, t_d12_d1\ladd t_d12_d2, t_d13_d1\lload t_d11_d1, [t_d12_d2]\lmove t_d10_d1, t_d11_d1\ladd t_d10_d1, 2\lconst t_d15_d1, 2\laddrof t_d14_d1, chars\lmove t_d14_d2, t_d14_d1\ladd t_d14_d2, t_d15_d1\lstore [t_d14_d2], t_d10_d1\lconst t_d17_d1, 2\laddrof t_d16_d1, chars\lmove t_d16_d2, t_d16_d1\ladd t_d16_d2, t_d17_d1\lload result_d1, [t_d16_d2]\lcall printIntLf_Au8[result_d1]\ljump main__ret",shape=box];
+		BasicBlock_1_main -> BasicBlock_1_main__ret;
+		BasicBlock_1_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}
