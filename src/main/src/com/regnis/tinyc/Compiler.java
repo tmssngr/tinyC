@@ -77,6 +77,7 @@ public class Compiler {
 		irProgram = IROptimizer.branchAndLabelOptimizations(irProgram);
 		write(irProgram, irFile);
 
+		final IRLocalOptimizer.PlatformSpecificInstructionBehavior optimizationBehavior = LSArchitecture.WIN_X86_64;
 		final List<IRFunction> functions = new ArrayList<>();
 		try (final BufferedWriter cfgWriter = Files.newBufferedWriter(cfgFile)) {
 			final IRWriter irWriter = new IRWriter(cfgWriter);
@@ -94,7 +95,7 @@ public class Compiler {
 					irWriter.write(cfg, liveness);
 					dotWriter.writeCfg(cfg, liveness);
 					function = LSRegAlloc.process(function, LSArchitecture.WIN_X86_64, Type.I64);
-					final List<IRInstruction> optimizedInstructions = IROptimizer.optimize(function.instructions());
+					final List<IRInstruction> optimizedInstructions = IROptimizer.optimize(function.instructions(), optimizationBehavior);
 					final IRFunction optimizedFunction = CleanupLocalUnusedVariables.optimize(function.derive(optimizedInstructions));
 					functions.add(optimizedFunction);
 				}
