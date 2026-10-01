@@ -13,7 +13,7 @@ strlen@@u8:
 	arg 0: str (u8*/8)
 	; 9 pc
 	const length.1{r2}, 0
-	; 64:2 for *str != 0
+	; 69:2 for *str != 0
 	move length.2{r0}, length.1{r2}
 	jump for_1
 for_1_body:
@@ -24,7 +24,7 @@ for_1_body:
 for_1:
 	load t.2.1{r2}, [str.1{r1}]
 	branch t.2.1{r2} notequals 0: for_1_body
-	; 67:9 return length
+	; 72:9 return length
 
 next:
 	; 12 pc
