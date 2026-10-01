@@ -1,0 +1,40 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printChar_Au8 {
+		BasicBlock_0_printChar_Au8 [label="printChar_Au8\laddrof t_d1, chr\lcall printStringLength_A_Au8_Au8[t_d1, 1]\ljump printChar_Au8__ret",shape=box];
+		BasicBlock_0_printChar_Au8 -> BasicBlock_0_printChar_Au8__ret [label="(chr)"];
+		BasicBlock_0_printChar_Au8__ret [label="printChar_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printUint_Au8 {
+		BasicBlock_1_printUint_Au8 [label="printUint_Au8\lcast t_d1(i64), number(u8)\lcall printUint_Ai64[t_d1]\ljump printUint_Au8__ret",shape=box];
+		BasicBlock_1_printUint_Au8 -> BasicBlock_1_printUint_Au8__ret;
+		BasicBlock_1_printUint_Au8__ret [label="printUint_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printUint_Ai64 {
+		BasicBlock_2_printUint_Ai64 [label="printUint_Ai64\lconst pos, 20\ljump while__1",shape=box];
+		BasicBlock_2_printUint_Ai64 -> BasicBlock_2_while__1 [label="(buffer,number,pos)"];
+		BasicBlock_2_printUint_Ai64_dno__critical__edge__4 [label="printUint_Ai64_dno__critical__edge__4\ljump while__1",shape=box];
+		BasicBlock_2_printUint_Ai64_dno__critical__edge__4 -> BasicBlock_2_while__1 [label="(buffer,number,pos)"];
+		BasicBlock_2_while__1 [label="while__1\lsub pos, 1\lmove remainder, number\lmod remainder, 10\ldiv number, 10\lcast t_d5(u8), remainder(i64)\lmove digit, t_d5\ladd digit, 48\lcast t_d7(i64), pos(u8)\laddrof t_d6, buffer\ladd t_d6, t_d7\lstore [t_d6], digit\lbranch number notequals 0: printUint_Ai64_dno__critical__edge__4, while__1__break\ljump while__1__break",shape=box];
+		BasicBlock_2_while__1 -> BasicBlock_2_printUint_Ai64_dno__critical__edge__4 [label="(buffer,number,pos)"];
+		BasicBlock_2_while__1 -> BasicBlock_2_while__1__break [label="(buffer,pos)"];
+		BasicBlock_2_while__1__break [label="while__1__break\lcast t_d9(i64), pos(u8)\laddrof t_d8, buffer\ladd t_d8, t_d9\lconst t_d11, 20\lmove t_d10, t_d11\lsub t_d10, pos\lcall printStringLength_A_Au8_Au8[t_d8, t_d10]\ljump printUint_Ai64__ret",shape=box];
+		BasicBlock_2_while__1__break -> BasicBlock_2_printUint_Ai64__ret [label="(buffer)"];
+		BasicBlock_2_printUint_Ai64__ret [label="printUint_Ai64__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printStringLength_A_Au8_Au8 {
+		BasicBlock_3_printStringLength_A_Au8_Au8 [label="printStringLength_A_Au8_Au8\lcast t_d2(i64), length(u8)\lcall printStringLength_A_Au8_Ai64[str, t_d2]\ljump printStringLength_A_Au8_Au8__ret",shape=box];
+		BasicBlock_3_printStringLength_A_Au8_Au8 -> BasicBlock_3_printStringLength_A_Au8_Au8__ret;
+		BasicBlock_3_printStringLength_A_Au8_Au8__ret [label="printStringLength_A_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_unusedArgs_Au8_Abool_Au8_Au8 {
+		BasicBlock_4_unusedArgs_Au8_Abool_Au8_Au8 [label="unusedArgs_Au8_Abool_Au8_Au8\lcast t_d4(i64), c(u8)\lret t_d4\ljump unusedArgs_Au8_Abool_Au8_Au8__ret",shape=box];
+		BasicBlock_4_unusedArgs_Au8_Abool_Au8_Au8 -> BasicBlock_4_unusedArgs_Au8_Abool_Au8_Au8__ret;
+		BasicBlock_4_unusedArgs_Au8_Abool_Au8_Au8__ret [label="unusedArgs_Au8_Abool_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_5_main [label="main\lconst t_dzero, 48\laddrof a_dzero, zero\lstore [a_dzero], t_dzero\lconst t_done, 49\laddrof a_done, one\lstore [a_done], t_done\lconst t_dtwo, 50\laddrof a_dtwo, two\lstore [a_dtwo], t_dtwo\lconst t_dthreeFour, 34\laddrof a_dthreeFour, threeFour\lstore [a_dthreeFour], t_dthreeFour\lconst t_d3, 1\lcall __ = unusedArgs_Au8_Abool_Au8_Au8[1, t_d3, 2, 3] -> i64\laddrof a_dzero1, zero\lload t_dzero1, [a_dzero1]\lcall printChar_Au8[t_dzero1]\laddrof onePtr, one\lload t_d4, [onePtr]\lcall printChar_Au8[t_d4]\laddrof twoPtr, two\lconst t_d7, 0\lmove t_d6, twoPtr\ladd t_d6, t_d7\lload t_d5, [t_d6]\lcall printChar_Au8[t_d5]\laddrof a_dthreeFour1, threeFour\lload t_dthreeFour1, [a_dthreeFour1]\lcall printUint_Au8[t_dthreeFour1]\lcall printChar_Au8[10]\ljump main__ret",shape=box];
+		BasicBlock_5_main -> BasicBlock_5_main__ret;
+		BasicBlock_5_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}
