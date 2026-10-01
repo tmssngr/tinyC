@@ -39,7 +39,7 @@ while_1:
 	add t.6.2{r5}, t.7.1{r4}
 	store [t.6.2{r5}], digit.1{r0}
 	; 34:3 if number == 0
-	branch number.2{r3} notequals 0: while_1, while_1_break
+	branch number.2{r3} notequals 0: while_1
 	cast t.9.1{r0}(i64), pos.3{r6}(u8)
 	addrof t.8.1{r3}, buffer
 	move t.8.2{r1}, t.8.1{r3}
