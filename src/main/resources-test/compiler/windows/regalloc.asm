@@ -51,7 +51,7 @@ _registerHint@u8@u8:
         ;   rsp+24: arg b
 _max@u8@u8:
         sub rsp, 8
-        ; branch a{r1} gteq b{r2}: if_1_end, if_1_then
+        ; branch a{r1} gteq b{r2}: if_1_end
         cmp cl, dl
         jae _if_1_end
         ; 14:10 return b
@@ -92,7 +92,7 @@ _while_2_body:
         ; move b.2{r2}, b.3{r3}
         mov dx, r8w
 _while_2:
-        ; branch i.1{r1} gt 0: while_2_body, while_2_break
+        ; branch i.1{r1} gt 0: while_2_body
         cmp cl, 0
         ja _while_2_body
         ; 28:9 return a

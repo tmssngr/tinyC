@@ -88,7 +88,7 @@ _for_1_body:
 _for_1:
         ; load t.2.1{r2}, [str.1{r1}]
         mov dl, [rcx]
-        ; branch t.2.1{r2} notequals 0: for_1_body, for_1_break
+        ; branch t.2.1{r2} notequals 0: for_1_body
         cmp dl, 0
         jne _for_1_body
         ; 67:9 return length
@@ -132,7 +132,7 @@ _for_2_body:
         add rdx, rax
         ; load t.1.1{r0}, [t.2.2{r2}]
         mov al, [rdx]
-        ; branch t.1.1{r0} notequals 0: if_3_else, if_3_then
+        ; branch t.1.1{r0} notequals 0: if_3_else
         cmp al, 0
         jne _if_3_else
         ; const arg.1.0{r1}, 32
@@ -149,7 +149,7 @@ _for_2_continue:
         ; add i.4{r6}, 1
         add bl, 1
 _for_2:
-        ; branch i.2{r6} lt 30: for_2_body, for_2_break
+        ; branch i.2{r6} lt 30: for_2_body
         cmp bl, 30
         jb _for_2_body
         ; const t.4.1{r1}, [string-0]
@@ -184,7 +184,7 @@ _for_4_body:
         ; add i.5{r6}, 1
         add bl, 1
 _for_4:
-        ; branch i.2{r6} lt 30: for_4_body, for_4_break
+        ; branch i.2{r6} lt 30: for_4_body
         cmp bl, 30
         jb _for_4_body
         ; const t.7.1{r6}, 1
@@ -272,7 +272,7 @@ _for_6_body:
         ; move j.2{r2}, j.3{r1}
         mov dl, cl
 _for_6:
-        ; branch j.2{r2} lt 29: for_6_body, for_6_break
+        ; branch j.2{r2} lt 29: for_6_body
         cmp dl, 29
         jb _for_6_body
         ; call printBoard[]
@@ -284,7 +284,7 @@ _for_6:
         ; move i.4{r6}, i.7{r0}
         mov bl, al
 _for_5:
-        ; branch i.4{r6} lt 28: for_5_body, main_ret
+        ; branch i.4{r6} lt 28: for_5_body
         cmp bl, 28
         jb _for_5_body
         add rsp, 32

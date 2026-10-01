@@ -113,7 +113,7 @@ _while_1:
         ; store [t.6.2{r5}], digit.1{r0}
         mov [r10], al
         ; 34:3 if number == 0
-        ; branch number.2{r3} notequals 0: while_1, while_1_break
+        ; branch number.2{r3} notequals 0: while_1
         cmp r8, 0
         jne _while_1
         ; cast t.9.1{r0}(i64), pos.3{r6}(u8)
@@ -185,7 +185,7 @@ _printIntLf@i64:
         sub rsp, 32
         ; move number{r6}, number{r1}
         mov rbx, rcx
-        ; branch number{r6} gteq 0: printIntLf@i64.no_critical_edge_4, if_3_then
+        ; branch number{r6} gteq 0: printIntLf@i64.no_critical_edge_4
         cmp rbx, 0
         jge _printIntLf@i64.no_critical_edge_4
         ; const arg.0.0{r1}, 45
@@ -234,7 +234,7 @@ _for_4_body:
 _for_4:
         ; load t.2.1{r2}, [str.1{r1}]
         mov dl, [rcx]
-        ; branch t.2.1{r2} notequals 0: for_4_body, for_4_break
+        ; branch t.2.1{r2} notequals 0: for_4_body
         cmp dl, 0
         jne _for_4_body
         ; 67:9 return length
@@ -327,7 +327,7 @@ _logicNot:
         ; 13:2 if !getFalse([])
         ; call t.3.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.3.1{r0} notequals 0: if_5_else, if_5_then
+        ; branch t.3.1{r0} notequals 0: if_5_else
         cmp al, 0
         jne _if_5_else
         ; call printPass[]
@@ -345,7 +345,7 @@ _if_5_end:
         ; 15:2 if !getTrue([])
         ; call t.5.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.5.1{r0} notequals 0: if_6_else, if_6_then
+        ; branch t.5.1{r0} notequals 0: if_6_else
         cmp al, 0
         jne _if_6_else
         ; call printError[]
@@ -385,12 +385,12 @@ _logicAnd:
         ; 23:2 if getFalse([]) && getFalse([])
         ; call t.3.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.3.1{r0} equals 0: if_7_else, and_8
+        ; branch t.3.1{r0} equals 0: if_7_else
         cmp al, 0
         je _if_7_else
         ; call t.4.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.4.1{r0} equals 0: if_7_else, if_7_then
+        ; branch t.4.1{r0} equals 0: if_7_else
         cmp al, 0
         je _if_7_else
         ; call printError[]
@@ -403,7 +403,7 @@ _if_7_end:
         ; 24:15 logic and
         ; move t.5.1{r0}, f.1{r7}
         mov al, r12b
-        ; branch t.5.1{r0} equals 0: logicAnd.no_critical_edge_51, and_2nd_9
+        ; branch t.5.1{r0} equals 0: logicAnd.no_critical_edge_51
         cmp al, 0
         je _logicAnd.no_critical_edge_51
         ; move t.5.3{r0}, f.1{r7}
@@ -420,12 +420,12 @@ _and_next_9:
         ; 25:2 if getFalse([]) && getTrue([])
         ; call t.6.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.6.1{r0} equals 0: if_10_else, and_11
+        ; branch t.6.1{r0} equals 0: if_10_else
         cmp al, 0
         je _if_10_else
         ; call t.7.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.7.1{r0} equals 0: if_10_else, if_10_then
+        ; branch t.7.1{r0} equals 0: if_10_else
         cmp al, 0
         je _if_10_else
         ; call printError[]
@@ -438,7 +438,7 @@ _if_10_end:
         ; 26:15 logic and
         ; move t.8.1{r0}, f.1{r7}
         mov al, r12b
-        ; branch t.8.1{r0} equals 0: logicAnd.no_critical_edge_53, and_2nd_12
+        ; branch t.8.1{r0} equals 0: logicAnd.no_critical_edge_53
         cmp al, 0
         je _logicAnd.no_critical_edge_53
         ; move t.8.3{r0}, t.1{r6}
@@ -455,12 +455,12 @@ _and_next_12:
         ; 27:2 if getTrue([]) && getFalse([])
         ; call t.9.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.9.1{r0} equals 0: if_13_else, and_14
+        ; branch t.9.1{r0} equals 0: if_13_else
         cmp al, 0
         je _if_13_else
         ; call t.10.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.10.1{r0} equals 0: if_13_else, if_13_then
+        ; branch t.10.1{r0} equals 0: if_13_else
         cmp al, 0
         je _if_13_else
         ; call printError[]
@@ -473,7 +473,7 @@ _if_13_end:
         ; 28:15 logic and
         ; move t.11.1{r0}, t.1{r6}
         mov al, bl
-        ; branch t.11.1{r0} equals 0: logicAnd.no_critical_edge_55, and_2nd_15
+        ; branch t.11.1{r0} equals 0: logicAnd.no_critical_edge_55
         cmp al, 0
         je _logicAnd.no_critical_edge_55
         ; move t.11.3{r0}, f.1{r7}
@@ -490,12 +490,12 @@ _and_next_15:
         ; 29:2 if getTrue([]) && getTrue([])
         ; call t.12.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.12.1{r0} equals 0: if_16_else, and_17
+        ; branch t.12.1{r0} equals 0: if_16_else
         cmp al, 0
         je _if_16_else
         ; call t.13.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.13.1{r0} equals 0: if_16_else, if_16_then
+        ; branch t.13.1{r0} equals 0: if_16_else
         cmp al, 0
         je _if_16_else
         ; call printPass[]
@@ -508,7 +508,7 @@ _if_16_end:
         ; 30:15 logic and
         ; move t.14.1{r0}, t.1{r6}
         mov al, bl
-        ; branch t.14.1{r0} equals 0: logicAnd.no_critical_edge_57, and_2nd_18
+        ; branch t.14.1{r0} equals 0: logicAnd.no_critical_edge_57
         cmp al, 0
         je _logicAnd.no_critical_edge_57
         ; move t.14.3{r0}, t.1{r6}
@@ -525,12 +525,12 @@ _and_next_18:
         ; 32:2 if !getFalse([]) && getFalse([])
         ; call t.15.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.15.1{r0} equals 0: if_19_then, and_20
+        ; branch t.15.1{r0} equals 0: if_19_then
         cmp al, 0
         je _if_19_then
         ; call t.16.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.16.1{r0} equals 0: if_19_then, if_19_else
+        ; branch t.16.1{r0} equals 0: if_19_then
         cmp al, 0
         je _if_19_then
         ; call printError[]
@@ -543,7 +543,7 @@ _if_19_end:
         ; 33:17 logic and
         ; move t.18.1{r0}, f.1{r7}
         mov al, r12b
-        ; branch t.18.1{r0} equals 0: and_next_21, and_2nd_21
+        ; branch t.18.1{r0} equals 0: and_next_21
         cmp al, 0
         je _and_next_21
         ; move t.18.3{r0}, f.1{r7}
@@ -557,12 +557,12 @@ _and_next_21:
         ; 34:2 if !getFalse([]) && getTrue([])
         ; call t.19.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.19.1{r0} equals 0: if_22_then, and_23
+        ; branch t.19.1{r0} equals 0: if_22_then
         cmp al, 0
         je _if_22_then
         ; call t.20.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.20.1{r0} equals 0: if_22_then, if_22_else
+        ; branch t.20.1{r0} equals 0: if_22_then
         cmp al, 0
         je _if_22_then
         ; call printError[]
@@ -575,7 +575,7 @@ _if_22_end:
         ; 35:17 logic and
         ; move t.22.1{r0}, f.1{r7}
         mov al, r12b
-        ; branch t.22.1{r0} equals 0: and_next_24, and_2nd_24
+        ; branch t.22.1{r0} equals 0: and_next_24
         cmp al, 0
         je _and_next_24
         ; move t.22.3{r0}, t.1{r6}
@@ -589,12 +589,12 @@ _and_next_24:
         ; 36:2 if !getTrue([]) && getFalse([])
         ; call t.23.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.23.1{r0} equals 0: if_25_then, and_26
+        ; branch t.23.1{r0} equals 0: if_25_then
         cmp al, 0
         je _if_25_then
         ; call t.24.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.24.1{r0} equals 0: if_25_then, if_25_else
+        ; branch t.24.1{r0} equals 0: if_25_then
         cmp al, 0
         je _if_25_then
         ; call printError[]
@@ -607,7 +607,7 @@ _if_25_end:
         ; 37:17 logic and
         ; move t.26.1{r0}, t.1{r6}
         mov al, bl
-        ; branch t.26.1{r0} notequals 0: and_next_27, logicAnd.no_critical_edge_63
+        ; branch t.26.1{r0} notequals 0: and_next_27
         cmp al, 0
         jne _and_next_27
         ; move t.26.2{r7}, t.26.1{r0}
@@ -621,12 +621,12 @@ _and_next_27:
         ; 38:2 if !getTrue([]) && getTrue([])
         ; call t.27.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.27.1{r0} equals 0: if_28_then, and_29
+        ; branch t.27.1{r0} equals 0: if_28_then
         cmp al, 0
         je _if_28_then
         ; call t.28.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.28.1{r0} equals 0: if_28_then, if_28_else
+        ; branch t.28.1{r0} equals 0: if_28_then
         cmp al, 0
         je _if_28_then
         ; call printPass[]
@@ -639,7 +639,7 @@ _if_28_end:
         ; 39:17 logic and
         ; move t.30.1{r7}, t.1{r6}
         mov r12b, bl
-        ; branch t.30.1{r7} notequals 0: and_next_30, logicAnd.no_critical_edge_65
+        ; branch t.30.1{r7} notequals 0: and_next_30
         cmp r12b, 0
         jne _and_next_30
         ; move t.30.2{r6}, t.30.1{r7}
@@ -675,12 +675,12 @@ _logicOr:
         ; 46:2 if getFalse([]) || getFalse([])
         ; call t.3.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.3.1{r0} notequals 0: if_31_then, or_32
+        ; branch t.3.1{r0} notequals 0: if_31_then
         cmp al, 0
         jne _if_31_then
         ; call t.4.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.4.1{r0} notequals 0: if_31_then, if_31_else
+        ; branch t.4.1{r0} notequals 0: if_31_then
         cmp al, 0
         jne _if_31_then
         ; call printPass[]
@@ -693,7 +693,7 @@ _if_31_end:
         ; 47:15 logic or
         ; move t.5.1{r0}, f.1{r7}
         mov al, r12b
-        ; branch t.5.1{r0} notequals 0: logicOr.no_critical_edge_27, or_2nd_33
+        ; branch t.5.1{r0} notequals 0: logicOr.no_critical_edge_27
         cmp al, 0
         jne _logicOr.no_critical_edge_27
         ; move t.5.3{r0}, f.1{r7}
@@ -710,12 +710,12 @@ _or_next_33:
         ; 48:2 if getFalse([]) || getTrue([])
         ; call t.6.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.6.1{r0} notequals 0: if_34_then, or_35
+        ; branch t.6.1{r0} notequals 0: if_34_then
         cmp al, 0
         jne _if_34_then
         ; call t.7.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.7.1{r0} notequals 0: if_34_then, if_34_else
+        ; branch t.7.1{r0} notequals 0: if_34_then
         cmp al, 0
         jne _if_34_then
         ; call printError[]
@@ -728,7 +728,7 @@ _if_34_end:
         ; 49:15 logic or
         ; move t.8.1{r0}, f.1{r7}
         mov al, r12b
-        ; branch t.8.1{r0} notequals 0: logicOr.no_critical_edge_29, or_2nd_36
+        ; branch t.8.1{r0} notequals 0: logicOr.no_critical_edge_29
         cmp al, 0
         jne _logicOr.no_critical_edge_29
         ; move t.8.3{r0}, t.1{r6}
@@ -745,12 +745,12 @@ _or_next_36:
         ; 50:2 if getTrue([]) || getFalse([])
         ; call t.9.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.9.1{r0} notequals 0: if_37_then, or_38
+        ; branch t.9.1{r0} notequals 0: if_37_then
         cmp al, 0
         jne _if_37_then
         ; call t.10.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.10.1{r0} notequals 0: if_37_then, if_37_else
+        ; branch t.10.1{r0} notequals 0: if_37_then
         cmp al, 0
         jne _if_37_then
         ; call printError[]
@@ -763,7 +763,7 @@ _if_37_end:
         ; 51:15 logic or
         ; move t.11.1{r0}, t.1{r6}
         mov al, bl
-        ; branch t.11.1{r0} notequals 0: logicOr.no_critical_edge_31, or_2nd_39
+        ; branch t.11.1{r0} notequals 0: logicOr.no_critical_edge_31
         cmp al, 0
         jne _logicOr.no_critical_edge_31
         ; move t.11.2{r1}, t.11.3{r7}
@@ -778,12 +778,12 @@ _or_next_39:
         ; 52:2 if getTrue([]) || getTrue([])
         ; call t.12.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.12.1{r0} notequals 0: if_40_then, or_41
+        ; branch t.12.1{r0} notequals 0: if_40_then
         cmp al, 0
         jne _if_40_then
         ; call t.13.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.13.1{r0} notequals 0: if_40_then, if_40_else
+        ; branch t.13.1{r0} notequals 0: if_40_then
         cmp al, 0
         jne _if_40_then
         ; call printError[]
@@ -796,7 +796,7 @@ _if_40_end:
         ; 53:15 logic or
         ; move t.14.1{r7}, t.1{r6}
         mov r12b, bl
-        ; branch t.14.1{r7} notequals 0: logicOr.no_critical_edge_33, or_2nd_42
+        ; branch t.14.1{r7} notequals 0: logicOr.no_critical_edge_33
         cmp r12b, 0
         jne _logicOr.no_critical_edge_33
         ; move t.14.2{r1}, t.14.3{r6}
@@ -1029,22 +1029,22 @@ _main:
         ; 82:2 if !getTrue([]) && getTrue([]) || !getFalse([]) && getFalse([])
         ; call t.24.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.24.1{r0} equals 0: if_43_then, and_45
+        ; branch t.24.1{r0} equals 0: if_43_then
         cmp al, 0
         je _if_43_then
         ; call t.25.1{r0} = getTrue[] -> bool
         call _getTrue
-        ; branch t.25.1{r0} equals 0: if_43_then, or_44
+        ; branch t.25.1{r0} equals 0: if_43_then
         cmp al, 0
         je _if_43_then
         ; call t.26.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.26.1{r0} equals 0: if_43_then, and_46
+        ; branch t.26.1{r0} equals 0: if_43_then
         cmp al, 0
         je _if_43_then
         ; call t.27.1{r0} = getFalse[] -> bool
         call _getFalse
-        ; branch t.27.1{r0} equals 0: if_43_then, if_43_else
+        ; branch t.27.1{r0} equals 0: if_43_then
         cmp al, 0
         je _if_43_then
         ; call printError[]
@@ -1062,7 +1062,7 @@ _if_43_end:
         mov al, [r12]
         ; move t.29.1{r2}, t.1{r0}
         mov dl, al
-        ; branch t.29.1{r2} notequals 0: and_next_48, main.no_critical_edge_19
+        ; branch t.29.1{r2} notequals 0: and_next_48
         cmp dl, 0
         jne _and_next_48
         ; move t.29.2{r0}, t.29.1{r2}
@@ -1071,7 +1071,7 @@ _and_next_48:
         ; notlog t.28.1{r0}, t.29.2{r0}
         or al, al
         sete al
-        ; branch t.28.1{r0} notequals 0: main.no_critical_edge_20, or_2nd_47
+        ; branch t.28.1{r0} notequals 0: main.no_critical_edge_20
         cmp al, 0
         jne _main.no_critical_edge_20
         ; 88:30 logic and
@@ -1081,7 +1081,7 @@ _and_next_48:
         mov al, [r12]
         ; move t.30.1{r2}, f.1{r0}
         mov dl, al
-        ; branch t.30.1{r2} notequals 0: and_next_49, main.no_critical_edge_23
+        ; branch t.30.1{r2} notequals 0: and_next_49
         cmp dl, 0
         jne _and_next_49
         ; move t.30.2{r0}, t.30.1{r2}
@@ -1129,7 +1129,7 @@ _or_next_47:
         ; equals t.34.1{r2}, b.1{r6}, c.1{r0}
         cmp bx, ax
         sete dl
-        ; branch t.34.1{r2} notequals 0: main.no_critical_edge_21, or_2nd_50
+        ; branch t.34.1{r2} notequals 0: main.no_critical_edge_21
         cmp dl, 0
         jne _main.no_critical_edge_21
         ; addrof memVarAddr{r7}, d.1
@@ -1168,7 +1168,7 @@ _or_next_50:
         ; equals t.35.1{r2}, b.1{r6}, c.1{r0}
         cmp bx, ax
         sete dl
-        ; branch t.35.1{r2} equals 0: main.no_critical_edge_22, and_2nd_51
+        ; branch t.35.1{r2} equals 0: main.no_critical_edge_22
         cmp dl, 0
         je _main.no_critical_edge_22
         ; addrof memVarAddr{r7}, d.1
