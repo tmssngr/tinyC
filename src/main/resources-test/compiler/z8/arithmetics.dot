@@ -1,0 +1,25 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printUint_Ai16 {
+		BasicBlock_0_printUint_Ai16 [label="printUint_Ai16\lcast t_d1(i32), number(i16)\lcall printUint_Ai32[t_d1]\ljump printUint_Ai16__ret",shape=box];
+		BasicBlock_0_printUint_Ai16 -> BasicBlock_0_printUint_Ai16__ret;
+		BasicBlock_0_printUint_Ai16__ret [label="printUint_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf_Ai16 {
+		BasicBlock_1_printIntLf_Ai16 [label="printIntLf_Ai16\lbranch number gteq 0: printIntLf_Ai16_dno__critical__edge__4, if__1__then\ljump if__1__then",shape=box];
+		BasicBlock_1_printIntLf_Ai16 -> BasicBlock_1_printIntLf_Ai16_dno__critical__edge__4 [label="(number)"];
+		BasicBlock_1_printIntLf_Ai16 -> BasicBlock_1_if__1__then [label="(number)"];
+		BasicBlock_1_printIntLf_Ai16_dno__critical__edge__4 [label="printIntLf_Ai16_dno__critical__edge__4\ljump if__1__end",shape=box];
+		BasicBlock_1_printIntLf_Ai16_dno__critical__edge__4 -> BasicBlock_1_if__1__end [label="(number)"];
+		BasicBlock_1_if__1__then [label="if__1__then\lcall printChar_Au8[45]\lneg number, number\ljump if__1__end",shape=box];
+		BasicBlock_1_if__1__then -> BasicBlock_1_if__1__end [label="(number)"];
+		BasicBlock_1_if__1__end [label="if__1__end\lcall printUint_Ai16[number]\lcall printChar_Au8[13]\ljump printIntLf_Ai16__ret",shape=box];
+		BasicBlock_1_if__1__end -> BasicBlock_1_printIntLf_Ai16__ret;
+		BasicBlock_1_printIntLf_Ai16__ret [label="printIntLf_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_2_main [label="main\lconst foo, 22\lmove bar, foo\lmul bar, foo\lconst foo, 1\lmove t_d5, bar\ladd t_d5, foo\lcall printIntLf_Ai16[t_d5]\lconst foo, 21\lcall printIntLf_Ai16[foo]\lconst bazz, 0\lcall printIntLf_Ai16[bazz]\lconst a, 1000\lconst b, 10\lmove t_d6, a\ldiv t_d6, b\lcall printIntLf_Ai16[t_d6]\lmove t_d7, a\land t_d7, 255\lcall printIntLf_Ai16[t_d7]\lconst a, 10\lconst b, 1\lmove t_d8, a\lshiftright t_d8, b\lcall printIntLf_Ai16[t_d8]\lconst a, 9\lconst b, 2\lmove t_d9, a\lshiftright t_d9, b\lcall printIntLf_Ai16[t_d9]\lconst a, 1\lmove t_d10, a\lshiftleft t_d10, b\lcall printIntLf_Ai16[t_d10]\ljump main__ret",shape=box];
+		BasicBlock_2_main -> BasicBlock_2_main__ret;
+		BasicBlock_2_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}
