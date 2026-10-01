@@ -1,0 +1,8 @@
+void main() {
+	u8 i;
+
+	i = 0;
+	while (true) {
+		i = i + 1;
+	}
+}

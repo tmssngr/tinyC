@@ -87,7 +87,7 @@ _printUint@i64:
         sub rsp, 32
         ; const pos.1{r6}, 20
         mov bl, 20
-        ; 28:2 while true
+        ; 33:2 while true
         ; move number.1{r3}, number{r1}
         mov r8, rcx
 _while_1:
@@ -123,7 +123,7 @@ _while_1:
         add r10, r9
         ; store [t.6.2{r5}], digit.1{r0}
         mov [r10], al
-        ; 34:3 if number == 0
+        ; 39:3 if number == 0
         ; branch number.2{r3} notequals 0: while_1
         cmp r8, 0
         jne _while_1
@@ -155,7 +155,7 @@ _strlen@@u8:
         sub rsp, 8
         ; const length.1{r2}, 0
         mov rdx, 0
-        ; 64:2 for *str != 0
+        ; 69:2 for *str != 0
         ; move length.2{r0}, length.1{r2}
         mov rax, rdx
         jmp _for_3
@@ -174,7 +174,7 @@ _for_3:
         ; branch t.2.1{r2} notequals 0: for_3_body
         cmp dl, 0
         jne _for_3_body
-        ; 67:9 return length
+        ; 72:9 return length
         add rsp, 8
         ret
 
