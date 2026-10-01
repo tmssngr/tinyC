@@ -1,0 +1,13 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printIntLf_Au8 {
+		BasicBlock_0_printIntLf_Au8 [label="printIntLf_Au8\ljump printIntLf_Au8__ret",shape=box];
+		BasicBlock_0_printIntLf_Au8 -> BasicBlock_0_printIntLf_Au8__ret;
+		BasicBlock_0_printIntLf_Au8__ret [label="printIntLf_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_1_main [label="main\lconst t_d2_d1, 1\laddrof t_d3_d1, pos\lstore [t_d3_d1], t_d2_d1\laddrof t_d6_d1, pos\lload t_d5_d1, [t_d6_d1]\lmove t_d4_d1, t_d5_d1\ladd t_d4_d1, 1\laddrof t_d7_d1, pos\lmove t_d7_d2, t_d7_d1\ladd t_d7_d2, 1\lstore [t_d7_d2], t_d4_d1\laddrof t_d9_d1, pos\lload t_d8_d1, [t_d9_d1]\lcall printIntLf_Au8[t_d8_d1]\laddrof t_d11_d1, pos\lmove t_d11_d2, t_d11_d1\ladd t_d11_d2, 1\lload t_d10_d1, [t_d11_d2]\lcall printIntLf_Au8[t_d10_d1]\laddrof x_d1, pos\lload t_d12_d1, [x_d1]\lcall printIntLf_Au8[t_d12_d1]\ljump main__ret",shape=box];
+		BasicBlock_1_main -> BasicBlock_1_main__ret [label="(pos)"];
+		BasicBlock_1_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

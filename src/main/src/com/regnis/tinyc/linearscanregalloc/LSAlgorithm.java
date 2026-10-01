@@ -391,6 +391,10 @@ final class LSAlgorithm {
 	private void setRegister(LSInterval current, int reg) {
 		Utils.assertTrue(reg >= 0);
 
+		if (isOnlyEvenRegisters(current.var())) {
+			Utils.assertTrue((reg & 1) == 0);
+		}
+
 		logger.log(current.getName() + ": assigned r" + reg);
 		current.setRegister(reg);
 		active.add(current);
