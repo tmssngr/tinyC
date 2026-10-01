@@ -1,0 +1,13 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printIntLf_Abool {
+		BasicBlock_0_printIntLf_Abool [label="printIntLf_Abool\ljump printIntLf_Abool__ret",shape=box];
+		BasicBlock_0_printIntLf_Abool -> BasicBlock_0_printIntLf_Abool__ret;
+		BasicBlock_0_printIntLf_Abool__ret [label="printIntLf_Abool__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_1_main [label="main\lconst t_d4, [string-0]\lcall printString_A_Au8[t_d4]\lconst a, 1\lconst b, 2\llt t_d5, a, b\lcall printIntLf_Abool[t_d5]\llt t_d6, b, a\lcall printIntLf_Abool[t_d6]\lconst t_d7, [string-1]\lcall printString_A_Au8[t_d7]\lconst c, 0\lconst d, 128\llt t_d8, c, d\lcall printIntLf_Abool[t_d8]\llt t_d9, d, c\lcall printIntLf_Abool[t_d9]\lconst t_d10, [string-2]\lcall printString_A_Au8[t_d10]\llteq t_d11, a, b\lcall printIntLf_Abool[t_d11]\llteq t_d12, b, a\lcall printIntLf_Abool[t_d12]\lconst t_d13, [string-3]\lcall printString_A_Au8[t_d13]\llteq t_d14, c, d\lcall printIntLf_Abool[t_d14]\llteq t_d15, d, c\lcall printIntLf_Abool[t_d15]\lconst t_d16, [string-4]\lcall printString_A_Au8[t_d16]\lequals t_d17, a, b\lcall printIntLf_Abool[t_d17]\lequals t_d18, b, a\lcall printIntLf_Abool[t_d18]\lconst t_d19, [string-5]\lcall printString_A_Au8[t_d19]\lnotequals t_d20, a, b\lcall printIntLf_Abool[t_d20]\lnotequals t_d21, b, a\lcall printIntLf_Abool[t_d21]\lconst t_d22, [string-6]\lcall printString_A_Au8[t_d22]\lgteq t_d23, a, b\lcall printIntLf_Abool[t_d23]\lgteq t_d24, b, a\lcall printIntLf_Abool[t_d24]\lconst t_d25, [string-7]\lcall printString_A_Au8[t_d25]\lgteq t_d26, c, d\lcall printIntLf_Abool[t_d26]\lgteq t_d27, d, c\lcall printIntLf_Abool[t_d27]\lconst t_d28, [string-8]\lcall printString_A_Au8[t_d28]\lgt t_d29, a, b\lcall printIntLf_Abool[t_d29]\lgt t_d30, b, a\lcall printIntLf_Abool[t_d30]\lconst t_d31, [string-9]\lcall printString_A_Au8[t_d31]\lgt t_d32, c, d\lcall printIntLf_Abool[t_d32]\lgt t_d33, d, c\lcall printIntLf_Abool[t_d33]\ljump main__ret",shape=box];
+		BasicBlock_1_main -> BasicBlock_1_main__ret;
+		BasicBlock_1_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

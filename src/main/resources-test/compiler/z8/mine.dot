@@ -1,0 +1,413 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printUint_Ai16 {
+		BasicBlock_0_printUint_Ai16 [label="printUint_Ai16\lcast t_d1(i32), number(i16)\lcall printUint_Ai32[t_d1]\ljump printUint_Ai16__ret",shape=box];
+		BasicBlock_0_printUint_Ai16 -> BasicBlock_0_printUint_Ai16__ret;
+		BasicBlock_0_printUint_Ai16__ret [label="printUint_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_initRandom_Ai32 {
+		BasicBlock_1_initRandom_Ai32 [label="initRandom_Ai32\lmove t_d1, salt\laddrof a_d2, ____random____\lstore [a_d2], t_d1\ljump initRandom_Ai32__ret",shape=box];
+		BasicBlock_1_initRandom_Ai32 -> BasicBlock_1_initRandom_Ai32__ret;
+		BasicBlock_1_initRandom_Ai32__ret [label="initRandom_Ai32__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_random {
+		BasicBlock_2_random [label="random\laddrof a_d5, ____random____\lload r, [a_d5]\lmove t_d6, r\land t_d6, 524287\lmove b, t_d6\lmul b, 48271\lmove t_d7, r\lshiftright t_d7, 15\lmove c, t_d7\lmul c, 48271\lmove t_d8, c\land t_d8, 65535\lmove d, t_d8\lshiftleft d, 15\lmove t_d10, c\lshiftright t_d10, 16\lmove t_d9, t_d10\ladd t_d9, b\lmove e, t_d9\ladd e, d\lmove t_d12, e\land t_d12, 2147483647\lmove t_d13, e\lshiftright t_d13, 31\lmove t_d11, t_d12\ladd t_d11, t_d13\laddrof a_d14, ____random____\lstore [a_d14], t_d11\laddrof a_d15, ____random____\lload t_d16, [a_d15]\lret t_d16\ljump random__ret",shape=box];
+		BasicBlock_2_random -> BasicBlock_2_random__ret;
+		BasicBlock_2_random__ret [label="random__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_rowColumnToCell_Ai16_Ai16 {
+		BasicBlock_3_rowColumnToCell_Ai16_Ai16 [label="rowColumnToCell_Ai16_Ai16\lmove t_d3, row\lmul t_d3, 40\lmove t_d2, t_d3\ladd t_d2, column\lret t_d2\ljump rowColumnToCell_Ai16_Ai16__ret",shape=box];
+		BasicBlock_3_rowColumnToCell_Ai16_Ai16 -> BasicBlock_3_rowColumnToCell_Ai16_Ai16__ret;
+		BasicBlock_3_rowColumnToCell_Ai16_Ai16__ret [label="rowColumnToCell_Ai16_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_getCell_Ai16_Ai16 {
+		BasicBlock_4_getCell_Ai16_Ai16 [label="getCell_Ai16_Ai16\lcall t_d4 = rowColumnToCell_Ai16_Ai16[row, column] -> i16\laddrof t_d3, field\ladd t_d3, t_d4\lload t_d2, [t_d3]\lret t_d2\ljump getCell_Ai16_Ai16__ret",shape=box];
+		BasicBlock_4_getCell_Ai16_Ai16 -> BasicBlock_4_getCell_Ai16_Ai16__ret;
+		BasicBlock_4_getCell_Ai16_Ai16__ret [label="getCell_Ai16_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_isBomb_Au8 {
+		BasicBlock_5_isBomb_Au8 [label="isBomb_Au8\lmove t_d2, cell\land t_d2, 1\lnotequals t_d1, t_d2, 0\lret t_d1\ljump isBomb_Au8__ret",shape=box];
+		BasicBlock_5_isBomb_Au8 -> BasicBlock_5_isBomb_Au8__ret;
+		BasicBlock_5_isBomb_Au8__ret [label="isBomb_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_isOpen_Au8 {
+		BasicBlock_6_isOpen_Au8 [label="isOpen_Au8\lmove t_d2, cell\land t_d2, 2\lnotequals t_d1, t_d2, 0\lret t_d1\ljump isOpen_Au8__ret",shape=box];
+		BasicBlock_6_isOpen_Au8 -> BasicBlock_6_isOpen_Au8__ret;
+		BasicBlock_6_isOpen_Au8__ret [label="isOpen_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_isFlag_Au8 {
+		BasicBlock_7_isFlag_Au8 [label="isFlag_Au8\lmove t_d2, cell\land t_d2, 4\lnotequals t_d1, t_d2, 0\lret t_d1\ljump isFlag_Au8__ret",shape=box];
+		BasicBlock_7_isFlag_Au8 -> BasicBlock_7_isFlag_Au8__ret;
+		BasicBlock_7_isFlag_Au8__ret [label="isFlag_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_checkCellBounds_Ai16_Ai16 {
+		BasicBlock_8_checkCellBounds_Ai16_Ai16 [label="checkCellBounds_Ai16_Ai16\lgteq t_d2, row, 0\lbranch t_d2 equals 0: checkCellBounds_Ai16_Ai16_dno__critical__edge__8, and__2nd__3\ljump and__2nd__3",shape=box];
+		BasicBlock_8_checkCellBounds_Ai16_Ai16 -> BasicBlock_8_checkCellBounds_Ai16_Ai16_dno__critical__edge__8 [label="(column,t.2)"];
+		BasicBlock_8_checkCellBounds_Ai16_Ai16 -> BasicBlock_8_and__2nd__3 [label="(column,row)"];
+		BasicBlock_8_checkCellBounds_Ai16_Ai16_dno__critical__edge__8 [label="checkCellBounds_Ai16_Ai16_dno__critical__edge__8\ljump and__next__3",shape=box];
+		BasicBlock_8_checkCellBounds_Ai16_Ai16_dno__critical__edge__8 -> BasicBlock_8_and__next__3 [label="(column,t.2)"];
+		BasicBlock_8_and__2nd__3 [label="and__2nd__3\llt t_d2, row, 20\ljump and__next__3",shape=box];
+		BasicBlock_8_and__2nd__3 -> BasicBlock_8_and__next__3 [label="(column,t.2)"];
+		BasicBlock_8_and__next__3 [label="and__next__3\lbranch t_d2 equals 0: checkCellBounds_Ai16_Ai16_dno__critical__edge__9, and__2nd__2\ljump and__2nd__2",shape=box];
+		BasicBlock_8_and__next__3 -> BasicBlock_8_checkCellBounds_Ai16_Ai16_dno__critical__edge__9 [label="(column,t.2)"];
+		BasicBlock_8_and__next__3 -> BasicBlock_8_and__2nd__2 [label="(column)"];
+		BasicBlock_8_checkCellBounds_Ai16_Ai16_dno__critical__edge__9 [label="checkCellBounds_Ai16_Ai16_dno__critical__edge__9\ljump and__next__2",shape=box];
+		BasicBlock_8_checkCellBounds_Ai16_Ai16_dno__critical__edge__9 -> BasicBlock_8_and__next__2 [label="(column,t.2)"];
+		BasicBlock_8_and__2nd__2 [label="and__2nd__2\lgteq t_d2, column, 0\ljump and__next__2",shape=box];
+		BasicBlock_8_and__2nd__2 -> BasicBlock_8_and__next__2 [label="(column,t.2)"];
+		BasicBlock_8_and__next__2 [label="and__next__2\lbranch t_d2 equals 0: checkCellBounds_Ai16_Ai16_dno__critical__edge__10, and__2nd__1\ljump and__2nd__1",shape=box];
+		BasicBlock_8_and__next__2 -> BasicBlock_8_checkCellBounds_Ai16_Ai16_dno__critical__edge__10 [label="(t.2)"];
+		BasicBlock_8_and__next__2 -> BasicBlock_8_and__2nd__1 [label="(column)"];
+		BasicBlock_8_checkCellBounds_Ai16_Ai16_dno__critical__edge__10 [label="checkCellBounds_Ai16_Ai16_dno__critical__edge__10\ljump and__next__1",shape=box];
+		BasicBlock_8_checkCellBounds_Ai16_Ai16_dno__critical__edge__10 -> BasicBlock_8_and__next__1 [label="(t.2)"];
+		BasicBlock_8_and__2nd__1 [label="and__2nd__1\llt t_d2, column, 40\ljump and__next__1",shape=box];
+		BasicBlock_8_and__2nd__1 -> BasicBlock_8_and__next__1 [label="(t.2)"];
+		BasicBlock_8_and__next__1 [label="and__next__1\lret t_d2\ljump checkCellBounds_Ai16_Ai16__ret",shape=box];
+		BasicBlock_8_and__next__1 -> BasicBlock_8_checkCellBounds_Ai16_Ai16__ret;
+		BasicBlock_8_checkCellBounds_Ai16_Ai16__ret [label="checkCellBounds_Ai16_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_setCell_Ai16_Ai16_Au8 {
+		BasicBlock_9_setCell_Ai16_Ai16_Au8 [label="setCell_Ai16_Ai16_Au8\lcall t_d4 = rowColumnToCell_Ai16_Ai16[row, column] -> i16\laddrof t_d3, field\ladd t_d3, t_d4\lstore [t_d3], cell\ljump setCell_Ai16_Ai16_Au8__ret",shape=box];
+		BasicBlock_9_setCell_Ai16_Ai16_Au8 -> BasicBlock_9_setCell_Ai16_Ai16_Au8__ret;
+		BasicBlock_9_setCell_Ai16_Ai16_Au8__ret [label="setCell_Ai16_Ai16_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_getBombCountAround_Ai16_Ai16 {
+		BasicBlock_10_getBombCountAround_Ai16_Ai16 [label="getBombCountAround_Ai16_Ai16\lconst count, 0\lconst dr, -1\ljump for__4",shape=box];
+		BasicBlock_10_getBombCountAround_Ai16_Ai16 -> BasicBlock_10_for__4 [label="(column,count,dr,row)"];
+		BasicBlock_10_for__4__body [label="for__4__body\lmove r, row\ladd r, dr\lconst dc, -1\ljump for__5",shape=box];
+		BasicBlock_10_for__4__body -> BasicBlock_10_for__5 [label="(column,count,dc,dr,r,row)"];
+		BasicBlock_10_for__5__body [label="for__5__body\lmove c, column\ladd c, dc\lcall t_d8 = checkCellBounds_Ai16_Ai16[r, c] -> bool\lbranch t_d8 equals 0: getBombCountAround_Ai16_Ai16_dno__critical__edge__11, if__6__then\ljump if__6__then",shape=box];
+		BasicBlock_10_for__5__body -> BasicBlock_10_getBombCountAround_Ai16_Ai16_dno__critical__edge__11 [label="(column,count,dc,dr,r,row)"];
+		BasicBlock_10_for__5__body -> BasicBlock_10_if__6__then [label="(c,column,count,dc,dr,r,row)"];
+		BasicBlock_10_getBombCountAround_Ai16_Ai16_dno__critical__edge__11 [label="getBombCountAround_Ai16_Ai16_dno__critical__edge__11\ljump for__5__continue",shape=box];
+		BasicBlock_10_getBombCountAround_Ai16_Ai16_dno__critical__edge__11 -> BasicBlock_10_for__5__continue [label="(column,count,dc,dr,r,row)"];
+		BasicBlock_10_if__6__then [label="if__6__then\lcall cell = getCell_Ai16_Ai16[r, c] -> u8\lcall t_d9 = isBomb_Au8[cell] -> bool\lbranch t_d9 equals 0: getBombCountAround_Ai16_Ai16_dno__critical__edge__12, if__7__then\ljump if__7__then",shape=box];
+		BasicBlock_10_if__6__then -> BasicBlock_10_getBombCountAround_Ai16_Ai16_dno__critical__edge__12 [label="(column,count,dc,dr,r,row)"];
+		BasicBlock_10_if__6__then -> BasicBlock_10_if__7__then [label="(column,count,dc,dr,r,row)"];
+		BasicBlock_10_getBombCountAround_Ai16_Ai16_dno__critical__edge__12 [label="getBombCountAround_Ai16_Ai16_dno__critical__edge__12\ljump for__5__continue",shape=box];
+		BasicBlock_10_getBombCountAround_Ai16_Ai16_dno__critical__edge__12 -> BasicBlock_10_for__5__continue [label="(column,count,dc,dr,r,row)"];
+		BasicBlock_10_if__7__then [label="if__7__then\ladd count, 1\ljump for__5__continue",shape=box];
+		BasicBlock_10_if__7__then -> BasicBlock_10_for__5__continue [label="(column,count,dc,dr,r,row)"];
+		BasicBlock_10_for__5__continue [label="for__5__continue\ladd dc, 1\ljump for__5",shape=box];
+		BasicBlock_10_for__5__continue -> BasicBlock_10_for__5 [label="(column,count,dc,dr,r,row)"];
+		BasicBlock_10_for__5 [label="for__5\lbranch dc gt 1: for__4__continue, for__5__body\ljump for__5__body",shape=box];
+		BasicBlock_10_for__5 -> BasicBlock_10_for__4__continue [label="(column,count,dr,row)"];
+		BasicBlock_10_for__5 -> BasicBlock_10_for__5__body [label="(column,count,dc,dr,r,row)"];
+		BasicBlock_10_for__4__continue [label="for__4__continue\ladd dr, 1\ljump for__4",shape=box];
+		BasicBlock_10_for__4__continue -> BasicBlock_10_for__4 [label="(column,count,dr,row)"];
+		BasicBlock_10_for__4 [label="for__4\lbranch dr gt 1: for__4__break, for__4__body\ljump for__4__body",shape=box];
+		BasicBlock_10_for__4 -> BasicBlock_10_for__4__break [label="(count)"];
+		BasicBlock_10_for__4 -> BasicBlock_10_for__4__body [label="(column,count,dr,row)"];
+		BasicBlock_10_for__4__break [label="for__4__break\lret count\ljump getBombCountAround_Ai16_Ai16__ret",shape=box];
+		BasicBlock_10_for__4__break -> BasicBlock_10_getBombCountAround_Ai16_Ai16__ret;
+		BasicBlock_10_getBombCountAround_Ai16_Ai16__ret [label="getBombCountAround_Ai16_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_getSpacer_Ai16_Ai16_Ai16_Ai16 {
+		BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16 [label="getSpacer_Ai16_Ai16_Ai16_Ai16\lbranch rowCursor notequals row: getSpacer_Ai16_Ai16_Ai16_Ai16_dno__critical__edge__7, if__8__then\ljump if__8__then",shape=box];
+		BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16 -> BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16_dno__critical__edge__7;
+		BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16 -> BasicBlock_11_if__8__then [label="(column,columnCursor)"];
+		BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16_dno__critical__edge__7 [label="getSpacer_Ai16_Ai16_Ai16_Ai16_dno__critical__edge__7\ljump if__8__end",shape=box];
+		BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16_dno__critical__edge__7 -> BasicBlock_11_if__8__end;
+		BasicBlock_11_if__8__then [label="if__8__then\lbranch columnCursor notequals column: if__9__end, if__9__then\ljump if__9__then",shape=box];
+		BasicBlock_11_if__8__then -> BasicBlock_11_if__9__end [label="(column,columnCursor)"];
+		BasicBlock_11_if__8__then -> BasicBlock_11_if__9__then;
+		BasicBlock_11_if__9__end [label="if__9__end\lmove t_d4, column\lsub t_d4, 1\lbranch columnCursor notequals t_d4: getSpacer_Ai16_Ai16_Ai16_Ai16_dno__critical__edge__8, if__10__then\ljump if__10__then",shape=box];
+		BasicBlock_11_if__9__end -> BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16_dno__critical__edge__8;
+		BasicBlock_11_if__9__end -> BasicBlock_11_if__10__then;
+		BasicBlock_11_if__9__then [label="if__9__then\lret 91\ljump getSpacer_Ai16_Ai16_Ai16_Ai16__ret",shape=box];
+		BasicBlock_11_if__9__then -> BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16__ret;
+		BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16_dno__critical__edge__8 [label="getSpacer_Ai16_Ai16_Ai16_Ai16_dno__critical__edge__8\ljump if__8__end",shape=box];
+		BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16_dno__critical__edge__8 -> BasicBlock_11_if__8__end;
+		BasicBlock_11_if__10__then [label="if__10__then\lret 93\ljump getSpacer_Ai16_Ai16_Ai16_Ai16__ret",shape=box];
+		BasicBlock_11_if__10__then -> BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16__ret;
+		BasicBlock_11_if__8__end [label="if__8__end\lret 32\ljump getSpacer_Ai16_Ai16_Ai16_Ai16__ret",shape=box];
+		BasicBlock_11_if__8__end -> BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16__ret;
+		BasicBlock_11_getSpacer_Ai16_Ai16_Ai16_Ai16__ret [label="getSpacer_Ai16_Ai16_Ai16_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printCell_Au8_Ai16_Ai16 {
+		BasicBlock_12_printCell_Au8_Ai16_Ai16 [label="printCell_Au8_Ai16_Ai16\lconst chr, 46\lcall t_d5 = isOpen_Au8[cell] -> bool\lbranch t_d5 equals 0: if__11__else, if__11__then\ljump if__11__then",shape=box];
+		BasicBlock_12_printCell_Au8_Ai16_Ai16 -> BasicBlock_12_if__11__else [label="(cell,chr)"];
+		BasicBlock_12_printCell_Au8_Ai16_Ai16 -> BasicBlock_12_if__11__then [label="(cell,column,row)"];
+		BasicBlock_12_if__11__else [label="if__11__else\lcall t_d7 = isFlag_Au8[cell] -> bool\lbranch t_d7 equals 0: printCell_Au8_Ai16_Ai16_dno__critical__edge__10, if__14__then\ljump if__14__then",shape=box];
+		BasicBlock_12_if__11__else -> BasicBlock_12_printCell_Au8_Ai16_Ai16_dno__critical__edge__10 [label="(chr)"];
+		BasicBlock_12_if__11__else -> BasicBlock_12_if__14__then;
+		BasicBlock_12_if__11__then [label="if__11__then\lcall t_d6 = isBomb_Au8[cell] -> bool\lbranch t_d6 equals 0: if__12__else, if__12__then\ljump if__12__then",shape=box];
+		BasicBlock_12_if__11__then -> BasicBlock_12_if__12__else [label="(column,row)"];
+		BasicBlock_12_if__11__then -> BasicBlock_12_if__12__then;
+		BasicBlock_12_printCell_Au8_Ai16_Ai16_dno__critical__edge__10 [label="printCell_Au8_Ai16_Ai16_dno__critical__edge__10\ljump if__11__end",shape=box];
+		BasicBlock_12_printCell_Au8_Ai16_Ai16_dno__critical__edge__10 -> BasicBlock_12_if__11__end [label="(chr)"];
+		BasicBlock_12_if__14__then [label="if__14__then\lconst chr, 35\ljump if__11__end",shape=box];
+		BasicBlock_12_if__14__then -> BasicBlock_12_if__11__end [label="(chr)"];
+		BasicBlock_12_if__12__else [label="if__12__else\lcall count = getBombCountAround_Ai16_Ai16[row, column] -> u8\lbranch count lteq 0: if__13__else, if__13__then\ljump if__13__then",shape=box];
+		BasicBlock_12_if__12__else -> BasicBlock_12_if__13__else;
+		BasicBlock_12_if__12__else -> BasicBlock_12_if__13__then [label="(count)"];
+		BasicBlock_12_if__12__then [label="if__12__then\lconst chr, 42\ljump if__11__end",shape=box];
+		BasicBlock_12_if__12__then -> BasicBlock_12_if__11__end [label="(chr)"];
+		BasicBlock_12_if__13__else [label="if__13__else\lconst chr, 32\ljump if__11__end",shape=box];
+		BasicBlock_12_if__13__else -> BasicBlock_12_if__11__end [label="(chr)"];
+		BasicBlock_12_if__13__then [label="if__13__then\lmove chr, count\ladd chr, 48\ljump if__11__end",shape=box];
+		BasicBlock_12_if__13__then -> BasicBlock_12_if__11__end [label="(chr)"];
+		BasicBlock_12_if__11__end [label="if__11__end\lcall printChar_Au8[chr]\ljump printCell_Au8_Ai16_Ai16__ret",shape=box];
+		BasicBlock_12_if__11__end -> BasicBlock_12_printCell_Au8_Ai16_Ai16__ret;
+		BasicBlock_12_printCell_Au8_Ai16_Ai16__ret [label="printCell_Au8_Ai16_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printField_Ai16_Ai16 {
+		BasicBlock_13_printField_Ai16_Ai16 [label="printField_Ai16_Ai16\lcall setCursor_Ai16_Ai16[0, 0]\lconst row, 0\ljump for__15",shape=box];
+		BasicBlock_13_printField_Ai16_Ai16 -> BasicBlock_13_for__15 [label="(columnCursor,row,rowCursor)"];
+		BasicBlock_13_for__15__body [label="for__15__body\lcall printChar_Au8[124]\lconst column, 0\ljump for__16",shape=box];
+		BasicBlock_13_for__15__body -> BasicBlock_13_for__16 [label="(column,columnCursor,row,rowCursor)"];
+		BasicBlock_13_for__16__body [label="for__16__body\lcall spacer = getSpacer_Ai16_Ai16_Ai16_Ai16[row, column, rowCursor, columnCursor] -> u8\lcall printChar_Au8[spacer]\lcall cell = getCell_Ai16_Ai16[row, column] -> u8\lcall printCell_Au8_Ai16_Ai16[cell, row, column]\ladd column, 1\ljump for__16",shape=box];
+		BasicBlock_13_for__16__body -> BasicBlock_13_for__16 [label="(column,columnCursor,row,rowCursor)"];
+		BasicBlock_13_for__16 [label="for__16\lbranch column gteq 40: for__16__break, for__16__body\ljump for__16__body",shape=box];
+		BasicBlock_13_for__16 -> BasicBlock_13_for__16__break [label="(columnCursor,row,rowCursor)"];
+		BasicBlock_13_for__16 -> BasicBlock_13_for__16__body [label="(column,columnCursor,row,rowCursor)"];
+		BasicBlock_13_for__16__break [label="for__16__break\lcall spacer = getSpacer_Ai16_Ai16_Ai16_Ai16[row, 40, rowCursor, columnCursor] -> u8\lcall printChar_Au8[spacer]\lconst t_d7, [string-0]\lcall printString_A_Au8[t_d7]\ladd row, 1\ljump for__15",shape=box];
+		BasicBlock_13_for__16__break -> BasicBlock_13_for__15 [label="(columnCursor,row,rowCursor)"];
+		BasicBlock_13_for__15 [label="for__15\lbranch row gteq 20: printField_Ai16_Ai16__ret, for__15__body\ljump for__15__body",shape=box];
+		BasicBlock_13_for__15 -> BasicBlock_13_printField_Ai16_Ai16__ret;
+		BasicBlock_13_for__15 -> BasicBlock_13_for__15__body [label="(columnCursor,row,rowCursor)"];
+		BasicBlock_13_printField_Ai16_Ai16__ret [label="printField_Ai16_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printSpaces_Ai16 {
+		BasicBlock_14_printSpaces_Ai16 [label="printSpaces_Ai16\ljump for__17",shape=box];
+		BasicBlock_14_printSpaces_Ai16 -> BasicBlock_14_for__17 [label="(i)"];
+		BasicBlock_14_for__17__body [label="for__17__body\lcall printChar_Au8[48]\lsub i, 1\ljump for__17",shape=box];
+		BasicBlock_14_for__17__body -> BasicBlock_14_for__17 [label="(i)"];
+		BasicBlock_14_for__17 [label="for__17\lbranch i lteq 0: printSpaces_Ai16__ret, for__17__body\ljump for__17__body",shape=box];
+		BasicBlock_14_for__17 -> BasicBlock_14_printSpaces_Ai16__ret;
+		BasicBlock_14_for__17 -> BasicBlock_14_for__17__body [label="(i)"];
+		BasicBlock_14_printSpaces_Ai16__ret [label="printSpaces_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_getDigitCount_Ai16 {
+		BasicBlock_15_getDigitCount_Ai16 [label="getDigitCount_Ai16\lconst count, 0\lbranch value gteq 0: getDigitCount_Ai16_dno__critical__edge__6, if__18__then\ljump if__18__then",shape=box];
+		BasicBlock_15_getDigitCount_Ai16 -> BasicBlock_15_getDigitCount_Ai16_dno__critical__edge__6 [label="(count,value)"];
+		BasicBlock_15_getDigitCount_Ai16 -> BasicBlock_15_if__18__then [label="(value)"];
+		BasicBlock_15_getDigitCount_Ai16_dno__critical__edge__6 [label="getDigitCount_Ai16_dno__critical__edge__6\ljump if__18__end",shape=box];
+		BasicBlock_15_getDigitCount_Ai16_dno__critical__edge__6 -> BasicBlock_15_if__18__end [label="(count,value)"];
+		BasicBlock_15_if__18__then [label="if__18__then\lconst count, 1\lneg value, value\ljump if__18__end",shape=box];
+		BasicBlock_15_if__18__then -> BasicBlock_15_if__18__end [label="(count,value)"];
+		BasicBlock_15_if__18__end [label="if__18__end\ljump while__19",shape=box];
+		BasicBlock_15_if__18__end -> BasicBlock_15_while__19 [label="(count,value)"];
+		BasicBlock_15_getDigitCount_Ai16_dno__critical__edge__7 [label="getDigitCount_Ai16_dno__critical__edge__7\ljump while__19",shape=box];
+		BasicBlock_15_getDigitCount_Ai16_dno__critical__edge__7 -> BasicBlock_15_while__19 [label="(count,value)"];
+		BasicBlock_15_while__19 [label="while__19\ladd count, 1\ldiv value, 10\lbranch value notequals 0: getDigitCount_Ai16_dno__critical__edge__7, while__19__break\ljump while__19__break",shape=box];
+		BasicBlock_15_while__19 -> BasicBlock_15_getDigitCount_Ai16_dno__critical__edge__7 [label="(count,value)"];
+		BasicBlock_15_while__19 -> BasicBlock_15_while__19__break [label="(count)"];
+		BasicBlock_15_while__19__break [label="while__19__break\lret count\ljump getDigitCount_Ai16__ret",shape=box];
+		BasicBlock_15_while__19__break -> BasicBlock_15_getDigitCount_Ai16__ret;
+		BasicBlock_15_getDigitCount_Ai16__ret [label="getDigitCount_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_getHiddenCount {
+		BasicBlock_16_getHiddenCount [label="getHiddenCount\lconst count, 0\lconst r, 0\ljump for__21",shape=box];
+		BasicBlock_16_getHiddenCount -> BasicBlock_16_for__21 [label="(count,r)"];
+		BasicBlock_16_for__21__body [label="for__21__body\lconst c, 0\ljump for__22",shape=box];
+		BasicBlock_16_for__21__body -> BasicBlock_16_for__22 [label="(c,count,r)"];
+		BasicBlock_16_for__22__body [label="for__22__body\lcall cell = getCell_Ai16_Ai16[r, c] -> u8\lmove t_d4, cell\land t_d4, 6\lbranch t_d4 notequals 0: getHiddenCount_dno__critical__edge__10, if__23__then\ljump if__23__then",shape=box];
+		BasicBlock_16_for__22__body -> BasicBlock_16_getHiddenCount_dno__critical__edge__10 [label="(c,count,r)"];
+		BasicBlock_16_for__22__body -> BasicBlock_16_if__23__then [label="(c,count,r)"];
+		BasicBlock_16_getHiddenCount_dno__critical__edge__10 [label="getHiddenCount_dno__critical__edge__10\ljump for__22__continue",shape=box];
+		BasicBlock_16_getHiddenCount_dno__critical__edge__10 -> BasicBlock_16_for__22__continue [label="(c,count,r)"];
+		BasicBlock_16_if__23__then [label="if__23__then\ladd count, 1\ljump for__22__continue",shape=box];
+		BasicBlock_16_if__23__then -> BasicBlock_16_for__22__continue [label="(c,count,r)"];
+		BasicBlock_16_for__22__continue [label="for__22__continue\ladd c, 1\ljump for__22",shape=box];
+		BasicBlock_16_for__22__continue -> BasicBlock_16_for__22 [label="(c,count,r)"];
+		BasicBlock_16_for__22 [label="for__22\lbranch c gteq 40: for__21__continue, for__22__body\ljump for__22__body",shape=box];
+		BasicBlock_16_for__22 -> BasicBlock_16_for__21__continue [label="(count,r)"];
+		BasicBlock_16_for__22 -> BasicBlock_16_for__22__body [label="(c,count,r)"];
+		BasicBlock_16_for__21__continue [label="for__21__continue\ladd r, 1\ljump for__21",shape=box];
+		BasicBlock_16_for__21__continue -> BasicBlock_16_for__21 [label="(count,r)"];
+		BasicBlock_16_for__21 [label="for__21\lbranch r gteq 20: for__21__break, for__21__body\ljump for__21__body",shape=box];
+		BasicBlock_16_for__21 -> BasicBlock_16_for__21__break [label="(count)"];
+		BasicBlock_16_for__21 -> BasicBlock_16_for__21__body [label="(count,r)"];
+		BasicBlock_16_for__21__break [label="for__21__break\lret count\ljump getHiddenCount__ret",shape=box];
+		BasicBlock_16_for__21__break -> BasicBlock_16_getHiddenCount__ret;
+		BasicBlock_16_getHiddenCount__ret [label="getHiddenCount__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printLeft {
+		BasicBlock_17_printLeft [label="printLeft\lcall count = getHiddenCount[] -> i16\lcall t_d3 = getDigitCount_Ai16[count] -> u8\lcast leftDigits(i16), t_d3(u8)\lcall t_d4 = getDigitCount_Ai16[40] -> u8\lcast bombDigits(i16), t_d4(u8)\lcall setCursor_Ai16_Ai16[20, 6]\lmove t_d5, bombDigits\lsub t_d5, leftDigits\lcall printSpaces_Ai16[t_d5]\lcall printUint_Ai16[count]\lequals t_d6, count, 0\lret t_d6\ljump printLeft__ret",shape=box];
+		BasicBlock_17_printLeft -> BasicBlock_17_printLeft__ret;
+		BasicBlock_17_printLeft__ret [label="printLeft__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_abs_Ai16 {
+		BasicBlock_18_abs_Ai16 [label="abs_Ai16\lbranch a gteq 0: if__24__end, if__24__then\ljump if__24__then",shape=box];
+		BasicBlock_18_abs_Ai16 -> BasicBlock_18_if__24__end [label="(a)"];
+		BasicBlock_18_abs_Ai16 -> BasicBlock_18_if__24__then [label="(a)"];
+		BasicBlock_18_if__24__end [label="if__24__end\lret a\ljump abs_Ai16__ret",shape=box];
+		BasicBlock_18_if__24__end -> BasicBlock_18_abs_Ai16__ret;
+		BasicBlock_18_if__24__then [label="if__24__then\lneg t_d1, a\lret t_d1\ljump abs_Ai16__ret",shape=box];
+		BasicBlock_18_if__24__then -> BasicBlock_18_abs_Ai16__ret;
+		BasicBlock_18_abs_Ai16__ret [label="abs_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_clearField {
+		BasicBlock_19_clearField [label="clearField\lconst r, 0\ljump for__25",shape=box];
+		BasicBlock_19_clearField -> BasicBlock_19_for__25 [label="(r)"];
+		BasicBlock_19_for__25__body [label="for__25__body\lconst c, 0\ljump for__26",shape=box];
+		BasicBlock_19_for__25__body -> BasicBlock_19_for__26 [label="(c,r)"];
+		BasicBlock_19_for__26__body [label="for__26__body\lcall setCell_Ai16_Ai16_Au8[r, c, 0]\ladd c, 1\ljump for__26",shape=box];
+		BasicBlock_19_for__26__body -> BasicBlock_19_for__26 [label="(c,r)"];
+		BasicBlock_19_for__26 [label="for__26\lbranch c gteq 40: for__25__continue, for__26__body\ljump for__26__body",shape=box];
+		BasicBlock_19_for__26 -> BasicBlock_19_for__25__continue [label="(r)"];
+		BasicBlock_19_for__26 -> BasicBlock_19_for__26__body [label="(c,r)"];
+		BasicBlock_19_for__25__continue [label="for__25__continue\ladd r, 1\ljump for__25",shape=box];
+		BasicBlock_19_for__25__continue -> BasicBlock_19_for__25 [label="(r)"];
+		BasicBlock_19_for__25 [label="for__25\lbranch r gteq 20: clearField__ret, for__25__body\ljump for__25__body",shape=box];
+		BasicBlock_19_for__25 -> BasicBlock_19_clearField__ret;
+		BasicBlock_19_for__25 -> BasicBlock_19_for__25__body [label="(r)"];
+		BasicBlock_19_clearField__ret [label="clearField__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_initField_Ai16_Ai16 {
+		BasicBlock_20_initField_Ai16_Ai16 [label="initField_Ai16_Ai16\lconst bombs, 40\ljump for__27",shape=box];
+		BasicBlock_20_initField_Ai16_Ai16 -> BasicBlock_20_for__27 [label="(bombs,curr_c,curr_r)"];
+		BasicBlock_20_for__27__body [label="for__27__body\lcall t_d6 = random[] -> i32\lmove t_d5, t_d6\lmod t_d5, 20\lcast row(i16), t_d5(i32)\lcall t_d8 = random[] -> i32\lmove t_d7, t_d8\lmod t_d7, 40\lcast column(i16), t_d7(i32)\lmove t_d10, row\lsub t_d10, curr__r\lcall t_d9 = abs_Ai16[t_d10] -> i16\lbranch t_d9 gt 1: initField_Ai16_Ai16_dno__critical__edge__7, or__29\ljump or__29",shape=box];
+		BasicBlock_20_for__27__body -> BasicBlock_20_initField_Ai16_Ai16_dno__critical__edge__7 [label="(bombs,column,curr_c,curr_r,row)"];
+		BasicBlock_20_for__27__body -> BasicBlock_20_or__29 [label="(bombs,column,curr_c,curr_r,row)"];
+		BasicBlock_20_initField_Ai16_Ai16_dno__critical__edge__7 [label="initField_Ai16_Ai16_dno__critical__edge__7\ljump if__28__then",shape=box];
+		BasicBlock_20_initField_Ai16_Ai16_dno__critical__edge__7 -> BasicBlock_20_if__28__then [label="(bombs,column,curr_c,curr_r,row)"];
+		BasicBlock_20_or__29 [label="or__29\lmove t_d12, column\lsub t_d12, curr__c\lcall t_d11 = abs_Ai16[t_d12] -> i16\lbranch t_d11 lteq 1: initField_Ai16_Ai16_dno__critical__edge__8, initField_Ai16_Ai16_dno__critical__edge__9\ljump initField_Ai16_Ai16_dno__critical__edge__9",shape=box];
+		BasicBlock_20_or__29 -> BasicBlock_20_initField_Ai16_Ai16_dno__critical__edge__8 [label="(bombs,curr_c,curr_r)"];
+		BasicBlock_20_or__29 -> BasicBlock_20_initField_Ai16_Ai16_dno__critical__edge__9 [label="(bombs,column,curr_c,curr_r,row)"];
+		BasicBlock_20_initField_Ai16_Ai16_dno__critical__edge__8 [label="initField_Ai16_Ai16_dno__critical__edge__8\ljump for__27__continue",shape=box];
+		BasicBlock_20_initField_Ai16_Ai16_dno__critical__edge__8 -> BasicBlock_20_for__27__continue [label="(bombs,curr_c,curr_r)"];
+		BasicBlock_20_initField_Ai16_Ai16_dno__critical__edge__9 [label="initField_Ai16_Ai16_dno__critical__edge__9\ljump if__28__then",shape=box];
+		BasicBlock_20_initField_Ai16_Ai16_dno__critical__edge__9 -> BasicBlock_20_if__28__then [label="(bombs,column,curr_c,curr_r,row)"];
+		BasicBlock_20_if__28__then [label="if__28__then\lcall setCell_Ai16_Ai16_Au8[row, column, 1]\ljump for__27__continue",shape=box];
+		BasicBlock_20_if__28__then -> BasicBlock_20_for__27__continue [label="(bombs,curr_c,curr_r)"];
+		BasicBlock_20_for__27__continue [label="for__27__continue\lsub bombs, 1\ljump for__27",shape=box];
+		BasicBlock_20_for__27__continue -> BasicBlock_20_for__27 [label="(bombs,curr_c,curr_r)"];
+		BasicBlock_20_for__27 [label="for__27\lbranch bombs lteq 0: initField_Ai16_Ai16__ret, for__27__body\ljump for__27__body",shape=box];
+		BasicBlock_20_for__27 -> BasicBlock_20_initField_Ai16_Ai16__ret;
+		BasicBlock_20_for__27 -> BasicBlock_20_for__27__body [label="(bombs,curr_c,curr_r)"];
+		BasicBlock_20_initField_Ai16_Ai16__ret [label="initField_Ai16_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_maybeRevealAround_Ai16_Ai16 {
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16 [label="maybeRevealAround_Ai16_Ai16\lcall t_d7 = getBombCountAround_Ai16_Ai16[row, column] -> u8\lbranch t_d7 equals 0: if__30__end, if__30__then\ljump if__30__then",shape=box];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16 -> BasicBlock_21_if__30__end [label="(column,row)"];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16 -> BasicBlock_21_if__30__then;
+		BasicBlock_21_if__30__end [label="if__30__end\lconst dr, -1\ljump for__31",shape=box];
+		BasicBlock_21_if__30__end -> BasicBlock_21_for__31 [label="(column,dr,row)"];
+		BasicBlock_21_for__31__body [label="for__31__body\lmove r, row\ladd r, dr\lconst dc, -1\ljump for__32",shape=box];
+		BasicBlock_21_for__31__body -> BasicBlock_21_for__32 [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_for__32__body [label="for__32__body\lbranch dr notequals 0: maybeRevealAround_Ai16_Ai16_dno__critical__edge__15, and__34\ljump and__34",shape=box];
+		BasicBlock_21_for__32__body -> BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__15 [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_for__32__body -> BasicBlock_21_and__34 [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__15 [label="maybeRevealAround_Ai16_Ai16_dno__critical__edge__15\ljump if__33__end",shape=box];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__15 -> BasicBlock_21_if__33__end [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_and__34 [label="and__34\lbranch dc equals 0: maybeRevealAround_Ai16_Ai16_dno__critical__edge__18, maybeRevealAround_Ai16_Ai16_dno__critical__edge__19\ljump maybeRevealAround_Ai16_Ai16_dno__critical__edge__19",shape=box];
+		BasicBlock_21_and__34 -> BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__18 [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_and__34 -> BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__19 [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__18 [label="maybeRevealAround_Ai16_Ai16_dno__critical__edge__18\ljump for__32__continue",shape=box];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__18 -> BasicBlock_21_for__32__continue [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__19 [label="maybeRevealAround_Ai16_Ai16_dno__critical__edge__19\ljump if__33__end",shape=box];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__19 -> BasicBlock_21_if__33__end [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_if__33__end [label="if__33__end\lmove c, column\ladd c, dc\lcall t_d8 = checkCellBounds_Ai16_Ai16[r, c] -> bool\lbranch t_d8 equals 0: maybeRevealAround_Ai16_Ai16_dno__critical__edge__16, if__35__end\ljump if__35__end",shape=box];
+		BasicBlock_21_if__33__end -> BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__16 [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_if__33__end -> BasicBlock_21_if__35__end [label="(c,column,dc,dr,r,row)"];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__16 [label="maybeRevealAround_Ai16_Ai16_dno__critical__edge__16\ljump for__32__continue",shape=box];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__16 -> BasicBlock_21_for__32__continue [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_if__35__end [label="if__35__end\lcall cell = getCell_Ai16_Ai16[r, c] -> u8\lcall t_d9 = isOpen_Au8[cell] -> bool\lbranch t_d9 notequals 0: maybeRevealAround_Ai16_Ai16_dno__critical__edge__17, if__36__end\ljump if__36__end",shape=box];
+		BasicBlock_21_if__35__end -> BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__17 [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_if__35__end -> BasicBlock_21_if__36__end [label="(c,cell,column,dc,dr,r,row)"];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__17 [label="maybeRevealAround_Ai16_Ai16_dno__critical__edge__17\ljump for__32__continue",shape=box];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__17 -> BasicBlock_21_for__32__continue [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_if__36__end [label="if__36__end\lmove t_d10, cell\lor t_d10, 2\lcall setCell_Ai16_Ai16_Au8[r, c, t_d10]\lcall maybeRevealAround_Ai16_Ai16[r, c]\ljump for__32__continue",shape=box];
+		BasicBlock_21_if__36__end -> BasicBlock_21_for__32__continue [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_for__32__continue [label="for__32__continue\ladd dc, 1\ljump for__32",shape=box];
+		BasicBlock_21_for__32__continue -> BasicBlock_21_for__32 [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_for__32 [label="for__32\lbranch dc gt 1: for__31__continue, for__32__body\ljump for__32__body",shape=box];
+		BasicBlock_21_for__32 -> BasicBlock_21_for__31__continue [label="(column,dr,row)"];
+		BasicBlock_21_for__32 -> BasicBlock_21_for__32__body [label="(column,dc,dr,r,row)"];
+		BasicBlock_21_for__31__continue [label="for__31__continue\ladd dr, 1\ljump for__31",shape=box];
+		BasicBlock_21_for__31__continue -> BasicBlock_21_for__31 [label="(column,dr,row)"];
+		BasicBlock_21_if__30__then [label="if__30__then\ljump maybeRevealAround_Ai16_Ai16__ret",shape=box];
+		BasicBlock_21_if__30__then -> BasicBlock_21_maybeRevealAround_Ai16_Ai16__ret;
+		BasicBlock_21_for__31 [label="for__31\lbranch dr gt 1: maybeRevealAround_Ai16_Ai16_dno__critical__edge__14, for__31__body\ljump for__31__body",shape=box];
+		BasicBlock_21_for__31 -> BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__14;
+		BasicBlock_21_for__31 -> BasicBlock_21_for__31__body [label="(column,dr,row)"];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__14 [label="maybeRevealAround_Ai16_Ai16_dno__critical__edge__14\ljump maybeRevealAround_Ai16_Ai16__ret",shape=box];
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16_dno__critical__edge__14 -> BasicBlock_21_maybeRevealAround_Ai16_Ai16__ret;
+		BasicBlock_21_maybeRevealAround_Ai16_Ai16__ret [label="maybeRevealAround_Ai16_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_22_main [label="main\lconst t_d6, 0\laddrof a_d7, ____random____\lstore [a_d7], t_d6\lcall initRandom_Ai32[7439742]\lconst needsInitialize, 1\lcall clearField[]\lconst curr__c, 20\lconst curr__r, 10\lcall setCursor_Ai16_Ai16[20, 0]\lconst t_d8, [string-1]\lcall printString_A_Au8[t_d8]\ljump while__37",shape=box];
+		BasicBlock_22_main -> BasicBlock_22_while__37 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_main_dno__critical__edge__26 [label="main_dno__critical__edge__26\ljump if__38__end",shape=box];
+		BasicBlock_22_main_dno__critical__edge__26 -> BasicBlock_22_if__38__end [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__38__then [label="if__38__then\lcall t_d9 = printLeft[] -> bool\lbranch t_d9 equals 0: main_dno__critical__edge__33, if__39__then\ljump if__39__then",shape=box];
+		BasicBlock_22_if__38__then -> BasicBlock_22_main_dno__critical__edge__33 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__38__then -> BasicBlock_22_if__39__then;
+		BasicBlock_22_main_dno__critical__edge__33 [label="main_dno__critical__edge__33\ljump if__38__end",shape=box];
+		BasicBlock_22_main_dno__critical__edge__33 -> BasicBlock_22_if__38__end [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__38__end [label="if__38__end\lcall chr = getChar[] -> i16\lbranch chr equals 27: main_dno__critical__edge__27, if__40__end\ljump if__40__end",shape=box];
+		BasicBlock_22_if__38__end -> BasicBlock_22_main_dno__critical__edge__27;
+		BasicBlock_22_if__38__end -> BasicBlock_22_if__40__end [label="(chr,curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__40__end [label="if__40__end\lbranch chr notequals 3: if__41__else, if__41__then\ljump if__41__then",shape=box];
+		BasicBlock_22_if__40__end -> BasicBlock_22_if__41__else [label="(chr,curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__40__end -> BasicBlock_22_if__41__then [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__41__else [label="if__41__else\lbranch chr notequals 4: if__42__else, if__42__then\ljump if__42__then",shape=box];
+		BasicBlock_22_if__41__else -> BasicBlock_22_if__42__else [label="(chr,curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__41__else -> BasicBlock_22_if__42__then [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__41__then [label="if__41__then\lmove t_d12, curr__r\ladd t_d12, 20\lmove t_d11, t_d12\lsub t_d11, 1\lmove curr__r, t_d11\lmod curr__r, 20\ljump while__37",shape=box];
+		BasicBlock_22_if__41__then -> BasicBlock_22_while__37 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__42__else [label="if__42__else\lbranch chr notequals 1: if__43__else, if__43__then\ljump if__43__then",shape=box];
+		BasicBlock_22_if__42__else -> BasicBlock_22_if__43__else [label="(chr,curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__42__else -> BasicBlock_22_if__43__then [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__42__then [label="if__42__then\lmove t_d13, curr__r\ladd t_d13, 1\lmove curr__r, t_d13\lmod curr__r, 20\ljump while__37",shape=box];
+		BasicBlock_22_if__42__then -> BasicBlock_22_while__37 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__43__else [label="if__43__else\lbranch chr notequals 2: if__44__else, if__44__then\ljump if__44__then",shape=box];
+		BasicBlock_22_if__43__else -> BasicBlock_22_if__44__else [label="(chr,curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__43__else -> BasicBlock_22_if__44__then [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__43__then [label="if__43__then\lmove t_d15, curr__c\ladd t_d15, 40\lmove t_d14, t_d15\lsub t_d14, 1\lmove curr__c, t_d14\lmod curr__c, 40\ljump while__37",shape=box];
+		BasicBlock_22_if__43__then -> BasicBlock_22_while__37 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__44__else [label="if__44__else\lbranch chr notequals 32: if__45__else, if__45__then\ljump if__45__then",shape=box];
+		BasicBlock_22_if__44__else -> BasicBlock_22_if__45__else [label="(chr,curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__44__else -> BasicBlock_22_if__45__then [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__44__then [label="if__44__then\lmove t_d16, curr__c\ladd t_d16, 1\lmove curr__c, t_d16\lmod curr__c, 40\ljump while__37",shape=box];
+		BasicBlock_22_if__44__then -> BasicBlock_22_while__37 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__45__else [label="if__45__else\lbranch chr notequals 13: main_dno__critical__edge__28, if__48__then\ljump if__48__then",shape=box];
+		BasicBlock_22_if__45__else -> BasicBlock_22_main_dno__critical__edge__28 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__45__else -> BasicBlock_22_if__48__then [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__45__then [label="if__45__then\lbranch needsInitialize notequals 0: main_dno__critical__edge__31, if__46__then\ljump if__46__then",shape=box];
+		BasicBlock_22_if__45__then -> BasicBlock_22_main_dno__critical__edge__31 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__45__then -> BasicBlock_22_if__46__then [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_main_dno__critical__edge__28 [label="main_dno__critical__edge__28\ljump while__37",shape=box];
+		BasicBlock_22_main_dno__critical__edge__28 -> BasicBlock_22_while__37 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__48__then [label="if__48__then\lbranch needsInitialize equals 0: main_dno__critical__edge__29, if__49__then\ljump if__49__then",shape=box];
+		BasicBlock_22_if__48__then -> BasicBlock_22_main_dno__critical__edge__29 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__48__then -> BasicBlock_22_if__49__then [label="(curr_c,curr_r)"];
+		BasicBlock_22_main_dno__critical__edge__31 [label="main_dno__critical__edge__31\ljump while__37",shape=box];
+		BasicBlock_22_main_dno__critical__edge__31 -> BasicBlock_22_while__37 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__46__then [label="if__46__then\lcall cell = getCell_Ai16_Ai16[curr__r, curr__c] -> u8\lcall t_d17 = isOpen_Au8[cell] -> bool\lbranch t_d17 notequals 0: main_dno__critical__edge__32, if__47__then\ljump if__47__then",shape=box];
+		BasicBlock_22_if__46__then -> BasicBlock_22_main_dno__critical__edge__32 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__46__then -> BasicBlock_22_if__47__then [label="(cell,curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_main_dno__critical__edge__29 [label="main_dno__critical__edge__29\ljump if__49__end",shape=box];
+		BasicBlock_22_main_dno__critical__edge__29 -> BasicBlock_22_if__49__end [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__49__then [label="if__49__then\lconst needsInitialize, 0\lcall initField_Ai16_Ai16[curr__r, curr__c]\ljump if__49__end",shape=box];
+		BasicBlock_22_if__49__then -> BasicBlock_22_if__49__end [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_main_dno__critical__edge__32 [label="main_dno__critical__edge__32\ljump while__37",shape=box];
+		BasicBlock_22_main_dno__critical__edge__32 -> BasicBlock_22_while__37 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__47__then [label="if__47__then\lxor cell, 4\lcall setCell_Ai16_Ai16_Au8[curr__r, curr__c, cell]\ljump while__37",shape=box];
+		BasicBlock_22_if__47__then -> BasicBlock_22_while__37 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__49__end [label="if__49__end\lcall cell = getCell_Ai16_Ai16[curr__r, curr__c] -> u8\lcall t_d18 = isOpen_Au8[cell] -> bool\lbranch t_d18 notequals 0: main_dno__critical__edge__30, if__50__then\ljump if__50__then",shape=box];
+		BasicBlock_22_if__49__end -> BasicBlock_22_main_dno__critical__edge__30 [label="(cell,curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__49__end -> BasicBlock_22_if__50__then [label="(cell,curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_main_dno__critical__edge__30 [label="main_dno__critical__edge__30\ljump if__50__end",shape=box];
+		BasicBlock_22_main_dno__critical__edge__30 -> BasicBlock_22_if__50__end [label="(cell,curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__50__then [label="if__50__then\lmove t_d19, cell\lor t_d19, 2\lcall setCell_Ai16_Ai16_Au8[curr__r, curr__c, t_d19]\ljump if__50__end",shape=box];
+		BasicBlock_22_if__50__then -> BasicBlock_22_if__50__end [label="(cell,curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__50__end [label="if__50__end\lcall t_d20 = isBomb_Au8[cell] -> bool\lbranch t_d20 equals 0: if__51__end, if__51__then\ljump if__51__then",shape=box];
+		BasicBlock_22_if__50__end -> BasicBlock_22_if__51__end [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__50__end -> BasicBlock_22_if__51__then [label="(curr_c,curr_r)"];
+		BasicBlock_22_if__51__end [label="if__51__end\lcall maybeRevealAround_Ai16_Ai16[curr__r, curr__c]\ljump while__37",shape=box];
+		BasicBlock_22_if__51__end -> BasicBlock_22_while__37 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_while__37 [label="while__37\lcall printField_Ai16_Ai16[curr__r, curr__c]\lbranch needsInitialize notequals 0: main_dno__critical__edge__26, if__38__then\ljump if__38__then",shape=box];
+		BasicBlock_22_while__37 -> BasicBlock_22_main_dno__critical__edge__26 [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_while__37 -> BasicBlock_22_if__38__then [label="(curr_c,curr_r,needsInitialize)"];
+		BasicBlock_22_if__39__then [label="if__39__then\lconst t_d10, [string-2]\lcall printString_A_Au8[t_d10]\ljump main__ret",shape=box];
+		BasicBlock_22_if__39__then -> BasicBlock_22_main__ret;
+		BasicBlock_22_main_dno__critical__edge__27 [label="main_dno__critical__edge__27\ljump main__ret",shape=box];
+		BasicBlock_22_main_dno__critical__edge__27 -> BasicBlock_22_main__ret;
+		BasicBlock_22_if__51__then [label="if__51__then\lcall printField_Ai16_Ai16[curr__r, curr__c]\lconst t_d21, [string-3]\lcall printString_A_Au8[t_d21]\ljump main__ret",shape=box];
+		BasicBlock_22_if__51__then -> BasicBlock_22_main__ret;
+		BasicBlock_22_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}
