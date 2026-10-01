@@ -1,0 +1,46 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printBoard {
+		BasicBlock_0_printBoard [label="printBoard\lcall printChar_Au8[124]\lconst i_d1, 0\lmove i_d2, i_d1\ljump for__1",shape=box];
+		BasicBlock_0_printBoard -> BasicBlock_0_for__1 [label="(board,i.2)"];
+		BasicBlock_0_for__1__body [label="for__1__body\lcast t_d3_d1(i16), i_d2(u8)\laddrof t_d2_d1, board\lmove t_d2_d2, t_d2_d1\ladd t_d2_d2, t_d3_d1\lload t_d1_d1, [t_d2_d2]\lbranch t_d1_d1 notequals 0: if__2__else, if__2__then\ljump if__2__then",shape=box];
+		BasicBlock_0_for__1__body -> BasicBlock_0_if__2__else [label="(board,i.2)"];
+		BasicBlock_0_for__1__body -> BasicBlock_0_if__2__then [label="(board,i.2)"];
+		BasicBlock_0_if__2__then [label="if__2__then\lcall printChar_Au8[32]\ljump for__1__continue",shape=box];
+		BasicBlock_0_if__2__then -> BasicBlock_0_for__1__continue [label="(board,i.2)"];
+		BasicBlock_0_if__2__else [label="if__2__else\lcall printChar_Au8[42]\ljump for__1__continue",shape=box];
+		BasicBlock_0_if__2__else -> BasicBlock_0_for__1__continue [label="(board,i.2)"];
+		BasicBlock_0_for__1__continue [label="for__1__continue\lmove i_d4, i_d2\ladd i_d4, 1\lmove i_d2, i_d4\ljump for__1",shape=box];
+		BasicBlock_0_for__1__continue -> BasicBlock_0_for__1 [label="(board,i.2)"];
+		BasicBlock_0_for__1 [label="for__1\lbranch i_d2 gteq 30: for__1__break, for__1__body\ljump for__1__body",shape=box];
+		BasicBlock_0_for__1 -> BasicBlock_0_for__1__break;
+		BasicBlock_0_for__1 -> BasicBlock_0_for__1__body [label="(board,i.2)"];
+		BasicBlock_0_for__1__break [label="for__1__break\lconst t_d4_d1, [string-0]\lcall printString_A_Au8[t_d4_d1]\ljump printBoard__ret",shape=box];
+		BasicBlock_0_for__1__break -> BasicBlock_0_printBoard__ret;
+		BasicBlock_0_printBoard__ret [label="printBoard__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_1_main [label="main\lconst i_d1, 0\lmove i_d2, i_d1\ljump for__3",shape=box];
+		BasicBlock_1_main -> BasicBlock_1_for__3 [label="(board,i.2)"];
+		BasicBlock_1_for__3__body [label="for__3__body\lconst t_d4_d1, 0\lcast t_d6_d1(i16), i_d2(u8)\laddrof t_d5_d1, board\lmove t_d5_d2, t_d5_d1\ladd t_d5_d2, t_d6_d1\lstore [t_d5_d2], t_d4_d1\lmove i_d5, i_d2\ladd i_d5, 1\lmove i_d2, i_d5\ljump for__3",shape=box];
+		BasicBlock_1_for__3__body -> BasicBlock_1_for__3 [label="(board,i.2)"];
+		BasicBlock_1_for__3 [label="for__3\lbranch i_d2 gteq 30: for__3__break, for__3__body\ljump for__3__body",shape=box];
+		BasicBlock_1_for__3 -> BasicBlock_1_for__3__break [label="(board)"];
+		BasicBlock_1_for__3 -> BasicBlock_1_for__3__body [label="(board,i.2)"];
+		BasicBlock_1_for__3__break [label="for__3__break\lconst t_d7_d1, 1\lconst t_d9_d1, 29\laddrof t_d8_d1, board\lmove t_d8_d2, t_d8_d1\ladd t_d8_d2, t_d9_d1\lstore [t_d8_d2], t_d7_d1\lcall printBoard[]\lconst i_d3, 0\lmove i_d4, i_d3\ljump for__4",shape=box];
+		BasicBlock_1_for__3__break -> BasicBlock_1_for__4 [label="(board,i.4)"];
+		BasicBlock_1_for__4__body [label="for__4__body\lconst t_d13_d1, 0\laddrof t_d12_d1, board\lmove t_d12_d2, t_d12_d1\ladd t_d12_d2, t_d13_d1\lload t_d11_d1, [t_d12_d2]\lmove t_d10_d1, t_d11_d1\lshiftleft t_d10_d1, 1\lconst t_d16_d1, 1\laddrof t_d15_d1, board\lmove t_d15_d2, t_d15_d1\ladd t_d15_d2, t_d16_d1\lload t_d14_d1, [t_d15_d2]\lmove pattern_d1, t_d10_d1\lor pattern_d1, t_d14_d1\lconst j_d1, 1\lmove pattern_d2, pattern_d1\lmove j_d2, j_d1\ljump for__5",shape=box];
+		BasicBlock_1_for__4__body -> BasicBlock_1_for__5 [label="(board,i.4,j.2,pattern.2)"];
+		BasicBlock_1_for__5__body [label="for__5__body\lmove t_d18_d1, pattern_d2\lshiftleft t_d18_d1, 1\lmove t_d17_d1, t_d18_d1\land t_d17_d1, 7\lmove t_d22_d1, j_d2\ladd t_d22_d1, 1\lcast t_d21_d1(i16), t_d22_d1(u8)\laddrof t_d20_d1, board\lmove t_d20_d2, t_d20_d1\ladd t_d20_d2, t_d21_d1\lload t_d19_d1, [t_d20_d2]\lmove pattern_d3, t_d17_d1\lor pattern_d3, t_d19_d1\lconst t_d25_d1, 110\lmove t_d24_d1, t_d25_d1\lshiftright t_d24_d1, pattern_d3\lmove t_d23_d1, t_d24_d1\land t_d23_d1, 1\lcast t_d27_d1(i16), j_d2(u8)\laddrof t_d26_d1, board\lmove t_d26_d2, t_d26_d1\ladd t_d26_d2, t_d27_d1\lstore [t_d26_d2], t_d23_d1\lmove j_d3, j_d2\ladd j_d3, 1\lmove pattern_d2, pattern_d3\lmove j_d2, j_d3\ljump for__5",shape=box];
+		BasicBlock_1_for__5__body -> BasicBlock_1_for__5 [label="(board,i.4,j.2,pattern.2)"];
+		BasicBlock_1_for__5 [label="for__5\lbranch j_d2 gteq 29: for__5__break, for__5__body\ljump for__5__body",shape=box];
+		BasicBlock_1_for__5 -> BasicBlock_1_for__5__break [label="(board,i.4)"];
+		BasicBlock_1_for__5 -> BasicBlock_1_for__5__body [label="(board,i.4,j.2,pattern.2)"];
+		BasicBlock_1_for__5__break [label="for__5__break\lcall printBoard[]\lmove i_d7, i_d4\ladd i_d7, 1\lmove i_d4, i_d7\ljump for__4",shape=box];
+		BasicBlock_1_for__5__break -> BasicBlock_1_for__4 [label="(board,i.4)"];
+		BasicBlock_1_for__4 [label="for__4\lbranch i_d4 gteq 28: main__ret, for__4__body\ljump for__4__body",shape=box];
+		BasicBlock_1_for__4 -> BasicBlock_1_main__ret;
+		BasicBlock_1_for__4 -> BasicBlock_1_for__4__body [label="(board,i.4)"];
+		BasicBlock_1_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

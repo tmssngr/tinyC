@@ -1,0 +1,38 @@
+printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+
+main:
+	; 39 pc
+	const chr.1{r8}, 32
+	const t.3.1{r9}, 0
+	addrof t.2.1{r12}, chars
+	add t.2.2{r12}, t.3.1{r9}
+	store [t.2.2{r12}], chr.1{r8}
+	const t.7.1{r8}, 0
+	addrof t.6.1{r10}, chars
+	move t.6.2{r10}, t.6.2{r12}
+	load t.5.1{r8}, [t.6.2{r10}]
+	add t.4.1{r8}, 1
+	const t.9.1{r9}, 1
+	addrof t.8.1{r12}, chars
+	add t.8.2{r12}, t.9.1{r9}
+	store [t.8.2{r12}], t.4.1{r8}
+	const t.13.1{r8}, 1
+	addrof t.12.1{r10}, chars
+	move t.12.2{r10}, t.12.2{r12}
+	load t.11.1{r8}, [t.12.2{r10}]
+	add t.10.1{r8}, 2
+	const t.15.1{r9}, 2
+	addrof t.14.1{r12}, chars
+	add t.14.2{r12}, t.15.1{r9}
+	store [t.14.2{r12}], t.10.1{r8}
+	const t.17.1{r8}, 2
+	addrof t.16.1{r10}, chars
+	move t.16.2{r10}, t.16.2{r12}
+	load result.1{r0}, [t.16.2{r10}]
+	call printIntLf@u8[result.1{r0}]
+
+Global variables
+	0: chars[] (u8*/512)
+
