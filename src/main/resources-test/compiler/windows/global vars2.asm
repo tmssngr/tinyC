@@ -63,7 +63,7 @@ _for_1_body:
 _for_1:
         ; load t.2.1{r2}, [str.1{r1}]
         mov dl, [rcx]
-        ; branch t.2.1{r2} notequals 0: for_1_body, for_1_break
+        ; branch t.2.1{r2} notequals 0: for_1_body
         cmp dl, 0
         jne _for_1_body
         ; 67:9 return length
@@ -107,7 +107,7 @@ _main:
         ; 12:2 while true
         jmp _while_2
 _if_3_end:
-        ; branch n.1{r6} gteq 2: while_2, if_4_then
+        ; branch n.1{r6} gteq 2: while_2
         cmp bl, 2
         jae _while_2
         ; const t.4.1{r1}, [string-1]
@@ -124,7 +124,7 @@ _while_2:
         ; move n.1{r6}, n.1{r0}
         mov bl, al
         ; 15:3 if n == 3
-        ; branch n.1{r6} notequals 3: if_3_end, main_ret
+        ; branch n.1{r6} notequals 3: if_3_end
         cmp bl, 3
         jne _if_3_end
         add rsp, 32

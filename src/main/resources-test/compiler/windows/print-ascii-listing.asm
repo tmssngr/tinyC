@@ -88,7 +88,7 @@ _for_1_body:
 _for_1:
         ; load t.2.1{r2}, [str.1{r1}]
         mov dl, [rcx]
-        ; branch t.2.1{r2} notequals 0: for_1_body, for_1_break
+        ; branch t.2.1{r2} notequals 0: for_1_body
         cmp dl, 0
         jne _for_1_body
         ; 67:9 return length
@@ -120,7 +120,7 @@ _printNibble@u8:
         ; and x.1{r6}, 15
         and bl, 15
         ; 5:2 if x > 9
-        ; branch x.1{r6} lteq 9: if_2_end, if_2_then
+        ; branch x.1{r6} lteq 9: if_2_end
         cmp bl, 9
         jbe _if_2_end
         ; add x.3{r6}, 7
@@ -181,7 +181,7 @@ _for_3_body:
         mov r12b, bl
         ; and t.3.1{r7}, 7
         and r12b, 7
-        ; branch t.3.1{r7} notequals 0: if_4_end, if_4_then
+        ; branch t.3.1{r7} notequals 0: if_4_end
         cmp r12b, 0
         jne _if_4_end
         ; const arg.1.0{r1}, 32
@@ -196,7 +196,7 @@ _if_4_end:
         ; add i.7{r6}, 1
         add bl, 1
 _for_3:
-        ; branch i.2{r6} lt 16: for_3_body, for_3_break
+        ; branch i.2{r6} lt 16: for_3_body
         cmp bl, 16
         jb _for_3_body
         ; const arg.3.0{r1}, 10
@@ -213,7 +213,7 @@ _for_5_body:
         mov r12b, bl
         ; and t.4.1{r7}, 15
         and r12b, 15
-        ; branch t.4.1{r7} notequals 0: if_6_end, if_6_then
+        ; branch t.4.1{r7} notequals 0: if_6_end
         cmp r12b, 0
         jne _if_6_end
         ; move i.4{r1}, i.4{r6}
@@ -226,7 +226,7 @@ _if_6_end:
         mov r12b, bl
         ; and t.5.1{r7}, 7
         and r12b, 7
-        ; branch t.5.1{r7} notequals 0: if_7_end, if_7_then
+        ; branch t.5.1{r7} notequals 0: if_7_end
         cmp r12b, 0
         jne _if_7_end
         ; const arg.5.0{r1}, 32
@@ -243,7 +243,7 @@ _if_7_end:
         mov r12b, bl
         ; and t.6.1{r7}, 15
         and r12b, 15
-        ; branch t.6.1{r7} notequals 15: for_5_continue, if_8_then
+        ; branch t.6.1{r7} notequals 15: for_5_continue
         cmp r12b, 15
         jne _for_5_continue
         ; const arg.7.0{r1}, 10
@@ -258,7 +258,7 @@ _for_5_continue:
         ; move i.4{r6}, i.10{r0}
         mov bl, al
 _for_5:
-        ; branch i.4{r6} lt 128: for_5_body, main_ret
+        ; branch i.4{r6} lt 128: for_5_body
         cmp bl, 128
         jb _for_5_body
         add rsp, 32
