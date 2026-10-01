@@ -103,7 +103,7 @@ _while_1:
         ; store [t.6{r5}], digit{r0}
         mov [r10], al
         ; 34:3 if number == 0
-        ; branch number{r6} notequals 0: while_1, while_1_break
+        ; branch number{r6} notequals 0: while_1
         cmp rbx, 0
         jne _while_1
         ; cast t.9{r6}(i64), pos{r3}(u8)

@@ -126,7 +126,7 @@ _while_1:
         ; store [t.6{r5}], digit{r0}
         mov [r10], al
         ; 34:3 if number == 0
-        ; branch number{r6} notequals 0: while_1, while_1_break
+        ; branch number{r6} notequals 0: while_1
         cmp rbx, 0
         jne _while_1
         ; cast t.9{r6}(i64), pos{r3}(u8)
@@ -165,7 +165,7 @@ _for_3_body:
 _for_3:
         ; load t.2{r2}, [str{r1}]
         mov dl, [rcx]
-        ; branch t.2{r2} notequals 0: for_3_body, for_3_break
+        ; branch t.2{r2} notequals 0: for_3_body
         cmp dl, 0
         jne _for_3_body
         ; 67:9 return length
@@ -338,21 +338,21 @@ _checkCellBounds@i16@i16:
         ; gteq t.2{r0}, row{r1}, 0
         cmp cx, 0
         setge al
-        ; branch t.2{r0} equals 0: and_next_6, and_2nd_6
+        ; branch t.2{r0} equals 0: and_next_6
         cmp al, 0
         je _and_next_6
         ; lt t.2{r0}, row{r1}, 20
         cmp cx, 20
         setl al
 _and_next_6:
-        ; branch t.2{r0} equals 0: and_next_5, and_2nd_5
+        ; branch t.2{r0} equals 0: and_next_5
         cmp al, 0
         je _and_next_5
         ; gteq t.2{r0}, column{r2}, 0
         cmp dx, 0
         setge al
 _and_next_5:
-        ; branch t.2{r0} equals 0: checkCellBounds@i16@i16_ret, and_2nd_4
+        ; branch t.2{r0} equals 0: checkCellBounds@i16@i16_ret
         cmp al, 0
         je _checkCellBounds@i16@i16_ret
         ; lt t.2{r0}, column{r2}, 40
@@ -500,7 +500,7 @@ _for_8_body:
         mov [r12], r8w
         ; call t.8{r0} = checkCellBounds@i16@i16[r{r1}, c{r2}] -> bool
         call _checkCellBounds@i16@i16
-        ; branch t.8{r0} notequals 0: if_9_then, getBombCountAround@i16@i16.no_critical_edge_11
+        ; branch t.8{r0} notequals 0: if_9_then
         cmp al, 0
         jne _if_9_then
         ; addrof memVarAddr{r7}, count
@@ -528,7 +528,7 @@ _if_9_then:
         mov cl, al
         ; call t.9{r0} = isBomb@u8[cell{r1}] -> bool
         call _isBomb@u8
-        ; branch t.9{r0} notequals 0: if_10_then, getBombCountAround@i16@i16.no_critical_edge_12
+        ; branch t.9{r0} notequals 0: if_10_then
         cmp al, 0
         jne _if_10_then
         ; addrof memVarAddr{r7}, count
@@ -551,7 +551,7 @@ _for_8_continue:
         ; add dc{r1}, 1
         add cx, 1
 _for_8:
-        ; branch dc{r1} lteq 1: for_8_body, for_7_continue
+        ; branch dc{r1} lteq 1: for_8_body
         cmp cx, 1
         jle _for_8_body
         ; addrof memVarAddr{r7}, dr
@@ -561,7 +561,7 @@ _for_8:
         ; add dr{r1}, 1
         add cx, 1
 _for_7:
-        ; branch dr{r1} lteq 1: for_7_body, for_7_break
+        ; branch dr{r1} lteq 1: for_7_body
         cmp cx, 1
         jle _for_7_body
         ; 58:9 return count
@@ -580,10 +580,10 @@ _for_7:
 _getSpacer@i16@i16@i16@i16:
         sub rsp, 8
         ; 62:2 if rowCursor == row
-        ; branch rowCursor{r3} notequals row{r1}: if_11_end, if_11_then
+        ; branch rowCursor{r3} notequals row{r1}: if_11_end
         cmp r8w, cx
         jne _if_11_end
-        ; branch columnCursor{r4} equals column{r2}: if_12_then, if_12_end
+        ; branch columnCursor{r4} equals column{r2}: if_12_then
         cmp r9w, dx
         je _if_12_then
         ; 66:3 if columnCursor == column - 1
@@ -645,7 +645,7 @@ _printCell@u8@i16@i16:
         mov cl, bl
         ; call t.5{r0} = isOpen@u8[cell{r1}] -> bool
         call _isOpen@u8
-        ; branch t.5{r0} notequals 0: if_14_then, if_14_else
+        ; branch t.5{r0} notequals 0: if_14_then
         cmp al, 0
         jne _if_14_then
         ; 89:7 if isFlag@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=89:18]])
@@ -844,7 +844,7 @@ _for_19_body:
         ; add column{r0}, 1
         add ax, 1
 _for_19:
-        ; branch column{r0} lt 40: for_19_body, for_19_break
+        ; branch column{r0} lt 40: for_19_body
         cmp ax, 40
         jl _for_19_body
         ; addrof memVarAddr{r7}, row
@@ -884,7 +884,7 @@ _for_19:
         ; add row{r0}, 1
         add ax, 1
 _for_18:
-        ; branch row{r0} lt 20: for_18_body, printField@i16@i16_ret
+        ; branch row{r0} lt 20: for_18_body
         cmp ax, 20
         jl _for_18_body
         add rsp, 32
@@ -912,7 +912,7 @@ _for_20_body:
         ; sub i{r6}, 1
         sub bx, 1
 _for_20:
-        ; branch i{r6} gt 0: for_20_body, printSpaces@i16_ret
+        ; branch i{r6} gt 0: for_20_body
         cmp bx, 0
         jg _for_20_body
         add rsp, 32
@@ -929,7 +929,7 @@ _getDigitCount@i16:
         ; const count{r4}, 0
         mov r9b, 0
         ; 119:2 if value < 0
-        ; branch value{r3} gteq 0: while_22, if_21_then
+        ; branch value{r3} gteq 0: while_22
         cmp r8w, 0
         jge _while_22
         ; const count{r4}, 1
@@ -949,7 +949,7 @@ _while_22:
         ; move value{r3}, value{r0}
         mov r8w, ax
         ; 127:3 if value == 0
-        ; branch value{r3} notequals 0: while_22, while_22_break
+        ; branch value{r3} notequals 0: while_22
         cmp r8w, 0
         jne _while_22
         ; 132:9 return count
@@ -1006,7 +1006,7 @@ _for_25_body:
         mov cl, al
         ; and t.4{r1}, 6
         and cl, 6
-        ; branch t.4{r1} notequals 0: for_25_continue, if_26_then
+        ; branch t.4{r1} notequals 0: for_25_continue
         cmp cl, 0
         jne _for_25_continue
         ; add count{r6}, 1
@@ -1019,7 +1019,7 @@ _for_25_continue:
         ; add c{r1}, 1
         add cx, 1
 _for_25:
-        ; branch c{r1} lt 40: for_25_body, for_24_continue
+        ; branch c{r1} lt 40: for_25_body
         cmp cx, 40
         jl _for_25_body
         ; addrof memVarAddr{r7}, r
@@ -1029,7 +1029,7 @@ _for_25:
         ; add r{r1}, 1
         add cx, 1
 _for_24:
-        ; branch r{r1} lt 20: for_24_body, for_24_break
+        ; branch r{r1} lt 20: for_24_body
         cmp cx, 20
         jl _for_24_body
         ; 145:9 return count
@@ -1115,7 +1115,7 @@ _printLeft:
 _abs@i16:
         sub rsp, 8
         ; 160:2 if a < 0
-        ; branch a{r1} lt 0: if_27_then, if_27_end
+        ; branch a{r1} lt 0: if_27_then
         cmp cx, 0
         jl _if_27_then
         ; 163:9 return a
@@ -1160,13 +1160,13 @@ _for_29_body:
         ; add c{r7}, 1
         add r12w, 1
 _for_29:
-        ; branch c{r7} lt 40: for_29_body, for_28_continue
+        ; branch c{r7} lt 40: for_29_body
         cmp r12w, 40
         jl _for_29_body
         ; add r{r6}, 1
         add bx, 1
 _for_28:
-        ; branch r{r6} lt 20: for_28_body, clearField_ret
+        ; branch r{r6} lt 20: for_28_body
         cmp bx, 20
         jl _for_28_body
         add rsp, 32
@@ -1264,7 +1264,7 @@ _for_30_body:
         sub cx, bx
         ; call t.9{r0} = abs@i16[t.10{r1}] -> i16
         call _abs@i16
-        ; branch t.9{r0} gt 1: if_31_then, or_32
+        ; branch t.9{r0} gt 1: if_31_then
         cmp ax, 1
         jg _if_31_then
         ; addrof memVarAddr{r7}, column
@@ -1313,7 +1313,7 @@ _for_30_continue:
         ; sub bombs{r0}, 1
         sub ax, 1
 _for_30:
-        ; branch bombs{r0} gt 0: for_30_body, initField@i16@i16_ret
+        ; branch bombs{r0} gt 0: for_30_body
         cmp ax, 0
         jg _for_30_body
         add rsp, 32
@@ -1348,7 +1348,7 @@ _maybeRevealAround@i16@i16:
         mov [r12], dx
         ; call t.7{r0} = getBombCountAround@i16@i16[row{r1}, column{r2}] -> u8
         call _getBombCountAround@i16@i16
-        ; branch t.7{r0} notequals 0: maybeRevealAround@i16@i16_ret, if_33_end
+        ; branch t.7{r0} notequals 0: maybeRevealAround@i16@i16_ret
         cmp al, 0
         jne _maybeRevealAround@i16@i16_ret
         ; const dr{r0}, -1
@@ -1404,7 +1404,7 @@ _and_37:
         lea r12, [rsp+48]
         ; store [memVarAddr{r7}], dr{r0}
         mov [r12], ax
-        ; branch dc{r3} notequals 0: if_36_end, maybeRevealAround@i16@i16.no_critical_edge_18
+        ; branch dc{r3} notequals 0: if_36_end
         cmp r8w, 0
         jne _if_36_end
         ; addrof memVarAddr{r7}, dc
@@ -1444,7 +1444,7 @@ _if_36_end:
         mov [r12], dx
         ; call t.8{r0} = checkCellBounds@i16@i16[r{r1}, c{r2}] -> bool
         call _checkCellBounds@i16@i16
-        ; branch t.8{r0} equals 0: for_35_continue, if_38_end
+        ; branch t.8{r0} equals 0: for_35_continue
         cmp al, 0
         je _for_35_continue
         ; addrof memVarAddr{r7}, r
@@ -1474,7 +1474,7 @@ _if_36_end:
         mov [r12], al
         ; call t.9{r0} = isOpen@u8[cell{r1}] -> bool
         call _isOpen@u8
-        ; branch t.9{r0} notequals 0: for_35_continue, if_39_end
+        ; branch t.9{r0} notequals 0: for_35_continue
         cmp al, 0
         jne _for_35_continue
         ; addrof memVarAddr{r7}, cell
@@ -1525,7 +1525,7 @@ _for_35_continue:
         ; add dc{r0}, 1
         add ax, 1
 _for_35:
-        ; branch dc{r0} lteq 1: for_35_body, for_34_continue
+        ; branch dc{r0} lteq 1: for_35_body
         cmp ax, 1
         jle _for_35_body
         ; addrof memVarAddr{r7}, dr
@@ -1610,10 +1610,10 @@ _if_41_end:
         ; move chr{r3}, chr{r0}
         mov r8w, ax
         ; 231:3 if chr == 27
-        ; branch chr{r3} equals 27: main_ret, if_43_end
+        ; branch chr{r3} equals 27: main_ret
         cmp r8w, 27
         je _main_ret
-        ; branch chr{r3} equals -8120: if_44_then, if_44_else
+        ; branch chr{r3} equals -8120: if_44_then
         cmp r8w, -8120
         je _if_44_then
         ; branch chr{r3} notequals -8112: if_45_else, if_45_then
@@ -1912,7 +1912,7 @@ _if_52_end:
         mov [r12], al
         ; call t.16{r0} = isOpen@u8[cell{r1}] -> bool
         call _isOpen@u8
-        ; branch t.16{r0} notequals 0: if_53_end, if_53_then
+        ; branch t.16{r0} notequals 0: if_53_end
         cmp al, 0
         jne _if_53_end
         ; addrof memVarAddr{r7}, cell
@@ -1953,7 +1953,7 @@ _if_53_end:
         mov cl, [r12]
         ; call t.18{r0} = isBomb@u8[cell{r1}] -> bool
         call _isBomb@u8
-        ; branch t.18{r0} notequals 0: if_54_then, if_54_end
+        ; branch t.18{r0} notequals 0: if_54_then
         cmp al, 0
         jne _if_54_then
         ; addrof memVarAddr{r7}, curr_r

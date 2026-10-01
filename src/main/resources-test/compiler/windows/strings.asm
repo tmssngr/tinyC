@@ -113,7 +113,7 @@ _while_1:
         ; store [t.6{r5}], digit{r0}
         mov [r10], al
         ; 34:3 if number == 0
-        ; branch number{r6} notequals 0: while_1, while_1_break
+        ; branch number{r6} notequals 0: while_1
         cmp rbx, 0
         jne _while_1
         ; cast t.9{r6}(i64), pos{r3}(u8)
@@ -171,7 +171,7 @@ _printIntLf@i64:
         ; move number{r6}, number{r1}
         mov rbx, rcx
         ; 54:2 if number < 0
-        ; branch number{r6} gteq 0: if_3_end, if_3_then
+        ; branch number{r6} gteq 0: if_3_end
         cmp rbx, 0
         jge _if_3_end
         ; const arg.0.0{r1}, 45
@@ -210,7 +210,7 @@ _for_4_body:
 _for_4:
         ; load t.2{r2}, [str{r1}]
         mov dl, [rcx]
-        ; branch t.2{r2} notequals 0: for_4_body, for_4_break
+        ; branch t.2{r2} notequals 0: for_4_body
         cmp dl, 0
         jne _for_4_body
         ; 67:9 return length
@@ -298,7 +298,7 @@ _for_5_body:
 _for_5:
         ; load t.2{r0}, [ptr{r6}]
         mov al, [rbx]
-        ; branch t.2{r0} notequals 0: for_5_body, for_5_break
+        ; branch t.2{r0} notequals 0: for_5_body
         cmp al, 0
         jne _for_5_body
         ; call printIntLf@i16[length{r1}]

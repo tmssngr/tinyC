@@ -31,7 +31,7 @@ for_1_body:
 	add str{r1}, 1
 for_1:
 	load t.2{r2}, [str{r1}]
-	branch t.2{r2} notequals 0: for_1_body, for_1_break
+	branch t.2{r2} notequals 0: for_1_body
 	; 67:9 return length
 
 printStringLength@@u8@u8:
@@ -55,7 +55,7 @@ for_2_body:
 	addrof t.2{r2}, board
 	add t.2{r2}, t.3{r0}
 	load t.1{r0}, [t.2{r2}]
-	branch t.1{r0} equals 0: if_3_then, if_3_else
+	branch t.1{r0} equals 0: if_3_then
 	const arg.2.0{r1}, 42
 	call printChar@u8[arg.2.0{r1}]
 	jump for_2_continue
@@ -65,7 +65,7 @@ if_3_then:
 for_2_continue:
 	add i{r6}, 1
 for_2:
-	branch i{r6} lt 30: for_2_body, for_2_break
+	branch i{r6} lt 30: for_2_body
 	const t.4{r1}, [string-0]
 	call printString@@u8[t.4{r1}]
 
@@ -82,7 +82,7 @@ for_4_body:
 	store [t.5{r2}], t.4{r0}
 	add i{r6}, 1
 for_4:
-	branch i{r6} lt 30: for_4_body, for_4_break
+	branch i{r6} lt 30: for_4_body
 	const t.7{r6}, 1
 	const t.9{r0}, 29
 	addrof t.8{r1}, board
@@ -127,11 +127,11 @@ for_6_body:
 	store [t.26{r4}], t.23{r1}
 	add j{r2}, 1
 for_6:
-	branch j{r2} lt 29: for_6_body, for_6_break
+	branch j{r2} lt 29: for_6_body
 	call printBoard[]
 	add i{r6}, 1
 for_5:
-	branch i{r6} lt 28: for_5_body, main_ret
+	branch i{r6} lt 28: for_5_body
 
 printStringLength@@u8@i64:
 	mov     rdi, rsp

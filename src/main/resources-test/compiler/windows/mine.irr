@@ -50,7 +50,7 @@ while_1:
 	add t.6{r5}, t.7{r4}
 	store [t.6{r5}], digit{r0}
 	; 34:3 if number == 0
-	branch number{r6} notequals 0: while_1, while_1_break
+	branch number{r6} notequals 0: while_1
 	cast t.9{r6}(i64), pos{r3}(u8)
 	addrof t.8{r1}, buffer
 	add t.8{r1}, t.9{r6}
@@ -71,7 +71,7 @@ for_3_body:
 	add str{r1}, 1
 for_3:
 	load t.2{r2}, [str{r1}]
-	branch t.2{r2} notequals 0: for_3_body, for_3_break
+	branch t.2{r2} notequals 0: for_3_body
 	; 67:9 return length
 
 printStringLength@@u8@u8:
@@ -171,13 +171,13 @@ checkCellBounds@i16@i16:
 	; 36:40 logic and
 	; 36:21 logic and
 	gteq t.2{r0}, row{r1}, 0
-	branch t.2{r0} equals 0: and_next_6, and_2nd_6
+	branch t.2{r0} equals 0: and_next_6
 	lt t.2{r0}, row{r1}, 20
 and_next_6:
-	branch t.2{r0} equals 0: and_next_5, and_2nd_5
+	branch t.2{r0} equals 0: and_next_5
 	gteq t.2{r0}, column{r2}, 0
 and_next_5:
-	branch t.2{r0} equals 0: checkCellBounds@i16@i16_ret, and_2nd_4
+	branch t.2{r0} equals 0: checkCellBounds@i16@i16_ret
 	lt t.2{r0}, column{r2}, 40
 checkCellBounds@i16@i16_ret:
 
@@ -257,7 +257,7 @@ for_8_body:
 	addrof memVarAddr{r7}, c
 	store [memVarAddr{r7}], c{r3}
 	call t.8{r0} = checkCellBounds@i16@i16[r{r1}, c{r2}] -> bool
-	branch t.8{r0} notequals 0: if_9_then, getBombCountAround@i16@i16.no_critical_edge_11
+	branch t.8{r0} notequals 0: if_9_then
 	addrof memVarAddr{r7}, count
 	load count{r0}, [memVarAddr{r7}]
 	jump for_8_continue
@@ -272,7 +272,7 @@ if_9_then:
 	; 52:5 if isBomb@u8([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=52:16]])
 	move cell{r1}, cell{r0}
 	call t.9{r0} = isBomb@u8[cell{r1}] -> bool
-	branch t.9{r0} notequals 0: if_10_then, getBombCountAround@i16@i16.no_critical_edge_12
+	branch t.9{r0} notequals 0: if_10_then
 	addrof memVarAddr{r7}, count
 	load count{r0}, [memVarAddr{r7}]
 	jump for_8_continue
@@ -285,12 +285,12 @@ for_8_continue:
 	load dc{r1}, [memVarAddr{r7}]
 	add dc{r1}, 1
 for_8:
-	branch dc{r1} lteq 1: for_8_body, for_7_continue
+	branch dc{r1} lteq 1: for_8_body
 	addrof memVarAddr{r7}, dr
 	load dr{r1}, [memVarAddr{r7}]
 	add dr{r1}, 1
 for_7:
-	branch dr{r1} lteq 1: for_7_body, for_7_break
+	branch dr{r1} lteq 1: for_7_body
 	; 58:9 return count
 
 getSpacer@i16@i16@i16@i16:
@@ -301,8 +301,8 @@ getSpacer@i16@i16@i16@i16:
 	arg 3: columnCursor (i16/2)
 	; 8 pc
 	; 62:2 if rowCursor == row
-	branch rowCursor{r3} notequals row{r1}: if_11_end, if_11_then
-	branch columnCursor{r4} equals column{r2}: if_12_then, if_12_end
+	branch rowCursor{r3} notequals row{r1}: if_11_end
+	branch columnCursor{r4} equals column{r2}: if_12_then
 	; 66:3 if columnCursor == column - 1
 	move t.4{r1}, column{r2}
 	sub t.4{r1}, 1
@@ -339,7 +339,7 @@ printCell@u8@i16@i16:
 	; 75:2 if isOpen@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=75:13]])
 	move cell{r1}, cell{r6}
 	call t.5{r0} = isOpen@u8[cell{r1}] -> bool
-	branch t.5{r0} notequals 0: if_14_then, if_14_else
+	branch t.5{r0} notequals 0: if_14_then
 	; 89:7 if isFlag@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=89:18]])
 	move cell{r1}, cell{r6}
 	call t.7{r0} = isFlag@u8[cell{r1}] -> bool
@@ -448,7 +448,7 @@ for_19_body:
 	load column{r0}, [memVarAddr{r7}]
 	add column{r0}, 1
 for_19:
-	branch column{r0} lt 40: for_19_body, for_19_break
+	branch column{r0} lt 40: for_19_body
 	addrof memVarAddr{r7}, row
 	load row{r1}, [memVarAddr{r7}]
 	addrof memVarAddr{r7}, row
@@ -468,7 +468,7 @@ for_19:
 	load row{r0}, [memVarAddr{r7}]
 	add row{r0}, 1
 for_18:
-	branch row{r0} lt 20: for_18_body, printField@i16@i16_ret
+	branch row{r0} lt 20: for_18_body
 
 printSpaces@i16:
  Local variables
@@ -482,7 +482,7 @@ for_20_body:
 	call printChar@u8[arg.0.0{r1}]
 	sub i{r6}, 1
 for_20:
-	branch i{r6} gt 0: for_20_body, printSpaces@i16_ret
+	branch i{r6} gt 0: for_20_body
 
 getDigitCount@i16:
  Local variables
@@ -491,7 +491,7 @@ getDigitCount@i16:
 	move value{r3}, value{r1}
 	const count{r4}, 0
 	; 119:2 if value < 0
-	branch value{r3} gteq 0: while_22, if_21_then
+	branch value{r3} gteq 0: while_22
 	const count{r4}, 1
 	neg value{r3}, value{r3}
 while_22:
@@ -500,7 +500,7 @@ while_22:
 	div value{r0}, 10
 	move value{r3}, value{r0}
 	; 127:3 if value == 0
-	branch value{r3} notequals 0: while_22, while_22_break
+	branch value{r3} notequals 0: while_22
 	; 132:9 return count
 	move count{r0}, count{r4}
 
@@ -532,19 +532,19 @@ for_25_body:
 	; 140:4 if cell & 6 == 0
 	move t.4{r1}, cell{r0}
 	and t.4{r1}, 6
-	branch t.4{r1} notequals 0: for_25_continue, if_26_then
+	branch t.4{r1} notequals 0: for_25_continue
 	add count{r6}, 1
 for_25_continue:
 	addrof memVarAddr{r7}, c
 	load c{r1}, [memVarAddr{r7}]
 	add c{r1}, 1
 for_25:
-	branch c{r1} lt 40: for_25_body, for_24_continue
+	branch c{r1} lt 40: for_25_body
 	addrof memVarAddr{r7}, r
 	load r{r1}, [memVarAddr{r7}]
 	add r{r1}, 1
 for_24:
-	branch r{r1} lt 20: for_24_body, for_24_break
+	branch r{r1} lt 20: for_24_body
 	; 145:9 return count
 	move count{r0}, count{r6}
 
@@ -585,7 +585,7 @@ abs@i16:
 	arg 0: a (i16/2)
 	; 5 pc
 	; 160:2 if a < 0
-	branch a{r1} lt 0: if_27_then, if_27_end
+	branch a{r1} lt 0: if_27_then
 	; 163:9 return a
 	move a{r0}, a{r1}
 	jump abs@i16_ret
@@ -611,10 +611,10 @@ for_29_body:
 	call setCell@i16@i16@u8[r{r1}, c{r2}, arg.0.2{r3}]
 	add c{r7}, 1
 for_29:
-	branch c{r7} lt 40: for_29_body, for_28_continue
+	branch c{r7} lt 40: for_29_body
 	add r{r6}, 1
 for_28:
-	branch r{r6} lt 20: for_28_body, clearField_ret
+	branch r{r6} lt 20: for_28_body
 
 initField@i16@i16:
  Local variables
@@ -661,7 +661,7 @@ for_30_body:
 	store [memVarAddr{r7}], row{r0}
 	sub t.10{r1}, curr_r{r6}
 	call t.9{r0} = abs@i16[t.10{r1}] -> i16
-	branch t.9{r0} gt 1: if_31_then, or_32
+	branch t.9{r0} gt 1: if_31_then
 	addrof memVarAddr{r7}, column
 	load column{r0}, [memVarAddr{r7}]
 	move t.12{r1}, column{r0}
@@ -686,7 +686,7 @@ for_30_continue:
 	load bombs{r0}, [memVarAddr{r7}]
 	sub bombs{r0}, 1
 for_30:
-	branch bombs{r0} gt 0: for_30_body, initField@i16@i16_ret
+	branch bombs{r0} gt 0: for_30_body
 
 maybeRevealAround@i16@i16:
  Local variables
@@ -704,7 +704,7 @@ maybeRevealAround@i16@i16:
 	addrof memVarAddr{r7}, column
 	store [memVarAddr{r7}], column{r2}
 	call t.7{r0} = getBombCountAround@i16@i16[row{r1}, column{r2}] -> u8
-	branch t.7{r0} notequals 0: maybeRevealAround@i16@i16_ret, if_33_end
+	branch t.7{r0} notequals 0: maybeRevealAround@i16@i16_ret
 	const dr{r0}, -1
 	; 190:2 for dr <= 1
 	jump for_34
@@ -736,7 +736,7 @@ maybeRevealAround@i16@i16.no_critical_edge_15:
 and_37:
 	addrof memVarAddr{r7}, dr
 	store [memVarAddr{r7}], dr{r0}
-	branch dc{r3} notequals 0: if_36_end, maybeRevealAround@i16@i16.no_critical_edge_18
+	branch dc{r3} notequals 0: if_36_end
 	addrof memVarAddr{r7}, dc
 	store [memVarAddr{r7}], dc{r3}
 	addrof memVarAddr{r7}, r
@@ -757,7 +757,7 @@ if_36_end:
 	addrof memVarAddr{r7}, c
 	store [memVarAddr{r7}], c{r2}
 	call t.8{r0} = checkCellBounds@i16@i16[r{r1}, c{r2}] -> bool
-	branch t.8{r0} equals 0: for_35_continue, if_38_end
+	branch t.8{r0} equals 0: for_35_continue
 	addrof memVarAddr{r7}, r
 	load r{r1}, [memVarAddr{r7}]
 	addrof memVarAddr{r7}, r
@@ -772,7 +772,7 @@ if_36_end:
 	addrof memVarAddr{r7}, cell
 	store [memVarAddr{r7}], cell{r0}
 	call t.9{r0} = isOpen@u8[cell{r1}] -> bool
-	branch t.9{r0} notequals 0: for_35_continue, if_39_end
+	branch t.9{r0} notequals 0: for_35_continue
 	addrof memVarAddr{r7}, cell
 	load cell{r0}, [memVarAddr{r7}]
 	move t.10{r3}, cell{r0}
@@ -798,7 +798,7 @@ for_35_continue:
 	load dc{r0}, [memVarAddr{r7}]
 	add dc{r0}, 1
 for_35:
-	branch dc{r0} lteq 1: for_35_body, for_34_continue
+	branch dc{r0} lteq 1: for_35_body
 	addrof memVarAddr{r7}, dr
 	load dr{r0}, [memVarAddr{r7}]
 	add dr{r0}, 1
@@ -843,8 +843,8 @@ if_41_end:
 	call chr{r0} = getChar[] -> i16
 	move chr{r3}, chr{r0}
 	; 231:3 if chr == 27
-	branch chr{r3} equals 27: main_ret, if_43_end
-	branch chr{r3} equals -8120: if_44_then, if_44_else
+	branch chr{r3} equals 27: main_ret
+	branch chr{r3} equals -8120: if_44_then
 	branch chr{r3} notequals -8112: if_45_else, if_45_then
 	jump if_45_then
 if_44_then:
@@ -1001,7 +1001,7 @@ if_52_end:
 	addrof memVarAddr{r7}, cell
 	store [memVarAddr{r7}], cell{r0}
 	call t.16{r0} = isOpen@u8[cell{r1}] -> bool
-	branch t.16{r0} notequals 0: if_53_end, if_53_then
+	branch t.16{r0} notequals 0: if_53_end
 	addrof memVarAddr{r7}, cell
 	load cell{r0}, [memVarAddr{r7}]
 	move t.17{r3}, cell{r0}
@@ -1022,7 +1022,7 @@ if_53_end:
 	addrof memVarAddr{r7}, cell
 	load cell{r1}, [memVarAddr{r7}]
 	call t.18{r0} = isBomb@u8[cell{r1}] -> bool
-	branch t.18{r0} notequals 0: if_54_then, if_54_end
+	branch t.18{r0} notequals 0: if_54_then
 	addrof memVarAddr{r7}, curr_r
 	load curr_r{r1}, [memVarAddr{r7}]
 	addrof memVarAddr{r7}, curr_r

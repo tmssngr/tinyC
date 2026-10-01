@@ -21,7 +21,7 @@ max@u8@u8:
 	arg 1: b (u8/1)
 	; 4 pc
 	; 13:2 if a < b
-	branch a{r1} lt b{r2}: if_1_then, if_1_end
+	branch a{r1} lt b{r2}: if_1_then
 	; 16:9 return a
 	move a{r0}, a{r1}
 	jump max@u8@u8_ret
@@ -45,7 +45,7 @@ while_2_body:
 	move a{r0}, b{r2}
 	move b{r2}, c{r3}
 while_2:
-	branch i{r1} gt 0: while_2_body, while_2_break
+	branch i{r1} gt 0: while_2_body
 	; 28:9 return a
 
 main:

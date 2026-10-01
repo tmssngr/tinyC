@@ -52,7 +52,7 @@ _registerHint@u8@u8:
 _max@u8@u8:
         sub rsp, 8
         ; 13:2 if a < b
-        ; branch a{r1} lt b{r2}: if_1_then, if_1_end
+        ; branch a{r1} lt b{r2}: if_1_then
         cmp cl, dl
         jb _if_1_then
         ; 16:9 return a
@@ -89,7 +89,7 @@ _while_2_body:
         ; move b{r2}, c{r3}
         mov dx, r8w
 _while_2:
-        ; branch i{r1} gt 0: while_2_body, while_2_break
+        ; branch i{r1} gt 0: while_2_body
         cmp cl, 0
         ja _while_2_body
         ; 28:9 return a
