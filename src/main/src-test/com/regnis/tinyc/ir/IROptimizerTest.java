@@ -55,12 +55,9 @@ public class IROptimizerTest {
 				new IRLabel("next"),
 				new IRMove(varA, varB),
 				new IRLabel("then")
-		));
+		), instruction -> null);
 		final Iterator<IRInstruction> it = optimized.iterator();
 		assertEquals(new IRMove(varA, varB), it.next());
-		assertEquals(new IRBranch(IRCompare.Op.Equals, varA, 1, "then", ""), it.next());
-		assertEquals(new IRMove(varA, varB), it.next());
-		assertEquals(new IRLabel("then"), it.next());
 		assertFalse(it.hasNext());
 	}
 }
