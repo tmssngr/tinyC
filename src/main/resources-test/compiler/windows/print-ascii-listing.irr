@@ -1,9 +1,8 @@
 printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
-	; 6 pc
+	; 5 pc
 	move str{r6}, str{r1}
-	move str{r1}, str{r6}
 	call length.1{r0} = strlen@@u8[str{r1}] -> i64
 	move str{r1}, str{r6}
 	move length.1{r2}, length.1{r0}
@@ -12,10 +11,10 @@ printString@@u8:
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 9 pc
+	; 7 pc
 	addrof memVarAddr{r7}, chr
 	store [memVarAddr{r7}], chr{r1}
-	addrof t.1.1{r1}, chr
+	move t.1.1{r1}, t.1.1{r7}
 	const arg.0.1{r2}, 1
 	call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
 
@@ -62,9 +61,8 @@ if_2_end:
 printHex2@u8:
  Local variables
 	arg 0: x (u8/1)
-	; 6 pc
+	; 5 pc
 	move x{r6}, x{r1}
-	move t.1.1{r1}, x{r6}
 	shiftright t.1.1{r1}, 4
 	call printNibble@u8[t.1.1{r1}]
 	move x{r1}, x{r6}
