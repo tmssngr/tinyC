@@ -1,0 +1,25 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printUint_Ai16 {
+		BasicBlock_0_printUint_Ai16 [label="printUint_Ai16\lcast t_d1_d1(i32), number(i16)\lcall printUint_Ai32[t_d1_d1]\ljump printUint_Ai16__ret",shape=box];
+		BasicBlock_0_printUint_Ai16 -> BasicBlock_0_printUint_Ai16__ret;
+		BasicBlock_0_printUint_Ai16__ret [label="printUint_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf_Ai16 {
+		BasicBlock_1_printIntLf_Ai16 [label="printIntLf_Ai16\lbranch number gteq 0: printIntLf_Ai16_dno__critical__edge__4, if__1__then\ljump if__1__then",shape=box];
+		BasicBlock_1_printIntLf_Ai16 -> BasicBlock_1_printIntLf_Ai16_dno__critical__edge__4 [label="(number)"];
+		BasicBlock_1_printIntLf_Ai16 -> BasicBlock_1_if__1__then [label="(number)"];
+		BasicBlock_1_printIntLf_Ai16_dno__critical__edge__4 [label="printIntLf_Ai16_dno__critical__edge__4\lmove number_d1, number\ljump if__1__end",shape=box];
+		BasicBlock_1_printIntLf_Ai16_dno__critical__edge__4 -> BasicBlock_1_if__1__end [label="(number.1)"];
+		BasicBlock_1_if__1__then [label="if__1__then\lcall printChar_Au8[45]\lneg number_d2, number\lmove number_d1, number_d2\ljump if__1__end",shape=box];
+		BasicBlock_1_if__1__then -> BasicBlock_1_if__1__end [label="(number.1)"];
+		BasicBlock_1_if__1__end [label="if__1__end\lcall printUint_Ai16[number_d1]\lcall printChar_Au8[13]\ljump printIntLf_Ai16__ret",shape=box];
+		BasicBlock_1_if__1__end -> BasicBlock_1_printIntLf_Ai16__ret;
+		BasicBlock_1_printIntLf_Ai16__ret [label="printIntLf_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_2_main [label="main\lconst t_d0_d1, 32\laddrof a_d1_d1, space\lstore [a_d1_d1], t_d0_d1\lconst t_d2_d1, 63\laddrof a_d3_d1, next\lstore [a_d3_d1], t_d2_d1\laddrof t_d4_d1, space\laddrof a_d5_d1, ptrToSpace\lstore [a_d5_d1], t_d4_d1\laddrof a_d6_d1, next\lload t_d7_d1, [a_d6_d1]\lcall printIntLf_Ai16[t_d7_d1]\laddrof a_d9_d1, ptrToSpace\lload t_d10_d1, [a_d9_d1]\lmove t_d8_d1, t_d10_d1\ladd t_d8_d1, 2\laddrof a_d11_d1, ptrToSpace\lstore [a_d11_d1], t_d8_d1\laddrof a_d13_d1, ptrToSpace\lload t_d14_d1, [a_d13_d1]\lload t_d12_d1, [t_d14_d1]\lcall printIntLf_Ai16[t_d12_d1]\ljump main__ret",shape=box];
+		BasicBlock_2_main -> BasicBlock_2_main__ret;
+		BasicBlock_2_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

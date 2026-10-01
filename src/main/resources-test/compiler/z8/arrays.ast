@@ -1,0 +1,16 @@
+u8* chars[256];
+
+void printIntLf@u8(u8 number) {
+}
+
+void main() {
+	u8 chr;
+	u8 result;
+
+	chr = 32;
+	chars[0] = chr;
+	chars[1] = chars[0] + 1;
+	chars[(i16)(1 + 1)] = chars[1] + 2;
+	result = chars[2];
+	printIntLf@u8(result);
+}
