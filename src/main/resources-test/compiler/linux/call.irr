@@ -1,0 +1,160 @@
+printChar@u8:
+ Local variables
+	arg 0: chr (u8/1)
+	; 7 pc
+	addrof memVarAddr{r9}, chr
+	store [memVarAddr{r9}], chr{r1}
+	move t.1.1{r1}, t.1.1{r9}
+	const arg.0.1{r2}, 1
+	call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
+
+printUint@i64:
+ Local variables
+	arg 0: number (i64/8)
+	var 1: buffer[] (u8*/20)
+	; 28 pc
+	const pos.1{r8}, 20
+	; 33:2 while true
+	move number.1{r5}, number{r1}
+while_1:
+	sub pos.3{r8}, 1
+	move remainder.1{r6}, number.1{r5}
+	move remainder.1{r0}, remainder.1{r6}
+	mod remainder.1{r3}, remainder.1{r0}, 10
+	move remainder.1{r6}, remainder.1{r3}
+	move number.2{r0}, number.2{r5}
+	div number.2{r0}, 10
+	move number.2{r5}, number.2{r0}
+	cast t.5.1{r0}(u8), remainder.1{r6}(i64)
+	add digit.1{r0}, 48
+	cast t.7.1{r3}(i64), pos.3{r8}(u8)
+	addrof t.6.1{r4}, buffer
+	add t.6.2{r4}, t.7.1{r3}
+	store [t.6.2{r4}], digit.1{r0}
+	; 39:3 if number == 0
+	branch number.2{r5} notequals 0: while_1
+	move t.9.1{r0}, t.9.1{r3}
+	addrof t.8.1{r3}, buffer
+	move t.8.2{r1}, t.8.1{r3}
+	move t.8.2{r1}, t.8.2{r4}
+	const t.11.1{r0}, 20
+	move t.10.1{r2}, t.11.1{r0}
+	sub t.10.1{r2}, pos.3{r8}
+	call printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
+
+printIntLf@u8:
+ Local variables
+	arg 0: number (u8/1)
+	; 2 pc
+	cast t.1.1{r1}(i64), number{r1}(u8)
+	call printIntLf@i64[t.1.1{r1}]
+
+printIntLf@i64:
+ Local variables
+	arg 0: number (i64/8)
+	; 9 pc
+	move number{r8}, number{r1}
+	branch number{r8} gteq 0: printIntLf@i64.no_critical_edge_4
+	const arg.0.0{r1}, 45
+	call printChar@u8[arg.0.0{r1}]
+	neg number.2{r8}, number{r8}
+	move number.1{r1}, number.2{r8}
+	jump if_3_end
+printIntLf@i64.no_critical_edge_4:
+	move number.1{r1}, number{r8}
+if_3_end:
+	call printUint@i64[number.1{r1}]
+	const arg.2.0{r1}, 10
+	call printChar@u8[arg.2.0{r1}]
+
+printStringLength@@u8@u8:
+ Local variables
+	arg 0: str (u8*/8)
+	arg 1: length (u8/1)
+	; 2 pc
+	cast t.2.1{r2}(i64), length{r2}(u8)
+	call printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
+
+main:
+ Local variables
+	var 0: t.3.1 (u8/1)
+	var 1: t.4.1 (u8/1)
+	var 2: t.5.1 (u8/1)
+	; 44 pc
+	; begin initialize global variables
+	const t.0.1{r8}, 0
+	addrof a.1.1{r0}, i
+	store [a.1.1{r0}], t.0.1{r8}
+	; end initialize global variables
+	call t.2.1{r0} = next[] -> u8
+	move t.2.1{r8}, t.2.1{r0}
+	call t.3.1{r0} = next[] -> u8
+	addrof memVarAddr{r9}, t.3.1
+	store [memVarAddr{r9}], t.3.1{r0}
+	call t.4.1{r0} = next[] -> u8
+	addrof memVarAddr{r9}, t.4.1
+	store [memVarAddr{r9}], t.4.1{r0}
+	call t.5.1{r0} = next[] -> u8
+	addrof memVarAddr{r9}, t.5.1
+	store [memVarAddr{r9}], t.5.1{r0}
+	call t.6.1{r0} = next[] -> u8
+	move t.2.1{r1}, t.2.1{r8}
+	addrof memVarAddr{r9}, t.3.1
+	load t.3.1{r2}, [memVarAddr{r9}]
+	addrof memVarAddr{r9}, t.4.1
+	load t.4.1{r3}, [memVarAddr{r9}]
+	addrof memVarAddr{r9}, t.5.1
+	load t.5.1{r4}, [memVarAddr{r9}]
+	move t.6.1{r5}, t.6.1{r0}
+	call doPrint@u8@u8@u8@u8@u8[t.2.1{r1}, t.3.1{r2}, t.4.1{r3}, t.5.1{r4}, t.6.1{r5}]
+
+next:
+	; 14 pc
+	addrof a.1.1{r1}, i
+	load t.2.1{r1}, [a.1.1{r1}]
+	add t.0.1{r1}, 1
+	addrof a.3.1{r2}, i
+	store [a.3.1{r2}], t.0.1{r1}
+	; 11:9 return i
+	move a.4.1{r1}, a.4.1{r2}
+	load t.5.1{r0}, [a.4.1{r1}]
+
+doPrint@u8@u8@u8@u8@u8:
+ Local variables
+	arg 0: a (u8/1)
+	arg 1: b (u8/1)
+	arg 2: c (u8/1)
+	arg 3: d (u8/1)
+	arg 4: e (u8/1)
+	; 37 pc
+	move b{r8}, b{r2}
+	addrof memVarAddr{r9}, c
+	store [memVarAddr{r9}], c{r3}
+	addrof memVarAddr{r9}, d
+	store [memVarAddr{r9}], d{r4}
+	addrof memVarAddr{r9}, e
+	store [memVarAddr{r9}], e{r5}
+	call printIntLf@u8[a{r1}]
+	move b{r1}, b{r8}
+	call printIntLf@u8[b{r1}]
+	addrof memVarAddr{r9}, c
+	load c{r1}, [memVarAddr{r9}]
+	call printIntLf@u8[c{r1}]
+	addrof memVarAddr{r9}, d
+	load d{r1}, [memVarAddr{r9}]
+	call printIntLf@u8[d{r1}]
+	addrof memVarAddr{r9}, e
+	load e{r1}, [memVarAddr{r9}]
+	call printIntLf@u8[e{r1}]
+
+printStringLength@@u8@i64:
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, 1
+	mov rax, 1
+	syscall
+	ret
+
+Global variables
+	0: i (u8/1)
+

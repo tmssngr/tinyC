@@ -24,7 +24,7 @@ printUint@i64:
 	var 1: buffer[] (u8*/20)
 	; 28 pc
 	const pos.1{r6}, 20
-	; 28:2 while true
+	; 33:2 while true
 	move number.1{r3}, number{r1}
 while_1:
 	sub pos.3{r6}, 1
@@ -41,7 +41,7 @@ while_1:
 	addrof t.6.1{r5}, buffer
 	add t.6.2{r5}, t.7.1{r4}
 	store [t.6.2{r5}], digit.1{r0}
-	; 34:3 if number == 0
+	; 39:3 if number == 0
 	branch number.2{r3} notequals 0: while_1
 	move t.9.1{r0}, t.9.1{r4}
 	addrof t.8.1{r3}, buffer
@@ -96,7 +96,7 @@ strlen@@u8:
 	arg 0: str (u8*/8)
 	; 9 pc
 	const length.1{r2}, 0
-	; 64:2 for *str != 0
+	; 69:2 for *str != 0
 	move length.2{r0}, length.1{r2}
 	jump for_4
 for_4_body:
@@ -107,7 +107,7 @@ for_4_body:
 for_4:
 	load t.2.1{r2}, [str.1{r1}]
 	branch t.2.1{r2} notequals 0: for_4_body
-	; 67:9 return length
+	; 72:9 return length
 
 printStringLength@@u8@u8:
  Local variables
