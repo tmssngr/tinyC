@@ -45,7 +45,7 @@ _strlen@@u8:
         sub rsp, 8
         ; const length.1{r2}, 0
         mov rdx, 0
-        ; 64:2 for *str != 0
+        ; 69:2 for *str != 0
         ; move length.2{r0}, length.1{r2}
         mov rax, rdx
         jmp _for_1
@@ -64,7 +64,7 @@ _for_1:
         ; branch t.2.1{r2} notequals 0: for_1_body
         cmp dl, 0
         jne _for_1_body
-        ; 67:9 return length
+        ; 72:9 return length
         add rsp, 8
         ret
 
