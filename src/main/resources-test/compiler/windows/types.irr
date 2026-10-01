@@ -32,7 +32,7 @@ while_1:
 	add t.6.2{r5}, t.7.1{r4}
 	store [t.6.2{r5}], digit.1{r0}
 	; 34:3 if number == 0
-	branch number.2{r3} notequals 0: while_1, while_1_break
+	branch number.2{r3} notequals 0: while_1
 	cast t.9.1{r0}(i64), pos.3{r6}(u8)
 	addrof t.8.1{r3}, buffer
 	move t.8.2{r1}, t.8.1{r3}
@@ -54,7 +54,7 @@ printIntLf@i64:
 	arg 0: number (i64/8)
 	; 7 pc
 	move number{r6}, number{r1}
-	branch number{r6} gteq 0: if_3_end, if_3_then
+	branch number{r6} gteq 0: if_3_end
 	const arg.0.0{r1}, 45
 	call printChar@u8[arg.0.0{r1}]
 	neg number.2{r6}, number{r6}
@@ -82,7 +82,7 @@ for_4_body:
 	call printIntLf@u8[i.2{r1}]
 	add i.3{r6}, 1
 for_4:
-	branch i.2{r6} notequals 2: for_4_body, for_4_break
+	branch i.2{r6} notequals 2: for_4_body
 	const v.1{r6}, 260
 	cast t.2.1{r1}(u8), v.1{r6}(i16)
 	call printIntLf@u8[t.2.1{r1}]
