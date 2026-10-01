@@ -11,9 +11,10 @@ import org.jetbrains.annotations.*;
  */
 public class IROptimizer {
 
-	public static List<IRInstruction> optimize(List<IRInstruction> initialInstructions) {
+	@NotNull
+	public static List<IRInstruction> optimize(@NotNull List<IRInstruction> initialInstructions, @NotNull IRLocalOptimizer.PlatformSpecificInstructionBehavior platformSpecificInstructionBehavior) {
 		while (true) {
-			final List<IRInstruction> instructions = removeObsoleteLabelJump(initialInstructions);
+			List<IRInstruction> instructions = removeObsoleteLabelJump(initialInstructions);
 
 			removeJumpJump(instructions);
 			removeJumpLabel(instructions, false);
@@ -21,6 +22,8 @@ public class IROptimizer {
 			removeBranchJumpLabel(instructions);
 
 			removeObsoleteLabels(instructions);
+
+			instructions = IRLocalOptimizer.cleanUp(instructions, platformSpecificInstructionBehavior);
 
 			if (initialInstructions.equals(instructions)) {
 				return instructions;
