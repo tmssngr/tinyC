@@ -30,8 +30,8 @@ _printChar@u8:
         lea r12, [rsp+64]
         ; store [memVarAddr{r7}], chr{r1}
         mov [r12], cl
-        ; addrof t.1{r1}, chr
-        lea rcx, [rsp+64]
+        ; move t.1{r1}, t.1{r7}
+        mov rcx, r12
         ; const arg.0.1{r2}, 1
         mov dl, 1
         ; call printStringLength@@u8@u8[t.1{r1}, arg.0.1{r2}]
@@ -93,12 +93,12 @@ _while_1:
         ; branch number{r6} notequals 0: while_1
         cmp rbx, 0
         jne _while_1
-        ; cast t.9{r6}(i64), pos{r3}(u8)
-        movzx rbx, r8b
+        ; move t.9{r6}, t.9{r4}
+        mov rbx, r9
         ; addrof t.8{r1}, buffer
         lea rcx, [rsp+40]
-        ; add t.8{r1}, t.9{r6}
-        add rcx, rbx
+        ; move t.8{r1}, t.8{r5}
+        mov rcx, r10
         ; const t.11{r6}, 20
         mov bl, 20
         ; move t.10{r2}, t.11{r6}
@@ -186,14 +186,12 @@ _main:
         lea rax, [rsp+40]
         ; store [a.a{r0}], t.a{r6}
         mov [rax], bx
-        ; addrof a.a1{r6}, a
-        lea rbx, [rsp+40]
+        ; move a.a1{r6}, a.a1{r0}
+        mov rbx, rax
         ; load t.a1{r1}, [a.a1{r6}]
         mov cx, [rbx]
         ; call printIntLf@i16[t.a1{r1}]
         call _printIntLf@i16
-        ; addrof b{r6}, a
-        lea rbx, [rsp+40]
         ; load t.4{r6}, [b{r6}]
         mov bx, [rbx]
         ; sub t.c{r6}, 1
@@ -202,24 +200,20 @@ _main:
         lea rax, [rsp+42]
         ; store [a.c{r0}], t.c{r6}
         mov [rax], bx
-        ; addrof a.c1{r6}, c
-        lea rbx, [rsp+42]
+        ; move a.c1{r6}, a.c1{r0}
+        mov rbx, rax
         ; load t.c1{r1}, [a.c1{r6}]
         mov cx, [rbx]
         ; call printIntLf@i16[t.c1{r1}]
         call _printIntLf@i16
-        ; addrof d{r6}, c
-        lea rbx, [rsp+42]
         ; load t.6{r0}, [d{r6}]
         mov ax, [rbx]
         ; sub t.5{r0}, 1
         sub ax, 1
         ; store [d{r6}], t.5{r0}
         mov [rbx], ax
-        ; addrof a.c2{r6}, c
-        lea rbx, [rsp+42]
-        ; load t.c2{r1}, [a.c2{r6}]
-        mov cx, [rbx]
+        ; move t.c2{r1}, t.c2{r0}
+        mov cx, ax
         ; call printIntLf@i16[t.c2{r1}]
         call _printIntLf@i16
         add rsp, 32

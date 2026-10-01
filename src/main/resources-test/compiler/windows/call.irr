@@ -1,10 +1,10 @@
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 9 pc
+	; 7 pc
 	addrof memVarAddr{r7}, chr
 	store [memVarAddr{r7}], chr{r1}
-	addrof t.1{r1}, chr
+	move t.1{r1}, t.1{r7}
 	const arg.0.1{r2}, 1
 	call printStringLength@@u8@u8[t.1{r1}, arg.0.1{r2}]
 
@@ -33,9 +33,9 @@ while_1:
 	store [t.6{r5}], digit{r0}
 	; 34:3 if number == 0
 	branch number{r6} notequals 0: while_1
-	cast t.9{r6}(i64), pos{r3}(u8)
+	move t.9{r6}, t.9{r4}
 	addrof t.8{r1}, buffer
-	add t.8{r1}, t.9{r6}
+	move t.8{r1}, t.8{r5}
 	const t.11{r6}, 20
 	move t.10{r2}, t.11{r6}
 	sub t.10{r2}, pos{r3}
@@ -108,14 +108,14 @@ main:
 	call doPrint@u8@u8@u8@u8@u8[t.0{r1}, t.1{r2}, t.2{r3}, t.3{r4}, arg.5.4]
 
 next:
-	; 16 pc
+	; 14 pc
 	addrof a.i{r1}, i
 	load t.i{r1}, [a.i{r1}]
 	add t.i1{r1}, 1
 	addrof a.i1{r2}, i
 	store [a.i1{r2}], t.i1{r1}
 	; 11:9 return i
-	addrof a.i2{r1}, i
+	move a.i2{r1}, a.i2{r2}
 	load t.i2{r0}, [a.i2{r1}]
 
 doPrint@u8@u8@u8@u8@u8:

@@ -1,10 +1,10 @@
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 9 pc
+	; 7 pc
 	addrof memVarAddr{r7}, chr
 	store [memVarAddr{r7}], chr{r1}
-	addrof t.1{r1}, chr
+	move t.1{r1}, t.1{r7}
 	const arg.0.1{r2}, 1
 	call printStringLength@@u8@u8[t.1{r1}, arg.0.1{r2}]
 
@@ -40,9 +40,9 @@ while_1:
 	store [t.6{r5}], digit{r0}
 	; 34:3 if number == 0
 	branch number{r6} notequals 0: while_1
-	cast t.9{r6}(i64), pos{r3}(u8)
+	move t.9{r6}, t.9{r4}
 	addrof t.8{r1}, buffer
-	add t.8{r1}, t.9{r6}
+	move t.8{r1}, t.8{r5}
 	const t.11{r6}, 20
 	move t.10{r2}, t.11{r6}
 	sub t.10{r2}, pos{r3}
