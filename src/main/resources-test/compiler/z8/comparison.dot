@@ -1,0 +1,13 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printIntLf_Abool {
+		BasicBlock_0_printIntLf_Abool [label="printIntLf_Abool\ljump printIntLf_Abool__ret",shape=box];
+		BasicBlock_0_printIntLf_Abool -> BasicBlock_0_printIntLf_Abool__ret;
+		BasicBlock_0_printIntLf_Abool__ret [label="printIntLf_Abool__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_1_main [label="main\lconst t_d4_d1, [string-0]\lcall printString_A_Au8[t_d4_d1]\lconst a_d1, 1\lconst b_d1, 2\llt t_d5_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d5_d1]\llt t_d6_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d6_d1]\lconst t_d7_d1, [string-1]\lcall printString_A_Au8[t_d7_d1]\lconst c_d1, 0\lconst d_d1, 128\llt t_d8_d1, c_d1, d_d1\lcall printIntLf_Abool[t_d8_d1]\llt t_d9_d1, d_d1, c_d1\lcall printIntLf_Abool[t_d9_d1]\lconst t_d10_d1, [string-2]\lcall printString_A_Au8[t_d10_d1]\llteq t_d11_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d11_d1]\llteq t_d12_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d12_d1]\lconst t_d13_d1, [string-3]\lcall printString_A_Au8[t_d13_d1]\llteq t_d14_d1, c_d1, d_d1\lcall printIntLf_Abool[t_d14_d1]\llteq t_d15_d1, d_d1, c_d1\lcall printIntLf_Abool[t_d15_d1]\lconst t_d16_d1, [string-4]\lcall printString_A_Au8[t_d16_d1]\lequals t_d17_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d17_d1]\lequals t_d18_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d18_d1]\lconst t_d19_d1, [string-5]\lcall printString_A_Au8[t_d19_d1]\lnotequals t_d20_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d20_d1]\lnotequals t_d21_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d21_d1]\lconst t_d22_d1, [string-6]\lcall printString_A_Au8[t_d22_d1]\lgteq t_d23_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d23_d1]\lgteq t_d24_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d24_d1]\lconst t_d25_d1, [string-7]\lcall printString_A_Au8[t_d25_d1]\lgteq t_d26_d1, c_d1, d_d1\lcall printIntLf_Abool[t_d26_d1]\lgteq t_d27_d1, d_d1, c_d1\lcall printIntLf_Abool[t_d27_d1]\lconst t_d28_d1, [string-8]\lcall printString_A_Au8[t_d28_d1]\lgt t_d29_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d29_d1]\lgt t_d30_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d30_d1]\lconst t_d31_d1, [string-9]\lcall printString_A_Au8[t_d31_d1]\lgt t_d32_d1, c_d1, d_d1\lcall printIntLf_Abool[t_d32_d1]\lgt t_d33_d1, d_d1, c_d1\lcall printIntLf_Abool[t_d33_d1]\ljump main__ret",shape=box];
+		BasicBlock_1_main -> BasicBlock_1_main__ret;
+		BasicBlock_1_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}
