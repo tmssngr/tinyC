@@ -1,0 +1,95 @@
+printIntLf@bool:
+ Local variables
+	arg 0: number (bool/1)
+
+main:
+	; 60 pc
+	const t.4.1{r0}, [string-0]
+	call printString@@u8[t.4.1{r0}]
+	const a.1{r8}, 1
+	const b.1{r10}, 2
+	lt t.5.1{r0}, a.1{r8}, b.1{r10}
+	call printIntLf@bool[t.5.1{r0}]
+	lt t.6.1{r0}, b.1{r10}, a.1{r8}
+	call printIntLf@bool[t.6.1{r0}]
+	const t.7.1{r0}, [string-1]
+	call printString@@u8[t.7.1{r0}]
+	const c.1{r12}, 0
+	const d.1{r13}, 128
+	lt t.8.1{r0}, c.1{r12}, d.1{r13}
+	call printIntLf@bool[t.8.1{r0}]
+	lt t.9.1{r0}, d.1{r13}, c.1{r12}
+	call printIntLf@bool[t.9.1{r0}]
+	const t.10.1{r0}, [string-2]
+	call printString@@u8[t.10.1{r0}]
+	lteq t.11.1{r0}, a.1{r8}, b.1{r10}
+	call printIntLf@bool[t.11.1{r0}]
+	lteq t.12.1{r0}, b.1{r10}, a.1{r8}
+	call printIntLf@bool[t.12.1{r0}]
+	const t.13.1{r0}, [string-3]
+	call printString@@u8[t.13.1{r0}]
+	lteq t.14.1{r0}, c.1{r12}, d.1{r13}
+	call printIntLf@bool[t.14.1{r0}]
+	lteq t.15.1{r0}, d.1{r13}, c.1{r12}
+	call printIntLf@bool[t.15.1{r0}]
+	const t.16.1{r0}, [string-4]
+	call printString@@u8[t.16.1{r0}]
+	equals t.17.1{r0}, a.1{r8}, b.1{r10}
+	call printIntLf@bool[t.17.1{r0}]
+	equals t.18.1{r0}, b.1{r10}, a.1{r8}
+	call printIntLf@bool[t.18.1{r0}]
+	const t.19.1{r0}, [string-5]
+	call printString@@u8[t.19.1{r0}]
+	notequals t.20.1{r0}, a.1{r8}, b.1{r10}
+	call printIntLf@bool[t.20.1{r0}]
+	notequals t.21.1{r0}, b.1{r10}, a.1{r8}
+	call printIntLf@bool[t.21.1{r0}]
+	const t.22.1{r0}, [string-6]
+	call printString@@u8[t.22.1{r0}]
+	gteq t.23.1{r0}, a.1{r8}, b.1{r10}
+	call printIntLf@bool[t.23.1{r0}]
+	gteq t.24.1{r0}, b.1{r10}, a.1{r8}
+	call printIntLf@bool[t.24.1{r0}]
+	const t.25.1{r0}, [string-7]
+	call printString@@u8[t.25.1{r0}]
+	gteq t.26.1{r0}, c.1{r12}, d.1{r13}
+	call printIntLf@bool[t.26.1{r0}]
+	gteq t.27.1{r0}, d.1{r13}, c.1{r12}
+	call printIntLf@bool[t.27.1{r0}]
+	const t.28.1{r0}, [string-8]
+	call printString@@u8[t.28.1{r0}]
+	gt t.29.1{r0}, a.1{r8}, b.1{r10}
+	call printIntLf@bool[t.29.1{r0}]
+	gt t.30.1{r0}, b.1{r10}, a.1{r8}
+	call printIntLf@bool[t.30.1{r0}]
+	const t.31.1{r0}, [string-9]
+	call printString@@u8[t.31.1{r0}]
+	gt t.32.1{r0}, c.1{r12}, d.1{r13}
+	call printIntLf@bool[t.32.1{r0}]
+	gt t.33.1{r0}, d.1{r13}, c.1{r12}
+	call printIntLf@bool[t.33.1{r0}]
+
+printString@@u8:
+	ld   r2, r0
+	ld   r3, r1
+	jr   .loop
+	.print:
+	call printChar_Pu8
+	incw r2
+	.loop:
+	lde  r0, @rr2
+	or   r0, r0
+	jr   nz, .print
+	ret
+
+String literals
+	string lit 0 "< (signed)\n\0"
+	string lit 1 "< (unsigned)\n\0"
+	string lit 2 "<= (signed)\n\0"
+	string lit 3 "<= (unsigned)\n\0"
+	string lit 4 "==\n\0"
+	string lit 5 "!=\n\0"
+	string lit 6 ">= (signed)\n\0"
+	string lit 7 ">= (unsigned)\n\0"
+	string lit 8 "> (signed)\n\0"
+	string lit 9 "> (unsigned)\n\0"
