@@ -65,11 +65,11 @@ public class CleanupLocalUnusedVariables {
 	private static final class TrivialLiveTracker {
 
 		private final boolean[] live;
-		private final LSArchitecture architecture;
+		private final LSCallingConventionProvider callingConventionProvider;
 
 		public TrivialLiveTracker(@NotNull LSArchitecture architecture) {
 			live = new boolean[architecture.registerCount()];
-			this.architecture = architecture;
+			callingConventionProvider = architecture.getCallingConventionProvider();
 			setAllLive();
 		}
 
@@ -111,7 +111,7 @@ public class CleanupLocalUnusedVariables {
 					if (target != null) {
 						setIsLive(target, false);
 					}
-					final LSCallingConvention callingConvention = architecture.getCallingConvention(target != null ? target.type() : Type.VOID, i.getArgumentTypes());
+					final LSCallingConvention callingConvention = callingConventionProvider.getCallingConvention(target != null ? target.type() : Type.VOID, i.getArgumentTypes());
 					for (int j = 0; j < callingConvention.volatileRegisterCount(); j++) {
 						live[j] = true;
 					}

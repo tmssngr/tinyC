@@ -1,0 +1,6 @@
+void unusedArg@u8(u8 a) {
+}
+
+void main() {
+	unusedArg@u8(0);
+}
