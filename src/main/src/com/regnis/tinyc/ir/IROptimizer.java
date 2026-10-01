@@ -144,7 +144,10 @@ public class IROptimizer {
 				    && item2 instanceof IRLabel(String label)
 				    && Objects.equals(branch.target(), label)) {
 					remove();
-					insert(new IRBranch(branch.op().invert(), branch.left(), branch.right(), branch.nextLabel(), label));
+					final String nextLabel = branch.nextLabel();
+					if (nextLabel.length() > 0) {
+						insert(new IRBranch(branch.op().invert(), branch.left(), branch.right(), nextLabel, label));
+					}
 				}
 			}
 		}.process();
@@ -193,12 +196,20 @@ public class IROptimizer {
 			}
 		}
 
-		for (final Iterator<IRInstruction> it = instructions.iterator(); it.hasNext(); ) {
-			final IRInstruction instruction = it.next();
-			if (instruction instanceof IRLabel(String label)) {
-				if (!targets.contains(label)) {
-					it.remove();
+		for (int i = 0; i < instructions.size(); i++) {
+			final IRInstruction instruction = instructions.get(i);
+			switch (instruction) {
+			case IRBranch branch -> {
+				if (!targets.contains(branch.nextLabel())) {
+					instructions.set(i, new IRBranch(branch.op(), branch.left(), branch.right(), branch.target(), "", branch.location()));
 				}
+			}
+			case IRLabel label -> {
+				if (!targets.contains(label.label())) {
+					instructions.remove(i);
+				}
+			}
+			default -> {}
 			}
 		}
 	}

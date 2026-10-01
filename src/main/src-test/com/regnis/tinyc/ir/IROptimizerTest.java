@@ -3,7 +3,9 @@ package com.regnis.tinyc.ir;
 import com.regnis.tinyc.ast.*;
 
 import java.util.*;
+import java.util.function.*;
 
+import org.jetbrains.annotations.*;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -39,6 +41,26 @@ public class IROptimizerTest {
 		assertEquals(new IRCall(null, Type.VOID, "something", List.of()), it.next());
 		assertEquals(new IRJump("while"), it.next());
 		assertEquals(new IRLabel("while_break"), it.next());
+		assertFalse(it.hasNext());
+	}
+
+	@Test
+	public void testCollapsedBranches() {
+		final IRVar varA = new IRVar("a", 0, VariableScope.register, Type.U8);
+		final IRVar varB = new IRVar("b", 1, VariableScope.register, Type.U8);
+		final List<IRInstruction> optimized = IROptimizer.optimize(List.of(
+				new IRMove(varA, varB),
+				new IRBranch(IRCompare.Op.Equals, varA, 1, "then", "next"),
+				new IRJump("next"),
+				new IRLabel("next"),
+				new IRMove(varA, varB),
+				new IRLabel("then")
+		));
+		final Iterator<IRInstruction> it = optimized.iterator();
+		assertEquals(new IRMove(varA, varB), it.next());
+		assertEquals(new IRBranch(IRCompare.Op.Equals, varA, 1, "then", ""), it.next());
+		assertEquals(new IRMove(varA, varB), it.next());
+		assertEquals(new IRLabel("then"), it.next());
 		assertFalse(it.hasNext());
 	}
 }
