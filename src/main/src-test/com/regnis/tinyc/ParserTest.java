@@ -969,6 +969,35 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testGlobal() {
+		assertEquals(new Program(List.of(),
+		                         List.of(
+				                         new StmtVarDeclaration("i16", "space",
+				                                                new ExprIntLiteral(32, Type.U8, loc(0, 12)),
+				                                                loc(0, 0))
+		                         ),
+		                         List.of(),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram("""
+				                          i16 space = 0x20;"""));
+
+		assertEquals(new Program(List.of(),
+		                         List.of(
+				                         new StmtVarDeclaration("i16", "space",
+				                                                new ExprIntLiteral(32, Type.U8, loc(0, 12)),
+				                                                loc(0, 0))
+		                         ),
+		                         List.of(),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram("""
+				                          i16 space = 0x20"""));
+	}
+
+	@Test
 	public void testArrays() {
 		assertEquals(new Program(List.of(), List.of(
 				             new StmtArrayDeclaration("u8", "str", 4,
