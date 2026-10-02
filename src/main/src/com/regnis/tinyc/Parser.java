@@ -136,7 +136,9 @@ public final class Parser {
 
 				if (isConsume(TokenType.EQUAL)) {
 					final Expression expression = getExpression();
-					consumeSemiOrLineBreak();
+					if (token != TokenType.EOF) {
+						consumeSemiOrLineBreak();
+					}
 					project.addGlobalVar(new StmtVarDeclaration(typeString, name, expression, location));
 					continue;
 				}
