@@ -16,8 +16,8 @@ strlen@@u8:
 	; 64:2 for *str != 0
 	jump for_1
 for_1_body:
-	add length, length, 1
-	add str, str, 1
+	add length, 1
+	add str, 1
 for_1:
 	load t.2, [str]
 	branch t.2 notequals 0: for_1_body, for_1_break
@@ -40,7 +40,7 @@ next:
 	addrof a.global1, global
 	load t.global1, [a.global1]
 	move t.global2, t.global1
-	add t.global2, t.global2, 1
+	add t.global2, 1
 	addrof a.global2, global
 	store [a.global2], t.global2
 	; 8:9 return copy

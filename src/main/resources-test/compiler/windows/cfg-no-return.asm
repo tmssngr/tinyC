@@ -31,7 +31,7 @@ _main:
         mov [rbx], al
         ; 3:2 while true
 _while_1:
-        ; add i, i, 1
+        ; add i, 1
         lea rax, [rsp+0]
         mov bl, [rax]
         add bl, 1

@@ -62,13 +62,13 @@ _strlen@@u8:
         ; 64:2 for *str != 0
         jmp _for_1
 _for_1_body:
-        ; add length, length, 1
+        ; add length, 1
         lea rax, [rsp+0]
         mov rbx, [rax]
         add rbx, 1
         lea rax, [rsp+0]
         mov [rax], rbx
-        ; add str, str, 1
+        ; add str, 1
         lea rax, [rsp+24]
         mov rbx, [rax]
         add rbx, 1
@@ -136,7 +136,7 @@ _next:
         mov bl, [rax]
         lea rax, [rsp+48]
         mov [rax], bl
-        ; add t.global2, t.global2, 1
+        ; add t.global2, 1
         lea rax, [rsp+48]
         mov bl, [rax]
         add bl, 1

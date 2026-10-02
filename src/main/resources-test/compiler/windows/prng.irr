@@ -24,25 +24,25 @@ printUint@i64:
 	const pos, 20
 	; 28:2 while true
 while_1:
-	sub pos, pos, 1
+	sub pos, 1
 	move remainder, number
-	mod remainder, remainder, 10
-	div number, number, 10
+	mod remainder, 10
+	div number, 10
 	cast t.5(u8), remainder(i64)
 	move digit, t.5
-	add digit, digit, 48
+	add digit, 48
 	cast t.7(i64), pos(u8)
 	addrof t.6, buffer
-	add t.6, t.6, t.7
+	add t.6, t.7
 	store [t.6], digit
 	; 34:3 if number == 0
 	branch number notequals 0: while_1, while_1_break
 	cast t.9(i64), pos(u8)
 	addrof t.8, buffer
-	add t.8, t.8, t.9
+	add t.8, t.9
 	const t.11, 20
 	move t.10, t.11
-	sub t.10, t.10, pos
+	sub t.10, pos
 	call printStringLength@@u8@u8[t.8, t.10]
 
 printIntLf@u8:
@@ -108,29 +108,29 @@ random:
 	load t.__random__, [a.__random__]
 	move r, t.__random__
 	move t.5, r
-	and t.5, t.5, 524287
+	and t.5, 524287
 	move b, t.5
-	mul b, b, 48271
+	mul b, 48271
 	move t.6, r
-	shiftright t.6, t.6, 15
+	shiftright t.6, 15
 	move c, t.6
-	mul c, c, 48271
+	mul c, 48271
 	move t.7, c
-	and t.7, t.7, 65535
+	and t.7, 65535
 	move d, t.7
-	shiftleft d, d, 15
+	shiftleft d, 15
 	move t.9, c
-	shiftright t.9, t.9, 16
+	shiftright t.9, 16
 	move t.8, t.9
-	add t.8, t.8, b
+	add t.8, b
 	move e, t.8
-	add e, e, d
+	add e, d
 	move t.10, e
-	and t.10, t.10, 2147483647
+	and t.10, 2147483647
 	move t.11, e
-	shiftright t.11, t.11, 31
+	shiftright t.11, 31
 	move t.__random__1, t.10
-	add t.__random__1, t.__random__1, t.11
+	add t.__random__1, t.11
 	addrof a.__random__1, __random__
 	store [a.__random__1], t.__random__1
 	; 15:9 return __random__
@@ -167,7 +167,7 @@ main:
 for_4_body:
 	call r = randomU8[] -> u8
 	call printIntLf@u8[r]
-	add i, i, 1
+	add i, 1
 for_4:
 	branch i lt 50: for_4_body, main_ret
 

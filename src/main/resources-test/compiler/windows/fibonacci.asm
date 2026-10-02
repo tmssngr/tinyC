@@ -65,7 +65,7 @@ _printUint@i64:
         mov [rbx], al
         ; 28:2 while true
 _while_1:
-        ; sub pos, pos, 1
+        ; sub pos, 1
         lea rax, [rsp+20]
         mov bl, [rax]
         sub bl, 1
@@ -76,7 +76,7 @@ _while_1:
         mov rbx, [rax]
         lea rax, [rsp+24]
         mov [rax], rbx
-        ; mod remainder, remainder, 10
+        ; mod remainder, 10
         lea rax, [rsp+24]
         mov rbx, [rax]
         mov rax, rbx
@@ -86,7 +86,7 @@ _while_1:
         mov rbx, rdx
         lea rcx, [rsp+24]
         mov [rcx], rbx
-        ; div number, number, 10
+        ; div number, 10
         lea rax, [rsp+88]
         mov rbx, [rax]
         mov rax, rbx
@@ -106,7 +106,7 @@ _while_1:
         mov bl, [rax]
         lea rax, [rsp+32]
         mov [rax], bl
-        ; add digit, digit, 48
+        ; add digit, 48
         lea rax, [rsp+32]
         mov bl, [rax]
         add bl, 48
@@ -122,7 +122,7 @@ _while_1:
         lea rax, [rsp+0]
         lea rbx, [rsp+40]
         mov [rbx], rax
-        ; add t.6, t.6, t.7
+        ; add t.6, t.7
         lea rax, [rsp+40]
         mov rbx, [rax]
         lea rax, [rsp+48]
@@ -152,7 +152,7 @@ _while_1:
         lea rax, [rsp+0]
         lea rbx, [rsp+56]
         mov [rbx], rax
-        ; add t.8, t.8, t.9
+        ; add t.8, t.9
         lea rax, [rsp+56]
         mov rbx, [rax]
         lea rax, [rsp+64]
@@ -169,7 +169,7 @@ _while_1:
         mov bl, [rax]
         lea rax, [rsp+72]
         mov [rax], bl
-        ; sub t.10, t.10, pos
+        ; sub t.10, pos
         lea rax, [rsp+72]
         mov bl, [rax]
         lea rax, [rsp+20]
@@ -291,7 +291,7 @@ _main:
         ; 6:2 while b < 1000
         jmp _while_4
 _while_4_body:
-        ; add b, b, a
+        ; add b, a
         lea rax, [rsp+2]
         mov bx, [rax]
         lea rax, [rsp+0]
@@ -304,7 +304,7 @@ _while_4_body:
         mov bx, [rax]
         lea rax, [rsp+4]
         mov [rax], bx
-        ; sub t.1, t.1, a
+        ; sub t.1, a
         lea rax, [rsp+4]
         mov bx, [rax]
         lea rax, [rsp+0]

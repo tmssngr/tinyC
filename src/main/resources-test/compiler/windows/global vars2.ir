@@ -19,9 +19,9 @@ for_1:
 	load t.2, [str]
 	branch t.2 equals 0: for_1_break, for_1_body
 for_1_body:
-	add length, length, 1
+	add length, 1
 for_1_continue:
-	add str, str, 1
+	add str, 1
 	jump for_1
 for_1_break:
 	; 67:9 return length
@@ -34,7 +34,7 @@ next:
 	var 0: copy (u8/1)
 	; 14 pc
 	move copy, global
-	add global, global, 1
+	add global, 1
 	; 8:9 return copy
 	ret copy
 	jump next_ret

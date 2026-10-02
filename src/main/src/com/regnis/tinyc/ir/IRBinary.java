@@ -52,10 +52,10 @@ public record IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar lef
 		builder.append(op.toString().toLowerCase());
 		builder.append(" ");
 		builder.append(target.toString(comment));
-//		if (!Objects.equals(target, left)) {
+		if (!Objects.equals(target, left)) {
 			builder.append(", ");
 			builder.append(left.toString(comment));
-//		}
+		}
 		builder.append(", ");
 		builder.append(right.toString(comment));
 		return builder.toString();

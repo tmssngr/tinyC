@@ -28,9 +28,9 @@ for_1:
 	load t.2, [str]
 	branch t.2 equals 0: for_1_break, for_1_body
 for_1_body:
-	add length, length, 1
+	add length, 1
 for_1_continue:
-	add str, str, 1
+	add str, 1
 	jump for_1
 for_1_break:
 	; 67:9 return length
@@ -65,7 +65,7 @@ for_2_body:
 	; 12:3 if [...] == 0
 	cast t.3(i64), i(u8)
 	addrof t.2, board
-	add t.2, t.2, t.3
+	add t.2, t.3
 	load t.1, [t.2]
 	branch t.1 notequals 0: if_3_else, if_3_then
 if_3_then:
@@ -74,7 +74,7 @@ if_3_then:
 if_3_else:
 	call printChar@u8[42]
 for_2_continue:
-	add i, i, 1
+	add i, 1
 	jump for_2
 for_2_break:
 	const t.4, [string-0]
@@ -120,16 +120,16 @@ for_4_body:
 	const t.4, 0
 	cast t.6(i64), i(u8)
 	addrof t.5, board
-	add t.5, t.5, t.6
+	add t.5, t.6
 	store [t.5], t.4
 for_4_continue:
-	add i, i, 1
+	add i, 1
 	jump for_4
 for_4_break:
 	const t.7, 1
 	const t.9, 29
 	addrof t.8, board
-	add t.8, t.8, t.9
+	add t.8, t.9
 	store [t.8], t.7
 	call printBoard[]
 	const i, 0
@@ -139,12 +139,12 @@ for_5:
 for_5_body:
 	const t.13, 0
 	addrof t.12, board
-	add t.12, t.12, t.13
+	add t.12, t.13
 	load t.11, [t.12]
 	shiftleft t.10, t.11, 1
 	const t.16, 1
 	addrof t.15, board
-	add t.15, t.15, t.16
+	add t.15, t.16
 	load t.14, [t.15]
 	or pattern, t.10, t.14
 	const j, 1
@@ -157,7 +157,7 @@ for_6_body:
 	add t.22, j, 1
 	cast t.21(i64), t.22(u8)
 	addrof t.20, board
-	add t.20, t.20, t.21
+	add t.20, t.21
 	load t.19, [t.20]
 	or pattern, t.17, t.19
 	const t.25, 110
@@ -165,15 +165,15 @@ for_6_body:
 	and t.23, t.24, 1
 	cast t.27(i64), j(u8)
 	addrof t.26, board
-	add t.26, t.26, t.27
+	add t.26, t.27
 	store [t.26], t.23
 for_6_continue:
-	add j, j, 1
+	add j, 1
 	jump for_6
 for_6_break:
 	call printBoard[]
 for_5_continue:
-	add i, i, 1
+	add i, 1
 	jump for_5
 main_ret:
 

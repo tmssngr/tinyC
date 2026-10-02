@@ -85,13 +85,13 @@ _strlen@@u8:
         ; 64:2 for *str != 0
         jmp _for_1
 _for_1_body:
-        ; add length, length, 1
+        ; add length, 1
         lea rax, [rsp+0]
         mov rbx, [rax]
         add rbx, 1
         lea rax, [rsp+0]
         mov [rax], rbx
-        ; add str, str, 1
+        ; add str, 1
         lea rax, [rsp+24]
         mov rbx, [rax]
         add rbx, 1
@@ -148,7 +148,7 @@ _printStringLength@@u8@u8:
         ; void printNibble@u8
         ;   rsp+8: arg x
 _printNibble@u8:
-        ; and x, x, 15
+        ; and x, 15
         lea rax, [rsp+8]
         mov bl, [rax]
         and bl, 15
@@ -160,14 +160,14 @@ _printNibble@u8:
         mov bl, [rax]
         cmp bl, 9
         jbe _if_2_end
-        ; add x, x, 7
+        ; add x, 7
         lea rax, [rsp+8]
         mov bl, [rax]
         add bl, 7
         lea rax, [rsp+8]
         mov [rax], bl
 _if_2_end:
-        ; add x, x, 48
+        ; add x, 48
         lea rax, [rsp+8]
         mov bl, [rax]
         add bl, 48
@@ -192,7 +192,7 @@ _printHex2@u8:
         mov bl, [rax]
         lea rax, [rsp+0]
         mov [rax], bl
-        ; shiftright t.1, t.1, 4
+        ; shiftright t.1, 4
         lea rax, [rsp+0]
         mov bl, [rax]
         shr bl, 4
@@ -248,7 +248,7 @@ _for_3_body:
         mov bl, [rax]
         lea rax, [rsp+16]
         mov [rax], bl
-        ; and t.3, t.3, 7
+        ; and t.3, 7
         lea rax, [rsp+16]
         mov bl, [rax]
         and bl, 7
@@ -271,7 +271,7 @@ _if_4_end:
         push rbx
           call _printNibble@u8
         add rsp, 8
-        ; add i, i, 1
+        ; add i, 1
         lea rax, [rsp+0]
         mov bl, [rax]
         add bl, 1
@@ -301,7 +301,7 @@ _for_5_body:
         mov bl, [rax]
         lea rax, [rsp+17]
         mov [rax], bl
-        ; and t.4, t.4, 15
+        ; and t.4, 15
         lea rax, [rsp+17]
         mov bl, [rax]
         and bl, 15
@@ -325,7 +325,7 @@ _if_6_end:
         mov bl, [rax]
         lea rax, [rsp+18]
         mov [rax], bl
-        ; and t.5, t.5, 7
+        ; and t.5, 7
         lea rax, [rsp+18]
         mov bl, [rax]
         and bl, 7
@@ -354,7 +354,7 @@ _if_7_end:
         mov bl, [rax]
         lea rax, [rsp+19]
         mov [rax], bl
-        ; and t.6, t.6, 15
+        ; and t.6, 15
         lea rax, [rsp+19]
         mov bl, [rax]
         and bl, 15
@@ -371,7 +371,7 @@ _if_7_end:
           call _printChar@u8
         add rsp, 8
 _for_5_continue:
-        ; add i, i, 1
+        ; add i, 1
         lea rax, [rsp+1]
         mov bl, [rax]
         add bl, 1
