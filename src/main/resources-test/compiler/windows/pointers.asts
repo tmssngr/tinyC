@@ -25,6 +25,10 @@ void printUint@i64(i64 number) {
 	printStringLength@@u8@u8(&buffer[(i64)pos], 20 - pos);
 }
 
+void printIntLf@u8(u8 number) {
+	printIntLf@i64((i64)number);
+}
+
 void printIntLf@i16(i16 number) {
 	printIntLf@i64((i64)number);
 }
@@ -42,6 +46,18 @@ void printStringLength@@u8@u8(u8* str, u8 length) {
 	printStringLength@@u8@i64(str, (i64)length);
 }
 
+void testIf@u8(u8 a) {
+	u8 b;
+	u8* b_ref;
+
+	b = 1;
+	b_ref = &b;
+	if (a == 0) {
+		printIntLf@u8(*b_ref);
+	}
+	printIntLf@u8(b);
+}
+
 void main() {
 	i16 a;
 	i16* b;
@@ -56,4 +72,5 @@ void main() {
 	d = &c;
 	*d = (*d) - 1;
 	printIntLf@i16(c);
+	testIf@u8(1);
 }
