@@ -1,38 +1,38 @@
 digraph program {
 	edge[fontsize="10pt"];
 	subgraph fn_printString_A_Au8 {
-		BasicBlock_0_printString_A_Au8 [label="printString_A_Au8",shape=box];
+		BasicBlock_0_printString_A_Au8 [label="printString_A_Au8\lcall length = strlen_A_Au8[str] -> i64\lcall printStringLength_A_Au8_Ai64[str, length]\ljump printString_A_Au8__ret",shape=box];
 		BasicBlock_0_printString_A_Au8 -> BasicBlock_0_printString_A_Au8__ret;
 		BasicBlock_0_printString_A_Au8__ret [label="printString_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_strlen_A_Au8 {
-		BasicBlock_1_strlen_A_Au8 [label="strlen_A_Au8",shape=box];
+		BasicBlock_1_strlen_A_Au8 [label="strlen_A_Au8\lconst length, 0\ljump for__1",shape=box];
 		BasicBlock_1_strlen_A_Au8 -> BasicBlock_1_for__1 [label="(length,str)"];
-		BasicBlock_1_for__1__body [label="for__1__body",shape=box];
+		BasicBlock_1_for__1__body [label="for__1__body\ladd length, 1\ladd str, 1\ljump for__1",shape=box];
 		BasicBlock_1_for__1__body -> BasicBlock_1_for__1 [label="(length,str)"];
-		BasicBlock_1_for__1 [label="for__1",shape=hexagon];
+		BasicBlock_1_for__1 [label="for__1\lload t_d2, [str]\lbranch t_d2 equals 0: for__1__break, for__1__body\ljump for__1__body",shape=hexagon];
 		BasicBlock_1_for__1 -> BasicBlock_1_for__1__break [label="(length)"];
 		BasicBlock_1_for__1 -> BasicBlock_1_for__1__body [label="(length,str)"];
-		BasicBlock_1_for__1__break [label="for__1__break",shape=box];
+		BasicBlock_1_for__1__break [label="for__1__break\lret length\ljump strlen_A_Au8__ret",shape=box];
 		BasicBlock_1_for__1__break -> BasicBlock_1_strlen_A_Au8__ret;
 		BasicBlock_1_strlen_A_Au8__ret [label="strlen_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_next {
-		BasicBlock_2_next [label="next",shape=box];
+		BasicBlock_2_next [label="next\laddrof a_dglobal, global\lload t_dglobal, [a_dglobal]\lmove copy, t_dglobal\laddrof a_dglobal1, global\lload t_dglobal1, [a_dglobal1]\lmove t_dglobal2, t_dglobal1\ladd t_dglobal2, 1\laddrof a_dglobal2, global\lstore [a_dglobal2], t_dglobal2\lret copy\ljump next__ret",shape=box];
 		BasicBlock_2_next -> BasicBlock_2_next__ret;
 		BasicBlock_2_next__ret [label="next__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_3_main [label="main",shape=box];
+		BasicBlock_3_main [label="main\lconst t_dglobal, 0\laddrof a_dglobal, global\lstore [a_dglobal], t_dglobal\ljump while__2",shape=box];
 		BasicBlock_3_main -> BasicBlock_3_while__2;
-		BasicBlock_3_if__3__end [label="if__3__end",shape=hexagon];
+		BasicBlock_3_if__3__end [label="if__3__end\lbranch n gteq 2: main_dno__critical__edge__5, if__4__then\ljump if__4__then",shape=hexagon];
 		BasicBlock_3_if__3__end -> BasicBlock_3_main_dno__critical__edge__5;
 		BasicBlock_3_if__3__end -> BasicBlock_3_if__4__then;
-		BasicBlock_3_main_dno__critical__edge__5 [label="main_dno__critical__edge__5",shape=box];
+		BasicBlock_3_main_dno__critical__edge__5 [label="main_dno__critical__edge__5\ljump while__2",shape=box];
 		BasicBlock_3_main_dno__critical__edge__5 -> BasicBlock_3_while__2;
-		BasicBlock_3_if__4__then [label="if__4__then",shape=box];
+		BasicBlock_3_if__4__then [label="if__4__then\lconst t_d2, [string-1]\lcall printString_A_Au8[t_d2]\ljump while__2",shape=box];
 		BasicBlock_3_if__4__then -> BasicBlock_3_while__2;
-		BasicBlock_3_while__2 [label="while__2",shape=hexagon];
+		BasicBlock_3_while__2 [label="while__2\lconst t_d1, [string-0]\lcall printString_A_Au8[t_d1]\lcall n = next[] -> u8\lbranch n equals 3: main__ret, if__3__end\ljump if__3__end",shape=hexagon];
 		BasicBlock_3_while__2 -> BasicBlock_3_main__ret;
 		BasicBlock_3_while__2 -> BasicBlock_3_if__3__end [label="(n)"];
 		BasicBlock_3_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
