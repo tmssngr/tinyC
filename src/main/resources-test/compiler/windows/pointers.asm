@@ -191,6 +191,28 @@ _while_1:
         add rsp, 80
         ret
 
+        ; void printIntLf@u8
+        ;   rsp+24: arg number
+        ;   rsp+0: var t.1
+_printIntLf@u8:
+        ; reserve space for local variables
+        sub rsp, 16
+        ; cast t.1(i64), number(u8)
+        lea rax, [rsp+24]
+        mov bl, [rax]
+        movzx rbx, bl
+        lea rax, [rsp+0]
+        mov [rax], rbx
+        ; call printIntLf@i64[t.1]
+        lea rax, [rsp+0]
+        mov rbx, [rax]
+        push rbx
+          call _printIntLf@i64
+        add rsp, 8
+        ; release space for local variables
+        add rsp, 16
+        ret
+
         ; void printIntLf@i16
         ;   rsp+24: arg number
         ;   rsp+0: var t.1
@@ -271,6 +293,75 @@ _printStringLength@@u8@u8:
         add rsp, 24
         ; release space for local variables
         add rsp, 16
+        ret
+
+        ; void testIf@u8
+        ;   rsp+72: arg a
+        ;   rsp+0: var b
+        ;   rsp+8: var b_ref
+        ;   rsp+16: var t.3
+        ;   rsp+24: var a.4
+        ;   rsp+32: var t.5
+        ;   rsp+40: var a.6
+        ;   rsp+48: var t.7
+_testIf@u8:
+        ; reserve space for local variables
+        sub rsp, 64
+        ; const t.3, 1
+        mov al, 1
+        lea rbx, [rsp+16]
+        mov [rbx], al
+        ; addrof a.4, b
+        lea rax, [rsp+0]
+        lea rbx, [rsp+24]
+        mov [rbx], rax
+        ; store [a.4], t.3
+        lea rax, [rsp+24]
+        mov rbx, [rax]
+        lea rax, [rsp+16]
+        mov cl, [rax]
+        mov [rbx], cl
+        ; addrof b_ref, b
+        lea rax, [rsp+0]
+        lea rbx, [rsp+8]
+        mov [rbx], rax
+        ; 6:2 if a == 0
+        ; branch a notequals 0: if_4_end, if_4_then
+        lea rax, [rsp+72]
+        mov bl, [rax]
+        cmp bl, 0
+        jne _if_4_end
+        ; load t.5, [b_ref]
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+32]
+        mov [rbx], al
+        ; call printIntLf@u8[t.5]
+        lea rax, [rsp+32]
+        mov bl, [rax]
+        push rbx
+          call _printIntLf@u8
+        add rsp, 8
+_if_4_end:
+        ; addrof a.6, b
+        lea rax, [rsp+0]
+        lea rbx, [rsp+40]
+        mov [rbx], rax
+        ; load t.7, [a.6]
+        lea rax, [rsp+40]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+48]
+        mov [rbx], al
+        ; call printIntLf@u8[t.7]
+        lea rax, [rsp+48]
+        mov bl, [rax]
+        push rbx
+          call _printIntLf@u8
+        add rsp, 8
+        ; release space for local variables
+        add rsp, 64
         ret
 
         ; void main
@@ -413,6 +504,11 @@ _main:
         mov bx, [rax]
         push rbx
           call _printIntLf@i16
+        add rsp, 8
+        ; call testIf@u8[1]
+        mov  rax, 1
+        push rax
+          call _testIf@u8
         add rsp, 8
         ; release space for local variables
         add rsp, 112
