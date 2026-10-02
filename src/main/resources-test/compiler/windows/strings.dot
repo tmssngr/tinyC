@@ -62,16 +62,16 @@ digraph program {
 		BasicBlock_7_printStringLength_A_Au8_Au8__ret [label="printStringLength_A_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_8_main [label="main\lconst text, [string-0]\lcall printString_A_Au8[text]\lcall printLength[]\lconst t_d2, 1\lmove second, text\ladd second, t_d2\lcall printString_A_Au8[second]\lload chr, [text]\lcall printIntLf_Au8[chr]\ljump main__ret",shape=box];
+		BasicBlock_8_main [label="main\lconst t_d2, [string-0]\laddrof a_d3, text\lstore [a_d3], t_d2\laddrof a_d4, text\lload t_d5, [a_d4]\lcall printString_A_Au8[t_d5]\lcall printLength[]\lconst t_d6, 1\laddrof a_d7, text\lload second, [a_d7]\ladd second, t_d6\lcall printString_A_Au8[second]\laddrof a_d8, text\lload t_d9, [a_d8]\lload chr, [t_d9]\lcall printIntLf_Au8[chr]\ljump main__ret",shape=box];
 		BasicBlock_8_main -> BasicBlock_8_main__ret;
 		BasicBlock_8_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printLength {
-		BasicBlock_9_printLength [label="printLength\lconst length, 0\lmove ptr, text\ljump for__5",shape=box];
+		BasicBlock_9_printLength [label="printLength\lconst length, 0\laddrof a_d2, text\lload ptr, [a_d2]\ljump for__5",shape=box];
 		BasicBlock_9_printLength -> BasicBlock_9_for__5 [label="(length,ptr)"];
 		BasicBlock_9_for__5__body [label="for__5__body\ladd length, 1\ladd ptr, 1\ljump for__5",shape=box];
 		BasicBlock_9_for__5__body -> BasicBlock_9_for__5 [label="(length,ptr)"];
-		BasicBlock_9_for__5 [label="for__5\lload t_d2, [ptr]\lbranch t_d2 equals 0: for__5__break, for__5__body\ljump for__5__body",shape=box];
+		BasicBlock_9_for__5 [label="for__5\lload t_d3, [ptr]\lbranch t_d3 equals 0: for__5__break, for__5__body\ljump for__5__body",shape=box];
 		BasicBlock_9_for__5 -> BasicBlock_9_for__5__break [label="(length)"];
 		BasicBlock_9_for__5 -> BasicBlock_9_for__5__body [label="(length,ptr)"];
 		BasicBlock_9_for__5__break [label="for__5__break\lcall printIntLf_Ai16[length]\ljump printLength__ret",shape=box];

@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 
 import java.util.*;
 
@@ -12,6 +13,8 @@ import org.jetbrains.annotations.*;
 public record IRUnary(@NotNull Op op, @NotNull IRVar target, @NotNull IRVar source) implements IRInstruction {
 	public IRUnary {
 		Utils.assertTrue(Objects.equals(target.type(), source.type()));
+		Utils.assertTrue(target.scope() != VariableScope.global);
+		Utils.assertTrue(source.scope() != VariableScope.global);
 	}
 
 	@NotNull

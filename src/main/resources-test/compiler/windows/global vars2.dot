@@ -18,21 +18,21 @@ digraph program {
 		BasicBlock_1_strlen_A_Au8__ret [label="strlen_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_next {
-		BasicBlock_2_next [label="next\lmove copy, global\ladd global, 1\lret copy\ljump next__ret",shape=box];
+		BasicBlock_2_next [label="next\laddrof a_d1, global\lload copy, [a_d1]\laddrof a_d3, global\lload t_d4, [a_d3]\lmove t_d2, t_d4\ladd t_d2, 1\laddrof a_d5, global\lstore [a_d5], t_d2\lret copy\ljump next__ret",shape=box];
 		BasicBlock_2_next -> BasicBlock_2_next__ret;
 		BasicBlock_2_next__ret [label="next__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_3_main [label="main\lconst global, 0\ljump while__2",shape=box];
+		BasicBlock_3_main [label="main\lconst t_d1, 0\laddrof a_d2, global\lstore [a_d2], t_d1\ljump while__2",shape=box];
 		BasicBlock_3_main -> BasicBlock_3_while__2;
 		BasicBlock_3_if__3__end [label="if__3__end\lbranch n gteq 2: main_dno__critical__edge__5, if__4__then\ljump if__4__then",shape=box];
 		BasicBlock_3_if__3__end -> BasicBlock_3_main_dno__critical__edge__5;
 		BasicBlock_3_if__3__end -> BasicBlock_3_if__4__then;
 		BasicBlock_3_main_dno__critical__edge__5 [label="main_dno__critical__edge__5\ljump while__2",shape=box];
 		BasicBlock_3_main_dno__critical__edge__5 -> BasicBlock_3_while__2;
-		BasicBlock_3_if__4__then [label="if__4__then\lconst t_d2, [string-1]\lcall printString_A_Au8[t_d2]\ljump while__2",shape=box];
+		BasicBlock_3_if__4__then [label="if__4__then\lconst t_d4, [string-1]\lcall printString_A_Au8[t_d4]\ljump while__2",shape=box];
 		BasicBlock_3_if__4__then -> BasicBlock_3_while__2;
-		BasicBlock_3_while__2 [label="while__2\lconst t_d1, [string-0]\lcall printString_A_Au8[t_d1]\lcall n = next[] -> u8\lbranch n equals 3: main__ret, if__3__end\ljump if__3__end",shape=box];
+		BasicBlock_3_while__2 [label="while__2\lconst t_d3, [string-0]\lcall printString_A_Au8[t_d3]\lcall n = next[] -> u8\lbranch n equals 3: main__ret, if__3__end\ljump if__3__end",shape=box];
 		BasicBlock_3_while__2 -> BasicBlock_3_main__ret;
 		BasicBlock_3_while__2 -> BasicBlock_3_if__3__end [label="(n)"];
 		BasicBlock_3_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];

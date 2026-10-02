@@ -79,31 +79,55 @@ main:
 	var 0: c (i64/8)
 	var 1: onePtr (u8*/8)
 	var 2: twoPtr (u8*/8)
-	var 3: t.3 (bool/1)
-	var 4: t.4 (u8/1)
+	var 3: t.3 (u8/1)
+	var 4: a.4 (u8*/8)
 	var 5: t.5 (u8/1)
-	var 6: t.6 (u8*/8)
-	var 7: t.7 (i64/8)
-	; 62 pc
+	var 6: a.6 (u8*/8)
+	var 7: t.7 (u8/1)
+	var 8: a.8 (u8*/8)
+	var 9: t.9 (u8/1)
+	var 10: a.10 (u8*/8)
+	var 11: t.11 (bool/1)
+	var 12: a.12 (u8*/8)
+	var 13: t.13 (u8/1)
+	var 14: t.14 (u8/1)
+	var 15: t.15 (u8/1)
+	var 16: t.16 (u8*/8)
+	var 17: t.17 (i64/8)
+	var 18: a.18 (u8*/8)
+	var 19: t.19 (u8/1)
+	; 128 pc
 	; begin initialize global variables
-	const zero, 48
-	const one, 49
-	const two, 50
-	const threeFour, 34
+	const t.3, 48
+	addrof a.4, zero
+	store [a.4], t.3
+	const t.5, 49
+	addrof a.6, one
+	store [a.6], t.5
+	const t.7, 50
+	addrof a.8, two
+	store [a.8], t.7
+	const t.9, 34
+	addrof a.10, threeFour
+	store [a.10], t.9
 	; end initialize global variables
-	const t.3, 1
-	call _ = unusedArgs@u8@bool@u8@u8[1, t.3, 2, 3] -> i64
-	call printChar@u8[zero]
+	const t.11, 1
+	call _ = unusedArgs@u8@bool@u8@u8[1, t.11, 2, 3] -> i64
+	addrof a.12, zero
+	load t.13, [a.12]
+	call printChar@u8[t.13]
 	addrof onePtr, one
-	load t.4, [onePtr]
-	call printChar@u8[t.4]
+	load t.14, [onePtr]
+	call printChar@u8[t.14]
 	addrof twoPtr, two
-	const t.7, 0
-	move t.6, twoPtr
-	add t.6, t.7
-	load t.5, [t.6]
-	call printChar@u8[t.5]
-	call printUint@u8[threeFour]
+	const t.17, 0
+	move t.16, twoPtr
+	add t.16, t.17
+	load t.15, [t.16]
+	call printChar@u8[t.15]
+	addrof a.18, threeFour
+	load t.19, [a.18]
+	call printUint@u8[t.19]
 	call printChar@u8[10]
 
 printStringLength@@u8@i64:

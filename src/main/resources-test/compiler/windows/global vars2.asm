@@ -97,41 +97,88 @@ _for_1:
 
         ; u8 next
         ;   rsp+0: var copy
+        ;   rsp+8: var a.1
+        ;   rsp+16: var t.2
+        ;   rsp+24: var a.3
+        ;   rsp+32: var t.4
+        ;   rsp+40: var a.5
 _next:
         ; reserve space for local variables
-        sub rsp, 16
-        ; move copy, global
+        sub rsp, 48
+        ; addrof a.1, global
         lea rax, [var_0]
+        lea rbx, [rsp+8]
+        mov [rbx], rax
+        ; load copy, [a.1]
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+0]
+        mov [rbx], al
+        ; addrof a.3, global
+        lea rax, [var_0]
+        lea rbx, [rsp+24]
+        mov [rbx], rax
+        ; load t.4, [a.3]
+        lea rax, [rsp+24]
+        mov rbx, [rax]
+        mov al, [rbx]
+        lea rbx, [rsp+32]
+        mov [rbx], al
+        ; move t.2, t.4
+        lea rax, [rsp+32]
         mov bl, [rax]
-        lea rax, [rsp+0]
+        lea rax, [rsp+16]
         mov [rax], bl
-        ; add global, 1
-        lea rax, [var_0]
+        ; add t.2, 1
+        lea rax, [rsp+16]
         mov bl, [rax]
         add bl, 1
-        lea rax, [var_0]
+        lea rax, [rsp+16]
         mov [rax], bl
+        ; addrof a.5, global
+        lea rax, [var_0]
+        lea rbx, [rsp+40]
+        mov [rbx], rax
+        ; store [a.5], t.2
+        lea rax, [rsp+40]
+        mov rbx, [rax]
+        lea rax, [rsp+16]
+        mov cl, [rax]
+        mov [rbx], cl
         ; 8:9 return copy
         ; ret copy
         lea rax, [rsp+0]
         mov bl, [rax]
         mov rax, rbx
         ; release space for local variables
-        add rsp, 16
+        add rsp, 48
         ret
 
         ; void main
         ;   rsp+0: var n
-        ;   rsp+8: var t.1
-        ;   rsp+16: var t.2
+        ;   rsp+1: var t.1
+        ;   rsp+8: var a.2
+        ;   rsp+16: var t.3
+        ;   rsp+24: var t.4
 _main:
         ; reserve space for local variables
         sub rsp, 32
         ; begin initialize global variables
-        ; const global, 0
+        ; const t.1, 0
         mov al, 0
-        lea rbx, [var_0]
+        lea rbx, [rsp+1]
         mov [rbx], al
+        ; addrof a.2, global
+        lea rax, [var_0]
+        lea rbx, [rsp+8]
+        mov [rbx], rax
+        ; store [a.2], t.1
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        lea rax, [rsp+1]
+        mov cl, [rax]
+        mov [rbx], cl
         ; end initialize global variables
         ; 12:2 while true
         jmp _while_2
@@ -141,23 +188,23 @@ _if_3_end:
         mov bl, [rax]
         cmp bl, 2
         jae _while_2
-        ; const t.2, [string-1]
+        ; const t.4, [string-1]
         lea rax, [string_1]
-        lea rbx, [rsp+16]
+        lea rbx, [rsp+24]
         mov [rbx], rax
-        ; call printString@@u8[t.2]
-        lea rax, [rsp+16]
+        ; call printString@@u8[t.4]
+        lea rax, [rsp+24]
         mov rbx, [rax]
         push rbx
           call _printString@@u8
         add rsp, 8
 _while_2:
-        ; const t.1, [string-0]
+        ; const t.3, [string-0]
         lea rax, [string_0]
-        lea rbx, [rsp+8]
+        lea rbx, [rsp+16]
         mov [rbx], rax
-        ; call printString@@u8[t.1]
-        lea rax, [rsp+8]
+        ; call printString@@u8[t.3]
+        lea rax, [rsp+16]
         mov rbx, [rax]
         push rbx
           call _printString@@u8

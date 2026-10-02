@@ -80,22 +80,42 @@ main:
 	var 2: c (i16/2)
 	var 3: d (i16*/8)
 	var 4: t.4 (i16/2)
-	var 5: t.5 (i16/2)
-	var 6: t.6 (i16/2)
-	; 59 pc
-	const a, 10
-	call printIntLf@i16[a]
+	var 5: a.5 (i16*/8)
+	var 6: a.6 (i16*/8)
+	var 7: t.7 (i16/2)
+	var 8: t.8 (i16/2)
+	var 9: t.9 (i16/2)
+	var 10: a.10 (i16*/8)
+	var 11: a.11 (i16*/8)
+	var 12: t.12 (i16/2)
+	var 13: t.13 (i16/2)
+	var 14: t.14 (i16/2)
+	var 15: a.15 (i16*/8)
+	var 16: t.16 (i16/2)
+	; 114 pc
+	const t.4, 10
+	addrof a.5, a
+	store [a.5], t.4
+	addrof a.6, a
+	load t.7, [a.6]
+	call printIntLf@i16[t.7]
 	addrof b, a
-	load t.4, [b]
-	move c, t.4
-	sub c, 1
-	call printIntLf@i16[c]
+	load t.9, [b]
+	move t.8, t.9
+	sub t.8, 1
+	addrof a.10, c
+	store [a.10], t.8
+	addrof a.11, c
+	load t.12, [a.11]
+	call printIntLf@i16[t.12]
 	addrof d, c
-	load t.6, [d]
-	move t.5, t.6
-	sub t.5, 1
-	store [d], t.5
-	call printIntLf@i16[c]
+	load t.14, [d]
+	move t.13, t.14
+	sub t.13, 1
+	store [d], t.13
+	addrof a.15, c
+	load t.16, [a.15]
+	call printIntLf@i16[t.16]
 
 printStringLength@@u8@i64:
 	mov     rdi, rsp

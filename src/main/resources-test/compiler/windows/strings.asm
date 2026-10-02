@@ -374,17 +374,44 @@ _printStringLength@@u8@u8:
         ;   rsp+0: var second
         ;   rsp+8: var chr
         ;   rsp+16: var t.2
+        ;   rsp+24: var a.3
+        ;   rsp+32: var a.4
+        ;   rsp+40: var t.5
+        ;   rsp+48: var t.6
+        ;   rsp+56: var a.7
+        ;   rsp+64: var a.8
+        ;   rsp+72: var t.9
 _main:
         ; reserve space for local variables
-        sub rsp, 32
+        sub rsp, 80
         ; begin initialize global variables
-        ; const text, [string-0]
+        ; const t.2, [string-0]
         lea rax, [string_0]
-        lea rbx, [var_0]
+        lea rbx, [rsp+16]
         mov [rbx], rax
-        ; end initialize global variables
-        ; call printString@@u8[text]
+        ; addrof a.3, text
         lea rax, [var_0]
+        lea rbx, [rsp+24]
+        mov [rbx], rax
+        ; store [a.3], t.2
+        lea rax, [rsp+24]
+        mov rbx, [rax]
+        lea rax, [rsp+16]
+        mov rcx, [rax]
+        mov [rbx], rcx
+        ; end initialize global variables
+        ; addrof a.4, text
+        lea rax, [var_0]
+        lea rbx, [rsp+32]
+        mov [rbx], rax
+        ; load t.5, [a.4]
+        lea rax, [rsp+32]
+        mov rbx, [rax]
+        mov rax, [rbx]
+        lea rbx, [rsp+40]
+        mov [rbx], rax
+        ; call printString@@u8[t.5]
+        lea rax, [rsp+40]
         mov rbx, [rax]
         push rbx
           call _printString@@u8
@@ -393,19 +420,24 @@ _main:
         sub rsp, 8
           call _printLength
         add rsp, 8
-        ; const t.2, 1
+        ; const t.6, 1
         mov rax, 1
-        lea rbx, [rsp+16]
+        lea rbx, [rsp+48]
         mov [rbx], rax
-        ; move second, text
+        ; addrof a.7, text
         lea rax, [var_0]
+        lea rbx, [rsp+56]
+        mov [rbx], rax
+        ; load second, [a.7]
+        lea rax, [rsp+56]
         mov rbx, [rax]
-        lea rax, [rsp+0]
-        mov [rax], rbx
-        ; add second, t.2
+        mov rax, [rbx]
+        lea rbx, [rsp+0]
+        mov [rbx], rax
+        ; add second, t.6
         lea rax, [rsp+0]
         mov rbx, [rax]
-        lea rax, [rsp+16]
+        lea rax, [rsp+48]
         mov rcx, [rax]
         add rbx, rcx
         lea rax, [rsp+0]
@@ -416,8 +448,18 @@ _main:
         push rbx
           call _printString@@u8
         add rsp, 8
-        ; load chr, [text]
+        ; addrof a.8, text
         lea rax, [var_0]
+        lea rbx, [rsp+64]
+        mov [rbx], rax
+        ; load t.9, [a.8]
+        lea rax, [rsp+64]
+        mov rbx, [rax]
+        mov rax, [rbx]
+        lea rbx, [rsp+72]
+        mov [rbx], rax
+        ; load chr, [t.9]
+        lea rax, [rsp+72]
         mov rbx, [rax]
         mov al, [rbx]
         lea rbx, [rsp+8]
@@ -429,13 +471,14 @@ _main:
           call _printIntLf@u8
         add rsp, 8
         ; release space for local variables
-        add rsp, 32
+        add rsp, 80
         ret
 
         ; void printLength
         ;   rsp+0: var length
         ;   rsp+8: var ptr
-        ;   rsp+16: var t.2
+        ;   rsp+16: var a.2
+        ;   rsp+24: var t.3
 _printLength:
         ; reserve space for local variables
         sub rsp, 32
@@ -443,11 +486,16 @@ _printLength:
         mov ax, 0
         lea rbx, [rsp+0]
         mov [rbx], ax
-        ; move ptr, text
+        ; addrof a.2, text
         lea rax, [var_0]
+        lea rbx, [rsp+16]
+        mov [rbx], rax
+        ; load ptr, [a.2]
+        lea rax, [rsp+16]
         mov rbx, [rax]
-        lea rax, [rsp+8]
-        mov [rax], rbx
+        mov rax, [rbx]
+        lea rbx, [rsp+8]
+        mov [rbx], rax
         ; 16:2 for *ptr != 0
         jmp _for_5
 _for_5_body:
@@ -464,14 +512,14 @@ _for_5_body:
         lea rax, [rsp+8]
         mov [rax], rbx
 _for_5:
-        ; load t.2, [ptr]
+        ; load t.3, [ptr]
         lea rax, [rsp+8]
         mov rbx, [rax]
         mov al, [rbx]
-        lea rbx, [rsp+16]
+        lea rbx, [rsp+24]
         mov [rbx], al
-        ; branch t.2 notequals 0: for_5_body, for_5_break
-        lea rax, [rsp+16]
+        ; branch t.3 notequals 0: for_5_body, for_5_break
+        lea rax, [rsp+24]
         mov bl, [rax]
         cmp bl, 0
         jne _for_5_body

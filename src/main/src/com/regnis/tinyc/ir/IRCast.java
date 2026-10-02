@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 
 import org.jetbrains.annotations.*;
 
@@ -10,6 +11,8 @@ import org.jetbrains.annotations.*;
 public record IRCast(@NotNull IRVar target, @NotNull IRVar source, @NotNull Location location) implements IRInstruction {
 	public IRCast(@NotNull IRVar target, @NotNull IRVar source, @NotNull Location location) {
 		Utils.assertTrue(target.type().isInt());
+		Utils.assertTrue(target.scope() != VariableScope.global);
+		Utils.assertTrue(source.scope() != VariableScope.global);
 		this.target = target;
 		this.source = source;
 		this.location = location;

@@ -30,6 +30,8 @@ public record IRCompare(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar le
 	public IRCompare {
 		Utils.assertTrue(Objects.equals(left.type(), right.type()), left.type() + " vs. " + right.type());
 		Utils.assertTrue(Objects.equals(target.type(), Type.BOOL), String.valueOf(target.type()));
+		Utils.assertTrue(target.scope() != VariableScope.global);
+		Utils.assertTrue(left.scope() != VariableScope.global);
 	}
 
 	@NotNull

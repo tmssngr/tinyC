@@ -1,5 +1,6 @@
 package com.regnis.tinyc.ir;
 
+import com.regnis.tinyc.*;
 import com.regnis.tinyc.ast.*;
 
 import java.util.*;
@@ -25,6 +26,12 @@ public record IRValue(@Nullable IRVar var, int value, @NotNull Type type) {
 
 	public IRValue(int value, @NotNull Type type) {
 		this(null, value, type);
+	}
+
+	public IRValue {
+		if (var != null) {
+			Utils.assertTrue(var.scope() != VariableScope.global);
+		}
 	}
 
 	@NotNull

@@ -40,12 +40,12 @@ digraph program {
 		BasicBlock_4_printStringLength_A_Au8_Au8__ret [label="printStringLength_A_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_initRandom_Ai32 {
-		BasicBlock_5_initRandom_Ai32 [label="initRandom_Ai32\lmove ____random____, salt\ljump initRandom_Ai32__ret",shape=box];
+		BasicBlock_5_initRandom_Ai32 [label="initRandom_Ai32\lmove t_d1, salt\laddrof a_d2, ____random____\lstore [a_d2], t_d1\ljump initRandom_Ai32__ret",shape=box];
 		BasicBlock_5_initRandom_Ai32 -> BasicBlock_5_initRandom_Ai32__ret;
 		BasicBlock_5_initRandom_Ai32__ret [label="initRandom_Ai32__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_random {
-		BasicBlock_6_random [label="random\lmove r, ____random____\lmove t_d5, r\land t_d5, 524287\lmove b, t_d5\lmul b, 48271\lmove t_d6, r\lshiftright t_d6, 15\lmove c, t_d6\lmul c, 48271\lmove t_d7, c\land t_d7, 65535\lmove d, t_d7\lshiftleft d, 15\lmove t_d9, c\lshiftright t_d9, 16\lmove t_d8, t_d9\ladd t_d8, b\lmove e, t_d8\ladd e, d\lmove t_d10, e\land t_d10, 2147483647\lmove t_d11, e\lshiftright t_d11, 31\lmove ____random____, t_d10\ladd ____random____, t_d11\lret ____random____\ljump random__ret",shape=box];
+		BasicBlock_6_random [label="random\laddrof a_d5, ____random____\lload r, [a_d5]\lmove t_d6, r\land t_d6, 524287\lmove b, t_d6\lmul b, 48271\lmove t_d7, r\lshiftright t_d7, 15\lmove c, t_d7\lmul c, 48271\lmove t_d8, c\land t_d8, 65535\lmove d, t_d8\lshiftleft d, 15\lmove t_d10, c\lshiftright t_d10, 16\lmove t_d9, t_d10\ladd t_d9, b\lmove e, t_d9\ladd e, d\lmove t_d12, e\land t_d12, 2147483647\lmove t_d13, e\lshiftright t_d13, 31\lmove t_d11, t_d12\ladd t_d11, t_d13\laddrof a_d14, ____random____\lstore [a_d14], t_d11\laddrof a_d15, ____random____\lload t_d16, [a_d15]\lret t_d16\ljump random__ret",shape=box];
 		BasicBlock_6_random -> BasicBlock_6_random__ret;
 		BasicBlock_6_random__ret [label="random__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
@@ -55,7 +55,7 @@ digraph program {
 		BasicBlock_7_randomU8__ret [label="randomU8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_8_main [label="main\lconst ____random____, 0\lcall initRandom_Ai32[7439742]\lconst i, 0\ljump for__4",shape=box];
+		BasicBlock_8_main [label="main\lconst t_d2, 0\laddrof a_d3, ____random____\lstore [a_d3], t_d2\lcall initRandom_Ai32[7439742]\lconst i, 0\ljump for__4",shape=box];
 		BasicBlock_8_main -> BasicBlock_8_for__4 [label="(i)"];
 		BasicBlock_8_for__4__body [label="for__4__body\lcall r = randomU8[] -> u8\lcall printIntLf_Au8[r]\ladd i, 1\ljump for__4",shape=box];
 		BasicBlock_8_for__4__body -> BasicBlock_8_for__4 [label="(i)"];

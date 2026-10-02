@@ -122,18 +122,32 @@ main:
  Local variables
 	var 0: second (u8*/8)
 	var 1: chr (u8/1)
-	var 2: t.2 (i64/8)
-	; 33 pc
+	var 2: t.2 (u8*/8)
+	var 3: a.3 (u8**/8)
+	var 4: a.4 (u8**/8)
+	var 5: t.5 (u8*/8)
+	var 6: t.6 (i64/8)
+	var 7: a.7 (u8**/8)
+	var 8: a.8 (u8**/8)
+	var 9: t.9 (u8*/8)
+	; 72 pc
 	; begin initialize global variables
-	const text, [string-0]
+	const t.2, [string-0]
+	addrof a.3, text
+	store [a.3], t.2
 	; end initialize global variables
-	call printString@@u8[text]
+	addrof a.4, text
+	load t.5, [a.4]
+	call printString@@u8[t.5]
 	call printLength[]
-	const t.2, 1
-	move second, text
-	add second, t.2
+	const t.6, 1
+	addrof a.7, text
+	load second, [a.7]
+	add second, t.6
 	call printString@@u8[second]
-	load chr, [text]
+	addrof a.8, text
+	load t.9, [a.8]
+	load chr, [t.9]
 	call printIntLf@u8[chr]
 main_ret:
 
@@ -141,14 +155,16 @@ printLength:
  Local variables
 	var 0: length (i16/2)
 	var 1: ptr (u8*/8)
-	var 2: t.2 (u8/1)
-	; 30 pc
+	var 2: a.2 (u8**/8)
+	var 3: t.3 (u8/1)
+	; 36 pc
 	const length, 0
-	move ptr, text
+	addrof a.2, text
+	load ptr, [a.2]
 	; 16:2 for *ptr != 0
 for_5:
-	load t.2, [ptr]
-	branch t.2 equals 0: for_5_break, for_5_body
+	load t.3, [ptr]
+	branch t.3 equals 0: for_5_break, for_5_body
 for_5_body:
 	add length, 1
 for_5_continue:

@@ -81,27 +81,44 @@ printStringLength@@u8@u8_ret:
 main:
  Local variables
 	var 0: t.0 (u8/1)
-	var 1: t.1 (u8/1)
+	var 1: a.1 (u8*/8)
 	var 2: t.2 (u8/1)
 	var 3: t.3 (u8/1)
 	var 4: t.4 (u8/1)
-	; 28 pc
+	var 5: t.5 (u8/1)
+	var 6: t.6 (u8/1)
+	; 39 pc
 	; begin initialize global variables
-	const i, 0
+	const t.0, 0
+	addrof a.1, i
+	store [a.1], t.0
 	; end initialize global variables
-	call t.0 = next[] -> u8
-	call t.1 = next[] -> u8
 	call t.2 = next[] -> u8
 	call t.3 = next[] -> u8
 	call t.4 = next[] -> u8
-	call doPrint@u8@u8@u8@u8@u8[t.0, t.1, t.2, t.3, t.4]
+	call t.5 = next[] -> u8
+	call t.6 = next[] -> u8
+	call doPrint@u8@u8@u8@u8@u8[t.2, t.3, t.4, t.5, t.6]
 main_ret:
 
 next:
-	; 9 pc
-	add i, 1
+ Local variables
+	var 0: t.0 (u8/1)
+	var 1: a.1 (u8*/8)
+	var 2: t.2 (u8/1)
+	var 3: a.3 (u8*/8)
+	var 4: a.4 (u8*/8)
+	var 5: t.5 (u8/1)
+	; 42 pc
+	addrof a.1, i
+	load t.2, [a.1]
+	add t.0, t.2, 1
+	addrof a.3, i
+	store [a.3], t.0
 	; 11:9 return i
-	ret i
+	addrof a.4, i
+	load t.5, [a.4]
+	ret t.5
 	jump next_ret
 next_ret:
 
