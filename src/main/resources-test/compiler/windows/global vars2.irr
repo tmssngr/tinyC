@@ -16,8 +16,8 @@ strlen@@u8:
 	; 64:2 for *str != 0
 	jump for_1
 for_1_body:
-	add length, length, 1
-	add str, str, 1
+	add length, 1
+	add str, 1
 for_1:
 	load t.2, [str]
 	branch t.2 notequals 0: for_1_body, for_1_break
@@ -29,7 +29,7 @@ next:
 	var 0: copy (u8/1)
 	; 13 pc
 	move copy, global
-	add global, global, 1
+	add global, 1
 	; 8:9 return copy
 	ret copy
 

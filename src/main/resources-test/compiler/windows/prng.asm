@@ -65,7 +65,7 @@ _printUint@i64:
         mov [rbx], al
         ; 28:2 while true
 _while_1:
-        ; sub pos, pos, 1
+        ; sub pos, 1
         lea rax, [rsp+20]
         mov bl, [rax]
         sub bl, 1
@@ -76,7 +76,7 @@ _while_1:
         mov rbx, [rax]
         lea rax, [rsp+24]
         mov [rax], rbx
-        ; mod remainder, remainder, 10
+        ; mod remainder, 10
         lea rax, [rsp+24]
         mov rbx, [rax]
         mov rax, rbx
@@ -86,7 +86,7 @@ _while_1:
         mov rbx, rdx
         lea rcx, [rsp+24]
         mov [rcx], rbx
-        ; div number, number, 10
+        ; div number, 10
         lea rax, [rsp+88]
         mov rbx, [rax]
         mov rax, rbx
@@ -106,7 +106,7 @@ _while_1:
         mov bl, [rax]
         lea rax, [rsp+32]
         mov [rax], bl
-        ; add digit, digit, 48
+        ; add digit, 48
         lea rax, [rsp+32]
         mov bl, [rax]
         add bl, 48
@@ -122,7 +122,7 @@ _while_1:
         lea rax, [rsp+0]
         lea rbx, [rsp+40]
         mov [rbx], rax
-        ; add t.6, t.6, t.7
+        ; add t.6, t.7
         lea rax, [rsp+40]
         mov rbx, [rax]
         lea rax, [rsp+48]
@@ -152,7 +152,7 @@ _while_1:
         lea rax, [rsp+0]
         lea rbx, [rsp+56]
         mov [rbx], rax
-        ; add t.8, t.8, t.9
+        ; add t.8, t.9
         lea rax, [rsp+56]
         mov rbx, [rax]
         lea rax, [rsp+64]
@@ -169,7 +169,7 @@ _while_1:
         mov bl, [rax]
         lea rax, [rsp+72]
         mov [rax], bl
-        ; sub t.10, t.10, pos
+        ; sub t.10, pos
         lea rax, [rsp+72]
         mov bl, [rax]
         lea rax, [rsp+20]
@@ -309,7 +309,7 @@ _random:
         mov ebx, [rax]
         lea rax, [rsp+20]
         mov [rax], ebx
-        ; and t.5, t.5, 524287
+        ; and t.5, 524287
         lea rax, [rsp+20]
         mov ebx, [rax]
         and ebx, 524287
@@ -320,7 +320,7 @@ _random:
         mov ebx, [rax]
         lea rax, [rsp+4]
         mov [rax], ebx
-        ; mul b, b, 48271
+        ; mul b, 48271
         lea rax, [rsp+4]
         mov ebx, [rax]
         movsxd rbx, ebx
@@ -332,7 +332,7 @@ _random:
         mov ebx, [rax]
         lea rax, [rsp+24]
         mov [rax], ebx
-        ; shiftright t.6, t.6, 15
+        ; shiftright t.6, 15
         lea rax, [rsp+24]
         mov ebx, [rax]
         sar ebx, 15
@@ -343,7 +343,7 @@ _random:
         mov ebx, [rax]
         lea rax, [rsp+8]
         mov [rax], ebx
-        ; mul c, c, 48271
+        ; mul c, 48271
         lea rax, [rsp+8]
         mov ebx, [rax]
         movsxd rbx, ebx
@@ -355,7 +355,7 @@ _random:
         mov ebx, [rax]
         lea rax, [rsp+28]
         mov [rax], ebx
-        ; and t.7, t.7, 65535
+        ; and t.7, 65535
         lea rax, [rsp+28]
         mov ebx, [rax]
         and ebx, 65535
@@ -366,7 +366,7 @@ _random:
         mov ebx, [rax]
         lea rax, [rsp+12]
         mov [rax], ebx
-        ; shiftleft d, d, 15
+        ; shiftleft d, 15
         lea rax, [rsp+12]
         mov ebx, [rax]
         sal ebx, 15
@@ -377,7 +377,7 @@ _random:
         mov ebx, [rax]
         lea rax, [rsp+36]
         mov [rax], ebx
-        ; shiftright t.9, t.9, 16
+        ; shiftright t.9, 16
         lea rax, [rsp+36]
         mov ebx, [rax]
         sar ebx, 16
@@ -388,7 +388,7 @@ _random:
         mov ebx, [rax]
         lea rax, [rsp+32]
         mov [rax], ebx
-        ; add t.8, t.8, b
+        ; add t.8, b
         lea rax, [rsp+32]
         mov ebx, [rax]
         lea rax, [rsp+4]
@@ -401,7 +401,7 @@ _random:
         mov ebx, [rax]
         lea rax, [rsp+16]
         mov [rax], ebx
-        ; add e, e, d
+        ; add e, d
         lea rax, [rsp+16]
         mov ebx, [rax]
         lea rax, [rsp+12]
@@ -414,7 +414,7 @@ _random:
         mov ebx, [rax]
         lea rax, [rsp+40]
         mov [rax], ebx
-        ; and t.10, t.10, 2147483647
+        ; and t.10, 2147483647
         lea rax, [rsp+40]
         mov ebx, [rax]
         and ebx, 2147483647
@@ -425,7 +425,7 @@ _random:
         mov ebx, [rax]
         lea rax, [rsp+44]
         mov [rax], ebx
-        ; shiftright t.11, t.11, 31
+        ; shiftright t.11, 31
         lea rax, [rsp+44]
         mov ebx, [rax]
         sar ebx, 31
@@ -436,7 +436,7 @@ _random:
         mov ebx, [rax]
         lea rax, [var_0]
         mov [rax], ebx
-        ; add __random__, __random__, t.11
+        ; add __random__, t.11
         lea rax, [var_0]
         mov ebx, [rax]
         lea rax, [rsp+44]
@@ -515,7 +515,7 @@ _for_4_body:
         push rbx
           call _printIntLf@u8
         add rsp, 8
-        ; add i, i, 1
+        ; add i, 1
         lea rax, [rsp+0]
         mov bl, [rax]
         add bl, 1

@@ -7,7 +7,7 @@ simple:
 	const four, 4
 	const three, 3
 	move one, four
-	sub one, one, three
+	sub one, three
 	; 5:9 return one
 	ret one
 
@@ -19,7 +19,7 @@ registerHint@u8@u8:
 	; 15 pc
 	; 9:11 return a + b
 	move t.2, a
-	add t.2, t.2, b
+	add t.2, b
 	ret t.2
 
 max@u8@u8:
@@ -48,9 +48,9 @@ fibonacci@u8:
 	; 22:2 while i > 0
 	jump while_2
 while_2_body:
-	sub i, i, 1
+	sub i, 1
 	move c, a
-	add c, c, b
+	add c, b
 	move a, b
 	move b, c
 while_2:

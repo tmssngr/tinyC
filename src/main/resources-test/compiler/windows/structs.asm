@@ -65,7 +65,7 @@ _printUint@i64:
         mov [rbx], al
         ; 28:2 while true
 _while_1:
-        ; sub pos, pos, 1
+        ; sub pos, 1
         lea rax, [rsp+20]
         mov bl, [rax]
         sub bl, 1
@@ -76,7 +76,7 @@ _while_1:
         mov rbx, [rax]
         lea rax, [rsp+24]
         mov [rax], rbx
-        ; mod remainder, remainder, 10
+        ; mod remainder, 10
         lea rax, [rsp+24]
         mov rbx, [rax]
         mov rax, rbx
@@ -86,7 +86,7 @@ _while_1:
         mov rbx, rdx
         lea rcx, [rsp+24]
         mov [rcx], rbx
-        ; div number, number, 10
+        ; div number, 10
         lea rax, [rsp+88]
         mov rbx, [rax]
         mov rax, rbx
@@ -106,7 +106,7 @@ _while_1:
         mov bl, [rax]
         lea rax, [rsp+32]
         mov [rax], bl
-        ; add digit, digit, 48
+        ; add digit, 48
         lea rax, [rsp+32]
         mov bl, [rax]
         add bl, 48
@@ -122,7 +122,7 @@ _while_1:
         lea rax, [rsp+0]
         lea rbx, [rsp+40]
         mov [rbx], rax
-        ; add t.6, t.6, t.7
+        ; add t.6, t.7
         lea rax, [rsp+40]
         mov rbx, [rax]
         lea rax, [rsp+48]
@@ -152,7 +152,7 @@ _while_1:
         lea rax, [rsp+0]
         lea rbx, [rsp+56]
         mov [rbx], rax
-        ; add t.8, t.8, t.9
+        ; add t.8, t.9
         lea rax, [rsp+56]
         mov rbx, [rax]
         lea rax, [rsp+64]
@@ -169,7 +169,7 @@ _while_1:
         mov bl, [rax]
         lea rax, [rsp+72]
         mov [rax], bl
-        ; sub t.10, t.10, pos
+        ; sub t.10, pos
         lea rax, [rsp+72]
         mov bl, [rax]
         lea rax, [rsp+20]
@@ -321,7 +321,7 @@ _main:
         mov bl, [rax]
         lea rax, [rsp+32]
         mov [rax], bl
-        ; add t.4, t.4, 1
+        ; add t.4, 1
         lea rax, [rsp+32]
         mov bl, [rax]
         add bl, 1
@@ -332,7 +332,7 @@ _main:
         lea rax, [rsp+0]
         lea rbx, [rsp+48]
         mov [rbx], rax
-        ; add t.7, t.7, 1
+        ; add t.7, 1
         lea rax, [rsp+48]
         mov rbx, [rax]
         add rbx, 1
@@ -366,7 +366,7 @@ _main:
         lea rax, [rsp+0]
         lea rbx, [rsp+80]
         mov [rbx], rax
-        ; add t.11, t.11, 1
+        ; add t.11, 1
         lea rax, [rsp+80]
         mov rbx, [rax]
         add rbx, 1

@@ -40,7 +40,7 @@ _simple:
         mov bl, [rax]
         lea rax, [rsp+2]
         mov [rax], bl
-        ; sub one, one, three
+        ; sub one, three
         lea rax, [rsp+2]
         mov bl, [rax]
         lea rax, [rsp+1]
@@ -70,7 +70,7 @@ _registerHint@u8@u8:
         mov bl, [rax]
         lea rax, [rsp+0]
         mov [rax], bl
-        ; add t.2, t.2, b
+        ; add t.2, b
         lea rax, [rsp+0]
         mov bl, [rax]
         lea rax, [rsp+32]
@@ -131,7 +131,7 @@ _fibonacci@u8:
         ; 22:2 while i > 0
         jmp _while_2
 _while_2_body:
-        ; sub i, i, 1
+        ; sub i, 1
         lea rax, [rsp+24]
         mov bl, [rax]
         sub bl, 1
@@ -142,7 +142,7 @@ _while_2_body:
         mov bx, [rax]
         lea rax, [rsp+4]
         mov [rax], bx
-        ; add c, c, b
+        ; add c, b
         lea rax, [rsp+4]
         mov bx, [rax]
         lea rax, [rsp+2]

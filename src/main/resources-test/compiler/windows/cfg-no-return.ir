@@ -5,7 +5,7 @@ main:
 	const i, 0
 	; 3:2 while true
 while_1:
-	add i, i, 1
+	add i, 1
 	jump while_1
 main_ret:
 
