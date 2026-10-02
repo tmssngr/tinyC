@@ -85,13 +85,13 @@ _strlen@@u8:
         ; 64:2 for *str != 0
         jmp _for_1
 _for_1_body:
-        ; add length, length, 1
+        ; add length, 1
         lea rax, [rsp+0]
         mov rbx, [rax]
         add rbx, 1
         lea rax, [rsp+0]
         mov [rax], rbx
-        ; add str, str, 1
+        ; add str, 1
         lea rax, [rsp+24]
         mov rbx, [rax]
         add rbx, 1
@@ -177,7 +177,7 @@ _for_2_body:
         lea rax, [var_0]
         lea rbx, [rsp+8]
         mov [rbx], rax
-        ; add t.2, t.2, t.3
+        ; add t.2, t.3
         lea rax, [rsp+8]
         mov rbx, [rax]
         lea rax, [rsp+16]
@@ -209,7 +209,7 @@ _if_3_then:
           call _printChar@u8
         add rsp, 8
 _for_2_continue:
-        ; add i, i, 1
+        ; add i, 1
         lea rax, [rsp+0]
         mov bl, [rax]
         add bl, 1
@@ -288,7 +288,7 @@ _for_4_body:
         lea rax, [var_0]
         lea rbx, [rsp+8]
         mov [rbx], rax
-        ; add t.5, t.5, t.6
+        ; add t.5, t.6
         lea rax, [rsp+8]
         mov rbx, [rax]
         lea rax, [rsp+16]
@@ -302,7 +302,7 @@ _for_4_body:
         lea rax, [rsp+4]
         mov cl, [rax]
         mov [rbx], cl
-        ; add i, i, 1
+        ; add i, 1
         lea rax, [rsp+0]
         mov bl, [rax]
         add bl, 1
@@ -326,7 +326,7 @@ _for_4:
         lea rax, [var_0]
         lea rbx, [rsp+32]
         mov [rbx], rax
-        ; add t.8, t.8, t.9
+        ; add t.8, t.9
         lea rax, [rsp+32]
         mov rbx, [rax]
         lea rax, [rsp+40]
@@ -359,7 +359,7 @@ _for_5_body:
         lea rax, [var_0]
         lea rbx, [rsp+56]
         mov [rbx], rax
-        ; add t.12, t.12, t.13
+        ; add t.12, t.13
         lea rax, [rsp+56]
         mov rbx, [rax]
         lea rax, [rsp+64]
@@ -378,7 +378,7 @@ _for_5_body:
         mov bl, [rax]
         lea rax, [rsp+48]
         mov [rax], bl
-        ; shiftleft t.10, t.10, 1
+        ; shiftleft t.10, 1
         lea rax, [rsp+48]
         mov bl, [rax]
         shl bl, 1
@@ -392,7 +392,7 @@ _for_5_body:
         lea rax, [var_0]
         lea rbx, [rsp+80]
         mov [rbx], rax
-        ; add t.15, t.15, t.16
+        ; add t.15, t.16
         lea rax, [rsp+80]
         mov rbx, [rax]
         lea rax, [rsp+88]
@@ -411,7 +411,7 @@ _for_5_body:
         mov bl, [rax]
         lea rax, [rsp+2]
         mov [rax], bl
-        ; or pattern, pattern, t.14
+        ; or pattern, t.14
         lea rax, [rsp+2]
         mov bl, [rax]
         lea rax, [rsp+72]
@@ -431,7 +431,7 @@ _for_6_body:
         mov bl, [rax]
         lea rax, [rsp+97]
         mov [rax], bl
-        ; shiftleft t.18, t.18, 1
+        ; shiftleft t.18, 1
         lea rax, [rsp+97]
         mov bl, [rax]
         shl bl, 1
@@ -442,7 +442,7 @@ _for_6_body:
         mov bl, [rax]
         lea rax, [rsp+96]
         mov [rax], bl
-        ; and t.17, t.17, 7
+        ; and t.17, 7
         lea rax, [rsp+96]
         mov bl, [rax]
         and bl, 7
@@ -453,7 +453,7 @@ _for_6_body:
         mov bl, [rax]
         lea rax, [rsp+120]
         mov [rax], bl
-        ; add t.22, t.22, 1
+        ; add t.22, 1
         lea rax, [rsp+120]
         mov bl, [rax]
         add bl, 1
@@ -469,7 +469,7 @@ _for_6_body:
         lea rax, [var_0]
         lea rbx, [rsp+104]
         mov [rbx], rax
-        ; add t.20, t.20, t.21
+        ; add t.20, t.21
         lea rax, [rsp+104]
         mov rbx, [rax]
         lea rax, [rsp+112]
@@ -488,7 +488,7 @@ _for_6_body:
         mov bl, [rax]
         lea rax, [rsp+2]
         mov [rax], bl
-        ; or pattern, pattern, t.19
+        ; or pattern, t.19
         lea rax, [rsp+2]
         mov bl, [rax]
         lea rax, [rsp+98]
@@ -505,7 +505,7 @@ _for_6_body:
         mov bl, [rax]
         lea rax, [rsp+122]
         mov [rax], bl
-        ; shiftright t.24, t.24, pattern
+        ; shiftright t.24, pattern
         lea rax, [rsp+122]
         mov bl, [rax]
         lea rax, [rsp+2]
@@ -518,7 +518,7 @@ _for_6_body:
         mov bl, [rax]
         lea rax, [rsp+121]
         mov [rax], bl
-        ; and t.23, t.23, 1
+        ; and t.23, 1
         lea rax, [rsp+121]
         mov bl, [rax]
         and bl, 1
@@ -534,7 +534,7 @@ _for_6_body:
         lea rax, [var_0]
         lea rbx, [rsp+128]
         mov [rbx], rax
-        ; add t.26, t.26, t.27
+        ; add t.26, t.27
         lea rax, [rsp+128]
         mov rbx, [rax]
         lea rax, [rsp+136]
@@ -548,7 +548,7 @@ _for_6_body:
         lea rax, [rsp+121]
         mov cl, [rax]
         mov [rbx], cl
-        ; add j, j, 1
+        ; add j, 1
         lea rax, [rsp+3]
         mov bl, [rax]
         add bl, 1
@@ -564,7 +564,7 @@ _for_6:
         sub rsp, 8
           call _printBoard
         add rsp, 8
-        ; add i, i, 1
+        ; add i, 1
         lea rax, [rsp+1]
         mov bl, [rax]
         add bl, 1
