@@ -215,6 +215,7 @@ public class CompilerTest {
 				             10
 				             9
 				             8
+				             1
 				             """, compileAndRun("pointers.c"));
 	}
 
