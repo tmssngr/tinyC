@@ -42,6 +42,7 @@ public record IRBranch(@NotNull IRCompare.Op op, @NotNull IRVar left, @NotNull I
 
 	public IRBranch {
 		Utils.assertTrue(Objects.equals(left.type(), right.type()), left.type() + " vs. " + right.type());
+		Utils.assertTrue(left.scope() != VariableScope.global);
 		Utils.assertTrue(target.length() > 0);
 	}
 

@@ -33,7 +33,7 @@ digraph program {
 		BasicBlock_4_unusedArgs_Au8_Abool_Au8_Au8__ret [label="unusedArgs_Au8_Abool_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_5_main [label="main\lconst zero, 48\lconst one, 49\lconst two, 50\lconst threeFour, 34\lconst t_d3, 1\lcall __ = unusedArgs_Au8_Abool_Au8_Au8[1, t_d3, 2, 3] -> i64\lcall printChar_Au8[zero]\laddrof onePtr, one\lload t_d4, [onePtr]\lcall printChar_Au8[t_d4]\laddrof twoPtr, two\lconst t_d7, 0\lmove t_d6, twoPtr\ladd t_d6, t_d7\lload t_d5, [t_d6]\lcall printChar_Au8[t_d5]\lcall printUint_Au8[threeFour]\lcall printChar_Au8[10]\ljump main__ret",shape=box];
+		BasicBlock_5_main [label="main\lconst t_d3, 48\laddrof a_d4, zero\lstore [a_d4], t_d3\lconst t_d5, 49\laddrof a_d6, one\lstore [a_d6], t_d5\lconst t_d7, 50\laddrof a_d8, two\lstore [a_d8], t_d7\lconst t_d9, 34\laddrof a_d10, threeFour\lstore [a_d10], t_d9\lconst t_d11, 1\lcall __ = unusedArgs_Au8_Abool_Au8_Au8[1, t_d11, 2, 3] -> i64\laddrof a_d12, zero\lload t_d13, [a_d12]\lcall printChar_Au8[t_d13]\laddrof onePtr, one\lload t_d14, [onePtr]\lcall printChar_Au8[t_d14]\laddrof twoPtr, two\lconst t_d17, 0\lmove t_d16, twoPtr\ladd t_d16, t_d17\lload t_d15, [t_d16]\lcall printChar_Au8[t_d15]\laddrof a_d18, threeFour\lload t_d19, [a_d18]\lcall printUint_Au8[t_d19]\lcall printChar_Au8[10]\ljump main__ret",shape=box];
 		BasicBlock_5_main -> BasicBlock_5_main__ret;
 		BasicBlock_5_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}

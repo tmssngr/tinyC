@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 
 import org.jetbrains.annotations.*;
 
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.*;
 public record IRString(@NotNull IRVar target, int stringIndex, @NotNull Location location) implements IRInstruction {
 	public IRString(@NotNull IRVar target, int stringIndex) {
 		this(target, stringIndex, Location.DUMMY);
+		Utils.assertTrue(target.scope() != VariableScope.global);
 	}
 
 	@NotNull

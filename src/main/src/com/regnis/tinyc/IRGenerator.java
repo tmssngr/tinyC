@@ -1,9 +1,11 @@
 package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.ast.Function;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 
@@ -11,6 +13,9 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 public final class IRGenerator {
+
+	private static final String TMP_PREFIX = "t.";
+	private static final String ADDR_PREFIX = "a.";
 
 	@NotNull
 	public static IRProgram convert(@NotNull Program program, @NotNull Type pointerIntType) {
@@ -30,6 +35,7 @@ public final class IRGenerator {
 	private String functionRetLabel;
 	private BreakContinueLabels breakContinueLabels;
 	private IRVarInfos globalVars;
+	private Set<IRVar> localVarsCantBeRegister;
 
 	private IRGenerator(Type pointerIntType) {
 		this.pointerIntType = pointerIntType;
@@ -77,7 +83,7 @@ public final class IRGenerator {
 			return;
 		}
 
-		final Set<IRVar> localVarsCantBeRegister = processLocalVars(function);
+		localVarsCantBeRegister = processLocalVars(function);
 		instructions = new ArrayList<>();
 		try {
 			functionRetLabel = name + "_ret";
@@ -432,20 +438,28 @@ public final class IRGenerator {
 	}
 
 	private IRVar writeExpression(Expression expression) {
+		final Type type = expression.typeNotNull();
 		return switch (expression) {
 			case ExprVarAccess access -> {
 				final IRVar var = varAccessToVar(access);
 				if (access.varIsArray()) {
-					final IRVar tmp = createTempVar(expression.typeNotNull());
+					final IRVar tmp = createTempVar(type, ADDR_PREFIX);
 					write(new IRAddrOf(tmp, var, access.location()));
 					yield tmp;
 				}
-				yield var;
+				if (isNonReferencedLocalVar(var)) {
+					yield var;
+				}
+				final IRVar addr = createTempVar(Type.pointer(type), ADDR_PREFIX);
+				write(new IRAddrOf(addr, var));
+				final IRVar tmp = createTempVar(type);
+				write(new IRMemLoad(tmp, addr));
+				yield tmp;
 			}
 			case ExprArrayAccess access -> writeArrayAccess(access);
 			case ExprBinary binary -> writeBinary(binary);
 			default -> {
-				final IRVar tmp = createTempVar(expression.typeNotNull());
+				final IRVar tmp = createTempVar(type);
 				writeExpression(tmp, expression);
 				yield tmp;
 			}
@@ -453,11 +467,13 @@ public final class IRGenerator {
 	}
 
 	private void writeExpression(IRVar var, Expression expression) {
+		Utils.assertTrue(var.scope() != VariableScope.global);
+
 		switch (expression) {
 		case ExprIntLiteral literal -> write(new IRMove(var, literal.value(), literal.location()));
 		case ExprBoolLiteral literal -> write(new IRMove(var, literal.value() ? 1 : 0, literal.location()));
 		case ExprStringLiteral literal -> write(new IRString(var, literal.index(), literal.location()));
-		case ExprVarAccess access -> write(new IRMove(var, varAccessToVar(access), access.location()));
+		case ExprVarAccess access -> writeReadingVarAccess(var, access, access.location());
 		case ExprArrayAccess access -> writeArrayAccess(var, access);
 		case ExprMemberAccess access -> writeMemberAccess(var, access);
 		case ExprBinary binary -> writeBinary(var, binary);
@@ -521,6 +537,43 @@ public final class IRGenerator {
 		}
 	}
 
+	private void writeReadingVarAccess(IRVar var, ExprVarAccess access, Location location) {
+		final IRVar source = varAccessToVar(access);
+		if (isNonReferencedLocalVar(source)) {
+			write(new IRMove(var, source, location));
+			return;
+		}
+
+		final Type type = var.type();
+		final IRVar addr = createTempVar(Type.pointer(type), ADDR_PREFIX);
+		write(new IRAddrOf(addr, source));
+		write(new IRMemLoad(var, addr));
+	}
+
+	@NotNull
+	private IRVar writeVar(@NotNull IRVar var, @NotNull Consumer<IRVar> valueWriter) {
+		if (isNonReferencedLocalVar(var)) {
+			valueWriter.accept(var);
+			return var;
+		}
+
+		final Type type = var.type();
+		final IRVar localVar = createTempVar(type);
+		valueWriter.accept(localVar);
+		final IRVar addr = createTempVar(Type.pointer(type), ADDR_PREFIX);
+		write(new IRAddrOf(addr, var));
+		write(new IRMemStore(addr, localVar));
+		return localVar;
+	}
+
+	private boolean isNonReferencedLocalVar(@NotNull IRVar var) {
+		final VariableScope scope = var.scope();
+		if (scope == VariableScope.global) {
+			return false;
+		}
+		return !localVarsCantBeRegister.contains(var);
+	}
+
 	@NotNull
 	private IRVar writeAssign(ExprBinary binary) {
 		final Expression left = binary.left();
@@ -528,8 +581,7 @@ public final class IRGenerator {
 		switch (left) {
 		case ExprVarAccess access -> {
 			final IRVar var = varAccessToVar(access);
-			writeExpression(var, right);
-			return var;
+			return writeVar(var, v -> writeExpression(v, right));
 		}
 		case ExprArrayAccess access -> {
 			final IRVar valueVar = writeExpression(right);
@@ -588,7 +640,7 @@ public final class IRGenerator {
 			write(new IRAddrOf(var, varAccessToVar(varAccess), location));
 		}
 		else {
-			write(new IRMove(var, varAccessToVar(varAccess), location));
+			writeReadingVarAccess(var, varAccess, location);
 		}
 		write(new IRBinary(var, IRBinary.Op.Add, var, offset, location));
 	}
@@ -708,8 +760,12 @@ public final class IRGenerator {
 	}
 
 	private IRVar createTempVar(@NotNull Type type) {
+		return createTempVar(type, TMP_PREFIX);
+	}
+
+	private IRVar createTempVar(@NotNull Type type, @NotNull String prefix) {
 		final int index = localVars.size();
-		final String name = "t." + index;
+		final String name = prefix + index;
 		final IRVar var = new IRVar(name, index, VariableScope.function, type);
 		localVars.add(new IRVarDef(var, getTypeSize(type)));
 		return var;

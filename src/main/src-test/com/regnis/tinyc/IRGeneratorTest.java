@@ -186,13 +186,19 @@ public class IRGeneratorTest {
 				                                    i16 a = 17
 				                                    print(a)
 				                                    i16* b = &a
-				                                    *b = 10i16
+				                                    *b = a + 1
 				                                    print(*b)
 				                                  }""");
 		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.I16);
 		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.pointer(Type.I16));
 		final IRVar varT2 = new IRVar("t.2", 2, VariableScope.function, Type.I16);
-		final IRVar varT3 = new IRVar("t.3", 3, VariableScope.function, Type.I16);
+		final IRVar varA3 = new IRVar("a.3", 3, VariableScope.function, Type.pointer(Type.I16));
+		final IRVar varA4 = new IRVar("a.4", 4, VariableScope.function, Type.pointer(Type.I16));
+		final IRVar varT5 = new IRVar("t.5", 5, VariableScope.function, Type.I16);
+		final IRVar varT6 = new IRVar("t.6", 6, VariableScope.function, Type.I16);
+		final IRVar varA7 = new IRVar("a.7", 7, VariableScope.function, Type.pointer(Type.I16));
+		final IRVar varT8 = new IRVar("t.8", 8, VariableScope.function, Type.I16);
+		final IRVar varT9 = new IRVar("t.9", 9, VariableScope.function, Type.I16);
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		assertEquals(new IRProgram(List.of(
 				             new IRFunction("print@i16", Type.VOID, new IRVarInfos(List.of(
@@ -204,16 +210,95 @@ public class IRGeneratorTest {
 						             new IRVarDef(varA, 2),
 						             new IRVarDef(varB, 8),
 						             new IRVarDef(varT2, 2),
-						             new IRVarDef(varT3, 2)
+						             new IRVarDef(varA3, 8),
+						             new IRVarDef(varA4, 8),
+						             new IRVarDef(varT5, 2),
+						             new IRVarDef(varT6, 2),
+						             new IRVarDef(varA7, 8),
+						             new IRVarDef(varT8, 2),
+						             new IRVarDef(varT9, 2)
 				             ), Set.of(varA), globalVarInfos), List.of(
-									 new IRMove(varA, 17, loc(4, 10)),
-									 new IRCall(null, Type.VOID, "print@i16", List.of(new IRValue(varA)), loc(5, 2)),
+									 new IRMove(varT2, 17, loc(4, 10)),
+									 new IRAddrOf(varA3, varA),
+									 new IRMemStore(varA3, varT2),
+									 new IRAddrOf(varA4, varA),
+									 new IRMemLoad(varT5, varA4),
+									 new IRCall(null, Type.VOID, "print@i16", List.of(new IRValue(varT5)), loc(5, 2)),
 									 new IRAddrOf(varB, varA, loc(6, 11)),
-									 new IRMove(varT2, 10, loc(7, 7)),
-									 new IRMemStore(varB, varT2, loc(7, 2)),
-									 new IRMemLoad(varT3, varB, loc(8, 8)),
-									 new IRCall(null, Type.VOID, "print@i16", List.of(new IRValue(varT3)), loc(8, 2)),
+									 new IRAddrOf(varA7, varA),
+									 new IRMemLoad(varT8, varA7),
+									 new IRBinary(varT6, IRBinary.Op.Add, varT8, 1, loc(7, 9)),
+									 new IRMemStore(varB, varT6, loc(7, 2)),
+									 new IRMemLoad(varT9, varB, loc(8, 8)),
+									 new IRCall(null, Type.VOID, "print@i16", List.of(new IRValue(varT9)), loc(8, 2)),
 									 new IRLabel("main_ret")
+				             ))
+		             ), List.of(), globalVarInfos, List.of()),
+		             program);
+	}
+
+	@Test
+	public void testGlobalVars() {
+		final IRProgram program = convert("""
+				                                  u8 global = 0
+
+				                                  void print(u8 p) {
+				                                  }
+
+				                                  void main() {
+				                                    print(global)
+				                                    global = global + 1
+				                                    print(global)
+				                                  }""");
+		final IRVar varGlobal = new IRVar("global", 0, VariableScope.global, Type.U8);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(
+				new IRVarDef(varGlobal, 1)
+		), Set.of(), null);
+		final IRVar varT0 = new IRVar("t.0", 0, VariableScope.function, Type.U8);
+		final IRVar varA1 = new IRVar("a.1", 1, VariableScope.function, Type.POINTER_U8);
+		final IRVar varA2 = new IRVar("a.2", 2, VariableScope.function, Type.POINTER_U8);
+		final IRVar varT3 = new IRVar("t.3", 3, VariableScope.function, Type.U8);
+		final IRVar varT4 = new IRVar("t.4", 4, VariableScope.function, Type.U8);
+		final IRVar varA5 = new IRVar("a.5", 5, VariableScope.function, Type.POINTER_U8);
+		final IRVar varT6 = new IRVar("t.6", 6, VariableScope.function, Type.U8);
+		final IRVar varA7 = new IRVar("a.7", 7, VariableScope.function, Type.POINTER_U8);
+		final IRVar varA8 = new IRVar("a.8", 8, VariableScope.function, Type.POINTER_U8);
+		final IRVar varT9 = new IRVar("t.9", 9, VariableScope.function, Type.U8);
+		assertEquals(new IRProgram(List.of(
+				             new IRFunction("print@u8", Type.VOID, new IRVarInfos(List.of(
+						             new IRVarDef(new IRVar("p", 0, VariableScope.parameter, Type.U8), 1)
+				             ), Set.of(), globalVarInfos), List.of(
+						             new IRLabel("print@u8_ret")
+				             )),
+				             new IRFunction("main", Type.VOID, new IRVarInfos(List.of(
+						             new IRVarDef(varT0, 1),
+						             new IRVarDef(varA1, 8),
+						             new IRVarDef(varA2, 8),
+						             new IRVarDef(varT3, 1),
+						             new IRVarDef(varT4, 1),
+						             new IRVarDef(varA5, 8),
+						             new IRVarDef(varT6, 1),
+						             new IRVarDef(varA7, 8),
+						             new IRVarDef(varA8, 8),
+						             new IRVarDef(varT9, 1)
+				             ), Set.of(), globalVarInfos), List.of(
+									 new IRComment("begin initialize global variables"),
+						             new IRMove(varT0, 0, loc(0, 12)),
+									 new IRAddrOf(varA1, varGlobal),
+									 new IRMemStore(varA1, varT0),
+									 new IRComment("end initialize global variables"),
+									 new IRAddrOf(varA2, varGlobal),
+									 new IRMemLoad(varT3, varA2),
+						             new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue(varT3)), loc(6, 2)),
+									 new IRAddrOf(varA5, varGlobal),
+									 new IRMemLoad(varT6, varA5),
+									 new IRBinary(varT4, IRBinary.Op.Add, varT6, 1, loc(7, 18)),
+									 new IRAddrOf(varA7, varGlobal),
+									 new IRMemStore(varA7, varT4),
+									 new IRAddrOf(varA8, varGlobal),
+									 new IRMemLoad(varT9, varA8),
+									 new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue(varT9)), loc(8, 2)),
+						             new IRLabel("main_ret")
 				             ))
 		             ), List.of(), globalVarInfos, List.of()),
 		             program);
@@ -258,11 +343,6 @@ public class IRGeneratorTest {
 		final TypeChecker checker = new TypeChecker(pointerIntType, message -> Assert.fail("no message expected"));
 		final Program program = checker.check(rawProgram);
 		return IRGenerator.convert(program, pointerIntType);
-	}
-
-	@NotNull
-	private static IRVar tmp(int index, Type type) {
-		return var("t." + index, index, type);
 	}
 
 	@NotNull

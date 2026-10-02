@@ -98,8 +98,12 @@ printStringLength@@u8@u8_ret:
 initRandom@i32:
  Local variables
 	arg 0: salt (i32/4)
-	; 5 pc
-	move __random__, salt
+	var 1: t.1 (i32/4)
+	var 2: a.2 (i32*/8)
+	; 16 pc
+	move t.1, salt
+	addrof a.2, __random__
+	store [a.2], t.1
 initRandom@i32_ret:
 
 random:
@@ -109,29 +113,39 @@ random:
 	var 2: c (i32/4)
 	var 3: d (i32/4)
 	var 4: e (i32/4)
-	var 5: t.5 (i32/4)
+	var 5: a.5 (i32*/8)
 	var 6: t.6 (i32/4)
 	var 7: t.7 (i32/4)
 	var 8: t.8 (i32/4)
 	var 9: t.9 (i32/4)
 	var 10: t.10 (i32/4)
 	var 11: t.11 (i32/4)
-	; 75 pc
-	move r, __random__
-	and t.5, r, 524287
-	mul b, t.5, 48271
-	shiftright t.6, r, 15
-	mul c, t.6, 48271
-	and t.7, c, 65535
-	shiftleft d, t.7, 15
-	shiftright t.9, c, 16
-	add t.8, t.9, b
-	add e, t.8, d
-	and t.10, e, 2147483647
-	shiftright t.11, e, 31
-	add __random__, t.10, t.11
+	var 12: t.12 (i32/4)
+	var 13: t.13 (i32/4)
+	var 14: a.14 (i32*/8)
+	var 15: a.15 (i32*/8)
+	var 16: t.16 (i32/4)
+	; 103 pc
+	addrof a.5, __random__
+	load r, [a.5]
+	and t.6, r, 524287
+	mul b, t.6, 48271
+	shiftright t.7, r, 15
+	mul c, t.7, 48271
+	and t.8, c, 65535
+	shiftleft d, t.8, 15
+	shiftright t.10, c, 16
+	add t.9, t.10, b
+	add e, t.9, d
+	and t.12, e, 2147483647
+	shiftright t.13, e, 31
+	add t.11, t.12, t.13
+	addrof a.14, __random__
+	store [a.14], t.11
 	; 15:9 return __random__
-	ret __random__
+	addrof a.15, __random__
+	load t.16, [a.15]
+	ret t.16
 	jump random_ret
 random_ret:
 
@@ -661,23 +675,27 @@ main:
 	var 3: chr (i16/2)
 	var 4: cell (u8/1)
 	var 5: cell (u8/1)
-	var 6: t.6 (u8*/8)
-	var 7: t.7 (bool/1)
+	var 6: t.6 (i32/4)
+	var 7: a.7 (i32*/8)
 	var 8: t.8 (u8*/8)
-	var 9: t.9 (i16/2)
-	var 10: t.10 (i16/2)
+	var 9: t.9 (bool/1)
+	var 10: t.10 (u8*/8)
 	var 11: t.11 (i16/2)
 	var 12: t.12 (i16/2)
 	var 13: t.13 (i16/2)
 	var 14: t.14 (i16/2)
-	var 15: t.15 (bool/1)
-	var 16: t.16 (bool/1)
-	var 17: t.17 (u8/1)
+	var 15: t.15 (i16/2)
+	var 16: t.16 (i16/2)
+	var 17: t.17 (bool/1)
 	var 18: t.18 (bool/1)
-	var 19: t.19 (u8*/8)
-	; 210 pc
+	var 19: t.19 (u8/1)
+	var 20: t.20 (bool/1)
+	var 21: t.21 (u8*/8)
+	; 221 pc
 	; begin initialize global variables
-	const __random__, 0
+	const t.6, 0
+	addrof a.7, __random__
+	store [a.7], t.6
 	; end initialize global variables
 	call initRandom@i32[7439742]
 	const needsInitialize, 1
@@ -685,8 +703,8 @@ main:
 	const curr_c, 20
 	const curr_r, 10
 	call setCursor@i16@i16[20, 0]
-	const t.6, [string-1]
-	call printString@@u8[t.6]
+	const t.8, [string-1]
+	call printString@@u8[t.8]
 	; 221:2 while true
 while_40:
 	call printField@i16@i16[curr_r, curr_c]
@@ -694,11 +712,11 @@ while_40:
 	branch needsInitialize notequals 0: if_41_end, if_41_then
 if_41_then:
 	; 224:4 if printLeft([])
-	call t.7 = printLeft[] -> bool
-	branch t.7 equals 0: if_41_end, if_42_then
+	call t.9 = printLeft[] -> bool
+	branch t.9 equals 0: if_41_end, if_42_then
 if_42_then:
-	const t.8, [string-2]
-	call printString@@u8[t.8]
+	const t.10, [string-2]
+	call printString@@u8[t.10]
 	jump main_ret
 if_41_end:
 	call chr = getChar[] -> i16
@@ -708,31 +726,31 @@ if_43_end:
 	; 236:3 if chr == -8120
 	branch chr notequals -8120: if_44_else, if_44_then
 if_44_then:
-	add t.10, curr_r, 20
-	sub t.9, t.10, 1
-	mod curr_r, t.9, 20
+	add t.12, curr_r, 20
+	sub t.11, t.12, 1
+	mod curr_r, t.11, 20
 	jump while_40
 if_44_else:
 	; 240:8 if chr == -8112
 	branch chr notequals -8112: if_45_else, if_45_then
 if_45_then:
-	add t.11, curr_r, 1
-	mod curr_r, t.11, 20
+	add t.13, curr_r, 1
+	mod curr_r, t.13, 20
 	jump while_40
 if_45_else:
 	; 244:8 if chr == -8117
 	branch chr notequals -8117: if_46_else, if_46_then
 if_46_then:
-	add t.13, curr_c, 40
-	sub t.12, t.13, 1
-	mod curr_c, t.12, 40
+	add t.15, curr_c, 40
+	sub t.14, t.15, 1
+	mod curr_c, t.14, 40
 	jump while_40
 if_46_else:
 	; 248:8 if chr == -8115
 	branch chr notequals -8115: if_47_else, if_47_then
 if_47_then:
-	add t.14, curr_c, 1
-	mod curr_c, t.14, 40
+	add t.16, curr_c, 1
+	mod curr_c, t.16, 40
 	jump while_40
 if_47_else:
 	; 252:8 if chr == 32
@@ -743,8 +761,8 @@ if_48_then:
 if_49_then:
 	call cell = getCell@i16@i16[curr_r, curr_c] -> u8
 	; 255:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=255:17]])
-	call t.15 = isOpen@u8[cell] -> bool
-	branch t.15 notequals 0: while_40, if_50_then
+	call t.17 = isOpen@u8[cell] -> bool
+	branch t.17 notequals 0: while_40, if_50_then
 if_50_then:
 	xor cell, 4
 	call setCell@i16@i16@u8[curr_r, curr_c, cell]
@@ -761,19 +779,19 @@ if_52_then:
 if_52_end:
 	call cell = getCell@i16@i16[curr_r, curr_c] -> u8
 	; 267:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=267:16]])
-	call t.16 = isOpen@u8[cell] -> bool
-	branch t.16 notequals 0: if_53_end, if_53_then
+	call t.18 = isOpen@u8[cell] -> bool
+	branch t.18 notequals 0: if_53_end, if_53_then
 if_53_then:
-	or t.17, cell, 2
-	call setCell@i16@i16@u8[curr_r, curr_c, t.17]
+	or t.19, cell, 2
+	call setCell@i16@i16@u8[curr_r, curr_c, t.19]
 if_53_end:
 	; 270:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=270:15]])
-	call t.18 = isBomb@u8[cell] -> bool
-	branch t.18 equals 0: if_54_end, if_54_then
+	call t.20 = isBomb@u8[cell] -> bool
+	branch t.20 equals 0: if_54_end, if_54_then
 if_54_then:
 	call printField@i16@i16[curr_r, curr_c]
-	const t.19, [string-3]
-	call printString@@u8[t.19]
+	const t.21, [string-3]
+	call printString@@u8[t.21]
 	jump main_ret
 if_54_end:
 	call maybeRevealAround@i16@i16[curr_r, curr_c]

@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 
 import java.util.*;
 
@@ -32,6 +33,8 @@ public record IRBinary(@NotNull IRVar target, @NotNull Op op, @NotNull IRVar lef
 
 	public IRBinary {
 		Utils.assertTrue(Objects.equals(target.type(), left.type()), target.type() + " vs. " + left.type());
+		Utils.assertTrue(target.scope() != VariableScope.global);
+		Utils.assertTrue(left.scope() != VariableScope.global);
 		if (op == Op.Add && target.type().isPointer()) {
 			Utils.assertTrue(right.type().isInt());
 		}
