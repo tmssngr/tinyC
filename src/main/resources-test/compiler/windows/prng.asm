@@ -274,13 +274,29 @@ _printStringLength@@u8@u8:
         ret
 
         ; void initRandom@i32
-        ;   rsp+8: arg salt
+        ;   rsp+24: arg salt
+        ;   rsp+0: var t.1
+        ;   rsp+8: var a.2
 _initRandom@i32:
-        ; move __random__, salt
-        lea rax, [rsp+8]
+        ; reserve space for local variables
+        sub rsp, 16
+        ; move t.1, salt
+        lea rax, [rsp+24]
         mov ebx, [rax]
-        lea rax, [var_0]
+        lea rax, [rsp+0]
         mov [rax], ebx
+        ; addrof a.2, __random__
+        lea rax, [var_0]
+        lea rbx, [rsp+8]
+        mov [rbx], rax
+        ; store [a.2], t.1
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        lea rax, [rsp+0]
+        mov ecx, [rax]
+        mov [rbx], ecx
+        ; release space for local variables
+        add rsp, 16
         ret
 
         ; i32 random
@@ -289,34 +305,44 @@ _initRandom@i32:
         ;   rsp+8: var c
         ;   rsp+12: var d
         ;   rsp+16: var e
-        ;   rsp+20: var t.5
-        ;   rsp+24: var t.6
-        ;   rsp+28: var t.7
-        ;   rsp+32: var t.8
-        ;   rsp+36: var t.9
-        ;   rsp+40: var t.10
-        ;   rsp+44: var t.11
+        ;   rsp+24: var a.5
+        ;   rsp+32: var t.6
+        ;   rsp+36: var t.7
+        ;   rsp+40: var t.8
+        ;   rsp+44: var t.9
+        ;   rsp+48: var t.10
+        ;   rsp+52: var t.11
+        ;   rsp+56: var t.12
+        ;   rsp+60: var t.13
+        ;   rsp+64: var a.14
+        ;   rsp+72: var a.15
+        ;   rsp+80: var t.16
 _random:
         ; reserve space for local variables
-        sub rsp, 48
-        ; move r, __random__
+        sub rsp, 96
+        ; addrof a.5, __random__
         lea rax, [var_0]
-        mov ebx, [rax]
+        lea rbx, [rsp+24]
+        mov [rbx], rax
+        ; load r, [a.5]
+        lea rax, [rsp+24]
+        mov rbx, [rax]
+        mov eax, [rbx]
+        lea rbx, [rsp+0]
+        mov [rbx], eax
+        ; move t.6, r
         lea rax, [rsp+0]
-        mov [rax], ebx
-        ; move t.5, r
-        lea rax, [rsp+0]
         mov ebx, [rax]
-        lea rax, [rsp+20]
+        lea rax, [rsp+32]
         mov [rax], ebx
-        ; and t.5, 524287
-        lea rax, [rsp+20]
+        ; and t.6, 524287
+        lea rax, [rsp+32]
         mov ebx, [rax]
         and ebx, 524287
-        lea rax, [rsp+20]
+        lea rax, [rsp+32]
         mov [rax], ebx
-        ; move b, t.5
-        lea rax, [rsp+20]
+        ; move b, t.6
+        lea rax, [rsp+32]
         mov ebx, [rax]
         lea rax, [rsp+4]
         mov [rax], ebx
@@ -327,19 +353,19 @@ _random:
         imul  rbx, 48271
         lea rax, [rsp+4]
         mov [rax], ebx
-        ; move t.6, r
+        ; move t.7, r
         lea rax, [rsp+0]
         mov ebx, [rax]
-        lea rax, [rsp+24]
+        lea rax, [rsp+36]
         mov [rax], ebx
-        ; shiftright t.6, 15
-        lea rax, [rsp+24]
+        ; shiftright t.7, 15
+        lea rax, [rsp+36]
         mov ebx, [rax]
         sar ebx, 15
-        lea rax, [rsp+24]
+        lea rax, [rsp+36]
         mov [rax], ebx
-        ; move c, t.6
-        lea rax, [rsp+24]
+        ; move c, t.7
+        lea rax, [rsp+36]
         mov ebx, [rax]
         lea rax, [rsp+8]
         mov [rax], ebx
@@ -350,19 +376,19 @@ _random:
         imul  rbx, 48271
         lea rax, [rsp+8]
         mov [rax], ebx
-        ; move t.7, c
+        ; move t.8, c
         lea rax, [rsp+8]
         mov ebx, [rax]
-        lea rax, [rsp+28]
+        lea rax, [rsp+40]
         mov [rax], ebx
-        ; and t.7, 65535
-        lea rax, [rsp+28]
+        ; and t.8, 65535
+        lea rax, [rsp+40]
         mov ebx, [rax]
         and ebx, 65535
-        lea rax, [rsp+28]
+        lea rax, [rsp+40]
         mov [rax], ebx
-        ; move d, t.7
-        lea rax, [rsp+28]
+        ; move d, t.8
+        lea rax, [rsp+40]
         mov ebx, [rax]
         lea rax, [rsp+12]
         mov [rax], ebx
@@ -372,32 +398,32 @@ _random:
         sal ebx, 15
         lea rax, [rsp+12]
         mov [rax], ebx
-        ; move t.9, c
+        ; move t.10, c
         lea rax, [rsp+8]
         mov ebx, [rax]
-        lea rax, [rsp+36]
+        lea rax, [rsp+48]
         mov [rax], ebx
-        ; shiftright t.9, 16
-        lea rax, [rsp+36]
+        ; shiftright t.10, 16
+        lea rax, [rsp+48]
         mov ebx, [rax]
         sar ebx, 16
-        lea rax, [rsp+36]
+        lea rax, [rsp+48]
         mov [rax], ebx
-        ; move t.8, t.9
-        lea rax, [rsp+36]
+        ; move t.9, t.10
+        lea rax, [rsp+48]
         mov ebx, [rax]
-        lea rax, [rsp+32]
+        lea rax, [rsp+44]
         mov [rax], ebx
-        ; add t.8, b
-        lea rax, [rsp+32]
+        ; add t.9, b
+        lea rax, [rsp+44]
         mov ebx, [rax]
         lea rax, [rsp+4]
         mov ecx, [rax]
         add ebx, ecx
-        lea rax, [rsp+32]
+        lea rax, [rsp+44]
         mov [rax], ebx
-        ; move e, t.8
-        lea rax, [rsp+32]
+        ; move e, t.9
+        lea rax, [rsp+44]
         mov ebx, [rax]
         lea rax, [rsp+16]
         mov [rax], ebx
@@ -409,48 +435,68 @@ _random:
         add ebx, ecx
         lea rax, [rsp+16]
         mov [rax], ebx
-        ; move t.10, e
+        ; move t.12, e
         lea rax, [rsp+16]
         mov ebx, [rax]
-        lea rax, [rsp+40]
+        lea rax, [rsp+56]
         mov [rax], ebx
-        ; and t.10, 2147483647
-        lea rax, [rsp+40]
+        ; and t.12, 2147483647
+        lea rax, [rsp+56]
         mov ebx, [rax]
         and ebx, 2147483647
-        lea rax, [rsp+40]
+        lea rax, [rsp+56]
         mov [rax], ebx
-        ; move t.11, e
+        ; move t.13, e
         lea rax, [rsp+16]
         mov ebx, [rax]
-        lea rax, [rsp+44]
+        lea rax, [rsp+60]
         mov [rax], ebx
-        ; shiftright t.11, 31
-        lea rax, [rsp+44]
+        ; shiftright t.13, 31
+        lea rax, [rsp+60]
         mov ebx, [rax]
         sar ebx, 31
-        lea rax, [rsp+44]
+        lea rax, [rsp+60]
         mov [rax], ebx
-        ; move __random__, t.10
-        lea rax, [rsp+40]
+        ; move t.11, t.12
+        lea rax, [rsp+56]
         mov ebx, [rax]
-        lea rax, [var_0]
+        lea rax, [rsp+52]
         mov [rax], ebx
-        ; add __random__, t.11
-        lea rax, [var_0]
+        ; add t.11, t.13
+        lea rax, [rsp+52]
         mov ebx, [rax]
-        lea rax, [rsp+44]
+        lea rax, [rsp+60]
         mov ecx, [rax]
         add ebx, ecx
-        lea rax, [var_0]
+        lea rax, [rsp+52]
         mov [rax], ebx
-        ; 15:9 return __random__
-        ; ret __random__
+        ; addrof a.14, __random__
         lea rax, [var_0]
+        lea rbx, [rsp+64]
+        mov [rbx], rax
+        ; store [a.14], t.11
+        lea rax, [rsp+64]
+        mov rbx, [rax]
+        lea rax, [rsp+52]
+        mov ecx, [rax]
+        mov [rbx], ecx
+        ; 15:9 return __random__
+        ; addrof a.15, __random__
+        lea rax, [var_0]
+        lea rbx, [rsp+72]
+        mov [rbx], rax
+        ; load t.16, [a.15]
+        lea rax, [rsp+72]
+        mov rbx, [rax]
+        mov eax, [rbx]
+        lea rbx, [rsp+80]
+        mov [rbx], eax
+        ; ret t.16
+        lea rax, [rsp+80]
         mov ebx, [rax]
         mov rax, rbx
         ; release space for local variables
-        add rsp, 48
+        add rsp, 96
         ret
 
         ; u8 randomU8
@@ -482,14 +528,26 @@ _randomU8:
         ; void main
         ;   rsp+0: var i
         ;   rsp+1: var r
+        ;   rsp+4: var t.2
+        ;   rsp+8: var a.3
 _main:
         ; reserve space for local variables
         sub rsp, 16
         ; begin initialize global variables
-        ; const __random__, 0
+        ; const t.2, 0
         mov eax, 0
-        lea rbx, [var_0]
+        lea rbx, [rsp+4]
         mov [rbx], eax
+        ; addrof a.3, __random__
+        lea rax, [var_0]
+        lea rbx, [rsp+8]
+        mov [rbx], rax
+        ; store [a.3], t.2
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        lea rax, [rsp+4]
+        mov ecx, [rax]
+        mov [rbx], ecx
         ; end initialize global variables
         ; call initRandom@i32[7439742]
         mov  rax, 7439742

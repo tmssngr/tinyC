@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 
 import java.util.*;
 
@@ -28,6 +29,7 @@ public record IRMove(@NotNull IRVar target, @NotNull IRValue source, @NotNull Lo
 
 	public IRMove {
 		Utils.assertTrue(Objects.equals(target.type(), source.type()));
+		Utils.assertTrue(target.scope() != VariableScope.global);
 	}
 
 	@NotNull

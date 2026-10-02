@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 
 import org.jetbrains.annotations.*;
 
@@ -14,6 +15,7 @@ public record IRAddrOf(@NotNull IRVar target, @NotNull IRVar source, @NotNull Lo
 
 	public IRAddrOf {
 		Utils.assertTrue(target.type().isPointer());
+		Utils.assertTrue(target.scope() != VariableScope.global);
 		// we don't verify more detailed, because we use it for pointer arithmetics,
 		// e.g. pointer to structs will be turned into a pointer to a struct member (with the help of an offset)
 	}

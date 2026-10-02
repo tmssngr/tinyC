@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.*;
+import com.regnis.tinyc.ast.*;
 
 import org.jetbrains.annotations.*;
 
@@ -14,6 +15,8 @@ public record IRMemLoad(@NotNull IRVar target, @NotNull IRVar addr, @NotNull Loc
 
 	public IRMemLoad {
 		Utils.assertTrue(addr.type().isPointer());
+		Utils.assertTrue(target.scope() != VariableScope.global);
+		Utils.assertTrue(addr.scope() != VariableScope.global);
 	}
 
 	@NotNull

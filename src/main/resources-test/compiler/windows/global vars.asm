@@ -275,49 +275,138 @@ _printStringLength@@u8@u8:
 
         ; void main
         ;   rsp+0: var t.0
+        ;   rsp+8: var a.1
+        ;   rsp+16: var t.2
+        ;   rsp+24: var a.3
+        ;   rsp+32: var t.4
+        ;   rsp+40: var a.5
+        ;   rsp+48: var a.6
+        ;   rsp+56: var t.7
+        ;   rsp+64: var t.8
+        ;   rsp+72: var a.9
+        ;   rsp+80: var t.10
+        ;   rsp+88: var a.11
+        ;   rsp+96: var t.12
+        ;   rsp+104: var a.13
+        ;   rsp+112: var t.14
 _main:
         ; reserve space for local variables
-        sub rsp, 16
+        sub rsp, 128
         ; begin initialize global variables
-        ; const space, 32
+        ; const t.0, 32
         mov ax, 32
-        lea rbx, [var_0]
+        lea rbx, [rsp+0]
         mov [rbx], ax
-        ; const next, 63
-        mov ax, 63
-        lea rbx, [var_1]
-        mov [rbx], ax
-        ; addrof ptrToSpace, space
+        ; addrof a.1, space
         lea rax, [var_0]
-        lea rbx, [var_2]
+        lea rbx, [rsp+8]
         mov [rbx], rax
-        ; end initialize global variables
-        ; call printIntLf@i16[next]
+        ; store [a.1], t.0
+        lea rax, [rsp+8]
+        mov rbx, [rax]
+        lea rax, [rsp+0]
+        mov cx, [rax]
+        mov [rbx], cx
+        ; const t.2, 63
+        mov ax, 63
+        lea rbx, [rsp+16]
+        mov [rbx], ax
+        ; addrof a.3, next
         lea rax, [var_1]
+        lea rbx, [rsp+24]
+        mov [rbx], rax
+        ; store [a.3], t.2
+        lea rax, [rsp+24]
+        mov rbx, [rax]
+        lea rax, [rsp+16]
+        mov cx, [rax]
+        mov [rbx], cx
+        ; addrof t.4, space
+        lea rax, [var_0]
+        lea rbx, [rsp+32]
+        mov [rbx], rax
+        ; addrof a.5, ptrToSpace
+        lea rax, [var_2]
+        lea rbx, [rsp+40]
+        mov [rbx], rax
+        ; store [a.5], t.4
+        lea rax, [rsp+40]
+        mov rbx, [rax]
+        lea rax, [rsp+32]
+        mov rcx, [rax]
+        mov [rbx], rcx
+        ; end initialize global variables
+        ; addrof a.6, next
+        lea rax, [var_1]
+        lea rbx, [rsp+48]
+        mov [rbx], rax
+        ; load t.7, [a.6]
+        lea rax, [rsp+48]
+        mov rbx, [rax]
+        mov ax, [rbx]
+        lea rbx, [rsp+56]
+        mov [rbx], ax
+        ; call printIntLf@i16[t.7]
+        lea rax, [rsp+56]
         mov bx, [rax]
         push rbx
           call _printIntLf@i16
         add rsp, 8
-        ; add ptrToSpace, 2
+        ; addrof a.9, ptrToSpace
         lea rax, [var_2]
+        lea rbx, [rsp+72]
+        mov [rbx], rax
+        ; load t.10, [a.9]
+        lea rax, [rsp+72]
+        mov rbx, [rax]
+        mov rax, [rbx]
+        lea rbx, [rsp+80]
+        mov [rbx], rax
+        ; move t.8, t.10
+        lea rax, [rsp+80]
+        mov rbx, [rax]
+        lea rax, [rsp+64]
+        mov [rax], rbx
+        ; add t.8, 2
+        lea rax, [rsp+64]
         mov rbx, [rax]
         add rbx, 2
-        lea rax, [var_2]
+        lea rax, [rsp+64]
         mov [rax], rbx
-        ; load t.0, [ptrToSpace]
+        ; addrof a.11, ptrToSpace
         lea rax, [var_2]
+        lea rbx, [rsp+88]
+        mov [rbx], rax
+        ; store [a.11], t.8
+        lea rax, [rsp+88]
+        mov rbx, [rax]
+        lea rax, [rsp+64]
+        mov rcx, [rax]
+        mov [rbx], rcx
+        ; addrof a.13, ptrToSpace
+        lea rax, [var_2]
+        lea rbx, [rsp+104]
+        mov [rbx], rax
+        ; load t.14, [a.13]
+        lea rax, [rsp+104]
+        mov rbx, [rax]
+        mov rax, [rbx]
+        lea rbx, [rsp+112]
+        mov [rbx], rax
+        ; load t.12, [t.14]
+        lea rax, [rsp+112]
         mov rbx, [rax]
         mov ax, [rbx]
-        lea rbx, [rsp+0]
+        lea rbx, [rsp+96]
         mov [rbx], ax
-        ; call printIntLf@i16[t.0]
-        lea rax, [rsp+0]
+        ; call printIntLf@i16[t.12]
+        lea rax, [rsp+96]
         mov bx, [rax]
         push rbx
           call _printIntLf@i16
         add rsp, 8
         ; release space for local variables
-        add rsp, 16
+        add rsp, 128
         ret
 
         ; void printStringLength@@u8@i64
