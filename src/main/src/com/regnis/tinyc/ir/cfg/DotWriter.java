@@ -46,7 +46,7 @@ public final class DotWriter extends TextWriter {
 		writeIndentation();
 		write(nodeName(block));
 		write(" [label=\"");
-		write(getBlockName(block));
+		write(getBlockText(block));
 		write("\"");
 		write(",shape=");
 		final List<String> successors = block.successors();
@@ -88,6 +88,20 @@ public final class DotWriter extends TextWriter {
 			}
 			writeln(";");
 		}
+	}
+
+	@NotNull
+	private String getBlockText(BasicBlock block) {
+		final StringBuilder buffer = new StringBuilder();
+		buffer.append(escape(block.name));
+		for (IRInstruction instruction : block.instructions()) {
+			if (instruction instanceof IRComment) {
+				continue;
+			}
+			buffer.append("\\l");
+			buffer.append(escape(instruction.toString()));
+		}
+		return buffer.toString();
 	}
 
 	private String nodeName(BasicBlock block) {

@@ -1,92 +1,92 @@
 digraph program {
 	edge[fontsize="10pt"];
 	subgraph fn_printString_A_Au8 {
-		BasicBlock_0_printString_A_Au8 [label="printString_A_Au8",shape=box];
+		BasicBlock_0_printString_A_Au8 [label="printString_A_Au8\lcall length = strlen_A_Au8[str] -> i64\lcall printStringLength_A_Au8_Ai64[str, length]\ljump printString_A_Au8__ret",shape=box];
 		BasicBlock_0_printString_A_Au8 -> BasicBlock_0_printString_A_Au8__ret;
 		BasicBlock_0_printString_A_Au8__ret [label="printString_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printChar_Au8 {
-		BasicBlock_1_printChar_Au8 [label="printChar_Au8",shape=box];
+		BasicBlock_1_printChar_Au8 [label="printChar_Au8\laddrof t_d1, chr\lcall printStringLength_A_Au8_Au8[t_d1, 1]\ljump printChar_Au8__ret",shape=box];
 		BasicBlock_1_printChar_Au8 -> BasicBlock_1_printChar_Au8__ret;
 		BasicBlock_1_printChar_Au8__ret [label="printChar_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_strlen_A_Au8 {
-		BasicBlock_2_strlen_A_Au8 [label="strlen_A_Au8",shape=box];
+		BasicBlock_2_strlen_A_Au8 [label="strlen_A_Au8\lconst length, 0\ljump for__1",shape=box];
 		BasicBlock_2_strlen_A_Au8 -> BasicBlock_2_for__1 [label="(length,str)"];
-		BasicBlock_2_for__1__body [label="for__1__body",shape=box];
+		BasicBlock_2_for__1__body [label="for__1__body\ladd length, 1\ladd str, 1\ljump for__1",shape=box];
 		BasicBlock_2_for__1__body -> BasicBlock_2_for__1 [label="(length,str)"];
-		BasicBlock_2_for__1 [label="for__1",shape=hexagon];
+		BasicBlock_2_for__1 [label="for__1\lload t_d2, [str]\lbranch t_d2 equals 0: for__1__break, for__1__body\ljump for__1__body",shape=hexagon];
 		BasicBlock_2_for__1 -> BasicBlock_2_for__1__break [label="(length)"];
 		BasicBlock_2_for__1 -> BasicBlock_2_for__1__body [label="(length,str)"];
-		BasicBlock_2_for__1__break [label="for__1__break",shape=box];
+		BasicBlock_2_for__1__break [label="for__1__break\lret length\ljump strlen_A_Au8__ret",shape=box];
 		BasicBlock_2_for__1__break -> BasicBlock_2_strlen_A_Au8__ret;
 		BasicBlock_2_strlen_A_Au8__ret [label="strlen_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printStringLength_A_Au8_Au8 {
-		BasicBlock_3_printStringLength_A_Au8_Au8 [label="printStringLength_A_Au8_Au8",shape=box];
+		BasicBlock_3_printStringLength_A_Au8_Au8 [label="printStringLength_A_Au8_Au8\lcast t_d2(i64), length(u8)\lcall printStringLength_A_Au8_Ai64[str, t_d2]\ljump printStringLength_A_Au8_Au8__ret",shape=box];
 		BasicBlock_3_printStringLength_A_Au8_Au8 -> BasicBlock_3_printStringLength_A_Au8_Au8__ret;
 		BasicBlock_3_printStringLength_A_Au8_Au8__ret [label="printStringLength_A_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printNibble_Au8 {
-		BasicBlock_4_printNibble_Au8 [label="printNibble_Au8",shape=hexagon];
+		BasicBlock_4_printNibble_Au8 [label="printNibble_Au8\land x, 15\lbranch x lteq 9: printNibble_Au8_dno__critical__edge__4, if__2__then\ljump if__2__then",shape=hexagon];
 		BasicBlock_4_printNibble_Au8 -> BasicBlock_4_printNibble_Au8_dno__critical__edge__4 [label="(x)"];
 		BasicBlock_4_printNibble_Au8 -> BasicBlock_4_if__2__then [label="(x)"];
-		BasicBlock_4_printNibble_Au8_dno__critical__edge__4 [label="printNibble_Au8_dno__critical__edge__4",shape=box];
+		BasicBlock_4_printNibble_Au8_dno__critical__edge__4 [label="printNibble_Au8_dno__critical__edge__4\ljump if__2__end",shape=box];
 		BasicBlock_4_printNibble_Au8_dno__critical__edge__4 -> BasicBlock_4_if__2__end [label="(x)"];
-		BasicBlock_4_if__2__then [label="if__2__then",shape=box];
+		BasicBlock_4_if__2__then [label="if__2__then\ladd x, 7\ljump if__2__end",shape=box];
 		BasicBlock_4_if__2__then -> BasicBlock_4_if__2__end [label="(x)"];
-		BasicBlock_4_if__2__end [label="if__2__end",shape=box];
+		BasicBlock_4_if__2__end [label="if__2__end\ladd x, 48\lcall printChar_Au8[x]\ljump printNibble_Au8__ret",shape=box];
 		BasicBlock_4_if__2__end -> BasicBlock_4_printNibble_Au8__ret;
 		BasicBlock_4_printNibble_Au8__ret [label="printNibble_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printHex2_Au8 {
-		BasicBlock_5_printHex2_Au8 [label="printHex2_Au8",shape=box];
+		BasicBlock_5_printHex2_Au8 [label="printHex2_Au8\lmove t_d1, x\lshiftright t_d1, 4\lcall printNibble_Au8[t_d1]\lcall printNibble_Au8[x]\ljump printHex2_Au8__ret",shape=box];
 		BasicBlock_5_printHex2_Au8 -> BasicBlock_5_printHex2_Au8__ret;
 		BasicBlock_5_printHex2_Au8__ret [label="printHex2_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_6_main [label="main",shape=box];
+		BasicBlock_6_main [label="main\lconst t_d2, [string-0]\lcall printString_A_Au8[t_d2]\lconst i, 0\ljump for__3",shape=box];
 		BasicBlock_6_main -> BasicBlock_6_for__3 [label="(i)"];
-		BasicBlock_6_for__3__body [label="for__3__body",shape=hexagon];
+		BasicBlock_6_for__3__body [label="for__3__body\lmove t_d3, i\land t_d3, 7\lbranch t_d3 notequals 0: main_dno__critical__edge__19, if__4__then\ljump if__4__then",shape=hexagon];
 		BasicBlock_6_for__3__body -> BasicBlock_6_main_dno__critical__edge__19 [label="(i)"];
 		BasicBlock_6_for__3__body -> BasicBlock_6_if__4__then [label="(i)"];
-		BasicBlock_6_main_dno__critical__edge__19 [label="main_dno__critical__edge__19",shape=box];
+		BasicBlock_6_main_dno__critical__edge__19 [label="main_dno__critical__edge__19\ljump if__4__end",shape=box];
 		BasicBlock_6_main_dno__critical__edge__19 -> BasicBlock_6_if__4__end [label="(i)"];
-		BasicBlock_6_if__4__then [label="if__4__then",shape=box];
+		BasicBlock_6_if__4__then [label="if__4__then\lcall printChar_Au8[32]\ljump if__4__end",shape=box];
 		BasicBlock_6_if__4__then -> BasicBlock_6_if__4__end [label="(i)"];
-		BasicBlock_6_if__4__end [label="if__4__end",shape=box];
+		BasicBlock_6_if__4__end [label="if__4__end\lcall printNibble_Au8[i]\ljump for__3__continue",shape=box];
 		BasicBlock_6_if__4__end -> BasicBlock_6_for__3__continue [label="(i)"];
-		BasicBlock_6_for__3__continue [label="for__3__continue",shape=box];
+		BasicBlock_6_for__3__continue [label="for__3__continue\ladd i, 1\ljump for__3",shape=box];
 		BasicBlock_6_for__3__continue -> BasicBlock_6_for__3 [label="(i)"];
-		BasicBlock_6_for__3 [label="for__3",shape=hexagon];
+		BasicBlock_6_for__3 [label="for__3\lbranch i gteq 16: for__3__break, for__3__body\ljump for__3__body",shape=hexagon];
 		BasicBlock_6_for__3 -> BasicBlock_6_for__3__break;
 		BasicBlock_6_for__3 -> BasicBlock_6_for__3__body [label="(i)"];
-		BasicBlock_6_for__3__break [label="for__3__break",shape=box];
+		BasicBlock_6_for__3__break [label="for__3__break\lcall printChar_Au8[10]\lconst i, 32\ljump for__5",shape=box];
 		BasicBlock_6_for__3__break -> BasicBlock_6_for__5 [label="(i)"];
-		BasicBlock_6_for__5__body [label="for__5__body",shape=hexagon];
+		BasicBlock_6_for__5__body [label="for__5__body\lmove t_d4, i\land t_d4, 15\lbranch t_d4 notequals 0: main_dno__critical__edge__16, if__6__then\ljump if__6__then",shape=hexagon];
 		BasicBlock_6_for__5__body -> BasicBlock_6_main_dno__critical__edge__16 [label="(i)"];
 		BasicBlock_6_for__5__body -> BasicBlock_6_if__6__then [label="(i)"];
-		BasicBlock_6_main_dno__critical__edge__16 [label="main_dno__critical__edge__16",shape=box];
+		BasicBlock_6_main_dno__critical__edge__16 [label="main_dno__critical__edge__16\ljump if__6__end",shape=box];
 		BasicBlock_6_main_dno__critical__edge__16 -> BasicBlock_6_if__6__end [label="(i)"];
-		BasicBlock_6_if__6__then [label="if__6__then",shape=box];
+		BasicBlock_6_if__6__then [label="if__6__then\lcall printHex2_Au8[i]\ljump if__6__end",shape=box];
 		BasicBlock_6_if__6__then -> BasicBlock_6_if__6__end [label="(i)"];
-		BasicBlock_6_if__6__end [label="if__6__end",shape=hexagon];
+		BasicBlock_6_if__6__end [label="if__6__end\lmove t_d5, i\land t_d5, 7\lbranch t_d5 notequals 0: main_dno__critical__edge__17, if__7__then\ljump if__7__then",shape=hexagon];
 		BasicBlock_6_if__6__end -> BasicBlock_6_main_dno__critical__edge__17 [label="(i)"];
 		BasicBlock_6_if__6__end -> BasicBlock_6_if__7__then [label="(i)"];
-		BasicBlock_6_main_dno__critical__edge__17 [label="main_dno__critical__edge__17",shape=box];
+		BasicBlock_6_main_dno__critical__edge__17 [label="main_dno__critical__edge__17\ljump if__7__end",shape=box];
 		BasicBlock_6_main_dno__critical__edge__17 -> BasicBlock_6_if__7__end [label="(i)"];
-		BasicBlock_6_if__7__then [label="if__7__then",shape=box];
+		BasicBlock_6_if__7__then [label="if__7__then\lcall printChar_Au8[32]\ljump if__7__end",shape=box];
 		BasicBlock_6_if__7__then -> BasicBlock_6_if__7__end [label="(i)"];
-		BasicBlock_6_if__7__end [label="if__7__end",shape=hexagon];
+		BasicBlock_6_if__7__end [label="if__7__end\lcall printChar_Au8[i]\lmove t_d6, i\land t_d6, 15\lbranch t_d6 notequals 15: main_dno__critical__edge__18, if__8__then\ljump if__8__then",shape=hexagon];
 		BasicBlock_6_if__7__end -> BasicBlock_6_main_dno__critical__edge__18 [label="(i)"];
 		BasicBlock_6_if__7__end -> BasicBlock_6_if__8__then [label="(i)"];
-		BasicBlock_6_main_dno__critical__edge__18 [label="main_dno__critical__edge__18",shape=box];
+		BasicBlock_6_main_dno__critical__edge__18 [label="main_dno__critical__edge__18\ljump for__5__continue",shape=box];
 		BasicBlock_6_main_dno__critical__edge__18 -> BasicBlock_6_for__5__continue [label="(i)"];
-		BasicBlock_6_if__8__then [label="if__8__then",shape=box];
+		BasicBlock_6_if__8__then [label="if__8__then\lcall printChar_Au8[10]\ljump for__5__continue",shape=box];
 		BasicBlock_6_if__8__then -> BasicBlock_6_for__5__continue [label="(i)"];
-		BasicBlock_6_for__5__continue [label="for__5__continue",shape=box];
+		BasicBlock_6_for__5__continue [label="for__5__continue\ladd i, 1\ljump for__5",shape=box];
 		BasicBlock_6_for__5__continue -> BasicBlock_6_for__5 [label="(i)"];
-		BasicBlock_6_for__5 [label="for__5",shape=hexagon];
+		BasicBlock_6_for__5 [label="for__5\lbranch i gteq 128: main__ret, for__5__body\ljump for__5__body",shape=hexagon];
 		BasicBlock_6_for__5 -> BasicBlock_6_main__ret;
 		BasicBlock_6_for__5 -> BasicBlock_6_for__5__body [label="(i)"];
 		BasicBlock_6_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
