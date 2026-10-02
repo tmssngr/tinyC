@@ -11,7 +11,7 @@ digraph program {
 		BasicBlock_1_registerHint_Au8_Au8__ret [label="registerHint_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_max_Au8_Au8 {
-		BasicBlock_2_max_Au8_Au8 [label="max_Au8_Au8\lbranch a gteq b: if__1__end, if__1__then\ljump if__1__then",shape=hexagon];
+		BasicBlock_2_max_Au8_Au8 [label="max_Au8_Au8\lbranch a gteq b: if__1__end, if__1__then\ljump if__1__then",shape=box];
 		BasicBlock_2_max_Au8_Au8 -> BasicBlock_2_if__1__end [label="(a)"];
 		BasicBlock_2_max_Au8_Au8 -> BasicBlock_2_if__1__then [label="(b)"];
 		BasicBlock_2_if__1__end [label="if__1__end\lret a\ljump max_Au8_Au8__ret",shape=box];
@@ -25,7 +25,7 @@ digraph program {
 		BasicBlock_3_fibonacci_Au8 -> BasicBlock_3_while__2 [label="(a,b,i)"];
 		BasicBlock_3_while__2__body [label="while__2__body\lsub i, 1\lmove c, a\ladd c, b\lmove a, b\lmove b, c\ljump while__2",shape=box];
 		BasicBlock_3_while__2__body -> BasicBlock_3_while__2 [label="(a,b,i)"];
-		BasicBlock_3_while__2 [label="while__2\lbranch i lteq 0: while__2__break, while__2__body\ljump while__2__body",shape=hexagon];
+		BasicBlock_3_while__2 [label="while__2\lbranch i lteq 0: while__2__break, while__2__body\ljump while__2__body",shape=box];
 		BasicBlock_3_while__2 -> BasicBlock_3_while__2__break [label="(a)"];
 		BasicBlock_3_while__2 -> BasicBlock_3_while__2__body [label="(a,b,i)"];
 		BasicBlock_3_while__2__break [label="while__2__break\lret a\ljump fibonacci_Au8__ret",shape=box];

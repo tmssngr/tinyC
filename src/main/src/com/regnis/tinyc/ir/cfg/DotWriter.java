@@ -53,11 +53,8 @@ public final class DotWriter extends TextWriter {
 		if (successors.isEmpty()) {
 			write("oval");
 		}
-		else if (successors.size() == 1) {
-			write("box");
-		}
 		else {
-			write("hexagon");
+			write("box");
 		}
 
 		if (successors.isEmpty()) {
