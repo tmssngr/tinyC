@@ -54,7 +54,7 @@ fibonacci@u8:
 while_2:
 	branch i lteq 0: while_2_break, while_2_body
 while_2_body:
-	sub i, i, 1
+	sub i, 1
 	add c, a, b
 	move a, b
 	move b, c
