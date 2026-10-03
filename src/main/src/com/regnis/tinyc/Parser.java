@@ -45,18 +45,19 @@ public final class Parser {
 		return project.createProgram();
 	}
 
-	private final List<Location> openIfDefLocations = new ArrayList<>();
 	private final Lexer lexer;
 	private final IncludeHandler includeHandler;
 	private final Project project;
+	private final IfDefHandling ifDefHandling;
 
-	private int skipIfDef;
 	private TokenType token;
 
 	private Parser(@NotNull Lexer lexer, @NotNull IncludeHandler includeHandler, @NotNull Project project) {
 		this.lexer = lexer;
 		this.includeHandler = includeHandler;
 		this.project = project;
+
+		ifDefHandling = new IfDefHandling(project.defines);
 
 		consume();
 	}
@@ -76,29 +77,17 @@ public final class Parser {
 		while (token != TokenType.EOF) {
 			Location location = getLocation();
 			if (isConsume(TokenType.HASH_IFDEF)) {
-				openIfDefLocations.add(location);
-				if (skipIfDef == 0) {
-					final String name = consumeIdentifier();
-					if (!project.isDef(name)) {
-						skipIfDef = openIfDefLocations.size();
-					}
-				}
+				final String name = consumeIdentifier();
+				ifDefHandling.ifDef(name, location);
 				continue;
 			}
 
 			if (isConsume(TokenType.HASH_ENDIF)) {
-				if (openIfDefLocations.isEmpty()) {
-					throw new SyntaxException(Messages.endifWithoutIfdef(), location);
-				}
-
-				if (openIfDefLocations.size() == skipIfDef) {
-					skipIfDef = 0;
-				}
-				openIfDefLocations.removeLast();
+				ifDefHandling.endif(location);
 				continue;
 			}
 
-			if (skipIfDef > 0) {
+			if (ifDefHandling.isSkip()) {
 				consume();
 				continue;
 			}
@@ -200,9 +189,7 @@ public final class Parser {
 			throw new SyntaxException(Messages.expectedRootElement(), location);
 		}
 
-		if (openIfDefLocations.size() > 0) {
-			throw new SyntaxException(Messages.unclosedIfdef(), openIfDefLocations.removeLast());
-		}
+		ifDefHandling.eof();
 	}
 
 	private Expression resolveConstExpression(Expression expression) {
