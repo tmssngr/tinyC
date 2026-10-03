@@ -1,8 +1,9 @@
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 7 pc
-	move chr, chr{r1}
+	; 9 pc
+	addrof memVarAddr{r7}, chr
+	store [memVarAddr{r7}], chr{r1}
 	addrof t.1.1{r1}, chr
 	const arg.0.1{r2}, 1
 	call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
@@ -14,30 +15,30 @@ printUint@i64:
 	; 28 pc
 	const pos.1{r6}, 20
 	; 28:2 while true
-	move number.1{r7}, number{r1}
+	move number.1{r3}, number{r1}
 while_1:
 	sub pos.3{r6}, 1
-	move remainder.1{r3}, number.1{r7}
-	move remainder.1{r0}, remainder.1{r3}
+	move remainder.1{r4}, number.1{r3}
+	move remainder.1{r0}, remainder.1{r4}
 	mod remainder.1{r2}, remainder.1{r0}, 10
-	move remainder.1{r3}, remainder.1{r2}
-	move number.2{r0}, number.2{r7}
+	move remainder.1{r4}, remainder.1{r2}
+	move number.2{r0}, number.2{r3}
 	div number.2{r0}, 10
-	move number.2{r7}, number.2{r0}
-	cast t.5.1{r0}(u8), remainder.1{r3}(i64)
+	move number.2{r3}, number.2{r0}
+	cast t.5.1{r0}(u8), remainder.1{r4}(i64)
 	add digit.1{r0}, 48
-	cast t.7.1{r3}(i64), pos.3{r6}(u8)
-	addrof t.6.1{r4}, buffer
-	add t.6.2{r4}, t.7.1{r3}
-	store [t.6.2{r4}], digit.1{r0}
+	cast t.7.1{r4}(i64), pos.3{r6}(u8)
+	addrof t.6.1{r5}, buffer
+	add t.6.2{r5}, t.7.1{r4}
+	store [t.6.2{r5}], digit.1{r0}
 	; 34:3 if number == 0
-	branch number.2{r7} notequals 0: while_1, while_1_break
-	cast t.9.1{r7}(i64), pos.3{r6}(u8)
-	addrof t.8.1{r0}, buffer
-	move t.8.2{r1}, t.8.1{r0}
-	add t.8.2{r1}, t.9.1{r7}
-	const t.11.1{r7}, 20
-	move t.10.1{r2}, t.11.1{r7}
+	branch number.2{r3} notequals 0: while_1, while_1_break
+	cast t.9.1{r0}(i64), pos.3{r6}(u8)
+	addrof t.8.1{r3}, buffer
+	move t.8.2{r1}, t.8.1{r3}
+	add t.8.2{r1}, t.9.1{r0}
+	const t.11.1{r0}, 20
+	move t.10.1{r2}, t.11.1{r0}
 	sub t.10.1{r2}, pos.3{r6}
 	call printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
 
@@ -74,32 +75,32 @@ printStringLength@@u8@u8:
 main:
 	; 39 pc
 	const chr.1{r6}, 32
-	const t.3.1{r7}, 0
-	addrof t.2.1{r0}, chars
-	add t.2.2{r0}, t.3.1{r7}
-	store [t.2.2{r0}], chr.1{r6}
+	const t.3.1{r0}, 0
+	addrof t.2.1{r2}, chars
+	add t.2.2{r2}, t.3.1{r0}
+	store [t.2.2{r2}], chr.1{r6}
 	const t.7.1{r6}, 0
-	addrof t.6.1{r7}, chars
-	add t.6.2{r7}, t.7.1{r6}
-	load t.5.1{r6}, [t.6.2{r7}]
+	addrof t.6.1{r0}, chars
+	add t.6.2{r0}, t.7.1{r6}
+	load t.5.1{r6}, [t.6.2{r0}]
 	add t.4.1{r6}, 1
-	const t.9.1{r7}, 1
-	addrof t.8.1{r0}, chars
-	add t.8.2{r0}, t.9.1{r7}
-	store [t.8.2{r0}], t.4.1{r6}
+	const t.9.1{r0}, 1
+	addrof t.8.1{r2}, chars
+	add t.8.2{r2}, t.9.1{r0}
+	store [t.8.2{r2}], t.4.1{r6}
 	const t.13.1{r6}, 1
-	addrof t.12.1{r7}, chars
-	add t.12.2{r7}, t.13.1{r6}
-	load t.11.1{r6}, [t.12.2{r7}]
+	addrof t.12.1{r0}, chars
+	add t.12.2{r0}, t.13.1{r6}
+	load t.11.1{r6}, [t.12.2{r0}]
 	add t.10.1{r6}, 2
-	const t.15.1{r7}, 2
-	addrof t.14.1{r0}, chars
-	add t.14.2{r0}, t.15.1{r7}
-	store [t.14.2{r0}], t.10.1{r6}
+	const t.15.1{r0}, 2
+	addrof t.14.1{r2}, chars
+	add t.14.2{r2}, t.15.1{r0}
+	store [t.14.2{r2}], t.10.1{r6}
 	const t.17.1{r6}, 2
-	addrof t.16.1{r7}, chars
-	add t.16.2{r7}, t.17.1{r6}
-	load result.1{r1}, [t.16.2{r7}]
+	addrof t.16.1{r0}, chars
+	add t.16.2{r0}, t.17.1{r6}
+	load result.1{r1}, [t.16.2{r0}]
 	call printIntLf@u8[result.1{r1}]
 
 printStringLength@@u8@i64:
