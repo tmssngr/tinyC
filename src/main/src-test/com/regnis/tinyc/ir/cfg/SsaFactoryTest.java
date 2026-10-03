@@ -23,9 +23,10 @@ public class SsaFactoryTest {
 				new IRBinary(varA, IRBinary.Op.Add, varA, 1),
 				new IRBinary(varB, IRBinary.Op.Add, varA, varB)
 		));
-		DetectVarLiveness.process(cfg);
+		final Set<IRVar> cantBeRegister = Set.of();
+		DetectVarLiveness.process(cfg, cantBeRegister, false);
 
-		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), cantBeRegister, null);
 		final IRVarInfos varInfos = new IRVarInfos(List.of(
 				new IRVarDef(varA, 2),
 				new IRVarDef(varB, 2)
@@ -63,9 +64,10 @@ public class SsaFactoryTest {
 				new IRBinary(varA, IRBinary.Op.Add, varA, 1),
 				new IRCall(null, Type.VOID, "print", List.of(new IRValue(varA)))
 		));
-		DetectVarLiveness.process(cfg);
+		final Set<IRVar> cantBeRegister = Set.of();
+		DetectVarLiveness.process(cfg, cantBeRegister, false);
 
-		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), cantBeRegister, null);
 		final IRVarInfos varInfos = new IRVarInfos(List.of(
 				new IRVarDef(varA, 2)
 		), Set.of(), globalVarInfos);
@@ -106,9 +108,10 @@ public class SsaFactoryTest {
 				new IRLabel("end"),
 				new IRCall(null, Type.VOID, "sink", List.of(new IRValue(varA)))
 		));
-		DetectVarLiveness.process(cfg);
+		final Set<IRVar> cantBeRegister = Set.of();
+		DetectVarLiveness.process(cfg, cantBeRegister, false);
 
-		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), cantBeRegister, null);
 		final IRVarInfos varInfos = new IRVarInfos(List.of(
 				new IRVarDef(varA, 2),
 				new IRVarDef(varB, 2)
@@ -175,9 +178,10 @@ public class SsaFactoryTest {
 				new IRCall(null, Type.VOID, "sink", List.of(new IRValue(varB))),
 				new IRCall(null, Type.VOID, "sink", List.of(new IRValue(varA)))
 		));
-		DetectVarLiveness.process(cfg);
+		final Set<IRVar> cantBeRegister = Set.of();
+		DetectVarLiveness.process(cfg, cantBeRegister, false);
 
-		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), cantBeRegister, null);
 		final IRVarInfos varInfos = new IRVarInfos(List.of(
 				new IRVarDef(varA, 2),
 				new IRVarDef(varB, 2)
@@ -244,9 +248,10 @@ public class SsaFactoryTest {
 				new IRLabel("end"),
 				new IRCall(null, Type.VOID, "sink", List.of(new IRValue(varA)))
 		));
-		DetectVarLiveness.process(cfg);
+		final Set<IRVar> cantBeRegister = Set.of();
+		DetectVarLiveness.process(cfg, cantBeRegister, false);
 
-		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), cantBeRegister, null);
 		final IRVarInfos varInfos = new IRVarInfos(List.of(
 				new IRVarDef(varA, 2),
 				new IRVarDef(varB, 2)
@@ -308,9 +313,10 @@ public class SsaFactoryTest {
 				new IRLabel("break"),
 				new IRLabel("end")
 		));
-		DetectVarLiveness.process(cfg);
+		final Set<IRVar> cantBeRegister = Set.of();
+		DetectVarLiveness.process(cfg, cantBeRegister, false);
 
-		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), cantBeRegister, null);
 		final IRVarInfos varInfos = new IRVarInfos(List.of(
 				new IRVarDef(varA, 2)
 		), Set.of(), globalVarInfos);
@@ -388,9 +394,10 @@ public class SsaFactoryTest {
 				new IRLabel("end"),
 				new IRCall(null, Type.VOID, "sink", List.of(new IRValue(varB)))
 		));
-		DetectVarLiveness.process(cfg);
+		final Set<IRVar> cantBeRegister = Set.of();
+		DetectVarLiveness.process(cfg, cantBeRegister, false);
 
-		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), cantBeRegister, null);
 		final IRVarInfos varInfos = new IRVarInfos(List.of(
 				new IRVarDef(varA, 2),
 				new IRVarDef(varB, 2)

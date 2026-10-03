@@ -6,13 +6,13 @@ digraph program {
 		BasicBlock_0_printString_A_Au8__ret [label="printString_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_strlen_A_Au8 {
-		BasicBlock_1_strlen_A_Au8 [label="strlen_A_Au8\lconst length_d1, 0\ljump for__1",shape=box];
-		BasicBlock_1_strlen_A_Au8 -> BasicBlock_1_for__1 [label="(length.1,length.3,str,str.2)"];
-		BasicBlock_1_for__1__body [label="for__1__body\lmove length_d3, length_d2\ladd length_d3, 1\lmove str_d2, str_d1\ladd str_d2, 1\ljump for__1",shape=box];
-		BasicBlock_1_for__1__body -> BasicBlock_1_for__1 [label="(length.1,length.3,str,str.2)"];
-		BasicBlock_1_for__1 [label="for__1\lphi str_d1=[str, str_d2]\lphi length_d2=[length_d1, length_d3]\lload t_d2_d1, [str_d1]\lbranch t_d2_d1 equals 0: for__1__break, for__1__body\ljump for__1__body",shape=box];
+		BasicBlock_1_strlen_A_Au8 [label="strlen_A_Au8\lconst length_d1, 0\lmove str_d1, str\lmove length_d2, length_d1\ljump for__1",shape=box];
+		BasicBlock_1_strlen_A_Au8 -> BasicBlock_1_for__1 [label="(length.2,str.1)"];
+		BasicBlock_1_for__1__body [label="for__1__body\lmove length_d3, length_d2\ladd length_d3, 1\lmove str_d2, str_d1\ladd str_d2, 1\lmove str_d1, str_d2\lmove length_d2, length_d3\ljump for__1",shape=box];
+		BasicBlock_1_for__1__body -> BasicBlock_1_for__1 [label="(length.2,str.1)"];
+		BasicBlock_1_for__1 [label="for__1\lload t_d2_d1, [str_d1]\lbranch t_d2_d1 equals 0: for__1__break, for__1__body\ljump for__1__body",shape=box];
 		BasicBlock_1_for__1 -> BasicBlock_1_for__1__break [label="(length.2)"];
-		BasicBlock_1_for__1 -> BasicBlock_1_for__1__body [label="(length.1,length.2,str,str.1)"];
+		BasicBlock_1_for__1 -> BasicBlock_1_for__1__body [label="(length.2,str.1)"];
 		BasicBlock_1_for__1__break [label="for__1__break\lret length_d2\ljump strlen_A_Au8__ret",shape=box];
 		BasicBlock_1_for__1__break -> BasicBlock_1_strlen_A_Au8__ret;
 		BasicBlock_1_strlen_A_Au8__ret [label="strlen_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
