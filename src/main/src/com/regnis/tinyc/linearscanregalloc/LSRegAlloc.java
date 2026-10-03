@@ -70,7 +70,7 @@ public final class LSRegAlloc {
 			intervalFactory.debugPrint(function.name());
 		}
 
-		final LSRegAlloc regAlloc = new LSRegAlloc(varToInterval, registerCount, cfg, blockToIndex, varInfos, spillHelper);
+		final LSRegAlloc regAlloc = new LSRegAlloc(varToInterval, registerCount, cfg, blockToIndex, varInfos, null, spillHelper);
 		regAlloc.determineMovesAtBlockEdges(blocks);
 		regAlloc.processStackArguments();
 		regAlloc.processInstructions(instructions2);
@@ -92,6 +92,7 @@ public final class LSRegAlloc {
 	private final ControlFlowGraph cfg;
 	private final Map<String, LSIntervalFactory.Indices> blockToIndex;
 	private final IRCanBeRegister canBeRegister;
+	@Nullable private final Type pointerIntType;
 	@Nullable private final IRVar spillHelper;
 
 	private int pos;
@@ -101,12 +102,14 @@ public final class LSRegAlloc {
 	                   @NotNull ControlFlowGraph cfg,
 	                   @NotNull Map<String, LSIntervalFactory.Indices> blockToIndex,
 	                   @NotNull IRCanBeRegister canBeRegister,
+	                   @Nullable Type pointerIntType,
 	                   @Nullable IRVar spillHelper) {
 		this.varToInterval = varToInterval;
 		this.registerCount = registerCount;
 		this.cfg = cfg;
 		this.blockToIndex = blockToIndex;
 		this.canBeRegister = canBeRegister;
+		this.pointerIntType = pointerIntType;
 		this.spillHelper = spillHelper;
 	}
 
@@ -410,7 +413,7 @@ public final class LSRegAlloc {
 		});
 
 		final List<IRMove> moves = new ArrayList<>();
-		LSParallelMove.transfer(transfers, registerCount, transfer -> {
+		LSParallelMove.transfer(transfers, registerCount, pointerIntType, transfer -> {
 			final IRVar var = transfer.var();
 			final IRVar source = deriveVar(var, transfer.from());
 			final IRVar target = deriveVar(var, transfer.to());
