@@ -21,13 +21,13 @@ digraph program {
 		BasicBlock_2_max_Au8_Au8__ret [label="max_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_fibonacci_Au8 {
-		BasicBlock_3_fibonacci_Au8 [label="fibonacci_Au8\lconst a_d1, 0\lconst b_d1, 1\ljump while__2",shape=box];
-		BasicBlock_3_fibonacci_Au8 -> BasicBlock_3_while__2 [label="(a.1,a.3,b.1,b.3,i,i.2)"];
-		BasicBlock_3_while__2__body [label="while__2__body\lmove i_d2, i_d1\lsub i_d2, 1\lmove c_d1, a_d2\ladd c_d1, b_d2\lmove a_d3, b_d2\lmove b_d3, c_d1\ljump while__2",shape=box];
-		BasicBlock_3_while__2__body -> BasicBlock_3_while__2 [label="(a.1,a.3,b.1,b.3,i,i.2)"];
-		BasicBlock_3_while__2 [label="while__2\lphi i_d1=[i, i_d2]\lphi a_d2=[a_d1, a_d3]\lphi b_d2=[b_d1, b_d3]\lbranch i_d1 lteq 0: while__2__break, while__2__body\ljump while__2__body",shape=box];
+		BasicBlock_3_fibonacci_Au8 [label="fibonacci_Au8\lconst a_d1, 0\lconst b_d1, 1\lmove i_d1, i\lmove a_d2, a_d1\lmove b_d2, b_d1\ljump while__2",shape=box];
+		BasicBlock_3_fibonacci_Au8 -> BasicBlock_3_while__2 [label="(a.2,b.2,i.1)"];
+		BasicBlock_3_while__2__body [label="while__2__body\lmove i_d2, i_d1\lsub i_d2, 1\lmove c_d1, a_d2\ladd c_d1, b_d2\lmove a_d3, b_d2\lmove b_d3, c_d1\lmove i_d1, i_d2\lmove a_d2, a_d3\lmove b_d2, b_d3\ljump while__2",shape=box];
+		BasicBlock_3_while__2__body -> BasicBlock_3_while__2 [label="(a.2,b.2,i.1)"];
+		BasicBlock_3_while__2 [label="while__2\lbranch i_d1 lteq 0: while__2__break, while__2__body\ljump while__2__body",shape=box];
 		BasicBlock_3_while__2 -> BasicBlock_3_while__2__break [label="(a.2)"];
-		BasicBlock_3_while__2 -> BasicBlock_3_while__2__body [label="(a.1,a.2,b.1,b.2,i,i.1)"];
+		BasicBlock_3_while__2 -> BasicBlock_3_while__2__body [label="(a.2,b.2,i.1)"];
 		BasicBlock_3_while__2__break [label="while__2__break\lret a_d2\ljump fibonacci_Au8__ret",shape=box];
 		BasicBlock_3_while__2__break -> BasicBlock_3_fibonacci_Au8__ret;
 		BasicBlock_3_fibonacci_Au8__ret [label="fibonacci_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
