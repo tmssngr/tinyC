@@ -87,18 +87,16 @@ _next:
 
         ; void main
 _main:
-        sub rsp, 8
         ; save clobbered non-volatile registers
         push rbx
-        push r12
         sub rsp, 32
         ; begin initialize global variables
         ; const t.1{r6}, 0
         mov bl, 0
-        ; addrof a.2{r7}, global
-        lea r12, [var_0]
-        ; store [a.2{r7}], t.1{r6}
-        mov [r12], bl
+        ; addrof a.2{r0}, global
+        lea rax, [var_0]
+        ; store [a.2{r0}], t.1{r6}
+        mov [rax], bl
         ; end initialize global variables
         ; 12:2 while true
         jmp _while_2
@@ -125,9 +123,7 @@ _while_2:
         jne _if_3_end
         add rsp, 32
         ; restore clobbered non-volatile registers
-        pop r12
         pop rbx
-        add rsp, 8
         ret
 
         ; void printStringLength@@u8@i64
