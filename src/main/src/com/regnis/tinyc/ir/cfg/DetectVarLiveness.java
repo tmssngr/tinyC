@@ -1,5 +1,6 @@
 package com.regnis.tinyc.ir.cfg;
 
+import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.util.*;
@@ -11,12 +12,12 @@ import org.jetbrains.annotations.*;
  */
 public final class DetectVarLiveness {
 
-	public static void process(ControlFlowGraph cfg) {
-		while (detect(cfg)) {
+	public static void process(@NotNull ControlFlowGraph cfg, @NotNull Set<? extends IRVar> cantBeRegisterVars, boolean alsoForGlobal) {
+		while (detect(cfg, cantBeRegisterVars, alsoForGlobal)) {
 		}
 	}
 
-	public static boolean processBlock(@NotNull BasicBlock block, @NotNull Set<IRVar> liveOut) {
+	public static boolean processBlock(@NotNull BasicBlock block, @NotNull Set<IRVar> liveOut, boolean alsoForGlobal) {
 		final Set<IRVar> live = new HashSet<>(liveOut);
 		final Set<IRVar> liveAfter = new HashSet<>(live);
 		boolean changed = liveAfter.addAll(block.getLiveAfter());
@@ -26,7 +27,7 @@ public final class DetectVarLiveness {
 			final IRInstruction instruction = instructions.get(i);
 			final Set<IRVar> uses = new HashSet<>();
 			final Set<IRVar> defines = new HashSet<>();
-			detectLiveness(instruction, uses, defines);
+			detectLiveness(instruction, alsoForGlobal, uses, defines);
 			if (block.setLive(i, uses, defines, live)) {
 				changed = true;
 			}
@@ -36,7 +37,13 @@ public final class DetectVarLiveness {
 		return changed;
 	}
 
-	private static boolean detect(ControlFlowGraph cfg) {
+	public static void detectLiveness(IRInstruction instruction, boolean alsoForGlobal, Set<IRVar> uses, Set<IRVar> defines) {
+		IRUtils.getVars(instruction,
+		                var -> add(var, alsoForGlobal, uses),
+		                var -> add(var, alsoForGlobal, defines));
+	}
+
+	private static boolean detect(ControlFlowGraph cfg, Set<? extends IRVar> cantBeRegisterVars, boolean alsoForGlobal) {
 		final Set<String> processed = new HashSet<>();
 
 		boolean changed = false;
@@ -51,8 +58,8 @@ public final class DetectVarLiveness {
 			}
 
 			final BasicBlock block = cfg.get(name);
-			final Set<IRVar> live = getLiveInFromAllNext(block, cfg);
-			if (processBlock(block, live)) {
+			final Set<IRVar> live = getLiveInFromAllNext(block, cfg, cantBeRegisterVars);
+			if (processBlock(block, live, alsoForGlobal)) {
 				changed = true;
 			}
 
@@ -61,8 +68,8 @@ public final class DetectVarLiveness {
 		return changed;
 	}
 
-	private static Set<IRVar> getLiveInFromAllNext(BasicBlock block, ControlFlowGraph cfg) {
-		final Set<IRVar> liveIn = new HashSet<>();
+	private static Set<IRVar> getLiveInFromAllNext(BasicBlock block, ControlFlowGraph cfg, Set<? extends IRVar> cantBeRegisterVars) {
+		final Set<IRVar> liveIn = new HashSet<>(cantBeRegisterVars);
 		for (String next : block.successors()) {
 			final BasicBlock nextBlock = cfg.get(next);
 			liveIn.addAll(nextBlock.getLiveBefore());
@@ -70,17 +77,9 @@ public final class DetectVarLiveness {
 		return liveIn;
 	}
 
-	private static void detectLiveness(IRInstruction instruction, Set<IRVar> uses, Set<IRVar> defines) {
-		IRUtils.getVars(instruction,
-		                var -> uses(var, uses),
-		                var -> defines(var, defines));
-	}
-
-	private static void uses(IRVar var, Set<IRVar> uses) {
-		uses.add(var);
-	}
-
-	private static void defines(IRVar var, Set<IRVar> defines) {
-		defines.add(var);
+	private static void add(IRVar var, boolean alsoForGlobal, Set<IRVar> uses) {
+		if (alsoForGlobal || var.scope() != VariableScope.global) {
+			uses.add(var);
+		}
 	}
 }
