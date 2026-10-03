@@ -592,9 +592,14 @@ public final class Parser {
 	@NotNull
 	private StmtReturn handleReturn() {
 		final Location location = getLocation();
-		consume(TokenType.RETURN);
+		expectType(TokenType.RETURN, null);
+		consume(false);
+
 		Expression expression = null;
-		if (!isConsume(TokenType.SEMI)) {
+		if (token == TokenType.SEMI || token == TokenType.LINEBREAK) {
+			consume();
+		}
+		else {
 			expression = getExpression();
 			consumeSemiOrLineBreak();
 		}

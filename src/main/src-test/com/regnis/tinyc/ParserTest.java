@@ -1366,6 +1366,26 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testReturn() {
+		final Program program = Parser.parse("""
+				                                     const compact = true
+
+				                                     void showCursor(u8 row, u8 column, bool show) {
+				                                     	if compact {
+				                                     		if show {
+				                                     			i16 x = columnToX(column)
+				                                     			setCursor((i16)row, x)
+				                                     		}
+				                                     		return
+				                                     	}
+
+				                                     	i16 x = columnToX(column)
+				                                     	setCursor((i16)row, x - 1)
+				                                     }
+				                                     """, Set.of());
+	}
+
+	@Test
 	public void testStatementsFollowReturn() {
 		final Program program = Parser.parse(SNIPPET_STATEMENTS_FOLLOW_RETURN, Set.of());
 		assertEquals(new Program(List.of(), List.of(), List.of(
