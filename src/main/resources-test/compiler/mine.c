@@ -2,13 +2,15 @@
 #include "random.h"
 
 #ifdef Z8
-const width = 17
+const width = 38
+const compact = true
 #else
 const width = 40
+const compact = false
 #endif
 
 const height = 20;
-const bombRatio = 70;
+const bombRatio = 90;
 const bombCount = height * width * bombRatio / 1000;
 
 const maskBomb = 1;
@@ -62,6 +64,10 @@ u8 getBombCountAround(u8 row, u8 column) {
 
 i16 columnToX(u8 column) {
 	i16 c = (i16)column
+	if compact {
+		return c
+	}
+	
 	return (c + 1) * 2
 }
 
@@ -98,20 +104,46 @@ void printCell(u8 cell, u8 row, u8 column) {
 	printChar(chr);
 }
 
+#ifdef Z8
+void initializeScreen() {
+	printChar(0x0C)
+	printField()
+}
+#else
+void initializeScreen() {
+	printField()
+}
+#endif
+
 void printField() {
 	setCursor(0i16, 0i16);
 	for (u8 row = 0; row < height; row = row + 1) {
-		printChar('|');
+		setCursor((i16)row, 0)
+		if !compact {
+			printChar('|')
+		}
 		for (u8 column = 0; column < width; column = column + 1) {
-			printChar(' ');
+			if !compact {
+				printChar(' ')
+			}
 			u8 cell = field[rowColumnToCell(row, column)]
 			printCell(cell, row, column);
 		}
-		printString(" |\n");
+		if !compact {
+			printString(" |");
+		}
 	}
 }
 
 void showCursor(u8 row, u8 column, bool show) {
+	if compact {
+		if show {
+			i16 x = columnToX(column)
+			setCursor((i16)row, x)
+		}
+		return
+	}
+	
 	i16 x = columnToX(column)
 	setCursor((i16)row, x - 1)
 	u8 chr = ' '
@@ -202,10 +234,28 @@ void initField(u8 curr_r, u8 curr_c) {
 	}
 }
 
+#ifdef Z8
+bool isStackTooDeep() asm {
+	"clr r0"
+	"cp  SPH, #%f0"
+	"adc r0, #0"
+	"ret"
+}
+#else
+bool isStackTooDeep() asm {
+	"xor rax, rax"
+	"ret"
+}
+#endif
+
 void maybeRevealAround(u8 row, u8 column) {
 	printCellAt(row, column)
 	if (getBombCountAround(row, column) != 0) {
 		return;
+	}
+
+	if isStackTooDeep() {
+		return
 	}
 
 	u8 rowFrom = row
@@ -248,7 +298,7 @@ void main() {
 	initRandom(7439742);
 	bool needsInitialize = true;
 	clearField();
-	printField();
+	initializeScreen();
 	setCursor(height, 0);
 	printString("Left:");
 	u8 curr_c = width / 2;

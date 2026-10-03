@@ -142,6 +142,9 @@ i16 columnToX@u8(u8 column) {
 	i16 c;
 
 	c = (i16)column;
+	if (false) {
+		return c;
+	}
 	return (c + 1) * 2;
 }
 
@@ -187,6 +190,10 @@ void printCell@u8@u8@u8(u8 cell, u8 row, u8 column) {
 	printChar@u8(chr);
 }
 
+void initializeScreen() {
+	printField();
+}
+
 void printField() {
 	u8 row;
 	u8 column;
@@ -195,21 +202,36 @@ void printField() {
 	setCursor@i16@i16(0, 0);
 	row = 0;
 	for (; row < 20; row = row + 1) {
-		printChar@u8(124);
+		setCursor@i16@i16((i16)row, 0);
+		if (!(false)) {
+			printChar@u8(124);
+		}
 		column = 0;
 		for (; column < 40; column = column + 1) {
-			printChar@u8(32);
+			if (!(false)) {
+				printChar@u8(32);
+			}
 			cell = field[(i64)(rowColumnToCell@u8@u8(row, column))];
 			printCell@u8@u8@u8(cell, row, column);
 		}
-		printString@@u8(" |\n");
+		if (!(false)) {
+			printString@@u8(" |");
+		}
 	}
 }
 
 void showCursor@u8@u8@bool(u8 row, u8 column, bool show) {
 	i16 x;
+	i16 x;
 	u8 chr;
 
+	if (false) {
+		if (show) {
+			x = columnToX@u8(column);
+			setCursor@i16@i16((i16)row, x);
+		}
+		return;
+	}
 	x = columnToX@u8(column);
 	setCursor@i16@i16((i16)row, x - 1);
 	chr = 32;
@@ -275,7 +297,7 @@ bool printLeft() {
 
 	count = getHiddenCount();
 	leftDigits = (i16)(getDigitCount@i16(count));
-	bombDigits = (i16)(getDigitCount@i16(56));
+	bombDigits = (i16)(getDigitCount@i16(72));
 	setCursor@i16@i16(20, 6);
 	printSpaces@i16(bombDigits - leftDigits);
 	printUint@i16(count);
@@ -309,7 +331,7 @@ void initField@u8@u8(u8 curr_r, u8 curr_c) {
 
 	r = (i16)curr_r;
 	c = (i16)curr_c;
-	bombs = 56;
+	bombs = 72;
 	for (; bombs > 0; bombs = bombs - 1) {
 		row = (random16()) % 20;
 		column = (random16()) % 40;
@@ -317,6 +339,9 @@ void initField@u8@u8(u8 curr_r, u8 curr_c) {
 			field[(i64)(rowColumnToCell@u8@u8((u8)row, (u8)column))] = 1;
 		}
 	}
+}
+
+bool isStackTooDeep() asm {
 }
 
 void maybeRevealAround@u8@u8(u8 row, u8 column) {
@@ -331,6 +356,9 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 
 	printCellAt@u8@u8(row, column);
 	if ((getBombCountAround@u8@u8(row, column)) != 0) {
+		return;
+	}
+	if (isStackTooDeep()) {
 		return;
 	}
 	rowFrom = row;
@@ -381,7 +409,7 @@ void main() {
 	initRandom@i32(7439742);
 	needsInitialize = true;
 	clearField();
-	printField();
+	initializeScreen();
 	setCursor@i16@i16(20, 0);
 	printString@@u8("Left:");
 	curr_c = 40 / 2;
