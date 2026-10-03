@@ -1,8 +1,9 @@
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 7 pc
-	move chr, chr{r1}
+	; 9 pc
+	addrof memVarAddr{r7}, chr
+	store [memVarAddr{r7}], chr{r1}
 	addrof t.1.1{r1}, chr
 	const arg.0.1{r2}, 1
 	call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
@@ -14,30 +15,30 @@ printUint@i64:
 	; 28 pc
 	const pos.1{r6}, 20
 	; 28:2 while true
-	move number.1{r7}, number{r1}
+	move number.1{r3}, number{r1}
 while_1:
 	sub pos.3{r6}, 1
-	move remainder.1{r3}, number.1{r7}
-	move remainder.1{r0}, remainder.1{r3}
+	move remainder.1{r4}, number.1{r3}
+	move remainder.1{r0}, remainder.1{r4}
 	mod remainder.1{r2}, remainder.1{r0}, 10
-	move remainder.1{r3}, remainder.1{r2}
-	move number.2{r0}, number.2{r7}
+	move remainder.1{r4}, remainder.1{r2}
+	move number.2{r0}, number.2{r3}
 	div number.2{r0}, 10
-	move number.2{r7}, number.2{r0}
-	cast t.5.1{r0}(u8), remainder.1{r3}(i64)
+	move number.2{r3}, number.2{r0}
+	cast t.5.1{r0}(u8), remainder.1{r4}(i64)
 	add digit.1{r0}, 48
-	cast t.7.1{r3}(i64), pos.3{r6}(u8)
-	addrof t.6.1{r4}, buffer
-	add t.6.2{r4}, t.7.1{r3}
-	store [t.6.2{r4}], digit.1{r0}
+	cast t.7.1{r4}(i64), pos.3{r6}(u8)
+	addrof t.6.1{r5}, buffer
+	add t.6.2{r5}, t.7.1{r4}
+	store [t.6.2{r5}], digit.1{r0}
 	; 34:3 if number == 0
-	branch number.2{r7} notequals 0: while_1, while_1_break
-	cast t.9.1{r7}(i64), pos.3{r6}(u8)
-	addrof t.8.1{r0}, buffer
-	move t.8.2{r1}, t.8.1{r0}
-	add t.8.2{r1}, t.9.1{r7}
-	const t.11.1{r7}, 20
-	move t.10.1{r2}, t.11.1{r7}
+	branch number.2{r3} notequals 0: while_1, while_1_break
+	cast t.9.1{r0}(i64), pos.3{r6}(u8)
+	addrof t.8.1{r3}, buffer
+	move t.8.2{r1}, t.8.1{r3}
+	add t.8.2{r1}, t.9.1{r0}
+	const t.11.1{r0}, 20
+	move t.10.1{r2}, t.11.1{r0}
 	sub t.10.1{r2}, pos.3{r6}
 	call printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
 
@@ -114,8 +115,8 @@ main:
 	; 14 pc
 	; begin initialize global variables
 	const t.2.1{r6}, 0
-	addrof a.3.1{r7}, __random__
-	store [a.3.1{r7}], t.2.1{r6}
+	addrof a.3.1{r0}, __random__
+	store [a.3.1{r0}], t.2.1{r6}
 	; end initialize global variables
 	const arg.0.0{r1}, 7439742
 	call initRandom@i32[arg.0.0{r1}]

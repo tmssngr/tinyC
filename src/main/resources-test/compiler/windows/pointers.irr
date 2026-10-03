@@ -1,8 +1,9 @@
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 7 pc
-	move chr, chr{r1}
+	; 9 pc
+	addrof memVarAddr{r7}, chr
+	store [memVarAddr{r7}], chr{r1}
 	addrof t.1.1{r1}, chr
 	const arg.0.1{r2}, 1
 	call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
@@ -14,30 +15,30 @@ printUint@i64:
 	; 28 pc
 	const pos.1{r6}, 20
 	; 28:2 while true
-	move number.1{r7}, number{r1}
+	move number.1{r3}, number{r1}
 while_1:
 	sub pos.3{r6}, 1
-	move remainder.1{r3}, number.1{r7}
-	move remainder.1{r0}, remainder.1{r3}
+	move remainder.1{r4}, number.1{r3}
+	move remainder.1{r0}, remainder.1{r4}
 	mod remainder.1{r2}, remainder.1{r0}, 10
-	move remainder.1{r3}, remainder.1{r2}
-	move number.2{r0}, number.2{r7}
+	move remainder.1{r4}, remainder.1{r2}
+	move number.2{r0}, number.2{r3}
 	div number.2{r0}, 10
-	move number.2{r7}, number.2{r0}
-	cast t.5.1{r0}(u8), remainder.1{r3}(i64)
+	move number.2{r3}, number.2{r0}
+	cast t.5.1{r0}(u8), remainder.1{r4}(i64)
 	add digit.1{r0}, 48
-	cast t.7.1{r3}(i64), pos.3{r6}(u8)
-	addrof t.6.1{r4}, buffer
-	add t.6.2{r4}, t.7.1{r3}
-	store [t.6.2{r4}], digit.1{r0}
+	cast t.7.1{r4}(i64), pos.3{r6}(u8)
+	addrof t.6.1{r5}, buffer
+	add t.6.2{r5}, t.7.1{r4}
+	store [t.6.2{r5}], digit.1{r0}
 	; 34:3 if number == 0
-	branch number.2{r7} notequals 0: while_1, while_1_break
-	cast t.9.1{r7}(i64), pos.3{r6}(u8)
-	addrof t.8.1{r0}, buffer
-	move t.8.2{r1}, t.8.1{r0}
-	add t.8.2{r1}, t.9.1{r7}
-	const t.11.1{r7}, 20
-	move t.10.1{r2}, t.11.1{r7}
+	branch number.2{r3} notequals 0: while_1, while_1_break
+	cast t.9.1{r0}(i64), pos.3{r6}(u8)
+	addrof t.8.1{r3}, buffer
+	move t.8.2{r1}, t.8.1{r3}
+	add t.8.2{r1}, t.9.1{r0}
+	const t.11.1{r0}, 20
+	move t.10.1{r2}, t.11.1{r0}
 	sub t.10.1{r2}, pos.3{r6}
 	call printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
 
@@ -84,8 +85,8 @@ testIf@u8:
 	var 1: b (u8/1)
 	; 18 pc
 	const t.3.1{r6}, 1
-	addrof a.4.1{r7}, b
-	store [a.4.1{r7}], t.3.1{r6}
+	addrof a.4.1{r0}, b
+	store [a.4.1{r0}], t.3.1{r6}
 	addrof b_ref.1{r6}, b
 	; 6:2 if a == 0
 	branch a{r1} notequals 0: if_4_end, if_4_then
@@ -102,23 +103,23 @@ main:
 	var 1: c (i16/2)
 	; 43 pc
 	const t.4.1{r6}, 10
-	addrof a.5.1{r7}, a
-	store [a.5.1{r7}], t.4.1{r6}
+	addrof a.5.1{r0}, a
+	store [a.5.1{r0}], t.4.1{r6}
 	addrof a.6.1{r6}, a
 	load t.7.1{r1}, [a.6.1{r6}]
 	call printIntLf@i16[t.7.1{r1}]
 	addrof b.1{r6}, a
 	load t.9.1{r6}, [b.1{r6}]
 	sub t.8.1{r6}, 1
-	addrof a.10.1{r7}, c
-	store [a.10.1{r7}], t.8.1{r6}
+	addrof a.10.1{r0}, c
+	store [a.10.1{r0}], t.8.1{r6}
 	addrof a.11.1{r6}, c
 	load t.12.1{r1}, [a.11.1{r6}]
 	call printIntLf@i16[t.12.1{r1}]
 	addrof d.1{r6}, c
-	load t.14.1{r7}, [d.1{r6}]
-	sub t.13.1{r7}, 1
-	store [d.1{r6}], t.13.1{r7}
+	load t.14.1{r0}, [d.1{r6}]
+	sub t.13.1{r0}, 1
+	store [d.1{r6}], t.13.1{r0}
 	addrof a.15.1{r6}, c
 	load t.16.1{r1}, [a.15.1{r6}]
 	call printIntLf@i16[t.16.1{r1}]
