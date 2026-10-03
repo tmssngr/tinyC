@@ -15,8 +15,9 @@ public final class SsaFactory {
 
 	public static IRFunction convert(@NotNull IRFunction function, @NotNull Type pointerIntType) {
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), function.instructions());
-		DetectVarLiveness.process(cfg);
-		final Pair<List<IRInstruction>, IRVarInfos> result = convert(cfg, function.varInfos(), pointerIntType);
+		final IRVarInfos varInfos = function.varInfos();
+		DetectVarLiveness.process(cfg, varInfos.cantBeRegister(), false);
+		final Pair<List<IRInstruction>, IRVarInfos> result = convert(cfg, varInfos, pointerIntType);
 		return function.derive(result.first(), result.second());
 	}
 
