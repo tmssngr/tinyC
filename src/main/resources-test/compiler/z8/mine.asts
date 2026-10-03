@@ -84,6 +84,9 @@ i16 columnToX@u8(u8 column) {
 	i16 c;
 
 	c = (i16)column;
+	if (true) {
+		return c;
+	}
 	return (c + 1) << 1;
 }
 
@@ -137,21 +140,36 @@ void printField() {
 	setCursor@i16@i16(0, 0);
 	row = 0;
 	for (; row < 20; row = row + 1) {
-		printChar@u8(124);
+		setCursor@i16@i16((i16)row, 0);
+		if (false) {
+			printChar@u8(124);
+		}
 		column = 0;
 		for (; column < 17; column = column + 1) {
-			printChar@u8(32);
+			if (false) {
+				printChar@u8(32);
+			}
 			cell = field[rowColumnToCell@u8@u8(row, column)];
 			printCell@u8@u8@u8(cell, row, column);
 		}
-		printString@@u8(" |\n");
+		if (false) {
+			printString@@u8(" |");
+		}
 	}
 }
 
 void showCursor@u8@u8@bool(u8 row, u8 column, bool show) {
 	i16 x;
+	i16 x;
 	u8 chr;
 
+	if (true) {
+		if (show) {
+			x = columnToX@u8(column);
+			setCursor@i16@i16((i16)row, x);
+		}
+		return;
+	}
 	x = columnToX@u8(column);
 	setCursor@i16@i16((i16)row, x - 1);
 	chr = 32;

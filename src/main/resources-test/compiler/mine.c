@@ -3,8 +3,10 @@
 
 #ifdef Z8
 const width = 17
+const compact = true
 #else
 const width = 40
+const compact = false
 #endif
 
 const height = 20;
@@ -62,6 +64,10 @@ u8 getBombCountAround(u8 row, u8 column) {
 
 i16 columnToX(u8 column) {
 	i16 c = (i16)column
+	if compact {
+		return c
+	}
+	
 	return (c + 1) * 2
 }
 
@@ -101,17 +107,32 @@ void printCell(u8 cell, u8 row, u8 column) {
 void printField() {
 	setCursor(0i16, 0i16);
 	for (u8 row = 0; row < height; row = row + 1) {
-		printChar('|');
+		setCursor((i16)row, 0)
+		if !compact {
+			printChar('|')
+		}
 		for (u8 column = 0; column < width; column = column + 1) {
-			printChar(' ');
+			if !compact {
+				printChar(' ')
+			}
 			u8 cell = field[rowColumnToCell(row, column)]
 			printCell(cell, row, column);
 		}
-		printString(" |\n");
+		if !compact {
+			printString(" |");
+		}
 	}
 }
 
 void showCursor(u8 row, u8 column, bool show) {
+	if compact {
+		if show {
+			i16 x = columnToX(column)
+			setCursor((i16)row, x)
+		}
+		return
+	}
+	
 	i16 x = columnToX(column)
 	setCursor((i16)row, x - 1)
 	u8 chr = ' '
