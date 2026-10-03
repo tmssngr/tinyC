@@ -1395,6 +1395,69 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testIfDef3() {
+		final String input = """
+				#ifdef A
+				  #ifdef B
+				    u8 a = 0
+				  #else
+				    u8 a = 1
+				  #endif
+				#else
+				  #ifdef B
+				    u8 a = 2
+				  #else
+				    u8 a = 3
+				  #endif
+				#endif
+				""";
+		assertEquals(new Program(List.of(),
+		                         List.of(
+										 new StmtVarDeclaration("u8", "a",
+										                        new ExprIntLiteral(3, Type.U8, loc(10, 11)),
+										                        loc(10, 4))
+		                         ),
+		                         List.of(),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram(input, Set.of()));
+		assertEquals(new Program(List.of(),
+		                         List.of(
+				                         new StmtVarDeclaration("u8", "a",
+				                                                new ExprIntLiteral(1, Type.U8, loc(4, 11)),
+				                                                loc(4, 4))
+		                         ),
+		                         List.of(),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram(input, Set.of("A")));
+		assertEquals(new Program(List.of(),
+		                         List.of(
+				                         new StmtVarDeclaration("u8", "a",
+				                                                new ExprIntLiteral(0, Type.U8, loc(2, 11)),
+				                                                loc(2, 4))
+		                         ),
+		                         List.of(),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram(input, Set.of("A", "B")));
+		assertEquals(new Program(List.of(),
+		                         List.of(
+				                         new StmtVarDeclaration("u8", "a",
+				                                                new ExprIntLiteral(2, Type.U8, loc(8, 11)),
+				                                                loc(8, 4))
+		                         ),
+		                         List.of(),
+		                         List.of(),
+		                         List.of()
+		             ),
+		             parseProgram(input, Set.of("B")));
+	}
+
+	@Test
 	public void testReturn() {
 		final Program program = Parser.parse("""
 				                                     const compact = true
