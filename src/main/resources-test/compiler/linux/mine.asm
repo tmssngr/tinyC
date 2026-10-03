@@ -419,12 +419,12 @@ _for_7_body:
         lea r12, [rsp+36]
         ; store [memVarAddr{r9}], count{r0}
         mov [r12], al
-        ; move dr{r0}, dr{r1}
-        mov ax, di
         ; addrof memVarAddr{r9}, column
         lea r12, [rsp+34]
         ; load column{r2}, [memVarAddr{r9}]
         mov si, [r12]
+        ; move dr{r0}, dr{r1}
+        mov ax, di
         ; move r{r1}, row{r8}
         mov di, bx
         ; add r{r1}, dr{r0}
@@ -454,12 +454,12 @@ _for_8_body:
         lea r12, [rsp+36]
         ; store [memVarAddr{r9}], count{r0}
         mov [r12], al
-        ; move dc{r0}, dc{r1}
-        mov ax, di
         ; addrof memVarAddr{r9}, column
         lea r12, [rsp+34]
         ; load column{r2}, [memVarAddr{r9}]
         mov si, [r12]
+        ; move dc{r0}, dc{r1}
+        mov ax, di
         ; addrof memVarAddr{r9}, r
         lea r12, [rsp+40]
         ; load r{r1}, [memVarAddr{r9}]

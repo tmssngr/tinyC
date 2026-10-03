@@ -217,9 +217,9 @@ getBombCountAround@i16@i16:
 for_7_body:
 	addrof memVarAddr{r7}, count
 	store [memVarAddr{r7}], count{r0}
-	move dr{r0}, dr{r1}
 	addrof memVarAddr{r7}, column
 	load column{r2}, [memVarAddr{r7}]
+	move dr{r0}, dr{r1}
 	move r{r1}, row{r6}
 	add r{r1}, dr{r0}
 	addrof memVarAddr{r7}, dr
@@ -236,9 +236,9 @@ for_7_body:
 for_8_body:
 	addrof memVarAddr{r7}, count
 	store [memVarAddr{r7}], count{r0}
-	move dc{r0}, dc{r1}
 	addrof memVarAddr{r7}, column
 	load column{r2}, [memVarAddr{r7}]
+	move dc{r0}, dc{r1}
 	addrof memVarAddr{r7}, r
 	load r{r1}, [memVarAddr{r7}]
 	move c{r3}, column{r2}
