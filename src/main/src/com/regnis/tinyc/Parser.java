@@ -75,7 +75,7 @@ public final class Parser {
 	public void parse() {
 		while (token != TokenType.EOF) {
 			Location location = getLocation();
-			if (isConsume(TokenType.IFDEF)) {
+			if (isConsume(TokenType.HASH_IFDEF)) {
 				openIfDefLocations.add(location);
 				if (skipIfDef == 0) {
 					final String name = consumeIdentifier();
@@ -86,7 +86,7 @@ public final class Parser {
 				continue;
 			}
 
-			if (isConsume(TokenType.ENDIF)) {
+			if (isConsume(TokenType.HASH_ENDIF)) {
 				if (openIfDefLocations.isEmpty()) {
 					throw new SyntaxException(Messages.endifWithoutIfdef(), location);
 				}
@@ -176,7 +176,7 @@ public final class Parser {
 				project.addTypeDef(new TypeDef(typeName, null, parts, location));
 				continue;
 			}
-			else if (isConsume(TokenType.INCLUDE)) {
+			else if (isConsume(TokenType.HASH_INCLUDE)) {
 				expectType(TokenType.STRING, null);
 				final String fileName = consumeText();
 				includeHandler.parse(fileName, location);
