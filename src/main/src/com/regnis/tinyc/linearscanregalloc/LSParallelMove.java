@@ -15,37 +15,48 @@ final class LSParallelMove {
 	public static void transfer(@NotNull List<VarTransfer> varTransfers, int maxRegisters, @NotNull Consumer<VarTransfer> consumer) {
 		final Map<Integer, IRVar> registerStates = new HashMap<>();
 		final List<VarTransfer> pending = new ArrayList<>();
-		final List<VarTransfer> memToRegisterTransfers = new ArrayList<>();
 
-		prepareAndSpill(varTransfers, memToRegisterTransfers, registerStates, pending, consumer);
+		prepareAndSpill(varTransfers, registerStates, pending, consumer);
 
-		// perform all non-conflicting moves
-		while (pending.size() > 0 && performNonConflicting(pending, registerStates, consumer)) {
-		}
-
-		// perform all circular moves
-		while (pending.size() > 0) {
-			Utils.assertTrue(pending.size() > 1);
-
-			final int tmp = determineTemp(registerStates, maxRegisters);
-
-			// split the circle by removing one transfer from it
-			final VarTransfer tmpTransfer = pending.removeFirst();
-			consumeAndUpdateRegisterState(new VarTransfer(tmpTransfer.var, tmpTransfer.from, tmp),
-			                              registerStates, consumer);
-
-			while (pending.size() > 0 && performNonConflicting(pending, registerStates, consumer)) {
+		while (!pending.isEmpty()) {
+			if (performNonConflicting(pending, registerStates, consumer)) {
+				continue;
 			}
 
-			consumeAndUpdateRegisterState(new VarTransfer(tmpTransfer.var, tmp, tmpTransfer.to),
-			                              registerStates, consumer);
+			final int transferIndex = findRegisterTransfer(pending);
+			Utils.assertTrue(transferIndex >= 0);
+			final VarTransfer transfer = pending.get(transferIndex);
+			final int tmp = determineTemp(pending, registerStates, maxRegisters);
+			if (tmp >= 0) {
+				consumeAndUpdateRegisterState(new VarTransfer(transfer.var, transfer.from, tmp), registerStates, consumer);
+				pending.set(transferIndex, new VarTransfer(transfer.var, tmp, transfer.to));
+			}
+			else {
+				consumeAndUpdateRegisterState(new VarTransfer(transfer.var, transfer.from, -1), registerStates, consumer);
+				pending.set(transferIndex, new VarTransfer(transfer.var, -1, transfer.to));
+			}
 		}
+	}
 
-		// last respawn in registers
-		for (VarTransfer transfer : memToRegisterTransfers) {
-			Utils.assertTrue(transfer.from < 0);
-			consumer.accept(transfer);
+	private static int findRegisterTransfer(List<VarTransfer> pending) {
+		for (int i = 0; i < pending.size(); i++) {
+			final VarTransfer sourceTransfer = pending.get(i);
+			if (sourceTransfer.from < 0) {
+				continue;
+			}
+
+			for (int j = 0; j < pending.size(); j++) {
+				if (i == j) {
+					continue;
+				}
+
+				final VarTransfer targetTransfer = pending.get(j);
+				if (sourceTransfer.from == targetTransfer.to) {
+					return i;
+				}
+			}
 		}
+		return -1;
 	}
 
 	private static boolean performNonConflicting(@NotNull List<VarTransfer> pending, @NotNull Map<Integer, IRVar> registerStates, @NotNull Consumer<VarTransfer> consumer) {
@@ -64,23 +75,36 @@ final class LSParallelMove {
 	private static void consumeAndUpdateRegisterState(VarTransfer transfer, @NotNull Map<Integer, IRVar> registerStates, @NotNull Consumer<VarTransfer> consumer) {
 		consumer.accept(transfer);
 
-		registerStates.remove(transfer.from);
+		if (transfer.from >= 0) {
+			registerStates.remove(transfer.from);
+		}
 
 		if (transfer.to >= 0) {
 			registerStates.put(transfer.to, transfer.var);
 		}
 	}
 
-	private static int determineTemp(Map<Integer, IRVar> registerStates, int maxRegisters) {
-		for (int i = 0; i < maxRegisters; i++) {
-			if (!registerStates.containsKey(i)) {
-				return i;
+	private static int determineTemp(List<VarTransfer> pending, Map<Integer, IRVar> registerStates, int maxRegisters) {
+		for (int register = 0; register < maxRegisters; register++) {
+			if (registerStates.containsKey(register)) {
+				continue;
+			}
+
+			boolean available = true;
+			for (VarTransfer pendingTransfer : pending) {
+				if (pendingTransfer.to == register) {
+					available = false;
+					break;
+				}
+			}
+			if (available) {
+				return register;
 			}
 		}
 		return -1;
 	}
 
-	private static void prepareAndSpill(@NotNull List<VarTransfer> varTransfers, List<VarTransfer> memToRegisterTransfers, Map<Integer, IRVar> registerStates, List<VarTransfer> pending, @NotNull Consumer<VarTransfer> consumer) {
+	private static void prepareAndSpill(@NotNull List<VarTransfer> varTransfers, Map<Integer, IRVar> registerStates, List<VarTransfer> pending, @NotNull Consumer<VarTransfer> consumer) {
 		for (VarTransfer transfer : varTransfers) {
 			if (transfer.to < 0) {
 				if (transfer.from >= 0) {
@@ -91,7 +115,7 @@ final class LSParallelMove {
 			}
 
 			if (transfer.from < 0) {
-				memToRegisterTransfers.add(transfer);
+				pending.add(transfer);
 				continue;
 			}
 

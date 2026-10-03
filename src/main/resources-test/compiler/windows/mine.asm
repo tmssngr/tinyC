@@ -459,12 +459,12 @@ _for_7_body:
         lea r12, [rsp+50]
         ; store [memVarAddr{r7}], r.1{r1}
         mov [r12], cx
-        ; move dc.2{r2}, dc.2{r0}
-        mov dx, ax
         ; addrof memVarAddr{r7}, count.3
         lea r12, [rsp+52]
         ; load count.3{r1}, [memVarAddr{r7}]
         mov cl, [r12]
+        ; move dc.2{r2}, dc.2{r0}
+        mov dx, ax
         jmp _for_8
 _for_8_body:
         ; addrof memVarAddr{r7}, count.3
@@ -473,18 +473,16 @@ _for_8_body:
         mov [r12], cl
         ; move dc.2{r0}, dc.2{r2}
         mov ax, dx
-        ; addrof memVarAddr{r7}, column
-        lea r12, [rsp+88]
-        ; load column{r2}, [memVarAddr{r7}]
-        mov dx, [r12]
         ; addrof memVarAddr{r7}, r.1
         lea r12, [rsp+50]
         ; load r.1{r1}, [memVarAddr{r7}]
         mov cx, [r12]
-        ; move c.1{r3}, column{r2}
-        mov r8w, dx
         ; addrof memVarAddr{r7}, column
         lea r12, [rsp+88]
+        ; load column{r2}, [memVarAddr{r7}]
+        mov dx, [r12]
+        ; move c.1{r3}, column{r2}
+        mov r8w, dx
         ; add c.1{r3}, dc.2{r0}
         add r8w, ax
         ; addrof memVarAddr{r7}, dc.2
