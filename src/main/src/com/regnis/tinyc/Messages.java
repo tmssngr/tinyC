@@ -201,6 +201,11 @@ public class Messages {
 	}
 
 	@NotNull
+	public static String elseWithoutIfdef() {
+		return "#else without belonging #ifdef";
+	}
+
+	@NotNull
 	public static String endifWithoutIfdef() {
 		return "#endif without belonging #ifdef";
 	}
@@ -223,6 +228,10 @@ public class Messages {
 	@NotNull
 	public static String skippingAllAfterReturn() {
 		return "Skipping all statements in a {}-block after a `return`";
+	}
+
+	public static String duplicateElse(@NotNull Location elseLocation) {
+		return "The #else at " + elseLocation + " must be closed with #endif before a new #else is allowed";
 	}
 
 	private static void functionWithType(String name, List<Type> argTypes, StringBuilder buffer) {

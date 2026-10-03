@@ -78,12 +78,17 @@ public final class Parser {
 			Location location = getLocation();
 			if (isConsume(TokenType.HASH_IFDEF)) {
 				final String name = consumeIdentifier();
-				ifDefHandling.ifDef(name, location);
+				ifDefHandling.processIfDef(name, location);
+				continue;
+			}
+
+			if (isConsume(TokenType.HASH_ELSE)) {
+				ifDefHandling.processElse(location);
 				continue;
 			}
 
 			if (isConsume(TokenType.HASH_ENDIF)) {
-				ifDefHandling.endif(location);
+				ifDefHandling.processEndIf(location);
 				continue;
 			}
 

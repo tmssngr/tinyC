@@ -8,40 +8,69 @@ import org.jetbrains.annotations.*;
  * @author Thomas Singer
  */
 final class IfDefHandling {
-	private final List<Location> openIfDefLocations = new ArrayList<>();
+	private final List<IfDef> openIfDefs = new ArrayList<>();
 	private final Set<String> defines;
 
-	private int skipIfDef;
+	private boolean skipping;
 
 	public IfDefHandling(@NotNull Set<String> defines) {
 		this.defines = defines;
 	}
 
-	public void ifDef(@NotNull String name, @NotNull Location location) {
-		openIfDefLocations.add(location);
-		if (skipIfDef == 0 && !defines.contains(name)) {
-			skipIfDef = openIfDefLocations.size();
-		}
+	public void processIfDef(@NotNull String name, @NotNull Location location) {
+		final boolean defined = defines.contains(name);
+		final boolean skipElse = skipping || defined;
+		openIfDefs.add(new IfDef(location, skipElse, skipping));
+		skipping |= !defined;
 	}
 
-	public void endif(@NotNull Location location) {
-		if (openIfDefLocations.isEmpty()) {
+	public void processElse(@NotNull Location location) {
+		if (openIfDefs.isEmpty()) {
+			throw new SyntaxException(Messages.elseWithoutIfdef(), location);
+		}
+
+		final IfDef ifDef = openIfDefs.getLast();
+		if (ifDef.elseLocation != null) {
+			throw new SyntaxException(Messages.duplicateElse(ifDef.elseLocation), location);
+		}
+
+		ifDef.elseLocation = location;
+		skipping = ifDef.skipElseBranch;
+	}
+
+	public void processEndIf(@NotNull Location location) {
+		if (openIfDefs.isEmpty()) {
 			throw new SyntaxException(Messages.endifWithoutIfdef(), location);
 		}
 
-		if (openIfDefLocations.size() == skipIfDef) {
-			skipIfDef = 0;
-		}
-		openIfDefLocations.removeLast();
+		final IfDef ifDef = openIfDefs.removeLast();
+		skipping = ifDef.skipAfterEnd;
 	}
 
 	public boolean isSkip() {
-		return skipIfDef > 0;
+		return skipping;
 	}
 
 	public void eof() {
-		if (openIfDefLocations.size() > 0) {
-			throw new SyntaxException(Messages.unclosedIfdef(), openIfDefLocations.removeLast());
+		if (openIfDefs.isEmpty()) {
+			return;
+		}
+
+		final IfDef ifDef = openIfDefs.removeLast();
+		throw new SyntaxException(Messages.unclosedIfdef(), ifDef.ifDefLocation);
+	}
+
+	private static final class IfDef {
+		private final Location ifDefLocation;
+		private final boolean skipAfterEnd;
+		private final boolean skipElseBranch;
+
+		private Location elseLocation;
+
+		public IfDef(@NotNull Location location, boolean skipElseBranch, boolean skipAfterEnd) {
+			ifDefLocation = location;
+			this.skipElseBranch = skipElseBranch;
+			this.skipAfterEnd = skipAfterEnd;
 		}
 	}
 }
