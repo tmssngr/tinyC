@@ -12,8 +12,9 @@ printString@@u8:
 printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
-	; 7 pc
-	move chr, chr{r1}
+	; 9 pc
+	addrof memVarAddr{r7}, chr
+	store [memVarAddr{r7}], chr{r1}
 	addrof t.1.1{r1}, chr
 	const arg.0.1{r2}, 1
 	call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
@@ -25,30 +26,30 @@ printUint@i64:
 	; 28 pc
 	const pos.1{r6}, 20
 	; 28:2 while true
-	move number.1{r7}, number{r1}
+	move number.1{r3}, number{r1}
 while_1:
 	sub pos.3{r6}, 1
-	move remainder.1{r3}, number.1{r7}
-	move remainder.1{r0}, remainder.1{r3}
+	move remainder.1{r4}, number.1{r3}
+	move remainder.1{r0}, remainder.1{r4}
 	mod remainder.1{r2}, remainder.1{r0}, 10
-	move remainder.1{r3}, remainder.1{r2}
-	move number.2{r0}, number.2{r7}
+	move remainder.1{r4}, remainder.1{r2}
+	move number.2{r0}, number.2{r3}
 	div number.2{r0}, 10
-	move number.2{r7}, number.2{r0}
-	cast t.5.1{r0}(u8), remainder.1{r3}(i64)
+	move number.2{r3}, number.2{r0}
+	cast t.5.1{r0}(u8), remainder.1{r4}(i64)
 	add digit.1{r0}, 48
-	cast t.7.1{r3}(i64), pos.3{r6}(u8)
-	addrof t.6.1{r4}, buffer
-	add t.6.2{r4}, t.7.1{r3}
-	store [t.6.2{r4}], digit.1{r0}
+	cast t.7.1{r4}(i64), pos.3{r6}(u8)
+	addrof t.6.1{r5}, buffer
+	add t.6.2{r5}, t.7.1{r4}
+	store [t.6.2{r5}], digit.1{r0}
 	; 34:3 if number == 0
-	branch number.2{r7} notequals 0: while_1, while_1_break
-	cast t.9.1{r7}(i64), pos.3{r6}(u8)
-	addrof t.8.1{r0}, buffer
-	move t.8.2{r1}, t.8.1{r0}
-	add t.8.2{r1}, t.9.1{r7}
-	const t.11.1{r7}, 20
-	move t.10.1{r2}, t.11.1{r7}
+	branch number.2{r3} notequals 0: while_1, while_1_break
+	cast t.9.1{r0}(i64), pos.3{r6}(u8)
+	addrof t.8.1{r3}, buffer
+	move t.8.2{r1}, t.8.1{r3}
+	add t.8.2{r1}, t.9.1{r0}
+	const t.11.1{r0}, 20
+	move t.10.1{r2}, t.11.1{r0}
 	sub t.10.1{r2}, pos.3{r6}
 	call printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
 
@@ -102,96 +103,169 @@ printStringLength@@u8@u8:
 
 main:
  Local variables
-	var 0: c.1 (u8/1)
-	var 1: d.1 (u8/1)
-	; 132 pc
+	var 0: b.1 (i16/2)
+	var 1: c.1 (u8/1)
+	var 2: d.1 (u8/1)
+	; 300 pc
 	const t.4.1{r1}, [string-0]
 	call printString@@u8[t.4.1{r1}]
 	const a.1{r6}, 1
-	const b.1{r7}, 2
-	lt t.5.1{r1}, a.1{r6}, b.1{r7}
+	const b.1{r0}, 2
+	lt t.5.1{r1}, a.1{r6}, b.1{r0}
+	addrof memVarAddr{r7}, b.1
+	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@bool[t.5.1{r1}]
-	lt t.6.1{r1}, b.1{r7}, a.1{r6}
+	addrof memVarAddr{r7}, b.1
+	load b.1{r0}, [memVarAddr{r7}]
+	lt t.6.1{r1}, b.1{r0}, a.1{r6}
+	addrof memVarAddr{r7}, b.1
+	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@bool[t.6.1{r1}]
 	const t.7.1{r1}, [string-1]
 	call printString@@u8[t.7.1{r1}]
 	const c.1{r0}, 0
 	const d.1{r2}, 128
 	lt t.8.1{r1}, c.1{r0}, d.1{r2}
-	move c.1, c.1{r0}
-	move d.1, d.1{r2}
+	addrof memVarAddr{r7}, c.1
+	store [memVarAddr{r7}], c.1{r0}
+	addrof memVarAddr{r7}, d.1
+	store [memVarAddr{r7}], d.1{r2}
 	call printIntLf@bool[t.8.1{r1}]
-	move c.1{r2}, c.1
-	move d.1{r0}, d.1
+	addrof memVarAddr{r7}, c.1
+	load c.1{r2}, [memVarAddr{r7}]
+	addrof memVarAddr{r7}, d.1
+	load d.1{r0}, [memVarAddr{r7}]
 	lt t.9.1{r1}, d.1{r0}, c.1{r2}
-	move c.1, c.1{r2}
-	move d.1, d.1{r0}
+	addrof memVarAddr{r7}, c.1
+	store [memVarAddr{r7}], c.1{r2}
+	addrof memVarAddr{r7}, d.1
+	store [memVarAddr{r7}], d.1{r0}
 	call printIntLf@bool[t.9.1{r1}]
 	const t.10.1{r1}, [string-2]
 	call printString@@u8[t.10.1{r1}]
-	lteq t.11.1{r1}, a.1{r6}, b.1{r7}
+	addrof memVarAddr{r7}, b.1
+	load b.1{r0}, [memVarAddr{r7}]
+	lteq t.11.1{r1}, a.1{r6}, b.1{r0}
+	addrof memVarAddr{r7}, b.1
+	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@bool[t.11.1{r1}]
-	lteq t.12.1{r1}, b.1{r7}, a.1{r6}
+	addrof memVarAddr{r7}, b.1
+	load b.1{r0}, [memVarAddr{r7}]
+	lteq t.12.1{r1}, b.1{r0}, a.1{r6}
+	addrof memVarAddr{r7}, b.1
+	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@bool[t.12.1{r1}]
 	const t.13.1{r1}, [string-3]
 	call printString@@u8[t.13.1{r1}]
-	move c.1{r0}, c.1
-	move d.1{r2}, d.1
+	addrof memVarAddr{r7}, c.1
+	load c.1{r0}, [memVarAddr{r7}]
+	addrof memVarAddr{r7}, d.1
+	load d.1{r2}, [memVarAddr{r7}]
 	lteq t.14.1{r1}, c.1{r0}, d.1{r2}
-	move c.1, c.1{r0}
-	move d.1, d.1{r2}
+	addrof memVarAddr{r7}, c.1
+	store [memVarAddr{r7}], c.1{r0}
+	addrof memVarAddr{r7}, d.1
+	store [memVarAddr{r7}], d.1{r2}
 	call printIntLf@bool[t.14.1{r1}]
-	move c.1{r2}, c.1
-	move d.1{r0}, d.1
+	addrof memVarAddr{r7}, c.1
+	load c.1{r2}, [memVarAddr{r7}]
+	addrof memVarAddr{r7}, d.1
+	load d.1{r0}, [memVarAddr{r7}]
 	lteq t.15.1{r1}, d.1{r0}, c.1{r2}
-	move c.1, c.1{r2}
-	move d.1, d.1{r0}
+	addrof memVarAddr{r7}, c.1
+	store [memVarAddr{r7}], c.1{r2}
+	addrof memVarAddr{r7}, d.1
+	store [memVarAddr{r7}], d.1{r0}
 	call printIntLf@bool[t.15.1{r1}]
 	const t.16.1{r1}, [string-4]
 	call printString@@u8[t.16.1{r1}]
-	equals t.17.1{r1}, a.1{r6}, b.1{r7}
+	addrof memVarAddr{r7}, b.1
+	load b.1{r0}, [memVarAddr{r7}]
+	equals t.17.1{r1}, a.1{r6}, b.1{r0}
+	addrof memVarAddr{r7}, b.1
+	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@bool[t.17.1{r1}]
-	equals t.18.1{r1}, b.1{r7}, a.1{r6}
+	addrof memVarAddr{r7}, b.1
+	load b.1{r0}, [memVarAddr{r7}]
+	equals t.18.1{r1}, b.1{r0}, a.1{r6}
+	addrof memVarAddr{r7}, b.1
+	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@bool[t.18.1{r1}]
 	const t.19.1{r1}, [string-5]
 	call printString@@u8[t.19.1{r1}]
-	notequals t.20.1{r1}, a.1{r6}, b.1{r7}
+	addrof memVarAddr{r7}, b.1
+	load b.1{r0}, [memVarAddr{r7}]
+	notequals t.20.1{r1}, a.1{r6}, b.1{r0}
+	addrof memVarAddr{r7}, b.1
+	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@bool[t.20.1{r1}]
-	notequals t.21.1{r1}, b.1{r7}, a.1{r6}
+	addrof memVarAddr{r7}, b.1
+	load b.1{r0}, [memVarAddr{r7}]
+	notequals t.21.1{r1}, b.1{r0}, a.1{r6}
+	addrof memVarAddr{r7}, b.1
+	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@bool[t.21.1{r1}]
 	const t.22.1{r1}, [string-6]
 	call printString@@u8[t.22.1{r1}]
-	gteq t.23.1{r1}, a.1{r6}, b.1{r7}
+	addrof memVarAddr{r7}, b.1
+	load b.1{r0}, [memVarAddr{r7}]
+	gteq t.23.1{r1}, a.1{r6}, b.1{r0}
+	addrof memVarAddr{r7}, b.1
+	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@bool[t.23.1{r1}]
-	gteq t.24.1{r1}, b.1{r7}, a.1{r6}
+	addrof memVarAddr{r7}, b.1
+	load b.1{r0}, [memVarAddr{r7}]
+	gteq t.24.1{r1}, b.1{r0}, a.1{r6}
+	addrof memVarAddr{r7}, b.1
+	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@bool[t.24.1{r1}]
 	const t.25.1{r1}, [string-7]
 	call printString@@u8[t.25.1{r1}]
-	move c.1{r0}, c.1
-	move d.1{r2}, d.1
+	addrof memVarAddr{r7}, c.1
+	load c.1{r0}, [memVarAddr{r7}]
+	addrof memVarAddr{r7}, d.1
+	load d.1{r2}, [memVarAddr{r7}]
 	gteq t.26.1{r1}, c.1{r0}, d.1{r2}
-	move c.1, c.1{r0}
-	move d.1, d.1{r2}
+	addrof memVarAddr{r7}, c.1
+	store [memVarAddr{r7}], c.1{r0}
+	addrof memVarAddr{r7}, d.1
+	store [memVarAddr{r7}], d.1{r2}
 	call printIntLf@bool[t.26.1{r1}]
-	move c.1{r2}, c.1
-	move d.1{r0}, d.1
+	addrof memVarAddr{r7}, c.1
+	load c.1{r2}, [memVarAddr{r7}]
+	addrof memVarAddr{r7}, d.1
+	load d.1{r0}, [memVarAddr{r7}]
 	gteq t.27.1{r1}, d.1{r0}, c.1{r2}
-	move c.1, c.1{r2}
-	move d.1, d.1{r0}
+	addrof memVarAddr{r7}, c.1
+	store [memVarAddr{r7}], c.1{r2}
+	addrof memVarAddr{r7}, d.1
+	store [memVarAddr{r7}], d.1{r0}
 	call printIntLf@bool[t.27.1{r1}]
 	const t.28.1{r1}, [string-8]
 	call printString@@u8[t.28.1{r1}]
-	gt t.29.1{r1}, a.1{r6}, b.1{r7}
+	addrof memVarAddr{r7}, b.1
+	load b.1{r0}, [memVarAddr{r7}]
+	gt t.29.1{r1}, a.1{r6}, b.1{r0}
+	addrof memVarAddr{r7}, b.1
+	store [memVarAddr{r7}], b.1{r0}
 	call printIntLf@bool[t.29.1{r1}]
-	gt t.30.1{r1}, b.1{r7}, a.1{r6}
+	addrof memVarAddr{r7}, b.1
+	load b.1{r0}, [memVarAddr{r7}]
+	gt t.30.1{r1}, b.1{r0}, a.1{r6}
 	call printIntLf@bool[t.30.1{r1}]
 	const t.31.1{r1}, [string-9]
 	call printString@@u8[t.31.1{r1}]
-	move c.1{r6}, c.1
-	move d.1{r7}, d.1
-	gt t.32.1{r1}, c.1{r6}, d.1{r7}
+	addrof memVarAddr{r7}, c.1
+	load c.1{r6}, [memVarAddr{r7}]
+	addrof memVarAddr{r7}, d.1
+	load d.1{r0}, [memVarAddr{r7}]
+	gt t.32.1{r1}, c.1{r6}, d.1{r0}
+	addrof memVarAddr{r7}, d.1
+	store [memVarAddr{r7}], d.1{r0}
 	call printIntLf@bool[t.32.1{r1}]
-	gt t.33.1{r1}, d.1{r7}, c.1{r6}
+	addrof memVarAddr{r7}, d.1
+	load d.1{r0}, [memVarAddr{r7}]
+	gt t.33.1{r1}, d.1{r0}, c.1{r6}
 	call printIntLf@bool[t.33.1{r1}]
 
 printStringLength@@u8@i64:
