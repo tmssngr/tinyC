@@ -29,7 +29,7 @@ public class DetectVarLivenessTest {
 				new IRRetValue(right),
 				new IRLabel("exit")
 		));
-		final VarLiveness liveness = DetectVarLiveness.process(cfg);
+		final VarLiveness liveness = DetectVarLiveness.process(cfg, Set.of());
 
 		final Iterator<BasicBlock> it = cfg.blocks().iterator();
 		assertBlock("start", List.of(
@@ -74,7 +74,7 @@ public class DetectVarLivenessTest {
 				new IRJump("loop"),
 				new IRLabel("exit")
 		));
-		final VarLiveness liveness = DetectVarLiveness.process(cfg);
+		final VarLiveness liveness = DetectVarLiveness.process(cfg, Set.of());
 		final Iterator<BasicBlock> it = cfg.blocks().iterator();
 		assertBlock("main", List.of(
 				            new IRMove(bool_needsInitialize, 1),

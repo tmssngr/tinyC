@@ -13,8 +13,8 @@ import org.jetbrains.annotations.*;
 public final class DetectVarLiveness {
 
 	@NotNull
-	public static VarLiveness process(@NotNull ControlFlowGraph cfg) {
-		final DetectVarLiveness detectVarLiveness = new DetectVarLiveness(cfg);
+	public static VarLiveness process(@NotNull ControlFlowGraph cfg, @NotNull Set<? extends IRVar> cantBeRegisterVars) {
+		final DetectVarLiveness detectVarLiveness = new DetectVarLiveness(cfg, cantBeRegisterVars);
 		while (detectVarLiveness.detect()) {
 		}
 
@@ -23,8 +23,11 @@ public final class DetectVarLiveness {
 
 	private final Map<String, VarLiveness.Block> nameToBlock = new HashMap<>();
 	private final List<BasicBlock> blocks;
+	private final Set<? extends IRVar> cantBeRegisterVars;
 
-	private DetectVarLiveness(ControlFlowGraph cfg) {
+	private DetectVarLiveness(ControlFlowGraph cfg, Set<? extends IRVar> cantBeRegisterVars) {
+		this.cantBeRegisterVars = cantBeRegisterVars;
+
 		blocks = cfg.blocks();
 		for (BasicBlock block : blocks) {
 			nameToBlock.put(block.name, new VarLiveness.Block(block));
@@ -66,7 +69,7 @@ public final class DetectVarLiveness {
 	}
 
 	private Set<IRVar> getLiveInFromAllNext(BasicBlock block) {
-		final Set<IRVar> liveIn = new HashSet<>();
+		final Set<IRVar> liveIn = new HashSet<>(cantBeRegisterVars);
 		for (String next : block.successors()) {
 			final VarLiveness.Block blockLiveness = nameToBlock.get(next);
 			liveIn.addAll(blockLiveness.getLiveBefore());
