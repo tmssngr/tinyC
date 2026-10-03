@@ -42,8 +42,8 @@ main:
 	; 14 pc
 	; begin initialize global variables
 	const t.1.1{r6}, 0
-	addrof a.2.1{r7}, global
-	store [a.2.1{r7}], t.1.1{r6}
+	addrof a.2.1{r0}, global
+	store [a.2.1{r0}], t.1.1{r6}
 	; end initialize global variables
 	; 12:2 while true
 	jump while_2
