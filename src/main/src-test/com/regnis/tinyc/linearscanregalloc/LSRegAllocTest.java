@@ -85,8 +85,10 @@ public class LSRegAllocTest {
 	public void testSplitLiveInterval() {
 		final int rRet = 0;
 		final int rArg1 = 1;
+		final int rSpill = 2;
 		final IRVar varA = new IRVar("a", 0, VariableScope.function, Type.U8);
 		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.U8);
+		final IRVar varMVA = new IRVar(LSRegAlloc.MEM_VAR_ADDRESS, 2, VariableScope.function, Type.pointer(Type.VOID));
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		final IRFunction function = new IRFunction(
 				"simple", Type.U8,
@@ -101,13 +103,15 @@ public class LSRegAllocTest {
 						new IRRetValue(varA)
 				)
 		);
-		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(1, 0);
-		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 2, callingConventionProvider, Type.I64);
+		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(1, 1);
+		final IRFunction regAllocFunction = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64);
 		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
 		assertEquals(new IRMove(varA.asRegister(rArg1), 1), it.next());
-		assertEquals(new IRMove(varA, varA.asRegister(rArg1)), it.next());
+		assertEquals(new IRAddrOf(varMVA.asRegister(rSpill), varA), it.next());
+		assertEquals(new IRMemStore(varMVA.asRegister(rSpill), varA.asRegister(rArg1)), it.next());
 		assertEquals(new IRCall(varB.asRegister(rRet), Type.U8, "foo", IRValue.toValues(varA.asRegister(rArg1))), it.next());
-		assertEquals(new IRMove(varA.asRegister(rArg1), varA), it.next());
+		assertEquals(new IRAddrOf(varMVA.asRegister(rSpill), varA), it.next());
+		assertEquals(new IRMemLoad(varA.asRegister(rArg1), varMVA.asRegister(rSpill)), it.next());
 		assertEquals(new IRBinary(varA.asRegister(rArg1), IRBinary.Op.Add, varA.asRegister(rArg1), varB.asRegister(rRet)), it.next());
 		assertEquals(new IRMove(varA.asRegister(rRet), varA.asRegister(rArg1)), it.next());
 		assertFalse(it.hasNext());
@@ -118,6 +122,7 @@ public class LSRegAllocTest {
 		final IRVar varRow = new IRVar("row", 0, VariableScope.function, Type.U8);
 		final IRVar varLimit = new IRVar("limit", 1, VariableScope.function, Type.U8);
 		final IRVar varCounter = new IRVar("counter", 2, VariableScope.function, Type.U8);
+		final IRVar varMVA = new IRVar(LSRegAlloc.MEM_VAR_ADDRESS, 3, VariableScope.function, Type.pointer(Type.VOID)).asRegister(2);
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		final IRFunction function = new IRFunction(
 				"loop", Type.U8,
@@ -145,36 +150,51 @@ public class LSRegAllocTest {
 		final List<IRInstruction> instructions = LSRegAlloc.process(function, false, 3, callingConventionProvider, Type.I64).instructions();
 		final Iterator<IRInstruction> it = instructions.iterator();
 		assertEquals(new IRMove(varRow.asRegister(0), 1), it.next());
-		assertEquals(new IRMove(varRow, varRow.asRegister(0)), it.next());
+		assertEquals(new IRAddrOf(varMVA, varRow), it.next());
+		assertEquals(new IRMemStore(varMVA, varRow.asRegister(0)), it.next());
 
 		assertEquals(new IRMove(varLimit.asRegister(0), 3), it.next());
-		assertEquals(new IRMove(varLimit, varLimit.asRegister(0)), it.next());
+		assertEquals(new IRAddrOf(varMVA, varLimit), it.next());
+		assertEquals(new IRMemStore(varMVA, varLimit.asRegister(0)), it.next());
 
 		assertEquals(new IRMove(varCounter.asRegister(0), 0), it.next());
-		assertEquals(new IRMove(varCounter, varCounter.asRegister(0)), it.next());
+		assertEquals(new IRAddrOf(varMVA, varCounter), it.next());
+		assertEquals(new IRMemStore(varMVA, varCounter.asRegister(0)), it.next());
 
 		assertEquals(new IRCall(null, Type.VOID, "clobber", List.of()), it.next());
 
-		assertEquals(new IRMove(varCounter.asRegister(0), varCounter), it.next());
-		assertEquals(new IRMove(varRow.asRegister(1), varRow), it.next());
+		assertEquals(new IRAddrOf(varMVA, varCounter), it.next());
+		assertEquals(new IRMemLoad(varCounter.asRegister(0), varMVA), it.next());
+
+		assertEquals(new IRAddrOf(varMVA, varRow), it.next());
+		assertEquals(new IRMemLoad(varRow.asRegister(1), varMVA), it.next());
 
 		assertEquals(new IRJump("check"), it.next());
 
 		assertEquals(new IRLabel("body"), it.next());
+		assertEquals(new IRAddrOf(varMVA, varCounter), it.next());
+		assertEquals(new IRMemStore(varMVA, varCounter.asRegister(0)), it.next());
 
-		assertEquals(new IRMove(varCounter, varCounter.asRegister(0)), it.next());
-		assertEquals(new IRMove(varLimit, varLimit.asRegister(2)), it.next());
-		assertEquals(new IRMove(varRow, varRow.asRegister(1)), it.next());
-		assertEquals(new IRMove(varRow.asRegister(1), varRow), it.next());
-		assertEquals(new IRMove(varCounter.asRegister(0), varCounter), it.next());
+		assertEquals(new IRAddrOf(varMVA, varLimit), it.next());
+		assertEquals(new IRMemStore(varMVA, varLimit.asRegister(1)), it.next());
+
+		assertEquals(new IRAddrOf(varMVA, varRow), it.next());
+		assertEquals(new IRMemLoad(varRow.asRegister(1), varMVA), it.next());
+
+		assertEquals(new IRAddrOf(varMVA, varCounter), it.next());
+		assertEquals(new IRMemLoad(varCounter.asRegister(0), varMVA), it.next());
 
 		assertEquals(new IRBinary(varCounter.asRegister(0), IRBinary.Op.Add, varCounter.asRegister(0), varRow.asRegister(1)), it.next());
 		assertEquals(new IRJump("check"), it.next());
 
 		assertEquals(new IRLabel("check"), it.next());
+		assertEquals(new IRAddrOf(varMVA, varRow), it.next());
+		assertEquals(new IRMemStore(varMVA, varRow.asRegister(1)), it.next());
 
-		assertEquals(new IRMove(varLimit.asRegister(2), varLimit), it.next());
-		assertEquals(new IRBranch(IRCompare.Op.LtEq, varCounter.asRegister(0), varLimit.asRegister(2), "body", "end"), it.next());
+		assertEquals(new IRAddrOf(varMVA, varLimit), it.next());
+		assertEquals(new IRMemLoad(varLimit.asRegister(1), varMVA), it.next());
+
+		assertEquals(new IRBranch(IRCompare.Op.LtEq, varCounter.asRegister(0), varLimit.asRegister(1), "body", "end"), it.next());
 		assertEquals(new IRJump("end"), it.next());
 
 		assertEquals(new IRLabel("end"), it.next());
@@ -263,6 +283,7 @@ public class LSRegAllocTest {
 		final IRVar varB = new IRVar("b", 1, VariableScope.function, Type.U8);
 		final IRVar varC = new IRVar("c", 2, VariableScope.function, Type.U8);
 		final IRVar varT = new IRVar("t", 3, VariableScope.function, Type.U8);
+		final IRVar varMVA = new IRVar(LSRegAlloc.MEM_VAR_ADDRESS, 4, VariableScope.function, Type.pointer(Type.VOID));
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		final IRFunction function = new IRFunction(
 				"simple", Type.U8,
@@ -293,23 +314,47 @@ public class LSRegAllocTest {
 		final IRVar varC0 = varC.asRegister(0);
 		final IRVar varC1 = varC.asRegister(1);
 		final IRVar varT1 = varT.asRegister(1);
+		final IRVar varSpill2 = varMVA.asRegister(2);
 		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
 		assertEquals(new IRMove(varA1, 1), it.next());
 		assertEquals(new IRMove(varB0, 2), it.next());
-		assertEquals(new IRMove(varB, varB0), it.next());
+
+		assertEquals(new IRAddrOf(varSpill2, varB), it.next());
+		assertEquals(new IRMemStore(varSpill2, varB0), it.next());
+
 		assertEquals(new IRMove(varC0, 3), it.next());
-		assertEquals(new IRMove(varC, varC0), it.next());
-		assertEquals(new IRMove(varA, varA1), it.next());
+
+		assertEquals(new IRAddrOf(varSpill2, varC), it.next());
+		assertEquals(new IRMemStore(varSpill2, varC0), it.next());
+
+		assertEquals(new IRAddrOf(varSpill2, varA), it.next());
+		assertEquals(new IRMemStore(varSpill2, varA1), it.next());
+
 		assertEquals(new IRCall(null, Type.VOID, "print", IRValue.toValues(varA1)), it.next());
-		assertEquals(new IRMove(varB1, varB), it.next());
+
+		assertEquals(new IRAddrOf(varSpill2, varB), it.next());
+		assertEquals(new IRMemLoad(varB1, varSpill2), it.next());
+
 		assertEquals(new IRCall(null, Type.VOID, "print", IRValue.toValues(varB1)), it.next());
-		assertEquals(new IRMove(varA0, varA), it.next());
+
+		assertEquals(new IRAddrOf(varSpill2, varA), it.next());
+		assertEquals(new IRMemLoad(varA0, varSpill2), it.next());
+
 		assertEquals(new IRMove(varT1, varA0), it.next());
-		assertEquals(new IRMove(varC0, varC), it.next());
+
+		assertEquals(new IRAddrOf(varSpill2, varC), it.next());
+		assertEquals(new IRMemLoad(varC0, varSpill2), it.next());
+
 		assertEquals(new IRBinary(varT1, IRBinary.Op.Add, varT1, varC0), it.next());
-		assertEquals(new IRMove(varC, varC0), it.next());
+
+		assertEquals(new IRAddrOf(varSpill2, varC), it.next());
+		assertEquals(new IRMemStore(varSpill2, varC0), it.next());
+
 		assertEquals(new IRCall(null, Type.VOID, "print", IRValue.toValues(varT1)), it.next());
-		assertEquals(new IRMove(varC1, varC), it.next());
+
+		assertEquals(new IRAddrOf(varSpill2, varC), it.next());
+		assertEquals(new IRMemLoad(varC1, varSpill2), it.next());
+
 		assertEquals(new IRCall(null, Type.VOID, "print", IRValue.toValues(varC1)), it.next());
 		assertFalse(it.hasNext());
 	}
