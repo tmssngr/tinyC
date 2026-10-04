@@ -305,6 +305,9 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 	u8 r;
 	u8 c;
 	u8 cell;
+	u8 r;
+	u8 c;
+	u8 cell;
 
 	printCellAt@u8@u8(row, column);
 	if ((getBombCountAround@u8@u8(row, column)) != 0) {
@@ -318,6 +321,34 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 		for (; r < 20; r = r + 1) {
 			c = 0;
 			for (; c < 38; c = c + 1, index = index + 1) {
+				cell = field[index];
+				if (((cell & 32) == 0) || ((cell & 128) != 0)) {
+					continue;
+				}
+				if ((getBombCountAround@u8@u8(r, c)) != 0) {
+					continue;
+				}
+				if (revealNeighbors@u8@u8(r, c)) {
+					changed = true;
+				}
+			}
+		}
+		if (!changed) {
+			break;
+		}
+		r = 20;
+		while (true) {
+			if (r == 0) {
+				break;
+			}
+			r = r - 1;
+			c = 38;
+			while (true) {
+				if (c == 0) {
+					break;
+				}
+				c = c - 1;
+				index = index - 1;
 				cell = field[index];
 				if (((cell & 32) == 0) || ((cell & 128) != 0)) {
 					continue;

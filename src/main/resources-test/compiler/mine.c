@@ -257,9 +257,42 @@ void maybeRevealAround(u8 row, u8 column) {
 	bool changed = true
 	while (changed) {
 		changed = false
+
 		i16 index = 0
 		for (u8 r = 0; r < height; r = r + 1) {
 			for (u8 c = 0; c < width; c = c + 1, index = index + 1) {
+				u8 cell = field[index]
+				if (cell & maskOpen) == 0 || (cell & maskBomb) != 0 {
+					continue;
+				}
+				if (getBombCountAround(r, c) != 0) {
+					continue;
+				}
+
+				if revealNeighbors(r, c) {
+					changed = true
+				}
+			}
+		}
+
+		if !changed {
+			break
+		}
+
+		u8 r = height
+		while true {
+			if r == 0 {
+				break
+			}
+			r = r - 1
+
+			u8 c = width
+			while true {
+				if c == 0 {
+					break
+				}
+				c = c - 1
+				index = index - 1
 				u8 cell = field[index]
 				if (cell & maskOpen) == 0 || (cell & maskBomb) != 0 {
 					continue;
