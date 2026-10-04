@@ -341,58 +341,73 @@ void initField@u8@u8(u8 curr_r, u8 curr_c) {
 	}
 }
 
-bool isStackTooDeep() asm {
-}
-
 void maybeRevealAround@u8@u8(u8 row, u8 column) {
-	u8 rowFrom;
-	u8 rowTo;
-	u8 colFrom;
-	u8 colTo;
+	bool changed;
 	i16 index;
 	u8 r;
 	u8 c;
 	u8 cell;
+	u8 rowFrom;
+	u8 rowTo;
+	u8 colFrom;
+	u8 colTo;
+	i16 neighborIndex;
+	u8 neighborRow;
+	u8 neighborColumn;
+	u8 neighborCell;
 
 	printCellAt@u8@u8(row, column);
 	if ((getBombCountAround@u8@u8(row, column)) != 0) {
 		return;
 	}
-	if (isStackTooDeep()) {
-		return;
-	}
-	rowFrom = row;
-	if (rowFrom > 0) {
-		rowFrom = rowFrom - 1;
-	}
-	rowTo = row + 1;
-	if (rowTo >= 20) {
-		rowTo = rowTo - 1;
-	}
-	colFrom = column;
-	if (colFrom > 0) {
-		colFrom = colFrom - 1;
-	}
-	colTo = column + 1;
-	if (colTo >= 40) {
-		colTo = colTo - 1;
-	}
-	index = rowColumnToCell@u8@u8(rowFrom, colFrom);
-	r = rowFrom;
-	for (; r <= rowTo; r = r + 1) {
-		c = colFrom;
-		for (; c <= colTo; c = c + 1, index = index + 1) {
-			if ((r == row) && (c == column)) {
-				continue;
+	changed = true;
+	while (changed) {
+		changed = false;
+		index = 0;
+		r = 0;
+		for (; r < 20; r = r + 1) {
+			c = 0;
+			for (; c < 40; c = c + 1, index = index + 1) {
+				cell = field[(i64)index];
+				if (((cell & 2) == 0) || ((cell & 1) != 0)) {
+					continue;
+				}
+				if ((getBombCountAround@u8@u8(r, c)) != 0) {
+					continue;
+				}
+				rowFrom = r;
+				if (rowFrom > 0) {
+					rowFrom = rowFrom - 1;
+				}
+				rowTo = r + 1;
+				if (rowTo >= 20) {
+					rowTo = rowTo - 1;
+				}
+				colFrom = c;
+				if (colFrom > 0) {
+					colFrom = colFrom - 1;
+				}
+				colTo = c + 1;
+				if (colTo >= 40) {
+					colTo = colTo - 1;
+				}
+				neighborIndex = rowColumnToCell@u8@u8(rowFrom, colFrom);
+				neighborRow = rowFrom;
+				for (; neighborRow <= rowTo; neighborRow = neighborRow + 1) {
+					neighborColumn = colFrom;
+					for (; neighborColumn <= colTo; neighborColumn = neighborColumn + 1, neighborIndex = neighborIndex + 1) {
+						neighborCell = field[(i64)neighborIndex];
+						if ((neighborCell & 2) != 0) {
+							continue;
+						}
+						field[(i64)neighborIndex] = neighborCell | 2;
+						printCellAt@u8@u8@u8(field[(i64)neighborIndex], neighborRow, neighborColumn);
+						changed = true;
+					}
+					neighborIndex = (((neighborIndex - ((i16)colTo)) + ((i16)colFrom)) + 40) - 1;
+				}
 			}
-			cell = field[(i64)index];
-			if ((cell & 2) != 0) {
-				continue;
-			}
-			field[(i64)index] = cell | 2;
-			maybeRevealAround@u8@u8(r, c);
 		}
-		index = (((index - ((i16)colTo)) + ((i16)colFrom)) + 40) - 1;
 	}
 }
 
