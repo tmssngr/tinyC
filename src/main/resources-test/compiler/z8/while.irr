@@ -5,7 +5,6 @@ printIntLf@u8:
 main:
 	; 9 pc
 	const i.1{r8}, 5
-	; 5:2 while i > 0
 	jump while_1
 while_1_body:
 	move i.2{r0}, i.2{r8}
@@ -17,6 +16,5 @@ while_2:
 	move i.3{r0}, i.3{r8}
 	call printIntLf@u8[i.3{r0}]
 	add i.5{r8}, 1
-	; 13:3 if i < 5
 	branch i.5{r8} lt 5: while_2
 

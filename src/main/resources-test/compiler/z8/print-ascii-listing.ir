@@ -3,7 +3,6 @@ printNibble@u8:
 	arg 0: x (u8/1)
 	; 21 pc
 	and x, 15
-	; 5:2 if x > 9
 	branch x lteq 9: if_1_end, if_1_then
 if_1_then:
 	add x, 7
@@ -35,11 +34,9 @@ main:
 	const t.2, [string-0]
 	call printString@@u8[t.2]
 	const i, 0
-	; 19:2 for i < 16
 for_2:
 	branch i gteq 16: for_2_break, for_2_body
 for_2_body:
-	; 20:3 if i & 7 == 0
 	and t.3, i, 7
 	branch t.3 notequals 0: if_3_end, if_3_then
 if_3_then:
@@ -52,24 +49,20 @@ for_2_continue:
 for_2_break:
 	call printChar@u8[10]
 	const i, 32
-	; 27:2 for i < 128
 for_4:
 	branch i gteq 128: main_ret, for_4_body
 for_4_body:
-	; 28:3 if i & 15 == 0
 	and t.4, i, 15
 	branch t.4 notequals 0: if_5_end, if_5_then
 if_5_then:
 	call printHex2@u8[i]
 if_5_end:
-	; 31:3 if i & 7 == 0
 	and t.5, i, 7
 	branch t.5 notequals 0: if_6_end, if_6_then
 if_6_then:
 	call printChar@u8[32]
 if_6_end:
 	call printChar@u8[i]
-	; 35:3 if i & 15 == 15
 	and t.6, i, 15
 	branch t.6 notequals 15: for_4_continue, if_7_then
 if_7_then:

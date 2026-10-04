@@ -23,7 +23,6 @@ printUint@i64:
 	var 11: t.11 (u8/1)
 	; 84 pc
 	const pos, 20
-	; 33:2 while true
 while_1:
 	sub pos, 1
 	mod remainder, number, 10
@@ -34,7 +33,6 @@ while_1:
 	addrof t.6, buffer
 	add t.6, t.7
 	store [t.6], digit
-	; 39:3 if number == 0
 	branch number notequals 0: while_1, while_1_break
 while_1_break:
 	cast t.9(i64), pos(u8)
@@ -58,7 +56,6 @@ printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
 	; 13 pc
-	; 59:2 if number < 0
 	branch number gteq 0: if_3_end, if_3_then
 if_3_then:
 	call printChar@u8[45]
@@ -125,7 +122,6 @@ random:
 	add t.11, t.12, t.13
 	addrof a.14, __random__
 	store [a.14], t.11
-	; 16:9 return __random__
 	addrof a.15, __random__
 	load t.16, [a.15]
 	ret t.16
@@ -137,7 +133,6 @@ randomU8:
 	var 0: t.0 (u8/1)
 	var 1: t.1 (i32/4)
 	; 12 pc
-	; 60:10 return (u8)
 	call t.1 = random[] -> i32
 	cast t.0(u8), t.1(i32)
 	ret t.0
@@ -151,14 +146,11 @@ main:
 	var 2: t.2 (i32/4)
 	var 3: a.3 (i32*/8)
 	; 31 pc
-	; begin initialize global variables
 	const t.2, 0
 	addrof a.3, __random__
 	store [a.3], t.2
-	; end initialize global variables
 	call initRandom@i32[7439742]
 	const i, 0
-	; 6:2 for i < 50
 for_4:
 	branch i gteq 50: main_ret, for_4_body
 for_4_body:

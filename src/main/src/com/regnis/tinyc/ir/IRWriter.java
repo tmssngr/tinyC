@@ -122,11 +122,11 @@ public final class IRWriter extends TextWriter {
 				writeln(label.label() + ":");
 			}
 			else {
-				writeIndentation();
 				if (instruction instanceof IRComment c) {
-					writeln("; " + c.comment());
+//					writeln("; " + c.comment());
 				}
 				else {
+					writeIndentation();
 					writeln(instruction.toString(true));
 					if (liveness != null) {
 						write(liveness.getLiveAfter(i));

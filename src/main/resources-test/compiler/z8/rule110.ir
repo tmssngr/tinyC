@@ -8,11 +8,9 @@ printBoard:
 	; 47 pc
 	call printChar@u8[124]
 	const i, 0
-	; 11:2 for i < 30
 for_1:
 	branch i gteq 30: for_1_break, for_1_body
 for_1_body:
-	; 12:3 if [...] == 0
 	cast t.3(i16), i(u8)
 	addrof t.2, board
 	add t.2, t.3
@@ -63,7 +61,6 @@ main:
 	var 27: t.27 (i16/2)
 	; 216 pc
 	const i, 0
-	; 23:2 for i < 30
 for_3:
 	branch i gteq 30: for_3_break, for_3_body
 for_3_body:
@@ -83,7 +80,6 @@ for_3_break:
 	store [t.8], t.7
 	call printBoard[]
 	const i, 0
-	; 30:2 for i < 28
 for_4:
 	branch i gteq 28: main_ret, for_4_body
 for_4_body:
@@ -98,7 +94,6 @@ for_4_body:
 	load t.14, [t.15]
 	or pattern, t.10, t.14
 	const j, 1
-	; 32:3 for j < 29
 for_5:
 	branch j gteq 29: for_5_break, for_5_body
 for_5_body:

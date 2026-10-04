@@ -3,10 +3,8 @@ printBoard:
 	const arg.0.0{r0}, 124
 	call printChar@u8[arg.0.0{r0}]
 	const i.1{r8}, 0
-	; 11:2 for i < 30
 	jump for_1
 for_1_body:
-	; 12:3 if [...] == 0
 	cast t.3.1{r9}(i16), i.2{r8}(u8)
 	addrof t.2.1{r12}, board
 	add t.2.2{r12}, t.3.1{r9}
@@ -28,7 +26,6 @@ for_1:
 main:
 	; 61 pc
 	const i.1{r8}, 0
-	; 23:2 for i < 30
 	jump for_3
 for_3_body:
 	const t.4.1{r9}, 0
@@ -46,7 +43,6 @@ for_3:
 	store [t.8.2{r12}], t.7.1{r8}
 	call printBoard[]
 	const i.3{r8}, 0
-	; 30:2 for i < 28
 	jump for_4
 for_4_body:
 	const t.13.1{r9}, 0
@@ -60,7 +56,6 @@ for_4_body:
 	load t.14.1{r10}, [t.15.2{r12}]
 	or pattern.1{r9}, t.14.1{r10}
 	const j.1{r10}, 1
-	; 32:3 for j < 29
 	jump for_5
 for_5_body:
 	shiftleft t.18.1{r9}, 1

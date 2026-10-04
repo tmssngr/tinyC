@@ -7,7 +7,6 @@ simple:
 	const four, 4
 	const three, 3
 	sub one, four, three
-	; 5:9 return one
 	ret one
 	jump simple_ret
 simple_ret:
@@ -18,7 +17,6 @@ registerHint@u8@u8:
 	arg 1: b (u8/1)
 	var 2: t.2 (u8/1)
 	; 11 pc
-	; 9:11 return a + b
 	add t.2, a, b
 	ret t.2
 	jump registerHint@u8@u8_ret
@@ -29,14 +27,11 @@ max@u8@u8:
 	arg 0: a (u8/1)
 	arg 1: b (u8/1)
 	; 13 pc
-	; 13:2 if a < b
 	branch a gteq b: if_1_end, if_1_then
 if_1_then:
-	; 14:10 return b
 	ret b
 	jump max@u8@u8_ret
 if_1_end:
-	; 16:9 return a
 	ret a
 	jump max@u8@u8_ret
 max@u8@u8_ret:
@@ -50,7 +45,6 @@ fibonacci@u8:
 	; 34 pc
 	const a, 0
 	const b, 1
-	; 22:2 while i > 0
 while_2:
 	branch i lteq 0: while_2_break, while_2_body
 while_2_body:
@@ -60,7 +54,6 @@ while_2_body:
 	move b, c
 	jump while_2
 while_2_break:
-	; 28:9 return a
 	ret a
 	jump fibonacci@u8_ret
 fibonacci@u8_ret:

@@ -23,7 +23,6 @@ strlen@@u8:
 	var 2: t.2 (u8/1)
 	; 26 pc
 	const length, 0
-	; 69:2 for *str != 0
 for_1:
 	load t.2, [str]
 	branch t.2 equals 0: for_1_break, for_1_body
@@ -33,7 +32,6 @@ for_1_continue:
 	add str, 1
 	jump for_1
 for_1_break:
-	; 72:9 return length
 	ret length
 	jump strlen@@u8_ret
 strlen@@u8_ret:
@@ -53,7 +51,6 @@ printNibble@u8:
 	arg 0: x (u8/1)
 	; 21 pc
 	and x, 15
-	; 5:2 if x > 9
 	branch x lteq 9: if_2_end, if_2_then
 if_2_then:
 	add x, 7
@@ -85,11 +82,9 @@ main:
 	const t.2, [string-0]
 	call printString@@u8[t.2]
 	const i, 0
-	; 19:2 for i < 16
 for_3:
 	branch i gteq 16: for_3_break, for_3_body
 for_3_body:
-	; 20:3 if i & 7 == 0
 	and t.3, i, 7
 	branch t.3 notequals 0: if_4_end, if_4_then
 if_4_then:
@@ -102,24 +97,20 @@ for_3_continue:
 for_3_break:
 	call printChar@u8[10]
 	const i, 32
-	; 27:2 for i < 128
 for_5:
 	branch i gteq 128: main_ret, for_5_body
 for_5_body:
-	; 28:3 if i & 15 == 0
 	and t.4, i, 15
 	branch t.4 notequals 0: if_6_end, if_6_then
 if_6_then:
 	call printHex2@u8[i]
 if_6_end:
-	; 31:3 if i & 7 == 0
 	and t.5, i, 7
 	branch t.5 notequals 0: if_7_end, if_7_then
 if_7_then:
 	call printChar@u8[32]
 if_7_end:
 	call printChar@u8[i]
-	; 35:3 if i & 15 == 15
 	and t.6, i, 15
 	branch t.6 notequals 15: for_5_continue, if_8_then
 if_8_then:

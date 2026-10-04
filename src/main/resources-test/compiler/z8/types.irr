@@ -5,7 +5,6 @@ printIntLf@u8:
 main:
 	; 7 pc
 	const i.1{r8}, 250
-	; 4:3 for i != 2
 	jump for_1
 for_1_body:
 	move i.2{r0}, i.2{r8}

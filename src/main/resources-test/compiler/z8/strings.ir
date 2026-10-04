@@ -17,7 +17,6 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 	; 13 pc
-	; 127:2 if number < 0
 	branch number gteq 0: if_1_end, if_1_then
 if_1_then:
 	call printChar@u8[45]
@@ -40,11 +39,9 @@ main:
 	var 8: a.8 (u8**/2)
 	var 9: t.9 (u8*/2)
 	; 72 pc
-	; begin initialize global variables
 	const t.2, [string-0]
 	addrof a.3, text
 	store [a.3], t.2
-	; end initialize global variables
 	addrof a.4, text
 	load t.5, [a.4]
 	call printString@@u8[t.5]
@@ -70,7 +67,6 @@ printLength:
 	const length, 0
 	addrof a.2, text
 	load ptr, [a.2]
-	; 16:2 for *ptr != 0
 for_2:
 	load t.3, [ptr]
 	branch t.3 equals 0: for_2_break, for_2_body

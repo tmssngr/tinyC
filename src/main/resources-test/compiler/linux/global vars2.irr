@@ -13,7 +13,6 @@ strlen@@u8:
 	arg 0: str (u8*/8)
 	; 9 pc
 	const length.1{r2}, 0
-	; 69:2 for *str != 0
 	move length.2{r0}, length.1{r2}
 	jump for_1
 for_1_body:
@@ -24,7 +23,6 @@ for_1_body:
 for_1:
 	load t.2.1{r2}, [str.1{r1}]
 	branch t.2.1{r2} notequals 0: for_1_body
-	; 72:9 return length
 
 next:
 	; 12 pc
@@ -34,16 +32,12 @@ next:
 	add t.2.1{r1}, 1
 	addrof a.5.1{r2}, global
 	store [a.5.1{r2}], t.2.1{r1}
-	; 8:9 return copy
 
 main:
 	; 14 pc
-	; begin initialize global variables
 	const t.1.1{r8}, 0
 	addrof a.2.1{r0}, global
 	store [a.2.1{r0}], t.1.1{r8}
-	; end initialize global variables
-	; 12:2 while true
 	jump while_2
 if_3_end:
 	branch n.1{r8} gteq 2: while_2
@@ -54,7 +48,6 @@ while_2:
 	call printString@@u8[t.3.1{r1}]
 	call n.1{r0} = next[] -> u8
 	move n.1{r8}, n.1{r0}
-	; 15:3 if n == 3
 	branch n.1{r8} notequals 3: if_3_end
 
 printStringLength@@u8@i64:

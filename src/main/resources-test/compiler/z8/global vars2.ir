@@ -14,7 +14,6 @@ next:
 	add t.2, t.4, 1
 	addrof a.5, global
 	store [a.5], t.2
-	; 8:9 return copy
 	ret copy
 	jump next_ret
 next_ret:
@@ -27,20 +26,15 @@ main:
 	var 3: t.3 (u8*/2)
 	var 4: t.4 (u8*/2)
 	; 35 pc
-	; begin initialize global variables
 	const t.1, 0
 	addrof a.2, global
 	store [a.2], t.1
-	; end initialize global variables
-	; 12:2 while true
 while_1:
 	const t.3, [string-0]
 	call printString@@u8[t.3]
 	call n = next[] -> u8
-	; 15:3 if n == 3
 	branch n equals 3: main_ret, if_2_end
 if_2_end:
-	; 19:3 if n < 2
 	branch n gteq 2: while_1, if_3_then
 if_3_then:
 	const t.4, [string-1]

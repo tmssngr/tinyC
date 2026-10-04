@@ -4,7 +4,6 @@ printNibble@u8:
 	; 7 pc
 	move x.1{r8}, param.x{r0}
 	and x.1{r8}, 15
-	; 5:2 if x > 9
 	branch x.1{r8} lteq 9: if_1_end
 	add x.3{r8}, 7
 if_1_end:
@@ -27,10 +26,8 @@ main:
 	const t.2.1{r0}, [string-0]
 	call printString@@u8[t.2.1{r0}]
 	const i.1{r8}, 0
-	; 19:2 for i < 16
 	jump for_2
 for_2_body:
-	; 20:3 if i & 7 == 0
 	move t.3.1{r9}, i.2{r8}
 	and t.3.1{r9}, 7
 	branch t.3.1{r9} notequals 0: if_3_end
@@ -45,17 +42,14 @@ for_2:
 	const arg.3.0{r0}, 10
 	call printChar@u8[arg.3.0{r0}]
 	const i.3{r8}, 32
-	; 27:2 for i < 128
 	jump for_4
 for_4_body:
-	; 28:3 if i & 15 == 0
 	move t.4.1{r9}, i.4{r8}
 	and t.4.1{r9}, 15
 	branch t.4.1{r9} notequals 0: if_5_end
 	move i.4{r0}, i.4{r8}
 	call printHex2@u8[i.4{r0}]
 if_5_end:
-	; 31:3 if i & 7 == 0
 	move t.5.1{r9}, i.4{r8}
 	and t.5.1{r9}, 7
 	branch t.5.1{r9} notequals 0: if_6_end
@@ -64,7 +58,6 @@ if_5_end:
 if_6_end:
 	move i.4{r0}, i.4{r8}
 	call printChar@u8[i.4{r0}]
-	; 35:3 if i & 15 == 15
 	move t.6.1{r9}, i.4{r8}
 	and t.6.1{r9}, 15
 	branch t.6.1{r9} notequals 15: for_4_continue

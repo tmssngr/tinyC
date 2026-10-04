@@ -33,7 +33,6 @@ testIf@u8:
 	addrof a.4.1{r10}, b
 	store [a.4.1{r10}], t.3.1{r8}
 	move b_ref.1{r8}, b_ref.1{r10}
-	; 6:2 if a == 0
 	branch param.a{r0} notequals 0: if_2_end
 	load t.5.1{r0}, [b_ref.1{r8}]
 	call printIntLf@u8[t.5.1{r0}]

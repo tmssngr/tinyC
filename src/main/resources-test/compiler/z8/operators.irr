@@ -32,14 +32,12 @@ getTrue:
 	; 2 pc
 	const t.0.1{r0}, [string-0]
 	call printString@@u8[t.0.1{r0}]
-	; 3:49 return true
 	const {r0}, 1
 
 getFalse:
 	; 2 pc
 	const t.0.1{r0}, [string-1]
 	call printString@@u8[t.0.1{r0}]
-	; 4:49 return false
 	const {r0}, 0
 
 printPass:
@@ -58,7 +56,6 @@ logicNot:
 	call printString@@u8[t.2.1{r0}]
 	const t.1{r8}, 1
 	const f.1{r9}, 0
-	; 13:2 if !getFalse([])
 	call t.3.1{r0} = getFalse[] -> bool
 	branch t.3.1{r0} equals 0: if_2_then
 	call printError[]
@@ -68,7 +65,6 @@ if_2_then:
 if_2_end:
 	notlog t.4.1{r0}, f.1{r9}
 	call printIntLf@bool[t.4.1{r0}]
-	; 15:2 if !getTrue([])
 	call t.5.1{r0} = getTrue[] -> bool
 	branch t.5.1{r0} equals 0: if_3_then
 	call printPass[]
@@ -85,7 +81,6 @@ logicAnd:
 	call printString@@u8[t.2.1{r0}]
 	const t.1{r8}, 1
 	const f.1{r9}, 0
-	; 23:2 if getFalse([]) && getFalse([])
 	call t.3.1{r0} = getFalse[] -> bool
 	branch t.3.1{r0} equals 0: if_4_else
 	call t.4.1{r0} = getFalse[] -> bool
@@ -95,7 +90,6 @@ logicAnd:
 if_4_else:
 	call printPass[]
 if_4_end:
-	; 24:15 logic and
 	move t.5.1{r10}, f.1{r9}
 	branch t.5.1{r10} notequals 0: and_2nd_6
 	move t.5.2{r0}, t.5.1{r10}
@@ -105,7 +99,6 @@ and_2nd_6:
 	move t.5.2{r0}, t.5.3{r10}
 and_next_6:
 	call printIntLf@bool[t.5.2{r0}]
-	; 25:2 if getFalse([]) && getTrue([])
 	call t.6.1{r0} = getFalse[] -> bool
 	branch t.6.1{r0} equals 0: if_7_else
 	call t.7.1{r0} = getTrue[] -> bool
@@ -115,7 +108,6 @@ and_next_6:
 if_7_else:
 	call printPass[]
 if_7_end:
-	; 26:15 logic and
 	move t.8.1{r10}, f.1{r9}
 	branch t.8.1{r10} notequals 0: and_2nd_9
 	move t.8.2{r0}, t.8.1{r10}
@@ -125,7 +117,6 @@ and_2nd_9:
 	move t.8.2{r0}, t.8.3{r10}
 and_next_9:
 	call printIntLf@bool[t.8.2{r0}]
-	; 27:2 if getTrue([]) && getFalse([])
 	call t.9.1{r0} = getTrue[] -> bool
 	branch t.9.1{r0} equals 0: if_10_else
 	call t.10.1{r0} = getFalse[] -> bool
@@ -135,7 +126,6 @@ and_next_9:
 if_10_else:
 	call printPass[]
 if_10_end:
-	; 28:15 logic and
 	move t.11.1{r10}, t.1{r8}
 	branch t.11.1{r10} notequals 0: and_2nd_12
 	move t.11.2{r0}, t.11.1{r10}
@@ -145,7 +135,6 @@ and_2nd_12:
 	move t.11.2{r0}, t.11.3{r10}
 and_next_12:
 	call printIntLf@bool[t.11.2{r0}]
-	; 29:2 if getTrue([]) && getTrue([])
 	call t.12.1{r0} = getTrue[] -> bool
 	branch t.12.1{r0} equals 0: if_13_else
 	call t.13.1{r0} = getTrue[] -> bool
@@ -155,7 +144,6 @@ and_next_12:
 if_13_else:
 	call printError[]
 if_13_end:
-	; 30:15 logic and
 	move t.14.1{r10}, t.1{r8}
 	branch t.14.1{r10} notequals 0: and_2nd_15
 	move t.14.2{r0}, t.14.1{r10}
@@ -165,7 +153,6 @@ and_2nd_15:
 	move t.14.2{r0}, t.14.3{r10}
 and_next_15:
 	call printIntLf@bool[t.14.2{r0}]
-	; 32:2 if !getFalse([]) && getFalse([])
 	call t.15.1{r0} = getFalse[] -> bool
 	branch t.15.1{r0} equals 0: if_16_then
 	call t.16.1{r0} = getFalse[] -> bool
@@ -175,11 +162,9 @@ and_next_15:
 if_16_then:
 	call printPass[]
 if_16_end:
-	; 33:17 logic and
 	move t.18.1{r10}, f.1{r9}
 	notlog t.17.1{r0}, t.18.2{r10}
 	call printIntLf@bool[t.17.1{r0}]
-	; 34:2 if !getFalse([]) && getTrue([])
 	call t.19.1{r0} = getFalse[] -> bool
 	branch t.19.1{r0} equals 0: if_19_then
 	call t.20.1{r0} = getTrue[] -> bool
@@ -189,14 +174,12 @@ if_16_end:
 if_19_then:
 	call printPass[]
 if_19_end:
-	; 35:17 logic and
 	move t.22.1{r10}, f.1{r9}
 	branch t.22.1{r10} equals 0: and_next_21
 	move t.22.3{r10}, t.1{r8}
 and_next_21:
 	notlog t.21.1{r0}, t.22.2{r10}
 	call printIntLf@bool[t.21.1{r0}]
-	; 36:2 if !getTrue([]) && getFalse([])
 	call t.23.1{r0} = getTrue[] -> bool
 	branch t.23.1{r0} equals 0: if_22_then
 	call t.24.1{r0} = getFalse[] -> bool
@@ -206,14 +189,12 @@ and_next_21:
 if_22_then:
 	call printPass[]
 if_22_end:
-	; 37:17 logic and
 	move t.26.1{r10}, t.1{r8}
 	branch t.26.1{r10} notequals 0: and_next_24
 	move t.26.2{r9}, t.26.1{r10}
 and_next_24:
 	notlog t.25.1{r0}, t.26.2{r9}
 	call printIntLf@bool[t.25.1{r0}]
-	; 38:2 if !getTrue([]) && getTrue([])
 	call t.27.1{r0} = getTrue[] -> bool
 	branch t.27.1{r0} equals 0: if_25_then
 	call t.28.1{r0} = getTrue[] -> bool
@@ -223,7 +204,6 @@ and_next_24:
 if_25_then:
 	call printError[]
 if_25_end:
-	; 39:17 logic and
 	move t.30.1{r9}, t.1{r8}
 	notlog t.29.1{r0}, t.30.2{r8}
 	call printIntLf@bool[t.29.1{r0}]
@@ -234,7 +214,6 @@ logicOr:
 	call printString@@u8[t.2.1{r0}]
 	const t.1{r8}, 1
 	const f.1{r9}, 0
-	; 46:2 if getFalse([]) || getFalse([])
 	call t.3.1{r0} = getFalse[] -> bool
 	branch t.3.1{r0} notequals 0: if_28_then
 	call t.4.1{r0} = getFalse[] -> bool
@@ -244,7 +223,6 @@ logicOr:
 if_28_then:
 	call printError[]
 if_28_end:
-	; 47:15 logic or
 	move t.5.1{r10}, f.1{r9}
 	branch t.5.1{r10} equals 0: or_2nd_30
 	move t.5.2{r0}, t.5.1{r10}
@@ -254,7 +232,6 @@ or_2nd_30:
 	move t.5.2{r0}, t.5.3{r10}
 or_next_30:
 	call printIntLf@bool[t.5.2{r0}]
-	; 48:2 if getFalse([]) || getTrue([])
 	call t.6.1{r0} = getFalse[] -> bool
 	branch t.6.1{r0} notequals 0: if_31_then
 	call t.7.1{r0} = getTrue[] -> bool
@@ -264,7 +241,6 @@ or_next_30:
 if_31_then:
 	call printPass[]
 if_31_end:
-	; 49:15 logic or
 	move t.8.1{r10}, f.1{r9}
 	branch t.8.1{r10} equals 0: or_2nd_33
 	move t.8.2{r0}, t.8.1{r10}
@@ -274,7 +250,6 @@ or_2nd_33:
 	move t.8.2{r0}, t.8.3{r10}
 or_next_33:
 	call printIntLf@bool[t.8.2{r0}]
-	; 50:2 if getTrue([]) || getFalse([])
 	call t.9.1{r0} = getTrue[] -> bool
 	branch t.9.1{r0} notequals 0: if_34_then
 	call t.10.1{r0} = getFalse[] -> bool
@@ -284,7 +259,6 @@ or_next_33:
 if_34_then:
 	call printPass[]
 if_34_end:
-	; 51:15 logic or
 	move t.11.1{r10}, t.1{r8}
 	branch t.11.1{r10} equals 0: or_2nd_36
 	move t.11.2{r0}, t.11.1{r10}
@@ -293,7 +267,6 @@ or_2nd_36:
 	move t.11.2{r0}, t.11.3{r9}
 or_next_36:
 	call printIntLf@bool[t.11.2{r0}]
-	; 52:2 if getTrue([]) || getTrue([])
 	call t.12.1{r0} = getTrue[] -> bool
 	branch t.12.1{r0} notequals 0: if_37_then
 	call t.13.1{r0} = getTrue[] -> bool
@@ -303,7 +276,6 @@ or_next_36:
 if_37_then:
 	call printPass[]
 if_37_end:
-	; 53:15 logic or
 	move t.14.1{r9}, t.1{r8}
 	branch t.14.1{r9} equals 0: or_2nd_39
 	move t.14.2{r0}, t.14.1{r9}
@@ -377,7 +349,6 @@ main:
 	call logicNot[]
 	call logicAnd[]
 	call logicOr[]
-	; 82:2 if !getTrue([]) && getTrue([]) || !getFalse([]) && getFalse([])
 	call t.24.1{r0} = getTrue[] -> bool
 	branch t.24.1{r0} equals 0: if_40_then
 	call t.25.1{r0} = getTrue[] -> bool
@@ -391,8 +362,6 @@ main:
 if_40_then:
 	call printPass[]
 if_40_end:
-	; 88:23 logic or
-	; 88:17 logic and
 	addrof memVarAddr{r14}, t.1
 	load t.1{r8}, [memVarAddr{r14}]
 	move t.29.1{r9}, t.1{r8}
@@ -401,7 +370,6 @@ if_40_end:
 	move t.28.2{r0}, t.28.1{r8}
 	jump or_next_44
 or_2nd_44:
-	; 88:30 logic and
 	addrof memVarAddr{r14}, f.1
 	load f.1{r8}, [memVarAddr{r14}]
 	move t.30.1{r9}, f.1{r8}
@@ -420,7 +388,6 @@ or_next_44:
 	addrof memVarAddr{r14}, b1.1
 	store [memVarAddr{r14}], b1.1{r1}
 	call printIntLf@u8[t.32.1{r0}]
-	; 95:20 logic or
 	equals t.34.1{r8}, b.1{r10}, c.1{r12}
 	branch t.34.1{r8} equals 0: or_2nd_47
 	move t.34.2{r0}, t.34.1{r8}
@@ -434,7 +401,6 @@ or_2nd_47:
 	move t.34.2{r0}, t.34.3{r1}
 or_next_47:
 	call printIntLf@bool[t.34.2{r0}]
-	; 96:20 logic and
 	equals t.35.1{r1}, b.1{r10}, c.1{r12}
 	branch t.35.1{r1} notequals 0: and_2nd_48
 	move t.35.2{r0}, t.35.1{r1}

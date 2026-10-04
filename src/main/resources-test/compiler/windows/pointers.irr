@@ -14,7 +14,6 @@ printUint@i64:
 	var 1: buffer[] (u8*/20)
 	; 28 pc
 	const pos.1{r6}, 20
-	; 33:2 while true
 	move number.1{r3}, number{r1}
 while_1:
 	sub pos.3{r6}, 1
@@ -31,7 +30,6 @@ while_1:
 	addrof t.6.1{r5}, buffer
 	add t.6.2{r5}, t.7.1{r4}
 	store [t.6.2{r5}], digit.1{r0}
-	; 39:3 if number == 0
 	branch number.2{r3} notequals 0: while_1
 	move t.9.1{r0}, t.9.1{r4}
 	addrof t.8.1{r3}, buffer
@@ -88,7 +86,6 @@ testIf@u8:
 	addrof a.4.1{r0}, b
 	store [a.4.1{r0}], t.3.1{r6}
 	move b_ref.1{r6}, b_ref.1{r0}
-	; 6:2 if a == 0
 	branch a{r1} notequals 0: if_4_end
 	load t.5.1{r1}, [b_ref.1{r6}]
 	call printIntLf@u8[t.5.1{r1}]

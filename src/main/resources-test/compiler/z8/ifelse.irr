@@ -23,7 +23,6 @@ if_1_end:
 main:
 	; 6 pc
 	const a.1{r8}, 1
-	; 5:2 if a > 0
 	branch a.1{r8} gt 0: if_2_then
 	neg a.2{r0}, a.1{r8}
 	call printIntLf@i16[a.2{r0}]

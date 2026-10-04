@@ -14,11 +14,9 @@ main:
 	var 5: t.5 (u8/1)
 	var 6: t.6 (u8/1)
 	; 39 pc
-	; begin initialize global variables
 	const t.0, 0
 	addrof a.1, i
 	store [a.1], t.0
-	; end initialize global variables
 	call t.2 = next[] -> u8
 	call t.3 = next[] -> u8
 	call t.4 = next[] -> u8
@@ -41,7 +39,6 @@ next:
 	add t.0, t.2, 1
 	addrof a.3, i
 	store [a.3], t.0
-	; 11:9 return i
 	addrof a.4, i
 	load t.5, [a.4]
 	ret t.5

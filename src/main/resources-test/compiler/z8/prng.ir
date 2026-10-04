@@ -9,7 +9,6 @@ randomU8:
 	var 0: t.0 (u8/1)
 	var 1: t.1 (i32/4)
 	; 12 pc
-	; 60:10 return (u8)
 	call t.1 = random[] -> i32
 	cast t.0(u8), t.1(i32)
 	ret t.0
@@ -23,7 +22,6 @@ main:
 	; 18 pc
 	call initRandom@i32[7439742]
 	const i, 0
-	; 6:2 for i < 50
 for_1:
 	branch i gteq 50: main_ret, for_1_body
 for_1_body:

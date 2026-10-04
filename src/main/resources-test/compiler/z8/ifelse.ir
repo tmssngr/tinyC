@@ -11,7 +11,6 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 	; 13 pc
-	; 127:2 if number < 0
 	branch number gteq 0: if_1_end, if_1_then
 if_1_then:
 	call printChar@u8[45]
@@ -26,7 +25,6 @@ main:
 	var 0: a (i16/2)
 	; 17 pc
 	const a, 1
-	; 5:2 if a > 0
 	branch a lteq 0: if_2_else, if_2_then
 if_2_then:
 	call printIntLf@i16[a]

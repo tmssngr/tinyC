@@ -11,7 +11,6 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 	; 13 pc
-	; 127:2 if number < 0
 	branch number gteq 0: if_1_end, if_1_then
 if_1_then:
 	call printChar@u8[45]
@@ -47,7 +46,6 @@ printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
 	call printIntLf@i16[f]
 	call printIntLf@i16[g]
 	call printIntLf@i16[h]
-	; 17:35 return a + b + c + d + e + f + g + h
 	add t.14, a, b
 	add t.13, t.14, c
 	add t.12, t.13, d

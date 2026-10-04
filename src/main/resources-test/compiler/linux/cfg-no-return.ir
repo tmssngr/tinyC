@@ -3,7 +3,6 @@ main:
 	var 0: i (u8/1)
 	; 8 pc
 	const i, 0
-	; 3:2 while true
 while_1:
 	add i, 1
 	jump while_1

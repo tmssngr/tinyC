@@ -21,7 +21,6 @@ printUint@i64:
 	var 1: buffer[] (u8*/20)
 	; 28 pc
 	const pos.1{r6}, 20
-	; 33:2 while true
 	move number.1{r3}, number{r1}
 while_1:
 	sub pos.3{r6}, 1
@@ -38,7 +37,6 @@ while_1:
 	addrof t.6.1{r5}, buffer
 	add t.6.2{r5}, t.7.1{r4}
 	store [t.6.2{r5}], digit.1{r0}
-	; 39:3 if number == 0
 	branch number.2{r3} notequals 0: while_1
 	move t.9.1{r0}, t.9.1{r4}
 	addrof t.8.1{r3}, buffer
@@ -64,12 +62,10 @@ unusedArgs@u8@bool@u8@u8:
 	arg 2: c (u8/1)
 	arg 3: d (u8/1)
 	; 1 pc
-	; 9:10 return (i64)
 	cast t.4.1{r0}(i64), c{r3}(u8)
 
 main:
 	; 47 pc
-	; begin initialize global variables
 	const t.3.1{r6}, 48
 	addrof a.4.1{r0}, zero
 	store [a.4.1{r0}], t.3.1{r6}
@@ -82,7 +78,6 @@ main:
 	const t.9.1{r6}, 34
 	addrof a.10.1{r0}, threeFour
 	store [a.10.1{r0}], t.9.1{r6}
-	; end initialize global variables
 	const t.11.1{r2}, 1
 	const arg.0.0{r1}, 1
 	const arg.0.2{r3}, 2

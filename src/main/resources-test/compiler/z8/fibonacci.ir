@@ -11,7 +11,6 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 	; 13 pc
-	; 127:2 if number < 0
 	branch number gteq 0: if_1_end, if_1_then
 if_1_then:
 	call printChar@u8[45]
@@ -28,7 +27,6 @@ main:
 	; 25 pc
 	const a, 0
 	const b, 1
-	; 6:2 while b < 1000
 while_2:
 	branch b gteq 1000: main_ret, while_2_body
 while_2_body:

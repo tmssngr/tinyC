@@ -4,11 +4,9 @@ printIntLf@u8:
 
 main:
 	; 20 pc
-	; begin initialize global variables
 	const t.0.1{r8}, 0
 	addrof a.1.1{r10}, i
 	store [a.1.1{r10}], t.0.1{r8}
-	; end initialize global variables
 	call t.2.1{r0} = next[] -> u8
 	move t.2.1{r8}, t.2.1{r0}
 	call t.3.1{r0} = next[] -> u8
@@ -31,7 +29,6 @@ next:
 	load t.2.1{r1}, [a.1.1{r2}]
 	add t.0.1{r1}, 1
 	store [a.3.1{r2}], t.0.1{r1}
-	; 11:9 return i
 	move t.5.1{r0}, t.5.1{r1}
 
 doPrint@u8@u8@u8@u8@u8:

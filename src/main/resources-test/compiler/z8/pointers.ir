@@ -17,7 +17,6 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 	; 13 pc
-	; 127:2 if number < 0
 	branch number gteq 0: if_1_end, if_1_then
 if_1_then:
 	call printChar@u8[45]
@@ -42,7 +41,6 @@ testIf@u8:
 	addrof a.4, b
 	store [a.4], t.3
 	addrof b_ref, b
-	; 6:2 if a == 0
 	branch a notequals 0: if_2_end, if_2_then
 if_2_then:
 	load t.5, [b_ref]

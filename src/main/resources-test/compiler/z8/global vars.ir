@@ -11,7 +11,6 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 	; 13 pc
-	; 127:2 if number < 0
 	branch number gteq 0: if_1_end, if_1_then
 if_1_then:
 	call printChar@u8[45]
@@ -39,7 +38,6 @@ main:
 	var 13: a.13 (i16**/2)
 	var 14: t.14 (i16*/2)
 	; 103 pc
-	; begin initialize global variables
 	const t.0, 32
 	addrof a.1, space
 	store [a.1], t.0
@@ -49,7 +47,6 @@ main:
 	addrof t.4, space
 	addrof a.5, ptrToSpace
 	store [a.5], t.4
-	; end initialize global variables
 	addrof a.6, next
 	load t.7, [a.6]
 	call printIntLf@i16[t.7]

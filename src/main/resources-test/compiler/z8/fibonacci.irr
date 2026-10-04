@@ -24,7 +24,6 @@ main:
 	; 8 pc
 	const a.1{r8}, 0
 	const b.1{r10}, 1
-	; 6:2 while b < 1000
 	jump while_2
 while_2_body:
 	add b.3{r10}, a.2{r8}

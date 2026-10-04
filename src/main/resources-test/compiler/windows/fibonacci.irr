@@ -14,7 +14,6 @@ printUint@i64:
 	var 1: buffer[] (u8*/20)
 	; 28 pc
 	const pos.1{r6}, 20
-	; 33:2 while true
 	move number.1{r3}, number{r1}
 while_1:
 	sub pos.3{r6}, 1
@@ -31,7 +30,6 @@ while_1:
 	addrof t.6.1{r5}, buffer
 	add t.6.2{r5}, t.7.1{r4}
 	store [t.6.2{r5}], digit.1{r0}
-	; 39:3 if number == 0
 	branch number.2{r3} notequals 0: while_1
 	move t.9.1{r0}, t.9.1{r4}
 	addrof t.8.1{r3}, buffer
@@ -79,7 +77,6 @@ main:
 	; 24 pc
 	const a.1{r6}, 0
 	const b.1{r0}, 1
-	; 6:2 while b < 1000
 	jump while_4
 while_4_body:
 	add b.3{r0}, a.2{r6}

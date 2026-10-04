@@ -14,7 +14,6 @@ printUint@i64:
 	var 1: buffer[] (u8*/20)
 	; 28 pc
 	const pos.1{r6}, 20
-	; 33:2 while true
 	move number.1{r3}, number{r1}
 while_1:
 	sub pos.3{r6}, 1
@@ -31,7 +30,6 @@ while_1:
 	addrof t.6.1{r5}, buffer
 	add t.6.2{r5}, t.7.1{r4}
 	store [t.6.2{r5}], digit.1{r0}
-	; 39:3 if number == 0
 	branch number.2{r3} notequals 0: while_1
 	move t.9.1{r0}, t.9.1{r4}
 	addrof t.8.1{r3}, buffer
@@ -101,26 +99,21 @@ random:
 	add t.11.1{r2}, t.13.1{r1}
 	addrof a.14.1{r1}, __random__
 	store [a.14.1{r1}], t.11.1{r2}
-	; 16:9 return __random__
 	move t.16.1{r0}, t.16.1{r2}
 
 randomU8:
 	; 2 pc
-	; 60:10 return (u8)
 	call t.1.1{r0} = random[] -> i32
 	cast t.0.1{r0}(u8), t.1.1{r0}(i32)
 
 main:
 	; 14 pc
-	; begin initialize global variables
 	const t.2.1{r6}, 0
 	addrof a.3.1{r0}, __random__
 	store [a.3.1{r0}], t.2.1{r6}
-	; end initialize global variables
 	const arg.0.0{r1}, 7439742
 	call initRandom@i32[arg.0.0{r1}]
 	const i.1{r6}, 0
-	; 6:2 for i < 50
 	jump for_4
 for_4_body:
 	call r.1{r0} = randomU8[] -> u8
