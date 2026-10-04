@@ -305,14 +305,6 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 	u8 r;
 	u8 c;
 	u8 cell;
-	u8 rowFrom;
-	u8 rowTo;
-	u8 colFrom;
-	u8 colTo;
-	i16 neighborIndex;
-	u8 neighborRow;
-	u8 neighborColumn;
-	u8 neighborCell;
 
 	printCellAt@u8@u8(row, column);
 	if ((getBombCountAround@u8@u8(row, column)) != 0) {
@@ -333,40 +325,59 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 				if ((getBombCountAround@u8@u8(r, c)) != 0) {
 					continue;
 				}
-				rowFrom = r;
-				if (rowFrom > 0) {
-					rowFrom = rowFrom - 1;
-				}
-				rowTo = r + 1;
-				if (rowTo >= 20) {
-					rowTo = rowTo - 1;
-				}
-				colFrom = c;
-				if (colFrom > 0) {
-					colFrom = colFrom - 1;
-				}
-				colTo = c + 1;
-				if (colTo >= 38) {
-					colTo = colTo - 1;
-				}
-				neighborIndex = rowColumnToCell@u8@u8(rowFrom, colFrom);
-				neighborRow = rowFrom;
-				for (; neighborRow <= rowTo; neighborRow = neighborRow + 1) {
-					neighborColumn = colFrom;
-					for (; neighborColumn <= colTo; neighborColumn = neighborColumn + 1, neighborIndex = neighborIndex + 1) {
-						neighborCell = field[neighborIndex];
-						if ((neighborCell & 32) != 0) {
-							continue;
-						}
-						field[neighborIndex] = neighborCell | 32;
-						printCellAt@u8@u8@u8(field[neighborIndex], neighborRow, neighborColumn);
-						changed = true;
-					}
-					neighborIndex = (((neighborIndex - ((i16)colTo)) + ((i16)colFrom)) + 38) - 1;
+				if (revealNeighbors@u8@u8(r, c)) {
+					changed = true;
 				}
 			}
 		}
 	}
+}
+
+bool revealNeighbors@u8@u8(u8 row, u8 column) {
+	u8 rowFrom;
+	u8 rowTo;
+	u8 colFrom;
+	u8 colTo;
+	i16 index;
+	bool changed;
+	u8 r;
+	u8 c;
+	u8 cell;
+
+	rowFrom = row;
+	if (rowFrom > 0) {
+		rowFrom = rowFrom - 1;
+	}
+	rowTo = row + 1;
+	if (rowTo >= 20) {
+		rowTo = rowTo - 1;
+	}
+	colFrom = column;
+	if (colFrom > 0) {
+		colFrom = colFrom - 1;
+	}
+	colTo = column + 1;
+	if (colTo >= 38) {
+		colTo = colTo - 1;
+	}
+	index = rowColumnToCell@u8@u8(rowFrom, colFrom);
+	changed = false;
+	r = rowFrom;
+	for (; r <= rowTo; r = r + 1) {
+		c = colFrom;
+		for (; c <= colTo; c = c + 1, index = index + 1) {
+			cell = field[index];
+			if ((cell & 32) != 0) {
+				continue;
+			}
+			cell = cell | 32;
+			field[index] = cell;
+			printCellAt@u8@u8@u8(cell, r, c);
+			changed = true;
+		}
+		index = (((index - ((i16)colTo)) + ((i16)colFrom)) + 38) - 1;
+	}
+	return changed;
 }
 
 void main() {

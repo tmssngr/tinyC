@@ -1190,18 +1190,7 @@ setBomb_Pu8_Pu8__ret:
         ; void maybeRevealAround@u8@u8
         ; arg row (u8): r0
         ; arg column (u8): r1
-        ; var rowTo.2 (u8): SP+8
-        ; var colFrom.2 (u8): SP+9
-        ; var colTo.2 (u8): SP+10
-        ; var neighborIndex.3 (i16): SP+11
-        ; var neighborColumn.2 (u8): SP+13
 maybeRevealAround_Pu8_Pu8:
-        ld   %30, SPH
-        ld   %31, SPL
-        sub  %31, #%06
-        sbc  %30, #%00
-        ld   SPH, %30
-        ld   SPL, %31
         ; save clobbered non-volatile registers
         push r8
         push r9
@@ -1209,8 +1198,6 @@ maybeRevealAround_Pu8_Pu8:
         push r11
         push r12
         push r13
-        push r14
-        push r15
         ; move param.row{r8}, row{r0}
         ld   r8, r0
         ; move param.column{r9}, column{r1}
@@ -1222,9 +1209,9 @@ maybeRevealAround_Pu8_Pu8:
         ld   r0, r8
         ; move param.column{r1}, param.column{r9}
         ld   r1, r9
-        ; call t.15.1{r0} = getBombCountAround@u8@u8[param.row{r0}, param.column{r1}] -> u8
+        ; call t.7.1{r0} = getBombCountAround@u8@u8[param.row{r0}, param.column{r1}] -> u8
         call getBombCountAround_Pu8_Pu8
-        ; branch t.15.1{r0} notequals 0: maybeRevealAround@u8@u8_ret
+        ; branch t.7.1{r0} notequals 0: maybeRevealAround@u8@u8_ret
         cp   r0, #%00
         jr   ne, maybeRevealAround_Pu8_Pu8__ret
         ; const changed.1{r8}, 1
@@ -1250,25 +1237,25 @@ for__39__body:
         jr   for__40
 
 for__40__body:
-        ; addrof t.16.1{r2}, field
+        ; addrof t.8.1{r2}, field
         ld   r2, #hi(var_0)
         ld   r3, #lo(var_0)
-        ; add t.16.2{r2}, index.3{r9}
+        ; add t.8.2{r2}, index.3{r9}
         add  r3, r10
         adc  r2, r9
-        ; load cell.1{r13}, [t.16.2{r2}]
+        ; load cell.1{r13}, [t.8.2{r2}]
         lde  r13, @rr2
         ; 264:5 if cell & 32 == 0 || cell & 128 != 0
-        ; move t.17.1{r2}, cell.1{r13}
+        ; move t.9.1{r2}, cell.1{r13}
         ld   r2, r13
-        ; and t.17.1{r2}, 32
+        ; and t.9.1{r2}, 32
         and  r2, #%20
-        ; branch t.17.1{r2} equals 0: for_40_continue
+        ; branch t.9.1{r2} equals 0: for_40_continue
         cp   r2, #%00
         jr   eq, for__40__continue
-        ; and t.18.1{r13}, 128
+        ; and t.10.1{r13}, 128
         and  r13, #%80
-        ; branch t.18.1{r13} notequals 0: for_40_continue
+        ; branch t.10.1{r13} notequals 0: for_40_continue
         cp   r13, #%00
         jr   ne, for__40__continue
         ; 267:5 if getBombCountAround@u8@u8([ExprVarAccess[varName=r, index=4, scope=function, type=u8, varIsArray=false, location=267:28], ExprVarAccess[varName=c, index=5, scope=function, type=u8, varIsArray=false, location=267:31]]) != 0
@@ -1276,335 +1263,25 @@ for__40__body:
         ld   r0, r11
         ; move c.2{r1}, c.2{r12}
         ld   r1, r12
-        ; call t.19.1{r0} = getBombCountAround@u8@u8[r.2{r0}, c.2{r1}] -> u8
+        ; call t.11.1{r0} = getBombCountAround@u8@u8[r.2{r0}, c.2{r1}] -> u8
         call getBombCountAround_Pu8_Pu8
-        ; branch t.19.1{r0} notequals 0: for_40_continue
+        ; branch t.11.1{r0} notequals 0: for_40_continue
         cp   r0, #%00
         jr   ne, for__40__continue
-        ; move rowFrom.1{r13}, r.2{r11}
-        ld   r13, r11
-        ; 272:5 if rowFrom > 0
-        ; branch rowFrom.1{r13} lteq 0: if_44_end
-        cp   r13, #%00
-        jr   ule, if__44__end
-        ; sub rowFrom.3{r13}, 1
-        dec  r13
-if__44__end:
-        ; move rowTo.1{r2}, r.2{r11}
-        ld   r2, r11
-        ; add rowTo.1{r2}, 1
-        inc  r2
-        ; 276:5 if rowTo >= 20
-        ; branch rowTo.1{r2} gteq 20: if_45_then
-        cp   r2, #%14
-        jr   uge, if__45__then
-        ; addrof memVarAddr{r14}, rowTo.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%08
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], rowTo.2{r2}
-        lde  @rr14, r2
-        jr   if__45__end
-
-if__45__then:
-        ; sub rowTo.3{r2}, 1
-        dec  r2
-        ; addrof memVarAddr{r14}, rowTo.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%08
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], rowTo.2{r2}
-        lde  @rr14, r2
-if__45__end:
-        ; move colFrom.1{r2}, c.2{r12}
-        ld   r2, r12
-        ; 281:5 if colFrom > 0
-        ; branch colFrom.1{r2} gt 0: if_46_then
-        cp   r2, #%00
-        jr   ugt, if__46__then
-        ; move colFrom.2{r1}, colFrom.1{r2}
-        ld   r1, r2
-        jr   if__46__end
-
-if__46__then:
-        ; sub colFrom.3{r2}, 1
-        dec  r2
-        ; move colFrom.2{r1}, colFrom.3{r2}
-        ld   r1, r2
-if__46__end:
-        ; move colTo.1{r2}, c.2{r12}
-        ld   r2, r12
-        ; add colTo.1{r2}, 1
-        inc  r2
-        ; 285:5 if colTo >= 38
-        ; branch colTo.1{r2} gteq 38: if_47_then
-        cp   r2, #%26
-        jr   uge, if__47__then
-        ; addrof memVarAddr{r14}, colTo.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0a
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], colTo.2{r2}
-        lde  @rr14, r2
-        jr   if__47__end
-
-if__47__then:
-        ; sub colTo.3{r2}, 1
-        dec  r2
-        ; addrof memVarAddr{r14}, colTo.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0a
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], colTo.2{r2}
-        lde  @rr14, r2
-if__47__end:
-        ; move rowFrom.2{r0}, rowFrom.2{r13}
-        ld   r0, r13
-        ; addrof memVarAddr{r14}, colFrom.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%09
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], colFrom.2{r1}
-        lde  @rr14, r1
-        ; call neighborIndex.1{r0} = rowColumnToCell@u8@u8[rowFrom.2{r0}, colFrom.2{r1}] -> i16
-        call rowColumnToCell_Pu8_Pu8
-        ; 289:5 for neighborRow <= rowTo
-        ; move neighborIndex.2{r3}, neighborIndex.1{r0}
-        ld   r4, r1
-        ld   r3, r0
-        ; load colFrom.2{r1}, [memVarAddr{r14}]
-        lde  r1, @rr14
-        ; addrof memVarAddr{r14}, colTo.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0a
-        adc  r14, #%00
-        ; load colTo.2{r0}, [memVarAddr{r14}]
-        lde  r0, @rr14
-        ; move neighborIndex.2{r2}, neighborIndex.2{r3}
-        ld   r2, r3
-        ld   r3, r4
-        jr   for__48
-
-for__48__body:
-        ; addrof memVarAddr{r14}, colFrom.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%09
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], colFrom.2{r1}
-        lde  @rr14, r1
-        ; addrof memVarAddr{r14}, colTo.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0a
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], colTo.2{r0}
-        lde  @rr14, r0
-        ; addrof memVarAddr{r14}, rowTo.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%08
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], rowTo.2{r4}
-        lde  @rr14, r4
-        ; move neighborIndex.2{r3}, neighborIndex.2{r2}
-        ld   r4, r3
-        ld   r3, r2
-        ; addrof memVarAddr{r14}, colFrom.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%09
-        adc  r14, #%00
-        ; move neighborColumn.1{r5}, colFrom.2{r1}
-        ld   r5, r1
-        ; 290:6 for neighborColumn <= colTo
-        ; move neighborColumn.2{r2}, neighborColumn.1{r5}
-        ld   r2, r5
-        jr   for__49
-
-for__49__body:
-        ; addrof memVarAddr{r14}, colTo.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0a
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], colTo.2{r0}
-        lde  @rr14, r0
-        ; addrof t.20.1{r6}, field
-        ld   r6, #hi(var_0)
-        ld   r7, #lo(var_0)
-        ; add t.20.2{r6}, neighborIndex.3{r3}
-        add  r7, r4
-        adc  r6, r3
-        ; load neighborCell.1{r5}, [t.20.2{r6}]
-        lde  r5, @rr6
-        ; 292:7 if neighborCell & 32 != 0
-        ; move t.21.1{r6}, neighborCell.1{r5}
-        ld   r6, r5
-        ; and t.21.1{r6}, 32
-        and  r6, #%20
-        ; branch t.21.1{r6} equals 0: if_50_end
-        cp   r6, #%00
-        jr   eq, if__50__end
-        ; addrof memVarAddr{r14}, neighborColumn.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0d
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], neighborColumn.2{r2}
-        lde  @rr14, r2
-        ; addrof memVarAddr{r14}, neighborIndex.3
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0b
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], neighborIndex.3{r3}
-        lde  @rr14, r3
-        incw r14
-        lde  @rr14, r4
-        decw r14
-        jr   for__49__continue
-
-if__50__end:
-        ; move t.22.1{r8}, neighborCell.1{r5}
-        ld   r8, r5
-        ; or t.22.1{r8}, 32
-        or  r8, #%20
-        ; addrof t.23.1{r6}, field
-        ld   r6, #hi(var_0)
-        ld   r7, #lo(var_0)
-        ; add t.23.2{r6}, neighborIndex.3{r3}
-        add  r7, r4
-        adc  r6, r3
-        ; store [t.23.2{r6}], t.22.1{r8}
-        lde  @rr6, r8
-        ; addrof t.25.1{r6}, field
-        ld   r6, #hi(var_0)
-        ld   r7, #lo(var_0)
-        ; add t.25.2{r6}, neighborIndex.3{r3}
-        add  r7, r4
-        adc  r6, r3
-        ; addrof memVarAddr{r14}, neighborIndex.3
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0b
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], neighborIndex.3{r3}
-        lde  @rr14, r3
-        incw r14
-        lde  @rr14, r4
-        decw r14
-        ; load t.24.1{r0}, [t.25.2{r6}]
-        lde  r0, @rr6
-        ; move neighborRow.2{r1}, neighborRow.2{r13}
-        ld   r1, r13
-        ; addrof memVarAddr{r14}, neighborColumn.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0d
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], neighborColumn.2{r2}
-        lde  @rr14, r2
-        ; call printCellAt@u8@u8@u8[t.24.1{r0}, neighborRow.2{r1}, neighborColumn.2{r2}]
-        call printCellAt_Pu8_Pu8_Pu8
-        ; const changed.14{r0}, 1
+        ; 271:5 if revealNeighbors@u8@u8([ExprVarAccess[varName=r, index=4, scope=function, type=u8, varIsArray=false, location=271:24], ExprVarAccess[varName=c, index=5, scope=function, type=u8, varIsArray=false, location=271:27]])
+        ; move r.2{r0}, r.2{r11}
+        ld   r0, r11
+        ; move c.2{r1}, c.2{r12}
+        ld   r1, r12
+        ; call t.12.1{r0} = revealNeighbors@u8@u8[r.2{r0}, c.2{r1}] -> bool
+        call revealNeighbors_Pu8_Pu8
+        ; branch t.12.1{r0} equals 0: for_40_continue
+        cp   r0, #%00
+        jr   eq, for__40__continue
+        ; const changed.7{r0}, 1
         ld   r0, #%01
-        ; move changed.13{r8}, changed.14{r0}
+        ; move changed.6{r8}, changed.7{r0}
         ld   r8, r0
-for__49__continue:
-        ; addrof memVarAddr{r14}, neighborColumn.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0d
-        adc  r14, #%00
-        ; load neighborColumn.2{r2}, [memVarAddr{r14}]
-        lde  r2, @rr14
-        ; move neighborColumn.4{r0}, neighborColumn.2{r2}
-        ld   r0, r2
-        ; add neighborColumn.4{r0}, 1
-        inc  r0
-        ; addrof memVarAddr{r14}, neighborIndex.3
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0b
-        adc  r14, #%00
-        ; load neighborIndex.3{r3}, [memVarAddr{r14}]
-        lde  r3, @rr14
-        incw r14
-        lde  r4, @rr14
-        decw r14
-        ; move neighborIndex.6{r1}, neighborIndex.3{r3}
-        ld   r1, r3
-        ld   r2, r4
-        ; add neighborIndex.6{r1}, 1
-        add  r2, #%01
-        adc  r1, #%00
-        ; move neighborIndex.3{r3}, neighborIndex.6{r1}
-        ld   r4, r2
-        ld   r3, r1
-        ; move neighborColumn.2{r2}, neighborColumn.4{r0}
-        ld   r2, r0
-for__49:
-        ; addrof memVarAddr{r14}, colTo.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0a
-        adc  r14, #%00
-        ; load colTo.2{r0}, [memVarAddr{r14}]
-        lde  r0, @rr14
-        ; branch neighborColumn.2{r2} lteq colTo.2{r0}: for_49_body
-        cp   r2, r0
-        jr   ule, for__49__body
-        ; cast t.29.1{r1}(i16), colTo.2{r0}(u8)
-        ld   r2, r0
-        ld   r1, #0
-        ; sub t.28.1{r3}, t.29.1{r1}
-        sub  r4, r2
-        sbc  r3, r1
-        ; addrof memVarAddr{r14}, colFrom.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%09
-        adc  r14, #%00
-        ; load colFrom.2{r1}, [memVarAddr{r14}]
-        lde  r1, @rr14
-        ; cast t.30.1{r5}(i16), colFrom.2{r1}(u8)
-        ld   r6, r1
-        ld   r5, #0
-        ; move t.27.1{r2}, t.28.1{r3}
-        ld   r2, r3
-        ld   r3, r4
-        ; add t.27.1{r2}, t.30.1{r5}
-        add  r3, r6
-        adc  r2, r5
-        ; add t.26.1{r2}, 38
-        add  r3, #%26
-        adc  r2, #%00
-        ; sub neighborIndex.4{r2}, 1
-        decw r2
-        ; move neighborRow.4{r4}, neighborRow.2{r13}
-        ld   r4, r13
-        ; add neighborRow.4{r4}, 1
-        inc  r4
-        ; move neighborRow.2{r13}, neighborRow.4{r4}
-        ld   r13, r4
-for__48:
-        ; addrof memVarAddr{r14}, rowTo.2
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%08
-        adc  r14, #%00
-        ; load rowTo.2{r4}, [memVarAddr{r14}]
-        lde  r4, @rr14
-        ; branch neighborRow.2{r13} lteq rowTo.2{r4}: for_48_body, for_40_continue
-        cp   r13, r4
-        jr   ule, for__48__body
 for__40__continue:
         ; move c.4{r0}, c.2{r12}
         ld   r0, r12
@@ -1641,6 +1318,226 @@ while__38:
         jr   ne, while__38__body
 maybeRevealAround_Pu8_Pu8__ret:
         ; restore clobbered non-volatile registers
+        pop  r13
+        pop  r12
+        pop  r11
+        pop  r10
+        pop  r9
+        pop  r8
+        ret
+
+        ; bool revealNeighbors@u8@u8
+        ; arg row (u8): r0
+        ; arg column (u8): r1
+        ; var index.3 (i16): SP+8
+revealNeighbors_Pu8_Pu8:
+        ld   %30, SPH
+        ld   %31, SPL
+        sub  %31, #%02
+        sbc  %30, #%00
+        ld   SPH, %30
+        ld   SPL, %31
+        ; save clobbered non-volatile registers
+        push r8
+        push r9
+        push r10
+        push r11
+        push r12
+        push r13
+        push r14
+        push r15
+        ; move rowFrom.1{r8}, param.row{r0}
+        ld   r8, r0
+        ; 281:2 if rowFrom > 0
+        ; branch rowFrom.1{r8} lteq 0: if_45_end
+        cp   r8, #%00
+        jr   ule, if__45__end
+        ; sub rowFrom.3{r8}, 1
+        dec  r8
+if__45__end:
+        ; move rowTo.1{r9}, param.row{r0}
+        ld   r9, r0
+        ; add rowTo.1{r9}, 1
+        inc  r9
+        ; 285:2 if rowTo >= 20
+        ; branch rowTo.1{r9} lt 20: if_46_end
+        cp   r9, #%14
+        jr   ult, if__46__end
+        ; sub rowTo.3{r9}, 1
+        dec  r9
+if__46__end:
+        ; move colFrom.1{r10}, param.column{r1}
+        ld   r10, r1
+        ; 290:2 if colFrom > 0
+        ; branch colFrom.1{r10} lteq 0: if_47_end
+        cp   r10, #%00
+        jr   ule, if__47__end
+        ; sub colFrom.3{r10}, 1
+        dec  r10
+if__47__end:
+        ; move colTo.1{r11}, param.column{r1}
+        ld   r11, r1
+        ; add colTo.1{r11}, 1
+        inc  r11
+        ; 294:2 if colTo >= 38
+        ; branch colTo.1{r11} lt 38: if_48_end
+        cp   r11, #%26
+        jr   ult, if__48__end
+        ; sub colTo.3{r11}, 1
+        dec  r11
+if__48__end:
+        ; move rowFrom.2{r0}, rowFrom.2{r8}
+        ld   r0, r8
+        ; move colFrom.2{r1}, colFrom.2{r10}
+        ld   r1, r10
+        ; call index.1{r0} = rowColumnToCell@u8@u8[rowFrom.2{r0}, colFrom.2{r1}] -> i16
+        call rowColumnToCell_Pu8_Pu8
+        ; const changed.1{r12}, 0
+        ld   r12, #%00
+        ; 299:2 for r <= rowTo
+        ; move index.2{r3}, index.1{r0}
+        ld   r4, r1
+        ld   r3, r0
+        ; move index.2{r1}, index.2{r3}
+        ld   r1, r3
+        ld   r2, r4
+        jr   for__49
+
+for__49__body:
+        ; move index.2{r3}, index.2{r1}
+        ld   r4, r2
+        ld   r3, r1
+        ; move c.1{r13}, colFrom.2{r10}
+        ld   r13, r10
+        ; 300:3 for c <= colTo
+        ; move index.3{r2}, index.3{r3}
+        ld   r2, r3
+        ld   r3, r4
+        jr   for__50
+
+for__50__body:
+        ; move index.3{r3}, index.3{r2}
+        ld   r4, r3
+        ld   r3, r2
+        ; addrof t.11.1{r6}, field
+        ld   r6, #hi(var_0)
+        ld   r7, #lo(var_0)
+        ; add t.11.2{r6}, index.3{r3}
+        add  r7, r4
+        adc  r6, r3
+        ; load cell.1{r5}, [t.11.2{r6}]
+        lde  r5, @rr6
+        ; 302:4 if cell & 32 != 0
+        ; move t.12.1{r6}, cell.1{r5}
+        ld   r6, r5
+        ; and t.12.1{r6}, 32
+        and  r6, #%20
+        ; branch t.12.1{r6} equals 0: if_51_end
+        cp   r6, #%00
+        jr   eq, if__51__end
+        ; addrof memVarAddr{r14}, index.3
+        ld   r14, SPH
+        ld   r15, SPL
+        add  r15, #%08
+        adc  r14, #%00
+        ; store [memVarAddr{r14}], index.3{r3}
+        lde  @rr14, r3
+        incw r14
+        lde  @rr14, r4
+        decw r14
+        jr   for__50__continue
+
+if__51__end:
+        ; move cell.2{r0}, cell.1{r5}
+        ld   r0, r5
+        ; or cell.2{r0}, 32
+        or  r0, #%20
+        ; addrof t.13.1{r6}, field
+        ld   r6, #hi(var_0)
+        ld   r7, #lo(var_0)
+        ; add t.13.2{r6}, index.3{r3}
+        add  r7, r4
+        adc  r6, r3
+        ; addrof memVarAddr{r14}, index.3
+        ld   r14, SPH
+        ld   r15, SPL
+        add  r15, #%08
+        adc  r14, #%00
+        ; store [memVarAddr{r14}], index.3{r3}
+        lde  @rr14, r3
+        incw r14
+        lde  @rr14, r4
+        decw r14
+        ; store [t.13.2{r6}], cell.2{r0}
+        lde  @rr6, r0
+        ; move r.2{r1}, r.2{r8}
+        ld   r1, r8
+        ; move c.2{r2}, c.2{r13}
+        ld   r2, r13
+        ; call printCellAt@u8@u8@u8[cell.2{r0}, r.2{r1}, c.2{r2}]
+        call printCellAt_Pu8_Pu8_Pu8
+        ; const changed.5{r1}, 1
+        ld   r1, #%01
+        ; move changed.4{r12}, changed.5{r1}
+        ld   r12, r1
+for__50__continue:
+        ; move c.4{r1}, c.2{r13}
+        ld   r1, r13
+        ; add c.4{r1}, 1
+        inc  r1
+        ; addrof memVarAddr{r14}, index.3
+        ld   r14, SPH
+        ld   r15, SPL
+        add  r15, #%08
+        adc  r14, #%00
+        ; load index.3{r2}, [memVarAddr{r14}]
+        lde  r2, @rr14
+        incw r14
+        lde  r3, @rr14
+        decw r14
+        ; add index.6{r2}, 1
+        incw r2
+        ; move c.2{r13}, c.4{r1}
+        ld   r13, r1
+for__50:
+        ; branch c.2{r13} lteq colTo.2{r11}: for_50_body
+        cp   r13, r11
+        jr   ule, for__50__body
+        ; cast t.17.1{r4}(i16), colTo.2{r11}(u8)
+        ld   r5, r11
+        ld   r4, #0
+        ; move t.16.1{r1}, index.3{r2}
+        ld   r1, r2
+        ld   r2, r3
+        ; sub t.16.1{r1}, t.17.1{r4}
+        sub  r2, r5
+        sbc  r1, r4
+        ; cast t.18.1{r3}(i16), colFrom.2{r10}(u8)
+        ld   r4, r10
+        ld   r3, #0
+        ; add t.15.1{r1}, t.18.1{r3}
+        add  r2, r4
+        adc  r1, r3
+        ; add t.14.1{r1}, 38
+        add  r2, #%26
+        adc  r1, #%00
+        ; sub index.4{r1}, 1
+        sub  r2, #%01
+        sbc  r1, #%00
+        ; move r.4{r3}, r.2{r8}
+        ld   r3, r8
+        ; add r.4{r3}, 1
+        inc  r3
+        ; move r.2{r8}, r.4{r3}
+        ld   r8, r3
+for__49:
+        ; branch r.2{r8} lteq rowTo.2{r9}: for_49_body
+        cp   r8, r9
+        jr   ule, for__49__body
+        ; 313:9 return changed
+        ; move changed.2{r0}, changed.2{r12}
+        ld   r0, r12
+        ; restore clobbered non-volatile registers
         pop  r15
         pop  r14
         pop  r13
@@ -1651,7 +1548,7 @@ maybeRevealAround_Pu8_Pu8__ret:
         pop  r8
         ld   %30, SPH
         ld   %31, SPL
-        add  %31, #%06
+        add  %31, #%02
         adc  %30, #%00
         ld   SPL, %31
         ld   SPH, %30
@@ -1696,17 +1593,17 @@ main:
         ld   r9, #%13
         ; const curr_r.1{r10}, 10
         ld   r10, #%0a
-        ; 316:2 while true
-        jr   while__51
+        ; 325:2 while true
+        jr   while__52
 
-if__52__then:
-        ; 318:4 if printLeft([])
+if__53__then:
+        ; 327:4 if printLeft([])
         ; call t.9.1{r0} = printLeft[] -> bool
         call printLeft
-        ; branch t.9.1{r0} notequals 0: if_53_then, if_52_end
+        ; branch t.9.1{r0} notequals 0: if_54_then, if_53_end
         cp   r0, #%00
-        jr   ne, if__53__then
-if__52__end:
+        jr   ne, if__54__then
+if__53__end:
         ; const t.11.1{r2}, 1
         ld   r2, #%01
         ; move curr_r.2{r0}, curr_r.2{r10}
@@ -1728,47 +1625,47 @@ if__52__end:
         ld   r1, r9
         ; call showCursor@u8@u8@bool[curr_r.2{r0}, curr_c.2{r1}, t.12.1{r2}]
         call showCursor_Pu8_Pu8_Pbool
-        ; 327:3 if chr == 27
+        ; 336:3 if chr == 27
         ; branch chr.1{r11} equals 27: main_ret
         cp   r12, #%1b
         jr   ne, .notEquals9
         cp   r11, #%00
         jr   eq, main__ret
 .notEquals9:
-        ; branch chr.1{r11} equals 13: if_55_then
+        ; branch chr.1{r11} equals 13: if_56_then
         cp   r12, #%0d
         jr   ne, .notEquals10
         cp   r11, #%00
-        jr   eq, if__55__then
+        jr   eq, if__56__then
 .notEquals10:
-        ; branch chr.1{r11} notequals 3: if_59_else, if_59_then
+        ; branch chr.1{r11} notequals 3: if_60_else, if_60_then
         cp   r12, #%03
-        jr   ne, if__59__else
+        jr   ne, if__60__else
         cp   r11, #%00
-        jr   ne, if__59__else
-        jr   if__59__then
-
-if__55__then:
-        ; branch needsInitialize.2{r8} equals 0: if_56_end, if_56_then
-        cp   r8, #%00
-        jr   eq, if__56__end
-        jr   if__56__then
-
-if__59__else:
-        ; branch chr.1{r11} notequals 4: if_61_else, if_61_then
-        cp   r12, #%04
-        jr   ne, if__61__else
-        cp   r11, #%00
-        jr   ne, if__61__else
-        jr   if__61__then
-
-if__59__then:
-        ; branch curr_r.2{r10} lteq 0: while_51, if_60_then
-        cp   r10, #%00
-        jr   ule, while__51
+        jr   ne, if__60__else
         jr   if__60__then
 
 if__56__then:
+        ; branch needsInitialize.2{r8} equals 0: if_57_end, if_57_then
+        cp   r8, #%00
+        jr   eq, if__57__end
+        jr   if__57__then
+
+if__60__else:
+        ; branch chr.1{r11} notequals 4: if_62_else, if_62_then
+        cp   r12, #%04
+        jr   ne, if__62__else
+        cp   r11, #%00
+        jr   ne, if__62__else
+        jr   if__62__then
+
+if__60__then:
+        ; branch curr_r.2{r10} lteq 0: while_52, if_61_then
+        cp   r10, #%00
+        jr   ule, while__52
+        jr   if__61__then
+
+if__57__then:
         ; const needsInitialize.5{r8}, 0
         ld   r8, #%00
         ; move curr_r.2{r0}, curr_r.2{r10}
@@ -1777,28 +1674,28 @@ if__56__then:
         ld   r1, r9
         ; call initField@u8@u8[curr_r.2{r0}, curr_c.2{r1}]
         call initField_Pu8_Pu8
-        jr   if__56__end
+        jr   if__57__end
 
-if__61__else:
-        ; branch chr.1{r11} notequals 1: if_63_else, if_63_then
+if__62__else:
+        ; branch chr.1{r11} notequals 1: if_64_else, if_64_then
         cp   r12, #%01
-        jr   ne, if__63__else
+        jr   ne, if__64__else
         cp   r11, #%00
-        jr   ne, if__63__else
+        jr   ne, if__64__else
+        jr   if__64__then
+
+if__62__then:
+        ; branch curr_r.2{r10} gteq 19: while_52, if_63_then
+        cp   r10, #%13
+        jr   uge, while__52
         jr   if__63__then
 
 if__61__then:
-        ; branch curr_r.2{r10} gteq 19: while_51, if_62_then
-        cp   r10, #%13
-        jr   uge, while__51
-        jr   if__62__then
-
-if__60__then:
         ; sub curr_r.5{r10}, 1
         dec  r10
-        jr   while__51
+        jr   while__52
 
-if__56__end:
+if__57__end:
         ; move curr_r.2{r0}, curr_r.2{r10}
         ld   r0, r10
         ; move curr_c.2{r1}, curr_c.2{r9}
@@ -1813,36 +1710,36 @@ if__56__end:
         adc  r12, r0
         ; load cell.1{r11}, [t.13.2{r12}]
         lde  r11, @rr12
-        ; 338:4 if cell & 32 == 0
+        ; 347:4 if cell & 32 == 0
         ; move t.14.1{r12}, cell.1{r11}
         ld   r12, r11
         ; and t.14.1{r12}, 32
         and  r12, #%20
-        ; branch t.14.1{r12} notequals 0: if_57_end, if_57_then
+        ; branch t.14.1{r12} notequals 0: if_58_end, if_58_then
         cp   r12, #%00
-        jr   ne, if__57__end
-        jr   if__57__then
+        jr   ne, if__58__end
+        jr   if__58__then
 
-if__63__else:
-        ; branch chr.1{r11} notequals 2: if_65_else, if_65_then
+if__64__else:
+        ; branch chr.1{r11} notequals 2: if_66_else, if_66_then
         cp   r12, #%02
-        jr   ne, if__65__else
+        jr   ne, if__66__else
         cp   r11, #%00
-        jr   ne, if__65__else
+        jr   ne, if__66__else
+        jr   if__66__then
+
+if__64__then:
+        ; branch curr_c.2{r9} lteq 0: while_52, if_65_then
+        cp   r9, #%00
+        jr   ule, while__52
         jr   if__65__then
 
 if__63__then:
-        ; branch curr_c.2{r9} lteq 0: while_51, if_64_then
-        cp   r9, #%00
-        jr   ule, while__51
-        jr   if__64__then
-
-if__62__then:
         ; add curr_r.6{r10}, 1
         inc  r10
-        jr   while__51
+        jr   while__52
 
-if__57__then:
+if__58__then:
         ; move t.15.1{r12}, cell.1{r11}
         ld   r12, r11
         ; or t.15.1{r12}, 32
@@ -1855,57 +1752,57 @@ if__57__then:
         adc  r2, r0
         ; store [t.16.2{r2}], t.15.1{r12}
         lde  @rr2, r12
-        jr   if__57__end
+        jr   if__58__end
 
-if__65__else:
-        ; branch chr.1{r11} notequals 32: while_51, if_67_then
+if__66__else:
+        ; branch chr.1{r11} notequals 32: while_52, if_68_then
         cp   r12, #%20
-        jr   ne, while__51
+        jr   ne, while__52
         cp   r11, #%00
-        jr   ne, while__51
-        jr   if__67__then
-
-if__65__then:
-        ; branch curr_c.2{r9} gteq 37: while_51, if_66_then
-        cp   r9, #%25
-        jr   uge, while__51
-        jr   if__66__then
-
-if__64__then:
-        ; sub curr_c.6{r9}, 1
-        dec  r9
-        jr   while__51
-
-if__57__end:
-        ; 341:4 if cell & 128 != 0
-        ; and t.17.1{r11}, 128
-        and  r11, #%80
-        ; branch t.17.1{r11} equals 0: if_58_end, if_58_then
-        cp   r11, #%00
-        jr   eq, if__58__end
-        jr   if__58__then
-
-if__67__then:
-        ; branch needsInitialize.2{r8} notequals 0: while_51, if_68_then
-        cp   r8, #%00
-        jr   ne, while__51
+        jr   ne, while__52
         jr   if__68__then
 
 if__66__then:
-        ; add curr_c.7{r9}, 1
-        inc  r9
-        jr   while__51
+        ; branch curr_c.2{r9} gteq 37: while_52, if_67_then
+        cp   r9, #%25
+        jr   uge, while__52
+        jr   if__67__then
+
+if__65__then:
+        ; sub curr_c.6{r9}, 1
+        dec  r9
+        jr   while__52
 
 if__58__end:
+        ; 350:4 if cell & 128 != 0
+        ; and t.17.1{r11}, 128
+        and  r11, #%80
+        ; branch t.17.1{r11} equals 0: if_59_end, if_59_then
+        cp   r11, #%00
+        jr   eq, if__59__end
+        jr   if__59__then
+
+if__68__then:
+        ; branch needsInitialize.2{r8} notequals 0: while_52, if_69_then
+        cp   r8, #%00
+        jr   ne, while__52
+        jr   if__69__then
+
+if__67__then:
+        ; add curr_c.7{r9}, 1
+        inc  r9
+        jr   while__52
+
+if__59__end:
         ; move curr_r.2{r0}, curr_r.2{r10}
         ld   r0, r10
         ; move curr_c.2{r1}, curr_c.2{r9}
         ld   r1, r9
         ; call maybeRevealAround@u8@u8[curr_r.2{r0}, curr_c.2{r1}]
         call maybeRevealAround_Pu8_Pu8
-        jr   while__51
+        jr   while__52
 
-if__68__then:
+if__69__then:
         ; move curr_r.2{r0}, curr_r.2{r10}
         ld   r0, r10
         ; move curr_c.2{r1}, curr_c.2{r9}
@@ -1920,14 +1817,14 @@ if__68__then:
         adc  r12, r0
         ; load cell.3{r11}, [t.19.2{r12}]
         lde  r11, @rr12
-        ; 377:5 if cell & 32 == 0
+        ; 386:5 if cell & 32 == 0
         ; move t.20.1{r12}, cell.3{r11}
         ld   r12, r11
         ; and t.20.1{r12}, 32
         and  r12, #%20
-        ; branch t.20.1{r12} notequals 0: while_51
+        ; branch t.20.1{r12} notequals 0: while_52
         cp   r12, #%00
-        jr   ne, while__51
+        jr   ne, while__52
         ; xor cell.4{r11}, 64
         xor r11, #%40
         ; addrof t.21.1{r12}, field
@@ -1946,13 +1843,13 @@ if__68__then:
         ld   r2, r9
         ; call printCellAt@u8@u8@u8[cell.4{r0}, curr_r.2{r1}, curr_c.2{r2}]
         call printCellAt_Pu8_Pu8_Pu8
-while__51:
-        ; branch needsInitialize.2{r8} notequals 0: if_52_end, if_52_then
+while__52:
+        ; branch needsInitialize.2{r8} notequals 0: if_53_end, if_53_then
         cp   r8, #%00
-        jr   ne, if__52__end
-        jr   if__52__then
+        jr   ne, if__53__end
+        jr   if__53__then
 
-if__53__then:
+if__54__then:
         ; const t.10.1{r0}, [string-2]
         ld   r0, #hi(string_2)
         ld   r1, #lo(string_2)
@@ -1960,7 +1857,7 @@ if__53__then:
         call printString_P_Pu8
         jr   main__ret
 
-if__58__then:
+if__59__then:
         ; move curr_r.2{r0}, curr_r.2{r10}
         ld   r0, r10
         ; move curr_c.2{r1}, curr_c.2{r9}

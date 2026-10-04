@@ -507,20 +507,15 @@ maybeRevealAround@u8@u8:
  Local variables
 	arg 0: row (u8/1)
 	arg 1: column (u8/1)
-	var 2: rowTo.2 (u8/1)
-	var 3: colFrom.2 (u8/1)
-	var 4: colTo.2 (u8/1)
-	var 5: neighborIndex.3 (i16/2)
-	var 6: neighborColumn.2 (u8/1)
-	; 210 pc
+	; 42 pc
 	move param.row{r8}, row{r0}
 	move param.column{r9}, column{r1}
 	call printCellAt@u8@u8[param.row{r0}, param.column{r1}]
 	; 253:2 if getBombCountAround@u8@u8([ExprVarAccess[varName=row, index=0, scope=parameter, type=u8, varIsArray=false, location=253:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=u8, varIsArray=false, location=253:30]]) != 0
 	move param.row{r0}, param.row{r8}
 	move param.column{r1}, param.column{r9}
-	call t.15.1{r0} = getBombCountAround@u8@u8[param.row{r0}, param.column{r1}] -> u8
-	branch t.15.1{r0} notequals 0: maybeRevealAround@u8@u8_ret
+	call t.7.1{r0} = getBombCountAround@u8@u8[param.row{r0}, param.column{r1}] -> u8
+	branch t.7.1{r0} notequals 0: maybeRevealAround@u8@u8_ret
 	const changed.1{r8}, 1
 	; 258:2 while changed
 	jump while_38
@@ -535,145 +530,27 @@ for_39_body:
 	; 262:4 for c < 38
 	jump for_40
 for_40_body:
-	addrof t.16.1{r2}, field
-	add t.16.2{r2}, index.3{r9}
-	load cell.1{r13}, [t.16.2{r2}]
+	addrof t.8.1{r2}, field
+	add t.8.2{r2}, index.3{r9}
+	load cell.1{r13}, [t.8.2{r2}]
 	; 264:5 if cell & 32 == 0 || cell & 128 != 0
-	move t.17.1{r2}, cell.1{r13}
-	and t.17.1{r2}, 32
-	branch t.17.1{r2} equals 0: for_40_continue
-	and t.18.1{r13}, 128
-	branch t.18.1{r13} notequals 0: for_40_continue
+	move t.9.1{r2}, cell.1{r13}
+	and t.9.1{r2}, 32
+	branch t.9.1{r2} equals 0: for_40_continue
+	and t.10.1{r13}, 128
+	branch t.10.1{r13} notequals 0: for_40_continue
 	; 267:5 if getBombCountAround@u8@u8([ExprVarAccess[varName=r, index=4, scope=function, type=u8, varIsArray=false, location=267:28], ExprVarAccess[varName=c, index=5, scope=function, type=u8, varIsArray=false, location=267:31]]) != 0
 	move r.2{r0}, r.2{r11}
 	move c.2{r1}, c.2{r12}
-	call t.19.1{r0} = getBombCountAround@u8@u8[r.2{r0}, c.2{r1}] -> u8
-	branch t.19.1{r0} notequals 0: for_40_continue
-	move rowFrom.1{r13}, r.2{r11}
-	; 272:5 if rowFrom > 0
-	branch rowFrom.1{r13} lteq 0: if_44_end
-	sub rowFrom.3{r13}, 1
-if_44_end:
-	move rowTo.1{r2}, r.2{r11}
-	add rowTo.1{r2}, 1
-	; 276:5 if rowTo >= 20
-	branch rowTo.1{r2} gteq 20: if_45_then
-	addrof memVarAddr{r14}, rowTo.2
-	store [memVarAddr{r14}], rowTo.2{r2}
-	jump if_45_end
-if_45_then:
-	sub rowTo.3{r2}, 1
-	addrof memVarAddr{r14}, rowTo.2
-	store [memVarAddr{r14}], rowTo.2{r2}
-if_45_end:
-	move colFrom.1{r2}, c.2{r12}
-	; 281:5 if colFrom > 0
-	branch colFrom.1{r2} gt 0: if_46_then
-	move colFrom.2{r1}, colFrom.1{r2}
-	jump if_46_end
-if_46_then:
-	sub colFrom.3{r2}, 1
-	move colFrom.2{r1}, colFrom.3{r2}
-if_46_end:
-	move colTo.1{r2}, c.2{r12}
-	add colTo.1{r2}, 1
-	; 285:5 if colTo >= 38
-	branch colTo.1{r2} gteq 38: if_47_then
-	addrof memVarAddr{r14}, colTo.2
-	store [memVarAddr{r14}], colTo.2{r2}
-	jump if_47_end
-if_47_then:
-	sub colTo.3{r2}, 1
-	addrof memVarAddr{r14}, colTo.2
-	store [memVarAddr{r14}], colTo.2{r2}
-if_47_end:
-	move rowFrom.2{r0}, rowFrom.2{r13}
-	addrof memVarAddr{r14}, colFrom.2
-	store [memVarAddr{r14}], colFrom.2{r1}
-	call neighborIndex.1{r0} = rowColumnToCell@u8@u8[rowFrom.2{r0}, colFrom.2{r1}] -> i16
-	; 289:5 for neighborRow <= rowTo
-	move neighborIndex.2{r3}, neighborIndex.1{r0}
-	load colFrom.2{r1}, [memVarAddr{r14}]
-	addrof memVarAddr{r14}, colTo.2
-	load colTo.2{r0}, [memVarAddr{r14}]
-	move neighborIndex.2{r2}, neighborIndex.2{r3}
-	jump for_48
-for_48_body:
-	addrof memVarAddr{r14}, colFrom.2
-	store [memVarAddr{r14}], colFrom.2{r1}
-	addrof memVarAddr{r14}, colTo.2
-	store [memVarAddr{r14}], colTo.2{r0}
-	addrof memVarAddr{r14}, rowTo.2
-	store [memVarAddr{r14}], rowTo.2{r4}
-	move neighborIndex.2{r3}, neighborIndex.2{r2}
-	addrof memVarAddr{r14}, colFrom.2
-	move neighborColumn.1{r5}, colFrom.2{r1}
-	; 290:6 for neighborColumn <= colTo
-	move neighborColumn.2{r2}, neighborColumn.1{r5}
-	jump for_49
-for_49_body:
-	addrof memVarAddr{r14}, colTo.2
-	store [memVarAddr{r14}], colTo.2{r0}
-	addrof t.20.1{r6}, field
-	add t.20.2{r6}, neighborIndex.3{r3}
-	load neighborCell.1{r5}, [t.20.2{r6}]
-	; 292:7 if neighborCell & 32 != 0
-	move t.21.1{r6}, neighborCell.1{r5}
-	and t.21.1{r6}, 32
-	branch t.21.1{r6} equals 0: if_50_end
-	addrof memVarAddr{r14}, neighborColumn.2
-	store [memVarAddr{r14}], neighborColumn.2{r2}
-	addrof memVarAddr{r14}, neighborIndex.3
-	store [memVarAddr{r14}], neighborIndex.3{r3}
-	jump for_49_continue
-if_50_end:
-	move t.22.1{r8}, neighborCell.1{r5}
-	or t.22.1{r8}, 32
-	addrof t.23.1{r6}, field
-	add t.23.2{r6}, neighborIndex.3{r3}
-	store [t.23.2{r6}], t.22.1{r8}
-	addrof t.25.1{r6}, field
-	add t.25.2{r6}, neighborIndex.3{r3}
-	addrof memVarAddr{r14}, neighborIndex.3
-	store [memVarAddr{r14}], neighborIndex.3{r3}
-	load t.24.1{r0}, [t.25.2{r6}]
-	move neighborRow.2{r1}, neighborRow.2{r13}
-	addrof memVarAddr{r14}, neighborColumn.2
-	store [memVarAddr{r14}], neighborColumn.2{r2}
-	call printCellAt@u8@u8@u8[t.24.1{r0}, neighborRow.2{r1}, neighborColumn.2{r2}]
-	const changed.14{r0}, 1
-	move changed.13{r8}, changed.14{r0}
-for_49_continue:
-	addrof memVarAddr{r14}, neighborColumn.2
-	load neighborColumn.2{r2}, [memVarAddr{r14}]
-	move neighborColumn.4{r0}, neighborColumn.2{r2}
-	add neighborColumn.4{r0}, 1
-	addrof memVarAddr{r14}, neighborIndex.3
-	load neighborIndex.3{r3}, [memVarAddr{r14}]
-	move neighborIndex.6{r1}, neighborIndex.3{r3}
-	add neighborIndex.6{r1}, 1
-	move neighborIndex.3{r3}, neighborIndex.6{r1}
-	move neighborColumn.2{r2}, neighborColumn.4{r0}
-for_49:
-	addrof memVarAddr{r14}, colTo.2
-	load colTo.2{r0}, [memVarAddr{r14}]
-	branch neighborColumn.2{r2} lteq colTo.2{r0}: for_49_body
-	cast t.29.1{r1}(i16), colTo.2{r0}(u8)
-	sub t.28.1{r3}, t.29.1{r1}
-	addrof memVarAddr{r14}, colFrom.2
-	load colFrom.2{r1}, [memVarAddr{r14}]
-	cast t.30.1{r5}(i16), colFrom.2{r1}(u8)
-	move t.27.1{r2}, t.28.1{r3}
-	add t.27.1{r2}, t.30.1{r5}
-	add t.26.1{r2}, 38
-	sub neighborIndex.4{r2}, 1
-	move neighborRow.4{r4}, neighborRow.2{r13}
-	add neighborRow.4{r4}, 1
-	move neighborRow.2{r13}, neighborRow.4{r4}
-for_48:
-	addrof memVarAddr{r14}, rowTo.2
-	load rowTo.2{r4}, [memVarAddr{r14}]
-	branch neighborRow.2{r13} lteq rowTo.2{r4}: for_48_body, for_40_continue
+	call t.11.1{r0} = getBombCountAround@u8@u8[r.2{r0}, c.2{r1}] -> u8
+	branch t.11.1{r0} notequals 0: for_40_continue
+	; 271:5 if revealNeighbors@u8@u8([ExprVarAccess[varName=r, index=4, scope=function, type=u8, varIsArray=false, location=271:24], ExprVarAccess[varName=c, index=5, scope=function, type=u8, varIsArray=false, location=271:27]])
+	move r.2{r0}, r.2{r11}
+	move c.2{r1}, c.2{r12}
+	call t.12.1{r0} = revealNeighbors@u8@u8[r.2{r0}, c.2{r1}] -> bool
+	branch t.12.1{r0} equals 0: for_40_continue
+	const changed.7{r0}, 1
+	move changed.6{r8}, changed.7{r0}
 for_40_continue:
 	move c.4{r0}, c.2{r12}
 	add c.4{r0}, 1
@@ -692,6 +569,97 @@ while_38:
 	branch changed.2{r8} notequals 0: while_38_body, maybeRevealAround@u8@u8_ret
 maybeRevealAround@u8@u8_ret:
 
+revealNeighbors@u8@u8:
+ Local variables
+	arg 0: row (u8/1)
+	arg 1: column (u8/1)
+	var 2: index.3 (i16/2)
+	; 79 pc
+	move rowFrom.1{r8}, param.row{r0}
+	; 281:2 if rowFrom > 0
+	branch rowFrom.1{r8} lteq 0: if_45_end
+	sub rowFrom.3{r8}, 1
+if_45_end:
+	move rowTo.1{r9}, param.row{r0}
+	add rowTo.1{r9}, 1
+	; 285:2 if rowTo >= 20
+	branch rowTo.1{r9} lt 20: if_46_end
+	sub rowTo.3{r9}, 1
+if_46_end:
+	move colFrom.1{r10}, param.column{r1}
+	; 290:2 if colFrom > 0
+	branch colFrom.1{r10} lteq 0: if_47_end
+	sub colFrom.3{r10}, 1
+if_47_end:
+	move colTo.1{r11}, param.column{r1}
+	add colTo.1{r11}, 1
+	; 294:2 if colTo >= 38
+	branch colTo.1{r11} lt 38: if_48_end
+	sub colTo.3{r11}, 1
+if_48_end:
+	move rowFrom.2{r0}, rowFrom.2{r8}
+	move colFrom.2{r1}, colFrom.2{r10}
+	call index.1{r0} = rowColumnToCell@u8@u8[rowFrom.2{r0}, colFrom.2{r1}] -> i16
+	const changed.1{r12}, 0
+	; 299:2 for r <= rowTo
+	move index.2{r3}, index.1{r0}
+	move index.2{r1}, index.2{r3}
+	jump for_49
+for_49_body:
+	move index.2{r3}, index.2{r1}
+	move c.1{r13}, colFrom.2{r10}
+	; 300:3 for c <= colTo
+	move index.3{r2}, index.3{r3}
+	jump for_50
+for_50_body:
+	move index.3{r3}, index.3{r2}
+	addrof t.11.1{r6}, field
+	add t.11.2{r6}, index.3{r3}
+	load cell.1{r5}, [t.11.2{r6}]
+	; 302:4 if cell & 32 != 0
+	move t.12.1{r6}, cell.1{r5}
+	and t.12.1{r6}, 32
+	branch t.12.1{r6} equals 0: if_51_end
+	addrof memVarAddr{r14}, index.3
+	store [memVarAddr{r14}], index.3{r3}
+	jump for_50_continue
+if_51_end:
+	move cell.2{r0}, cell.1{r5}
+	or cell.2{r0}, 32
+	addrof t.13.1{r6}, field
+	add t.13.2{r6}, index.3{r3}
+	addrof memVarAddr{r14}, index.3
+	store [memVarAddr{r14}], index.3{r3}
+	store [t.13.2{r6}], cell.2{r0}
+	move r.2{r1}, r.2{r8}
+	move c.2{r2}, c.2{r13}
+	call printCellAt@u8@u8@u8[cell.2{r0}, r.2{r1}, c.2{r2}]
+	const changed.5{r1}, 1
+	move changed.4{r12}, changed.5{r1}
+for_50_continue:
+	move c.4{r1}, c.2{r13}
+	add c.4{r1}, 1
+	addrof memVarAddr{r14}, index.3
+	load index.3{r2}, [memVarAddr{r14}]
+	add index.6{r2}, 1
+	move c.2{r13}, c.4{r1}
+for_50:
+	branch c.2{r13} lteq colTo.2{r11}: for_50_body
+	cast t.17.1{r4}(i16), colTo.2{r11}(u8)
+	move t.16.1{r1}, index.3{r2}
+	sub t.16.1{r1}, t.17.1{r4}
+	cast t.18.1{r3}(i16), colFrom.2{r10}(u8)
+	add t.15.1{r1}, t.18.1{r3}
+	add t.14.1{r1}, 38
+	sub index.4{r1}, 1
+	move r.4{r3}, r.2{r8}
+	add r.4{r3}, 1
+	move r.2{r8}, r.4{r3}
+for_49:
+	branch r.2{r8} lteq rowTo.2{r9}: for_49_body
+	; 313:9 return changed
+	move changed.2{r0}, changed.2{r12}
+
 main:
 	; 115 pc
 	const arg.0.0{r0}, 7439742
@@ -706,13 +674,13 @@ main:
 	call printString@@u8[t.8.1{r0}]
 	const curr_c.1{r9}, 19
 	const curr_r.1{r10}, 10
-	; 316:2 while true
-	jump while_51
-if_52_then:
-	; 318:4 if printLeft([])
+	; 325:2 while true
+	jump while_52
+if_53_then:
+	; 327:4 if printLeft([])
 	call t.9.1{r0} = printLeft[] -> bool
-	branch t.9.1{r0} notequals 0: if_53_then, if_52_end
-if_52_end:
+	branch t.9.1{r0} notequals 0: if_54_then, if_53_end
+if_53_end:
 	const t.11.1{r2}, 1
 	move curr_r.2{r0}, curr_r.2{r10}
 	move curr_c.2{r1}, curr_c.2{r9}
@@ -723,99 +691,99 @@ if_52_end:
 	move curr_r.2{r0}, curr_r.2{r10}
 	move curr_c.2{r1}, curr_c.2{r9}
 	call showCursor@u8@u8@bool[curr_r.2{r0}, curr_c.2{r1}, t.12.1{r2}]
-	; 327:3 if chr == 27
+	; 336:3 if chr == 27
 	branch chr.1{r11} equals 27: main_ret
-	branch chr.1{r11} equals 13: if_55_then
-	branch chr.1{r11} notequals 3: if_59_else, if_59_then
-	jump if_59_then
-if_55_then:
-	branch needsInitialize.2{r8} equals 0: if_56_end, if_56_then
-	jump if_56_then
-if_59_else:
-	branch chr.1{r11} notequals 4: if_61_else, if_61_then
-	jump if_61_then
-if_59_then:
-	branch curr_r.2{r10} lteq 0: while_51, if_60_then
+	branch chr.1{r11} equals 13: if_56_then
+	branch chr.1{r11} notequals 3: if_60_else, if_60_then
 	jump if_60_then
 if_56_then:
+	branch needsInitialize.2{r8} equals 0: if_57_end, if_57_then
+	jump if_57_then
+if_60_else:
+	branch chr.1{r11} notequals 4: if_62_else, if_62_then
+	jump if_62_then
+if_60_then:
+	branch curr_r.2{r10} lteq 0: while_52, if_61_then
+	jump if_61_then
+if_57_then:
 	const needsInitialize.5{r8}, 0
 	move curr_r.2{r0}, curr_r.2{r10}
 	move curr_c.2{r1}, curr_c.2{r9}
 	call initField@u8@u8[curr_r.2{r0}, curr_c.2{r1}]
-	jump if_56_end
-if_61_else:
-	branch chr.1{r11} notequals 1: if_63_else, if_63_then
+	jump if_57_end
+if_62_else:
+	branch chr.1{r11} notequals 1: if_64_else, if_64_then
+	jump if_64_then
+if_62_then:
+	branch curr_r.2{r10} gteq 19: while_52, if_63_then
 	jump if_63_then
 if_61_then:
-	branch curr_r.2{r10} gteq 19: while_51, if_62_then
-	jump if_62_then
-if_60_then:
 	sub curr_r.5{r10}, 1
-	jump while_51
-if_56_end:
+	jump while_52
+if_57_end:
 	move curr_r.2{r0}, curr_r.2{r10}
 	move curr_c.2{r1}, curr_c.2{r9}
 	call index.1{r0} = rowColumnToCell@u8@u8[curr_r.2{r0}, curr_c.2{r1}] -> i16
 	addrof t.13.1{r12}, field
 	add t.13.2{r12}, index.1{r0}
 	load cell.1{r11}, [t.13.2{r12}]
-	; 338:4 if cell & 32 == 0
+	; 347:4 if cell & 32 == 0
 	move t.14.1{r12}, cell.1{r11}
 	and t.14.1{r12}, 32
-	branch t.14.1{r12} notequals 0: if_57_end, if_57_then
-	jump if_57_then
-if_63_else:
-	branch chr.1{r11} notequals 2: if_65_else, if_65_then
+	branch t.14.1{r12} notequals 0: if_58_end, if_58_then
+	jump if_58_then
+if_64_else:
+	branch chr.1{r11} notequals 2: if_66_else, if_66_then
+	jump if_66_then
+if_64_then:
+	branch curr_c.2{r9} lteq 0: while_52, if_65_then
 	jump if_65_then
 if_63_then:
-	branch curr_c.2{r9} lteq 0: while_51, if_64_then
-	jump if_64_then
-if_62_then:
 	add curr_r.6{r10}, 1
-	jump while_51
-if_57_then:
+	jump while_52
+if_58_then:
 	move t.15.1{r12}, cell.1{r11}
 	or t.15.1{r12}, 32
 	addrof t.16.1{r2}, field
 	add t.16.2{r2}, index.1{r0}
 	store [t.16.2{r2}], t.15.1{r12}
-	jump if_57_end
-if_65_else:
-	branch chr.1{r11} notequals 32: while_51, if_67_then
-	jump if_67_then
-if_65_then:
-	branch curr_c.2{r9} gteq 37: while_51, if_66_then
-	jump if_66_then
-if_64_then:
-	sub curr_c.6{r9}, 1
-	jump while_51
-if_57_end:
-	; 341:4 if cell & 128 != 0
-	and t.17.1{r11}, 128
-	branch t.17.1{r11} equals 0: if_58_end, if_58_then
-	jump if_58_then
-if_67_then:
-	branch needsInitialize.2{r8} notequals 0: while_51, if_68_then
+	jump if_58_end
+if_66_else:
+	branch chr.1{r11} notequals 32: while_52, if_68_then
 	jump if_68_then
 if_66_then:
-	add curr_c.7{r9}, 1
-	jump while_51
+	branch curr_c.2{r9} gteq 37: while_52, if_67_then
+	jump if_67_then
+if_65_then:
+	sub curr_c.6{r9}, 1
+	jump while_52
 if_58_end:
+	; 350:4 if cell & 128 != 0
+	and t.17.1{r11}, 128
+	branch t.17.1{r11} equals 0: if_59_end, if_59_then
+	jump if_59_then
+if_68_then:
+	branch needsInitialize.2{r8} notequals 0: while_52, if_69_then
+	jump if_69_then
+if_67_then:
+	add curr_c.7{r9}, 1
+	jump while_52
+if_59_end:
 	move curr_r.2{r0}, curr_r.2{r10}
 	move curr_c.2{r1}, curr_c.2{r9}
 	call maybeRevealAround@u8@u8[curr_r.2{r0}, curr_c.2{r1}]
-	jump while_51
-if_68_then:
+	jump while_52
+if_69_then:
 	move curr_r.2{r0}, curr_r.2{r10}
 	move curr_c.2{r1}, curr_c.2{r9}
 	call index.2{r0} = rowColumnToCell@u8@u8[curr_r.2{r0}, curr_c.2{r1}] -> i16
 	addrof t.19.1{r12}, field
 	add t.19.2{r12}, index.2{r0}
 	load cell.3{r11}, [t.19.2{r12}]
-	; 377:5 if cell & 32 == 0
+	; 386:5 if cell & 32 == 0
 	move t.20.1{r12}, cell.3{r11}
 	and t.20.1{r12}, 32
-	branch t.20.1{r12} notequals 0: while_51
+	branch t.20.1{r12} notequals 0: while_52
 	xor cell.4{r11}, 64
 	addrof t.21.1{r12}, field
 	add t.21.2{r12}, index.2{r0}
@@ -824,14 +792,14 @@ if_68_then:
 	move curr_r.2{r1}, curr_r.2{r10}
 	move curr_c.2{r2}, curr_c.2{r9}
 	call printCellAt@u8@u8@u8[cell.4{r0}, curr_r.2{r1}, curr_c.2{r2}]
-while_51:
-	branch needsInitialize.2{r8} notequals 0: if_52_end, if_52_then
-	jump if_52_then
-if_53_then:
+while_52:
+	branch needsInitialize.2{r8} notequals 0: if_53_end, if_53_then
+	jump if_53_then
+if_54_then:
 	const t.10.1{r0}, [string-2]
 	call printString@@u8[t.10.1{r0}]
 	jump main_ret
-if_58_then:
+if_59_then:
 	move curr_r.2{r0}, curr_r.2{r10}
 	move curr_c.2{r1}, curr_c.2{r9}
 	call printCellAt@u8@u8[curr_r.2{r0}, curr_c.2{r1}]

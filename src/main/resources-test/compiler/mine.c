@@ -268,40 +268,49 @@ void maybeRevealAround(u8 row, u8 column) {
 					continue;
 				}
 
-				u8 rowFrom = r
-				if rowFrom > 0 {
-					rowFrom = rowFrom - 1
-				}
-				u8 rowTo = r + 1
-				if rowTo >= height {
-					rowTo = rowTo - 1
-				}
-
-				u8 colFrom = c
-				if colFrom > 0 {
-					colFrom = colFrom - 1
-				}
-				u8 colTo = c + 1
-				if colTo >= width {
-					colTo = colTo - 1
-				}
-				i16 neighborIndex = rowColumnToCell(rowFrom, colFrom)
-				for (u8 neighborRow = rowFrom; neighborRow <= rowTo; neighborRow = neighborRow + 1) {
-					for (u8 neighborColumn = colFrom; neighborColumn <= colTo; neighborColumn = neighborColumn + 1, neighborIndex = neighborIndex + 1) {
-						u8 neighborCell = field[neighborIndex]
-						if (neighborCell & maskOpen) != 0 {
-							continue;
-						}
-
-						field[neighborIndex] = neighborCell | maskOpen
-						printCellAt(field[neighborIndex], neighborRow, neighborColumn)
-						changed = true
-					}
-					neighborIndex = neighborIndex - (i16)colTo + (i16)colFrom + width - 1
+				if revealNeighbors(r, c) {
+					changed = true
 				}
 			}
 		}
 	}
+}
+
+bool revealNeighbors(u8 row, u8 column) {
+	u8 rowFrom = row
+	if rowFrom > 0 {
+		rowFrom = rowFrom - 1
+	}
+	u8 rowTo = row + 1
+	if rowTo >= height {
+		rowTo = rowTo - 1
+	}
+
+	u8 colFrom = column
+	if colFrom > 0 {
+		colFrom = colFrom - 1
+	}
+	u8 colTo = column + 1
+	if colTo >= width {
+		colTo = colTo - 1
+	}
+	i16 index = rowColumnToCell(rowFrom, colFrom)
+	bool changed = false
+	for (u8 r = rowFrom; r <= rowTo; r = r + 1) {
+		for (u8 c = colFrom; c <= colTo; c = c + 1, index = index + 1) {
+			u8 cell = field[index]
+			if (cell & maskOpen) != 0 {
+				continue;
+			}
+
+			cell = cell | maskOpen
+			field[index] = cell
+			printCellAt(cell, r, c)
+			changed = true
+		}
+		index = index - (i16)colTo + (i16)colFrom + width - 1
+	}
+	return changed
 }
 
 void main() {
