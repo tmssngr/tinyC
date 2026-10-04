@@ -13,9 +13,10 @@ const height = 20;
 const bombRatio = 90;
 const bombCount = height * width * bombRatio / 1000;
 
-const maskBomb = 1;
-const maskOpen = 2;
-const maskFlag = 4;
+const maskBomb = 0x80;
+const maskFlag = 0x40;
+const maskOpen = 0x20;
+const maskCount = 0x0F;
 
 u8 field[width * height];
 
@@ -26,40 +27,8 @@ i16 rowColumnToCell(u8 row, u8 column) {
 }
 
 u8 getBombCountAround(u8 row, u8 column) {
-	u8 rowFrom = row
-	if rowFrom > 0 {
-		rowFrom = row - 1
-	}
-	u8 rowTo = row + 1
-	if rowTo >= height {
-		rowTo = rowTo - 1
-	}
-
-	u8 colFrom = column
-	if colFrom > 0 {
-		colFrom = colFrom - 1
-	}
-	u8 colTo = column + 1
-	if colTo >= width {
-		colTo = colTo - 1
-	}
-	
-	u8 count = 0;
-	i16 index = rowColumnToCell(rowFrom, colFrom)
-	for (u8 r = rowFrom; r <= rowTo; r = r + 1) {
-		for (u8 c = colFrom; c <= colTo; c = c + 1, index = index + 1) {
-			if r == row && c == column {
-				continue
-			}
-
-			u8 cell = field[index]
-			if (cell & maskBomb) != 0 {
-				count = count + 1;
-			}
-		}
-		index = index - (i16)colTo + (i16)colFrom + width - 1
-	}
-	return count;
+	i16 index = rowColumnToCell(row, column)
+	return field[index] & maskCount
 }
 
 i16 columnToX(u8 column) {
@@ -229,8 +198,53 @@ void initField(u8 curr_r, u8 curr_c) {
 		i16 column = random16() % width;
 		if (abs(row    - r) > 1 ||
 		    abs(column - c) > 1) {
-			field[rowColumnToCell((u8)row, (u8)column)] = maskBomb
+			setBomb((u8)row, (u8)column)
 		}
+	}
+}
+
+void setBomb(u8 row, u8 column) {
+	i16 index = rowColumnToCell(row, column)
+	if field[index] == maskBomb {
+		return
+	}
+	field[index] = maskBomb
+
+	u8 rowFrom = row
+	if rowFrom > 0 {
+		rowFrom = row - 1
+		index = index - width
+	}
+	u8 rowTo = row + 1
+	if rowTo >= height {
+		rowTo = rowTo - 1
+	}
+
+	u8 colFrom = column
+	if colFrom > 0 {
+		colFrom = colFrom - 1
+		index = index - 1
+	}
+	u8 colTo = column + 1
+	if colTo >= width {
+		colTo = colTo - 1
+	}
+	
+	u8 count = 0;
+	for (u8 r = rowFrom; r <= rowTo; r = r + 1) {
+		for (u8 c = colFrom; c <= colTo; c = c + 1, index = index + 1) {
+			if r == row && c == column {
+				continue
+			}
+
+			u8 cell = field[index]
+			if (cell & maskBomb) == 0 {
+				u8 count = cell & maskCount
+				count = count + 1;
+				field[index] = count
+			}
+		}
+		index = index - (i16)colTo + (i16)colFrom + width - 1
 	}
 }
 

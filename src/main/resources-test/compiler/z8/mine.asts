@@ -35,49 +35,10 @@ i16 rowColumnToCell@u8@u8(u8 row, u8 column) {
 }
 
 u8 getBombCountAround@u8@u8(u8 row, u8 column) {
-	u8 rowFrom;
-	u8 rowTo;
-	u8 colFrom;
-	u8 colTo;
-	u8 count;
 	i16 index;
-	u8 r;
-	u8 c;
-	u8 cell;
 
-	rowFrom = row;
-	if (rowFrom > 0) {
-		rowFrom = row - 1;
-	}
-	rowTo = row + 1;
-	if (rowTo >= 20) {
-		rowTo = rowTo - 1;
-	}
-	colFrom = column;
-	if (colFrom > 0) {
-		colFrom = colFrom - 1;
-	}
-	colTo = column + 1;
-	if (colTo >= 38) {
-		colTo = colTo - 1;
-	}
-	count = 0;
-	index = rowColumnToCell@u8@u8(rowFrom, colFrom);
-	r = rowFrom;
-	for (; r <= rowTo; r = r + 1) {
-		c = colFrom;
-		for (; c <= colTo; c = c + 1, index = index + 1) {
-			if ((r == row) && (c == column)) {
-				continue;
-			}
-			cell = field[index];
-			if ((cell & 1) != 0) {
-				count = count + 1;
-			}
-		}
-		index = (((index - ((i16)colTo)) + ((i16)colFrom)) + 38) - 1;
-	}
-	return count;
+	index = rowColumnToCell@u8@u8(row, column);
+	return field[index] & 15;
 }
 
 i16 columnToX@u8(u8 column) {
@@ -110,8 +71,8 @@ void printCell@u8@u8@u8(u8 cell, u8 row, u8 column) {
 	u8 count;
 
 	chr = 46;
-	if ((cell & 2) != 0) {
-		if ((cell & 1) != 0) {
+	if ((cell & 32) != 0) {
+		if ((cell & 128) != 0) {
 			chr = 42;
 		}
 		else {
@@ -125,7 +86,7 @@ void printCell@u8@u8@u8(u8 cell, u8 row, u8 column) {
 		}
 	}
 	else {
-		if ((cell & 4) != 0) {
+		if ((cell & 64) != 0) {
 			chr = 35;
 		}
 	}
@@ -225,7 +186,7 @@ i16 getHiddenCount() {
 		c = 0;
 		for (; c < 38; c = c + 1) {
 			cell = field[rowColumnToCell@u8@u8(r, c)];
-			if ((cell & 6) == 0) {
+			if ((cell & 96) == 0) {
 				count = count + 1;
 			}
 		}
@@ -279,8 +240,62 @@ void initField@u8@u8(u8 curr_r, u8 curr_c) {
 		row = (random16()) % 20;
 		column = (random16()) % 38;
 		if (((abs@i16(row - r)) > 1) || ((abs@i16(column - c)) > 1)) {
-			field[rowColumnToCell@u8@u8((u8)row, (u8)column)] = 1;
+			setBomb@u8@u8((u8)row, (u8)column);
 		}
+	}
+}
+
+void setBomb@u8@u8(u8 row, u8 column) {
+	i16 index;
+	u8 rowFrom;
+	u8 rowTo;
+	u8 colFrom;
+	u8 colTo;
+	u8 count;
+	u8 r;
+	u8 c;
+	u8 cell;
+	u8 count;
+
+	index = rowColumnToCell@u8@u8(row, column);
+	if (field[index] == 128) {
+		return;
+	}
+	field[index] = 128;
+	rowFrom = row;
+	if (rowFrom > 0) {
+		rowFrom = row - 1;
+		index = index - 38;
+	}
+	rowTo = row + 1;
+	if (rowTo >= 20) {
+		rowTo = rowTo - 1;
+	}
+	colFrom = column;
+	if (colFrom > 0) {
+		colFrom = colFrom - 1;
+		index = index - 1;
+	}
+	colTo = column + 1;
+	if (colTo >= 38) {
+		colTo = colTo - 1;
+	}
+	count = 0;
+	r = rowFrom;
+	for (; r <= rowTo; r = r + 1) {
+		c = colFrom;
+		for (; c <= colTo; c = c + 1, index = index + 1) {
+			if ((r == row) && (c == column)) {
+				continue;
+			}
+			cell = field[index];
+			if ((cell & 128) == 0) {
+				count = cell & 15;
+				count = count + 1;
+				field[index] = count;
+			}
+		}
+		index = (((index - ((i16)colTo)) + ((i16)colFrom)) + 38) - 1;
 	}
 }
 
@@ -312,7 +327,7 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 			c = 0;
 			for (; c < 38; c = c + 1, index = index + 1) {
 				cell = field[index];
-				if (((cell & 2) == 0) || ((cell & 1) != 0)) {
+				if (((cell & 32) == 0) || ((cell & 128) != 0)) {
 					continue;
 				}
 				if ((getBombCountAround@u8@u8(r, c)) != 0) {
@@ -340,10 +355,10 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 					neighborColumn = colFrom;
 					for (; neighborColumn <= colTo; neighborColumn = neighborColumn + 1, neighborIndex = neighborIndex + 1) {
 						neighborCell = field[neighborIndex];
-						if ((neighborCell & 2) != 0) {
+						if ((neighborCell & 32) != 0) {
 							continue;
 						}
-						field[neighborIndex] = neighborCell | 2;
+						field[neighborIndex] = neighborCell | 32;
 						printCellAt@u8@u8@u8(field[neighborIndex], neighborRow, neighborColumn);
 						changed = true;
 					}
@@ -392,10 +407,10 @@ void main() {
 			}
 			index = rowColumnToCell@u8@u8(curr_r, curr_c);
 			cell = field[index];
-			if ((cell & 2) == 0) {
-				field[index] = cell | 2;
+			if ((cell & 32) == 0) {
+				field[index] = cell | 32;
 			}
-			if ((cell & 1) != 0) {
+			if ((cell & 128) != 0) {
 				printCellAt@u8@u8(curr_r, curr_c);
 				printString@@u8("boom! you've lost");
 				break;
@@ -431,8 +446,8 @@ void main() {
 								if (!needsInitialize) {
 									index = rowColumnToCell@u8@u8(curr_r, curr_c);
 									cell = field[index];
-									if ((cell & 2) == 0) {
-										cell = cell ^ 4;
+									if ((cell & 32) == 0) {
+										cell = cell ^ 64;
 										field[index] = cell;
 										printCellAt@u8@u8@u8(cell, curr_r, curr_c);
 									}
