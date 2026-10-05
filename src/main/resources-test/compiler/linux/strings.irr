@@ -24,7 +24,6 @@ printUint@i64:
 	var 1: buffer[] (u8*/20)
 
 	const pos.1{r8}, 20
-	; 33:2 while true
 	move number.1{r5}, number{r1}
 while_1:
 	sub pos.3{r8}, 1
@@ -41,7 +40,6 @@ while_1:
 	addrof t.6.1{r4}, buffer
 	add t.6.2{r4}, t.7.1{r3}
 	store [t.6.2{r4}], digit.1{r0}
-	; 39:3 if number == 0
 	branch number.2{r5} notequals 0: while_1
 	addrof t.8.1{r3}, buffer
 	move t.8.2{r1}, t.8.2{r4}
@@ -84,7 +82,6 @@ strlen@@u8:
 	arg 0: str (u8*/8)
 
 	const length.1{r2}, 0
-	; 73:2 for *str != 0
 	move length.2{r0}, length.1{r2}
 	jump for_4
 for_4_body:
@@ -95,7 +92,6 @@ for_4_body:
 for_4:
 	load t.2.1{r2}, [str.1{r1}]
 	branch t.2.1{r2} notequals 0: for_4_body
-	; 76:9 return length
 
 printStringLength@@u8@u8:
  Local variables
@@ -106,11 +102,9 @@ printStringLength@@u8@u8:
 	call printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
 
 main:
-	; begin initialize global variables
 	const t.2.1{r8}, [string-0]
 	addrof a.3.1{r0}, text
 	store [a.3.1{r0}], t.2.1{r8}
-	; end initialize global variables
 	move a.4.1{r8}, a.4.1{r0}
 	load t.5.1{r1}, [a.4.1{r8}]
 	call printString@@u8[t.5.1{r1}]
@@ -130,7 +124,6 @@ printLength:
 	const length.1{r8}, 0
 	addrof a.2.1{r0}, text
 	load ptr.1{r0}, [a.2.1{r0}]
-	; 16:2 for *ptr != 0
 	move length.2{r1}, length.1{r8}
 	move ptr.2{r8}, ptr.1{r0}
 	jump for_5
