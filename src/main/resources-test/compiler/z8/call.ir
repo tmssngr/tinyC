@@ -20,7 +20,6 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 
-	; 133:2 if number < 0
 	branch number gteq 0: if_1_end, if_1_then
 if_1_then:
 	call printChar@u8[45]
@@ -40,11 +39,9 @@ main:
 	var 5: t.5 (u8/1)
 	var 6: t.6 (u8/1)
 
-	; begin initialize global variables
 	const t.0, 0
 	addrof a.1, i
 	store [a.1], t.0
-	; end initialize global variables
 	call t.2 = next[] -> u8
 	call t.3 = next[] -> u8
 	call t.4 = next[] -> u8
@@ -67,7 +64,6 @@ next:
 	add t.0, t.2, 1
 	addrof a.3, i
 	store [a.3], t.0
-	; 11:9 return i
 	addrof a.4, i
 	load t.5, [a.4]
 	ret t.5
