@@ -10,7 +10,6 @@ printIntLf@bool:
 	arg 0: value (bool/1)
 
 	const number.1{r8}, 0
-	; 122:2 if value
 	branch param.value{r0} equals 0: if_1_end
 	const number.3{r8}, 1
 if_1_end:

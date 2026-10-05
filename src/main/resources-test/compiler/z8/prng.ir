@@ -20,7 +20,6 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 
-	; 133:2 if number < 0
 	branch number gteq 0: if_1_end, if_1_then
 if_1_then:
 	call printChar@u8[45]
@@ -35,7 +34,6 @@ randomU8:
 	var 0: t.0 (u8/1)
 	var 1: t.1 (i32/4)
 
-	; 60:21 return (u8)
 	call t.1 = random[] -> i32
 	cast t.0(u8), t.1(i32)
 	ret t.0
@@ -49,7 +47,6 @@ main:
 
 	call initRandom@i32[7439742]
 	const i, 0
-	; 6:2 for i < 50
 for_2:
 	branch i gteq 50: main_ret, for_2_body
 for_2_body:

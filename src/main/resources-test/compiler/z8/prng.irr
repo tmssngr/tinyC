@@ -28,7 +28,6 @@ if_1_end:
 	call printChar@u8[arg.2.0{r0}]
 
 randomU8:
-	; 60:21 return (u8)
 	call t.1.1{r0} = random[] -> i32
 	cast t.0.1{r0}(u8), t.1.1{r0}(i32)
 
@@ -36,7 +35,6 @@ main:
 	const arg.0.0{r0}, 7439742
 	call initRandom@i32[arg.0.0{r0}]
 	const i.1{r8}, 0
-	; 6:2 for i < 50
 	jump for_2
 for_2_body:
 	call r.1{r0} = randomU8[] -> u8

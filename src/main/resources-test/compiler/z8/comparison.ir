@@ -14,7 +14,6 @@ printIntLf@bool:
 	var 2: t.2 (i16/2)
 
 	const number, 0
-	; 122:2 if value
 	branch value equals 0: if_1_end, if_1_then
 if_1_then:
 	const number, 1
@@ -27,7 +26,6 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 
-	; 133:2 if number < 0
 	branch number gteq 0: if_2_end, if_2_then
 if_2_then:
 	call printChar@u8[45]

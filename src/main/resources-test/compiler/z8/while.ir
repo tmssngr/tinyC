@@ -20,7 +20,6 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 
-	; 133:2 if number < 0
 	branch number gteq 0: if_1_end, if_1_then
 if_1_then:
 	call printChar@u8[45]
@@ -35,7 +34,6 @@ main:
 	var 0: i (u8/1)
 
 	const i, 5
-	; 5:2 while i > 0
 while_2:
 	branch i lteq 0: while_2_break, while_2_body
 while_2_body:
@@ -43,16 +41,12 @@ while_2_body:
 	sub i, 1
 	jump while_2
 while_2_break:
-	; 10:2 while true
 while_3:
 	call printIntLf@u8[i]
 	add i, 1
-	; 13:3 if i < 5
 	branch i lt 5: while_3, while_3_break
 while_3_break:
-	; 19:2 while true
 while_5:
-	; 20:3 return
 main_ret:
 
 printChar@u8:
