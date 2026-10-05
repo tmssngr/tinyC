@@ -1,680 +1,635 @@
-printUint@i16:
+rowColumnToCell@u8@u8:
  Local variables
-	arg 0: number (i16/2)
+	arg 0: row (u8/1)
+	arg 1: column (u8/1)
 
-	cast t.1.1{r0}(i32), param.number{r0}(i16)
-	call printUint@i32[t.1.1{r0}]
+	cast r.1{r2}(i16), param.row{r0}(u8)
+	cast c.1{r4}(i16), param.column{r1}(u8)
+	mul t.5.1{r2}, 38
+	move t.4.1{r0}, t.5.1{r2}
+	add t.4.1{r0}, c.1{r4}
 
-rowColumnToCell@i16@i16:
+columnToX@u8:
  Local variables
-	arg 0: row (i16/2)
-	arg 1: column (i16/2)
+	arg 0: column (u8/1)
 
-	; 16:21 return row * 40 + column
-	move t.3.1{r4}, param.row{r0}
-	mul t.3.1{r4}, 40
-	move t.2.1{r0}, t.3.1{r4}
-	add t.2.1{r0}, param.column{r2}
+	cast c.1{r0}(i16), param.column{r0}(u8)
 
-getCell@i16@i16:
+printCellAt@u8@u8:
  Local variables
-	arg 0: row (i16/2)
-	arg 1: column (i16/2)
-
-	; 20:15 return [...]
-	call t.4.1{r0} = rowColumnToCell@i16@i16[param.row{r0}, param.column{r2}] -> i16
-	addrof t.3.1{r2}, field
-	add t.3.2{r2}, t.4.1{r0}
-	load t.2.1{r0}, [t.3.2{r2}]
-
-isBomb@u8:
- Local variables
-	arg 0: cell (u8/1)
-
-	; 24:27 return cell & 1 != 0
-	move t.2.1{r1}, param.cell{r0}
-	and t.2.1{r1}, 1
-	notequals t.1.1{r0}, t.2.1{r1}, 0
-
-isOpen@u8:
- Local variables
-	arg 0: cell (u8/1)
-
-	; 28:27 return cell & 2 != 0
-	move t.2.1{r1}, param.cell{r0}
-	and t.2.1{r1}, 2
-	notequals t.1.1{r0}, t.2.1{r1}, 0
-
-isFlag@u8:
- Local variables
-	arg 0: cell (u8/1)
-
-	; 32:27 return cell & 4 != 0
-	move t.2.1{r1}, param.cell{r0}
-	and t.2.1{r1}, 4
-	notequals t.1.1{r0}, t.2.1{r1}, 0
-
-checkCellBounds@i16@i16:
- Local variables
-	arg 0: row (i16/2)
-	arg 1: column (i16/2)
-
-	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
-	; 37:21 logic and
-	; 36:40 logic and
-	; 36:21 logic and
-	gteq t.2.1{r4}, param.row{r0}, 0
-	branch t.2.1{r4} notequals 0: and_2nd_3
-	move t.2.2{r1}, t.2.1{r4}
-	jump and_next_3
-and_2nd_3:
-	lt t.2.3{r1}, param.row{r0}, 20
-and_next_3:
-	branch t.2.2{r1} equals 0: and_next_2
-	gteq t.2.5{r1}, param.column{r2}, 0
-and_next_2:
-	branch t.2.4{r1} notequals 0: and_2nd_1
-	move t.2.6{r0}, t.2.4{r1}
-	jump checkCellBounds@i16@i16_ret
-and_2nd_1:
-	lt t.2.7{r1}, param.column{r2}, 40
-	move t.2.6{r0}, t.2.7{r1}
-checkCellBounds@i16@i16_ret:
-
-setCell@i16@i16@u8:
- Local variables
-	arg 0: row (i16/2)
-	arg 1: column (i16/2)
-	arg 2: cell (u8/1)
-
-	move param.cell{r8}, cell{r4}
-	call t.4.1{r0} = rowColumnToCell@i16@i16[param.row{r0}, param.column{r2}] -> i16
-	addrof t.3.1{r2}, field
-	add t.3.2{r2}, t.4.1{r0}
-	store [t.3.2{r2}], param.cell{r8}
-
-getBombCountAround@i16@i16:
- Local variables
-	arg 0: row (i16/2)
-	arg 1: column (i16/2)
-	var 2: dr.2 (i16/2)
-	var 3: r.1 (i16/2)
-	var 4: dc.2 (i16/2)
-	var 5: c.1 (i16/2)
+	arg 0: row (u8/1)
+	arg 1: column (u8/1)
 
 	move param.row{r8}, row{r0}
-	move param.column{r10}, column{r2}
-	const count.1{r12}, 0
-	const dr.1{r4}, -1
-	; 46:2 for dr <= 1
-	move dr.2{r1}, dr.2{r4}
-	jump for_4
-for_4_body:
-	move dr.2{r4}, dr.2{r1}
-	move r.1{r0}, param.row{r8}
-	add r.1{r0}, dr.2{r4}
-	addrof memVarAddr{r14}, dr.2
-	store [memVarAddr{r14}], dr.2{r4}
-	const dc.1{r4}, -1
-	; 48:3 for dc <= 1
-	addrof memVarAddr{r14}, r.1
-	store [memVarAddr{r14}], r.1{r0}
-	move dc.2{r1}, dc.2{r4}
-	jump for_5
-for_5_body:
-	move dc.2{r4}, dc.2{r1}
-	addrof memVarAddr{r14}, r.1
-	load r.1{r0}, [memVarAddr{r14}]
-	move c.1{r2}, param.column{r10}
-	add c.1{r2}, dc.2{r4}
-	addrof memVarAddr{r14}, dc.2
-	store [memVarAddr{r14}], dc.2{r4}
-	; 50:4 if checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=50:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=50:27]])
-	addrof memVarAddr{r14}, c.1
-	store [memVarAddr{r14}], c.1{r2}
-	call t.8.1{r0} = checkCellBounds@i16@i16[r.1{r0}, c.1{r2}] -> bool
-	branch t.8.1{r0} equals 0: for_5_continue
-	addrof memVarAddr{r14}, r.1
-	load r.1{r0}, [memVarAddr{r14}]
-	addrof memVarAddr{r14}, c.1
-	load c.1{r2}, [memVarAddr{r14}]
-	call cell.1{r0} = getCell@i16@i16[r.1{r0}, c.1{r2}] -> u8
-	; 52:5 if isBomb@u8([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=52:16]])
-	call t.9.1{r0} = isBomb@u8[cell.1{r0}] -> bool
-	branch t.9.1{r0} equals 0: for_5_continue
-	move count.5{r1}, count.3{r12}
-	add count.5{r1}, 1
-	move count.4{r12}, count.5{r1}
-for_5_continue:
-	addrof memVarAddr{r14}, dc.2
-	load dc.2{r1}, [memVarAddr{r14}]
-	add dc.4{r1}, 1
-for_5:
-	branch dc.2{r1} lteq 1: for_5_body
-	addrof memVarAddr{r14}, dr.2
-	load dr.2{r1}, [memVarAddr{r14}]
-	add dr.4{r1}, 1
-for_4:
-	branch dr.2{r1} lteq 1: for_4_body
-	; 58:9 return count
-	move count.2{r0}, count.2{r12}
+	move param.column{r9}, column{r1}
+	call t.4.1{r0} = rowColumnToCell@u8@u8[param.row{r0}, param.column{r1}] -> i16
+	addrof t.3.1{r10}, field
+	add t.3.2{r10}, t.4.1{r0}
+	load cell.1{r0}, [t.3.2{r10}]
+	move param.row{r1}, param.row{r8}
+	move param.column{r2}, param.column{r9}
+	call printCellAt@u8@u8@u8[cell.1{r0}, param.row{r1}, param.column{r2}]
 
-getSpacer@i16@i16@i16@i16:
- Local variables
-	arg 0: row (i16/2)
-	arg 1: column (i16/2)
-	arg 2: rowCursor (i16/2)
-	arg 3: columnCursor (i16/2)
-
-	branch param.rowCursor{r4} notequals param.row{r0}: if_8_end
-	branch param.columnCursor{r6} equals param.column{r2}: if_9_then
-	; 66:3 if columnCursor == column - 1
-	move t.4.1{r1}, param.column{r2}
-	sub t.4.1{r1}, 1
-	branch param.columnCursor{r6} notequals t.4.1{r1}: if_8_end, if_10_then
-	jump if_10_then
-if_9_then:
-	const {r0}, 91
-	jump getSpacer@i16@i16@i16@i16_ret
-if_10_then:
-	const {r0}, 93
-	jump getSpacer@i16@i16@i16@i16_ret
-if_8_end:
-	const {r0}, 32
-getSpacer@i16@i16@i16@i16_ret:
-
-printCell@u8@i16@i16:
+printCellAt@u8@u8@u8:
  Local variables
 	arg 0: cell (u8/1)
-	arg 1: row (i16/2)
-	arg 2: column (i16/2)
+	arg 1: row (u8/1)
+	arg 2: column (u8/1)
 
 	move param.cell{r8}, cell{r0}
 	move param.row{r9}, row{r1}
-	move param.column{r11}, column{r3}
-	const chr.1{r13}, 46
-	; 75:2 if isOpen@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=75:13]])
-	call t.5.1{r0} = isOpen@u8[param.cell{r0}] -> bool
-	branch t.5.1{r0} notequals 0: if_11_then
-	; 89:7 if isFlag@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=89:18]])
+	move param.column{r10}, column{r2}
+	move param.column{r0}, param.column{r10}
+	call x.1{r0} = columnToX@u8[param.column{r0}] -> i16
+	move x.1{r2}, x.1{r0}
+	cast t.4.1{r0}(i16), param.row{r9}(u8)
+	call setCursor@i16@i16[t.4.1{r0}, x.1{r2}]
 	move param.cell{r0}, param.cell{r8}
-	call t.7.1{r0} = isFlag@u8[param.cell{r0}] -> bool
-	branch t.7.1{r0} equals 0: printCell@u8@i16@i16.no_critical_edge_10, if_14_then
-	jump if_14_then
-if_11_then:
-	; 76:3 if isBomb@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=76:14]])
-	move param.cell{r0}, param.cell{r8}
-	call t.6.1{r0} = isBomb@u8[param.cell{r0}] -> bool
-	branch t.6.1{r0} equals 0: if_12_else, if_12_then
-	jump if_12_then
-printCell@u8@i16@i16.no_critical_edge_10:
-	move chr.2{r8}, chr.1{r13}
-	jump if_11_end
-if_14_then:
+	move param.row{r1}, param.row{r9}
+	move param.column{r2}, param.column{r10}
+	call printCell@u8@u8@u8[param.cell{r0}, param.row{r1}, param.column{r2}]
+
+printCell@u8@u8@u8:
+ Local variables
+	arg 0: cell (u8/1)
+	arg 1: row (u8/1)
+	arg 2: column (u8/1)
+
+	const chr.1{r8}, 46
+	move t.6.1{r9}, param.cell{r0}
+	and t.6.1{r9}, 32
+	branch t.6.1{r9} notequals 0: if_1_then
+	move t.10.1{r9}, param.cell{r0}
+	and t.10.1{r9}, 64
+	branch t.10.1{r9} equals 0: if_1_end, if_4_then
+	jump if_4_then
+if_1_then:
+	move t.7.1{r8}, param.cell{r0}
+	and t.7.1{r8}, 128
+	branch t.7.1{r8} equals 0: if_2_else, if_2_then
+	jump if_2_then
+if_4_then:
 	const chr.3{r8}, 35
-	jump if_11_end
-if_12_else:
-	move param.row{r0}, param.row{r9}
-	move param.column{r2}, param.column{r11}
-	call count.1{r0} = getBombCountAround@i16@i16[param.row{r0}, param.column{r2}] -> u8
-	; 81:4 if count > 0
-	branch count.1{r0} lteq 0: if_13_else, if_13_then
-	jump if_13_then
-if_12_then:
+	jump if_1_end
+if_2_else:
+	move param.row{r0}, param.row{r1}
+	move param.column{r1}, param.column{r2}
+	call index.1{r0} = rowColumnToCell@u8@u8[param.row{r0}, param.column{r1}] -> i16
+	addrof t.9.1{r8}, field
+	add t.9.2{r8}, index.1{r0}
+	load t.8.1{r10}, [t.9.2{r8}]
+	move count.1{r8}, t.8.1{r10}
+	and count.1{r8}, 15
+	branch count.1{r8} lteq 0: if_3_else, if_3_then
+	jump if_3_then
+if_2_then:
 	const chr.4{r8}, 42
-	jump if_11_end
-if_13_else:
+	jump if_1_end
+if_3_else:
 	const chr.5{r8}, 32
-	jump if_11_end
-if_13_then:
-	move chr.6{r8}, count.1{r0}
+	jump if_1_end
+if_3_then:
 	add chr.6{r8}, 48
-if_11_end:
+if_1_end:
 	move chr.2{r0}, chr.2{r8}
 	call printChar@u8[chr.2{r0}]
 
-printField@i16@i16:
- Local variables
-	arg 0: rowCursor (i16/2)
-	arg 1: columnCursor (i16/2)
+initializeScreen:
+	const arg.0.0{r0}, 12
+	call printChar@u8[arg.0.0{r0}]
+	call printField[]
 
-	move param.rowCursor{r8}, rowCursor{r0}
-	move param.columnCursor{r10}, columnCursor{r2}
+printField:
 	const arg.0.0{r0}, 0
 	const arg.0.1{r2}, 0
 	call setCursor@i16@i16[arg.0.0{r0}, arg.0.1{r2}]
-	const row.1{r12}, 0
-	; 97:2 for row < 20
-	jump for_15
-for_15_body:
-	const arg.1.0{r0}, 124
-	call printChar@u8[arg.1.0{r0}]
-	const column.1{r14}, 0
-	; 99:3 for column < 40
-	jump for_16
-for_16_body:
-	move row.2{r0}, row.2{r12}
-	move column.2{r2}, column.2{r14}
-	move param.rowCursor{r4}, param.rowCursor{r8}
-	move param.columnCursor{r6}, param.columnCursor{r10}
-	call spacer.2{r0} = getSpacer@i16@i16@i16@i16[row.2{r0}, column.2{r2}, param.rowCursor{r4}, param.columnCursor{r6}] -> u8
-	call printChar@u8[spacer.2{r0}]
-	move row.2{r0}, row.2{r12}
-	move column.2{r2}, column.2{r14}
-	call cell.1{r0} = getCell@i16@i16[row.2{r0}, column.2{r2}] -> u8
-	move row.2{r1}, row.2{r12}
-	move column.2{r3}, column.2{r14}
-	call printCell@u8@i16@i16[cell.1{r0}, row.2{r1}, column.2{r3}]
-	add column.3{r14}, 1
-for_16:
-	branch column.2{r14} lt 40: for_16_body
-	move row.2{r0}, row.2{r12}
-	move param.rowCursor{r4}, param.rowCursor{r8}
-	move param.columnCursor{r6}, param.columnCursor{r10}
-	const arg.6.1{r2}, 40
-	call spacer.1{r0} = getSpacer@i16@i16@i16@i16[row.2{r0}, arg.6.1{r2}, param.rowCursor{r4}, param.columnCursor{r6}] -> u8
-	call printChar@u8[spacer.1{r0}]
-	const t.7.1{r0}, [string-0]
-	call printString@@u8[t.7.1{r0}]
-	move row.4{r0}, row.2{r12}
+	const row.1{r8}, 0
+	jump for_5
+for_5_body:
+	cast t.3.1{r0}(i16), row.2{r8}(u8)
+	const arg.1.1{r2}, 0
+	call setCursor@i16@i16[t.3.1{r0}, arg.1.1{r2}]
+	const column.1{r9}, 0
+	jump for_6
+for_6_body:
+	move row.2{r0}, row.2{r8}
+	move column.2{r1}, column.2{r9}
+	call t.5.1{r0} = rowColumnToCell@u8@u8[row.2{r0}, column.2{r1}] -> i16
+	addrof t.4.1{r10}, field
+	add t.4.2{r10}, t.5.1{r0}
+	load cell.1{r0}, [t.4.2{r10}]
+	move row.2{r1}, row.2{r8}
+	move column.2{r2}, column.2{r9}
+	call printCell@u8@u8@u8[cell.1{r0}, row.2{r1}, column.2{r2}]
+	move column.3{r0}, column.2{r9}
+	add column.3{r0}, 1
+	move column.2{r9}, column.3{r0}
+for_6:
+	branch column.2{r9} lt 38: for_6_body
+	move row.4{r0}, row.2{r8}
 	add row.4{r0}, 1
-	move row.2{r12}, row.4{r0}
-for_15:
-	branch row.2{r12} lt 20: for_15_body
+	move row.2{r8}, row.4{r0}
+for_5:
+	branch row.2{r8} lt 20: for_5_body
 
-printSpaces@i16:
+showCursor@u8@u8@bool:
  Local variables
-	arg 0: i (i16/2)
+	arg 0: row (u8/1)
+	arg 1: column (u8/1)
+	arg 2: show (bool/1)
 
-	move i.1{r8}, param.i{r0}
-	jump for_17
-for_17_body:
-	const arg.0.0{r0}, 48
-	call printChar@u8[arg.0.0{r0}]
-	move i.2{r0}, i.1{r8}
-	sub i.2{r0}, 1
-	move i.1{r8}, i.2{r0}
-for_17:
-	branch i.1{r8} gt 0: for_17_body
-
-getDigitCount@i16:
- Local variables
-	arg 0: value (i16/2)
-
-	const count.1{r2}, 0
-	; 119:2 if value < 0
-	branch param.value{r0} lt 0: if_18_then
-	move value.1{r3}, param.value{r0}
-	move count.2{r1}, count.1{r2}
-	jump if_18_end
-if_18_then:
-	const count.3{r2}, 1
-	neg value.2{r3}, param.value{r0}
-	move count.2{r1}, count.3{r2}
-if_18_end:
-	move value.3{r2}, value.1{r3}
-	jump while_19
-getDigitCount@i16.no_critical_edge_7:
-	move value.3{r2}, value.4{r1}
-	move count.4{r1}, count.5{r0}
-while_19:
-	move count.5{r0}, count.4{r1}
-	add count.5{r0}, 1
-	move value.4{r1}, value.3{r2}
-	div value.4{r1}, 10
-	; 127:3 if value == 0
-	branch value.4{r1} notequals 0: getDigitCount@i16.no_critical_edge_7
-	; 132:9 return count
-
-getHiddenCount:
-	const count.1{r8}, 0
-	const r.1{r10}, 0
-	; 137:2 for r < 20
-	jump for_21
-for_21_body:
-	const c.1{r12}, 0
-	; 138:3 for c < 40
-	jump for_22
-for_22_body:
-	move r.2{r0}, r.2{r10}
-	move c.2{r2}, c.2{r12}
-	call cell.1{r0} = getCell@i16@i16[r.2{r0}, c.2{r2}] -> u8
-	; 140:4 if cell & 6 == 0
-	move t.4.1{r2}, cell.1{r0}
-	and t.4.1{r2}, 6
-	branch t.4.1{r2} equals 0: if_23_then
-	move count.4{r2}, count.3{r8}
-	jump for_22_continue
-if_23_then:
-	move count.5{r2}, count.3{r8}
-	add count.5{r2}, 1
-for_22_continue:
-	move c.4{r4}, c.2{r12}
-	add c.4{r4}, 1
-	move count.3{r8}, count.4{r2}
-	move c.2{r12}, c.4{r4}
-for_22:
-	branch c.2{r12} lt 40: for_22_body
-	move r.4{r2}, r.2{r10}
-	add r.4{r2}, 1
-	move r.2{r10}, r.4{r2}
-for_21:
-	branch r.2{r10} lt 20: for_21_body
-	; 145:9 return count
-	move count.2{r0}, count.2{r8}
-
-printLeft:
-	call count.1{r0} = getHiddenCount[] -> i16
-	move count.1{r8}, count.1{r0}
-	call t.3.1{r0} = getDigitCount@i16[count.1{r0}] -> u8
-	cast leftDigits.1{r10}(i16), t.3.1{r0}(u8)
-	const arg.2.0{r0}, 40
-	call t.4.1{r0} = getDigitCount@i16[arg.2.0{r0}] -> u8
-	cast bombDigits.1{r12}(i16), t.4.1{r0}(u8)
-	const arg.3.0{r0}, 20
-	const arg.3.1{r2}, 6
-	call setCursor@i16@i16[arg.3.0{r0}, arg.3.1{r2}]
-	move t.5.1{r0}, bombDigits.1{r12}
-	sub t.5.1{r0}, leftDigits.1{r10}
-	call printSpaces@i16[t.5.1{r0}]
-	move count.1{r0}, count.1{r8}
-	call printUint@i16[count.1{r0}]
-	; 156:15 return count == 0
-	equals t.6.1{r0}, count.1{r8}, 0
+	move param.row{r8}, row{r0}
+	branch param.show{r2} equals 0: showCursor@u8@u8@bool_ret
+	move param.column{r0}, param.column{r1}
+	call x.1{r0} = columnToX@u8[param.column{r0}] -> i16
+	move x.1{r2}, x.1{r0}
+	cast t.6.1{r0}(i16), param.row{r8}(u8)
+	call setCursor@i16@i16[t.6.1{r0}, x.1{r2}]
+showCursor@u8@u8@bool_ret:
 
 abs@i16:
  Local variables
 	arg 0: a (i16/2)
 
 	move param.a{r2}, a{r0}
-	branch param.a{r2} lt 0: if_24_then
-	; 163:9 return a
+	branch param.a{r2} lt 0: if_10_then
 	jump abs@i16_ret
-if_24_then:
-	; 161:10 return -a
+if_10_then:
 	neg t.1.1{r2}, param.a{r2}
 	move t.1.1{r0}, t.1.1{r2}
 abs@i16_ret:
 
 clearField:
-	const r.1{r8}, 0
-	; 167:2 for r < 20
-	jump for_25
-for_25_body:
-	const c.1{r10}, 0
-	; 168:3 for c < 40
-	jump for_26
-for_26_body:
-	move r.2{r0}, r.2{r8}
-	move c.2{r2}, c.2{r10}
-	const arg.0.2{r4}, 0
-	call setCell@i16@i16@u8[r.2{r0}, c.2{r2}, arg.0.2{r4}]
-	move c.3{r0}, c.2{r10}
-	add c.3{r0}, 1
-	move c.2{r10}, c.3{r0}
-for_26:
-	branch c.2{r10} lt 40: for_26_body
-	move r.4{r0}, r.2{r8}
-	add r.4{r0}, 1
-	move r.2{r8}, r.4{r0}
-for_25:
-	branch r.2{r8} lt 20: for_25_body
+	const index.1{r0}, 0
+	const i.1{r2}, 760
+	jump for_11
+for_11_body:
+	const t.2.1{r4}, 0
+	addrof t.3.1{r6}, field
+	add t.3.2{r6}, index.2{r0}
+	store [t.3.2{r6}], t.2.1{r4}
+	sub i.3{r2}, 1
+	add index.3{r0}, 1
+for_11:
+	branch i.2{r2} gt 0: for_11_body
 
-initField@i16@i16:
+initField@u8@u8:
  Local variables
-	arg 0: curr_r (i16/2)
-	arg 1: curr_c (i16/2)
-	var 2: row.1 (i16/2)
-	var 3: column.1 (i16/2)
+	arg 0: curr_r (u8/1)
+	arg 1: curr_c (u8/1)
+	var 2: bombs.2 (i16/2)
+	var 3: row.1 (i16/2)
+	var 4: column.1 (i16/2)
 
-	move param.curr_r{r8}, curr_r{r0}
-	move param.curr_c{r10}, curr_c{r2}
-	const bombs.1{r12}, 40
-	; 175:2 for bombs > 0
-	jump for_27
-for_27_body:
-	call t.5.1{r0} = random16[] -> i16
+	cast r.1{r8}(i16), param.curr_r{r0}(u8)
+	cast c.1{r10}(i16), param.curr_c{r1}(u8)
+	const bombCount.1{r12}, 0
+	const bombs.1{r0}, 68
+	addrof memVarAddr{r14}, bombs.2
+	store [memVarAddr{r14}], bombs.2{r0}
+	move bombs.2{r2}, bombs.2{r0}
+	jump for_12
+for_12_body:
+	addrof memVarAddr{r14}, bombs.2
+	store [memVarAddr{r14}], bombs.2{r2}
+	call t.8.1{r0} = random16[] -> i16
 	mod row.1{r0}, 20
 	addrof memVarAddr{r14}, row.1
 	store [memVarAddr{r14}], row.1{r0}
-	call t.6.1{r0} = random16[] -> i16
-	move column.1{r2}, t.6.1{r0}
-	mod column.1{r2}, 40
+	call t.9.1{r0} = random16[] -> i16
+	move column.1{r2}, t.9.1{r0}
+	mod column.1{r2}, 38
 	addrof memVarAddr{r14}, column.1
 	store [memVarAddr{r14}], column.1{r2}
-	; 178:3 if abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=row, index=3, scope=function, type=i16, varIsArray=false, location=178:11], right=ExprVarAccess[varName=curr_r, index=0, scope=parameter, type=i16, varIsArray=false, location=178:20], location=178:18]]) > 1 || abs@i16([ExprBinary[op=-, type=i16, left=ExprVarAccess[varName=column, index=4, scope=function, type=i16, varIsArray=false, location=179:11], right=ExprVarAccess[varName=curr_c, index=1, scope=parameter, type=i16, varIsArray=false, location=179:20], location=179:18]]) > 1
 	addrof memVarAddr{r14}, row.1
-	load row.1{r0}, [memVarAddr{r14}]
-	move t.8.1{r2}, row.1{r0}
-	sub t.8.1{r2}, param.curr_r{r8}
-	move t.8.1{r0}, t.8.1{r2}
-	call t.7.1{r0} = abs@i16[t.8.1{r0}] -> i16
-	branch t.7.1{r0} gt 1: if_28_then
+	load row.1{r2}, [memVarAddr{r14}]
+	move t.11.1{r0}, row.1{r2}
+	sub t.11.1{r0}, r.1{r8}
+	call t.10.1{r0} = abs@i16[t.11.1{r0}] -> i16
+	branch t.10.1{r0} gt 1: if_13_then
 	addrof memVarAddr{r14}, column.1
 	load column.1{r2}, [memVarAddr{r14}]
-	move t.10.1{r0}, column.1{r2}
-	sub t.10.1{r0}, param.curr_c{r10}
-	call t.9.1{r0} = abs@i16[t.10.1{r0}] -> i16
-	branch t.9.1{r0} lteq 1: for_27_continue, if_28_then
-if_28_then:
+	move t.13.1{r0}, column.1{r2}
+	sub t.13.1{r0}, c.1{r10}
+	call t.12.1{r0} = abs@i16[t.13.1{r0}] -> i16
+	branch t.12.1{r0} lteq 1: for_12_continue, if_13_then
+if_13_then:
 	addrof memVarAddr{r14}, row.1
-	load row.1{r0}, [memVarAddr{r14}]
+	load row.1{r2}, [memVarAddr{r14}]
+	cast t.15.1{r0}(u8), row.1{r2}(i16)
 	addrof memVarAddr{r14}, column.1
 	load column.1{r2}, [memVarAddr{r14}]
-	const arg.4.2{r4}, 1
-	call setCell@i16@i16@u8[row.1{r0}, column.1{r2}, arg.4.2{r4}]
-for_27_continue:
-	move bombs.5{r0}, bombs.2{r12}
-	sub bombs.5{r0}, 1
-	move bombs.2{r12}, bombs.5{r0}
-for_27:
-	branch bombs.2{r12} gt 0: for_27_body
+	cast t.16.1{r1}(u8), column.1{r2}(i16)
+	call t.14.1{r0} = setBomb@u8@u8[t.15.1{r0}, t.16.1{r1}] -> bool
+	branch t.14.1{r0} equals 0: for_12_continue
+	move bombCount.5{r2}, bombCount.2{r12}
+	add bombCount.5{r2}, 1
+	move bombCount.4{r12}, bombCount.5{r2}
+for_12_continue:
+	addrof memVarAddr{r14}, bombs.2
+	load bombs.2{r2}, [memVarAddr{r14}]
+	sub bombs.5{r2}, 1
+for_12:
+	branch bombs.2{r2} gt 0: for_12_body
+	move bombCount.2{r0}, bombCount.2{r12}
 
-maybeRevealAround@i16@i16:
+setBomb@u8@u8:
  Local variables
-	arg 0: row (i16/2)
-	arg 1: column (i16/2)
-	var 2: r.1 (i16/2)
-	var 3: dc.2 (i16/2)
-	var 4: c.1 (i16/2)
-	var 5: cell.1 (u8/1)
+	arg 0: row (u8/1)
+	arg 1: column (u8/1)
 
 	move param.row{r8}, row{r0}
-	move param.column{r10}, column{r2}
-	; 186:2 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=186:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=186:30]]) != 0
-	call t.7.1{r0} = getBombCountAround@i16@i16[param.row{r0}, param.column{r2}] -> u8
-	branch t.7.1{r0} notequals 0: maybeRevealAround@i16@i16_ret
-	const dr.1{r12}, -1
-	; 190:2 for dr <= 1
-	jump for_31
-for_31_body:
-	move r.1{r0}, param.row{r8}
-	add r.1{r0}, dr.2{r12}
-	const dc.1{r4}, -1
-	; 192:3 for dc <= 1
-	addrof memVarAddr{r14}, r.1
-	store [memVarAddr{r14}], r.1{r0}
-	move dc.2{r0}, dc.2{r4}
-	jump for_32
-for_32_body:
-	move dc.2{r4}, dc.2{r0}
-	addrof memVarAddr{r14}, r.1
-	load r.1{r0}, [memVarAddr{r14}]
-	branch dr.2{r12} notequals 0: if_33_end
-	branch dc.2{r4} notequals 0: if_33_end
-	addrof memVarAddr{r14}, dc.2
-	store [memVarAddr{r14}], dc.2{r4}
-	addrof memVarAddr{r14}, r.1
-	jump for_32_continue
-if_33_end:
-	move c.1{r2}, param.column{r10}
-	add c.1{r2}, dc.2{r4}
-	addrof memVarAddr{r14}, dc.2
-	store [memVarAddr{r14}], dc.2{r4}
-	; 198:4 if !checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=198:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=198:28]])
-	addrof memVarAddr{r14}, r.1
-	store [memVarAddr{r14}], r.1{r0}
-	addrof memVarAddr{r14}, c.1
-	store [memVarAddr{r14}], c.1{r2}
-	call t.8.1{r0} = checkCellBounds@i16@i16[r.1{r0}, c.1{r2}] -> bool
-	branch t.8.1{r0} equals 0: for_32_continue
-	addrof memVarAddr{r14}, r.1
-	load r.1{r0}, [memVarAddr{r14}]
-	addrof memVarAddr{r14}, c.1
-	load c.1{r2}, [memVarAddr{r14}]
-	call cell.1{r0} = getCell@i16@i16[r.1{r0}, c.1{r2}] -> u8
-	; 203:4 if isOpen@u8([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=203:15]])
-	addrof memVarAddr{r14}, cell.1
-	store [memVarAddr{r14}], cell.1{r0}
-	call t.9.1{r0} = isOpen@u8[cell.1{r0}] -> bool
-	branch t.9.1{r0} notequals 0: for_32_continue
-	load cell.1{r0}, [memVarAddr{r14}]
-	move t.10.1{r4}, cell.1{r0}
-	or t.10.1{r4}, 2
-	addrof memVarAddr{r14}, r.1
-	load r.1{r0}, [memVarAddr{r14}]
-	addrof memVarAddr{r14}, c.1
-	load c.1{r2}, [memVarAddr{r14}]
-	call setCell@i16@i16@u8[r.1{r0}, c.1{r2}, t.10.1{r4}]
-	addrof memVarAddr{r14}, r.1
-	load r.1{r0}, [memVarAddr{r14}]
-	addrof memVarAddr{r14}, c.1
-	load c.1{r2}, [memVarAddr{r14}]
-	call maybeRevealAround@i16@i16[r.1{r0}, c.1{r2}]
-for_32_continue:
-	addrof memVarAddr{r14}, dc.2
-	load dc.2{r0}, [memVarAddr{r14}]
-	add dc.5{r0}, 1
-for_32:
-	branch dc.2{r0} lteq 1: for_32_body
-	move dr.4{r0}, dr.2{r12}
-	add dr.4{r0}, 1
-	move dr.2{r12}, dr.4{r0}
-for_31:
-	branch dr.2{r12} lteq 1: for_31_body, maybeRevealAround@i16@i16_ret
-maybeRevealAround@i16@i16_ret:
+	move param.column{r9}, column{r1}
+	call index.1{r0} = rowColumnToCell@u8@u8[param.row{r0}, param.column{r1}] -> i16
+	move index.1{r1}, index.1{r0}
+	addrof t.13.1{r4}, field
+	add t.13.2{r4}, index.1{r1}
+	load t.12.1{r3}, [t.13.2{r4}]
+	branch t.12.1{r3} equals 128: if_16_then
+	const t.14.1{r3}, 128
+	addrof t.15.1{r4}, field
+	add t.15.2{r4}, index.1{r1}
+	store [t.15.2{r4}], t.14.1{r3}
+	move rowFrom.1{r3}, param.row{r8}
+	branch rowFrom.1{r3} lteq 0: if_17_end, if_17_then
+	jump if_17_then
+if_16_then:
+	const {r0}, 0
+	jump setBomb@u8@u8_ret
+if_17_then:
+	sub rowFrom.3{r3}, 1
+	sub index.3{r1}, 38
+if_17_end:
+	move rowTo.1{r4}, param.row{r8}
+	add rowTo.1{r4}, 1
+	branch rowTo.1{r4} lt 20: if_18_end
+	sub rowTo.3{r4}, 1
+if_18_end:
+	move colFrom.1{r5}, param.column{r9}
+	branch colFrom.1{r5} lteq 0: if_19_end
+	sub colFrom.3{r5}, 1
+	sub index.6{r1}, 1
+if_19_end:
+	move colTo.1{r6}, param.column{r9}
+	add colTo.1{r6}, 1
+	branch colTo.1{r6} lt 38: if_20_end
+	sub colTo.3{r6}, 1
+if_20_end:
+	jump for_21
+for_21_body:
+	move c.1{r7}, colFrom.2{r5}
+	jump for_22
+for_22_body:
+	branch r.2{r3} notequals param.row{r8}: if_23_end
+	branch c.2{r7} equals param.column{r9}: for_22_continue, if_23_end
+if_23_end:
+	addrof t.16.1{r10}, field
+	add t.16.2{r10}, index.9{r1}
+	load cell.1{r12}, [t.16.2{r10}]
+	move t.17.1{r10}, cell.1{r12}
+	and t.17.1{r10}, 128
+	branch t.17.1{r10} notequals 0: for_22_continue
+	move count.2{r10}, cell.1{r12}
+	and count.2{r10}, 15
+	add count.3{r10}, 1
+	addrof t.18.1{r12}, field
+	add t.18.2{r12}, index.9{r1}
+	store [t.18.2{r12}], count.3{r10}
+for_22_continue:
+	add c.5{r7}, 1
+	add index.13{r1}, 1
+for_22:
+	branch c.2{r7} lteq colTo.2{r6}: for_22_body
+	cast t.22.1{r10}(i16), colTo.2{r6}(u8)
+	sub t.21.1{r1}, t.22.1{r10}
+	cast t.23.1{r10}(i16), colFrom.2{r5}(u8)
+	add t.20.1{r1}, t.23.1{r10}
+	add t.19.1{r1}, 38
+	sub index.10{r1}, 1
+	add r.4{r3}, 1
+for_21:
+	branch r.2{r3} lteq rowTo.2{r4}: for_21_body
+	const {r0}, 1
+setBomb@u8@u8_ret:
+
+maybeRevealAround@u8@u8:
+ Local variables
+	arg 0: row (u8/1)
+	arg 1: column (u8/1)
+
+	move param.row{r8}, row{r0}
+	move param.column{r9}, column{r1}
+	call printCellAt@u8@u8[param.row{r0}, param.column{r1}]
+	move param.row{r0}, param.row{r8}
+	move param.column{r1}, param.column{r9}
+	call index.1{r0} = rowColumnToCell@u8@u8[param.row{r0}, param.column{r1}] -> i16
+	addrof t.13.1{r8}, field
+	add t.13.2{r8}, index.1{r0}
+	load t.12.1{r10}, [t.13.2{r8}]
+	move t.11.1{r8}, t.12.1{r10}
+	and t.11.1{r8}, 15
+	branch t.11.1{r8} notequals 0: maybeRevealAround@u8@u8_ret
+	const changed.1{r8}, 1
+	jump while_27
+while_27_body:
+	const changed.3{r8}, 0
+	const index.2{r9}, 0
+	const r.1{r11}, 0
+	jump for_28
+for_28_body:
+	const c.1{r12}, 0
+	jump for_29
+for_29_body:
+	addrof t.14.1{r2}, field
+	add t.14.2{r2}, index.4{r9}
+	load cell.1{r13}, [t.14.2{r2}]
+	move t.15.1{r2}, cell.1{r13}
+	and t.15.1{r2}, 32
+	branch t.15.1{r2} equals 0: for_29_continue
+	and t.16.1{r13}, 128
+	branch t.16.1{r13} notequals 0: for_29_continue
+	addrof t.19.1{r2}, field
+	add t.19.2{r2}, index.4{r9}
+	load t.18.1{r13}, [t.19.2{r2}]
+	and t.17.1{r13}, 15
+	branch t.17.1{r13} notequals 0: for_29_continue
+	move r.2{r0}, r.2{r11}
+	move c.2{r1}, c.2{r12}
+	call t.20.1{r0} = revealNeighbors@u8@u8[r.2{r0}, c.2{r1}] -> bool
+	branch t.20.1{r0} equals 0: for_29_continue
+	const changed.9{r8}, 1
+for_29_continue:
+	add c.6{r12}, 1
+	add index.8{r9}, 1
+for_29:
+	branch c.2{r12} lt 38: for_29_body
+	add r.6{r11}, 1
+for_28:
+	branch r.2{r11} lt 20: for_28_body
+	branch changed.4{r8} equals 0: maybeRevealAround@u8@u8_ret
+	const r.4{r11}, 20
+	jump while_35
+if_36_end:
+	sub r.7{r11}, 1
+	const c.3{r12}, 38
+	jump while_37
+if_38_end:
+	sub c.7{r12}, 1
+	sub index.9{r9}, 1
+	addrof t.21.1{r2}, field
+	add t.21.2{r2}, index.9{r9}
+	load cell.2{r13}, [t.21.2{r2}]
+	move t.22.1{r2}, cell.2{r13}
+	and t.22.1{r2}, 32
+	branch t.22.1{r2} equals 0: while_37
+	and t.23.1{r13}, 128
+	branch t.23.1{r13} notequals 0: while_37
+	addrof t.26.1{r2}, field
+	add t.26.2{r2}, index.9{r9}
+	load t.25.1{r13}, [t.26.2{r2}]
+	and t.24.1{r13}, 15
+	branch t.24.1{r13} notequals 0: while_37
+	move r.7{r0}, r.7{r11}
+	move c.7{r1}, c.7{r12}
+	call t.27.1{r0} = revealNeighbors@u8@u8[r.7{r0}, c.7{r1}] -> bool
+	branch t.27.1{r0} equals 0: while_37
+	const changed.10{r0}, 1
+	move changed.7{r8}, changed.10{r0}
+while_37:
+	branch c.4{r12} notequals 0: if_38_end, while_35
+while_35:
+	branch r.5{r11} notequals 0: if_36_end, while_27
+while_27:
+	branch changed.2{r8} notequals 0: while_27_body, maybeRevealAround@u8@u8_ret
+maybeRevealAround@u8@u8_ret:
+
+revealNeighbors@u8@u8:
+ Local variables
+	arg 0: row (u8/1)
+	arg 1: column (u8/1)
+	var 2: index.3 (i16/2)
+
+	move rowFrom.1{r8}, param.row{r0}
+	branch rowFrom.1{r8} lteq 0: if_43_end
+	sub rowFrom.3{r8}, 1
+if_43_end:
+	move rowTo.1{r9}, param.row{r0}
+	add rowTo.1{r9}, 1
+	branch rowTo.1{r9} lt 20: if_44_end
+	sub rowTo.3{r9}, 1
+if_44_end:
+	move colFrom.1{r10}, param.column{r1}
+	branch colFrom.1{r10} lteq 0: if_45_end
+	sub colFrom.3{r10}, 1
+if_45_end:
+	move colTo.1{r11}, param.column{r1}
+	add colTo.1{r11}, 1
+	branch colTo.1{r11} lt 38: if_46_end
+	sub colTo.3{r11}, 1
+if_46_end:
+	move rowFrom.2{r0}, rowFrom.2{r8}
+	move colFrom.2{r1}, colFrom.2{r10}
+	call index.1{r0} = rowColumnToCell@u8@u8[rowFrom.2{r0}, colFrom.2{r1}] -> i16
+	const changed.1{r12}, 0
+	move index.2{r3}, index.1{r0}
+	move index.2{r1}, index.2{r3}
+	jump for_47
+for_47_body:
+	move index.2{r3}, index.2{r1}
+	move c.1{r13}, colFrom.2{r10}
+	move index.3{r2}, index.3{r3}
+	jump for_48
+for_48_body:
+	move index.3{r3}, index.3{r2}
+	addrof t.11.1{r6}, field
+	add t.11.2{r6}, index.3{r3}
+	load cell.1{r5}, [t.11.2{r6}]
+	move t.12.1{r6}, cell.1{r5}
+	and t.12.1{r6}, 32
+	branch t.12.1{r6} equals 0: if_49_end
+	addrof memVarAddr{r14}, index.3
+	store [memVarAddr{r14}], index.3{r3}
+	jump for_48_continue
+if_49_end:
+	move cell.2{r0}, cell.1{r5}
+	or cell.2{r0}, 32
+	addrof t.13.1{r6}, field
+	add t.13.2{r6}, index.3{r3}
+	addrof memVarAddr{r14}, index.3
+	store [memVarAddr{r14}], index.3{r3}
+	store [t.13.2{r6}], cell.2{r0}
+	move r.2{r1}, r.2{r8}
+	move c.2{r2}, c.2{r13}
+	call printCellAt@u8@u8@u8[cell.2{r0}, r.2{r1}, c.2{r2}]
+	const changed.5{r1}, 1
+	move changed.4{r12}, changed.5{r1}
+for_48_continue:
+	move c.4{r1}, c.2{r13}
+	add c.4{r1}, 1
+	addrof memVarAddr{r14}, index.3
+	load index.3{r2}, [memVarAddr{r14}]
+	add index.6{r2}, 1
+	move c.2{r13}, c.4{r1}
+for_48:
+	branch c.2{r13} lteq colTo.2{r11}: for_48_body
+	cast t.17.1{r4}(i16), colTo.2{r11}(u8)
+	move t.16.1{r1}, index.3{r2}
+	sub t.16.1{r1}, t.17.1{r4}
+	cast t.18.1{r3}(i16), colFrom.2{r10}(u8)
+	add t.15.1{r1}, t.18.1{r3}
+	add t.14.1{r1}, 38
+	sub index.4{r1}, 1
+	move r.4{r3}, r.2{r8}
+	add r.4{r3}, 1
+	move r.2{r8}, r.4{r3}
+for_47:
+	branch r.2{r8} lteq rowTo.2{r9}: for_47_body
+	move changed.2{r0}, changed.2{r12}
 
 main:
 	const arg.0.0{r0}, 7439742
 	call initRandom@i32[arg.0.0{r0}]
-	const needsInitialize.1{r8}, 1
 	call clearField[]
-	const curr_c.1{r9}, 20
-	const curr_r.1{r11}, 10
-	const arg.2.0{r0}, 20
-	const arg.2.1{r2}, 0
-	call setCursor@i16@i16[arg.2.0{r0}, arg.2.1{r2}]
-	const t.6.1{r0}, [string-1]
-	call printString@@u8[t.6.1{r0}]
-	; 221:2 while true
-	jump while_37
-if_38_then:
-	; 224:4 if printLeft([])
-	call t.7.1{r0} = printLeft[] -> bool
-	branch t.7.1{r0} notequals 0: if_39_then, if_38_end
-if_38_end:
+	call initializeScreen[]
+	const arg.3.0{r0}, 20
+	const arg.3.1{r2}, 0
+	call setCursor@i16@i16[arg.3.0{r0}, arg.3.1{r2}]
+	const col.1{r8}, 19
+	const row.1{r9}, 10
+	const bombsLeft.1{r10}, -1
+	jump while_50
+if_51_end:
+	const t.9.1{r2}, 1
+	move row.2{r0}, row.2{r9}
+	move col.2{r1}, col.2{r8}
+	call showCursor@u8@u8@bool[row.2{r0}, col.2{r1}, t.9.1{r2}]
 	call chr.1{r0} = getChar[] -> i16
-	; 231:3 if chr == 27
-	branch chr.1{r0} equals 27: main_ret
-	branch chr.1{r0} equals 3: if_41_then
-	branch chr.1{r0} notequals 4: if_42_else, if_42_then
-	jump if_42_then
-if_41_then:
-	add t.10.1{r11}, 20
-	sub t.9.1{r11}, 1
-	mod curr_r.4{r11}, 20
-	jump while_37
-if_42_else:
-	branch chr.1{r0} notequals 1: if_43_else, if_43_then
-	jump if_43_then
-if_42_then:
-	add t.11.1{r11}, 1
-	mod curr_r.5{r11}, 20
-	jump while_37
-if_43_else:
-	branch chr.1{r0} notequals 2: if_44_else, if_44_then
-	jump if_44_then
-if_43_then:
-	add t.13.1{r9}, 40
-	sub t.12.1{r9}, 1
-	mod curr_c.4{r9}, 40
-	jump while_37
-if_44_else:
-	branch chr.1{r0} notequals 32: if_45_else, if_45_then
-	jump if_45_then
-if_44_then:
-	add t.14.1{r9}, 1
-	mod curr_c.5{r9}, 40
-	jump while_37
-if_45_else:
-	branch chr.1{r0} notequals 13: while_37, if_48_then
-	jump if_48_then
-if_45_then:
-	branch needsInitialize.2{r8} notequals 0: while_37, if_46_then
-	jump if_46_then
-if_48_then:
-	branch needsInitialize.2{r8} equals 0: if_49_end, if_49_then
-	jump if_49_then
-if_46_then:
-	move curr_r.2{r0}, curr_r.2{r11}
-	move curr_c.2{r2}, curr_c.2{r9}
-	call cell.1{r0} = getCell@i16@i16[curr_r.2{r0}, curr_c.2{r2}] -> u8
-	move cell.1{r13}, cell.1{r0}
-	; 255:5 if !isOpen@u8([ExprVarAccess[varName=cell, index=4, scope=function, type=u8, varIsArray=false, location=255:17]])
-	call t.15.1{r0} = isOpen@u8[cell.1{r0}] -> bool
-	branch t.15.1{r0} notequals 0: while_37, if_47_then
-	jump if_47_then
-if_49_then:
-	const needsInitialize.5{r8}, 0
-	move curr_r.2{r0}, curr_r.2{r11}
-	move curr_c.2{r2}, curr_c.2{r9}
-	call initField@i16@i16[curr_r.2{r0}, curr_c.2{r2}]
-	jump if_49_end
-if_47_then:
-	move cell.2{r4}, cell.1{r13}
-	xor cell.2{r4}, 4
-	move curr_r.2{r0}, curr_r.2{r11}
-	move curr_c.2{r2}, curr_c.2{r9}
-	call setCell@i16@i16@u8[curr_r.2{r0}, curr_c.2{r2}, cell.2{r4}]
-	jump while_37
-if_49_end:
-	move curr_r.2{r0}, curr_r.2{r11}
-	move curr_c.2{r2}, curr_c.2{r9}
-	call cell.3{r0} = getCell@i16@i16[curr_r.2{r0}, curr_c.2{r2}] -> u8
-	move cell.3{r13}, cell.3{r0}
-	; 267:4 if !isOpen@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=267:16]])
-	call t.16.1{r0} = isOpen@u8[cell.3{r0}] -> bool
-	branch t.16.1{r0} notequals 0: if_50_end
-	move t.17.1{r4}, cell.3{r13}
-	or t.17.1{r4}, 2
-	move curr_r.2{r0}, curr_r.2{r11}
-	move curr_c.2{r2}, curr_c.2{r9}
-	call setCell@i16@i16@u8[curr_r.2{r0}, curr_c.2{r2}, t.17.1{r4}]
-if_50_end:
-	; 270:4 if isBomb@u8([ExprVarAccess[varName=cell, index=5, scope=function, type=u8, varIsArray=false, location=270:15]])
-	move cell.3{r0}, cell.3{r13}
-	call t.18.1{r0} = isBomb@u8[cell.3{r0}] -> bool
-	branch t.18.1{r0} notequals 0: if_51_then
-	move curr_r.2{r0}, curr_r.2{r11}
-	move curr_c.2{r2}, curr_c.2{r9}
-	call maybeRevealAround@i16@i16[curr_r.2{r0}, curr_c.2{r2}]
-while_37:
-	move curr_r.2{r0}, curr_r.2{r11}
-	move curr_c.2{r2}, curr_c.2{r9}
-	call printField@i16@i16[curr_r.2{r0}, curr_c.2{r2}]
-	; 223:3 if !needsInitialize
-	branch needsInitialize.2{r8} notequals 0: if_38_end, if_38_then
-	jump if_38_then
-if_39_then:
-	const t.8.1{r0}, [string-2]
+	move chr.1{r12}, chr.1{r0}
+	const t.10.1{r2}, 0
+	move row.2{r0}, row.2{r9}
+	move col.2{r1}, col.2{r8}
+	call showCursor@u8@u8@bool[row.2{r0}, col.2{r1}, t.10.1{r2}]
+	branch chr.1{r12} equals 27: main_ret
+	branch chr.1{r12} equals 13: if_53_then
+	branch chr.1{r12} notequals 3: if_57_else, if_57_then
+	jump if_57_then
+if_53_then:
+	branch bombsLeft.2{r10} gteq 0: if_54_end, if_54_then
+	jump if_54_then
+if_57_else:
+	branch chr.1{r12} notequals 4: if_59_else, if_59_then
+	jump if_59_then
+if_57_then:
+	branch row.2{r9} lteq 0: while_50, if_58_then
+	jump if_58_then
+if_54_then:
+	move row.2{r0}, row.2{r9}
+	move col.2{r1}, col.2{r8}
+	call bombsLeft.4{r0} = initField@u8@u8[row.2{r0}, col.2{r1}] -> i16
+	move bombsLeft.3{r10}, bombsLeft.4{r0}
+	jump if_54_end
+if_59_else:
+	branch chr.1{r12} notequals 1: if_61_else, if_61_then
+	jump if_61_then
+if_59_then:
+	branch row.2{r9} gteq 19: while_50, if_60_then
+	jump if_60_then
+if_58_then:
+	sub row.4{r9}, 1
+	jump while_50
+if_54_end:
+	move row.2{r0}, row.2{r9}
+	move col.2{r1}, col.2{r8}
+	call index.1{r0} = rowColumnToCell@u8@u8[row.2{r0}, col.2{r1}] -> i16
+	addrof t.11.1{r12}, field
+	add t.11.2{r12}, index.1{r0}
+	load cell.1{r2}, [t.11.2{r12}]
+	move t.12.1{r12}, cell.1{r2}
+	and t.12.1{r12}, 32
+	branch t.12.1{r12} notequals 0: if_55_end, if_55_then
+	jump if_55_then
+if_61_else:
+	branch chr.1{r12} notequals 2: if_63_else, if_63_then
+	jump if_63_then
+if_61_then:
+	branch col.2{r8} lteq 0: while_50, if_62_then
+	jump if_62_then
+if_60_then:
+	add row.5{r9}, 1
+	jump while_50
+if_55_then:
+	move t.13.1{r12}, cell.1{r2}
+	or t.13.1{r12}, 32
+	addrof t.14.1{r4}, field
+	add t.14.2{r4}, index.1{r0}
+	store [t.14.2{r4}], t.13.1{r12}
+	jump if_55_end
+if_63_else:
+	branch chr.1{r12} notequals 32: while_50, if_65_then
+	jump if_65_then
+if_63_then:
+	branch col.2{r8} gteq 37: while_50, if_64_then
+	jump if_64_then
+if_62_then:
+	sub col.5{r8}, 1
+	jump while_50
+if_55_end:
+	move t.15.1{r12}, cell.1{r2}
+	and t.15.1{r12}, 128
+	branch t.15.1{r12} equals 0: if_56_end, if_56_then
+	jump if_56_then
+if_65_then:
+	branch bombsLeft.2{r10} lt 0: while_50, if_66_then
+	jump if_66_then
+if_64_then:
+	add col.6{r8}, 1
+	jump while_50
+if_56_end:
+	move row.2{r0}, row.2{r9}
+	move col.2{r1}, col.2{r8}
+	call maybeRevealAround@u8@u8[row.2{r0}, col.2{r1}]
+	jump while_50
+if_66_then:
+	move row.2{r0}, row.2{r9}
+	move col.2{r1}, col.2{r8}
+	call index.2{r0} = rowColumnToCell@u8@u8[row.2{r0}, col.2{r1}] -> i16
+	addrof t.17.1{r12}, field
+	add t.17.2{r12}, index.2{r0}
+	load cell.3{r3}, [t.17.2{r12}]
+	move t.18.1{r12}, cell.3{r3}
+	and t.18.1{r12}, 32
+	branch t.18.1{r12} notequals 0: while_50
+	move cell.4{r12}, cell.3{r3}
+	xor cell.4{r12}, 64
+	move t.19.1{r13}, cell.4{r12}
+	and t.19.1{r13}, 128
+	branch t.19.1{r13} equals 0: if_68_end
+	move t.20.1{r13}, cell.4{r12}
+	and t.20.1{r13}, 64
+	branch t.20.1{r13} notequals 0: if_69_then
+	add bombsLeft.7{r10}, 1
+	jump if_68_end
+if_69_then:
+	sub bombsLeft.8{r10}, 1
+if_68_end:
+	addrof t.21.1{r4}, field
+	add t.21.2{r4}, index.2{r0}
+	store [t.21.2{r4}], cell.4{r12}
+	move cell.4{r0}, cell.4{r12}
+	move row.2{r1}, row.2{r9}
+	move col.2{r2}, col.2{r8}
+	call printCellAt@u8@u8@u8[cell.4{r0}, row.2{r1}, col.2{r2}]
+while_50:
+	branch bombsLeft.2{r10} notequals 0: if_51_end
+	const t.8.1{r0}, [string-1]
 	call printString@@u8[t.8.1{r0}]
 	jump main_ret
-if_51_then:
-	move curr_r.2{r0}, curr_r.2{r11}
-	move curr_c.2{r2}, curr_c.2{r9}
-	call printField@i16@i16[curr_r.2{r0}, curr_c.2{r2}]
-	const t.19.1{r0}, [string-3]
-	call printString@@u8[t.19.1{r0}]
+if_56_then:
+	move row.2{r0}, row.2{r9}
+	move col.2{r1}, col.2{r8}
+	call printCellAt@u8@u8[row.2{r0}, col.2{r1}]
+	const t.16.1{r0}, [string-2]
+	call printString@@u8[t.16.1{r0}]
 main_ret:
 
 printString@@u8:
@@ -697,91 +652,6 @@ printChar@u8:
 	.1:
 	ld    %15, r0
 	jp    %0818
-
-printUint@i32:
-	ld   r4, #1
-	ld   r5, #%28
-	ld   r6, #8
-	.push:
-	push @r5
-	inc  r5
-	djnz r6, .push
-	; result
-	clr     r11
-	clr     r12
-	clr     r13
-	clr     r14
-	clr     r15
-	; summand (bcd-shifted power of 2)
-	clr     r6
-	clr     r7
-	clr     r8
-	clr     r9
-	ld      r10, #1
-	; counter
-	ld      r5, #%20
-	.1:
-	sra     r0
-	rrc     r1
-	rrc     r2
-	rrc     r3
-	jr      nc, .2
-	add     r15, r10
-	da      r15
-	adc     r14, r9
-	da      r14
-	adc     r13, r8
-	da      r13
-	adc     r12, r7
-	da      r12
-	adc     r11, r6
-	da      r11
-	.2:
-	add     r10, r10
-	da      r10
-	adc     r9, r9
-	da      r9
-	adc     r8, r8
-	da      r8
-	adc     r7, r7
-	da      r7
-	adc     r6, r6
-	da      r6
-	djnz    r5, .1
-	ld      r6, #%2b
-	; counter
-	ld      r7, #10
-	.loop:
-	ld      r5, @r6
-	tm      r7, #1
-	jr      nz, .4
-	swap    r5
-	.4:
-	and     r5, #%0f
-	or      r4, r4
-	jr      z, .5
-	cp      r7, #1
-	jr      eq, .5
-	or      r5, r5
-	jr      z, .6
-	clr     r4
-	.5:
-	ld      %15, r5
-	add     %15, #'0'
-	call    %0818
-	.6:
-	tm      r7, #1
-	jr      z, .7
-	inc     r6
-	.7:
-	djnz    r7, .loop
-	ld   r5, #%2f
-	ld   r6, #8
-	.pop:
-	pop  @r5
-	dec  r5
-	djnz r6, .pop
-	ret
 
 setCursor@i16@i16:
 	ld   %5b, r3
@@ -816,10 +686,9 @@ random16:
 	ret
 
 Global variables
-	0: field[] (u8*/800)
+	0: field[] (u8*/760)
 
 String literals
-	string lit 0 "|\n\0"
-	string lit 1 "Left:\0"
-	string lit 2 " You've cleaned the field!\0"
-	string lit 3 "boom! you've lost\0"
+	string lit 0 " |\0"
+	string lit 1 " You've cleaned the field!\0"
+	string lit 2 "boom! you've lost\0"

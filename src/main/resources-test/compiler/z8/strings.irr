@@ -25,11 +25,9 @@ if_1_end:
 	call printChar@u8[arg.2.0{r0}]
 
 main:
-	; begin initialize global variables
 	const t.2.1{r8}, [string-0]
 	addrof a.3.1{r10}, text
 	store [a.3.1{r10}], t.2.1{r8}
-	; end initialize global variables
 	move a.4.1{r8}, a.4.1{r10}
 	load t.5.1{r0}, [a.4.1{r8}]
 	call printString@@u8[t.5.1{r0}]
@@ -48,7 +46,6 @@ printLength:
 	const length.1{r8}, 0
 	addrof a.2.1{r10}, text
 	load ptr.1{r12}, [a.2.1{r10}]
-	; 16:2 for *ptr != 0
 	move length.2{r0}, length.1{r8}
 	move ptr.2{r8}, ptr.1{r12}
 	jump for_2
