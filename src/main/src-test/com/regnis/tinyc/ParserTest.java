@@ -1331,6 +1331,11 @@ public class ParserTest {
 		             ),
 		             parseProgram(input, Set.of("Z8")));
 
+		testIllegal("Expected IDENTIFIER but got LINEBREAK", loc(0, 6),
+		            """
+				            #ifdef
+				            void main() {
+				            }""");
 		testIllegal(Messages.unclosedIfdef(), loc(0, 0),
 		            """
 				            #ifdef X86_64

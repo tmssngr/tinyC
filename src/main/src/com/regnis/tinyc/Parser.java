@@ -76,18 +76,23 @@ public final class Parser {
 	public void parse() {
 		while (token != TokenType.EOF) {
 			Location location = getLocation();
-			if (isConsume(TokenType.HASH_IFDEF)) {
-				final String name = consumeIdentifier();
+			if (isConsume(TokenType.HASH_IFDEF, false)) {
+				expectType(TokenType.IDENTIFIER, null);
+				final String name = getText();
+				consume(false);
+				consume(TokenType.LINEBREAK);
 				ifDefHandling.processIfDef(name, location);
 				continue;
 			}
 
-			if (isConsume(TokenType.HASH_ELSE)) {
+			if (isConsume(TokenType.HASH_ELSE, false)) {
+				consume(TokenType.LINEBREAK);
 				ifDefHandling.processElse(location);
 				continue;
 			}
 
-			if (isConsume(TokenType.HASH_ENDIF)) {
+			if (isConsume(TokenType.HASH_ENDIF, false)) {
+				consume(TokenType.LINEBREAK);
 				ifDefHandling.processEndIf(location);
 				continue;
 			}
@@ -170,7 +175,7 @@ public final class Parser {
 				project.addTypeDef(new TypeDef(typeName, null, parts, location));
 				continue;
 			}
-			else if (isConsume(TokenType.HASH_INCLUDE)) {
+			else if (isConsume(TokenType.HASH_INCLUDE, false)) {
 				expectType(TokenType.STRING, null);
 				final String fileName = consumeText();
 				includeHandler.parse(fileName, location);
@@ -829,11 +834,15 @@ public final class Parser {
 	}
 
 	private boolean isConsume(@NotNull TokenType type) {
+		return isConsume(type, true);
+	}
+
+	private boolean isConsume(@NotNull TokenType type, boolean skipLineBreaks) {
 		if (token != type) {
 			return false;
 		}
 
-		consume();
+		consume(skipLineBreaks);
 		return true;
 	}
 
