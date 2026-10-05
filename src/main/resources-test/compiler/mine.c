@@ -2,28 +2,28 @@
 #include "random.h"
 
 #ifdef Z8
-const width = 38
-const compact = true
+const WIDTH = 38
+const COMPACT = true
 #else
-const width = 40
-const compact = false
+const WIDTH = 40
+const COMPACT = false
 #endif
 
-const height = 20;
-const bombRatio = 90;
-const bombCount = height * width * bombRatio / 1000;
+const HEIGHT = 20;
+const BOMB_RATIO = 90;
+const BOMB_COUNT = HEIGHT * WIDTH * BOMB_RATIO / 1000;
 
 const maskBomb = 0x80;
 const maskFlag = 0x40;
 const maskOpen = 0x20;
 const maskCount = 0x0F;
 
-u8 field[width * height];
+u8 field[WIDTH * HEIGHT];
 
 i16 rowColumnToCell(u8 row, u8 column) {
 	i16 r = (i16)row
 	i16 c = (i16)column
-	return r * width + c;
+	return r * WIDTH + c;
 }
 
 u8 getBombCountAround(u8 row, u8 column) {
@@ -33,7 +33,7 @@ u8 getBombCountAround(u8 row, u8 column) {
 
 i16 columnToX(u8 column) {
 	i16 c = (i16)column
-	if compact {
+	if COMPACT {
 		return c
 	}
 	
@@ -86,26 +86,26 @@ void initializeScreen() {
 
 void printField() {
 	setCursor(0i16, 0i16);
-	for (u8 row = 0; row < height; row = row + 1) {
+	for (u8 row = 0; row < HEIGHT; row = row + 1) {
 		setCursor((i16)row, 0)
-		if !compact {
+		if !COMPACT {
 			printChar('|')
 		}
-		for (u8 column = 0; column < width; column = column + 1) {
-			if !compact {
+		for (u8 column = 0; column < WIDTH; column = column + 1) {
+			if !COMPACT {
 				printChar(' ')
 			}
 			u8 cell = field[rowColumnToCell(row, column)]
 			printCell(cell, row, column);
 		}
-		if !compact {
+		if !COMPACT {
 			printString(" |");
 		}
 	}
 }
 
 void showCursor(u8 row, u8 column, bool show) {
-	if compact {
+	if COMPACT {
 		if show {
 			i16 x = columnToX(column)
 			setCursor((i16)row, x)
@@ -154,8 +154,8 @@ u8 getDigitCount(i16 value) {
 
 i16 getHiddenCount() {
 	i16 count = 0;
-	for (u8 r = 0; r < height; r = r + 1) {
-		for (u8 c = 0; c < width; c = c + 1) {
+	for (u8 r = 0; r < HEIGHT; r = r + 1) {
+		for (u8 c = 0; c < WIDTH; c = c + 1) {
 			u8 cell = field[rowColumnToCell(r, c)]
 			if ((cell & (maskFlag | maskOpen)) == 0) {
 				count = count + 1;
@@ -169,8 +169,8 @@ bool printLeft() {
 	i16 count = getHiddenCount();
 
 	i16 leftDigits = (i16)getDigitCount(count);
-	i16 bombDigits = (i16)getDigitCount(bombCount);
-	setCursor(height, 6);
+	i16 bombDigits = (i16)getDigitCount(BOMB_COUNT);
+	setCursor(HEIGHT, 6);
 	printSpaces(bombDigits - leftDigits);
 	printUint(count);
 	return count == 0;
@@ -185,38 +185,42 @@ i16 abs(i16 a) {
 
 void clearField() {
 	i16 index = 0
-	for (i16 i = (i16)width * (i16)height; i > 0; i = i - 1, index = index + 1) {
+	for (i16 i = (i16)WIDTH * (i16)HEIGHT; i > 0; i = i - 1, index = index + 1) {
 		field[index] = 0
 	}
 }
 
-void initField(u8 curr_r, u8 curr_c) {
+i16 initField(u8 curr_r, u8 curr_c) {
 	i16 r = (i16)curr_r
 	i16 c = (i16)curr_c
-	for (i16 bombs = bombCount; bombs > 0; bombs = bombs - 1) {
-		i16 row = random16() % height;
-		i16 column = random16() % width;
+	i16 bombCount = 0;
+	for (i16 bombs = BOMB_COUNT; bombs > 0; bombs = bombs - 1) {
+		i16 row = random16() % HEIGHT;
+		i16 column = random16() % WIDTH;
 		if (abs(row    - r) > 1 ||
 		    abs(column - c) > 1) {
-			setBomb((u8)row, (u8)column)
+			if setBomb((u8)row, (u8)column) {
+				bombCount = bombCount + 1
+			}
 		}
 	}
+	return bombCount;
 }
 
-void setBomb(u8 row, u8 column) {
+bool setBomb(u8 row, u8 column) {
 	i16 index = rowColumnToCell(row, column)
 	if field[index] == maskBomb {
-		return
+		return false
 	}
 	field[index] = maskBomb
 
 	u8 rowFrom = row
 	if rowFrom > 0 {
 		rowFrom = row - 1
-		index = index - width
+		index = index - WIDTH
 	}
 	u8 rowTo = row + 1
-	if rowTo >= height {
+	if rowTo >= HEIGHT {
 		rowTo = rowTo - 1
 	}
 
@@ -226,7 +230,7 @@ void setBomb(u8 row, u8 column) {
 		index = index - 1
 	}
 	u8 colTo = column + 1
-	if colTo >= width {
+	if colTo >= WIDTH {
 		colTo = colTo - 1
 	}
 	
@@ -244,8 +248,9 @@ void setBomb(u8 row, u8 column) {
 				field[index] = count
 			}
 		}
-		index = index - (i16)colTo + (i16)colFrom + width - 1
+		index = index - (i16)colTo + (i16)colFrom + WIDTH - 1
 	}
+	return true
 }
 
 void maybeRevealAround(u8 row, u8 column) {
@@ -259,8 +264,8 @@ void maybeRevealAround(u8 row, u8 column) {
 		changed = false
 
 		i16 index = 0
-		for (u8 r = 0; r < height; r = r + 1) {
-			for (u8 c = 0; c < width; c = c + 1, index = index + 1) {
+		for (u8 r = 0; r < HEIGHT; r = r + 1) {
+			for (u8 c = 0; c < WIDTH; c = c + 1, index = index + 1) {
 				u8 cell = field[index]
 				if (cell & maskOpen) == 0 || (cell & maskBomb) != 0 {
 					continue;
@@ -279,14 +284,14 @@ void maybeRevealAround(u8 row, u8 column) {
 			break
 		}
 
-		u8 r = height
+		u8 r = HEIGHT
 		while true {
 			if r == 0 {
 				break
 			}
 			r = r - 1
 
-			u8 c = width
+			u8 c = WIDTH
 			while true {
 				if c == 0 {
 					break
@@ -315,7 +320,7 @@ bool revealNeighbors(u8 row, u8 column) {
 		rowFrom = rowFrom - 1
 	}
 	u8 rowTo = row + 1
-	if rowTo >= height {
+	if rowTo >= HEIGHT {
 		rowTo = rowTo - 1
 	}
 
@@ -324,7 +329,7 @@ bool revealNeighbors(u8 row, u8 column) {
 		colFrom = colFrom - 1
 	}
 	u8 colTo = column + 1
-	if colTo >= width {
+	if colTo >= WIDTH {
 		colTo = colTo - 1
 	}
 	i16 index = rowColumnToCell(rowFrom, colFrom)
@@ -341,85 +346,90 @@ bool revealNeighbors(u8 row, u8 column) {
 			printCellAt(cell, r, c)
 			changed = true
 		}
-		index = index - (i16)colTo + (i16)colFrom + width - 1
+		index = index - (i16)colTo + (i16)colFrom + WIDTH - 1
 	}
 	return changed
 }
 
 void main() {
 	initRandom(7439742);
-	bool needsInitialize = true;
 	clearField();
 	initializeScreen();
-	setCursor(height, 0);
-	printString("Left:");
-	u8 curr_c = width / 2;
-	u8 curr_r = height / 2;
+	setCursor(HEIGHT, 0);
+//	printString("Left:");
+	u8 col = WIDTH / 2;
+	u8 row = HEIGHT / 2;
+	i16 bombsLeft = -1
 	while (true) {
-		if (!needsInitialize) {
-			if (printLeft()) {
-				printString(" You've cleaned the field!");
-				break;
-			}
+		if (bombsLeft == 0) {
+			printString(" You've cleaned the field!");
+			break;
 		}
 
-		showCursor(curr_r, curr_c, true)
+		showCursor(row, col, true)
 		i16 chr = getChar();
-		showCursor(curr_r, curr_c, false)
+		showCursor(row, col, false)
 		if (chr == ESCAPE) {
 			break;
 		}
 
 		if (chr == 0x0D) {
-			if (needsInitialize) {
-				needsInitialize = false;
-				initField(curr_r, curr_c);
+			if (bombsLeft < 0) {
+				bombsLeft = initField(row, col);
 			}
-			i16 index = rowColumnToCell(curr_r, curr_c)
+			i16 index = rowColumnToCell(row, col)
 			u8 cell = field[index]
 			if (cell & maskOpen) == 0 {
 				field[index] = cell | maskOpen
 			}
 			if (cell & maskBomb) != 0 {
-				printCellAt(curr_r, curr_c)
+				printCellAt(row, col)
 				printString("boom! you've lost");
 				break;
 			}
-			maybeRevealAround(curr_r, curr_c);
+			maybeRevealAround(row, col);
 		}
 		// cursor up
 		else if (chr == CURSOR_UP) {
-			if curr_r > 0 {
-				curr_r = curr_r - 1
+			if row > 0 {
+				row = row - 1
 			}
 		}
 		// cursor down
 		else if (chr == CURSOR_DOWN) {
-			if curr_r < height - 1 {
-				curr_r = curr_r + 1
+			if row < HEIGHT - 1 {
+				row = row + 1
 			}
 		}
 		// cursor left
 		else if (chr == CURSOR_LEFT) {
-			if curr_c > 0 {
-				curr_c = curr_c - 1
+			if col > 0 {
+				col = col - 1
 			}
 		}
 		// cursor right
 		else if (chr == CURSOR_RIGHT) {
-			if curr_c < width - 1 {
-				curr_c = curr_c + 1
+			if col < WIDTH - 1 {
+				col = col + 1
 			}
 		}
 		// space = flag
 		else if (chr == 0x20) {
-			if (!needsInitialize) {
-				i16 index = rowColumnToCell(curr_r, curr_c)
+			if (bombsLeft >= 0) {
+				i16 index = rowColumnToCell(row, col)
 				u8 cell = field[index]
 				if (cell & maskOpen) == 0 {
 					cell = cell ^ maskFlag;
+					if (cell & maskBomb) != 0 {
+						if (cell & maskFlag) != 0 {
+							bombsLeft = bombsLeft - 1
+						}
+						else {
+							bombsLeft = bombsLeft + 1
+						}
+					}
 					field[index] = cell
-					printCellAt(cell, curr_r, curr_c)
+					printCellAt(cell, row, col)
 				}
 			}
 		}
