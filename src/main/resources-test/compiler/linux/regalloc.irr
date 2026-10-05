@@ -2,14 +2,12 @@ _simple:
 	const four.1{r0}, 4
 	const three.1{r1}, 3
 	sub one.1{r0}, three.1{r1}
-	; 5:9 return one
 
 _registerHint@u8@u8:
  Local variables
 	arg 0: a (u8/1)
 	arg 1: b (u8/1)
 
-	; 9:11 return a + b
 	move t.2.1{r0}, a{r1}
 	add t.2.1{r0}, b{r2}
 
@@ -19,11 +17,9 @@ _max@u8@u8:
 	arg 1: b (u8/1)
 
 	branch a{r1} lt b{r2}: if_1_then
-	; 16:9 return a
 	move a{r0}, a{r1}
 	jump _max@u8@u8_ret
 if_1_then:
-	; 14:10 return b
 	move b{r0}, b{r2}
 _max@u8@u8_ret:
 
@@ -33,7 +29,6 @@ _fibonacci@u8:
 
 	const a.1{r0}, 0
 	const b.1{r2}, 1
-	; 22:2 while i > 0
 	jump while_2
 while_2_body:
 	sub i.2{r1}, 1
@@ -43,7 +38,6 @@ while_2_body:
 	move b.2{r2}, b.3{r3}
 while_2:
 	branch i.1{r1} gt 0: while_2_body
-	; 28:9 return a
 
 _main:
 	call one.1{r0} = _simple[] -> u8

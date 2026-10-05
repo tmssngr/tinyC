@@ -24,7 +24,6 @@ if_1_end:
 main:
 	const a.1{r0}, 0
 	const b.1{r2}, 1
-	; 6:2 while b < 1000
 	move a.2{r8}, a.1{r0}
 	move b.2{r10}, b.1{r2}
 	jump while_2

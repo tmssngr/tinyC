@@ -36,7 +36,6 @@ testIf_Pu8:
 	const t.3.1{r1}, 1
 	addrof a.4.1{r2}, b
 	store [a.4.1{r2}], t.3.1{r1}
-	; 6:2 if a == 0
 	branch param.a{r0} notequals 0: if_2_end
 	move t.5.1{r0}, t.5.1{r1}
 	call printIntLf_Pu8[t.5.1{r0}]

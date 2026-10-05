@@ -14,7 +14,6 @@ _printUint@i64:
 	var 1: buffer[] (u8*/20)
 
 	const pos.1{r0}, 20
-	; 33:2 while true
 	move number.1{r3}, number{r1}
 	jump while_1
 _printUint@i64.no_critical_edge_4:
@@ -35,7 +34,6 @@ while_1:
 	addrof t.6.1{r2}, buffer
 	add t.6.2{r2}, t.7.1{r1}
 	store [t.6.2{r2}], digit.1{r0}
-	; 39:3 if number == 0
 	branch number.2{r3} notequals 0: _printUint@i64.no_critical_edge_4
 	move t.8.2{r1}, t.8.2{r2}
 	const t.11.1{r0}, 20
@@ -81,11 +79,9 @@ _main:
 	var 2: t.5.1 (u8/1)
 	var 3: arg.5.4 (u8/1)
 
-	; begin initialize global variables
 	const t.0.1{r0}, 0
 	addrof a.1.1{r1}, i
 	store [a.1.1{r1}], t.0.1{r0}
-	; end initialize global variables
 	call t.2.1{r0} = _next[] -> u8
 	move t.2.1{r6}, t.2.1{r0}
 	call t.3.1{r0} = _next[] -> u8
@@ -118,7 +114,6 @@ _next:
 	add t.0.1{r0}, 1
 	addrof a.3.1{r1}, i
 	store [a.3.1{r1}], t.0.1{r0}
-	; 11:9 return i
 	move a.4.1{r0}, a.4.1{r1}
 	load t.5.1{r0}, [a.4.1{r0}]
 

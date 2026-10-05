@@ -22,7 +22,6 @@ if_1_end:
 	call printChar_Pu8[arg.2.0{r0}]
 
 main:
-	; begin initialize global variables
 	const t.0.1{r0}, 32
 	addrof a.1.1{r2}, space
 	store [a.1.1{r2}], t.0.1{r0}
@@ -32,7 +31,6 @@ main:
 	addrof t.4.1{r0}, space
 	addrof a.5.1{r2}, ptrToSpace
 	store [a.5.1{r2}], t.4.1{r0}
-	; end initialize global variables
 	addrof a.6.1{r0}, next
 	load t.7.1{r2}, [a.6.1{r0}]
 	move t.7.1{r0}, t.7.1{r2}

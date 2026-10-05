@@ -10,7 +10,6 @@ printIntLf_Pbool:
 	arg 0: value (bool/1)
 
 	const number.1{r1}, 0
-	; 122:2 if value
 	branch param.value{r0} notequals 0: if_1_then
 	move number.2{r0}, number.1{r1}
 	jump if_1_end

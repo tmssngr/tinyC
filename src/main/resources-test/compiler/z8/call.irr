@@ -29,11 +29,9 @@ if_1_end:
 	call printChar_Pu8[arg.2.0{r0}]
 
 main:
-	; begin initialize global variables
 	const t.0.1{r0}, 0
 	addrof a.1.1{r2}, i
 	store [a.1.1{r2}], t.0.1{r0}
-	; end initialize global variables
 	call t.2.1{r0} = next[] -> u8
 	move t.2.1{r8}, t.2.1{r0}
 	call t.3.1{r0} = next[] -> u8
@@ -57,7 +55,6 @@ next:
 	add t.0.1{r0}, 1
 	addrof a.3.1{r2}, i
 	store [a.3.1{r2}], t.0.1{r0}
-	; 11:9 return i
 	move a.4.1{r0}, a.4.1{r2}
 	load t.5.1{r2}, [a.4.1{r0}]
 	move t.5.1{r0}, t.5.1{r2}

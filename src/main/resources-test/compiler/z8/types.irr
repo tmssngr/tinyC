@@ -30,7 +30,6 @@ if_1_end:
 
 main:
 	const i.1{r0}, 250
-	; 4:3 for i != 2
 	move i.2{r8}, i.1{r0}
 	jump for_2
 for_2_body:

@@ -23,7 +23,6 @@ _strlen@@u8:
 	arg 0: str (u8*/8)
 
 	const length.1{r0}, 0
-	; 73:2 for *str != 0
 	jump for_1
 for_1_body:
 	add length.3{r0}, 1
@@ -31,7 +30,6 @@ for_1_body:
 for_1:
 	load t.2.1{r2}, [str.1{r1}]
 	branch t.2.1{r2} notequals 0: for_1_body
-	; 76:9 return length
 
 _printStringLength@@u8@u8:
  Local variables
@@ -45,11 +43,9 @@ _printBoard:
 	const arg.0.0{r1}, 124
 	call _printChar@u8[arg.0.0{r1}]
 	const i.1{r0}, 0
-	; 11:2 for i < 30
 	move i.2{r8}, i.1{r0}
 	jump for_2
 for_2_body:
-	; 12:3 if [...] == 0
 	cast t.3.1{r0}(i64), i.2{r8}(u8)
 	addrof t.2.1{r1}, board
 	add t.2.2{r1}, t.3.1{r0}
@@ -72,7 +68,6 @@ for_2:
 
 _main:
 	const i.1{r0}, 0
-	; 23:2 for i < 30
 	jump for_4
 for_4_body:
 	const t.4.1{r1}, 0
@@ -90,7 +85,6 @@ for_4:
 	store [t.8.2{r2}], t.7.1{r0}
 	call _printBoard[]
 	const i.3{r0}, 0
-	; 30:2 for i < 28
 	move i.4{r8}, i.3{r0}
 	jump for_5
 for_5_body:
@@ -105,7 +99,6 @@ for_5_body:
 	load t.14.1{r1}, [t.15.2{r2}]
 	or pattern.1{r0}, t.14.1{r1}
 	const j.1{r1}, 1
-	; 32:3 for j < 29
 	jump for_6
 for_6_body:
 	shiftleft t.18.1{r0}, 1

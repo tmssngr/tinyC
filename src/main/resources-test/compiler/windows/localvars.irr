@@ -14,7 +14,6 @@ _printUint@i64:
 	var 1: buffer[] (u8*/20)
 
 	const pos.1{r0}, 20
-	; 33:2 while true
 	move number.1{r3}, number{r1}
 	jump while_1
 _printUint@i64.no_critical_edge_4:
@@ -35,7 +34,6 @@ while_1:
 	addrof t.6.1{r2}, buffer
 	add t.6.2{r2}, t.7.1{r1}
 	store [t.6.2{r2}], digit.1{r0}
-	; 39:3 if number == 0
 	branch number.2{r3} notequals 0: _printUint@i64.no_critical_edge_4
 	move t.8.2{r1}, t.8.2{r2}
 	const t.11.1{r0}, 20

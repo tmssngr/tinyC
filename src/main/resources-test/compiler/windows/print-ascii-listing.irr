@@ -23,7 +23,6 @@ _strlen@@u8:
 	arg 0: str (u8*/8)
 
 	const length.1{r0}, 0
-	; 73:2 for *str != 0
 	jump for_1
 for_1_body:
 	add length.3{r0}, 1
@@ -31,7 +30,6 @@ for_1_body:
 for_1:
 	load t.2.1{r2}, [str.1{r1}]
 	branch t.2.1{r2} notequals 0: for_1_body
-	; 76:9 return length
 
 _printStringLength@@u8@u8:
  Local variables
@@ -47,7 +45,6 @@ _printNibble@u8:
 
 	move x.1{r0}, x{r1}
 	and x.1{r0}, 15
-	; 5:2 if x > 9
 	branch x.1{r0} lteq 9: if_2_end
 	add x.3{r0}, 7
 if_2_end:
@@ -69,11 +66,9 @@ _main:
 	const t.2.1{r1}, [string-0]
 	call _printString@@u8[t.2.1{r1}]
 	const i.1{r0}, 0
-	; 19:2 for i < 16
 	move i.2{r6}, i.1{r0}
 	jump for_3
 for_3_body:
-	; 20:3 if i & 7 == 0
 	move t.3.1{r0}, i.2{r6}
 	and t.3.1{r0}, 7
 	branch t.3.1{r0} notequals 0: if_4_end
@@ -90,18 +85,15 @@ for_3:
 	const arg.3.0{r1}, 10
 	call _printChar@u8[arg.3.0{r1}]
 	const i.3{r0}, 32
-	; 27:2 for i < 128
 	move i.4{r6}, i.3{r0}
 	jump for_5
 for_5_body:
-	; 28:3 if i & 15 == 0
 	move t.4.1{r0}, i.4{r6}
 	and t.4.1{r0}, 15
 	branch t.4.1{r0} notequals 0: if_6_end
 	move i.4{r1}, i.4{r6}
 	call _printHex2@u8[i.4{r1}]
 if_6_end:
-	; 31:3 if i & 7 == 0
 	move t.5.1{r0}, i.4{r6}
 	and t.5.1{r0}, 7
 	branch t.5.1{r0} notequals 0: if_7_end
@@ -110,7 +102,6 @@ if_6_end:
 if_7_end:
 	move i.4{r1}, i.4{r6}
 	call _printChar@u8[i.4{r1}]
-	; 35:3 if i & 15 == 15
 	move t.6.1{r0}, i.4{r6}
 	and t.6.1{r0}, 15
 	branch t.6.1{r0} notequals 15: for_5_continue

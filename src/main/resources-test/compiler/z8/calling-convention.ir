@@ -11,7 +11,6 @@ printIntLf_Pi16:
  Local variables
 	arg 0: number (i16/2)
 
-	; 133:2 if number < 0
 	branch number gteq 0: if_1_end, if_1_then
 if_1_then:
 	call printChar_Pu8[45]
@@ -47,7 +46,6 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
 	call printIntLf_Pi16[f]
 	call printIntLf_Pi16[g]
 	call printIntLf_Pi16[h]
-	; 17:35 return a + b + c + d + e + f + g + h
 	add t.14, a, b
 	add t.13, t.14, c
 	add t.12, t.13, d

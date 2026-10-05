@@ -14,7 +14,6 @@ _printUint@i64:
 	var 1: buffer[] (u8*/20)
 
 	const pos.1{r0}, 20
-	; 33:2 while true
 	move number.1{r3}, number{r1}
 	jump while_1
 _printUint@i64.no_critical_edge_4:
@@ -35,7 +34,6 @@ while_1:
 	addrof t.6.1{r2}, buffer
 	add t.6.2{r2}, t.7.1{r1}
 	store [t.6.2{r2}], digit.1{r0}
-	; 39:3 if number == 0
 	branch number.2{r3} notequals 0: _printUint@i64.no_critical_edge_4
 	move t.8.2{r1}, t.8.2{r2}
 	const t.11.1{r0}, 20
@@ -123,7 +121,6 @@ _printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
 	call _printIntLf@i16[g{r1}]
 	move h{r1}, h{r6}
 	call _printIntLf@i16[h{r1}]
-	; 17:35 return a + b + c + d + e + f + g + h
 	addrof memVarAddr{r7}, a
 	load a{r1}, [memVarAddr{r7}]
 	move t.14.1{r0}, a{r1}

@@ -29,11 +29,9 @@ if_1_end:
 	call printChar_Pu8[arg.2.0{r0}]
 
 main:
-	; begin initialize global variables
 	const t.2.1{r0}, [string-0]
 	addrof a.3.1{r2}, text
 	store [a.3.1{r2}], t.2.1{r0}
-	; end initialize global variables
 	move a.4.1{r0}, a.4.1{r2}
 	load t.5.1{r2}, [a.4.1{r0}]
 	move t.5.1{r0}, t.5.1{r2}
@@ -55,7 +53,6 @@ printLength:
 	const length.1{r0}, 0
 	addrof a.2.1{r2}, text
 	load ptr.1{r4}, [a.2.1{r2}]
-	; 16:2 for *ptr != 0
 	move ptr.2{r2}, ptr.1{r4}
 	jump for_2
 for_2_body:

@@ -74,7 +74,6 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
 	call printIntLf_Pi16[g{r0}]
 	move h{r0}, h{r8}
 	call printIntLf_Pi16[h{r0}]
-	; 17:35 return a + b + c + d + e + f + g + h
 	addrof memVarAddr{r14}, param.a
 	load param.a{r0}, [memVarAddr{r14}]
 	addrof memVarAddr{r14}, param.b
