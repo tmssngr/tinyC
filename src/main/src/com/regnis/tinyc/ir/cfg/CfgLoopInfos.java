@@ -1,5 +1,7 @@
 package com.regnis.tinyc.ir.cfg;
 
+import com.regnis.tinyc.*;
+
 import java.util.*;
 
 import org.jetbrains.annotations.*;
@@ -142,50 +144,59 @@ public class CfgLoopInfos {
 
 	private void detectOrder() {
 		final List<String> pendingStack = new ArrayList<>();
+		String endBlock = null;
+		final Set<String> processed = new HashSet<>();
 		pendingStack.add(cfg.getRoot());
 		while (!pendingStack.isEmpty()) {
 			final String name = pendingStack.removeLast();
-			blocksInOrder.add(name);
-			processBlock(name, pendingStack);
+			if (getBlock(name).successors().isEmpty()) {
+				Utils.assertTrue(endBlock == null);
+				endBlock = name;
+			}
+			else {
+				blocksInOrder.add(name);
+			}
+			processBlock(name, pendingStack, processed);
+		}
+		if (endBlock != null) {
+			blocksInOrder.add(endBlock);
 		}
 	}
 
-	private void processBlock(String name, List<String> pendingStack) {
-		final BlockInfo block = getBlock(name);
-		final List<String> successors = block.successors();
-		for (String successor : successors) {
+	private void processBlock(String name, List<String> pendingStack, Set<String> processed) {
+		if (!processed.add(name)) {
+			return;
+		}
+
+		for (String successor : getBlock(name).successors()) {
 			final BlockInfo successorBlock = getBlock(successor);
 			successorBlock.incomingForwardEdgeCount--;
-			final boolean isReadyForProcessing = successorBlock.incomingForwardEdgeCount == 0;
-			if (isReadyForProcessing) {
+			if (successorBlock.incomingForwardEdgeCount == 0) {
 				sortIntoStack(successor, pendingStack);
 				if (isLoopHeader(successor)) {
-					processBlock(successor, pendingStack);
+					processBlock(successor, pendingStack, processed);
 				}
 			}
 		}
 	}
 
 	private void sortIntoStack(String name, List<String> pendingStack) {
-		if (pendingStack.isEmpty()) {
-			pendingStack.add(name);
-			return;
-		}
-
 		final int weight = getWeight(name);
-		int i = pendingStack.size();
-		while (i-- > 0) {
-			final String pendingName = pendingStack.get(i);
-			final int pendingWeight = getWeight(pendingName);
-			if (weight > pendingWeight) {
+		int index = pendingStack.size();
+		while (index-- > 0) {
+			if (weight >= getWeight(pendingStack.get(index))) {
 				break;
 			}
 		}
-		pendingStack.add(i + 1, name);
+		pendingStack.add(index + 1, name);
 	}
 
 	private int getWeight(String name) {
-		return getBlock(name).getLoopLevel();
+		int weight = getBlock(name).getLoopLevel() * 2;
+		if (isLoopHeader(name)) {
+			weight++;
+		}
+		return weight;
 	}
 
 	private static final class BlockInfo {

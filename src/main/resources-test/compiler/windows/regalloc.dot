@@ -14,10 +14,10 @@ digraph program {
 		BasicBlock_2_max_Au8_Au8 [label="max_Au8_Au8\lbranch a gteq b: if__1__end, if__1__then\ljump if__1__then",shape=box];
 		BasicBlock_2_max_Au8_Au8 -> BasicBlock_2_if__1__end [label="(a)"];
 		BasicBlock_2_max_Au8_Au8 -> BasicBlock_2_if__1__then [label="(b)"];
-		BasicBlock_2_if__1__end [label="if__1__end\lret a\ljump max_Au8_Au8__ret",shape=box];
-		BasicBlock_2_if__1__end -> BasicBlock_2_max_Au8_Au8__ret;
 		BasicBlock_2_if__1__then [label="if__1__then\lret b\ljump max_Au8_Au8__ret",shape=box];
 		BasicBlock_2_if__1__then -> BasicBlock_2_max_Au8_Au8__ret;
+		BasicBlock_2_if__1__end [label="if__1__end\lret a\ljump max_Au8_Au8__ret",shape=box];
+		BasicBlock_2_if__1__end -> BasicBlock_2_max_Au8_Au8__ret;
 		BasicBlock_2_max_Au8_Au8__ret [label="max_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_fibonacci_Au8 {

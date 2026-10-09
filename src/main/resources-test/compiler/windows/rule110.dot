@@ -33,10 +33,10 @@ digraph program {
 		BasicBlock_4_for__2__body [label="for__2__body\lcast t_d3(i64), i(u8)\laddrof t_d2, board\ladd t_d2, t_d3\lload t_d1, [t_d2]\lbranch t_d1 notequals 0: if__3__else, if__3__then\ljump if__3__then",shape=box];
 		BasicBlock_4_for__2__body -> BasicBlock_4_if__3__else [label="(board,i)"];
 		BasicBlock_4_for__2__body -> BasicBlock_4_if__3__then [label="(board,i)"];
-		BasicBlock_4_if__3__else [label="if__3__else\lcall printChar_Au8[42]\ljump for__2__continue",shape=box];
-		BasicBlock_4_if__3__else -> BasicBlock_4_for__2__continue [label="(board,i)"];
 		BasicBlock_4_if__3__then [label="if__3__then\lcall printChar_Au8[32]\ljump for__2__continue",shape=box];
 		BasicBlock_4_if__3__then -> BasicBlock_4_for__2__continue [label="(board,i)"];
+		BasicBlock_4_if__3__else [label="if__3__else\lcall printChar_Au8[42]\ljump for__2__continue",shape=box];
+		BasicBlock_4_if__3__else -> BasicBlock_4_for__2__continue [label="(board,i)"];
 		BasicBlock_4_for__2__continue [label="for__2__continue\ladd i, 1\ljump for__2",shape=box];
 		BasicBlock_4_for__2__continue -> BasicBlock_4_for__2 [label="(board,i)"];
 		BasicBlock_4_for__2 [label="for__2\lbranch i gteq 30: for__2__break, for__2__body\ljump for__2__body",shape=box];

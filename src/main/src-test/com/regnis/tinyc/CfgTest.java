@@ -12,7 +12,7 @@ import org.junit.*;
  */
 public class CfgTest {
 	@Test
-	public void testPostOrderIterationA() {
+	public void testInOrderIterationA() {
 		final List<BasicBlock> blocks = List.of(
 				new BasicBlock("break",
 				               BasicBlock.TEST_DUMMY_INSTRUCTIONS,
@@ -27,12 +27,12 @@ public class CfgTest {
 				               List.of(),
 				               List.of("loop"))
 		);
-		final List<String> order = visitInPostOrder(blocks);
+		final List<String> order = visitInOrder(blocks);
 		Assert.assertEquals(List.of("start", "loop", "break"), order);
 	}
 
 	@Test
-	public void testPostOrderIterationB() {
+	public void testLoopHeaderFollowsBody() {
 		final List<BasicBlock> blocks = List.of(
 				new BasicBlock("start",
 				               BasicBlock.TEST_DUMMY_INSTRUCTIONS,
@@ -51,12 +51,43 @@ public class CfgTest {
 				               List.of("loop"),
 				               List.of())
 		);
-		final List<String> order = visitInPostOrder(blocks);
+		final List<String> order = visitInOrder(blocks);
 		Assert.assertEquals(List.of("start", "body", "loop", "break"), order);
 	}
 
+	@Test
+	public void testConditionalSuccessorAdjacency() {
+		final Cfg cfg = new Cfg("start");
+		add(cfg, "start", "split");
+		add(cfg, "split", "left", "right");
+		add(cfg, "left", "leftA", "leftB");
+		add(cfg, "right", "rightA", "rightB");
+		add(cfg, "leftA", "exit");
+		add(cfg, "leftB", "exit");
+		add(cfg, "rightA", "exit");
+		add(cfg, "rightB", "exit");
+		add(cfg, "exit");
+		cfg.setPredecessors();
+
+		final List<String> order = cfg.getInOrder();
+		Assert.assertEquals(9, order.size());
+		Assert.assertEquals(9, new HashSet<>(order).size());
+		Assert.assertEquals("start", order.getFirst());
+		Assert.assertEquals("exit", order.getLast());
+		for (int index = 0; index < order.size() - 1; index++) {
+			final BasicBlock block = cfg.get(order.get(index));
+			if (block.successors().size() == 2) {
+				Assert.assertTrue(block.name, block.successors().contains(order.get(index + 1)));
+			}
+		}
+	}
+
+	private static void add(Cfg cfg, String name, String... successors) {
+		cfg.add(new BasicBlock(name, BasicBlock.TEST_DUMMY_INSTRUCTIONS, List.of(), List.of(successors)));
+	}
+
 	@NotNull
-	private static List<String> visitInPostOrder(List<BasicBlock> blocks) {
+	private static List<String> visitInOrder(List<BasicBlock> blocks) {
 		final Cfg cfg = new Cfg("start");
 		for (BasicBlock block : blocks) {
 			cfg.add(block);

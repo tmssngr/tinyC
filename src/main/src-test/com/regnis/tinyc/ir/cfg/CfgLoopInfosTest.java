@@ -8,6 +8,7 @@ import org.jetbrains.annotations.*;
 import org.junit.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Thomas Singer
@@ -15,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 public class CfgLoopInfosTest {
 
 	@Test
-	public void test() {
+	public void testNestedLoopOrder() {
 		final Cfg cfg = new Cfg("a");
 		add("a", List.of("bb"), cfg);
 		add("bb", List.of("cc"), cfg);
@@ -29,12 +30,18 @@ public class CfgLoopInfosTest {
 		add("j", List.of(), cfg);
 		cfg.setPredecessors();
 		final CfgLoopInfos infos = new CfgLoopInfos(cfg);
+		final Map<String, Set<String>> loops = infos.getLoops();
 		assertEquals(Map.of(
 				"bb", Set.of("cc", "ddd", "eee", "ff"),
 				"ddd", Set.of("eee"),
 				"hh", Set.of("ii")
-		), infos.getLoops());
+		), loops);
 		final List<String> inOrder = infos.getInOrder();
+		for (Map.Entry<String, Set<String>> loop : loops.entrySet()) {
+			final String previous = inOrder.get(inOrder.indexOf(loop.getKey()) - 1);
+			assertTrue(loop.getValue().contains(previous));
+			assertTrue(cfg.get(previous).successors().contains(loop.getKey()));
+		}
 		final List<Pair<String, Integer>> nameToLoopLevel = new ArrayList<>();
 		for (String name : inOrder) {
 			nameToLoopLevel.add(pair(name, infos.getLoopLevel(name)));

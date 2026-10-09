@@ -27,13 +27,13 @@ max@u8@u8:
 	arg 0: a (u8/1)
 	arg 1: b (u8/1)
 	; 12 pc
-	branch a lt b: if_1_then, if_1_end
-	; 16:9 return a
-	ret a
-	jump max@u8@u8_ret
-if_1_then:
+	branch a gteq b: if_1_end, if_1_then
 	; 14:10 return b
 	ret b
+	jump max@u8@u8_ret
+if_1_end:
+	; 16:9 return a
+	ret a
 max@u8@u8_ret:
 
 fibonacci@u8:

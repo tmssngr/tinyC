@@ -510,20 +510,20 @@ _logicNot:
         add rsp, 8
         lea rbx, [rsp+16]
         mov [rbx], al
-        ; branch t.3 equals 0: if_5_then, if_5_else
+        ; branch t.3 notequals 0: if_5_else, if_5_then
         lea rax, [rsp+16]
         mov bl, [rax]
         cmp bl, 0
-        je _if_5_then
-        ; call printError[]
-        sub rsp, 8
-          call _printError
-        add rsp, 8
-        jmp _if_5_end
-_if_5_then:
+        jne _if_5_else
         ; call printPass[]
         sub rsp, 8
           call _printPass
+        add rsp, 8
+        jmp _if_5_end
+_if_5_else:
+        ; call printError[]
+        sub rsp, 8
+          call _printError
         add rsp, 8
 _if_5_end:
         ; notlog t.4, f
@@ -546,20 +546,20 @@ _if_5_end:
         add rsp, 8
         lea rbx, [rsp+18]
         mov [rbx], al
-        ; branch t.5 equals 0: if_6_then, if_6_else
+        ; branch t.5 notequals 0: if_6_else, if_6_then
         lea rax, [rsp+18]
         mov bl, [rax]
         cmp bl, 0
-        je _if_6_then
-        ; call printPass[]
-        sub rsp, 8
-          call _printPass
-        add rsp, 8
-        jmp _if_6_end
-_if_6_then:
+        jne _if_6_else
         ; call printError[]
         sub rsp, 8
           call _printError
+        add rsp, 8
+        jmp _if_6_end
+_if_6_else:
+        ; call printPass[]
+        sub rsp, 8
+          call _printPass
         add rsp, 8
 _if_6_end:
         ; notlog t.6, t

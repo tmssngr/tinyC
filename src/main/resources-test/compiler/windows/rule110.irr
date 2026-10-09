@@ -59,11 +59,11 @@ for_2_body:
 	addrof t.2, board
 	add t.2, t.3
 	load t.1, [t.2]
-	branch t.1 equals 0: if_3_then, if_3_else
-	call printChar@u8[42]
-	jump for_2_continue
-if_3_then:
+	branch t.1 notequals 0: if_3_else, if_3_then
 	call printChar@u8[32]
+	jump for_2_continue
+if_3_else:
+	call printChar@u8[42]
 for_2_continue:
 	add i, 1
 for_2:

@@ -163,21 +163,21 @@ logicNot:
 	const f, 0
 	; 13:2 if !getFalse([])
 	call t.3 = getFalse[] -> bool
-	branch t.3 equals 0: if_5_then, if_5_else
-	call printError[]
-	jump if_5_end
-if_5_then:
+	branch t.3 notequals 0: if_5_else, if_5_then
 	call printPass[]
+	jump if_5_end
+if_5_else:
+	call printError[]
 if_5_end:
 	notlog t.4, f
 	call printIntLf@bool[t.4]
 	; 15:2 if !getTrue([])
 	call t.5 = getTrue[] -> bool
-	branch t.5 equals 0: if_6_then, if_6_else
-	call printPass[]
-	jump if_6_end
-if_6_then:
+	branch t.5 notequals 0: if_6_else, if_6_then
 	call printError[]
+	jump if_6_end
+if_6_else:
+	call printPass[]
 if_6_end:
 	notlog t.6, t
 	call printIntLf@bool[t.6]

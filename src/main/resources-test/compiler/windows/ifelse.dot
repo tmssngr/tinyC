@@ -26,10 +26,10 @@ digraph program {
 		BasicBlock_3_printIntLf_Ai64 [label="printIntLf_Ai64\lbranch number gteq 0: printIntLf_Ai64_dno__critical__edge__4, if__3__then\ljump if__3__then",shape=box];
 		BasicBlock_3_printIntLf_Ai64 -> BasicBlock_3_printIntLf_Ai64_dno__critical__edge__4 [label="(number)"];
 		BasicBlock_3_printIntLf_Ai64 -> BasicBlock_3_if__3__then [label="(number)"];
-		BasicBlock_3_printIntLf_Ai64_dno__critical__edge__4 [label="printIntLf_Ai64_dno__critical__edge__4\ljump if__3__end",shape=box];
-		BasicBlock_3_printIntLf_Ai64_dno__critical__edge__4 -> BasicBlock_3_if__3__end [label="(number)"];
 		BasicBlock_3_if__3__then [label="if__3__then\lcall printChar_Au8[45]\lneg number, number\ljump if__3__end",shape=box];
 		BasicBlock_3_if__3__then -> BasicBlock_3_if__3__end [label="(number)"];
+		BasicBlock_3_printIntLf_Ai64_dno__critical__edge__4 [label="printIntLf_Ai64_dno__critical__edge__4\ljump if__3__end",shape=box];
+		BasicBlock_3_printIntLf_Ai64_dno__critical__edge__4 -> BasicBlock_3_if__3__end [label="(number)"];
 		BasicBlock_3_if__3__end [label="if__3__end\lcall printUint_Ai64[number]\lcall printChar_Au8[10]\ljump printIntLf_Ai64__ret",shape=box];
 		BasicBlock_3_if__3__end -> BasicBlock_3_printIntLf_Ai64__ret;
 		BasicBlock_3_printIntLf_Ai64__ret [label="printIntLf_Ai64__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
@@ -43,10 +43,10 @@ digraph program {
 		BasicBlock_5_main [label="main\lconst a, 1\lbranch a lteq 0: if__4__else, if__4__then\ljump if__4__then",shape=box];
 		BasicBlock_5_main -> BasicBlock_5_if__4__else [label="(a)"];
 		BasicBlock_5_main -> BasicBlock_5_if__4__then [label="(a)"];
-		BasicBlock_5_if__4__else [label="if__4__else\lneg a, a\lcall printIntLf_Ai16[a]\ljump main__ret",shape=box];
-		BasicBlock_5_if__4__else -> BasicBlock_5_main__ret;
 		BasicBlock_5_if__4__then [label="if__4__then\lcall printIntLf_Ai16[a]\ljump main__ret",shape=box];
 		BasicBlock_5_if__4__then -> BasicBlock_5_main__ret;
+		BasicBlock_5_if__4__else [label="if__4__else\lneg a, a\lcall printIntLf_Ai16[a]\ljump main__ret",shape=box];
+		BasicBlock_5_if__4__else -> BasicBlock_5_main__ret;
 		BasicBlock_5_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 }

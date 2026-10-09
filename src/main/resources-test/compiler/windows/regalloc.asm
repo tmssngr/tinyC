@@ -90,23 +90,23 @@ _registerHint@u8@u8:
         ;   rsp+24: arg a
         ;   rsp+16: arg b
 _max@u8@u8:
-        ; branch a lt b: if_1_then, if_1_end
+        ; branch a gteq b: if_1_end, if_1_then
         lea rax, [rsp+24]
         mov bl, [rax]
         lea rax, [rsp+16]
         mov cl, [rax]
         cmp bl, cl
-        jb _if_1_then
-        ; 16:9 return a
-        ; ret a
-        lea rax, [rsp+24]
-        mov bl, [rax]
-        mov rax, rbx
-        jmp _max@u8@u8_ret
-_if_1_then:
+        jae _if_1_end
         ; 14:10 return b
         ; ret b
         lea rax, [rsp+16]
+        mov bl, [rax]
+        mov rax, rbx
+        jmp _max@u8@u8_ret
+_if_1_end:
+        ; 16:9 return a
+        ; ret a
+        lea rax, [rsp+24]
         mov bl, [rax]
         mov rax, rbx
 _max@u8@u8_ret:

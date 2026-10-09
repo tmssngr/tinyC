@@ -191,20 +191,20 @@ _for_2_body:
         mov al, [rbx]
         lea rbx, [rsp+1]
         mov [rbx], al
-        ; branch t.1 equals 0: if_3_then, if_3_else
+        ; branch t.1 notequals 0: if_3_else, if_3_then
         lea rax, [rsp+1]
         mov bl, [rax]
         cmp bl, 0
-        je _if_3_then
-        ; call printChar@u8[42]
-        mov  rax, 42
+        jne _if_3_else
+        ; call printChar@u8[32]
+        mov  rax, 32
         push rax
           call _printChar@u8
         add rsp, 8
         jmp _for_2_continue
-_if_3_then:
-        ; call printChar@u8[32]
-        mov  rax, 32
+_if_3_else:
+        ; call printChar@u8[42]
+        mov  rax, 42
         push rax
           call _printChar@u8
         add rsp, 8

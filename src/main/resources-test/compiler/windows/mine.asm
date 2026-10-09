@@ -1013,13 +1013,18 @@ _getSpacer@i16@i16@i16@i16:
         mov cx, [rax]
         cmp bx, cx
         jne _if_11_end
-        ; branch columnCursor equals column: if_12_then, if_12_end
+        ; branch columnCursor notequals column: if_12_end, if_12_then
         lea rax, [rsp+32]
         mov bx, [rax]
         lea rax, [rsp+48]
         mov cx, [rax]
         cmp bx, cx
-        je _if_12_then
+        jne _if_12_end
+        ; 64:11 return 91
+        ; ret 91
+        mov rax, 91
+        jmp _getSpacer@i16@i16@i16@i16_ret
+_if_12_end:
         ; 66:3 if columnCursor == column - 1
         ; move t.4, column
         lea rax, [rsp+48]
@@ -1039,13 +1044,6 @@ _getSpacer@i16@i16@i16@i16:
         mov cx, [rax]
         cmp bx, cx
         jne _if_11_end
-        jmp _if_13_then
-_if_12_then:
-        ; 64:11 return 91
-        ; ret 91
-        mov rax, 91
-        jmp _getSpacer@i16@i16@i16@i16_ret
-_if_13_then:
         ; 67:11 return 93
         ; ret 93
         mov rax, 93
@@ -1084,27 +1082,11 @@ _printCell@u8@i16@i16:
         add rsp, 8
         lea rbx, [rsp+2]
         mov [rbx], al
-        ; branch t.5 notequals 0: if_14_then, if_14_else
+        ; branch t.5 equals 0: if_14_else, if_14_then
         lea rax, [rsp+2]
         mov bl, [rax]
         cmp bl, 0
-        jne _if_14_then
-        ; 89:7 if isFlag@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=89:18]])
-        ; call t.7 = isFlag@u8[cell] -> bool
-        lea rax, [rsp+40]
-        mov bl, [rax]
-        push rbx
-          call _isFlag@u8
-        add rsp, 8
-        lea rbx, [rsp+4]
-        mov [rbx], al
-        ; branch t.7 equals 0: if_14_end, if_17_then
-        lea rax, [rsp+4]
-        mov bl, [rax]
-        cmp bl, 0
-        je _if_14_end
-        jmp _if_17_then
-_if_14_then:
+        je _if_14_else
         ; 76:3 if isBomb@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=76:14]])
         ; call t.6 = isBomb@u8[cell] -> bool
         lea rax, [rsp+40]
@@ -1119,10 +1101,8 @@ _if_14_then:
         mov bl, [rax]
         cmp bl, 0
         je _if_15_else
-        jmp _if_15_then
-_if_17_then:
-        ; const chr, 35
-        mov al, 35
+        ; const chr, 42
+        mov al, 42
         lea rbx, [rsp+0]
         mov [rbx], al
         jmp _if_14_end
@@ -1145,20 +1125,6 @@ _if_15_else:
         mov bl, [rax]
         cmp bl, 0
         jbe _if_16_else
-        jmp _if_16_then
-_if_15_then:
-        ; const chr, 42
-        mov al, 42
-        lea rbx, [rsp+0]
-        mov [rbx], al
-        jmp _if_14_end
-_if_16_else:
-        ; const chr, 32
-        mov al, 32
-        lea rbx, [rsp+0]
-        mov [rbx], al
-        jmp _if_14_end
-_if_16_then:
         ; move chr, count
         lea rax, [rsp+1]
         mov bl, [rax]
@@ -1170,6 +1136,32 @@ _if_16_then:
         add bl, 48
         lea rax, [rsp+0]
         mov [rax], bl
+        jmp _if_14_end
+_if_16_else:
+        ; const chr, 32
+        mov al, 32
+        lea rbx, [rsp+0]
+        mov [rbx], al
+        jmp _if_14_end
+_if_14_else:
+        ; 89:7 if isFlag@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=89:18]])
+        ; call t.7 = isFlag@u8[cell] -> bool
+        lea rax, [rsp+40]
+        mov bl, [rax]
+        push rbx
+          call _isFlag@u8
+        add rsp, 8
+        lea rbx, [rsp+4]
+        mov [rbx], al
+        ; branch t.7 equals 0: if_14_end, if_17_then
+        lea rax, [rsp+4]
+        mov bl, [rax]
+        cmp bl, 0
+        je _if_14_end
+        ; const chr, 35
+        mov al, 35
+        lea rbx, [rsp+0]
+        mov [rbx], al
 _if_14_end:
         ; call printChar@u8[chr]
         lea rax, [rsp+0]
@@ -1606,18 +1598,11 @@ _printLeft:
 _abs@i16:
         ; reserve space for local variables
         sub rsp, 16
-        ; branch a lt 0: if_27_then, if_27_end
+        ; branch a gteq 0: if_27_end, if_27_then
         lea rax, [rsp+24]
         mov bx, [rax]
         cmp bx, 0
-        jl _if_27_then
-        ; 163:9 return a
-        ; ret a
-        lea rax, [rsp+24]
-        mov bx, [rax]
-        mov rax, rbx
-        jmp _abs@i16_ret
-_if_27_then:
+        jge _if_27_end
         ; 161:10 return -a
         ; neg t.1, a
         lea rax, [rsp+24]
@@ -1627,6 +1612,13 @@ _if_27_then:
         mov [rax], bx
         ; ret t.1
         lea rax, [rsp+0]
+        mov bx, [rax]
+        mov rax, rbx
+        jmp _abs@i16_ret
+_if_27_end:
+        ; 163:9 return a
+        ; ret a
+        lea rax, [rsp+24]
         mov bx, [rax]
         mov rax, rbx
 _abs@i16_ret:
@@ -2151,18 +2143,11 @@ _if_41_end:
         mov bx, [rax]
         cmp bx, 27
         je _main_ret
-        ; branch chr equals -8120: if_44_then, if_44_else
+        ; branch chr notequals -8120: if_44_else, if_44_then
         lea rax, [rsp+6]
         mov bx, [rax]
         cmp bx, -8120
-        je _if_44_then
-        ; branch chr notequals -8112: if_45_else, if_45_then
-        lea rax, [rsp+6]
-        mov bx, [rax]
-        cmp bx, -8112
-        jne _if_45_else
-        jmp _if_45_then
-_if_44_then:
+        jne _if_44_else
         ; move t.12, curr_r
         lea rax, [rsp+4]
         mov bx, [rax]
@@ -2201,14 +2186,12 @@ _if_44_then:
         lea rcx, [rsp+4]
         mov [rcx], bx
         jmp _while_40
-_if_45_else:
-        ; branch chr notequals -8117: if_46_else, if_46_then
+_if_44_else:
+        ; branch chr notequals -8112: if_45_else, if_45_then
         lea rax, [rsp+6]
         mov bx, [rax]
-        cmp bx, -8117
-        jne _if_46_else
-        jmp _if_46_then
-_if_45_then:
+        cmp bx, -8112
+        jne _if_45_else
         ; move t.13, curr_r
         lea rax, [rsp+4]
         mov bx, [rax]
@@ -2236,14 +2219,12 @@ _if_45_then:
         lea rcx, [rsp+4]
         mov [rcx], bx
         jmp _while_40
-_if_46_else:
-        ; branch chr notequals -8115: if_47_else, if_47_then
+_if_45_else:
+        ; branch chr notequals -8117: if_46_else, if_46_then
         lea rax, [rsp+6]
         mov bx, [rax]
-        cmp bx, -8115
-        jne _if_47_else
-        jmp _if_47_then
-_if_46_then:
+        cmp bx, -8117
+        jne _if_46_else
         ; move t.15, curr_c
         lea rax, [rsp+2]
         mov bx, [rax]
@@ -2282,14 +2263,12 @@ _if_46_then:
         lea rcx, [rsp+2]
         mov [rcx], bx
         jmp _while_40
-_if_47_else:
-        ; branch chr notequals 32: if_48_else, if_48_then
+_if_46_else:
+        ; branch chr notequals -8115: if_47_else, if_47_then
         lea rax, [rsp+6]
         mov bx, [rax]
-        cmp bx, 32
-        jne _if_48_else
-        jmp _if_48_then
-_if_47_then:
+        cmp bx, -8115
+        jne _if_47_else
         ; move t.16, curr_c
         lea rax, [rsp+2]
         mov bx, [rax]
@@ -2317,28 +2296,17 @@ _if_47_then:
         lea rcx, [rsp+2]
         mov [rcx], bx
         jmp _while_40
-_if_48_else:
-        ; branch chr notequals 13: while_40, if_51_then
+_if_47_else:
+        ; branch chr notequals 32: if_48_else, if_48_then
         lea rax, [rsp+6]
         mov bx, [rax]
-        cmp bx, 13
-        jne _while_40
-        jmp _if_51_then
-_if_48_then:
+        cmp bx, 32
+        jne _if_48_else
         ; branch needsInitialize notequals 0: while_40, if_49_then
         lea rax, [rsp+0]
         mov bl, [rax]
         cmp bl, 0
         jne _while_40
-        jmp _if_49_then
-_if_51_then:
-        ; branch needsInitialize equals 0: if_52_end, if_52_then
-        lea rax, [rsp+0]
-        mov bl, [rax]
-        cmp bl, 0
-        je _if_52_end
-        jmp _if_52_then
-_if_49_then:
         ; call cell = getCell@i16@i16[curr_r, curr_c] -> u8
         lea rax, [rsp+4]
         mov bx, [rax]
@@ -2365,24 +2333,6 @@ _if_49_then:
         mov bl, [rax]
         cmp bl, 0
         jne _while_40
-        jmp _if_50_then
-_if_52_then:
-        ; const needsInitialize, 0
-        mov al, 0
-        lea rbx, [rsp+0]
-        mov [rbx], al
-        ; call initField@i16@i16[curr_r, curr_c]
-        lea rax, [rsp+4]
-        mov bx, [rax]
-        push rbx
-        lea rax, [rsp+10]
-        mov bx, [rax]
-        push rbx
-        sub rsp, 8
-          call _initField@i16@i16
-        add rsp, 24
-        jmp _if_52_end
-_if_50_then:
         ; xor cell, 4
         lea rax, [rsp+8]
         mov bl, [rax]
@@ -2402,6 +2352,31 @@ _if_50_then:
           call _setCell@i16@i16@u8
         add rsp, 24
         jmp _while_40
+_if_48_else:
+        ; branch chr notequals 13: while_40, if_51_then
+        lea rax, [rsp+6]
+        mov bx, [rax]
+        cmp bx, 13
+        jne _while_40
+        ; branch needsInitialize equals 0: if_52_end, if_52_then
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        cmp bl, 0
+        je _if_52_end
+        ; const needsInitialize, 0
+        mov al, 0
+        lea rbx, [rsp+0]
+        mov [rbx], al
+        ; call initField@i16@i16[curr_r, curr_c]
+        lea rax, [rsp+4]
+        mov bx, [rax]
+        push rbx
+        lea rax, [rsp+10]
+        mov bx, [rax]
+        push rbx
+        sub rsp, 8
+          call _initField@i16@i16
+        add rsp, 24
 _if_52_end:
         ; call cell = getCell@i16@i16[curr_r, curr_c] -> u8
         lea rax, [rsp+4]
@@ -2495,18 +2470,6 @@ _while_40:
         cmp bl, 0
         jne _if_41_end
         jmp _if_41_then
-_if_42_then:
-        ; const t.10, [string-2]
-        lea rax, [string_2]
-        lea rbx, [rsp+40]
-        mov [rbx], rax
-        ; call printString@@u8[t.10]
-        lea rax, [rsp+40]
-        mov rbx, [rax]
-        push rbx
-          call _printString@@u8
-        add rsp, 8
-        jmp _main_ret
 _if_54_then:
         ; call printField@i16@i16[curr_r, curr_c]
         lea rax, [rsp+4]
@@ -2524,6 +2487,18 @@ _if_54_then:
         mov [rbx], rax
         ; call printString@@u8[t.21]
         lea rax, [rsp+64]
+        mov rbx, [rax]
+        push rbx
+          call _printString@@u8
+        add rsp, 8
+        jmp _main_ret
+_if_42_then:
+        ; const t.10, [string-2]
+        lea rax, [string_2]
+        lea rbx, [rsp+40]
+        mov [rbx], rax
+        ; call printString@@u8[t.10]
+        lea rax, [rsp+40]
         mov rbx, [rax]
         push rbx
           call _printString@@u8

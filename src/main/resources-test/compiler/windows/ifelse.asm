@@ -283,17 +283,11 @@ _main:
         lea rbx, [rsp+0]
         mov [rbx], ax
         ; 5:2 if a > 0
-        ; branch a gt 0: if_4_then, if_4_else
+        ; branch a lteq 0: if_4_else, if_4_then
         lea rax, [rsp+0]
         mov bx, [rax]
         cmp bx, 0
-        jg _if_4_then
-        ; neg a, a
-        lea rax, [rsp+0]
-        mov bx, [rax]
-        neg rbx
-        lea rax, [rsp+0]
-        mov [rax], bx
+        jle _if_4_else
         ; call printIntLf@i16[a]
         lea rax, [rsp+0]
         mov bx, [rax]
@@ -301,7 +295,13 @@ _main:
           call _printIntLf@i16
         add rsp, 8
         jmp _main_ret
-_if_4_then:
+_if_4_else:
+        ; neg a, a
+        lea rax, [rsp+0]
+        mov bx, [rax]
+        neg rbx
+        lea rax, [rsp+0]
+        mov [rax], bx
         ; call printIntLf@i16[a]
         lea rax, [rsp+0]
         mov bx, [rax]

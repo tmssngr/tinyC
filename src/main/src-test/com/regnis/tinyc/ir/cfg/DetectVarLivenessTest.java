@@ -38,22 +38,20 @@ public class DetectVarLivenessTest {
 		            ),
 		            Set.of(choice, left, right),
 		            Set.of(left, right), it.next());
-		assertBlock("else", List.of(
-				            new IRRetValue(right),
-				            new IRJump("exit")
-		            ),
-		            Set.of(right),
-		            Set.of(), it.next());
 		assertBlock("if", List.of(
 				            new IRRetValue(left),
 				            new IRJump("exit")
 		            ),
 		            Set.of(left),
 		            Set.of(), it.next());
-		assertBlock("exit", List.of(
+		assertBlock("else", List.of(
+				            new IRRetValue(right),
+				            new IRJump("exit")
 		            ),
-		            Set.of(),
+		            Set.of(right),
 		            Set.of(), it.next());
+		assertBlock("exit", List.of(), Set.of(), Set.of(), it.next());
+		assertFalse(it.hasNext());
 	}
 
 	@Test
@@ -88,17 +86,17 @@ public class DetectVarLivenessTest {
 		            ),
 		            Set.of(bool_needsInitialize),
 		            Set.of(bool_needsInitialize), it.next());
-		assertBlock("main.no_critical_edge_6", List.of(
-				            new IRJump("3")
-		            ),
-		            Set.of(bool_needsInitialize),
-		            Set.of(bool_needsInitialize), it.next());
 		assertBlock("2", List.of(
 				            new IRMove(bool_needsInitialize, 0),
 				            new IRCall(null, Type.VOID, "doSomething", List.of()),
 				            new IRJump("3")
 		            ),
 		            Set.of(),
+		            Set.of(bool_needsInitialize), it.next());
+		assertBlock("main.no_critical_edge_6", List.of(
+				            new IRJump("3")
+		            ),
+		            Set.of(bool_needsInitialize),
 		            Set.of(bool_needsInitialize), it.next());
 		assertBlock("3", List.of(
 				            new IRJump("loop")
