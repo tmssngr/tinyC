@@ -37,26 +37,14 @@ public final class DetectVarLiveness {
 	}
 
 	private static boolean detect(ControlFlowGraph cfg) {
-		final Set<String> processed = new HashSet<>();
-
 		boolean changed = false;
-
-		final List<String> pending = new ArrayList<>();
-		pending.add(cfg.blocks().getLast().name);
-
-		while (!pending.isEmpty()) {
-			final String name = pending.removeFirst();
-			if (!processed.add(name)) {
-				continue;
-			}
-
-			final BasicBlock block = cfg.get(name);
+		final List<BasicBlock> blocks = cfg.blocks();
+		for (int index = blocks.size(); index-- > 0; ) {
+			final BasicBlock block = blocks.get(index);
 			final Set<IRVar> live = getLiveInFromAllNext(block, cfg);
 			if (processBlock(block, live)) {
 				changed = true;
 			}
-
-			pending.addAll(block.predecessors());
 		}
 		return changed;
 	}

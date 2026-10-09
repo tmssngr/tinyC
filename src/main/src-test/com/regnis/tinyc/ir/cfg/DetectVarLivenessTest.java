@@ -15,6 +15,48 @@ import static org.junit.Assert.*;
 public class DetectVarLivenessTest {
 
 	@Test
+	public void testMultipleExitBlocks() {
+		final IRVar choice = new IRVar("choice", 0, VariableScope.function, Type.BOOL);
+		final IRVar left = new IRVar("left", 1, VariableScope.function, Type.I16);
+		final IRVar right = new IRVar("right", 2, VariableScope.function, Type.I16);
+
+		final ControlFlowGraph cfg = CfgGenerator.create("start", List.of(
+				new IRBranch(choice, true, "else", "if"),
+				new IRLabel("if"),
+				new IRRetValue(left),
+				new IRJump("exit"),
+				new IRLabel("else"),
+				new IRRetValue(right),
+				new IRLabel("exit")
+		));
+		DetectVarLiveness.process(cfg);
+
+		final Iterator<BasicBlock> it = cfg.blocks().iterator();
+		assertBlock("start", List.of(
+				            new IRBranch(choice, true, "else", "if"),
+				            new IRJump("if")
+		            ),
+		            Set.of(choice, left, right),
+		            Set.of(left, right), it.next());
+		assertBlock("else", List.of(
+				            new IRRetValue(right),
+				            new IRJump("exit")
+		            ),
+		            Set.of(right),
+		            Set.of(), it.next());
+		assertBlock("if", List.of(
+				            new IRRetValue(left),
+				            new IRJump("exit")
+		            ),
+		            Set.of(left),
+		            Set.of(), it.next());
+		assertBlock("exit", List.of(
+		            ),
+		            Set.of(),
+		            Set.of(), it.next());
+	}
+
+	@Test
 	public void testLivenessInLoop() {
 		final IRVar bool_needsInitialize = new IRVar("needsInitialize", 0, VariableScope.function, Type.BOOL);
 		final IRVar bool_exit = new IRVar("exit", 1, VariableScope.function, Type.BOOL);
