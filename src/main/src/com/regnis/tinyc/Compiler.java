@@ -85,11 +85,12 @@ public class Compiler {
 				for (IRFunction function : irProgram.functions()) {
 					function = SsaFactory.convert(function, Type.I64);
 					function = IRConverter.convert(function, Type.I64);
-					final Pair<IRFunction, ControlFlowGraph> result = RemoveNotLiveResults.run(function);
-					function = result.first();
-					final ControlFlowGraph cfg = result.second();
-					irWriter.write(cfg);
-					dotWriter.writeCfg(cfg);
+					final RemoveNotLiveResults.Result result = RemoveNotLiveResults.run(function);
+					function = result.function();
+					final ControlFlowGraph cfg = result.cfg();
+					final VarLiveness liveness = result.liveness();
+					irWriter.write(cfg, liveness);
+					dotWriter.writeCfg(cfg, liveness);
 					List<IRInstruction> instructions = PhiElimination.process(cfg);
 					instructions = IROptimizer.optimize(instructions);
 

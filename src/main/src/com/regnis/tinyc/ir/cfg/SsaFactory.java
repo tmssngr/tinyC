@@ -15,14 +15,13 @@ public final class SsaFactory {
 
 	public static IRFunction convert(@NotNull IRFunction function, @NotNull Type pointerIntType) {
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), function.instructions());
-		DetectVarLiveness.process(cfg);
 		final Pair<List<IRInstruction>, IRVarInfos> result = convert(cfg, function.varInfos(), pointerIntType);
 		return function.derive(result.first(), result.second());
 	}
 
-	public static Pair<List<IRInstruction>, IRVarInfos> convert(@NotNull ControlFlowGraph cfgWithLiveness, @NotNull IRVarInfos varInfos, @NotNull Type pointerIntType) {
+	public static Pair<List<IRInstruction>, IRVarInfos> convert(@NotNull ControlFlowGraph cfg, @NotNull IRVarInfos varInfos, @NotNull Type pointerIntType) {
 		final IRLocalVarFactory varFactory = new IRLocalVarFactory(varInfos, pointerIntType);
-		final SsaFactory factory = new SsaFactory(cfgWithLiveness, varFactory);
+		final SsaFactory factory = new SsaFactory(cfg, varFactory);
 		return factory.convert();
 	}
 
@@ -31,10 +30,12 @@ public final class SsaFactory {
 	private final Map<String, List<IRInstruction>> newInstructions = new HashMap<>();
 	private final ControlFlowGraph cfg;
 	private final IRLocalVarFactory varFactory;
+	private final VarLiveness liveness;
 
-	private SsaFactory(@NotNull ControlFlowGraph cfgWithLiveness, @NotNull IRLocalVarFactory varFactory) {
-		this.cfg = cfgWithLiveness;
+	private SsaFactory(@NotNull ControlFlowGraph cfg, @NotNull IRLocalVarFactory varFactory) {
+		this.cfg = cfg;
 		this.varFactory = varFactory;
+		liveness = DetectVarLiveness.process(cfg);
 	}
 
 	private Pair<List<IRInstruction>, IRVarInfos> convert() {
@@ -55,7 +56,8 @@ public final class SsaFactory {
 
 	private void build() {
 		final List<ProcessingBlock> pending = new ArrayList<>();
-		pending.add(ProcessingBlock.createFirst(cfg.blocks().getFirst()));
+		final String firstBlockName = cfg.blocks().getFirst().name;
+		pending.add(ProcessingBlock.createFirst(firstBlockName, liveness.get(firstBlockName)));
 
 		while (pending.size() > 0) {
 			final ProcessingBlock current = pending.removeFirst();
@@ -86,7 +88,7 @@ public final class SsaFactory {
 					}
 
 					Utils.assertTrue(successors.size() == 1);
-					phiNodes = initializePhiNodes(successorBlock, predecessorCount);
+					phiNodes = initializePhiNodes(liveness.get(successor), predecessorCount);
 					this.phiNodes.put(successor, phiNodes);
 				}
 
@@ -179,9 +181,9 @@ public final class SsaFactory {
 	}
 
 	@NotNull
-	private Map<IRVar, Phi> initializePhiNodes(BasicBlock block, int predecessorCount) {
+	private Map<IRVar, Phi> initializePhiNodes(VarLiveness.Block liveness, int predecessorCount) {
 		final Map<IRVar, Phi> phiNodes = new HashMap<>();
-		final List<IRVar> liveBefore = new ArrayList<>(block.getLiveBefore());
+		final List<IRVar> liveBefore = new ArrayList<>(liveness.getLiveBefore());
 		liveBefore.sort(Comparator.comparingInt(IRVar::index));
 		for (IRVar var : liveBefore) {
 			if (var.scope() == VariableScope.global) {
@@ -236,9 +238,8 @@ public final class SsaFactory {
 	}
 
 	private ProcessingBlock createBlock(String name, Map<IRVar, IRVar> prevMapping) {
-		final BasicBlock block = cfg.get(name);
 		final Map<IRVar, IRVar> initialMapping = new HashMap<>();
-		final Set<IRVar> liveBefore = block.getLiveBefore();
+		final Set<IRVar> liveBefore = liveness.get(name).getLiveBefore();
 		for (IRVar var : liveBefore) {
 			final IRVar replacement = prevMapping.get(var);
 			if (replacement == null) {
@@ -391,8 +392,8 @@ public final class SsaFactory {
 
 	private record ProcessingBlock(String name, Map<IRVar, IRVar> initialMapping) {
 		@NotNull
-		private static ProcessingBlock createFirst(BasicBlock block) {
-			final Set<IRVar> liveBefore = block.getLiveBefore();
+		private static ProcessingBlock createFirst(String firstBlockName, VarLiveness.Block liveness) {
+			final Set<IRVar> liveBefore = liveness.getLiveBefore();
 			final Map<IRVar, IRVar> initialMapping = new HashMap<>();
 			for (IRVar var : liveBefore) {
 				if (var.scope() == VariableScope.global) {
@@ -400,7 +401,7 @@ public final class SsaFactory {
 				}
 				initialMapping.put(var, var);
 			}
-			return new ProcessingBlock(block.name, initialMapping);
+			return new ProcessingBlock(firstBlockName, initialMapping);
 		}
 	}
 

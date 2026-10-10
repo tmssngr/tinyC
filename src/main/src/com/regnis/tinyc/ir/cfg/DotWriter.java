@@ -25,12 +25,12 @@ public final class DotWriter extends TextWriter {
 		writeln("edge[fontsize=\"10pt\"];");
 	}
 
-	public void writeCfg(ControlFlowGraph cfg) throws IOException {
+	public void writeCfg(ControlFlowGraph cfg, VarLiveness liveness) throws IOException {
 		final String name = cfg.name();
 		writeIndentation();
 		writeln("subgraph fn_" + escape(name) + " {");
 		for (BasicBlock block : cfg.blocks()) {
-			writeBasicBlock(block, cfg);
+			writeBasicBlock(block, cfg, liveness);
 		}
 		writeIndentation();
 		end();
@@ -41,7 +41,7 @@ public final class DotWriter extends TextWriter {
 		writeln("}");
 	}
 
-	private void writeBasicBlock(BasicBlock block, ControlFlowGraph cfg) throws IOException {
+	private void writeBasicBlock(BasicBlock block, ControlFlowGraph cfg, VarLiveness liveness) throws IOException {
 		writeIndentation();
 		writeIndentation();
 		write(nodeName(block));
@@ -69,7 +69,7 @@ public final class DotWriter extends TextWriter {
 			write(nodeName(block));
 			write(" -> ");
 			write(nodeName(successorBlock));
-			final Set<IRVar> liveBefore = successorBlock.getLiveBefore();
+			final Set<IRVar> liveBefore = liveness.get(successor).getLiveBefore();
 			if (liveBefore.size() > 0) {
 				write(" [label=\"(");
 				final List<String> names = liveBefore.stream().map(IRVar::name).sorted().toList();
