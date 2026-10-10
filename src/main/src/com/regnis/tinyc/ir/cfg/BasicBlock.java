@@ -16,11 +16,9 @@ public final class BasicBlock {
 
 	public final String name;
 	private final IRInstruction[] instructions;
-	private final Liveness[] instructionLivenesses;
 	private final List<String> predecessors;
 	private final List<String> successors;
 
-	private Liveness live = new Liveness(Set.of(), Set.of(), Set.of());
 
 	public BasicBlock(@NotNull String name,
 	                  @NotNull List<IRInstruction> instructions,
@@ -45,7 +43,6 @@ public final class BasicBlock {
 		this.instructions = instructions.toArray(new IRInstruction[0]);
 		this.predecessors = new ArrayList<>(predecessors);
 		this.successors = new ArrayList<>(successors);
-		this.instructionLivenesses = new Liveness[instructions.size()];
 	}
 
 	@Override
@@ -65,14 +62,12 @@ public final class BasicBlock {
 		return Objects.equals(name, block.name)
 		       && Arrays.equals(instructions, block.instructions)
 		       && Objects.equals(predecessors, block.predecessors)
-		       && Objects.equals(successors, block.successors)
-		       && Arrays.equals(instructionLivenesses, block.instructionLivenesses)
-		       && Objects.equals(live, block.live);
+		       && Objects.equals(successors, block.successors);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, Arrays.hashCode(instructions), predecessors, successors, Arrays.hashCode(instructionLivenesses), live);
+		return Objects.hash(name, Arrays.hashCode(instructions), predecessors, successors);
 	}
 
 	public List<IRInstruction> instructions() {
@@ -98,69 +93,6 @@ public final class BasicBlock {
 
 	public void replaceSuccessor(String from, String to) {
 		replace(from, to, successors);
-	}
-
-	@NotNull
-	public Set<IRVar> getLiveBefore() {
-		return live.liveBefore();
-	}
-
-	@NotNull
-	public Set<IRVar> getLiveAfter() {
-		return live.liveAfter();
-	}
-
-	public void setLive(@NotNull Set<IRVar> liveBefore, @NotNull Set<IRVar> liveAfter) {
-		this.live = new Liveness(Set.copyOf(liveBefore), Set.copyOf(liveAfter), Set.of());
-	}
-
-	@NotNull
-	public Set<IRVar> getLiveBefore(int index) {
-		return instructionLivenesses[index]
-				.liveBefore();
-	}
-
-	@NotNull
-	public Set<IRVar> getLiveAfter(int index) {
-		return instructionLivenesses[index]
-				.liveAfter();
-	}
-
-	@NotNull
-	public Set<IRVar> getLastUsed(int index) {
-		return instructionLivenesses[index]
-				.others;
-	}
-
-	public boolean setLive(int index, Set<IRVar> uses, Set<IRVar> defines, Set<IRVar> live) {
-		final Set<IRVar> liveAfter = Set.copyOf(live);
-
-		final Set<IRVar> lastUsed = new HashSet<>();
-		live.removeAll(defines);
-		for (IRVar use : uses) {
-			if (live.add(use)) {
-				lastUsed.add(use);
-			}
-		}
-		final Liveness prevLiveness = instructionLivenesses[index];
-		final Set<IRVar> prevLiveAfter = prevLiveness != null ? prevLiveness.liveAfter : null;
-		final Liveness liveness = new Liveness(Set.copyOf(live), liveAfter, Set.copyOf(lastUsed));
-		instructionLivenesses[index] = liveness;
-		return !liveAfter.equals(prevLiveAfter);
-	}
-
-	public void printLiveness() {
-		printLiveness(getLiveBefore());
-		boolean printLiveBefore = false;
-		for (int i = 0; i < instructions.length; i++) {
-			final IRInstruction instruction = instructions[i];
-			if (printLiveBefore) {
-				printLiveness(getLiveBefore(i));
-			}
-			printLiveBefore = true;
-			System.out.println(instruction);
-		}
-		printLiveness(getLiveAfter());
 	}
 
 	public void replaceJump(String from, String to) {
@@ -213,16 +145,9 @@ public final class BasicBlock {
 		}
 	}
 
-	private void printLiveness(Set<IRVar> liveVars) {
-		System.out.println("; " + liveVars);
-	}
-
 	private static void replace(String from, String to, List<String> list) {
 		final int index = list.indexOf(from);
 		Utils.assertTrue(index >= 0);
 		list.set(index, to);
-	}
-
-	public record Liveness(@NotNull Set<IRVar> liveBefore, @NotNull Set<IRVar> liveAfter, @NotNull Set<IRVar> others) {
 	}
 }
