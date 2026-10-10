@@ -693,6 +693,34 @@ public final class TypeChecker {
 					throw new SyntaxException(Messages.needExplicitCast(leftType, rightType), location);
 				}
 			}
+			if (right instanceof ExprIntLiteral literal) {
+				switch (op) {
+				case Lt -> {
+					if (leftType.min() == literal.value()) {
+						messages.accept(Message.warn(Messages.expressionIsAlways(false), location));
+						return new ExprBoolLiteral(false, location);
+					}
+				}
+				case LtEq -> {
+					if (leftType.max() == literal.value()) {
+						messages.accept(Message.warn(Messages.expressionIsAlways(true), location));
+						return new ExprBoolLiteral(true, location);
+					}
+				}
+				case GtEq -> {
+					if (leftType.min() == literal.value()) {
+						messages.accept(Message.warn(Messages.expressionIsAlways(true), location));
+						return new ExprBoolLiteral(true, location);
+					}
+				}
+				case Gt -> {
+					if (leftType.max() == literal.value()) {
+						messages.accept(Message.warn(Messages.expressionIsAlways(false), location));
+						return new ExprBoolLiteral(false, location);
+					}
+				}
+				}
+			}
 		}
 		default -> throw new UnsupportedOperationException(String.valueOf(op.kind));
 		}
