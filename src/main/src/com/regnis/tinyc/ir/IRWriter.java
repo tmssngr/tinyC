@@ -24,17 +24,17 @@ public final class IRWriter extends TextWriter {
 		writeStringLiterals(program.stringLiterals());
 	}
 
-	public void write(ControlFlowGraph cfg) throws IOException {
+	public void write(ControlFlowGraph cfg, VarLiveness liveness) throws IOException {
 		write("; CFG for function ");
 		writeln(cfg.name());
 		for (BasicBlock block : cfg.blocks()) {
-			writeBlock(block);
+			writeBlock(block, liveness.get(block.name));
 			writeln();
 		}
 		writeln();
 	}
 
-	private void writeBlock(BasicBlock block) throws IOException {
+	private void writeBlock(BasicBlock block, VarLiveness.Block liveness) throws IOException {
 		write("; block ");
 		writeln(block.name);
 
@@ -42,9 +42,9 @@ public final class IRWriter extends TextWriter {
 		write("; predecessors=");
 		writeln(block.predecessors().toString());
 
-		write(block.getLiveBefore());
+		write(liveness.getLiveBefore());
 
-		writeInstructions(block.instructions(), block);
+		writeInstructions(block.instructions(), liveness);
 
 		writeIndentation();
 		write("; successors=");
@@ -106,7 +106,7 @@ public final class IRWriter extends TextWriter {
 		writeln();
 	}
 
-	private void writeInstructions(List<IRInstruction> instructions, @Nullable BasicBlock block) throws IOException {
+	private void writeInstructions(List<IRInstruction> instructions, VarLiveness.Block liveness) throws IOException {
 		if (instructions.isEmpty()) {
 			return;
 		}
@@ -128,8 +128,8 @@ public final class IRWriter extends TextWriter {
 				}
 				else {
 					writeln(instruction.toString(true));
-					if (block != null) {
-						write(block.getLiveAfter(i));
+					if (liveness != null) {
+						write(liveness.getLiveAfter(i));
 					}
 				}
 			}

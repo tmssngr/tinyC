@@ -10,10 +10,10 @@ import java.util.*;
  * @author Thomas Singer
  */
 public class RemoveNotLiveResults {
-	public static Pair<IRFunction, ControlFlowGraph> run(IRFunction function) {
+	public static Result run(IRFunction function) {
 		while (true) {
 			final ControlFlowGraph cfg = CfgGenerator.create(function.name(), function.instructions());
-			DetectVarLiveness.process(cfg);
+			final VarLiveness liveness = DetectVarLiveness.process(cfg);
 
 			final RemoveNotLiveResults command = new RemoveNotLiveResults();
 			final List<BasicBlock> blocks = cfg.blocks();
@@ -25,16 +25,18 @@ public class RemoveNotLiveResults {
 
 				addLabel = true;
 
+				final VarLiveness.Block blockLiveness = liveness.get(block.name);
+
 				final List<IRInstruction> instructions = block.instructions();
 				for (int i = 0; i < instructions.size(); i++) {
 					final IRInstruction instruction = instructions.get(i);
-					final Set<IRVar> liveAfter = block.getLiveAfter(i);
+					final Set<IRVar> liveAfter = blockLiveness.getLiveAfter(i);
 					command.simplify(instruction, liveAfter);
 				}
 			}
 
 			if (!command.changed) {
-				return new Pair<>(function, cfg);
+				return new Result(function, cfg, liveness);
 			}
 
 			function = function.derive(command.instructions);
@@ -93,5 +95,8 @@ public class RemoveNotLiveResults {
 
 	private boolean isLive(IRVar var, Set<IRVar> live) {
 		return var.scope() == VariableScope.global || live.contains(var);
+	}
+
+	public record Result(IRFunction function, ControlFlowGraph cfg, VarLiveness liveness) {
 	}
 }

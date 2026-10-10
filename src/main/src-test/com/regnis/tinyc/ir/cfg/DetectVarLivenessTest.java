@@ -29,7 +29,7 @@ public class DetectVarLivenessTest {
 				new IRRetValue(right),
 				new IRLabel("exit")
 		));
-		DetectVarLiveness.process(cfg);
+		final VarLiveness liveness = DetectVarLiveness.process(cfg);
 
 		final Iterator<BasicBlock> it = cfg.blocks().iterator();
 		assertBlock("start", List.of(
@@ -37,23 +37,23 @@ public class DetectVarLivenessTest {
 				            new IRJump("if")
 		            ),
 		            Set.of(choice, left, right),
-		            Set.of(left, right), it.next());
+		            Set.of(left, right), liveness, it.next());
 		assertBlock("else", List.of(
 				            new IRRetValue(right),
 				            new IRJump("exit")
 		            ),
 		            Set.of(right),
-		            Set.of(), it.next());
+		            Set.of(), liveness, it.next());
 		assertBlock("if", List.of(
 				            new IRRetValue(left),
 				            new IRJump("exit")
 		            ),
 		            Set.of(left),
-		            Set.of(), it.next());
+		            Set.of(), liveness, it.next());
 		assertBlock("exit", List.of(
 		            ),
 		            Set.of(),
-		            Set.of(), it.next());
+		            Set.of(), liveness, it.next());
 	}
 
 	@Test
@@ -74,52 +74,53 @@ public class DetectVarLivenessTest {
 				new IRJump("loop"),
 				new IRLabel("exit")
 		));
-		DetectVarLiveness.process(cfg);
+		final VarLiveness liveness = DetectVarLiveness.process(cfg);
 		final Iterator<BasicBlock> it = cfg.blocks().iterator();
 		assertBlock("main", List.of(
 				            new IRMove(bool_needsInitialize, 1),
 				            new IRJump("loop")
 		            ),
 		            Set.of(),
-		            Set.of(bool_needsInitialize), it.next());
+		            Set.of(bool_needsInitialize), liveness, it.next());
 		assertBlock("1", List.of(
 				            new IRBranch(bool_needsInitialize, false, "main.no_critical_edge_6", "2"),
 				            new IRJump("2")
 		            ),
 		            Set.of(bool_needsInitialize),
-		            Set.of(bool_needsInitialize), it.next());
+		            Set.of(bool_needsInitialize), liveness, it.next());
 		assertBlock("main.no_critical_edge_6", List.of(
 				            new IRJump("3")
 		            ),
 		            Set.of(bool_needsInitialize),
-		            Set.of(bool_needsInitialize), it.next());
+		            Set.of(bool_needsInitialize), liveness, it.next());
 		assertBlock("2", List.of(
 				            new IRMove(bool_needsInitialize, 0),
 				            new IRCall(null, Type.VOID, "doSomething", List.of()),
 				            new IRJump("3")
 		            ),
 		            Set.of(),
-		            Set.of(bool_needsInitialize), it.next());
+		            Set.of(bool_needsInitialize), liveness, it.next());
 		assertBlock("3", List.of(
 				            new IRJump("loop")
 		            ),
 		            Set.of(bool_needsInitialize),
-		            Set.of(bool_needsInitialize), it.next());
+		            Set.of(bool_needsInitialize), liveness, it.next());
 		assertBlock("loop", List.of(
 				            new IRCall(bool_exit, Type.BOOL, "isExit", List.of()),
 				            new IRBranch(bool_exit, true, "exit", "1"),
 				            new IRJump("1")
 		            ),
 		            Set.of(bool_needsInitialize),
-		            Set.of(bool_needsInitialize), it.next());
-		assertBlock("exit", List.of(), Set.of(), Set.of(), it.next());
+		            Set.of(bool_needsInitialize), liveness, it.next());
+		assertBlock("exit", List.of(), Set.of(), Set.of(), liveness, it.next());
 		assertFalse(it.hasNext());
 	}
 
-	private void assertBlock(String expectedName, List<? extends Record> expectedInstructions, Set<Object> expectedLiveBefore, Set<Object> expectedLiveAfter, BasicBlock block) {
+	private void assertBlock(String expectedName, List<? extends Record> expectedInstructions, Set<Object> expectedLiveBefore, Set<Object> expectedLiveAfter, VarLiveness liveness, BasicBlock block) {
+		final VarLiveness.Block blockLiveness = liveness.get(block.name);
 		assertEquals(expectedName, block.name);
 		assertEquals(expectedInstructions, block.instructions());
-		assertEquals("live before", expectedLiveBefore, block.getLiveBefore());
-		assertEquals("live after", expectedLiveAfter, block.getLiveAfter());
+		assertEquals("live before", expectedLiveBefore, blockLiveness.getLiveBefore());
+		assertEquals("live after", expectedLiveAfter, blockLiveness.getLiveAfter());
 	}
 }
