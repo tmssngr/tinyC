@@ -55,32 +55,7 @@ public final class IRLocalOptimizer {
 
 	private String getValuesAsString() {
 		final List<ValueContainer> locations = new ArrayList<>(locationToValue.keySet());
-		locations.sort(new Comparator<>() {
-			@Override
-			public int compare(ValueContainer loc1, ValueContainer loc2) {
-				final int loc = typeSortValue(loc1) - typeSortValue(loc2);
-				if (loc != 0) {
-					return loc;
-				}
-				return subSortValue(loc1) - subSortValue(loc2);
-			}
-
-			private int typeSortValue(ValueContainer container) {
-				return switch (container) {
-					case ValueContainer.Global ignored -> 2;
-					case ValueContainer.Reg ignored -> 0;
-					case ValueContainer.Stack ignored -> 1;
-				};
-			}
-
-			private int subSortValue(ValueContainer container) {
-				return switch (container) {
-					case ValueContainer.Global g -> g.index;
-					case ValueContainer.Reg r -> r.index;
-					case ValueContainer.Stack s -> s.index;
-				};
-			}
-		});
+		locations.sort(ValueContainer::compare);
 		final StringBuilder buffer = new StringBuilder();
 		for (ValueContainer location : locations) {
 			if (buffer.length() > 0) {
@@ -98,7 +73,7 @@ public final class IRLocalOptimizer {
 		return switch (instruction) {
 			case IRAddrOf addrOf -> {
 				final IRVar source = addrOf.source();
-				yield store(addrOf.target(), new Value.AddrOf(getLocation(source)), instruction);
+				yield store(addrOf.target(), new Value.AddrOf(ValueContainer.of(source)), instruction);
 			}
 			case IRBinary binary -> {
 				final Value left = getValue(binary.left());
@@ -227,7 +202,7 @@ public final class IRLocalOptimizer {
 		if (psib.isUsefulToBeReplacedWithMove(instruction)) {
 			instruction = checkOtherRegistersForValue(target, value, instruction);
 		}
-		final ValueContainer location = getLocation(target);
+		final ValueContainer location = ValueContainer.of(target);
 		return store(location, value, instruction);
 	}
 
@@ -256,7 +231,7 @@ public final class IRLocalOptimizer {
 
 	@NotNull
 	private Value getValue(@NotNull IRVar var) {
-		final ValueContainer location = getLocation(var);
+		final ValueContainer location = ValueContainer.of(var);
 		return getValue(location);
 	}
 
@@ -272,99 +247,8 @@ public final class IRLocalOptimizer {
 	}
 
 	@NotNull
-	private ValueContainer getLocation(@NotNull IRVar var) {
-		return switch (var.scope()) {
-			case register -> new ValueContainer.Reg(var.index());
-			case function, parameter -> new ValueContainer.Stack(var.index());
-			case global -> new ValueContainer.Global(var.index());
-		};
-	}
-
-	@NotNull
 	private Value.Unknown unknown() {
 		return new Value.Unknown(unknownId++);
-	}
-
-	public sealed interface ValueContainer permits ValueContainer.Global, ValueContainer.Reg, ValueContainer.Stack {
-		record Global(int index) implements ValueContainer {
-			@NotNull
-			@Override
-			public String toString() {
-				return "global+" + index;
-			}
-		}
-
-		record Reg(int index) implements ValueContainer {
-			@NotNull
-			@Override
-			public String toString() {
-				return "r" + index;
-			}
-		}
-
-		record Stack(int index) implements ValueContainer {
-			@NotNull
-			@Override
-			public String toString() {
-				return "stack+" + index;
-			}
-		}
-	}
-
-	public sealed interface Value permits Value.AddrOf, Value.Binary, Value.Cast, Value.Constant, Value.String0, Value.Unary, Value.Unknown {
-		record AddrOf(@NotNull ValueContainer var) implements Value {
-			public AddrOf {
-				Utils.assertTrue(!(var instanceof ValueContainer.Reg));
-			}
-		}
-
-		record Binary(@NotNull Value left, @NotNull IRBinary.Op op, @NotNull Value right) implements Value {
-			@NotNull
-			@Override
-			public String toString() {
-				return left + " " + op + " " + right;
-			}
-		}
-
-		record Cast(@NotNull Type type, @NotNull Value value) implements Value {
-			@NotNull
-			@Override
-			public String toString() {
-				return "(" + type + ")" + value;
-			}
-		}
-
-		record Constant(int value, @NotNull Type type) implements Value {
-			@NotNull
-			@Override
-			public String toString() {
-				return String.valueOf(value);
-			}
-		}
-
-		record String0(int index) implements Value {
-			@NotNull
-			@Override
-			public String toString() {
-				return "'" + index + "'";
-			}
-		}
-
-		record Unary(@NotNull IRUnary.Op op, @NotNull Value value) implements Value {
-			@NotNull
-			@Override
-			public String toString() {
-				return op + " " + value;
-			}
-		}
-
-		record Unknown(int id) implements Value {
-			@NotNull
-			@Override
-			public String toString() {
-				return "#" + id;
-			}
-		}
 	}
 
 	public interface PlatformSpecificInstructionBehavior {
