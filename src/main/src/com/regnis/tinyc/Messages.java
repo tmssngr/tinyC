@@ -230,8 +230,14 @@ public class Messages {
 		return "Skipping all statements in a {}-block after a `return`";
 	}
 
+	@NotNull
 	public static String duplicateElse(@NotNull Location elseLocation) {
 		return "The #else at " + elseLocation + " must be closed with #endif before a new #else is allowed";
+	}
+
+	@NotNull
+	public static String expressionIsAlways(boolean trueOrFalse) {
+		return "Expression is always " + trueOrFalse;
 	}
 
 	private static void functionWithType(String name, List<Type> argTypes, StringBuilder buffer) {

@@ -721,6 +721,51 @@ public class TypeCheckerTest {
 		), List.of(), List.of()), program);
 	}
 
+	@Test
+	public void testRelationalMinMax() {
+		final Program program = Parser.parse("""
+				                                     void print() {}
+				                                     void main(u8 a, i16 b) {
+				                                       if a < 0 {
+				                                         print()
+				                                       }
+				                                       if a >= 0 {
+				                                         print()
+				                                       }
+				                                       if a > 255 {
+				                                         print()
+				                                       }
+				                                       if a <= 255 {
+				                                         print()
+				                                       }
+				                                       if b < -32768 {
+				                                         print()
+				                                       }
+				                                       if b >= -32768 {
+				                                         print()
+				                                       }
+				                                       if b > 32767 {
+				                                         print()
+				                                       }
+				                                       if b <= 32767 {
+				                                         print()
+				                                       }
+				                                     }""", Set.of());
+		final List<Message> messages = new ArrayList<>();
+		final TypeChecker checker = new TypeChecker(Type.I64, messages::add);
+		checker.check(program);
+		final Iterator<Message> i = messages.iterator();
+		Assert.assertEquals(Message.warn(Messages.expressionIsAlways(false), loc(2, 7)), i.next());
+		Assert.assertEquals(Message.warn(Messages.expressionIsAlways(true), loc(5, 7)), i.next());
+		Assert.assertEquals(Message.warn(Messages.expressionIsAlways(false), loc(8, 7)), i.next());
+		Assert.assertEquals(Message.warn(Messages.expressionIsAlways(true), loc(11, 7)), i.next());
+
+		Assert.assertEquals(Message.warn(Messages.expressionIsAlways(false), loc(14, 7)), i.next());
+		Assert.assertEquals(Message.warn(Messages.expressionIsAlways(true), loc(17, 7)), i.next());
+		Assert.assertEquals(Message.warn(Messages.expressionIsAlways(false), loc(20, 7)), i.next());
+		Assert.assertEquals(Message.warn(Messages.expressionIsAlways(true), loc(23, 7)), i.next());
+		Assert.assertFalse(i.hasNext());
+	}
 
 	private void testIllegalStatement(String expectedMessage, int column, String illegalOperation) {
 		try {
