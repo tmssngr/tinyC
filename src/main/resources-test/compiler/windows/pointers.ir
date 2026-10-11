@@ -2,7 +2,7 @@ printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
-	; 8 pc
+
 	addrof t.1, chr
 	call printStringLength@@u8@u8[t.1, 1]
 printChar@u8_ret:
@@ -21,7 +21,7 @@ printUint@i64:
 	var 9: t.9 (i64/8)
 	var 10: t.10 (u8/1)
 	var 11: t.11 (u8/1)
-	; 84 pc
+
 	const pos, 20
 	; 28:2 while true
 while_1:
@@ -49,7 +49,7 @@ printIntLf@u8:
  Local variables
 	arg 0: number (u8/1)
 	var 1: t.1 (i64/8)
-	; 8 pc
+
 	cast t.1(i64), number(u8)
 	call printIntLf@i64[t.1]
 printIntLf@u8_ret:
@@ -58,7 +58,7 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 	var 1: t.1 (i64/8)
-	; 8 pc
+
 	cast t.1(i64), number(i16)
 	call printIntLf@i64[t.1]
 printIntLf@i16_ret:
@@ -66,7 +66,7 @@ printIntLf@i16_ret:
 printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
-	; 13 pc
+
 	; 54:2 if number < 0
 	branch number gteq 0: if_3_end, if_3_then
 if_3_then:
@@ -82,7 +82,7 @@ printStringLength@@u8@u8:
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
 	var 2: t.2 (i64/8)
-	; 10 pc
+
 	cast t.2(i64), length(u8)
 	call printStringLength@@u8@i64[str, t.2]
 printStringLength@@u8@u8_ret:
@@ -97,7 +97,7 @@ testIf@u8:
 	var 5: t.5 (u8/1)
 	var 6: a.6 (u8*/8)
 	var 7: t.7 (u8/1)
-	; 44 pc
+
 	const t.3, 1
 	addrof a.4, b
 	store [a.4], t.3
@@ -132,7 +132,7 @@ main:
 	var 14: t.14 (i16/2)
 	var 15: a.15 (i16*/8)
 	var 16: t.16 (i16/2)
-	; 105 pc
+
 	const t.4, 10
 	addrof a.5, a
 	store [a.5], t.4

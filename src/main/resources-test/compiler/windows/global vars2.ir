@@ -2,7 +2,7 @@ printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
-	; 10 pc
+
 	call length = strlen@@u8[str] -> i64
 	call printStringLength@@u8@i64[str, length]
 printString@@u8_ret:
@@ -12,7 +12,7 @@ strlen@@u8:
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
 	var 2: t.2 (u8/1)
-	; 26 pc
+
 	const length, 0
 	; 64:2 for *str != 0
 for_1:
@@ -37,7 +37,7 @@ next:
 	var 3: a.3 (u8*/8)
 	var 4: t.4 (u8/1)
 	var 5: a.5 (u8*/8)
-	; 42 pc
+
 	addrof a.1, global
 	load copy, [a.1]
 	addrof a.3, global
@@ -57,7 +57,7 @@ main:
 	var 2: a.2 (u8*/8)
 	var 3: t.3 (u8*/8)
 	var 4: t.4 (u8*/8)
-	; 35 pc
+
 	; begin initialize global variables
 	const t.1, 0
 	addrof a.2, global
