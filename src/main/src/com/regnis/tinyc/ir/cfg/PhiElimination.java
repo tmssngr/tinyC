@@ -12,6 +12,12 @@ import org.jetbrains.annotations.*;
  */
 public final class PhiElimination {
 	@NotNull
+	public static IRFunction process(@NotNull IRFunction function) {
+		final List<IRInstruction> instructions = process(function.name(), function.instructions());
+		return function.derive(instructions);
+	}
+
+	@NotNull
 	public static List<IRInstruction> process(@NotNull String name, @NotNull List<IRInstruction> ssaInstructions) {
 		return process(CfgGenerator.create(name, ssaInstructions));
 	}
