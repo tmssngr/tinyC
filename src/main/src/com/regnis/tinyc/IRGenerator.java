@@ -218,6 +218,16 @@ public final class IRGenerator {
 		Utils.assertTrue(condition.typeNotNull() == Type.BOOL);
 		final List<Statement> thenStatements = statement.thenStatements();
 		final List<Statement> elseStatements = statement.elseStatements();
+		if (condition instanceof ExprBoolLiteral literal) {
+			if (literal.value()) {
+				writeStatements(thenStatements);
+			}
+			else {
+				writeStatements(elseStatements);
+			}
+			return;
+		}
+
 		final int labelIndex = nextLabelIndex();
 		final String labelThen = "if_" + labelIndex + "_then";
 		final String labelElse = "if_" + labelIndex + "_else";
@@ -740,7 +750,9 @@ public final class IRGenerator {
 	}
 
 	private void write(@NotNull IRInstruction instruction) {
-		instructions.add(instruction);
+		if (instructions.isEmpty() || !(instructions.getLast() instanceof IRJump) || instruction instanceof IRLabel) {
+			instructions.add(instruction);
+		}
 	}
 
 	private int nextLabelIndex() {
