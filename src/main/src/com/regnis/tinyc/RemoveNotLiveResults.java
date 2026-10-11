@@ -94,6 +94,7 @@ public class RemoveNotLiveResults {
 	}
 
 	private boolean isLive(IRVar var, Set<IRVar> live) {
+		Utils.assertTrue(var.scope() != VariableScope.register);
 		return var.scope() == VariableScope.global || live.contains(var);
 	}
 
