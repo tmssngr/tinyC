@@ -107,6 +107,100 @@ public class IRGeneratorTest {
 		             IROptimizer.branchAndLabelOptimizations(program));
 	}
 
+	@Test
+	public void testSimplifiedIfElse() {
+		final IRProgram program = convert("""
+				                                  void print(u8 a) {
+				                                  }
+				                                  void foo() {
+				                                    if true {
+				                                      print('a')
+				                                    }
+				                                    else {
+				                                      print('b')
+				                                    }
+
+				                                    if false {
+				                                      print('c')
+				                                    }
+				                                    else {
+				                                      print('d')
+				                                    }
+
+				                                    if true {
+				                                      print('e')
+				                                    }
+
+				                                    if false {
+				                                      print('f')
+				                                    }
+
+				                                    if true {
+				                                      return
+				                                    }
+
+				                                    print(' ')
+				                                  }""");
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		assertEquals(new IRProgram(List.of(
+				new IRFunction("print@u8", Type.VOID,
+				               new IRVarInfos(List.of(
+						               new IRVarDef(new IRVar("a", 0, VariableScope.parameter, Type.U8), 1)
+				               ), Set.of(), globalVarInfos),
+				               List.of(
+						               new IRLabel("print@u8_ret")
+				               )),
+				new IRFunction("foo", Type.VOID,
+				               new IRVarInfos(List.of(
+						               new IRVarDef(tmp(0, Type.BOOL), 1),
+						               new IRVarDef(tmp(1, Type.BOOL), 1),
+						               new IRVarDef(tmp(2, Type.BOOL), 1),
+						               new IRVarDef(tmp(3, Type.BOOL), 1),
+						               new IRVarDef(tmp(4, Type.BOOL), 1)
+				               ), Set.of(), globalVarInfos),
+				               List.of(
+						               new IRComment("4:3 if true"),
+						               new IRMove(tmp(0, Type.BOOL), 1, loc(3, 5)),
+						               new IRBranch(IRCompare.Op.Equals, tmp(0, Type.BOOL), 0, "if_1_else", "if_1_then", loc(3, 5)),
+						               new IRLabel("if_1_then"),
+						               new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue('a', Type.U8)), loc(4, 4)),
+						               new IRJump("if_1_end"),
+						               new IRLabel("if_1_else"),
+						               new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue('b', Type.U8)), loc(7, 4)),
+						               new IRLabel("if_1_end"),
+						               new IRComment("11:3 if false"),
+						               new IRMove(tmp(1, Type.BOOL), 0, loc(10, 5)),
+						               new IRBranch(IRCompare.Op.Equals, tmp(1, Type.BOOL), 0, "if_2_else", "if_2_then", loc(10, 5)),
+						               new IRLabel("if_2_then"),
+						               new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue('c', Type.U8)), loc(11, 4)),
+						               new IRJump("if_2_end"),
+						               new IRLabel("if_2_else"),
+						               new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue('d', Type.U8)), loc(14, 4)),
+						               new IRLabel("if_2_end"),
+						               new IRComment("18:3 if true"),
+						               new IRMove(tmp(2, Type.BOOL), 1, loc(17, 5)),
+						               new IRBranch(IRCompare.Op.Equals, tmp(2, Type.BOOL), 0, "if_3_end", "if_3_then", loc(17, 5)),
+						               new IRLabel("if_3_then"),
+						               new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue('e', Type.U8)), loc(18, 4)),
+						               new IRLabel("if_3_end"),
+						               new IRComment("22:3 if false"),
+						               new IRMove(tmp(3, Type.BOOL), 0, loc(21, 5)),
+						               new IRBranch(IRCompare.Op.Equals, tmp(3, Type.BOOL), 0, "if_4_end", "if_4_then", loc(21, 5)),
+						               new IRLabel("if_4_then"),
+						               new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue('f', Type.U8)), loc(22, 4)),
+						               new IRLabel("if_4_end"),
+						               new IRComment("26:3 if true"),
+						               new IRMove(tmp(4, Type.BOOL), 1, loc(25, 5)),
+						               new IRBranch(IRCompare.Op.Equals, tmp(4, Type.BOOL), 0, "if_5_end", "if_5_then", loc(25, 5)),
+						               new IRLabel("if_5_then"),
+						               new IRComment("27:5 return"),
+									   new IRJump("foo_ret"),
+						               new IRLabel("if_5_end"),
+						               new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue(' ', Type.U8)), loc(29, 2)),
+						               new IRLabel("foo_ret")
+				               ))), List.of(), globalVarInfos, List.of()), program);
+	}
+
 	private void assertEquals(IRProgram expected, IRProgram actual) {
 		TestUtils.assertEquals(expected.functions(), actual.functions(),
 		                       this::assertEquals);
