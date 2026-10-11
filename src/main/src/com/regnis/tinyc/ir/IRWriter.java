@@ -84,6 +84,7 @@ public final class IRWriter extends TextWriter {
 	private void writeFunction(IRFunction function) throws IOException {
 		writeln(function.name() + ":");
 		final List<IRVarDef> localVars = function.varInfos().vars();
+		final List<IRInstruction> instructions = function.instructions();
 		if (localVars.size() > 0) {
 			writeln(" Local variables");
 			for (IRVarDef varDef : localVars) {
@@ -91,9 +92,12 @@ public final class IRWriter extends TextWriter {
 				write(varDef.var().scope() == VariableScope.parameter ? "arg " : "var ");
 				writeln(varDef.getString());
 			}
+			if (instructions.size() > 0) {
+				writeln();
+			}
 		}
 
-		writeInstructions(function.instructions(), null);
+		writeInstructions(instructions, null);
 		writeln();
 	}
 
@@ -110,11 +114,6 @@ public final class IRWriter extends TextWriter {
 		if (instructions.isEmpty()) {
 			return;
 		}
-
-		final int instructionTime = getInstructionTime(instructions);
-		writeIndentation();
-		// processor cycles
-		writeln("; " + instructionTime + " pc");
 
 		for (int i = 0; i < instructions.size(); i++) {
 			final IRInstruction instruction = instructions.get(i);
@@ -134,116 +133,6 @@ public final class IRWriter extends TextWriter {
 				}
 			}
 		}
-	}
-
-	private int getInstructionTime(List<IRInstruction> instructions) {
-		int sum = 0;
-		for (IRInstruction instruction : instructions) {
-			switch (instruction) {
-			case IRLabel ignored -> {
-			}
-			case IRComment ignored -> {
-			}
-			case IRAddrOf i -> {
-				sum += getInstructionTime(i.source());
-				sum += getInstructionTime(i.target());
-				sum++;
-			}
-			case IRBinary i -> {
-				sum += getInstructionTime(i.left());
-				final IRValue right = i.right();
-				final IRVar rightVar = right.var();
-				if (rightVar != null) {
-					sum += getInstructionTime(rightVar);
-				}
-				sum++;
-				sum += getInstructionTime(i.target());
-			}
-			case IRBranch i -> {
-				sum += getInstructionTime(i.left());
-				final IRValue right = i.right();
-				final IRVar rightVar = right.var();
-				if (rightVar != null) {
-					sum += getInstructionTime(rightVar);
-				}
-				sum++;
-			}
-			case IRCall i -> {
-				for (IRValue arg : i.args()) {
-					final IRVar var = arg.var();
-					if (var != null) {
-						sum += getInstructionTime(var);
-					}
-				}
-				sum++;
-				if (i.target() != null) {
-					sum += getInstructionTime(i.target());
-				}
-			}
-			case IRCast i -> {
-				sum += getInstructionTime(i.source());
-				sum++;
-				sum += getInstructionTime(i.target());
-			}
-			case IRCompare i -> {
-				sum += getInstructionTime(i.left());
-				final IRValue right = i.right();
-				final IRVar rightVar = right.var();
-				if (rightVar != null) {
-					sum += getInstructionTime(rightVar);
-				}
-				sum++;
-				sum += getInstructionTime(i.target());
-			}
-			case IRMove i -> {
-				final IRVar sourceVar = i.source().var();
-				if (sourceVar != null) {
-					sum += getInstructionTime(sourceVar);
-					sum++;
-				}
-				sum += getInstructionTime(i.target());
-			}
-			case IRJump i -> {
-				sum++;
-			}
-			case IRMemLoad i -> {
-				sum += getInstructionTime(i.addr());
-				sum += getInstructionTime(i.target());
-				sum += 2;
-			}
-			case IRMemStore i -> {
-				sum += getInstructionTime(i.addr());
-				sum += getInstructionTime(i.value());
-				sum += 2;
-			}
-			case IRPhi i -> {
-				sum += 2;
-			}
-			case IRRetValue i -> {
-				final IRValue value = i.value();
-				final IRVar var = value.var();
-				if (var != null) {
-					sum += getInstructionTime(var);
-				}
-				sum++;
-			}
-			case IRString i -> {
-				sum++;
-				sum += getInstructionTime(i.target());
-			}
-			case IRUnary i -> {
-				sum += getInstructionTime(i.source());
-				sum++;
-				sum += getInstructionTime(i.target());
-			}
-			default -> throw new UnsupportedOperationException(String.valueOf(instruction));
-			}
-		}
-		return sum;
-	}
-
-	private int getInstructionTime(IRVar var) {
-		return 2;
 	}
 
 	private void writeGlobalVars(List<IRVarDef> globalVars) throws IOException {

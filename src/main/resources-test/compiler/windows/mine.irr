@@ -2,7 +2,7 @@ printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length.1 (i64/8)
-	; 10 pc
+
 	call length.1 = strlen@@u8[str] -> i64
 	call printStringLength@@u8@i64[str, length.1]
 
@@ -10,7 +10,7 @@ printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1.1 (u8*/8)
-	; 8 pc
+
 	addrof t.1.1, chr
 	call printStringLength@@u8@u8[t.1.1, 1]
 
@@ -18,7 +18,7 @@ printUint@i16:
  Local variables
 	arg 0: number (i16/2)
 	var 1: t.1.1 (i64/8)
-	; 8 pc
+
 	cast t.1.1(i64), number(i16)
 	call printUint@i64[t.1.1]
 
@@ -42,7 +42,7 @@ printUint@i64:
 	var 15: t.8.2 (u8*/8)
 	var 16: t.11.1 (u8/1)
 	var 17: t.10.1 (u8/1)
-	; 140 pc
+
 	const pos.1, 20
 	; 28:2 while true
 	move number.1, number
@@ -86,7 +86,7 @@ strlen@@u8:
 	var 4: t.2.1 (u8/1)
 	var 5: length.3 (i64/8)
 	var 6: str.2 (u8*/8)
-	; 55 pc
+
 	const length.1, 0
 	; 64:2 for *str != 0
 	move str.1, str
@@ -110,7 +110,7 @@ printStringLength@@u8@u8:
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
 	var 2: t.2.1 (i64/8)
-	; 10 pc
+
 	cast t.2.1(i64), length(u8)
 	call printStringLength@@u8@i64[str, t.2.1]
 
@@ -119,7 +119,7 @@ initRandom@i32:
 	arg 0: salt (i32/4)
 	var 1: t.1.1 (i32/4)
 	var 2: a.2.1 (i32*/8)
-	; 16 pc
+
 	move t.1.1, salt
 	addrof a.2.1, __random__
 	store [a.2.1], t.1.1
@@ -143,7 +143,7 @@ random:
 	var 14: a.14.1 (i32*/8)
 	var 15: a.15.1 (i32*/8)
 	var 16: t.16.1 (i32/4)
-	; 162 pc
+
 	addrof a.5.1, __random__
 	load r.1, [a.5.1]
 	move t.6.1, r.1
@@ -183,7 +183,7 @@ rowColumnToCell@i16@i16:
 	arg 1: column (i16/2)
 	var 2: t.3.1 (i16/2)
 	var 3: t.2.1 (i16/2)
-	; 25 pc
+
 	; 16:21 return row * 40 + column
 	move t.3.1, row
 	mul t.3.1, 40
@@ -200,7 +200,7 @@ getCell@i16@i16:
 	var 4: t.3.1 (u8*/8)
 	var 5: t.3.2 (u8*/8)
 	var 6: t.2.1 (u8/1)
-	; 38 pc
+
 	; 20:15 return [...]
 	call t.5.1 = rowColumnToCell@i16@i16[row, column] -> i16
 	cast t.4.1(i64), t.5.1(i16)
@@ -215,7 +215,7 @@ isBomb@u8:
 	arg 0: cell (u8/1)
 	var 1: t.2.1 (u8/1)
 	var 2: t.1.1 (bool/1)
-	; 18 pc
+
 	; 24:27 return cell & 1 != 0
 	move t.2.1, cell
 	and t.2.1, 1
@@ -227,7 +227,7 @@ isOpen@u8:
 	arg 0: cell (u8/1)
 	var 1: t.2.1 (u8/1)
 	var 2: t.1.1 (bool/1)
-	; 18 pc
+
 	; 28:27 return cell & 2 != 0
 	move t.2.1, cell
 	and t.2.1, 2
@@ -239,7 +239,7 @@ isFlag@u8:
 	arg 0: cell (u8/1)
 	var 1: t.2.1 (u8/1)
 	var 2: t.1.1 (bool/1)
-	; 18 pc
+
 	; 32:27 return cell & 4 != 0
 	move t.2.1, cell
 	and t.2.1, 4
@@ -257,7 +257,7 @@ checkCellBounds@i16@i16:
 	var 6: t.2.5 (bool/1)
 	var 7: t.2.6 (bool/1)
 	var 8: t.2.7 (bool/1)
-	; 65 pc
+
 	; 37:21 return row >= 0 && row < 20 && column >= 0 && column < 40
 	; 37:21 logic and
 	; 36:40 logic and
@@ -295,7 +295,7 @@ setCell@i16@i16@u8:
 	var 4: t.4.1 (i64/8)
 	var 5: t.3.1 (u8*/8)
 	var 6: t.3.2 (u8*/8)
-	; 35 pc
+
 	call t.5.1 = rowColumnToCell@i16@i16[row, column] -> i16
 	cast t.4.1(i64), t.5.1(i16)
 	addrof t.3.1, field
@@ -323,7 +323,7 @@ getBombCountAround@i16@i16:
 	var 15: t.9.1 (bool/1)
 	var 16: dc.4 (i16/2)
 	var 17: count.5 (u8/1)
-	; 153 pc
+
 	const count.1, 0
 	const dr.1, -1
 	; 46:2 for dr <= 1
@@ -380,7 +380,7 @@ getSpacer@i16@i16@i16@i16:
 	arg 2: rowCursor (i16/2)
 	arg 3: columnCursor (i16/2)
 	var 4: t.4.1 (i16/2)
-	; 31 pc
+
 	branch rowCursor notequals row: if_11_end, if_11_then
 	branch columnCursor equals column: if_12_then, if_12_end
 	; 66:3 if columnCursor == column - 1
@@ -416,7 +416,7 @@ printCell@u8@i16@i16:
 	var 10: chr.4 (u8/1)
 	var 11: chr.5 (u8/1)
 	var 12: chr.6 (u8/1)
-	; 87 pc
+
 	const chr.1, 46
 	; 75:2 if isOpen@u8([ExprVarAccess[varName=cell, index=0, scope=parameter, type=u8, varIsArray=false, location=75:13]])
 	call t.5.1 = isOpen@u8[cell] -> bool
@@ -471,7 +471,7 @@ printField@i16@i16:
 	var 9: spacer.2 (u8/1)
 	var 10: cell.1 (u8/1)
 	var 11: column.3 (i16/2)
-	; 100 pc
+
 	call setCursor@i16@i16[0, 0]
 	const row.1, 0
 	; 97:2 for row < 20
@@ -508,7 +508,7 @@ printSpaces@i16:
 	arg 0: i (i16/2)
 	var 1: i.1 (i16/2)
 	var 2: i.2 (i16/2)
-	; 25 pc
+
 	move i.1, i
 	jump for_20
 for_20_body:
@@ -531,7 +531,7 @@ getDigitCount@i16:
 	var 7: count.4 (u8/1)
 	var 8: count.5 (u8/1)
 	var 9: value.4 (i16/2)
-	; 80 pc
+
 	const count.1, 0
 	; 119:2 if value < 0
 	branch value lt 0: if_21_then, getDigitCount@i16.no_critical_edge_6
@@ -575,7 +575,7 @@ getHiddenCount:
 	var 10: count.4 (i16/2)
 	var 11: count.5 (i16/2)
 	var 12: c.4 (i16/2)
-	; 118 pc
+
 	const count.1, 0
 	const r.1, 0
 	; 137:2 for r < 20
@@ -625,7 +625,7 @@ printLeft:
 	var 4: bombDigits.1 (i16/2)
 	var 5: t.5.1 (i16/2)
 	var 6: t.6.1 (bool/1)
-	; 48 pc
+
 	call count.1 = getHiddenCount[] -> i16
 	call t.3.1 = getDigitCount@i16[count.1] -> u8
 	cast leftDigits.1(i16), t.3.1(u8)
@@ -644,7 +644,7 @@ abs@i16:
  Local variables
 	arg 0: a (i16/2)
 	var 1: t.1.1 (i16/2)
-	; 15 pc
+
 	branch a lt 0: if_27_then, if_27_end
 	; 163:9 return a
 	ret a
@@ -663,7 +663,7 @@ clearField:
 	var 3: c.2 (i16/2)
 	var 4: r.4 (i16/2)
 	var 5: c.3 (i16/2)
-	; 57 pc
+
 	const r.1, 0
 	; 167:2 for r < 20
 	move r.2, r.1
@@ -703,7 +703,7 @@ initField@i16@i16:
 	var 12: t.12.1 (i16/2)
 	var 13: t.11.1 (i16/2)
 	var 14: bombs.5 (i16/2)
-	; 107 pc
+
 	const bombs.1, 40
 	; 175:2 for bombs > 0
 	move bombs.2, bombs.1
@@ -752,7 +752,7 @@ maybeRevealAround@i16@i16:
 	var 12: t.9.1 (bool/1)
 	var 13: dc.5 (i16/2)
 	var 14: t.10.1 (u8/1)
-	; 139 pc
+
 	; 186:2 if getBombCountAround@i16@i16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=186:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=186:30]]) != 0
 	call t.7.1 = getBombCountAround@i16@i16[row, column] -> u8
 	branch t.7.1 notequals 0: maybeRevealAround@i16@i16_ret, if_33_end
@@ -831,7 +831,7 @@ main:
 	var 29: t.19.1 (u8/1)
 	var 30: t.20.1 (bool/1)
 	var 31: t.21.1 (u8*/8)
-	; 454 pc
+
 	; begin initialize global variables
 	const t.6.1, 0
 	addrof a.7.1, __random__

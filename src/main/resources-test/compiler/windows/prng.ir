@@ -2,7 +2,7 @@ printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
-	; 8 pc
+
 	addrof t.1, chr
 	call printStringLength@@u8@u8[t.1, 1]
 printChar@u8_ret:
@@ -21,7 +21,7 @@ printUint@i64:
 	var 9: t.9 (i64/8)
 	var 10: t.10 (u8/1)
 	var 11: t.11 (u8/1)
-	; 84 pc
+
 	const pos, 20
 	; 28:2 while true
 while_1:
@@ -49,7 +49,7 @@ printIntLf@u8:
  Local variables
 	arg 0: number (u8/1)
 	var 1: t.1 (i64/8)
-	; 8 pc
+
 	cast t.1(i64), number(u8)
 	call printIntLf@i64[t.1]
 printIntLf@u8_ret:
@@ -57,7 +57,7 @@ printIntLf@u8_ret:
 printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
-	; 13 pc
+
 	; 54:2 if number < 0
 	branch number gteq 0: if_3_end, if_3_then
 if_3_then:
@@ -73,7 +73,7 @@ printStringLength@@u8@u8:
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
 	var 2: t.2 (i64/8)
-	; 10 pc
+
 	cast t.2(i64), length(u8)
 	call printStringLength@@u8@i64[str, t.2]
 printStringLength@@u8@u8_ret:
@@ -83,7 +83,7 @@ initRandom@i32:
 	arg 0: salt (i32/4)
 	var 1: t.1 (i32/4)
 	var 2: a.2 (i32*/8)
-	; 16 pc
+
 	move t.1, salt
 	addrof a.2, __random__
 	store [a.2], t.1
@@ -108,7 +108,7 @@ random:
 	var 14: a.14 (i32*/8)
 	var 15: a.15 (i32*/8)
 	var 16: t.16 (i32/4)
-	; 103 pc
+
 	addrof a.5, __random__
 	load r, [a.5]
 	and t.6, r, 524287
@@ -136,7 +136,7 @@ randomU8:
  Local variables
 	var 0: t.0 (u8/1)
 	var 1: t.1 (i32/4)
-	; 12 pc
+
 	; 19:10 return (u8)
 	call t.1 = random[] -> i32
 	cast t.0(u8), t.1(i32)
@@ -150,7 +150,7 @@ main:
 	var 1: r (u8/1)
 	var 2: t.2 (i32/4)
 	var 3: a.3 (i32*/8)
-	; 31 pc
+
 	; begin initialize global variables
 	const t.2, 0
 	addrof a.3, __random__
