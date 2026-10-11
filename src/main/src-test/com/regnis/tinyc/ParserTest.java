@@ -1366,6 +1366,69 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testReturn() {
+		final Program program = Parser.parse("""
+				                                     const compact = true
+
+				                                     void showCursor(u8 row, u8 column, bool show) {
+				                                       if compact {
+				                                         if show {
+				                                           i16 x = columnToX(column)
+				                                           setCursor((i16)row, x)
+				                                         }
+				                                         return
+				                                       }
+
+				                                       i16 x = columnToX(column)
+				                                       setCursor((i16)row, x - 1)
+				                                     }""", Set.of());
+		assertEquals(new Program(List.of(), List.of(),
+		                         List.of(
+				                         new Function("showCursor", "void", null, List.of(
+						                         new Function.Parameter("u8", "row", loc(2, 16)),
+						                         new Function.Parameter("u8", "column", loc(2, 24)),
+						                         new Function.Parameter("bool", "show", loc(2, 35))
+				                         ), List.of(), List.of(
+						                         new StmtIf(new ExprBoolLiteral(true, loc(3, 5)),
+						                                    List.of(
+								                                    new StmtIf(new ExprVarAccess("show", loc(4, 7)), List.of(
+										                                    new StmtVarDeclaration("i16", "x",
+										                                                           new ExprFuncCall("columnToX", List.of(
+												                                                           new ExprVarAccess("column", loc(5, 24))
+										                                                           ), loc(5, 14)),
+										                                                           loc(5, 6)),
+										                                    new StmtExpr(new ExprFuncCall("setCursor", List.of(
+												                                    ExprCast.cast("i16", new ExprVarAccess("row", loc(6, 21)), loc(6, 17)),
+												                                    new ExprVarAccess("x", loc(6, 26))
+										                                    ), loc(6, 6)))
+								                                    ), List.of(), loc(4, 4)),
+								                                    new StmtReturn(null, loc(8, 4))
+						                                    ),
+						                                    List.of(), loc(3, 2)),
+						                         new StmtVarDeclaration("i16", "x",
+						                                                new ExprFuncCall("columnToX",
+						                                                                 List.of(
+								                                                                 new ExprVarAccess("column", loc(11, 20))
+						                                                                 ),
+						                                                                 loc(11, 10)),
+						                                                loc(11, 2)),
+						                         new StmtExpr(new ExprFuncCall("setCursor", List.of(
+								                         ExprCast.cast("i16",
+								                                       new ExprVarAccess("row", loc(12, 17)),
+								                                       loc(12, 13)),
+								                         new ExprBinary(ExprBinary.Op.Sub,
+								                                        new ExprVarAccess("x", loc(12, 22)),
+								                                        intLit(1, loc(12, 26)),
+								                                        loc(12, 24))
+						                         ), loc(12, 2)))
+				                         ), List.of(), loc(2, 0))
+		                         ),
+		                         List.of(),
+		                         List.of()
+		), program);
+	}
+
+	@Test
 	public void testStatementsFollowReturn() {
 		final Program program = Parser.parse(SNIPPET_STATEMENTS_FOLLOW_RETURN, Set.of());
 		assertEquals(new Program(List.of(), List.of(), List.of(
