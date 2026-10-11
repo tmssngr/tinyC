@@ -195,7 +195,6 @@ public final class IRGenerator {
 		final Location location = stmtReturn.location();
 		final Expression expression = stmtReturn.expression();
 		if (expression != null) {
-			writeComment("return " + expression.toUserString(), expression.location());
 			if (expression instanceof ExprBoolLiteral literal) {
 				write(new IRRetValue(literal.value() ? 1 : 0, Type.BOOL, location));
 			}
@@ -203,6 +202,7 @@ public final class IRGenerator {
 				write(new IRRetValue(literal.value(), literal.typeNotNull(), location));
 			}
 			else {
+				writeComment("return " + expression.toUserString(), expression.location());
 				final IRVar var = writeExpression(expression);
 				write(new IRRetValue(var, location));
 			}

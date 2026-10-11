@@ -121,7 +121,6 @@ getTrue:
 	; 7 pc
 	const t.0, [string-0]
 	call printString@@u8[t.0]
-	; 3:49 return true
 	ret 1
 
 getFalse:
@@ -130,7 +129,6 @@ getFalse:
 	; 7 pc
 	const t.0, [string-1]
 	call printString@@u8[t.0]
-	; 4:49 return false
 	ret 0
 
 printPass:

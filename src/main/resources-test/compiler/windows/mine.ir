@@ -334,7 +334,6 @@ if_11_then:
 	; 63:3 if columnCursor == column
 	branch columnCursor notequals column: if_12_end, if_12_then
 if_12_then:
-	; 64:11 return 91
 	ret 91
 	jump getSpacer@i16@i16@i16@i16_ret
 if_12_end:
@@ -343,11 +342,9 @@ if_12_end:
 	sub t.4, t.4, 1
 	branch columnCursor notequals t.4: if_11_end, if_13_then
 if_13_then:
-	; 67:11 return 93
 	ret 93
 	jump getSpacer@i16@i16@i16@i16_ret
 if_11_end:
-	; 70:9 return 32
 	ret 32
 	jump getSpacer@i16@i16@i16@i16_ret
 getSpacer@i16@i16@i16@i16_ret:

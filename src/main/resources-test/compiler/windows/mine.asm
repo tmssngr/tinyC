@@ -995,17 +995,14 @@ _getSpacer@i16@i16@i16@i16:
         jne _if_11_end
         jmp _if_13_then
 _if_12_then:
-        ; 64:11 return 91
         ; ret 91
         mov rax, 91
         jmp _getSpacer@i16@i16@i16@i16_ret
 _if_13_then:
-        ; 67:11 return 93
         ; ret 93
         mov rax, 93
         jmp _getSpacer@i16@i16@i16@i16_ret
 _if_11_end:
-        ; 70:9 return 32
         ; ret 32
         mov rax, 32
 _getSpacer@i16@i16@i16@i16_ret:

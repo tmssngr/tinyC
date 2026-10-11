@@ -407,7 +407,6 @@ _getTrue:
         push rbx
           call _printString@@u8
         add rsp, 8
-        ; 3:49 return true
         ; ret 1
         mov rax, 1
         ; release space for local variables
@@ -429,7 +428,6 @@ _getFalse:
         push rbx
           call _printString@@u8
         add rsp, 8
-        ; 4:49 return false
         ; ret 0
         mov rax, 0
         ; release space for local variables
