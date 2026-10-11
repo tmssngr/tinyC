@@ -15,13 +15,14 @@ public final class SsaFactory {
 
 	public static IRFunction convert(@NotNull IRFunction function, @NotNull Type pointerIntType) {
 		final ControlFlowGraph cfg = CfgGenerator.create(function.name(), function.instructions());
-		final Pair<List<IRInstruction>, IRVarInfos> result = convert(cfg, function.varInfos(), pointerIntType);
+		final IRVarInfos varInfos = function.varInfos();
+		final Pair<List<IRInstruction>, IRVarInfos> result = convert(cfg, varInfos, pointerIntType);
 		return function.derive(result.first(), result.second());
 	}
 
 	public static Pair<List<IRInstruction>, IRVarInfos> convert(@NotNull ControlFlowGraph cfg, @NotNull IRVarInfos varInfos, @NotNull Type pointerIntType) {
 		final IRLocalVarFactory varFactory = new IRLocalVarFactory(varInfos, pointerIntType);
-		final SsaFactory factory = new SsaFactory(cfg, varFactory);
+		final SsaFactory factory = new SsaFactory(cfg, varFactory, varInfos.cantBeRegister());
 		return factory.convert();
 	}
 
@@ -32,10 +33,10 @@ public final class SsaFactory {
 	private final IRLocalVarFactory varFactory;
 	private final VarLiveness liveness;
 
-	private SsaFactory(@NotNull ControlFlowGraph cfg, @NotNull IRLocalVarFactory varFactory) {
+	private SsaFactory(@NotNull ControlFlowGraph cfg, @NotNull IRLocalVarFactory varFactory, Set<? extends IRVar> cantBeRegisterVars) {
 		this.cfg = cfg;
 		this.varFactory = varFactory;
-		liveness = DetectVarLiveness.process(cfg);
+		liveness = DetectVarLiveness.process(cfg, cantBeRegisterVars);
 	}
 
 	private Pair<List<IRInstruction>, IRVarInfos> convert() {
