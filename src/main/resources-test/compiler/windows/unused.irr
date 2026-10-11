@@ -3,5 +3,6 @@ unusedArg@u8:
 	arg 0: a (u8/1)
 
 main:
-	call unusedArg@u8[0]
+	const arg.0.0{r1}, 0
+	call unusedArg@u8[arg.0.0{r1}]
 
