@@ -2,7 +2,7 @@ printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length.1 (i64/8)
-	; 10 pc
+
 	call length.1 = strlen@@u8[str] -> i64
 	call printStringLength@@u8@i64[str, length.1]
 
@@ -10,7 +10,7 @@ printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1.1 (u8*/8)
-	; 8 pc
+
 	addrof t.1.1, chr
 	call printStringLength@@u8@u8[t.1.1, 1]
 
@@ -34,7 +34,7 @@ printUint@i64:
 	var 15: t.8.2 (u8*/8)
 	var 16: t.11.1 (u8/1)
 	var 17: t.10.1 (u8/1)
-	; 140 pc
+
 	const pos.1, 20
 	; 28:2 while true
 	move number.1, number
@@ -73,7 +73,7 @@ printIntLf@u8:
  Local variables
 	arg 0: number (u8/1)
 	var 1: t.1.1 (i64/8)
-	; 8 pc
+
 	cast t.1.1(i64), number(u8)
 	call printIntLf@i64[t.1.1]
 
@@ -81,7 +81,7 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 	var 1: t.1.1 (i64/8)
-	; 8 pc
+
 	cast t.1.1(i64), number(i16)
 	call printIntLf@i64[t.1.1]
 
@@ -90,7 +90,7 @@ printIntLf@i64:
 	arg 0: number (i64/8)
 	var 1: number.1 (i64/8)
 	var 2: number.2 (i64/8)
-	; 24 pc
+
 	branch number lt 0: if_3_then, printIntLf@i64.no_critical_edge_4
 	move number.1, number
 	jump if_3_end
@@ -111,7 +111,7 @@ strlen@@u8:
 	var 4: t.2.1 (u8/1)
 	var 5: length.3 (i64/8)
 	var 6: str.2 (u8*/8)
-	; 55 pc
+
 	const length.1, 0
 	; 64:2 for *str != 0
 	move str.1, str
@@ -135,7 +135,7 @@ printStringLength@@u8@u8:
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
 	var 2: t.2.1 (i64/8)
-	; 10 pc
+
 	cast t.2.1(i64), length(u8)
 	call printStringLength@@u8@i64[str, t.2.1]
 
@@ -152,7 +152,7 @@ main:
 	var 8: a.8.1 (u8**/8)
 	var 9: t.9.1 (u8*/8)
 	var 10: chr.1 (u8/1)
-	; 77 pc
+
 	; begin initialize global variables
 	const t.2.1, [string-0]
 	addrof a.3.1, text
@@ -183,7 +183,7 @@ printLength:
 	var 5: t.3.1 (u8/1)
 	var 6: length.3 (i16/2)
 	var 7: ptr.3 (u8*/8)
-	; 66 pc
+
 	const length.1, 0
 	addrof a.2.1, text
 	load ptr.1, [a.2.1]

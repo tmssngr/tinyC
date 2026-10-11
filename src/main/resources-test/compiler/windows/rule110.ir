@@ -2,7 +2,7 @@ printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
-	; 10 pc
+
 	call length = strlen@@u8[str] -> i64
 	call printStringLength@@u8@i64[str, length]
 printString@@u8_ret:
@@ -11,7 +11,7 @@ printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
-	; 8 pc
+
 	addrof t.1, chr
 	call printStringLength@@u8@u8[t.1, 1]
 printChar@u8_ret:
@@ -21,7 +21,7 @@ strlen@@u8:
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
 	var 2: t.2 (u8/1)
-	; 26 pc
+
 	const length, 0
 	; 64:2 for *str != 0
 for_1:
@@ -43,7 +43,7 @@ printStringLength@@u8@u8:
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
 	var 2: t.2 (i64/8)
-	; 10 pc
+
 	cast t.2(i64), length(u8)
 	call printStringLength@@u8@i64[str, t.2]
 printStringLength@@u8@u8_ret:
@@ -55,7 +55,7 @@ printBoard:
 	var 2: t.2 (u8*/8)
 	var 3: t.3 (i64/8)
 	var 4: t.4 (u8*/8)
-	; 47 pc
+
 	call printChar@u8[124]
 	const i, 0
 	; 11:2 for i < 30
@@ -111,7 +111,7 @@ main:
 	var 25: t.25 (u8/1)
 	var 26: t.26 (u8*/8)
 	var 27: t.27 (i64/8)
-	; 216 pc
+
 	const i, 0
 	; 23:2 for i < 30
 for_4:

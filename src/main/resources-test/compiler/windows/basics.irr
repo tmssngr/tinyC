@@ -2,7 +2,7 @@ printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1.1 (u8*/8)
-	; 8 pc
+
 	addrof t.1.1, chr
 	call printStringLength@@u8@u8[t.1.1, 1]
 
@@ -10,7 +10,7 @@ printUint@u8:
  Local variables
 	arg 0: number (u8/1)
 	var 1: t.1.1 (i64/8)
-	; 8 pc
+
 	cast t.1.1(i64), number(u8)
 	call printUint@i64[t.1.1]
 
@@ -34,7 +34,7 @@ printUint@i64:
 	var 15: t.8.2 (u8*/8)
 	var 16: t.11.1 (u8/1)
 	var 17: t.10.1 (u8/1)
-	; 140 pc
+
 	const pos.1, 20
 	; 28:2 while true
 	move number.1, number
@@ -74,7 +74,7 @@ printStringLength@@u8@u8:
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
 	var 2: t.2.1 (i64/8)
-	; 10 pc
+
 	cast t.2.1(i64), length(u8)
 	call printStringLength@@u8@i64[str, t.2.1]
 
@@ -85,7 +85,7 @@ unusedArgs@u8@bool@u8@u8:
 	arg 2: c (u8/1)
 	arg 3: d (u8/1)
 	var 4: t.4.1 (i64/8)
-	; 8 pc
+
 	; 9:14 return (i64)
 	cast t.4.1(i64), c(u8)
 	ret t.4.1
@@ -113,7 +113,7 @@ main:
 	var 18: t.15.1 (u8/1)
 	var 19: a.18.1 (u8*/8)
 	var 20: t.19.1 (u8/1)
-	; 133 pc
+
 	; begin initialize global variables
 	const t.3.1, 48
 	addrof a.4.1, zero

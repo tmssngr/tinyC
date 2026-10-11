@@ -3,7 +3,7 @@ simple:
 	var 0: four.1 (u8/1)
 	var 1: three.1 (u8/1)
 	var 2: one.1 (u8/1)
-	; 19 pc
+
 	const four.1, 4
 	const three.1, 3
 	move one.1, four.1
@@ -16,7 +16,7 @@ registerHint@u8@u8:
 	arg 0: a (u8/1)
 	arg 1: b (u8/1)
 	var 2: t.2.1 (u8/1)
-	; 15 pc
+
 	; 9:11 return a + b
 	move t.2.1, a
 	add t.2.1, b
@@ -26,7 +26,7 @@ max@u8@u8:
  Local variables
 	arg 0: a (u8/1)
 	arg 1: b (u8/1)
-	; 12 pc
+
 	branch a lt b: if_1_then, if_1_end
 	; 16:9 return a
 	ret a
@@ -48,7 +48,7 @@ fibonacci@u8:
 	var 7: c.1 (i16/2)
 	var 8: a.3 (i16/2)
 	var 9: b.3 (i16/2)
-	; 73 pc
+
 	const a.1, 0
 	const b.1, 1
 	; 22:2 while i > 0
@@ -77,7 +77,7 @@ main:
 	var 1: two.1 (u8/1)
 	var 2: oneOrTwo.1 (u8/1)
 	var 3: f5.1 (i16/2)
-	; 16 pc
+
 	call one.1 = simple[] -> u8
 	const two.1, 2
 	call _ = registerHint@u8@u8[one.1, two.1] -> u8

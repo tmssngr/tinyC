@@ -2,7 +2,7 @@ printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length.1 (i64/8)
-	; 10 pc
+
 	call length.1 = strlen@@u8[str] -> i64
 	call printStringLength@@u8@i64[str, length.1]
 
@@ -10,7 +10,7 @@ printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1.1 (u8*/8)
-	; 8 pc
+
 	addrof t.1.1, chr
 	call printStringLength@@u8@u8[t.1.1, 1]
 
@@ -34,7 +34,7 @@ printUint@i64:
 	var 15: t.8.2 (u8*/8)
 	var 16: t.11.1 (u8/1)
 	var 17: t.10.1 (u8/1)
-	; 140 pc
+
 	const pos.1, 20
 	; 28:2 while true
 	move number.1, number
@@ -73,7 +73,7 @@ printIntLf@bool:
  Local variables
 	arg 0: number (bool/1)
 	var 1: t.1.1 (i64/8)
-	; 8 pc
+
 	cast t.1.1(i64), number(bool)
 	call printIntLf@i64[t.1.1]
 
@@ -81,7 +81,7 @@ printIntLf@u8:
  Local variables
 	arg 0: number (u8/1)
 	var 1: t.1.1 (i64/8)
-	; 8 pc
+
 	cast t.1.1(i64), number(u8)
 	call printIntLf@i64[t.1.1]
 
@@ -89,7 +89,7 @@ printIntLf@i16:
  Local variables
 	arg 0: number (i16/2)
 	var 1: t.1.1 (i64/8)
-	; 8 pc
+
 	cast t.1.1(i64), number(i16)
 	call printIntLf@i64[t.1.1]
 
@@ -98,7 +98,7 @@ printIntLf@i64:
 	arg 0: number (i64/8)
 	var 1: number.1 (i64/8)
 	var 2: number.2 (i64/8)
-	; 24 pc
+
 	branch number lt 0: if_3_then, printIntLf@i64.no_critical_edge_4
 	move number.1, number
 	jump if_3_end
@@ -119,7 +119,7 @@ strlen@@u8:
 	var 4: t.2.1 (u8/1)
 	var 5: length.3 (i64/8)
 	var 6: str.2 (u8*/8)
-	; 55 pc
+
 	const length.1, 0
 	; 64:2 for *str != 0
 	move str.1, str
@@ -143,14 +143,14 @@ printStringLength@@u8@u8:
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
 	var 2: t.2.1 (i64/8)
-	; 10 pc
+
 	cast t.2.1(i64), length(u8)
 	call printStringLength@@u8@i64[str, t.2.1]
 
 getTrue:
  Local variables
 	var 0: t.0.1 (u8*/8)
-	; 7 pc
+
 	const t.0.1, [string-0]
 	call printString@@u8[t.0.1]
 	ret 1
@@ -158,7 +158,7 @@ getTrue:
 getFalse:
  Local variables
 	var 0: t.0.1 (u8*/8)
-	; 7 pc
+
 	const t.0.1, [string-1]
 	call printString@@u8[t.0.1]
 	ret 0
@@ -166,14 +166,14 @@ getFalse:
 printPass:
  Local variables
 	var 0: t.0.1 (u8*/8)
-	; 6 pc
+
 	const t.0.1, [string-2]
 	call printString@@u8[t.0.1]
 
 printError:
  Local variables
 	var 0: t.0.1 (u8*/8)
-	; 6 pc
+
 	const t.0.1, [string-3]
 	call printString@@u8[t.0.1]
 
@@ -186,7 +186,7 @@ logicNot:
 	var 4: t.4.1 (bool/1)
 	var 5: t.5.1 (bool/1)
 	var 6: t.6.1 (bool/1)
-	; 44 pc
+
 	const t.2.1, [string-4]
 	call printString@@u8[t.2.1]
 	const t.1, 1
@@ -261,7 +261,7 @@ logicAnd:
 	var 44: t.30.2 (bool/1)
 	var 45: t.30.3 (bool/1)
 	var 46: t.29.1 (bool/1)
-	; 366 pc
+
 	const t.2.1, [string-5]
 	call printString@@u8[t.2.1]
 	const t.1, 1
@@ -456,7 +456,7 @@ logicOr:
 	var 20: t.14.1 (bool/1)
 	var 21: t.14.2 (bool/1)
 	var 22: t.14.3 (bool/1)
-	; 178 pc
+
 	const t.2.1, [string-6]
 	call printString@@u8[t.2.1]
 	const t.1, 1
@@ -592,7 +592,7 @@ main:
 	var 45: t.35.3 (bool/1)
 	var 46: t.36.1 (i16/2)
 	var 47: t.37.1 (u8/1)
-	; 433 pc
+
 	const t.9.1, [string-7]
 	call printString@@u8[t.9.1]
 	const a.1, 0
