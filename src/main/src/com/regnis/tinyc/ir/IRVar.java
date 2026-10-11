@@ -17,7 +17,25 @@ public record IRVar(@NotNull String name, int index, @NotNull VariableScope scop
 
 	public String toString(boolean comment) {
 		final StringBuilder buffer = new StringBuilder();
-		buffer.append(name);
+		if (!comment && scope == VariableScope.register) {
+			buffer.append("r");
+			buffer.append(index);
+		}
+		else {
+			buffer.append(name);
+			if (scope == VariableScope.register) {
+				buffer.append("{r");
+				buffer.append(index);
+				buffer.append("}");
+			}
+		}
 		return buffer.toString();
+	}
+
+	@NotNull
+	public IRVar asRegister(int register) {
+		Utils.assertTrue(register >= 0);
+		Utils.assertTrue(scope != VariableScope.register);
+		return new IRVar(name, register, VariableScope.register, type);
 	}
 }

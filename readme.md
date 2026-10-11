@@ -22,8 +22,8 @@ This example uses the `hStdOut` and `WriteFile` symbols provided by the Windows 
 void printStringLength(u8* str, i64 length) asm {
 	// rsp+0    return address
 	// rsp+8    padding (rsp is 8 modulo 10h at function entry)
-	// rsp+10h  length
-	// rsp+18h  str
+	// rcx      str
+	// rdx      length
 	// BOOL WriteFile(
 	//  [in]                HANDLE       hFile,                    rcx
 	//  [in]                LPCVOID      lpBuffer,                 rdx
@@ -33,10 +33,10 @@ void printStringLength(u8* str, i64 length) asm {
 	// );
 	"mov     rdi, rsp"
 	""
+	"mov     r8, rdx"
+	"mov     rdx, rcx"
 	"lea     rcx, [hStdOut]"
 	"mov     rcx, [rcx]"
-	"mov     rdx, [rdi+18h]"
-	"mov     r8, [rdi+10h]"
 	"xor     r9, r9"
 	"push    0"
 	"sub     rsp, 20h"

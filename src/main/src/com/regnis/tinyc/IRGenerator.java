@@ -352,7 +352,7 @@ public final class IRGenerator {
 					// ...
 					// else:
 					// ```
-					writeBoolExpression(binary.left(), true, targetLabel, "@and_" + nextLabelIndex());
+					writeBoolExpression(binary.left(), true, targetLabel, "and_" + nextLabelIndex());
 					writeBoolExpression(binary.right(), true, targetLabel, nextLabel);
 				}
 				else {
@@ -365,7 +365,7 @@ public final class IRGenerator {
 					// ...
 					// else:
 					// ```
-					writeBoolExpression(binary.left(), true, nextLabel, "@and_" + nextLabelIndex());
+					writeBoolExpression(binary.left(), true, nextLabel, "and_" + nextLabelIndex());
 					writeBoolExpression(binary.right(), false, targetLabel, nextLabel);
 				}
 				return;
@@ -381,7 +381,7 @@ public final class IRGenerator {
 					// ...
 					// else:
 					// ```
-					writeBoolExpression(binary.left(), false, nextLabel, "@or_" + nextLabelIndex());
+					writeBoolExpression(binary.left(), false, nextLabel, "or_" + nextLabelIndex());
 					writeBoolExpression(binary.right(), true, targetLabel, nextLabel);
 				}
 				else {
@@ -394,7 +394,7 @@ public final class IRGenerator {
 					// ...
 					// else:
 					// ```
-					writeBoolExpression(binary.left(), false, targetLabel, "@or_" + nextLabelIndex());
+					writeBoolExpression(binary.left(), false, targetLabel, "or_" + nextLabelIndex());
 					writeBoolExpression(binary.right(), false, targetLabel, nextLabel);
 				}
 				return;
