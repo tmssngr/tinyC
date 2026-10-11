@@ -3,6 +3,7 @@ package com.regnis.tinyc;
 import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 import com.regnis.tinyc.ir.cfg.*;
+import com.regnis.tinyc.linearscanregalloc.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -85,16 +86,16 @@ public class Compiler {
 				for (IRFunction function : irProgram.functions()) {
 					function = SsaFactory.convert(function, Type.I64);
 					function = IRConverter.convert(function, Type.I64);
+					function = PhiElimination.process(function);
 					final RemoveNotLiveResults.Result result = RemoveNotLiveResults.run(function);
 					function = result.function();
 					final ControlFlowGraph cfg = result.cfg();
 					final VarLiveness liveness = result.liveness();
 					irWriter.write(cfg, liveness);
 					dotWriter.writeCfg(cfg, liveness);
-					List<IRInstruction> instructions = PhiElimination.process(cfg);
-					instructions = IROptimizer.optimize(instructions);
-
-					final IRFunction optimizedFunction = function.derive(instructions);
+					function = LSRegAlloc.process(function, LSArchitecture.WIN_X86_64, Type.I64);
+					final List<IRInstruction> optimizedInstructions = IROptimizer.optimize(function.instructions());
+					final IRFunction optimizedFunction = CleanupLocalUnusedVariables.optimize(function.derive(optimizedInstructions));
 					functions.add(optimizedFunction);
 				}
 				dotWriter.end();
