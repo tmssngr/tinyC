@@ -620,8 +620,8 @@ section '.data' data readable writeable
         hStdIn  rb 8
         hStdOut rb 8
         hStdErr rb 8
-        ; variable 0: board[] (u8*/240)
-        var_0 rb 240
+        ; variable 0: board[] (u8*/30)
+        var_0 rb 30
 
 section '.data' data readable
         string_0 db '|', 0x0a, 0x00

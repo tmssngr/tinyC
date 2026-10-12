@@ -789,7 +789,7 @@ setCursor@i16@i16:
 
 Global variables
 	0: __random__ (i32/4)
-	1: field[] (u8*/6400)
+	1: field[] (u8*/800)
 
 String literals
 	string lit 0 "|\n\0"

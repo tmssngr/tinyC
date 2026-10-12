@@ -103,9 +103,7 @@ public final class IRGenerator {
 		for (Variable variable : function.localVars()) {
 			Type type = variable.type();
 			final boolean isArray = variable.isArray();
-			final int size = isArray
-					? getTypeSize(Objects.requireNonNull(type.toType())) * variable.arraySize()
-					: getTypeSize(type);
+			final int size = getVariableSize(variable, isArray, type);
 			type = structToU8(type);
 			final IRVar var = new IRVar(variable.name(), variable.index(), variable.scope(), type);
 			localVars.add(new IRVarDef(var, size, isArray));
@@ -114,6 +112,12 @@ public final class IRGenerator {
 			}
 		}
 		return localVarsCantBeRegister;
+	}
+
+	public int getVariableSize(Variable variable, boolean isArray, Type type) {
+		return isArray
+				? getTypeSize(Objects.requireNonNull(type.toType())) * variable.arraySize()
+				: getTypeSize(type);
 	}
 
 	private Type structToU8(Type type) {
@@ -151,18 +155,16 @@ public final class IRGenerator {
 		final Set<IRVar> cantBeRegister = new HashSet<>();
 		for (Variable variable : globalVariables) {
 			Utils.assertTrue(variable.scope() == VariableScope.global);
-			final int size = getVariableSize(variable);
-			final IRVar var = new IRVar(variable.name(), variable.index(), VariableScope.global, variable.type());
-			globalVars.add(new IRVarDef(var, size, variable.isArray()));
+			final Type type = variable.type();
+			final boolean isArray = variable.isArray();
+			final int size = getVariableSize(variable, isArray, type);
+			final IRVar var = new IRVar(variable.name(), variable.index(), VariableScope.global, type);
+			globalVars.add(new IRVarDef(var, size, isArray));
 			if (!variable.canBeRegister()) {
 				cantBeRegister.add(var);
 			}
 		}
 		return new IRVarInfos(globalVars, cantBeRegister, null);
-	}
-
-	private int getVariableSize(Variable variable) {
-		return getTypeSize(variable.type()) * Math.max(1, variable.arraySize());
 	}
 
 	private List<IRStringLiteral> createStringLiterals(List<StringLiteral> stringLiterals) {

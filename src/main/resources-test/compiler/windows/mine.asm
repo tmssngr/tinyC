@@ -2546,8 +2546,8 @@ section '.data' data readable writeable
         hStdErr rb 8
         ; variable 0: __random__ (i32/4)
         var_0 rb 4
-        ; variable 1: field[] (u8*/6400)
-        var_1 rb 6400
+        ; variable 1: field[] (u8*/800)
+        var_1 rb 800
 
 section '.data' data readable
         string_0 db '|', 0x0a, 0x00

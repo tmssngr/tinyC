@@ -140,5 +140,5 @@ printStringLength@@u8@i64:
 	ret
 
 Global variables
-	0: chars[] (u8*/2048)
+	0: chars[] (u8*/256)
 
