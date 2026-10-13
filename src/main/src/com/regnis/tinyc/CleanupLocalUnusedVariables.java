@@ -65,10 +65,12 @@ public class CleanupLocalUnusedVariables {
 	private static final class TrivialLiveTracker {
 
 		private final boolean[] live;
+		@Nullable private final Type pointerIntType;
 		private final LSCallingConventionProvider callingConventionProvider;
 
 		public TrivialLiveTracker(@NotNull LSArchitecture architecture) {
 			live = new boolean[architecture.registerCount()];
+			pointerIntType = architecture instanceof LSArchitecture.X86_64 ? null : architecture.getPointerIntType();
 			callingConventionProvider = architecture.getCallingConventionProvider();
 			setAllLive();
 		}
@@ -191,7 +193,12 @@ public class CleanupLocalUnusedVariables {
 
 		private boolean isLive(@NotNull IRVar var) {
 			Utils.assertTrue(var.scope() == VariableScope.register);
-			return live[var.index()];
+			int r = var.index();
+			final boolean isLive = live[r];
+			for (int i = 1, count = registerCount(var.type()); i < count; i++, r++) {
+				Utils.assertTrue(live[r] == isLive);
+			}
+			return isLive;
 		}
 
 		private void setIsLive(IRValue value) {
@@ -203,11 +210,21 @@ public class CleanupLocalUnusedVariables {
 
 		private void setIsLive(IRVar var, boolean isLive) {
 			Utils.assertTrue(var.scope() == VariableScope.register);
-			live[var.index()] = isLive;
+			int r = var.index();
+			for (int i = 0, count = registerCount(var.type()); i < count; i++, r++) {
+				live[r] = isLive;
+			}
 		}
 
 		private void setAllLive() {
 			Arrays.fill(live, true);
+		}
+
+		private int registerCount(@NotNull Type type) {
+			if (pointerIntType == null) {
+				return 1;
+			}
+			return Type.getSize(type, pointerIntType);
 		}
 	}
 
