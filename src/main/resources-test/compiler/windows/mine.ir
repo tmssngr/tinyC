@@ -509,137 +509,272 @@ maybeRevealAround@u8@u8:
 	arg 0: row (u8/1)
 	arg 1: column (u8/1)
 	var 2: index (i16/2)
-	var 3: changed (bool/1)
-	var 4: index (i16/2)
-	var 5: r (u8/1)
-	var 6: c (u8/1)
-	var 7: cell (u8/1)
-	var 8: r (u8/1)
-	var 9: c (u8/1)
-	var 10: cell (u8/1)
-	var 11: t.11 (u8/1)
+	var 3: stackSize (u8/1)
+	var 4: stackIndex (i16*/8)
+	var 5: changed (bool/1)
+	var 6: r (u8/1)
+	var 7: c (u8/1)
+	var 8: cell (u8/1)
+	var 9: r (u8/1)
+	var 10: c (u8/1)
+	var 11: cell (u8/1)
 	var 12: t.12 (u8/1)
-	var 13: t.13 (u8*/8)
-	var 14: t.14 (i64/8)
-	var 15: t.15 (u8*/8)
-	var 16: t.16 (i64/8)
-	var 17: t.17 (u8/1)
-	var 18: t.18 (u8/1)
-	var 19: t.19 (u8/1)
-	var 20: t.20 (u8/1)
-	var 21: t.21 (u8*/8)
-	var 22: t.22 (i64/8)
-	var 23: t.23 (bool/1)
-	var 24: t.24 (u8*/8)
-	var 25: t.25 (i64/8)
-	var 26: t.26 (u8/1)
+	var 13: t.13 (u8/1)
+	var 14: t.14 (u8*/8)
+	var 15: t.15 (i64/8)
+	var 16: t.16 (u8*/8)
+	var 17: t.17 (i64/8)
+	var 18: t.18 (u8*/8)
+	var 19: t.19 (i64/8)
+	var 20: a.20 (i16*/8)
+	var 21: t.21 (i16*/8)
+	var 22: a.22 (i16*/8)
+	var 23: a.23 (i16**/8)
+	var 24: t.24 (u8/1)
+	var 25: a.25 (u8*/8)
+	var 26: a.26 (u8*/8)
 	var 27: t.27 (u8/1)
-	var 28: t.28 (u8/1)
+	var 28: a.28 (u8*/8)
 	var 29: t.29 (u8/1)
-	var 30: t.30 (u8*/8)
-	var 31: t.31 (i64/8)
-	var 32: t.32 (bool/1)
+	var 30: t.30 (u8/1)
+	var 31: a.31 (u8*/8)
+	var 32: t.32 (u8*/8)
+	var 33: t.33 (i64/8)
+	var 34: t.34 (u8*/8)
+	var 35: t.35 (i64/8)
+	var 36: a.36 (i16**/8)
+	var 37: t.37 (i16*/8)
+	var 38: t.38 (i16*/8)
+	var 39: a.39 (i16**/8)
+	var 40: a.40 (u8*/8)
+	var 41: t.41 (u8/1)
+	var 42: a.42 (u8*/8)
+	var 43: t.43 (u8/1)
+	var 44: t.44 (u8*/8)
+	var 45: t.45 (i64/8)
+	var 46: t.46 (u8/1)
+	var 47: t.47 (u8/1)
+	var 48: t.48 (u8/1)
+	var 49: t.49 (u8/1)
+	var 50: t.50 (u8*/8)
+	var 51: t.51 (i64/8)
+	var 52: t.52 (bool/1)
+	var 53: t.53 (u8*/8)
+	var 54: t.54 (i64/8)
+	var 55: t.55 (u8/1)
+	var 56: t.56 (u8/1)
+	var 57: t.57 (u8/1)
+	var 58: t.58 (u8/1)
+	var 59: t.59 (u8*/8)
+	var 60: t.60 (i64/8)
+	var 61: t.61 (bool/1)
 
 	call printCellAt@u8@u8[row, column]
 	call index = rowColumnToCell@u8@u8[row, column] -> i16
-	cast t.14(i64), index(i16)
-	addrof t.13, field
-	add t.13, t.14
-	load t.12, [t.13]
-	and t.11, t.12, 15
-	branch t.11 equals 0: if_26_end, if_26_then
+	cast t.15(i64), index(i16)
+	addrof t.14, field
+	add t.14, t.15
+	load t.13, [t.14]
+	and t.12, t.13, 15
+	branch t.12 equals 0: if_26_end, if_26_then
 if_26_then:
 	jump maybeRevealAround@u8@u8_ret
 if_26_end:
-	const changed, 1
+	const t.17, 0
+	addrof t.16, revealStackRows
+	add t.16, t.17
+	store [t.16], row
+	const t.19, 0
+	addrof t.18, revealStackColumns
+	add t.18, t.19
+	store [t.18], column
+	addrof a.20, revealStackIndices
+	store [a.20], index
+	addrof a.22, revealStackIndices
+	add t.21, a.22, 2
+	addrof a.23, revealStackIndexTop
+	store [a.23], t.21
+	const t.24, 1
+	addrof a.25, revealStackSize
+	store [a.25], t.24
 while_27:
-	branch changed equals 0: maybeRevealAround@u8@u8_ret, while_27_body
+	addrof a.26, revealStackSize
+	load t.27, [a.26]
+	branch t.27 lteq 0: while_27_break, while_27_body
 while_27_body:
+	addrof a.28, revealStackSize
+	load t.29, [a.28]
+	sub stackSize, t.29, 1
+	move t.30, stackSize
+	addrof a.31, revealStackSize
+	store [a.31], t.30
+	cast t.33(i64), stackSize(u8)
+	addrof t.32, revealStackRows
+	add t.32, t.33
+	load row, [t.32]
+	cast t.35(i64), stackSize(u8)
+	addrof t.34, revealStackColumns
+	add t.34, t.35
+	load column, [t.34]
+	addrof a.36, revealStackIndexTop
+	load t.37, [a.36]
+	add stackIndex, t.37, -2
+	move t.38, stackIndex
+	addrof a.39, revealStackIndexTop
+	store [a.39], t.38
+	load index, [stackIndex]
+	call _ = revealNeighbors@u8@u8@i16[row, column, index] -> bool
+	addrof a.40, revealStackSize
+	load t.41, [a.40]
+	branch t.41 notequals 255: while_27, while_27_break
+while_27_break:
+	addrof a.42, revealStackSize
+	load t.43, [a.42]
+	branch t.43 equals 255: if_29_end, if_29_then
+if_29_then:
+	jump maybeRevealAround@u8@u8_ret
+if_29_end:
+	const changed, 1
+while_30:
+	branch changed equals 0: maybeRevealAround@u8@u8_ret, while_30_body
+while_30_body:
 	const changed, 0
 	const index, 0
 	const r, 0
-for_28:
-	branch r gteq 20: for_28_break, for_28_body
-for_28_body:
+for_31:
+	branch r gteq 20: for_31_break, for_31_body
+for_31_body:
 	const c, 0
-for_29:
-	branch c gteq 40: for_28_continue, for_29_body
-for_29_body:
-	cast t.16(i64), index(i16)
-	addrof t.15, field
-	add t.15, t.16
-	load cell, [t.15]
-	and t.17, cell, 32
-	branch t.17 equals 0: for_29_continue, or_31
-or_31:
-	and t.18, cell, 128
-	branch t.18 notequals 0: for_29_continue, if_30_end
-if_30_end:
-	cast t.22(i64), index(i16)
-	addrof t.21, field
-	add t.21, t.22
-	load t.20, [t.21]
-	and t.19, t.20, 15
-	branch t.19 notequals 0: for_29_continue, if_32_end
-if_32_end:
-	call t.23 = revealNeighbors@u8@u8[r, c] -> bool
-	branch t.23 equals 0: for_29_continue, if_33_then
-if_33_then:
+for_32:
+	branch c gteq 40: for_31_continue, for_32_body
+for_32_body:
+	cast t.45(i64), index(i16)
+	addrof t.44, field
+	add t.44, t.45
+	load cell, [t.44]
+	and t.46, cell, 32
+	branch t.46 equals 0: for_32_continue, or_34
+or_34:
+	and t.47, cell, 128
+	branch t.47 notequals 0: for_32_continue, if_33_end
+if_33_end:
+	cast t.51(i64), index(i16)
+	addrof t.50, field
+	add t.50, t.51
+	load t.49, [t.50]
+	and t.48, t.49, 15
+	branch t.48 notequals 0: for_32_continue, if_35_end
+if_35_end:
+	call t.52 = revealNeighbors@u8@u8@i16[r, c, index] -> bool
+	branch t.52 equals 0: for_32_continue, if_36_then
+if_36_then:
 	const changed, 1
-for_29_continue:
+for_32_continue:
 	add c, 1
 	add index, 1
-	jump for_29
-for_28_continue:
+	jump for_32
+for_31_continue:
 	add r, 1
-	jump for_28
-for_28_break:
-	branch changed equals 0: maybeRevealAround@u8@u8_ret, if_34_end
-if_34_end:
+	jump for_31
+for_31_break:
+	branch changed equals 0: maybeRevealAround@u8@u8_ret, if_37_end
+if_37_end:
 	const r, 20
-while_35:
-	branch r equals 0: while_27, if_36_end
-if_36_end:
+while_38:
+	branch r equals 0: while_30, if_39_end
+if_39_end:
 	sub r, 1
 	const c, 40
-while_37:
-	branch c equals 0: while_35, if_38_end
-if_38_end:
+while_40:
+	branch c equals 0: while_38, if_41_end
+if_41_end:
 	sub c, 1
 	sub index, 1
-	cast t.25(i64), index(i16)
-	addrof t.24, field
-	add t.24, t.25
-	load cell, [t.24]
-	and t.26, cell, 32
-	branch t.26 equals 0: while_37, or_40
-or_40:
-	and t.27, cell, 128
-	branch t.27 notequals 0: while_37, if_39_end
-if_39_end:
-	cast t.31(i64), index(i16)
-	addrof t.30, field
-	add t.30, t.31
-	load t.29, [t.30]
-	and t.28, t.29, 15
-	branch t.28 notequals 0: while_37, if_41_end
-if_41_end:
-	call t.32 = revealNeighbors@u8@u8[r, c] -> bool
-	branch t.32 equals 0: while_37, if_42_then
-if_42_then:
+	cast t.54(i64), index(i16)
+	addrof t.53, field
+	add t.53, t.54
+	load cell, [t.53]
+	and t.55, cell, 32
+	branch t.55 equals 0: while_40, or_43
+or_43:
+	and t.56, cell, 128
+	branch t.56 notequals 0: while_40, if_42_end
+if_42_end:
+	cast t.60(i64), index(i16)
+	addrof t.59, field
+	add t.59, t.60
+	load t.58, [t.59]
+	and t.57, t.58, 15
+	branch t.57 notequals 0: while_40, if_44_end
+if_44_end:
+	call t.61 = revealNeighbors@u8@u8@i16[r, c, index] -> bool
+	branch t.61 equals 0: while_40, if_45_then
+if_45_then:
 	const changed, 1
-	jump while_37
+	jump while_40
 maybeRevealAround@u8@u8_ret:
 
-revealNeighbors@u8@u8:
+pushReveal@u8@u8@i16:
  Local variables
 	arg 0: row (u8/1)
 	arg 1: column (u8/1)
-	var 2: rowFrom (u8/1)
-	var 3: rowTo (u8/1)
-	var 4: colFrom (u8/1)
-	var 5: colTo (u8/1)
-	var 6: index (i16/2)
+	arg 2: index (i16/2)
+	var 3: stackSize (u8/1)
+	var 4: a.4 (u8*/8)
+	var 5: t.5 (u8/1)
+	var 6: a.6 (u8*/8)
+	var 7: t.7 (u8*/8)
+	var 8: t.8 (i64/8)
+	var 9: t.9 (u8*/8)
+	var 10: t.10 (i64/8)
+	var 11: a.11 (i16**/8)
+	var 12: t.12 (i16*/8)
+	var 13: t.13 (i16*/8)
+	var 14: a.14 (i16**/8)
+	var 15: t.15 (i16*/8)
+	var 16: a.16 (i16**/8)
+	var 17: t.17 (u8/1)
+	var 18: a.18 (u8*/8)
+
+	addrof a.4, revealStackSize
+	load stackSize, [a.4]
+	branch stackSize lt 16: if_46_end, if_46_then
+if_46_then:
+	const t.5, 255
+	addrof a.6, revealStackSize
+	store [a.6], t.5
+	jump pushReveal@u8@u8@i16_ret
+if_46_end:
+	cast t.8(i64), stackSize(u8)
+	addrof t.7, revealStackRows
+	add t.7, t.8
+	store [t.7], row
+	cast t.10(i64), stackSize(u8)
+	addrof t.9, revealStackColumns
+	add t.9, t.10
+	store [t.9], column
+	addrof a.11, revealStackIndexTop
+	load t.12, [a.11]
+	store [t.12], index
+	addrof a.14, revealStackIndexTop
+	load t.15, [a.14]
+	add t.13, t.15, 2
+	addrof a.16, revealStackIndexTop
+	store [a.16], t.13
+	add t.17, stackSize, 1
+	addrof a.18, revealStackSize
+	store [a.18], t.17
+pushReveal@u8@u8@i16_ret:
+
+revealNeighbors@u8@u8@i16:
+ Local variables
+	arg 0: row (u8/1)
+	arg 1: column (u8/1)
+	arg 2: index (i16/2)
+	var 3: rowFrom (u8/1)
+	var 4: rowTo (u8/1)
+	var 5: colFrom (u8/1)
+	var 6: colTo (u8/1)
 	var 7: changed (bool/1)
 	var 8: r (u8/1)
 	var 9: c (u8/1)
@@ -649,49 +784,53 @@ revealNeighbors@u8@u8:
 	var 13: t.13 (u8/1)
 	var 14: t.14 (u8*/8)
 	var 15: t.15 (i64/8)
-	var 16: t.16 (i16/2)
-	var 17: t.17 (i16/2)
-	var 18: t.18 (i16/2)
+	var 16: t.16 (u8/1)
+	var 17: a.17 (u8*/8)
+	var 18: t.18 (u8/1)
 	var 19: t.19 (i16/2)
 	var 20: t.20 (i16/2)
+	var 21: t.21 (i16/2)
+	var 22: t.22 (i16/2)
+	var 23: t.23 (i16/2)
 
 	move rowFrom, row
-	branch rowFrom lteq 0: if_43_end, if_43_then
-if_43_then:
+	branch rowFrom lteq 0: if_47_end, if_47_then
+if_47_then:
 	sub rowFrom, 1
-if_43_end:
+	sub index, 40
+if_47_end:
 	add rowTo, row, 1
-	branch rowTo lt 20: if_44_end, if_44_then
-if_44_then:
+	branch rowTo lt 20: if_48_end, if_48_then
+if_48_then:
 	sub rowTo, 1
-if_44_end:
+if_48_end:
 	move colFrom, column
-	branch colFrom lteq 0: if_45_end, if_45_then
-if_45_then:
+	branch colFrom lteq 0: if_49_end, if_49_then
+if_49_then:
 	sub colFrom, 1
-if_45_end:
+	sub index, 1
+if_49_end:
 	add colTo, column, 1
-	branch colTo lt 40: if_46_end, if_46_then
-if_46_then:
+	branch colTo lt 40: if_50_end, if_50_then
+if_50_then:
 	sub colTo, 1
-if_46_end:
-	call index = rowColumnToCell@u8@u8[rowFrom, colFrom] -> i16
+if_50_end:
 	const changed, 0
 	move r, rowFrom
-for_47:
-	branch r gt rowTo: for_47_break, for_47_body
-for_47_body:
+for_51:
+	branch r gt rowTo: for_51_break, for_51_body
+for_51_body:
 	move c, colFrom
-for_48:
-	branch c gt colTo: for_48_break, for_48_body
-for_48_body:
+for_52:
+	branch c gt colTo: for_52_break, for_52_body
+for_52_body:
 	cast t.12(i64), index(i16)
 	addrof t.11, field
 	add t.11, t.12
 	load cell, [t.11]
 	and t.13, cell, 32
-	branch t.13 notequals 0: for_48_continue, if_49_end
-if_49_end:
+	branch t.13 notequals 0: for_52_continue, if_53_end
+if_53_end:
 	or cell, 32
 	cast t.15(i64), index(i16)
 	addrof t.14, field
@@ -699,24 +838,32 @@ if_49_end:
 	store [t.14], cell
 	call printCellAt@u8@u8@u8[cell, r, c]
 	const changed, 1
-for_48_continue:
+	and t.16, cell, 143
+	branch t.16 notequals 0: for_52_continue, and_55
+and_55:
+	addrof a.17, revealStackSize
+	load t.18, [a.17]
+	branch t.18 equals 255: for_52_continue, if_54_then
+if_54_then:
+	call pushReveal@u8@u8@i16[r, c, index]
+for_52_continue:
 	add c, 1
 	add index, 1
-	jump for_48
-for_48_break:
-	cast t.19(i16), colTo(u8)
-	sub t.18, index, t.19
-	cast t.20(i16), colFrom(u8)
-	add t.17, t.18, t.20
-	add t.16, t.17, 40
-	sub index, t.16, 1
-for_47_continue:
+	jump for_52
+for_52_break:
+	cast t.22(i16), colTo(u8)
+	sub t.21, index, t.22
+	cast t.23(i16), colFrom(u8)
+	add t.20, t.21, t.23
+	add t.19, t.20, 40
+	sub index, t.19, 1
+for_51_continue:
 	add r, 1
-	jump for_47
-for_47_break:
+	jump for_51
+for_51_break:
 	ret changed
-	jump revealNeighbors@u8@u8_ret
-revealNeighbors@u8@u8_ret:
+	jump revealNeighbors@u8@u8@i16_ret
+revealNeighbors@u8@u8@i16_ret:
 
 main:
  Local variables
@@ -730,28 +877,38 @@ main:
 	var 7: cell (u8/1)
 	var 8: t.8 (i32/4)
 	var 9: a.9 (i32*/8)
-	var 10: t.10 (u8*/8)
-	var 11: t.11 (bool/1)
-	var 12: t.12 (bool/1)
-	var 13: t.13 (u8*/8)
-	var 14: t.14 (i64/8)
-	var 15: t.15 (u8/1)
-	var 16: t.16 (u8/1)
+	var 10: t.10 (i16*/8)
+	var 11: a.11 (i16**/8)
+	var 12: t.12 (u8/1)
+	var 13: a.13 (u8*/8)
+	var 14: t.14 (u8*/8)
+	var 15: t.15 (bool/1)
+	var 16: t.16 (bool/1)
 	var 17: t.17 (u8*/8)
 	var 18: t.18 (i64/8)
 	var 19: t.19 (u8/1)
-	var 20: t.20 (u8*/8)
+	var 20: t.20 (u8/1)
 	var 21: t.21 (u8*/8)
 	var 22: t.22 (i64/8)
 	var 23: t.23 (u8/1)
-	var 24: t.24 (u8/1)
-	var 25: t.25 (u8/1)
-	var 26: t.26 (u8*/8)
-	var 27: t.27 (i64/8)
+	var 24: t.24 (u8*/8)
+	var 25: t.25 (u8*/8)
+	var 26: t.26 (i64/8)
+	var 27: t.27 (u8/1)
+	var 28: t.28 (u8/1)
+	var 29: t.29 (u8/1)
+	var 30: t.30 (u8*/8)
+	var 31: t.31 (i64/8)
 
 	const t.8, 0
 	addrof a.9, __random__
 	store [a.9], t.8
+	const t.10, 0
+	addrof a.11, revealStackIndexTop
+	store [a.11], t.10
+	const t.12, 0
+	addrof a.13, revealStackSize
+	store [a.13], t.12
 	call initRandom@i32[7439742]
 	call clearField[]
 	call initializeScreen[]
@@ -759,109 +916,109 @@ main:
 	const col, 20
 	const row, 10
 	const bombsLeft, -1
-while_50:
-	branch bombsLeft notequals 0: if_51_end, if_51_then
-if_51_then:
-	const t.10, [string-1]
-	call printString@@u8[t.10]
+while_56:
+	branch bombsLeft notequals 0: if_57_end, if_57_then
+if_57_then:
+	const t.14, [string-1]
+	call printString@@u8[t.14]
 	jump main_ret
-if_51_end:
-	const t.11, 1
-	call showCursor@u8@u8@bool[row, col, t.11]
+if_57_end:
+	const t.15, 1
+	call showCursor@u8@u8@bool[row, col, t.15]
 	call chr = getChar[] -> i16
-	const t.12, 0
-	call showCursor@u8@u8@bool[row, col, t.12]
-	branch chr equals 27: main_ret, if_52_end
-if_52_end:
-	branch chr notequals 13: if_53_else, if_53_then
-if_53_then:
-	branch bombsLeft gteq 0: if_54_end, if_54_then
-if_54_then:
+	const t.16, 0
+	call showCursor@u8@u8@bool[row, col, t.16]
+	branch chr equals 27: main_ret, if_58_end
+if_58_end:
+	branch chr notequals 13: if_59_else, if_59_then
+if_59_then:
+	branch bombsLeft gteq 0: if_60_end, if_60_then
+if_60_then:
 	call bombsLeft = initField@u8@u8[row, col] -> i16
-if_54_end:
+if_60_end:
 	call index = rowColumnToCell@u8@u8[row, col] -> i16
-	cast t.14(i64), index(i16)
-	addrof t.13, field
-	add t.13, t.14
-	load cell, [t.13]
-	and t.15, cell, 32
-	branch t.15 notequals 0: if_55_end, if_55_then
-if_55_then:
-	or t.16, cell, 32
 	cast t.18(i64), index(i16)
 	addrof t.17, field
 	add t.17, t.18
-	store [t.17], t.16
-if_55_end:
-	and t.19, cell, 128
-	branch t.19 equals 0: if_56_end, if_56_then
-if_56_then:
-	call printCellAt@u8@u8[row, col]
-	const t.20, [string-2]
-	call printString@@u8[t.20]
-	jump main_ret
-if_56_end:
-	call maybeRevealAround@u8@u8[row, col]
-	jump while_50
-if_53_else:
-	branch chr notequals -8120: if_57_else, if_57_then
-if_57_then:
-	branch row lteq 0: while_50, if_58_then
-if_58_then:
-	sub row, 1
-	jump while_50
-if_57_else:
-	branch chr notequals -8112: if_59_else, if_59_then
-if_59_then:
-	branch row gteq 19: while_50, if_60_then
-if_60_then:
-	add row, 1
-	jump while_50
-if_59_else:
-	branch chr notequals -8117: if_61_else, if_61_then
+	load cell, [t.17]
+	and t.19, cell, 32
+	branch t.19 notequals 0: if_61_end, if_61_then
 if_61_then:
-	branch col lteq 0: while_50, if_62_then
-if_62_then:
-	sub col, 1
-	jump while_50
-if_61_else:
-	branch chr notequals -8115: if_63_else, if_63_then
-if_63_then:
-	branch col gteq 39: while_50, if_64_then
-if_64_then:
-	add col, 1
-	jump while_50
-if_63_else:
-	branch chr notequals 32: while_50, if_65_then
-if_65_then:
-	branch bombsLeft lt 0: while_50, if_66_then
-if_66_then:
-	call index = rowColumnToCell@u8@u8[row, col] -> i16
+	or t.20, cell, 32
 	cast t.22(i64), index(i16)
 	addrof t.21, field
 	add t.21, t.22
-	load cell, [t.21]
-	and t.23, cell, 32
-	branch t.23 notequals 0: while_50, if_67_then
+	store [t.21], t.20
+if_61_end:
+	and t.23, cell, 128
+	branch t.23 equals 0: if_62_end, if_62_then
+if_62_then:
+	call printCellAt@u8@u8[row, col]
+	const t.24, [string-2]
+	call printString@@u8[t.24]
+	jump main_ret
+if_62_end:
+	call maybeRevealAround@u8@u8[row, col]
+	jump while_56
+if_59_else:
+	branch chr notequals -8120: if_63_else, if_63_then
+if_63_then:
+	branch row lteq 0: while_56, if_64_then
+if_64_then:
+	sub row, 1
+	jump while_56
+if_63_else:
+	branch chr notequals -8112: if_65_else, if_65_then
+if_65_then:
+	branch row gteq 19: while_56, if_66_then
+if_66_then:
+	add row, 1
+	jump while_56
+if_65_else:
+	branch chr notequals -8117: if_67_else, if_67_then
 if_67_then:
-	xor cell, 64
-	and t.24, cell, 128
-	branch t.24 equals 0: if_68_end, if_68_then
+	branch col lteq 0: while_56, if_68_then
 if_68_then:
-	and t.25, cell, 64
-	branch t.25 equals 0: if_69_else, if_69_then
+	sub col, 1
+	jump while_56
+if_67_else:
+	branch chr notequals -8115: if_69_else, if_69_then
 if_69_then:
-	sub bombsLeft, 1
-	jump if_68_end
+	branch col gteq 39: while_56, if_70_then
+if_70_then:
+	add col, 1
+	jump while_56
 if_69_else:
+	branch chr notequals 32: while_56, if_71_then
+if_71_then:
+	branch bombsLeft lt 0: while_56, if_72_then
+if_72_then:
+	call index = rowColumnToCell@u8@u8[row, col] -> i16
+	cast t.26(i64), index(i16)
+	addrof t.25, field
+	add t.25, t.26
+	load cell, [t.25]
+	and t.27, cell, 32
+	branch t.27 notequals 0: while_56, if_73_then
+if_73_then:
+	xor cell, 64
+	and t.28, cell, 128
+	branch t.28 equals 0: if_74_end, if_74_then
+if_74_then:
+	and t.29, cell, 64
+	branch t.29 equals 0: if_75_else, if_75_then
+if_75_then:
+	sub bombsLeft, 1
+	jump if_74_end
+if_75_else:
 	add bombsLeft, 1
-if_68_end:
-	cast t.27(i64), index(i16)
-	addrof t.26, field
-	add t.26, t.27
-	store [t.26], cell
+if_74_end:
+	cast t.31(i64), index(i16)
+	addrof t.30, field
+	add t.30, t.31
+	store [t.30], cell
 	call printCellAt@u8@u8@u8[cell, row, col]
-	jump while_50
+	jump while_56
 main_ret:
 
 printStringLength@@u8@i64:
@@ -911,6 +1068,11 @@ setCursor@i16@i16:
 Global variables
 	0: __random__ (i32/4)
 	1: field[] (u8*/800)
+	2: revealStackRows[] (u8*/16)
+	3: revealStackColumns[] (u8*/16)
+	4: revealStackIndices[] (i16*/32)
+	5: revealStackIndexTop (i16*/8)
+	6: revealStackSize (u8/1)
 
 String literals
 	string lit 0 " |\0"

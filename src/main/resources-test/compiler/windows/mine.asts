@@ -1,5 +1,10 @@
 i32 __random__;
 u8* field[800];
+u8* revealStackRows[16];
+u8* revealStackColumns[16];
+i16* revealStackIndices[16];
+i16* revealStackIndexTop;
+u8 revealStackSize;
 
 void printStringLength@@u8@i64(u8* str, i64 length) asm {
 }
@@ -277,8 +282,9 @@ bool setBomb@u8@u8(u8 row, u8 column) {
 
 void maybeRevealAround@u8@u8(u8 row, u8 column) {
 	i16 index;
+	u8 stackSize;
+	i16* stackIndex;
 	bool changed;
-	i16 index;
 	u8 r;
 	u8 c;
 	u8 cell;
@@ -289,6 +295,27 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 	printCellAt@u8@u8(row, column);
 	index = rowColumnToCell@u8@u8(row, column);
 	if ((field[index as i64] & 15) != 0) {
+		return;
+	}
+	revealStackRows[0] = row;
+	revealStackColumns[0] = column;
+	*revealStackIndices = index;
+	revealStackIndexTop = revealStackIndices + 2;
+	revealStackSize = 1;
+	while (revealStackSize > 0) {
+		stackSize = revealStackSize - 1;
+		revealStackSize = stackSize;
+		row = revealStackRows[stackSize as i64];
+		column = revealStackColumns[stackSize as i64];
+		stackIndex = revealStackIndexTop + -2;
+		revealStackIndexTop = stackIndex;
+		index = *stackIndex;
+		revealNeighbors@u8@u8@i16(row, column, index);
+		if (revealStackSize == 255) {
+			break;
+		}
+	}
+	if (revealStackSize != 255) {
 		return;
 	}
 	changed = true;
@@ -306,7 +333,7 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 				if ((field[index as i64] & 15) != 0) {
 					continue;
 				}
-				if (revealNeighbors@u8@u8(r, c)) {
+				if (revealNeighbors@u8@u8@i16(r, c, index)) {
 					changed = true;
 				}
 			}
@@ -334,7 +361,7 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 				if ((field[index as i64] & 15) != 0) {
 					continue;
 				}
-				if (revealNeighbors@u8@u8(r, c)) {
+				if (revealNeighbors@u8@u8@i16(r, c, index)) {
 					changed = true;
 				}
 			}
@@ -342,12 +369,26 @@ void maybeRevealAround@u8@u8(u8 row, u8 column) {
 	}
 }
 
-bool revealNeighbors@u8@u8(u8 row, u8 column) {
+void pushReveal@u8@u8@i16(u8 row, u8 column, i16 index) {
+	u8 stackSize;
+
+	stackSize = revealStackSize;
+	if (stackSize >= 16) {
+		revealStackSize = 255;
+		return;
+	}
+	revealStackRows[stackSize as i64] = row;
+	revealStackColumns[stackSize as i64] = column;
+	*revealStackIndexTop = index;
+	revealStackIndexTop = revealStackIndexTop + 2;
+	revealStackSize = stackSize + 1;
+}
+
+bool revealNeighbors@u8@u8@i16(u8 row, u8 column, i16 index) {
 	u8 rowFrom;
 	u8 rowTo;
 	u8 colFrom;
 	u8 colTo;
-	i16 index;
 	bool changed;
 	u8 r;
 	u8 c;
@@ -356,6 +397,7 @@ bool revealNeighbors@u8@u8(u8 row, u8 column) {
 	rowFrom = row;
 	if (rowFrom > 0) {
 		rowFrom = rowFrom - 1;
+		index = index - 40;
 	}
 	rowTo = row + 1;
 	if (rowTo >= 20) {
@@ -364,12 +406,12 @@ bool revealNeighbors@u8@u8(u8 row, u8 column) {
 	colFrom = column;
 	if (colFrom > 0) {
 		colFrom = colFrom - 1;
+		index = index - 1;
 	}
 	colTo = column + 1;
 	if (colTo >= 40) {
 		colTo = colTo - 1;
 	}
-	index = rowColumnToCell@u8@u8(rowFrom, colFrom);
 	changed = false;
 	r = rowFrom;
 	for (; r <= rowTo; r = r + 1) {
@@ -383,6 +425,9 @@ bool revealNeighbors@u8@u8(u8 row, u8 column) {
 			field[index as i64] = cell;
 			printCellAt@u8@u8@u8(cell, r, c);
 			changed = true;
+			if (((cell & 143) == 0) && (revealStackSize != 255)) {
+				pushReveal@u8@u8@i16(r, c, index);
+			}
 		}
 		index = (((index - (colTo as i16)) + (colFrom as i16)) + 40) - 1;
 	}

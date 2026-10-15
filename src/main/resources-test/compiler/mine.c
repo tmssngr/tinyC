@@ -12,6 +12,8 @@ const COMPACT = false
 const HEIGHT = 20;
 const BOMB_RATIO = 90;
 const BOMB_COUNT = HEIGHT * WIDTH * BOMB_RATIO / 1000;
+const REVEAL_STACK_CAPACITY = 16;
+const REVEAL_STACK_OVERFLOW = 0xFF;
 
 const maskBomb = 0x80;
 const maskFlag = 0x40;
@@ -19,6 +21,11 @@ const maskOpen = 0x20;
 const maskCount = 0x0F;
 
 u8 field[WIDTH * HEIGHT];
+u8 revealStackRows[REVEAL_STACK_CAPACITY];
+u8 revealStackColumns[REVEAL_STACK_CAPACITY];
+i16 revealStackIndices[REVEAL_STACK_CAPACITY];
+i16* revealStackIndexTop;
+u8 revealStackSize;
 
 i16 rowColumnToCell(u8 row, u8 column) {
 	i16 r = row as i16
@@ -256,11 +263,33 @@ void maybeRevealAround(u8 row, u8 column) {
 		return
 	}
 
+	revealStackRows[0] = row
+	revealStackColumns[0] = column
+	*revealStackIndices = index
+	revealStackIndexTop = revealStackIndices + 1
+	revealStackSize = 1
+	while (revealStackSize > 0) {
+		u8 stackSize = revealStackSize - 1
+		revealStackSize = stackSize
+		row = revealStackRows[stackSize]
+		column = revealStackColumns[stackSize]
+		i16* stackIndex = revealStackIndexTop + -1
+		revealStackIndexTop = stackIndex
+		index = *stackIndex
+		revealNeighbors(row, column, index)
+		if (revealStackSize == REVEAL_STACK_OVERFLOW) {
+			break
+		}
+	}
+	if (revealStackSize != REVEAL_STACK_OVERFLOW) {
+		return
+	}
+
 	bool changed = true
 	while (changed) {
 		changed = false
 
-		i16 index = 0
+		index = 0
 		for (u8 r = 0; r < HEIGHT; r += 1) {
 			for (u8 c = 0; c < WIDTH; c += 1, index += 1) {
 				u8 cell = field[index]
@@ -271,7 +300,7 @@ void maybeRevealAround(u8 row, u8 column) {
 					continue
 				}
 
-				if revealNeighbors(r, c) {
+				if revealNeighbors(r, c, index) {
 					changed = true
 				}
 			}
@@ -303,7 +332,7 @@ void maybeRevealAround(u8 row, u8 column) {
 					continue
 				}
 
-				if revealNeighbors(r, c) {
+				if revealNeighbors(r, c, index) {
 					changed = true
 				}
 			}
@@ -311,10 +340,25 @@ void maybeRevealAround(u8 row, u8 column) {
 	}
 }
 
-bool revealNeighbors(u8 row, u8 column) {
+void pushReveal(u8 row, u8 column, i16 index) {
+	u8 stackSize = revealStackSize
+	if stackSize >= REVEAL_STACK_CAPACITY {
+		revealStackSize = REVEAL_STACK_OVERFLOW
+		return
+	}
+
+	revealStackRows[stackSize] = row
+	revealStackColumns[stackSize] = column
+	*revealStackIndexTop = index
+	revealStackIndexTop = revealStackIndexTop + 1
+	revealStackSize = stackSize + 1
+}
+
+bool revealNeighbors(u8 row, u8 column, i16 index) {
 	u8 rowFrom = row
 	if rowFrom > 0 {
 		rowFrom -= 1
+		index -= WIDTH
 	}
 	u8 rowTo = row + 1
 	if rowTo >= HEIGHT {
@@ -324,12 +368,12 @@ bool revealNeighbors(u8 row, u8 column) {
 	u8 colFrom = column
 	if colFrom > 0 {
 		colFrom -= 1
+		index -= 1
 	}
 	u8 colTo = column + 1
 	if colTo >= WIDTH {
 		colTo -= 1
 	}
-	i16 index = rowColumnToCell(rowFrom, colFrom)
 	bool changed = false
 	for (u8 r = rowFrom; r <= rowTo; r += 1) {
 		for (u8 c = colFrom; c <= colTo; c += 1, index += 1) {
@@ -342,6 +386,9 @@ bool revealNeighbors(u8 row, u8 column) {
 			field[index] = cell
 			printCellAt(cell, r, c)
 			changed = true
+			if (cell & (maskBomb | maskCount)) == 0 && revealStackSize != REVEAL_STACK_OVERFLOW {
+				pushReveal(r, c, index)
+			}
 		}
 		index = index - colTo as i16 + colFrom as i16 + WIDTH - 1
 	}
