@@ -93,12 +93,8 @@ _while_1:
         ; branch number.2{r3} notequals 0: while_1
         cmp r8, 0
         jne _while_1
-        ; move t.9.1{r0}, t.9.1{r4}
-        mov rax, r9
         ; addrof t.8.1{r3}, buffer
         lea r8, [rsp+40]
-        ; move t.8.2{r1}, t.8.1{r3}
-        mov rcx, r8
         ; move t.8.2{r1}, t.8.2{r5}
         mov rcx, r10
         ; const t.11.1{r0}, 20
@@ -188,10 +184,6 @@ _main:
         add rdx, rax
         ; store [t.2.2{r2}], chr.1{r6}
         mov [rdx], bl
-        ; const t.7.1{r6}, 0
-        mov rbx, 0
-        ; addrof t.6.1{r0}, chars
-        lea rax, [var_0]
         ; move t.6.2{r0}, t.6.2{r2}
         mov rax, rdx
         ; load t.5.1{r6}, [t.6.2{r0}]
@@ -206,10 +198,6 @@ _main:
         add rdx, rax
         ; store [t.8.2{r2}], t.4.1{r6}
         mov [rdx], bl
-        ; const t.13.1{r6}, 1
-        mov rbx, 1
-        ; addrof t.12.1{r0}, chars
-        lea rax, [var_0]
         ; move t.12.2{r0}, t.12.2{r2}
         mov rax, rdx
         ; load t.11.1{r6}, [t.12.2{r0}]
@@ -226,8 +214,6 @@ _main:
         mov [rdx], bl
         ; const t.17.1{r6}, 2
         mov rbx, 2
-        ; addrof t.16.1{r0}, chars
-        lea rax, [var_0]
         ; move t.16.2{r0}, t.16.2{r2}
         mov rax, rdx
         ; load result.1{r1}, [t.16.2{r0}]
