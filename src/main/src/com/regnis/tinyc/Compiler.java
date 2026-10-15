@@ -96,7 +96,9 @@ public class Compiler {
 					dotWriter.writeCfg(cfg, liveness);
 					function = LSRegAlloc.process(function, LSArchitecture.WIN_X86_64, Type.I64);
 					final List<IRInstruction> optimizedInstructions = IROptimizer.optimize(function.instructions(), optimizationBehavior);
-					final IRFunction optimizedFunction = CleanupLocalUnusedVariables.optimize(function.derive(optimizedInstructions));
+					function = function.derive(optimizedInstructions);
+					final CleanupLocalUnusedVariables cleanup = new CleanupLocalUnusedVariables(LSArchitecture.WIN_X86_64);
+					final IRFunction optimizedFunction = cleanup.process(function);
 					functions.add(optimizedFunction);
 				}
 				dotWriter.end();

@@ -106,12 +106,8 @@ _while_1:
         ; branch number.2{r3} notequals 0: while_1
         cmp r8, 0
         jne _while_1
-        ; move t.9.1{r0}, t.9.1{r4}
-        mov rax, r9
         ; addrof t.8.1{r3}, buffer
         lea r8, [rsp+40]
-        ; move t.8.2{r1}, t.8.1{r3}
-        mov rcx, r8
         ; move t.8.2{r1}, t.8.2{r5}
         mov rcx, r10
         ; const t.11.1{r0}, 20
