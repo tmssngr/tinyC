@@ -43,9 +43,7 @@ while_1:
 	store [t.6.2{r5}], digit.1{r0}
 	; 34:3 if number == 0
 	branch number.2{r3} notequals 0: while_1
-	move t.9.1{r0}, t.9.1{r4}
 	addrof t.8.1{r3}, buffer
-	move t.8.2{r1}, t.8.1{r3}
 	move t.8.2{r1}, t.8.2{r5}
 	const t.11.1{r0}, 20
 	move t.10.1{r2}, t.11.1{r0}

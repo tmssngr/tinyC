@@ -33,9 +33,7 @@ while_1:
 	store [t.6.2{r5}], digit.1{r0}
 	; 34:3 if number == 0
 	branch number.2{r3} notequals 0: while_1
-	move t.9.1{r0}, t.9.1{r4}
 	addrof t.8.1{r3}, buffer
-	move t.8.2{r1}, t.8.1{r3}
 	move t.8.2{r1}, t.8.2{r5}
 	const t.11.1{r0}, 20
 	move t.10.1{r2}, t.11.1{r0}
@@ -78,8 +76,6 @@ main:
 	addrof t.2.1{r2}, chars
 	add t.2.2{r2}, t.3.1{r0}
 	store [t.2.2{r2}], chr.1{r6}
-	const t.7.1{r6}, 0
-	addrof t.6.1{r0}, chars
 	move t.6.2{r0}, t.6.2{r2}
 	load t.5.1{r6}, [t.6.2{r0}]
 	add t.4.1{r6}, 1
@@ -87,8 +83,6 @@ main:
 	addrof t.8.1{r2}, chars
 	add t.8.2{r2}, t.9.1{r0}
 	store [t.8.2{r2}], t.4.1{r6}
-	const t.13.1{r6}, 1
-	addrof t.12.1{r0}, chars
 	move t.12.2{r0}, t.12.2{r2}
 	load t.11.1{r6}, [t.12.2{r0}]
 	add t.10.1{r6}, 2
@@ -97,7 +91,6 @@ main:
 	add t.14.2{r2}, t.15.1{r0}
 	store [t.14.2{r2}], t.10.1{r6}
 	const t.17.1{r6}, 2
-	addrof t.16.1{r0}, chars
 	move t.16.2{r0}, t.16.2{r2}
 	load result.1{r1}, [t.16.2{r0}]
 	call printIntLf@u8[result.1{r1}]
