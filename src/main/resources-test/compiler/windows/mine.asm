@@ -127,12 +127,8 @@ _while_1:
         ; branch number.2{r3} notequals 0: while_1
         cmp r8, 0
         jne _while_1
-        ; move t.9.1{r0}, t.9.1{r4}
-        mov rax, r9
         ; addrof t.8.1{r3}, buffer
         lea r8, [rsp+40]
-        ; move t.8.2{r1}, t.8.1{r3}
-        mov rcx, r8
         ; move t.8.2{r1}, t.8.2{r5}
         mov rcx, r10
         ; const t.11.1{r0}, 20
@@ -433,10 +429,6 @@ _getBombCountAround@i16@i16:
 _for_7_body:
         ; move dr.2{r3}, dr.2{r2}
         mov r8w, dx
-        ; addrof memVarAddr{r7}, column
-        lea r12, [rsp+88]
-        ; load column{r2}, [memVarAddr{r7}]
-        mov dx, [r12]
         ; move r.1{r1}, row{r6}
         mov cx, bx
         ; add r.1{r1}, dr.2{r3}
@@ -454,8 +446,6 @@ _for_7_body:
         mov [r12], al
         ; move dc.2{r0}, dc.1{r3}
         mov ax, r8w
-        ; addrof memVarAddr{r7}, column
-        lea r12, [rsp+88]
         ; addrof memVarAddr{r7}, r.1
         lea r12, [rsp+50]
         ; store [memVarAddr{r7}], r.1{r1}
@@ -484,8 +474,6 @@ _for_8_body:
         mov cx, [r12]
         ; move c.1{r3}, column{r2}
         mov r8w, dx
-        ; addrof memVarAddr{r7}, column
-        lea r12, [rsp+88]
         ; add c.1{r3}, dc.2{r0}
         add r8w, ax
         ; addrof memVarAddr{r7}, dc.2
@@ -493,8 +481,6 @@ _for_8_body:
         ; store [memVarAddr{r7}], dc.2{r0}
         mov [r12], ax
         ; 50:4 if checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=50:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=50:27]])
-        ; addrof memVarAddr{r7}, r.1
-        lea r12, [rsp+50]
         ; move c.1{r2}, c.1{r3}
         mov dx, r8w
         ; addrof memVarAddr{r7}, c.1
@@ -1189,8 +1175,6 @@ _for_30_body:
         mov [r12], ax
         ; call t.6.1{r0} = random[] -> i32
         call _random
-        ; move t.5.1{r3}, t.6.1{r0}
-        mov r8d, eax
         ; mod t.5.1{r2}, t.5.1{r0}, 20
         movsxd rax, eax
         cqo
@@ -1206,8 +1190,6 @@ _for_30_body:
         mov [r12], cx
         ; call t.8.1{r0} = random[] -> i32
         call _random
-        ; move t.7.1{r3}, t.8.1{r0}
-        mov r8d, eax
         ; mod t.7.1{r2}, t.7.1{r0}, 40
         movsxd rax, eax
         cqo
@@ -1548,8 +1530,6 @@ _main:
         lea r12, [rsp+54]
         ; store [memVarAddr{r7}], curr_r.2{r1}
         mov [r12], cx
-        ; addrof memVarAddr{r7}, curr_c.2
-        lea r12, [rsp+52]
         ; addrof memVarAddr{r7}, curr_r.2
         lea r12, [rsp+54]
         jmp _while_40
@@ -1763,8 +1743,6 @@ _main.no_critical_edge_29:
         lea r12, [rsp+54]
         ; store [memVarAddr{r7}], curr_r.2{r4}
         mov [r12], r9w
-        ; addrof memVarAddr{r7}, curr_c.2
-        lea r12, [rsp+52]
         ; move curr_c.2{r2}, curr_c.2{r5}
         mov dx, r10w
         ; addrof memVarAddr{r7}, curr_r.2
@@ -1825,8 +1803,6 @@ _if_50_then:
         mov r8b, al
         ; xor cell.2{r3}, 4
         xor r8b, 4
-        ; addrof memVarAddr{r7}, curr_r.2
-        lea r12, [rsp+54]
         ; addrof memVarAddr{r7}, curr_c.2
         lea r12, [rsp+52]
         ; call setCell@i16@i16@u8[curr_r.2{r1}, curr_c.2{r2}, cell.2{r3}]

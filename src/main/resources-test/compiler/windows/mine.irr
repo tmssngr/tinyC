@@ -50,9 +50,7 @@ while_1:
 	store [t.6.2{r5}], digit.1{r0}
 	; 34:3 if number == 0
 	branch number.2{r3} notequals 0: while_1
-	move t.9.1{r0}, t.9.1{r4}
 	addrof t.8.1{r3}, buffer
-	move t.8.2{r1}, t.8.1{r3}
 	move t.8.2{r1}, t.8.2{r5}
 	const t.11.1{r0}, 20
 	move t.10.1{r2}, t.11.1{r0}
@@ -223,8 +221,6 @@ getBombCountAround@i16@i16:
 	jump for_7
 for_7_body:
 	move dr.2{r3}, dr.2{r2}
-	addrof memVarAddr{r7}, column
-	load column{r2}, [memVarAddr{r7}]
 	move r.1{r1}, row{r6}
 	add r.1{r1}, dr.2{r3}
 	addrof memVarAddr{r7}, dr.2
@@ -234,7 +230,6 @@ for_7_body:
 	addrof memVarAddr{r7}, count.3
 	store [memVarAddr{r7}], count.3{r0}
 	move dc.2{r0}, dc.1{r3}
-	addrof memVarAddr{r7}, column
 	addrof memVarAddr{r7}, r.1
 	store [memVarAddr{r7}], r.1{r1}
 	move dc.2{r2}, dc.2{r0}
@@ -250,12 +245,10 @@ for_8_body:
 	addrof memVarAddr{r7}, r.1
 	load r.1{r1}, [memVarAddr{r7}]
 	move c.1{r3}, column{r2}
-	addrof memVarAddr{r7}, column
 	add c.1{r3}, dc.2{r0}
 	addrof memVarAddr{r7}, dc.2
 	store [memVarAddr{r7}], dc.2{r0}
 	; 50:4 if checkCellBounds@i16@i16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=50:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=50:27]])
-	addrof memVarAddr{r7}, r.1
 	move c.1{r2}, c.1{r3}
 	addrof memVarAddr{r7}, c.1
 	store [memVarAddr{r7}], c.1{r3}
@@ -625,14 +618,12 @@ for_30_body:
 	addrof memVarAddr{r7}, bombs.2
 	store [memVarAddr{r7}], bombs.2{r0}
 	call t.6.1{r0} = random[] -> i32
-	move t.5.1{r3}, t.6.1{r0}
 	mod t.5.1{r2}, t.5.1{r0}, 20
 	move t.5.1{r3}, t.5.1{r2}
 	cast row.1{r1}(i16), t.5.1{r3}(i32)
 	addrof memVarAddr{r7}, row.1
 	store [memVarAddr{r7}], row.1{r1}
 	call t.8.1{r0} = random[] -> i32
-	move t.7.1{r3}, t.8.1{r0}
 	mod t.7.1{r2}, t.7.1{r0}, 40
 	move t.7.1{r3}, t.7.1{r2}
 	cast column.1{r2}(i16), t.7.1{r3}(i32)
@@ -810,7 +801,6 @@ main:
 	move curr_r.2{r1}, curr_r.1{r0}
 	addrof memVarAddr{r7}, curr_r.2
 	store [memVarAddr{r7}], curr_r.2{r1}
-	addrof memVarAddr{r7}, curr_c.2
 	addrof memVarAddr{r7}, curr_r.2
 	jump while_40
 if_41_then:
@@ -923,7 +913,6 @@ main.no_critical_edge_29:
 	store [memVarAddr{r7}], curr_c.2{r5}
 	addrof memVarAddr{r7}, curr_r.2
 	store [memVarAddr{r7}], curr_r.2{r4}
-	addrof memVarAddr{r7}, curr_c.2
 	move curr_c.2{r2}, curr_c.2{r5}
 	addrof memVarAddr{r7}, curr_r.2
 	move curr_r.2{r1}, curr_r.2{r4}
@@ -957,7 +946,6 @@ if_50_then:
 	load cell.1{r0}, [memVarAddr{r7}]
 	move cell.2{r3}, cell.1{r0}
 	xor cell.2{r3}, 4
-	addrof memVarAddr{r7}, curr_r.2
 	addrof memVarAddr{r7}, curr_c.2
 	call setCell@i16@i16@u8[curr_r.2{r1}, curr_c.2{r2}, cell.2{r3}]
 	load curr_c.2{r2}, [memVarAddr{r7}]

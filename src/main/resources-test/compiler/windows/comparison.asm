@@ -114,12 +114,8 @@ _while_1:
         ; branch number.2{r3} notequals 0: while_1
         cmp r8, 0
         jne _while_1
-        ; move t.9.1{r0}, t.9.1{r4}
-        mov rax, r9
         ; addrof t.8.1{r3}, buffer
         lea r8, [rsp+40]
-        ; move t.8.2{r1}, t.8.1{r3}
-        mov rcx, r8
         ; move t.8.2{r1}, t.8.2{r5}
         mov rcx, r10
         ; const t.11.1{r0}, 20
@@ -300,10 +296,6 @@ _main:
         ; lt t.9.1{r1}, d.1{r0}, c.1{r2}
         cmp al, dl
         setb cl
-        ; addrof memVarAddr{r7}, c.1
-        lea r12, [rsp+50]
-        ; addrof memVarAddr{r7}, d.1
-        lea r12, [rsp+51]
         ; call printIntLf@bool[t.9.1{r1}]
         call _printIntLf@bool
         ; const t.10.1{r1}, [string-2]
@@ -341,10 +333,6 @@ _main:
         ; lteq t.14.1{r1}, c.1{r0}, d.1{r2}
         cmp al, dl
         setbe cl
-        ; addrof memVarAddr{r7}, c.1
-        lea r12, [rsp+50]
-        ; addrof memVarAddr{r7}, d.1
-        lea r12, [rsp+51]
         ; call printIntLf@bool[t.14.1{r1}]
         call _printIntLf@bool
         ; addrof memVarAddr{r7}, c.1
@@ -358,10 +346,6 @@ _main:
         ; lteq t.15.1{r1}, d.1{r0}, c.1{r2}
         cmp al, dl
         setbe cl
-        ; addrof memVarAddr{r7}, c.1
-        lea r12, [rsp+50]
-        ; addrof memVarAddr{r7}, d.1
-        lea r12, [rsp+51]
         ; call printIntLf@bool[t.15.1{r1}]
         call _printIntLf@bool
         ; const t.16.1{r1}, [string-4]
@@ -435,10 +419,6 @@ _main:
         ; gteq t.26.1{r1}, c.1{r0}, d.1{r2}
         cmp al, dl
         setae cl
-        ; addrof memVarAddr{r7}, c.1
-        lea r12, [rsp+50]
-        ; addrof memVarAddr{r7}, d.1
-        lea r12, [rsp+51]
         ; call printIntLf@bool[t.26.1{r1}]
         call _printIntLf@bool
         ; addrof memVarAddr{r7}, c.1
@@ -452,10 +432,6 @@ _main:
         ; gteq t.27.1{r1}, d.1{r0}, c.1{r2}
         cmp al, dl
         setae cl
-        ; addrof memVarAddr{r7}, c.1
-        lea r12, [rsp+50]
-        ; addrof memVarAddr{r7}, d.1
-        lea r12, [rsp+51]
         ; call printIntLf@bool[t.27.1{r1}]
         call _printIntLf@bool
         ; const t.28.1{r1}, [string-8]
