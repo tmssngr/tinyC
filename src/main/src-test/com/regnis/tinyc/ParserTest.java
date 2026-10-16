@@ -1133,6 +1133,39 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testGroupedIdentifierBeforeBinaryOperator() {
+		for (Map.Entry<ExprBinary.Op, String> entry : Map.of(ExprBinary.Op.Sub, "-",
+		                                                   ExprBinary.Op.Multiply, "*",
+		                                                   ExprBinary.Op.And, "&").entrySet()) {
+			assertEquals(assignStmt(new ExprVarAccess("result", locS(0, 0)),
+			                        new ExprBinary(entry.getKey(), new ExprVarAccess("a", locS(0, 10)),
+			                                       new ExprVarAccess("b", locS(0, 15)), locS(0, 13)),
+			                        locS(0, 7)),
+			             parseStatement("result = (a) " + entry.getValue() + " b;"));
+		}
+	}
+
+	@Test
+	public void testCastOperandAndPointerType() {
+		assertEquals(assignStmt(new ExprVarAccess("b", locS(0, 0)),
+		                        ExprCast.cast("u8", new ExprUnary(ExprUnary.Op.Neg,
+		                                                         new ExprVarAccess("a", locS(0, 9)), locS(0, 8)),
+		                                      locS(0, 5)), locS(0, 2)),
+		             parseStatement("b = (u8)-a;"));
+		assertEquals(assignStmt(new ExprVarAccess("result", locS(0, 0)),
+		                        ExprCast.cast("u8*", new ExprVarAccess("ptr", locS(0, 14)), locS(0, 10)),
+		                        locS(0, 7)),
+		             parseStatement("result = (u8*)ptr;"));
+
+		final Program program = parseProgram("""
+				typedef Foo struct (u8 x);
+				void main() { result = (Foo*)ptr; }
+				""");
+		final StmtAssign assignment = (StmtAssign)program.functions().getFirst().statements().getFirst();
+		Assert.assertEquals("Foo*", ((ExprCast)assignment.right()).typeString());
+	}
+
+	@Test
 	public void testStruct() {
 		assertEquals(new Program(List.of(
 				             new TypeDef("Foo", null, List.of(

@@ -760,16 +760,12 @@ public final class Parser {
 		if (token == TokenType.IDENTIFIER) {
 			final String identifier = getText();
 			consume(false);
-			if (token == TokenType.R_PAREN) {
+			if (project.isType(identifier)) {
+				final String typeString = getTypeString(identifier);
+				expectType(TokenType.R_PAREN, Messages.expected(")"));
 				consume(false);
-				final Expression expression = getExpressionPrimary(getLocation());
-				if (expression != null) {
-					return ExprCast.cast(identifier, expression, location);
-				}
-
-				// just a braced expression like in
-				// if (foo) { }
-				return getExpressionIdentifier(identifier, location);
+				final Expression expression = getExpressionPrimaryNotNull(getLocation());
+				return ExprCast.cast(typeString, expression, location);
 			}
 
 			primary = getExpressionPrimaryDot(identifier, location);
@@ -947,6 +943,10 @@ public final class Parser {
 
 		public boolean isDef(@NotNull String name) {
 			return defines.contains(name);
+		}
+
+		public boolean isType(@NotNull String name) {
+			return Type.getDefaultType(name) != null || typeDefs.stream().anyMatch(typeDef -> typeDef.name().equals(name));
 		}
 
 		@Nullable
