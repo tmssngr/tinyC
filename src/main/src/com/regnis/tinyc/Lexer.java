@@ -75,15 +75,9 @@ public final class Lexer {
 			return TokenType.COMMA;
 		}
 		if (isConsume('+')) {
-			if (isConsume('+')) {
-				return TokenType.PLUS_PLUS;
-			}
 			return TokenType.PLUS;
 		}
 		if (isConsume('-')) {
-			if (isConsume('-')) {
-				return TokenType.MINUS_MINUS;
-			}
 			return TokenType.MINUS;
 		}
 		if (isConsume('*')) {
