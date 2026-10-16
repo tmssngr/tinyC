@@ -138,6 +138,9 @@ public final class Lexer {
 		}
 		if (isConsume('\'')) {
 			final String text = detectStringOrChar('\'');
+			if (text.length() != 1) {
+				throw new InvalidTokenException("A char must contain exactly one character", location);
+			}
 			intValue = text.charAt(0);
 			this.text = "";
 			return TokenType.INT_LITERAL;
@@ -164,6 +167,10 @@ public final class Lexer {
 			return TokenType.DOT;
 		}
 
+		if (!isIdentifierChar(chr) && chr != '#') {
+			throw new InvalidTokenException("Invalid character '" + (char)chr + "'", location);
+		}
+
 		final StringBuilder buffer = new StringBuilder();
 		do {
 			append(buffer);
@@ -179,6 +186,9 @@ public final class Lexer {
 
 		if (detectInt(text)) {
 			return TokenType.INT_LITERAL;
+		}
+		if (Utils.isInInterval(text.charAt(0), '0', '9')) {
+			throw new InvalidTokenException("Invalid number", location);
 		}
 
 		this.text = text;
@@ -200,7 +210,12 @@ public final class Lexer {
 			case "#endif" -> TokenType.HASH_ENDIF;
 			case "asm" -> TokenType.ASM;
 			case "const" -> TokenType.CONST;
-			default -> TokenType.IDENTIFIER;
+			default -> {
+				if (text.charAt(0) == '#') {
+					throw new InvalidTokenException("Invalid directive '" + text + "'", location);
+				}
+				yield TokenType.IDENTIFIER;
+			}
 		};
 	}
 
@@ -266,7 +281,7 @@ public final class Lexer {
 				lastWasUnderscore = true;
 				continue;
 			}
-			if (lastWasUnderscore || buffer.isEmpty()) {
+			if (lastWasUnderscore || buffer.isEmpty() || Utils.isInInterval(c, '0', '9')) {
 				return false;
 			}
 			this.text = text.substring(i);
@@ -429,7 +444,7 @@ public final class Lexer {
 		final int prevChr = chr;
 		chr = source.next();
 
-		if (prevChr == '\n') {
+		if (prevChr == '\n' || (prevChr == '\r' && chr != '\n')) {
 			line++;
 			column = 0;
 		}

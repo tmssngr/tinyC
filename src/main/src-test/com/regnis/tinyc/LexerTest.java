@@ -436,6 +436,109 @@ public class LexerTest {
 		}.test();
 	}
 
+	@Test
+	public void testOperatorsAndKeywords() {
+		new LexerTester("= == ! != < <= << > >= >> + - * / % & && | || ^ ~ . , ; () {} [] ++ --") {
+			@Override
+			protected void test() {
+				skipWhitespace = true;
+				for (TokenType type : new TokenType[] {
+						TokenType.EQUAL, TokenType.EQ_EQ, TokenType.EXCL, TokenType.EXCL_EQ,
+						TokenType.LT, TokenType.LT_EQ, TokenType.LT_LT, TokenType.GT, TokenType.GT_EQ, TokenType.GT_GT,
+						TokenType.PLUS, TokenType.MINUS, TokenType.STAR, TokenType.SLASH, TokenType.PERCENT,
+						TokenType.AMP, TokenType.AMP_AMP, TokenType.PIPE, TokenType.PIPE_PIPE, TokenType.CARET, TokenType.TILDE,
+						TokenType.DOT, TokenType.COMMA, TokenType.SEMI, TokenType.L_PAREN, TokenType.R_PAREN,
+						TokenType.L_BRACE, TokenType.R_BRACE, TokenType.L_BRACKET, TokenType.R_BRACKET,
+						TokenType.PLUS, TokenType.PLUS, TokenType.MINUS, TokenType.MINUS
+				}) {
+					assertType(type);
+				}
+				assertEof();
+			}
+		}.test();
+
+		new LexerTester("true false return if else for while break continue typedef struct asm const #include #ifdef #else #endif if_else _name1") {
+			@Override
+			protected void test() {
+				skipWhitespace = true;
+				for (TokenType type : new TokenType[] {
+						TokenType.TRUE, TokenType.FALSE, TokenType.RETURN, TokenType.IF, TokenType.ELSE,
+						TokenType.FOR, TokenType.WHILE, TokenType.BREAK, TokenType.CONTINUE, TokenType.TYPEDEF,
+						TokenType.STRUCT, TokenType.ASM, TokenType.CONST, TokenType.HASH_INCLUDE,
+						TokenType.HASH_IFDEF, TokenType.HASH_ELSE, TokenType.HASH_ENDIF
+				}) {
+					assertType(type);
+				}
+				assertIdentifier("if_else");
+				assertIdentifier("_name1");
+				assertEof();
+			}
+		}.test();
+	}
+
+	@Test
+	public void testStringAndCharEscapes() {
+		new LexerTester("\"\" \"a\\n\\t\\r\\0\\\"\\\\\\x41\" '\\n' '\\x41' '\\''") {
+			@Override
+			protected void test() {
+				skipWhitespace = true;
+				assertText(TokenType.STRING, "");
+				assertText(TokenType.STRING, "a\n\t\r\0\"\\A");
+				assertIntLiteral('\n');
+				assertIntLiteral('A');
+				assertIntLiteral('\'');
+				assertEof();
+			}
+		}.test();
+	}
+
+	@Test
+	public void testInvalidTokens() {
+		for (String number : new String[] {"0b", "0b2", "0b102", "0x", "0xG", "123_", "2147483648"}) {
+			assertInvalidToken(number, "Invalid number");
+		}
+		assertInvalidToken("@foo", "Invalid character '@'");
+		assertInvalidToken("?", "Invalid character '?'");
+		assertInvalidToken("#unknown", "Invalid directive '#unknown'");
+		assertInvalidToken("''", "A char must contain exactly one character");
+		assertInvalidToken("'ab'", "A char must contain exactly one character");
+		assertInvalidToken("'a", "A char must end with a quote");
+		assertInvalidToken("/* open", "Block comment needs to be closed");
+		assertInvalidToken("'\\x'", "Invalid char escape", 1);
+		assertInvalidToken("\"open", "String must end with a double-quote", 5);
+	}
+
+	@Test
+	public void testLineEndings() {
+		new LexerTester("a\rb\r\nc\nd") {
+			@Override
+			protected void test() {
+				for (int line = 0; line < 4; line++) {
+					assertIdentifier(String.valueOf((char)('a' + line)));
+					assertLocation(line, 0);
+					if (line < 3) {
+						assertLineBreak();
+					}
+				}
+				assertEof();
+				assertLocation(3, 1);
+			}
+		}.test();
+	}
+
+	private static void assertInvalidToken(String input, String message) {
+		assertInvalidToken(input, message, 0);
+	}
+
+	private static void assertInvalidToken(String input, String message, int column) {
+		new LexerTester(input) {
+			@Override
+			protected void test() {
+				assertInvalidTokenException(message, 0, column);
+			}
+		}.test();
+	}
+
 	private abstract static class LexerTester {
 		protected abstract void test();
 
