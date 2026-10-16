@@ -234,16 +234,17 @@ public class ArithmeticSimplifierTest {
 	}
 
 	@Test
-	public void testBinaryAssign() {
-		final ExprBinary.Op op = ExprBinary.Op.Assign;
-		assertEquals(new ExprBinary(op, Type.I16,
-		                            variable("a"),
-		                            literal(0),
-		                            loc(3, 4)),
-		             ArithmeticSimplifier.simplify(new ExprBinary(op, Type.I16,
-		                                                          variable("a"),
-		                                                          literal(0),
-		                                                          loc(3, 4))));
+	public void testAssignment() {
+		final Location location = loc(3, 4);
+		final StmtAssign assignment = new StmtAssign(variable("a"),
+		                                             new ExprBinary(ExprBinary.Op.Add, Type.I16,
+		                                                            literal(1), literal(2), location),
+		                                             location);
+		final Function function = Function.typedInstance("main", "void", Type.VOID, List.of(), List.of(),
+		                                                 List.of(assignment), List.of(), location);
+		final Program program = new Program(List.of(), List.of(), List.of(function), List.of(), List.of());
+		final Statement simplified = ArithmeticSimplifier.simplify(program).functions().getFirst().statements().getFirst();
+		assertEquals(new StmtAssign(variable("a"), literal(3, location), location), simplified);
 	}
 
 	@Test

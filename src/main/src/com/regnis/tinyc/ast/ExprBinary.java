@@ -47,15 +47,14 @@ public record ExprBinary(@NotNull Op op, @Nullable Type type, @NotNull Expressio
 	}
 
 	public enum OpKind {
-		Arithmetic, Relational, Logic, Assign
+		Arithmetic, Relational, Logic
 	}
 
 	public enum Op {
 		Add("+", OpKind.Arithmetic), Sub("-", OpKind.Arithmetic), Multiply("*", OpKind.Arithmetic), Divide("/", OpKind.Arithmetic), Mod("%", OpKind.Arithmetic), ShiftLeft("<<", OpKind.Arithmetic), ShiftRight(">>", OpKind.Arithmetic),
 		And("&", OpKind.Arithmetic), Or("|", OpKind.Arithmetic), Xor("^", OpKind.Arithmetic),
 		Lt("<", OpKind.Relational), LtEq("<=", OpKind.Relational), Equals("==", OpKind.Relational), NotEquals("!=", OpKind.Relational), GtEq(">=", OpKind.Relational), Gt(">", OpKind.Relational),
-		AndLog("&&", OpKind.Logic), OrLog("||", OpKind.Logic),
-		Assign("=", OpKind.Assign);
+		AndLog("&&", OpKind.Logic), OrLog("||", OpKind.Logic);
 
 		private final String s;
 		public final OpKind kind;

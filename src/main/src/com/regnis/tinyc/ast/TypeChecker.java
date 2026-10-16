@@ -253,6 +253,7 @@ public final class TypeChecker {
 		case StmtIf ifStatement -> processIf(ifStatement);
 		case StmtLoop forStatement -> processFor(forStatement);
 		case StmtReturn stmt -> processReturn(stmt.expression(), stmt.location());
+		case StmtAssign stmt -> add(processAssign(stmt.left(), stmt.right(), stmt.location()));
 		case StmtExpr stmt -> add(new StmtExpr(processExpression(stmt.expression())));
 		// nothing to do here
 		case StmtBreakContinue breakContinue -> add(breakContinue);
@@ -292,11 +293,9 @@ public final class TypeChecker {
 	}
 
 	private void addAssignment(Var var, Expression expression, Location location) {
-		add(new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-		                                var.type,
-		                                new ExprVarAccess(var.name, var.index, var.scope, var.type, var.isArray(), location),
-		                                expression,
-		                                location)));
+		add(new StmtAssign(new ExprVarAccess(var.name, var.index, var.scope, var.type, var.isArray(), location),
+		                   expression,
+		                   location));
 	}
 
 	private void processArrayDeclaration(StmtArrayDeclaration declaration) {
@@ -424,9 +423,6 @@ public final class TypeChecker {
 			case ExprMemberAccess access -> processMemberAccess(access);
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
 			case ExprBinary binary -> {
-				if (binary.op() == ExprBinary.Op.Assign) {
-					yield processAssign(binary.left(), binary.right(), binary.location());
-				}
 				final Expression left = processExpression(binary.left());
 				final Expression right = processExpression(binary.right());
 				yield processBinary(binary.op(), left, right, binary.location());
@@ -727,7 +723,7 @@ public final class TypeChecker {
 		return new ExprBinary(op, type, left, right, location);
 	}
 
-	private Expression processAssign(Expression left, Expression right, Location location) {
+	private StmtAssign processAssign(Expression left, Expression right, Location location) {
 		left = processLValue(left);
 		right = processExpression(right);
 		final Type leftType = left.typeNotNull();
@@ -735,7 +731,7 @@ public final class TypeChecker {
 		if (!Objects.equals(leftType, rightType)) {
 			right = autoCastTo(leftType, right, location);
 		}
-		return new ExprBinary(ExprBinary.Op.Assign, leftType, left, right, location);
+		return new StmtAssign(left, right, location);
 	}
 
 	private Expression processLValue(Expression expression) {
@@ -743,7 +739,7 @@ public final class TypeChecker {
 			case ExprVarAccess varRead -> processLValueVar(varRead);
 			case ExprArrayAccess arrayAccess -> processArrayAccess(arrayAccess);
 			case ExprMemberAccess memberAccess -> processMemberAccess(memberAccess);
-			case ExprUnary deref -> processUnary(deref);
+			case ExprUnary deref when deref.op() == ExprUnary.Op.Deref -> processUnary(deref);
 			default -> throw new SyntaxException(Messages.expectedLValue(), expression.location());
 		};
 	}

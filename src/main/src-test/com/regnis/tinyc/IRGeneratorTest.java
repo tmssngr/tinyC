@@ -3,6 +3,7 @@ package com.regnis.tinyc;
 import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
+import java.io.*;
 import java.util.*;
 
 import org.jetbrains.annotations.*;
@@ -355,6 +356,33 @@ public class IRGeneratorTest {
 				             ))
 		             ), List.of(), globalVarInfos, List.of()),
 		             program);
+	}
+
+	@Test
+	public void testAssignmentThroughCompilerStages() throws IOException {
+		final Program parsed = Parser.parse("""
+				u8 data[1];
+				i64 index() { return 0; }
+				u8 value() { return 7; }
+				void unused() {}
+				void main() { data[index()] = value(); }
+				""", Set.of());
+		final TypeChecker checker = new TypeChecker(Type.I64, message -> Assert.fail("no message expected"));
+		final Program program = ArithmeticSimplifier.simplify(UnusedFunctionRemover.removeUnusedFunctions(checker.check(parsed)));
+		Assert.assertEquals(List.of("index", "value", "main"), program.functions().stream().map(Function::name).toList());
+
+		final StringWriter output = new StringWriter();
+		try (final BufferedWriter writer = new BufferedWriter(output)) {
+			new ProgramWriter(writer).write(program);
+		}
+		Assert.assertTrue(output.toString().contains("data[index()] = value();"));
+
+		final IRFunction main = IRGenerator.convert(program, Type.I64).functions().getLast();
+		Assert.assertEquals(List.of("value", "index"), main.instructions().stream()
+		                                                     .filter(instruction -> instruction instanceof IRCall)
+		                                                     .map(instruction -> ((IRCall)instruction).name())
+		                                                     .toList());
+		Assert.assertEquals(1, main.instructions().stream().filter(instruction -> instruction instanceof IRMemStore).count());
 	}
 
 	private void assertEquals(IRProgram expected, IRProgram actual) {

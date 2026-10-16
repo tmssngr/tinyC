@@ -66,6 +66,7 @@ public class ArithmeticSimplifier {
 
 	private static Statement simplify(Statement statement) {
 		return switch (statement) {
+			case StmtAssign assign -> new StmtAssign(simplify(assign.left()), simplify(assign.right()), assign.location());
 			case StmtExpr stmtExpr -> new StmtExpr(simplify(stmtExpr.expression()));
 			case StmtIf stmtIf -> new StmtIf(simplify(stmtIf.condition()),
 			                                 simplify(stmtIf.thenStatements()),

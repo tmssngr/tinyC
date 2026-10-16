@@ -73,6 +73,10 @@ public class UnusedFunctionRemover {
 	private void process(Statement statement) {
 		switch (statement) {
 		case StmtCompound compound -> process(compound.statements());
+		case StmtAssign assign -> {
+			process(assign.left());
+			process(assign.right());
+		}
 		case StmtExpr expr -> process(expr.expression());
 		case StmtIf ifStatement -> {
 			process(ifStatement.condition());

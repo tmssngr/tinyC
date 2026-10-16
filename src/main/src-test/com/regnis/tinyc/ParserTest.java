@@ -355,6 +355,42 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testAssignmentExpressionsRejected() {
+		assertAssignmentExpressionRejected("foo = bar = bazz;", 10);
+		assertAssignmentExpressionRejected("foo = (bar = bazz);", 11);
+		assertAssignmentExpressionRejected("u8 foo = bar = bazz;", 13);
+		assertAssignmentExpressionRejected("return foo = bar;", 11);
+		assertAssignmentExpressionRejected("print(foo = bar);", 10);
+		assertAssignmentExpressionRejected("if (foo = bar) {}", 8);
+		assertAssignmentExpressionRejected("if foo = bar {}", 7);
+		assertAssignmentExpressionRejected("while (foo = bar) {}", 11);
+		assertAssignmentExpressionRejected("for (; foo = bar; ) {}", 11);
+		assertAssignmentExpressionRejected("for (foo = bar = bazz; true; foo = 1) {}", 15);
+		assertAssignmentExpressionRejected("for (; true; foo = bar = bazz) {}", 23);
+		assertAssignmentExpressionRejected("foo[bar = bazz] = 1;", 8);
+		testIllegal("Assignment is only allowed as a statement", loc(0, 13), "u8 foo = bar = bazz;");
+		testIllegal("Assignment is only allowed as a statement", loc(0, 16), "const FOO = bar = bazz;");
+	}
+
+	@Test
+	public void testAssignmentAndEquality() {
+		final StmtAssign assignment = (StmtAssign)parseStatement("foo = bar == bazz;");
+		Assert.assertEquals(ExprBinary.Op.Equals, ((ExprBinary)assignment.right()).op());
+		final StmtIf ifStatement = (StmtIf)parseStatement("if foo == bar {}");
+		Assert.assertEquals(ExprBinary.Op.Equals, ((ExprBinary)ifStatement.condition()).op());
+	}
+
+	private static void assertAssignmentExpressionRejected(String input, int column) {
+		try {
+			parseStatement(input);
+			Assert.fail("Expected assignment expression to be rejected: " + input);
+		}
+		catch (SyntaxException ex) {
+			Assert.assertEquals(locS(0, column), ex.location);
+		}
+	}
+
+	@Test
 	public void testCompound() {
 		assertEquals(new StmtCompound(List.of(
 				             new StmtVarDeclaration("u16", "foo", intLit(10, locS(1, 10)),
@@ -1532,24 +1568,21 @@ public class ParserTest {
 				new Function("f1", "void", null, List.of(), List.of(), List.of(
 						new StmtVarDeclaration("i16", "a", new ExprIntLiteral(1, Type.U8, loc(1, 10)), loc(1, 2)),
 						new StmtReturn(null, loc(2, 2)),
-						new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-						                            new ExprVarAccess("a", loc(3, 2)),
-						                            new ExprIntLiteral(2, Type.U8, loc(3, 6)),
-						                            loc(3, 4)))
+						new StmtAssign(new ExprVarAccess("a", loc(3, 2)),
+						               new ExprIntLiteral(2, Type.U8, loc(3, 6)),
+						               loc(3, 4))
 				), List.of(), loc(0, 0)),
 				new Function("f2", "void", null, List.of(), List.of(), List.of(
 						new StmtVarDeclaration("i16", "a", new ExprIntLiteral(1, Type.U8, loc(6, 10)), loc(6, 2)),
 						new StmtCompound(List.of(
 								new StmtReturn(null, loc(8, 4)),
-								new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-								                            new ExprVarAccess("a", loc(9, 4)),
-								                            new ExprIntLiteral(2, Type.U8, loc(9, 8)),
-								                            loc(9, 6)))
+								new StmtAssign(new ExprVarAccess("a", loc(9, 4)),
+								               new ExprIntLiteral(2, Type.U8, loc(9, 8)),
+								               loc(9, 6))
 						)),
-						new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-						                            new ExprVarAccess("a", loc(11, 2)),
-						                            new ExprIntLiteral(3, Type.U8, loc(11, 6)),
-						                            loc(11, 4)))
+						new StmtAssign(new ExprVarAccess("a", loc(11, 2)),
+						               new ExprIntLiteral(3, Type.U8, loc(11, 6)),
+						               loc(11, 4))
 				), List.of(), loc(5, 0))
 		), List.of(), List.of()), program);
 	}
@@ -1600,11 +1633,8 @@ public class ParserTest {
 	}
 
 	@NotNull
-	private static StmtExpr assignStmt(Expression left, Expression right, Location loc) {
-		return new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-		                                   left,
-		                                   right,
-		                                   loc));
+	private static StmtAssign assignStmt(Expression left, Expression right, Location loc) {
+		return new StmtAssign(left, right, loc);
 	}
 
 	private static Statement printStmt(Expression expression, Location loc) {
@@ -1654,6 +1684,11 @@ public class ParserTest {
 			assertEquals(expLoop.condition(), currLoop.condition());
 			assertEquals(expLoop.bodyStatements(), currLoop.bodyStatements());
 			assertEquals(expLoop.iteration(), currLoop.iteration());
+		}
+		else if (expectedStatement instanceof StmtAssign expAssign
+		         && currentStatement instanceof StmtAssign currAssign) {
+			assertEquals(expAssign.left(), currAssign.left());
+			assertEquals(expAssign.right(), currAssign.right());
 		}
 		else if (expectedStatement instanceof StmtExpr expExpr
 		         && currentStatement instanceof StmtExpr currExpr) {

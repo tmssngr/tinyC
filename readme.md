@@ -55,7 +55,9 @@ The lexer (class `Lexer`) takes the input files and splits the character streams
 The parser will receive the stream of tokens and builds the AST.
 The root object of the AST is `Program` which has children for type definitions (`TypeDef`), global variables, functions (`Function`) and string literals.
 Each function has a name, return type, zero or more arguments and a list of statements (`Statement`).
-Statements can be, e.g., control flow statements like `StmtIf` or `StmtLoop`, expression-statements or others (e.g. for `break`, `continue` or `return a`).
+Statements can be, e.g., control flow statements like `StmtIf` or `StmtLoop`, assignments (`StmtAssign`), function calls or others (e.g. for `break`, `continue` or `return a`).
+Assignment is only allowed as a statement, including in `for` initialization and iteration lists.
+Assignments cannot be chained or used in conditions, arguments, initializers or return expressions; use separate statements instead.
 Control flow statements have nested statements, e.g. for the then- or else-branches, and expressions for the conditions.
 
 In the next step a type checker (class `TypeChecker`) assigns types to the nodes of the AST, verifies the types (e.g. rejects multiplying two pointers) and adds autocasts where necessary.

@@ -368,32 +368,13 @@ public final class Parser {
 			}
 			default -> {
 				final Location location = getLocation();
-				final Statement statement = getVarDeclarationOrExpressionStatement(location);
-				//noinspection IfCanBeSwitch
+				final Statement statement = getDeclarationOrSimpleStatement(location);
 				if (statement == null) {
 					yield null;
 				}
 
-				if (statement instanceof StmtVarDeclaration
-				    || statement instanceof StmtArrayDeclaration) {
-					consumeSemiOrLineBreak();
-					yield statement;
-				}
-
-				if (statement instanceof StmtExpr expr) {
-					final Expression expression = expr.expression();
-					if (expression instanceof ExprFuncCall) {
-						consumeSemiOrLineBreak();
-						yield statement;
-					}
-
-					if (expression instanceof ExprBinary binary
-					    && binary.op().kind == ExprBinary.OpKind.Assign) {
-						consumeSemiOrLineBreak();
-						yield statement;
-					}
-				}
-				throw new SyntaxException(Messages.expectedStatement(), location);
+				consumeSemiOrLineBreak();
+				yield statement;
 			}
 		};
 	}
@@ -419,14 +400,8 @@ public final class Parser {
 	@Nullable
 	private Statement getSimpleStatement() {
 		final Location location = getLocation();
-		final Statement statement = getVarDeclarationOrExpressionStatement(location);
-		if (statement == null || statement instanceof StmtVarDeclaration) {
-			return statement;
-		}
-
-		if (statement instanceof StmtExpr expr
-		    && expr.expression() instanceof ExprBinary binary
-		    && binary.op().kind == ExprBinary.OpKind.Assign) {
+		final Statement statement = getDeclarationOrSimpleStatement(location);
+		if (statement == null || statement instanceof StmtVarDeclaration || statement instanceof StmtAssign) {
 			return statement;
 		}
 
@@ -434,7 +409,7 @@ public final class Parser {
 	}
 
 	@Nullable
-	private Statement getVarDeclarationOrExpressionStatement(Location location) {
+	private Statement getDeclarationOrSimpleStatement(Location location) {
 		final Expression primary;
 		if (token == TokenType.IDENTIFIER) {
 			final String identifier1 = getText();
@@ -464,7 +439,15 @@ public final class Parser {
 		}
 
 		final Expression expression = getExpression(primary, 0);
-		return new StmtExpr(expression);
+		if (token == TokenType.EQUAL) {
+			final Location assignmentLocation = getLocation();
+			consume();
+			return new StmtAssign(expression, getExpression(), assignmentLocation);
+		}
+		if (expression instanceof ExprFuncCall) {
+			return new StmtExpr(expression);
+		}
+		throw new SyntaxException(Messages.expectedStatement(), location);
 	}
 
 	@NotNull
@@ -607,7 +590,11 @@ public final class Parser {
 
 	@NotNull
 	private Expression getExpression() {
-		return getExpression(0);
+		final Expression expression = getExpression(0);
+		if (token == TokenType.EQUAL) {
+			throw new SyntaxException("Assignment is only allowed as a statement", getLocation());
+		}
+		return expression;
 	}
 
 	@NotNull
@@ -638,7 +625,6 @@ public final class Parser {
 				case LT_LT -> new ExprBinary(ExprBinary.Op.ShiftLeft, left, right, location);
 				case GT_GT -> new ExprBinary(ExprBinary.Op.ShiftRight, left, right, location);
 
-				case EQUAL -> new ExprBinary(ExprBinary.Op.Assign, left, right, location);
 				case EXCL_EQ -> new ExprBinary(ExprBinary.Op.NotEquals, left, right, location);
 
 				case LT -> new ExprBinary(ExprBinary.Op.Lt, left, right, location);
@@ -879,17 +865,16 @@ public final class Parser {
 	// see https://en.cppreference.com/w/c/language/operator_precedence
 	private static int getPrecedence(TokenType token) {
 		return switch (token) {
-			case EQUAL -> 1;
-			case PIPE_PIPE -> 2;
-			case AMP_AMP -> 3;
-			case PIPE -> 4;
-			case CARET -> 5;
-			case AMP -> 6;
-			case EQ_EQ, EXCL_EQ -> 7;
-			case LT, LT_EQ, GT_EQ, GT -> 8;
-			case LT_LT, GT_GT -> 9;
-			case PLUS, MINUS -> 10;
-			case STAR, SLASH, PERCENT -> 11;
+			case PIPE_PIPE -> 1;
+			case AMP_AMP -> 2;
+			case PIPE -> 3;
+			case CARET -> 4;
+			case AMP -> 5;
+			case EQ_EQ, EXCL_EQ -> 6;
+			case LT, LT_EQ, GT_EQ, GT -> 7;
+			case LT_LT, GT_GT -> 8;
+			case PLUS, MINUS -> 9;
+			case STAR, SLASH, PERCENT -> 10;
 			default -> 0;
 		};
 	}
