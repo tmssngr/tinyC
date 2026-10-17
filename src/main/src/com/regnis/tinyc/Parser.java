@@ -375,7 +375,8 @@ public final class Parser {
 				}
 
 				if (statement instanceof StmtVarDeclaration
-				    || statement instanceof StmtArrayDeclaration) {
+				    || statement instanceof StmtArrayDeclaration
+				    || statement instanceof StmtAssign) {
 					consumeSemiOrLineBreak();
 					yield statement;
 				}
@@ -383,12 +384,6 @@ public final class Parser {
 				if (statement instanceof StmtExpr expr) {
 					final Expression expression = expr.expression();
 					if (expression instanceof ExprFuncCall) {
-						consumeSemiOrLineBreak();
-						yield statement;
-					}
-
-					if (expression instanceof ExprBinary binary
-					    && binary.op().kind == ExprBinary.OpKind.Assign) {
 						consumeSemiOrLineBreak();
 						yield statement;
 					}
@@ -424,9 +419,7 @@ public final class Parser {
 			return statement;
 		}
 
-		if (statement instanceof StmtExpr expr
-		    && expr.expression() instanceof ExprBinary binary
-		    && binary.op().kind == ExprBinary.OpKind.Assign) {
+		if (statement instanceof StmtAssign) {
 			return statement;
 		}
 
@@ -435,7 +428,7 @@ public final class Parser {
 
 	@Nullable
 	private Statement getVarDeclarationOrExpressionStatement(Location location) {
-		final Expression primary;
+		final Expression left;
 		if (token == TokenType.IDENTIFIER) {
 			final String identifier1 = getText();
 			consume(false);
@@ -454,17 +447,35 @@ public final class Parser {
 				return new StmtVarDeclaration(typeString, identifier2, expression, location);
 			}
 
-			primary = getExpressionPrimaryDot(identifier1, location);
+			left = getExpressionPrimaryDot(identifier1, location);
 		}
 		else {
-			primary = getExpressionPrimary(location);
-			if (primary == null) {
+			left = getExpressionPrimary(location);
+			if (left == null) {
 				return null;
 			}
 		}
 
-		final Expression expression = getExpression(primary, 0);
-		return new StmtExpr(expression);
+		switch (left) {
+		case ExprArrayAccess ignored -> {}
+		case ExprFuncCall ignored -> {
+			return new StmtExpr(left);
+		}
+		case ExprMemberAccess ignored -> {}
+		case ExprVarAccess ignored -> {}
+		case ExprUnary unary -> {
+			if (unary.op() != ExprUnary.Op.Deref) {
+				throw new SyntaxException(Messages.expectedLValue(), location);
+			}
+		}
+		default -> throw new SyntaxException(Messages.expectedLValue(), location);
+		}
+
+		final Location equalLocation = getLocation();
+		expectType(TokenType.EQUAL, Messages.expected("="));
+		consume();
+		final Expression right = getExpression();
+		return new StmtAssign(left, right, equalLocation);
 	}
 
 	@NotNull
@@ -643,7 +654,6 @@ public final class Parser {
 				case LT_LT -> new ExprBinary(ExprBinary.Op.ShiftLeft, left, right, location);
 				case GT_GT -> new ExprBinary(ExprBinary.Op.ShiftRight, left, right, location);
 
-				case EQUAL -> new ExprBinary(ExprBinary.Op.Assign, left, right, location);
 				case EXCL_EQ -> new ExprBinary(ExprBinary.Op.NotEquals, left, right, location);
 
 				case LT -> new ExprBinary(ExprBinary.Op.Lt, left, right, location);
@@ -877,18 +887,17 @@ public final class Parser {
 	// see https://en.cppreference.com/w/c/language/operator_precedence
 	private static int getPrecedence(TokenType token) {
 		return switch (token) {
-			case EQUAL -> 1;
-			case PIPE_PIPE -> 2;
-			case AMP_AMP -> 3;
-			case PIPE -> 4;
-			case CARET -> 5;
-			case AMP -> 6;
-			case EQ_EQ, EXCL_EQ -> 7;
-			case LT, LT_EQ, GT_EQ, GT -> 8;
-			case LT_LT, GT_GT -> 9;
-			case PLUS, MINUS -> 10;
-			case STAR, SLASH, PERCENT -> 11;
-			case AS -> 12;
+			case PIPE_PIPE -> 1;
+			case AMP_AMP -> 2;
+			case PIPE -> 3;
+			case CARET -> 4;
+			case AMP -> 5;
+			case EQ_EQ, EXCL_EQ -> 6;
+			case LT, LT_EQ, GT_EQ, GT -> 7;
+			case LT_LT, GT_GT -> 8;
+			case PLUS, MINUS -> 9;
+			case STAR, SLASH, PERCENT -> 10;
+			case AS -> 11;
 			default -> 0;
 		};
 	}

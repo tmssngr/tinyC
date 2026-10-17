@@ -235,14 +235,15 @@ public class ArithmeticSimplifierTest {
 
 	@Test
 	public void testBinaryAssign() {
-		final ExprBinary.Op op = ExprBinary.Op.Assign;
-		assertEquals(new ExprBinary(op, Type.I16,
-		                            variable("a"),
-		                            literal(0),
+		assertEquals(new StmtAssign(variable("a"),
+		                            literal(11, ParserTest.loc(1, 4)),
 		                            loc(3, 4)),
-		             ArithmeticSimplifier.simplify(new ExprBinary(op, Type.I16,
-		                                                          variable("a"),
-		                                                          literal(0),
+		             ArithmeticSimplifier.simplify(new StmtAssign(variable("a"),
+		                                                          new ExprBinary(ExprBinary.Op.Add,
+		                                                                         Type.I16,
+		                                                                         literal(10, loc(1, 2)),
+		                                                                         literal(1, loc(1, 5)),
+		                                                                         loc(1, 4)),
 		                                                          loc(3, 4))));
 	}
 

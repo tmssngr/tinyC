@@ -189,6 +189,7 @@ public final class IRGenerator {
 
 	private void writeStatement(Statement statement) {
 		switch (statement) {
+		case StmtAssign assign -> writeAssign(assign);
 		case StmtCompound compound -> writeStatements(compound.statements());
 		case StmtExpr stmt -> writeExpressionStatement(stmt);
 		case StmtIf ifStatement -> writeIfElse(ifStatement);
@@ -304,10 +305,6 @@ public final class IRGenerator {
 		final Expression expression = stmt.expression();
 		switch (expression) {
 		case ExprFuncCall call -> writeCall(null, call);
-		case ExprBinary binary -> {
-			Utils.assertTrue(binary.op() == ExprBinary.Op.Assign);
-			writeAssign(binary);
-		}
 		default -> throw new UnsupportedOperationException(String.valueOf(stmt));
 		}
 	}
@@ -536,17 +533,9 @@ public final class IRGenerator {
 	}
 
 	private IRVar writeBinary(ExprBinary binary) {
-		final ExprBinary.Op op = binary.op();
-		switch (op) {
-		case Assign -> {
-			return writeAssign(binary);
-		}
-		default -> {
-			final IRVar tmp = createTempVar(binary.typeNotNull());
-			writeBinary(tmp, binary);
-			return tmp;
-		}
-		}
+		final IRVar tmp = createTempVar(binary.typeNotNull());
+		writeBinary(tmp, binary);
+		return tmp;
 	}
 
 	private void writeReadingVarAccess(IRVar var, ExprVarAccess access, Location location) {
@@ -586,34 +575,34 @@ public final class IRGenerator {
 		return !localVarsCantBeRegister.contains(var);
 	}
 
-	@NotNull
-	private IRVar writeAssign(ExprBinary binary) {
-		final Expression left = binary.left();
-		final Expression right = binary.right();
+	private void writeAssign(StmtAssign assign) {
+		final Expression left = assign.left();
+		final Expression right = assign.right();
 		switch (left) {
 		case ExprVarAccess access -> {
 			final IRVar var = varAccessToVar(access);
-			return writeVar(var, v -> writeExpression(v, right));
+			writeVar(var, v -> writeExpression(v, right));
+			return;
 		}
 		case ExprArrayAccess access -> {
 			final IRVar valueVar = writeExpression(right);
 			final IRVar addr = arrayAddr(access);
 			write(new IRMemStore(addr, valueVar, access.location()));
-			return valueVar;
+			return;
 		}
 		case ExprUnary unary -> {
 			if (unary.op() == ExprUnary.Op.Deref) {
 				final IRVar valueVar = writeExpression(right);
 				final IRVar pointer = writeExpression(unary.expression());
 				write(new IRMemStore(pointer, valueVar, unary.location()));
-				return valueVar;
+				return;
 			}
 		}
 		case ExprMemberAccess access -> {
 			final IRVar valueVar = writeExpression(right);
 			final IRVar addr = writeMemberAddress(access);
 			write(new IRMemStore(addr, valueVar, access.location()));
-			return valueVar;
+			return;
 		}
 		default -> {
 		}
@@ -659,10 +648,6 @@ public final class IRGenerator {
 
 	private void writeBinary(IRVar var, ExprBinary binary) {
 		switch (binary.op()) {
-		case Assign -> {
-			final IRVar binaryVar = writeAssign(binary);
-			write(new IRMove(var, binaryVar, binary.location()));
-		}
 		case Add -> writeBinary(IRBinary.Op.Add, var, binary);
 		case Sub -> writeBinary(IRBinary.Op.Sub, var, binary);
 		case Multiply -> writeBinary(IRBinary.Op.Mul, var, binary);

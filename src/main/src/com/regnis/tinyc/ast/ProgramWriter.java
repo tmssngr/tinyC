@@ -100,6 +100,10 @@ public final class ProgramWriter {
 
 	private boolean writeStatement(Statement statement) throws IOException {
 		return switch (statement) {
+			case StmtAssign assign -> {
+				writeAssign(assign);
+				yield true;
+			}
 			case StmtExpr expr -> {
 				writeExpression(expr.expression());
 				yield true;
@@ -128,6 +132,12 @@ public final class ProgramWriter {
 		for (int i = 0; i < indentationLevel; i++) {
 			write(INDENTATION);
 		}
+	}
+
+	private void writeAssign(StmtAssign assign) throws IOException {
+		writeExpression(assign.left());
+		write(" = ");
+		writeExpression(assign.right());
 	}
 
 	private void writeIf(StmtIf stmtIf) throws IOException {
@@ -219,15 +229,6 @@ public final class ProgramWriter {
 	}
 
 	private void writeBinary(ExprBinary binary) throws IOException {
-		if (binary.op() == ExprBinary.Op.Assign) {
-			writeExpression(binary.left());
-			write(" ");
-			write(binary.op().toString());
-			write(" ");
-			writeExpression(binary.right());
-			return;
-		}
-
 		writeExpressionMaybeInParentesis(binary.left());
 		write(" ");
 		write(binary.op().toString());

@@ -247,6 +247,7 @@ public final class TypeChecker {
 
 	private void processStatement(Statement statement) {
 		switch (statement) {
+		case StmtAssign assign -> processAssign(assign.left(), assign.right(), assign.location());
 		case StmtVarDeclaration declaration -> processVarDeclaration(declaration);
 		case StmtArrayDeclaration declaration -> processArrayDeclaration(declaration);
 		case StmtCompound compound -> processCompound(compound);
@@ -292,11 +293,9 @@ public final class TypeChecker {
 	}
 
 	private void addAssignment(Var var, Expression expression, Location location) {
-		add(new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-		                                var.type,
-		                                new ExprVarAccess(var.name, var.index, var.scope, var.type, var.isArray(), location),
-		                                expression,
-		                                location)));
+		add(new StmtAssign(new ExprVarAccess(var.name, var.index, var.scope, var.type, var.isArray(), location),
+		                   expression,
+		                   location));
 	}
 
 	private void processArrayDeclaration(StmtArrayDeclaration declaration) {
@@ -424,9 +423,6 @@ public final class TypeChecker {
 			case ExprMemberAccess access -> processMemberAccess(access);
 			case ExprFuncCall call -> processFuncCall(call.name(), call.argExpressions(), call.location());
 			case ExprBinary binary -> {
-				if (binary.op() == ExprBinary.Op.Assign) {
-					yield processAssign(binary.left(), binary.right(), binary.location());
-				}
 				final Expression left = processExpression(binary.left());
 				final Expression right = processExpression(binary.right());
 				yield processBinary(binary.op(), left, right, binary.location());
@@ -699,7 +695,7 @@ public final class TypeChecker {
 		return new ExprBinary(op, type, left, right, location);
 	}
 
-	private Expression processAssign(Expression left, Expression right, Location location) {
+	private void processAssign(Expression left, Expression right, Location location) {
 		left = processLValue(left);
 		right = processExpression(right);
 		final Type leftType = left.typeNotNull();
@@ -707,7 +703,7 @@ public final class TypeChecker {
 		if (!Objects.equals(leftType, rightType)) {
 			right = autoCastTo(leftType, right, location);
 		}
-		return new ExprBinary(ExprBinary.Op.Assign, leftType, left, right, location);
+		add(new StmtAssign(left, right, location));
 	}
 
 	private Expression processLValue(Expression expression) {

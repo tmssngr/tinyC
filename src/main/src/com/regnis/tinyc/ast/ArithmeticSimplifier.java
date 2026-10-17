@@ -34,6 +34,34 @@ public class ArithmeticSimplifier {
 		};
 	}
 
+	static Statement simplify(Statement statement) {
+		return switch (statement) {
+			case StmtAssign stmtAssign -> new StmtAssign(simplify(stmtAssign.left()), simplify(stmtAssign.right()), stmtAssign.location());
+			case StmtExpr stmtExpr -> new StmtExpr(simplify(stmtExpr.expression()));
+			case StmtIf stmtIf -> new StmtIf(simplify(stmtIf.condition()),
+			                                 simplify(stmtIf.thenStatements()),
+			                                 simplify(stmtIf.elseStatements()),
+			                                 stmtIf.location());
+			case StmtLoop stmtLoop -> new StmtLoop(simplify(stmtLoop.condition()),
+			                                       simplify(stmtLoop.bodyStatements()),
+			                                       simplify(stmtLoop.iteration()),
+			                                       stmtLoop.location());
+			case StmtReturn stmtReturn -> {
+				final Expression expression = stmtReturn.expression();
+				yield expression != null
+						? new StmtReturn(simplify(expression), stmtReturn.location())
+						: stmtReturn;
+			}
+			case StmtVarDeclaration stmt -> {
+				final Expression expression = stmt.expression();
+				yield expression != null
+						? new StmtVarDeclaration(stmt.typeString(), stmt.varName(), stmt.index(), stmt.scope(), stmt.type(), simplify(expression), stmt.location())
+						: stmt;
+			}
+			default -> statement;
+		};
+	}
+
 	private static Function simplify(Function function) {
 		if (function.asmLines().size() > 0) {
 			return function;
@@ -62,33 +90,6 @@ public class ArithmeticSimplifier {
 			simplified.add(simplified1);
 		}
 		return simplified;
-	}
-
-	private static Statement simplify(Statement statement) {
-		return switch (statement) {
-			case StmtExpr stmtExpr -> new StmtExpr(simplify(stmtExpr.expression()));
-			case StmtIf stmtIf -> new StmtIf(simplify(stmtIf.condition()),
-			                                 simplify(stmtIf.thenStatements()),
-			                                 simplify(stmtIf.elseStatements()),
-			                                 stmtIf.location());
-			case StmtLoop stmtLoop -> new StmtLoop(simplify(stmtLoop.condition()),
-			                                       simplify(stmtLoop.bodyStatements()),
-			                                       simplify(stmtLoop.iteration()),
-			                                       stmtLoop.location());
-			case StmtReturn stmtReturn -> {
-				final Expression expression = stmtReturn.expression();
-				yield expression != null
-						? new StmtReturn(simplify(expression), stmtReturn.location())
-						: stmtReturn;
-			}
-			case StmtVarDeclaration stmt -> {
-				final Expression expression = stmt.expression();
-				yield expression != null
-						? new StmtVarDeclaration(stmt.typeString(), stmt.varName(), stmt.index(), stmt.scope(), stmt.type(), simplify(expression), stmt.location())
-						: stmt;
-			}
-			default -> statement;
-		};
 	}
 
 	private static ExprVarAccess simplify(ExprVarAccess var) {

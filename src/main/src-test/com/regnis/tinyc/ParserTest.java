@@ -1315,7 +1315,7 @@ public class ParserTest {
 		testIllegal(Messages.expectedRootElement(), loc(0, 0),
 		            "&");
 
-		testIllegal(Messages.expectedStatement(), loc(1, 4),
+		testIllegal(Messages.expectedLValue(), loc(1, 4),
 		            """
 				            void main() {
 				                10
@@ -1567,24 +1567,21 @@ public class ParserTest {
 				new Function("f1", "void", null, List.of(), List.of(), List.of(
 						new StmtVarDeclaration("i16", "a", new ExprIntLiteral(1, Type.U8, loc(1, 10)), loc(1, 2)),
 						new StmtReturn(null, loc(2, 2)),
-						new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-						                            new ExprVarAccess("a", loc(3, 2)),
-						                            new ExprIntLiteral(2, Type.U8, loc(3, 6)),
-						                            loc(3, 4)))
+						assignStmt(new ExprVarAccess("a", loc(3, 2)),
+						           new ExprIntLiteral(2, Type.U8, loc(3, 6)),
+						           loc(3, 4))
 				), List.of(), loc(0, 0)),
 				new Function("f2", "void", null, List.of(), List.of(), List.of(
 						new StmtVarDeclaration("i16", "a", new ExprIntLiteral(1, Type.U8, loc(6, 10)), loc(6, 2)),
 						new StmtCompound(List.of(
 								new StmtReturn(null, loc(8, 4)),
-								new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-								                            new ExprVarAccess("a", loc(9, 4)),
-								                            new ExprIntLiteral(2, Type.U8, loc(9, 8)),
-								                            loc(9, 6)))
+								assignStmt(new ExprVarAccess("a", loc(9, 4)),
+								           new ExprIntLiteral(2, Type.U8, loc(9, 8)),
+								           loc(9, 6))
 						)),
-						new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-						                            new ExprVarAccess("a", loc(11, 2)),
-						                            new ExprIntLiteral(3, Type.U8, loc(11, 6)),
-						                            loc(11, 4)))
+						assignStmt(new ExprVarAccess("a", loc(11, 2)),
+						           new ExprIntLiteral(3, Type.U8, loc(11, 6)),
+						           loc(11, 4))
 				), List.of(), loc(5, 0))
 		), List.of(), List.of()), program);
 	}
@@ -1635,11 +1632,8 @@ public class ParserTest {
 	}
 
 	@NotNull
-	private static StmtExpr assignStmt(Expression left, Expression right, Location loc) {
-		return new StmtExpr(new ExprBinary(ExprBinary.Op.Assign,
-		                                   left,
-		                                   right,
-		                                   loc));
+	private static StmtAssign assignStmt(Expression left, Expression right, Location loc) {
+		return new StmtAssign(left, right, loc);
 	}
 
 	private static Statement printStmt(Expression expression, Location loc) {
