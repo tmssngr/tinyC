@@ -65,7 +65,7 @@ public final class Lexer {
 				return TokenType.COMMENT;
 			}
 
-			return TokenType.SLASH;
+			return isConsume('=') ? TokenType.SLASH_EQ : TokenType.SLASH;
 		}
 
 		if (isConsume(';')) {
@@ -75,30 +75,26 @@ public final class Lexer {
 			return TokenType.COMMA;
 		}
 		if (isConsume('+')) {
-			return TokenType.PLUS;
+			return isConsume('=') ? TokenType.PLUS_EQ : TokenType.PLUS;
 		}
 		if (isConsume('-')) {
-			return TokenType.MINUS;
+			return isConsume('=') ? TokenType.MINUS_EQ : TokenType.MINUS;
 		}
 		if (isConsume('*')) {
-			return TokenType.STAR;
+			return isConsume('=') ? TokenType.STAR_EQ : TokenType.STAR;
 		}
 		if (isConsume('%')) {
-			return TokenType.PERCENT;
+			return isConsume('=') ? TokenType.PERCENT_EQ : TokenType.PERCENT;
 		}
 		if (isConsume('!')) {
-			return isConsume('=')
-					? TokenType.EXCL_EQ
-					: TokenType.EXCL;
+			return isConsume('=') ? TokenType.EXCL_EQ : TokenType.EXCL;
 		}
 		if (isConsume('=')) {
-			return isConsume('=')
-					? TokenType.EQ_EQ
-					: TokenType.EQUAL;
+			return isConsume('=') ? TokenType.EQ_EQ : TokenType.EQUAL;
 		}
 		if (isConsume('<')) {
 			if (isConsume('<')) {
-				return TokenType.LT_LT;
+				return isConsume('=') ? TokenType.LT_LT_EQ : TokenType.LT_LT;
 			}
 			if (isConsume('=')) {
 				return TokenType.LT_EQ;
@@ -107,7 +103,7 @@ public final class Lexer {
 		}
 		if (isConsume('>')) {
 			if (isConsume('>')) {
-				return TokenType.GT_GT;
+				return isConsume('=') ? TokenType.GT_GT_EQ : TokenType.GT_GT;
 			}
 			if (isConsume('=')) {
 				return TokenType.GT_EQ;
@@ -143,19 +139,25 @@ public final class Lexer {
 			return TokenType.INT_LITERAL;
 		}
 		if (isConsume('&')) {
+			if (isConsume('=')) {
+				return TokenType.AMP_EQ;
+			}
 			if (isConsume('&')) {
 				return TokenType.AMP_AMP;
 			}
 			return TokenType.AMP;
 		}
 		if (isConsume('|')) {
+			if (isConsume('=')) {
+				return TokenType.PIPE_EQ;
+			}
 			if (isConsume('|')) {
 				return TokenType.PIPE_PIPE;
 			}
 			return TokenType.PIPE;
 		}
 		if (isConsume('^')) {
-			return TokenType.CARET;
+			return isConsume('=') ? TokenType.CARET_EQ : TokenType.CARET;
 		}
 		if (isConsume('~')) {
 			return TokenType.TILDE;

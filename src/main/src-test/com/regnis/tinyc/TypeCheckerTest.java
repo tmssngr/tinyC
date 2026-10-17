@@ -248,7 +248,7 @@ public class TypeCheckerTest {
 	@Test
 	public void testInvalidLValue() {
 		testIllegalStatement(Messages.expectedLValue(), 0, "1 = ptr1;");
-		testIllegalStatement(Messages.expected("="), 5, "ptr1 + 1 = ptr2;");
+		testIllegalStatement(Messages.expected("=, +=, -=, ..."), 5, "ptr1 + 1 = ptr2;");
 		testIllegal(Messages.arraysAreImmutable(), 2, 2,
 		            """
 				            u8 array[12];

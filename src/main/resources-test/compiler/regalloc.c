@@ -20,7 +20,7 @@ i16 fibonacci(u8 i) {
 	i16 a = 0;
 	i16 b = 1;
 	while (i > 0) {
-		i = i - 1;
+		i -= 1;
 		i16 c = a + b;
 		a = b;
 		b = c;

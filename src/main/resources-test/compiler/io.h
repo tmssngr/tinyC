@@ -26,9 +26,9 @@ void printUint(i64 number) {
 	u8 buffer[20];
 	u8 pos = 20;
 	while (true) {
-		pos = pos - 1;
+		pos -= 1;
 		i64 remainder = number % 10;
-		number = number / 10;
+		number /= 10;
 		u8 digit = remainder as u8 + '0';
 		buffer[pos] = digit;
 		if (number == 0) {
@@ -61,8 +61,8 @@ void printIntLf(i64 number) {
 
 i64 strlen(u8* str) {
 	i64 length = 0;
-	for (; *str != 0; str = str + 1) {
-		length = length + 1;
+	for (; *str != 0; str += 1) {
+		length += 1;
 	}
 	return length;
 }

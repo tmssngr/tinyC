@@ -7,7 +7,7 @@ void main() {
 u8 i = 0;
 
 u8 next() {
-	i = i + 1;
+	i += 1;
 	return i;
 }
 

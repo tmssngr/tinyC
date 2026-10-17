@@ -355,6 +355,46 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testModifyAssign() {
+		final List<Pair<ExprBinary.Op, String>> operands = List.of(
+				new Pair<>(ExprBinary.Op.Add, "+="),
+				new Pair<>(ExprBinary.Op.Sub, "-="),
+				new Pair<>(ExprBinary.Op.Multiply, "*="),
+				new Pair<>(ExprBinary.Op.Divide, "/="),
+				new Pair<>(ExprBinary.Op.Mod, "%="),
+				new Pair<>(ExprBinary.Op.And, "&="),
+				new Pair<>(ExprBinary.Op.Or, "|="),
+				new Pair<>(ExprBinary.Op.Xor, "^="),
+				new Pair<>(ExprBinary.Op.ShiftLeft, "<<="),
+				new Pair<>(ExprBinary.Op.ShiftRight, ">>=")
+		);
+		for (Pair<ExprBinary.Op, String> operand : operands) {
+			final ExprBinary.Op op = operand.first();
+			final String s = operand.second();
+			final int length = s.length();
+			assertEquals(assignStmt(new ExprVarAccess("foo", locS(0, 0)),
+			                        new ExprBinary(op,
+			                                       new ExprVarAccess("foo", locS(0, 0)),
+			                                       new ExprVarAccess("bar", locS(0, 5 + length)),
+			                                       locS(0, 4)),
+			                        locS(0, 4)),
+			             parseStatement("foo " + s + " bar"));
+
+			assertEquals(assignStmt(new ExprUnary(ExprUnary.Op.Deref,
+			                                      new ExprVarAccess("foo", locS(0, 1)),
+			                                      locS(0, 0)),
+			                        new ExprBinary(op,
+			                                       new ExprUnary(ExprUnary.Op.Deref,
+			                                                     new ExprVarAccess("foo", locS(0, 1)),
+			                                                     locS(0, 0)),
+			                                       new ExprVarAccess("bar", locS(0, 6 + length)),
+			                                       locS(0, 5)),
+			                        locS(0, 5)),
+			             parseStatement("*foo " + s + " bar"));
+		}
+	}
+
+	@Test
 	public void testCompound() {
 		assertEquals(new StmtCompound(List.of(
 				             new StmtVarDeclaration("u16", "foo", intLit(10, locS(1, 10)),

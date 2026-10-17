@@ -13,8 +13,8 @@ void main() {
 
 void printLength() {
 	i16 length = 0;
-	for (u8* ptr = text; *ptr != 0; ptr = ptr + 1) {
-		length = length + 1;
+	for (u8* ptr = text; *ptr != 0; ptr += 1) {
+		length += 1;
 	}
 	printIntLf(length);
 }

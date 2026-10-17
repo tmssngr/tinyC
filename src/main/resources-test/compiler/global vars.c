@@ -6,6 +6,6 @@ i16* ptrToSpace = &space;
 
 void main() {
 	printIntLf(next);
-	ptrToSpace = ptrToSpace + 1;
+	ptrToSpace += 1;
 	printIntLf(*ptrToSpace);
 }

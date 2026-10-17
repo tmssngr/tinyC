@@ -43,9 +43,9 @@ void setCell(i16 row, i16 column, u8 cell) {
 
 u8 getBombCountAround(i16 row, i16 column) {
 	u8 count = 0;
-	for (i16 dr = -1; dr <= 1; dr = dr + 1) {
+	for (i16 dr = -1; dr <= 1; dr += 1) {
 		i16 r = row + dr;
-		for (i16 dc = -1; dc <= 1; dc = dc + 1) {
+		for (i16 dc = -1; dc <= 1; dc += 1) {
 			i16 c = column + dc;
 			if (checkCellBounds(r, c)) {
 				u8 cell = getCell(r, c);
@@ -94,9 +94,9 @@ void printCell(u8 cell, i16 row, i16 column) {
 
 void printField(i16 rowCursor, i16 columnCursor) {
 	setCursor(0i16, 0i16);
-	for (i16 row = 0; row < height; row = row + 1) {
+	for (i16 row = 0; row < height; row += 1) {
 		printChar('|');
-		for (i16 column = 0; column < width; column = column + 1) {
+		for (i16 column = 0; column < width; column += 1) {
 			u8 spacer = getSpacer(row, column, rowCursor, columnCursor);
 			printChar(spacer);
 			u8 cell = getCell(row, column);
@@ -109,7 +109,7 @@ void printField(i16 rowCursor, i16 columnCursor) {
 }
 
 void printSpaces(i16 i) {
-	for (; i > 0; i = i - 1) {
+	for (; i > 0; i -= 1) {
 		printChar('0');
 	}
 }
@@ -122,8 +122,8 @@ u8 getDigitCount(i16 value) {
 	}
 
 	while (true) {
-		count = count + 1;
-		value = value / 10;
+		count += 1;
+		value /= 10;
 		if (value == 0) {
 			break;
 		}
@@ -134,8 +134,8 @@ u8 getDigitCount(i16 value) {
 
 i16 getHiddenCount() {
 	i16 count = 0;
-	for (i16 r = 0; r < height; r = r + 1) {
-		for (i16 c = 0; c < width; c = c + 1) {
+	for (i16 r = 0; r < height; r += 1) {
+		for (i16 c = 0; c < width; c += 1) {
 			u8 cell = getCell(r, c);
 			if ((cell & (maskFlag | maskOpen)) == 0) {
 				count = count + 1;
@@ -164,15 +164,15 @@ i16 abs(i16 a) {
 }
 
 void clearField() {
-	for (i16 r = 0; r < height; r = r + 1) {
-		for (i16 c = 0; c < width; c = c + 1) {
+	for (i16 r = 0; r < height; r += 1) {
+		for (i16 c = 0; c < width; c += 1) {
 			setCell(r, c, 0);
 		}
 	}
 }
 
 void initField(i16 curr_r, i16 curr_c) {
-	for (i16 bombs = bombCount; bombs > 0; bombs = bombs - 1) {
+	for (i16 bombs = bombCount; bombs > 0; bombs -= 1) {
 		i16 row = (random() % height) as i16;
 		i16 column = (random() % width) as i16;
 		if (abs(row    - curr_r) > 1 ||
@@ -187,9 +187,9 @@ void maybeRevealAround(i16 row, i16 column) {
 		return;
 	}
 
-	for (i16 dr = -1; dr <= 1; dr = dr + 1) {
+	for (i16 dr = -1; dr <= 1; dr += 1) {
 		i16 r = row + dr;
-		for (i16 dc = -1; dc <= 1; dc = dc + 1) {
+		for (i16 dc = -1; dc <= 1; dc += 1) {
 			if (dr == 0 && dc == 0) {
 				continue;
 			}

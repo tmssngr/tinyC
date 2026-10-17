@@ -3,9 +3,9 @@
 void printNibble(u8 x) {
 	x = x & 0xf
 	if x > 9 {
-		x = x + ('A' - '9' - 1)
+		x += 'A' - '9' - 1
 	}
-	x = x + '0'
+	x += '0'
 	printChar(x)
 }
 
@@ -16,7 +16,7 @@ void printHex2(u8 x) {
 
 void main() {
 	printString(" x")
-	for u8 i = 0; i < 0x10; i = i + 1 {
+	for u8 i = 0; i < 0x10; i += 1 {
 		if (i & 7) == 0 {
 			printChar(' ')
 		}
@@ -24,7 +24,7 @@ void main() {
 	}
 	printChar('\n')
 
-	for u8 i = 0x20; i < 0x80; i = i + 1 {
+	for u8 i = 0x20; i < 0x80; i += 1 {
 		if (i & 0xF) == 0 {
 			printHex2(i)
 		}

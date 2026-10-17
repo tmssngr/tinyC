@@ -472,10 +472,52 @@ public final class Parser {
 		}
 
 		final Location equalLocation = getLocation();
-		expectType(TokenType.EQUAL, Messages.expected("="));
+		switch (token) {
+		case EQUAL -> {
+			consume();
+			final Expression right = getExpression();
+			return new StmtAssign(left, right, equalLocation);
+		}
+		case PLUS_EQ -> {
+			return handleBinaryAssignment(ExprBinary.Op.Add, left, equalLocation);
+		}
+		case MINUS_EQ -> {
+			return handleBinaryAssignment(ExprBinary.Op.Sub, left, equalLocation);
+		}
+		case STAR_EQ -> {
+			return handleBinaryAssignment(ExprBinary.Op.Multiply, left, equalLocation);
+		}
+		case SLASH_EQ -> {
+			return handleBinaryAssignment(ExprBinary.Op.Divide, left, equalLocation);
+		}
+		case PERCENT_EQ -> {
+			return handleBinaryAssignment(ExprBinary.Op.Mod, left, equalLocation);
+		}
+		case AMP_EQ -> {
+			return handleBinaryAssignment(ExprBinary.Op.And, left, equalLocation);
+		}
+		case PIPE_EQ -> {
+			return handleBinaryAssignment(ExprBinary.Op.Or, left, equalLocation);
+		}
+		case CARET_EQ -> {
+			return handleBinaryAssignment(ExprBinary.Op.Xor, left, equalLocation);
+		}
+		case LT_LT_EQ -> {
+			return handleBinaryAssignment(ExprBinary.Op.ShiftLeft, left, equalLocation);
+		}
+		case GT_GT_EQ -> {
+			return handleBinaryAssignment(ExprBinary.Op.ShiftRight, left, equalLocation);
+		}
+		case null, default -> throw new SyntaxException(Messages.expected("=, +=, -=, ..."), getLocation());
+		}
+	}
+
+	private Statement handleBinaryAssignment(ExprBinary.Op op, Expression left, Location location) {
 		consume();
 		final Expression right = getExpression();
-		return new StmtAssign(left, right, equalLocation);
+		return new StmtAssign(left,
+		                      new ExprBinary(op, left, right, location),
+		                      location);
 	}
 
 	@NotNull

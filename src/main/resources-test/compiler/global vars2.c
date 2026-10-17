@@ -4,7 +4,7 @@ u8 global = 0;
 
 u8 next() {
 	u8 copy = global;
-	global = global + 1;
+	global += 1;
 	return copy;
 }
 
