@@ -254,11 +254,18 @@ public final class ProgramWriter {
 	}
 
 	private void writeCast(ExprCast cast) throws IOException {
-		write("(");
-		write(cast.typeNotNull().toString());
-		write(")");
 		final Expression expression = cast.expression();
 		writeExpressionMaybeInParentesis(expression);
+		write(" as ");
+		final Type type = cast.typeNotNull();
+		if (type.isPointer()) {
+			write("(");
+			write(type.toString());
+			write(")");
+		}
+		else {
+			write(type.toString());
+		}
 	}
 
 	private void writeCall(ExprFuncCall call) throws IOException {

@@ -25,7 +25,7 @@ i64 strlen@@u8(u8* str) {
 }
 
 void printStringLength@@u8@u8(u8* str, u8 length) {
-	printStringLength@@u8@i64(str, (i64)length);
+	printStringLength@@u8@i64(str, length as i64);
 }
 
 void printBoard() {
@@ -34,7 +34,7 @@ void printBoard() {
 	printChar@u8(124);
 	i = 0;
 	for (; i < 30; i = i + 1) {
-		if (board[(i64)i] == 0) {
+		if (board[i as i64] == 0) {
 			printChar@u8(32);
 		}
 		else {
@@ -52,7 +52,7 @@ void main() {
 
 	i = 0;
 	for (; i < 30; i = i + 1) {
-		board[(i64)i] = 0;
+		board[i as i64] = 0;
 	}
 	board[29] = 1;
 	printBoard();
@@ -61,8 +61,8 @@ void main() {
 		pattern = (board[0] << 1) | board[1];
 		j = 1;
 		for (; j < 29; j = j + 1) {
-			pattern = ((pattern << 1) & 7) | board[(i64)(j + 1)];
-			board[(i64)j] = (110 >> pattern) & 1;
+			pattern = ((pattern << 1) & 7) | board[(j + 1) as i64];
+			board[j as i64] = (110 >> pattern) & 1;
 		}
 		printBoard();
 	}

@@ -25,10 +25,10 @@ void printStringLength(u8* str, i64 length) asm {
 }
 
 const ESCAPE = 0x1b;
-const CURSOR_UP = (i16)0xE048;
-const CURSOR_LEFT = (i16)0xE04B;
-const CURSOR_RIGHT = (i16)0xE04D;
-const CURSOR_DOWN = (i16)0xE050;
+const CURSOR_UP = 0xE048 as i16;
+const CURSOR_LEFT = 0xE04B as i16;
+const CURSOR_RIGHT = 0xE04D as i16;
+const CURSOR_DOWN = 0xE050 as i16;
 
 i16 getChar() asm {
 	"sub    rsp, 28h" // 8h to compensate for return address, 20h for calling _getch

@@ -23,7 +23,7 @@ i64 strlen@@u8(u8* str) {
 }
 
 void printStringLength@@u8@u8(u8* str, u8 length) {
-	printStringLength@@u8@i64(str, (i64)length);
+	printStringLength@@u8@i64(str, length as i64);
 }
 
 void printNibble@u8(u8 x) {

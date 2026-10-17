@@ -22,7 +22,7 @@ void printChar@u8(u8 chr) {
 }
 
 void printUint@i16(i16 number) {
-	printUint@i64((i64)number);
+	printUint@i64(number as i64);
 }
 
 void printUint@i64(i64 number) {
@@ -36,13 +36,13 @@ void printUint@i64(i64 number) {
 		pos = pos - 1;
 		remainder = number % 10;
 		number = number / 10;
-		digit = ((u8)remainder) + 48;
-		buffer[(i64)pos] = digit;
+		digit = (remainder as u8) + 48;
+		buffer[pos as i64] = digit;
 		if (number == 0) {
 			break;
 		}
 	}
-	printStringLength@@u8@u8(&buffer[(i64)pos], 20 - pos);
+	printStringLength@@u8@u8(&buffer[pos as i64], 20 - pos);
 }
 
 i64 strlen@@u8(u8* str) {
@@ -56,7 +56,7 @@ i64 strlen@@u8(u8* str) {
 }
 
 void printStringLength@@u8@u8(u8* str, u8 length) {
-	printStringLength@@u8@i64(str, (i64)length);
+	printStringLength@@u8@i64(str, length as i64);
 }
 
 void initRandom@i32(i32 salt) {
@@ -84,7 +84,7 @@ i16 rowColumnToCell@i16@i16(i16 row, i16 column) {
 }
 
 u8 getCell@i16@i16(i16 row, i16 column) {
-	return field[(i64)(rowColumnToCell@i16@i16(row, column))];
+	return field[(rowColumnToCell@i16@i16(row, column)) as i64];
 }
 
 bool isBomb@u8(u8 cell) {
@@ -104,7 +104,7 @@ bool checkCellBounds@i16@i16(i16 row, i16 column) {
 }
 
 void setCell@i16@i16@u8(i16 row, i16 column, u8 cell) {
-	field[(i64)(rowColumnToCell@i16@i16(row, column))] = cell;
+	field[(rowColumnToCell@i16@i16(row, column)) as i64] = cell;
 }
 
 u8 getBombCountAround@i16@i16(i16 row, i16 column) {
@@ -246,8 +246,8 @@ bool printLeft() {
 	i16 bombDigits;
 
 	count = getHiddenCount();
-	leftDigits = (i16)(getDigitCount@i16(count));
-	bombDigits = (i16)(getDigitCount@i16(40));
+	leftDigits = (getDigitCount@i16(count)) as i16;
+	bombDigits = (getDigitCount@i16(40)) as i16;
 	setCursor@i16@i16(20, 6);
 	printSpaces@i16(bombDigits - leftDigits);
 	printUint@i16(count);
@@ -281,8 +281,8 @@ void initField@i16@i16(i16 curr_r, i16 curr_c) {
 
 	bombs = 40;
 	for (; bombs > 0; bombs = bombs - 1) {
-		row = (i16)((random()) % 20);
-		column = (i16)((random()) % 40);
+		row = ((random()) % 20) as i16;
+		column = ((random()) % 40) as i16;
 		if (((abs@i16(row - curr_r)) > 1) || ((abs@i16(column - curr_c)) > 1)) {
 			setCell@i16@i16@u8(row, column, 1);
 		}

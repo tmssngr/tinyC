@@ -486,7 +486,7 @@ public final class Parser {
 	@NotNull
 	private String getTypeString(String identifier) {
 		final StringBuilder typeBuilder = new StringBuilder(identifier);
-		while (isConsume(TokenType.STAR)) {
+		while (isConsume(TokenType.STAR, false)) {
 			typeBuilder.append("*");
 		}
 		return typeBuilder.toString();
@@ -628,6 +628,11 @@ public final class Parser {
 			final Location location = getLocation();
 			final TokenType operationToken = token;
 			consume();
+			if (operationToken == TokenType.AS) {
+				left = getCast(left);
+				continue;
+			}
+
 			final Expression right = getExpression(precedence);
 			left = switch (operationToken) {
 				case PLUS -> new ExprBinary(ExprBinary.Op.Add, left, right, location);
@@ -655,6 +660,25 @@ public final class Parser {
 				default -> throw new IllegalStateException("Unsupported operation " + operationToken);
 			};
 		}
+	}
+
+	@NotNull
+	private Expression getCast(@NotNull Expression left) {
+		final boolean expectBrace = token == TokenType.L_PAREN;
+		if (expectBrace) {
+			consume(false);
+		}
+		final Location location = getLocation();
+		expectType(TokenType.IDENTIFIER, Messages.expected("( or type"));
+		String typeString = getText();
+		consume(false);
+		if (expectBrace) {
+			typeString = getTypeString(typeString);
+			expectType(TokenType.R_PAREN, Messages.expected(")"));
+			consume(false);
+		}
+		left = new ExprCast(typeString, left, null, location);
+		return left;
 	}
 
 	@NotNull
@@ -696,7 +720,13 @@ public final class Parser {
 				consume(false);
 				yield new ExprStringLiteral(text, -1, location);
 			}
-			case L_PAREN -> getExpressionInParenthesis();
+			case L_PAREN -> {
+				consume(false);
+				final Expression expression = getExpression();
+				expectType(TokenType.R_PAREN, Messages.expected(")"));
+				consume(false);
+				yield expression;
+			}
 			case IDENTIFIER -> {
 				final String identifier = getText();
 				consume(false);
@@ -763,38 +793,6 @@ public final class Parser {
 		}
 
 		return new ExprVarAccess(identifier, location);
-	}
-
-	@NotNull
-	private Expression getExpressionInParenthesis() {
-		Utils.assertTrue(token == TokenType.L_PAREN);
-		consume(false);
-		final Location location = getLocation();
-		final Expression primary;
-		if (token == TokenType.IDENTIFIER) {
-			final String identifier = getText();
-			consume(false);
-			if (token == TokenType.R_PAREN) {
-				consume(false);
-				final Expression expression = getExpressionPrimary(getLocation());
-				if (expression != null) {
-					return ExprCast.cast(identifier, expression, location);
-				}
-
-				// just a braced expression like in
-				// if (foo) { }
-				return getExpressionIdentifier(identifier, location);
-			}
-
-			primary = getExpressionPrimaryDot(identifier, location);
-		}
-		else {
-			primary = getExpressionPrimaryNotNull(location);
-		}
-		final Expression expression = getExpression(primary, 0);
-		expectType(TokenType.R_PAREN, Messages.expected(")"));
-		consume(false);
-		return expression;
 	}
 
 	@NotNull
@@ -890,6 +888,7 @@ public final class Parser {
 			case LT_LT, GT_GT -> 9;
 			case PLUS, MINUS -> 10;
 			case STAR, SLASH, PERCENT -> 11;
+			case AS -> 12;
 			default -> 0;
 		};
 	}

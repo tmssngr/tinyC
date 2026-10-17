@@ -6,5 +6,5 @@ void main() {
   }
 
   i16 v = 260;
-  printIntLf((u8)v);
+  printIntLf(v as u8);
 }

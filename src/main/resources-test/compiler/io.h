@@ -11,15 +11,15 @@ void printChar(u8 chr) {
 }
 
 void printUint(u8 number) {
-	printUint((i64)number);
+	printUint(number as i64);
 }
 
 void printUint(i16 number) {
-	printUint((i64)number);
+	printUint(number as i64);
 }
 
 void printUint(i32 number) {
-	printUint((i64)number);
+	printUint(number as i64);
 }
 
 void printUint(i64 number) {
@@ -29,7 +29,7 @@ void printUint(i64 number) {
 		pos = pos - 1;
 		i64 remainder = number % 10;
 		number = number / 10;
-		u8 digit = (u8)remainder + '0';
+		u8 digit = remainder as u8 + '0';
 		buffer[pos] = digit;
 		if (number == 0) {
 			break;
@@ -39,15 +39,15 @@ void printUint(i64 number) {
 }
 
 void printIntLf(bool number) {
-	printIntLf((i64)number);
+	printIntLf(number as i64);
 }
 
 void printIntLf(u8 number) {
-	printIntLf((i64)number);
+	printIntLf(number as i64);
 }
 
 void printIntLf(i16 number) {
-	printIntLf((i64)number);
+	printIntLf(number as i64);
 }
 
 void printIntLf(i64 number) {
@@ -68,7 +68,7 @@ i64 strlen(u8* str) {
 }
 
 void printStringLength(u8* str, u8 length) {
-	printStringLength(str, (i64)length);
+	printStringLength(str, length as i64);
 }
 
 #endif

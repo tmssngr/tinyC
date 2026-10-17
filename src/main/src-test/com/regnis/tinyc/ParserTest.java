@@ -636,7 +636,7 @@ public class ParserTest {
 
 		assertEquals(new StmtLoop(new ExprBoolLiteral(true, locS(0, 6)),
 		                          List.of(
-										  new StmtBreakContinue(true, loc(2, 2))
+				                          new StmtBreakContinue(true, loc(2, 2))
 		                          ),
 		                          List.of(),
 		                          locS(0, 0)),
@@ -658,7 +658,7 @@ public class ParserTest {
 
 		assertEquals(new StmtLoop(new ExprBoolLiteral(true, locS(0, 6)),
 		                          List.of(
-										  new StmtBreakContinue(false, loc(2, 2))
+				                          new StmtBreakContinue(false, loc(2, 2))
 		                          ),
 		                          List.of(),
 		                          locS(0, 0)),
@@ -1083,17 +1083,52 @@ public class ParserTest {
 
 	@Test
 	public void testCast() {
-		assertEquals(assignStmt(new ExprVarAccess("b", locS(0, 0)),
-		                        ExprCast.cast("u8", new ExprVarAccess("a", locS(0, 8)),
-		                                      locS(0, 5)),
+		assertEquals(assignStmt(new ExprVarAccess("c", locS(0, 0)),
+		                        new ExprBinary(ExprBinary.Op.Sub,
+		                                       new ExprVarAccess("a", locS(0, 5)),
+		                                       new ExprVarAccess("b", locS(0, 10)),
+		                                       locS(0, 8)),
 		                        locS(0, 2)),
-		             parseStatement("b = (u8)a;"));
+		             parseStatement("c = (a) - b"));
+		assertEquals(assignStmt(new ExprVarAccess("result", locS(0, 0)),
+		                        new ExprBinary(ExprBinary.Op.Multiply,
+		                                       ExprCast.cast("u8",
+		                                                     new ExprVarAccess("ptr", locS(0, 9)),
+		                                                     locS(0, 16)),
+		                                       intLit(2, locS(0, 19)),
+		                                       locS(0, 18)),
+		                        locS(0, 7)),
+		             parseStatement("result = ptr as u8*2"));
+		assertEquals(assignStmt(new ExprVarAccess("result", locS(0, 0)),
+		                        ExprCast.cast("u8*",
+		                                      new ExprVarAccess("ptr", locS(0, 9)),
+		                                      locS(0, 17)),
+		                        locS(0, 7)),
+		             parseStatement("result = ptr as (u8*)"));
+		assertEquals(new StmtVarDeclaration("u8", "chosen",
+		                                    ExprCast.cast("u8",
+		                                                  new ExprBinary(ExprBinary.Op.Mod,
+		                                                                 new ExprFuncCall("random16", List.of(), locS(0, 13)),
+		                                                                 ExprCast.cast("i16",
+		                                                                               new ExprVarAccess("emptyCount", locS(0, 26)),
+		                                                                               locS(0, 40)),
+		                                                                 locS(0, 24)),
+		                                                  locS(0, 48)),
+		                                    locS(0, 0)),
+		             parseStatement("u8 chosen = (random16() % emptyCount as i16) as u8;"));
+	}
 
-		assertEquals(assignStmt(new ExprVarAccess("b", locS(0, 0)),
-		                        ExprCast.cast("u8", new ExprVarAccess("a", locS(0, 8)),
-		                                      locS(0, 5)),
-		                        locS(0, 2)),
-		             parseStatement("b = (u8)a"));
+	@Test
+	public void testGroupedIdentifierBeforeBinaryOperator() {
+		for (Map.Entry<ExprBinary.Op, String> entry : Map.of(ExprBinary.Op.Sub, "-",
+		                                                     ExprBinary.Op.Multiply, "*",
+		                                                     ExprBinary.Op.And, "&").entrySet()) {
+			assertEquals(assignStmt(new ExprVarAccess("result", locS(0, 0)),
+			                        new ExprBinary(entry.getKey(), new ExprVarAccess("a", locS(0, 10)),
+			                                       new ExprVarAccess("b", locS(0, 15)), locS(0, 13)),
+			                        locS(0, 7)),
+			             parseStatement("result = (a) " + entry.getValue() + " b;"));
+		}
 	}
 
 	@Test
@@ -1418,9 +1453,9 @@ public class ParserTest {
 				""";
 		assertEquals(new Program(List.of(),
 		                         List.of(
-										 new StmtVarDeclaration("u8", "a",
-										                        new ExprIntLiteral(3, Type.U8, loc(10, 11)),
-										                        loc(10, 4))
+				                         new StmtVarDeclaration("u8", "a",
+				                                                new ExprIntLiteral(3, Type.U8, loc(10, 11)),
+				                                                loc(10, 4))
 		                         ),
 		                         List.of(),
 		                         List.of(),
@@ -1471,13 +1506,13 @@ public class ParserTest {
 				                                       if compact {
 				                                         if show {
 				                                           i16 x = columnToX(column)
-				                                           setCursor((i16)row, x)
+				                                           setCursor(row, x)
 				                                         }
 				                                         return
 				                                       }
 
 				                                       i16 x = columnToX(column)
-				                                       setCursor((i16)row, x - 1)
+				                                       setCursor(row, x - 1)
 				                                     }""", Set.of());
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
@@ -1494,10 +1529,11 @@ public class ParserTest {
 												                                                           new ExprVarAccess("column", loc(5, 24))
 										                                                           ), loc(5, 14)),
 										                                                           loc(5, 6)),
-										                                    new StmtExpr(new ExprFuncCall("setCursor", List.of(
-												                                    ExprCast.cast("i16", new ExprVarAccess("row", loc(6, 21)), loc(6, 17)),
-												                                    new ExprVarAccess("x", loc(6, 26))
-										                                    ), loc(6, 6)))
+										                                    new StmtExpr(new ExprFuncCall("setCursor",
+										                                                                  List.of(
+												                                                                  new ExprVarAccess("row", loc(6, 16)),
+												                                                                  new ExprVarAccess("x", loc(6, 21))
+										                                                                  ), loc(6, 6)))
 								                                    ), List.of(), loc(4, 4)),
 								                                    new StmtReturn(null, loc(8, 4))
 						                                    ),
@@ -1509,14 +1545,13 @@ public class ParserTest {
 						                                                                 ),
 						                                                                 loc(11, 10)),
 						                                                loc(11, 2)),
-						                         new StmtExpr(new ExprFuncCall("setCursor", List.of(
-								                         ExprCast.cast("i16",
-								                                       new ExprVarAccess("row", loc(12, 17)),
-								                                       loc(12, 13)),
-								                         new ExprBinary(ExprBinary.Op.Sub,
-								                                        new ExprVarAccess("x", loc(12, 22)),
-								                                        intLit(1, loc(12, 26)),
-								                                        loc(12, 24))
+						                         new StmtExpr(new ExprFuncCall("setCursor",
+						                                                       List.of(
+								                                                       new ExprVarAccess("row", loc(12, 12)),
+								                                                       new ExprBinary(ExprBinary.Op.Sub,
+								                                                                      new ExprVarAccess("x", loc(12, 17)),
+								                                                                      intLit(1, loc(12, 21)),
+								                                                                      loc(12, 19))
 						                         ), loc(12, 2)))
 				                         ), List.of(), loc(2, 0))
 		                         ),

@@ -249,7 +249,7 @@ _printStringLength@@u8@u8:
 _unusedArgs@u8@bool@u8@u8:
         ; reserve space for local variables
         sub rsp, 16
-        ; 9:10 return (i64)
+        ; 9:14 return (i64)
         ; cast t.4(i64), c(u8)
         lea rax, [rsp+40]
         mov bl, [rax]

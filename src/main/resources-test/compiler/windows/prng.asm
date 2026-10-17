@@ -505,7 +505,7 @@ _random:
 _randomU8:
         ; reserve space for local variables
         sub rsp, 16
-        ; 19:10 return (u8)
+        ; 19:21 return (u8)
         ; call t.1 = random[] -> i32
         sub rsp, 8
           call _random

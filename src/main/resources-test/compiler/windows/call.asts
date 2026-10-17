@@ -18,17 +18,17 @@ void printUint@i64(i64 number) {
 		pos = pos - 1;
 		remainder = number % 10;
 		number = number / 10;
-		digit = ((u8)remainder) + 48;
-		buffer[(i64)pos] = digit;
+		digit = (remainder as u8) + 48;
+		buffer[pos as i64] = digit;
 		if (number == 0) {
 			break;
 		}
 	}
-	printStringLength@@u8@u8(&buffer[(i64)pos], 20 - pos);
+	printStringLength@@u8@u8(&buffer[pos as i64], 20 - pos);
 }
 
 void printIntLf@u8(u8 number) {
-	printIntLf@i64((i64)number);
+	printIntLf@i64(number as i64);
 }
 
 void printIntLf@i64(i64 number) {
@@ -41,7 +41,7 @@ void printIntLf@i64(i64 number) {
 }
 
 void printStringLength@@u8@u8(u8* str, u8 length) {
-	printStringLength@@u8@i64(str, (i64)length);
+	printStringLength@@u8@i64(str, length as i64);
 }
 
 void main() {

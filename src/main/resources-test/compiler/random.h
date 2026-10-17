@@ -16,5 +16,5 @@ i32 random() {
 }
 
 u8 randomU8() {
-	return (u8)random();
+	return random() as u8
 }

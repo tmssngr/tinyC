@@ -200,6 +200,7 @@ public final class Lexer {
 			case "#endif" -> TokenType.HASH_ENDIF;
 			case "asm" -> TokenType.ASM;
 			case "const" -> TokenType.CONST;
+			case "as" -> TokenType.AS;
 			default -> TokenType.IDENTIFIER;
 		};
 	}

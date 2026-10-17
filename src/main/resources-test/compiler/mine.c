@@ -148,8 +148,8 @@ i16 getHiddenCount() {
 bool printLeft() {
 	i16 count = getHiddenCount();
 
-	i16 leftDigits = (i16)getDigitCount(count);
-	i16 bombDigits = (i16)getDigitCount(bombCount);
+	i16 leftDigits = getDigitCount(count) as i16
+	i16 bombDigits = getDigitCount(bombCount) as i16
 	setCursor(height, 6);
 	printSpaces(bombDigits - leftDigits);
 	printUint(count);
@@ -173,8 +173,8 @@ void clearField() {
 
 void initField(i16 curr_r, i16 curr_c) {
 	for (i16 bombs = bombCount; bombs > 0; bombs = bombs - 1) {
-		i16 row = (i16)(random() % height);
-		i16 column = (i16)(random() % width);
+		i16 row = (random() % height) as i16;
+		i16 column = (random() % width) as i16;
 		if (abs(row    - curr_r) > 1 ||
 		    abs(column - curr_c) > 1) {
 			setCell(row, column, maskBomb);
@@ -214,8 +214,8 @@ void main() {
 	initRandom(7439742);
 	bool needsInitialize = true;
 	clearField();
-	i16 curr_c = (i16)(width / 2);
-	i16 curr_r = (i16)(height / 2);
+	i16 curr_c = (width / 2) as i16
+	i16 curr_r = (height / 2) as i16
 	setCursor(height, 0);
 	printString("Left:");
 	while (true) {
