@@ -38,7 +38,11 @@ void printUint(i64 number) {
 	printStringLength(&buffer[pos], 20 - pos);
 }
 
-void printIntLf(bool number) {
+void printIntLf(bool value) {
+	u8 number = 0
+	if value {
+		number = 1
+	}
 	printIntLf(number as i64);
 }
 

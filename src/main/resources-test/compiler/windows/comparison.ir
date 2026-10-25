@@ -56,23 +56,30 @@ printUint@i64_ret:
 
 printIntLf@bool:
  Local variables
-	arg 0: number (bool/1)
-	var 1: t.1 (i64/8)
+	arg 0: value (bool/1)
+	var 1: number (u8/1)
+	var 2: t.2 (i64/8)
 
-	cast t.1(i64), number(bool)
-	call printIntLf@i64[t.1]
+	const number, 0
+	; 43:2 if value
+	branch value equals 0: if_3_end, if_3_then
+if_3_then:
+	const number, 1
+if_3_end:
+	cast t.2(i64), number(u8)
+	call printIntLf@i64[t.2]
 printIntLf@bool_ret:
 
 printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
 
-	; 54:2 if number < 0
-	branch number gteq 0: if_3_end, if_3_then
-if_3_then:
+	; 58:2 if number < 0
+	branch number gteq 0: if_4_end, if_4_then
+if_4_then:
 	call printChar@u8[45]
 	neg number, number
-if_3_end:
+if_4_end:
 	call printUint@i64[number]
 	call printChar@u8[10]
 printIntLf@i64_ret:
@@ -84,17 +91,17 @@ strlen@@u8:
 	var 2: t.2 (u8/1)
 
 	const length, 0
-	; 64:2 for *str != 0
-for_4:
+	; 68:2 for *str != 0
+for_5:
 	load t.2, [str]
-	branch t.2 equals 0: for_4_break, for_4_body
-for_4_body:
+	branch t.2 equals 0: for_5_break, for_5_body
+for_5_body:
 	add length, 1
-for_4_continue:
+for_5_continue:
 	add str, 1
-	jump for_4
-for_4_break:
-	; 67:9 return length
+	jump for_5
+for_5_break:
+	; 71:9 return length
 	ret length
 	jump strlen@@u8_ret
 strlen@@u8_ret:

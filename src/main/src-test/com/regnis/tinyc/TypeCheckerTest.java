@@ -134,6 +134,58 @@ public class TypeCheckerTest {
 				               i16 a = 1;
 				               u8 b = a;
 				             }""");
+		testIllegal(Messages.cantCastFromTo(Type.I16, Type.BOOL), 2, 2,
+		            """
+				            void main() {
+				              i16 a = 1
+				              bool b = a
+				            }""");
+		testIllegal(Messages.cantCastFromTo(Type.BOOL, Type.I16), 2, 2,
+		            """
+				            void main() {
+				              bool a = true
+				              i16 b = a
+				            }""");
+		testIllegal(Messages.cantCastFromTo(Type.I16, Type.BOOL), 2, 16,
+		            """
+				            void main() {
+				              i16 a = 1
+				              bool b = a as bool
+				            }""");
+		testIllegal(Messages.cantCastFromTo(Type.BOOL, Type.I16), 2, 15,
+		            """
+				            void main() {
+				              bool a = true
+				              i16 b = a as i16
+				            }""");
+		testIllegal(Messages.cantCastFromTo(Type.BOOL, Type.I16), 3, 6,
+		            """
+				             void foo(i16 a) {
+				             }
+				             void main() {
+				               foo(true)
+				             }""");
+		testIllegal(Messages.cantCastFromTo(Type.U8, Type.BOOL), 3, 6,
+		            """
+				             void foo(bool a) {
+				             }
+				             void main() {
+				               foo(0)
+				             }""");
+		testIllegal(Messages.cantCastFromTo(Type.BOOL, Type.I16), 3, 14,
+		            """
+				             void foo(i16 a) {
+				             }
+				             void main() {
+				               foo(true as i16)
+				             }""");
+		testIllegal(Messages.cantCastFromTo(Type.U8, Type.BOOL), 3, 11,
+		            """
+				             void foo(bool a) {
+				             }
+				             void main() {
+				               foo(0 as bool)
+				             }""");
 	}
 
 	@Test
@@ -229,7 +281,7 @@ public class TypeCheckerTest {
 		                     "u8  diff = ptr1 - ptr2;");
 		testIllegalStatement(Messages.operationNotSupportedForTypes(ExprBinary.Op.Sub, Type.U8, Type.pointer(Type.U8)), 13,
 		                     "u8  diff = 1 - ptr2;");
-		testIllegalStatement(Messages.needExplicitCast(Type.pointer(Type.U8), Type.U8), 16,
+		testIllegalStatement(Messages.cantCastFromTo(Type.pointer(Type.U8), Type.U8), 0,
 		                     "u8  prev = ptr1 - 1;");
 		testIllegalStatement(Messages.operationNotSupportedForTypes(ExprBinary.Op.Multiply, Type.pointer(Type.U8), Type.U8), 16,
 		                     "u8* prev = ptr1 * 1;");

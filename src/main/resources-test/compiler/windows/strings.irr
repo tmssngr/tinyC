@@ -113,7 +113,7 @@ strlen@@u8:
 	var 6: str.2 (u8*/8)
 
 	const length.1, 0
-	; 64:2 for *str != 0
+	; 68:2 for *str != 0
 	move str.1, str
 	move length.2, length.1
 	jump for_4
@@ -127,7 +127,7 @@ for_4_body:
 for_4:
 	load t.2.1, [str.1]
 	branch t.2.1 notequals 0: for_4_body, for_4_break
-	; 67:9 return length
+	; 71:9 return length
 	ret length.2
 
 printStringLength@@u8@u8:

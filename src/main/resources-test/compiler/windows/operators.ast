@@ -32,7 +32,13 @@ void printUint@i64(i64 number) {
 	printStringLength@@u8@u8(&buffer[pos as i64], 20 - pos);
 }
 
-void printIntLf@bool(bool number) {
+void printIntLf@bool(bool value) {
+	u8 number;
+
+	number = 0;
+	if (value) {
+		number = 1;
+	}
 	printIntLf@i64(number as i64);
 }
 

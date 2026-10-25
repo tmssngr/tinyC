@@ -23,32 +23,39 @@ digraph program {
 		BasicBlock_2_printUint_Ai64__ret [label="printUint_Ai64__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printIntLf_Abool {
-		BasicBlock_3_printIntLf_Abool [label="printIntLf_Abool\lcast t_d1_d1(i64), number(bool)\lcall printIntLf_Ai64[t_d1_d1]\ljump printIntLf_Abool__ret",shape=box];
-		BasicBlock_3_printIntLf_Abool -> BasicBlock_3_printIntLf_Abool__ret;
+		BasicBlock_3_printIntLf_Abool [label="printIntLf_Abool\lconst number_d1, 0\lbranch value equals 0: printIntLf_Abool_dno__critical__edge__4, if__3__then\ljump if__3__then",shape=box];
+		BasicBlock_3_printIntLf_Abool -> BasicBlock_3_printIntLf_Abool_dno__critical__edge__4 [label="(number.1,number.3)"];
+		BasicBlock_3_printIntLf_Abool -> BasicBlock_3_if__3__then [label="(number.1)"];
+		BasicBlock_3_printIntLf_Abool_dno__critical__edge__4 [label="printIntLf_Abool_dno__critical__edge__4\ljump if__3__end",shape=box];
+		BasicBlock_3_printIntLf_Abool_dno__critical__edge__4 -> BasicBlock_3_if__3__end [label="(number.1,number.3)"];
+		BasicBlock_3_if__3__then [label="if__3__then\lconst number_d3, 1\ljump if__3__end",shape=box];
+		BasicBlock_3_if__3__then -> BasicBlock_3_if__3__end [label="(number.1,number.3)"];
+		BasicBlock_3_if__3__end [label="if__3__end\lphi number_d2=[number_d1, number_d3]\lcast t_d2_d1(i64), number_d2(u8)\lcall printIntLf_Ai64[t_d2_d1]\ljump printIntLf_Abool__ret",shape=box];
+		BasicBlock_3_if__3__end -> BasicBlock_3_printIntLf_Abool__ret;
 		BasicBlock_3_printIntLf_Abool__ret [label="printIntLf_Abool__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printIntLf_Ai64 {
-		BasicBlock_4_printIntLf_Ai64 [label="printIntLf_Ai64\lbranch number gteq 0: printIntLf_Ai64_dno__critical__edge__4, if__3__then\ljump if__3__then",shape=box];
+		BasicBlock_4_printIntLf_Ai64 [label="printIntLf_Ai64\lbranch number gteq 0: printIntLf_Ai64_dno__critical__edge__4, if__4__then\ljump if__4__then",shape=box];
 		BasicBlock_4_printIntLf_Ai64 -> BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 [label="(number,number.2)"];
-		BasicBlock_4_printIntLf_Ai64 -> BasicBlock_4_if__3__then [label="(number)"];
-		BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 [label="printIntLf_Ai64_dno__critical__edge__4\ljump if__3__end",shape=box];
-		BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 -> BasicBlock_4_if__3__end [label="(number,number.2)"];
-		BasicBlock_4_if__3__then [label="if__3__then\lcall printChar_Au8[45]\lneg number_d2, number\ljump if__3__end",shape=box];
-		BasicBlock_4_if__3__then -> BasicBlock_4_if__3__end [label="(number,number.2)"];
-		BasicBlock_4_if__3__end [label="if__3__end\lphi number_d1=[number, number_d2]\lcall printUint_Ai64[number_d1]\lcall printChar_Au8[10]\ljump printIntLf_Ai64__ret",shape=box];
-		BasicBlock_4_if__3__end -> BasicBlock_4_printIntLf_Ai64__ret;
+		BasicBlock_4_printIntLf_Ai64 -> BasicBlock_4_if__4__then [label="(number)"];
+		BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 [label="printIntLf_Ai64_dno__critical__edge__4\ljump if__4__end",shape=box];
+		BasicBlock_4_printIntLf_Ai64_dno__critical__edge__4 -> BasicBlock_4_if__4__end [label="(number,number.2)"];
+		BasicBlock_4_if__4__then [label="if__4__then\lcall printChar_Au8[45]\lneg number_d2, number\ljump if__4__end",shape=box];
+		BasicBlock_4_if__4__then -> BasicBlock_4_if__4__end [label="(number,number.2)"];
+		BasicBlock_4_if__4__end [label="if__4__end\lphi number_d1=[number, number_d2]\lcall printUint_Ai64[number_d1]\lcall printChar_Au8[10]\ljump printIntLf_Ai64__ret",shape=box];
+		BasicBlock_4_if__4__end -> BasicBlock_4_printIntLf_Ai64__ret;
 		BasicBlock_4_printIntLf_Ai64__ret [label="printIntLf_Ai64__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_strlen_A_Au8 {
-		BasicBlock_5_strlen_A_Au8 [label="strlen_A_Au8\lconst length_d1, 0\ljump for__4",shape=box];
-		BasicBlock_5_strlen_A_Au8 -> BasicBlock_5_for__4 [label="(length.1,length.3,str,str.2)"];
-		BasicBlock_5_for__4__body [label="for__4__body\lmove length_d3, length_d2\ladd length_d3, 1\lmove str_d2, str_d1\ladd str_d2, 1\ljump for__4",shape=box];
-		BasicBlock_5_for__4__body -> BasicBlock_5_for__4 [label="(length.1,length.3,str,str.2)"];
-		BasicBlock_5_for__4 [label="for__4\lphi str_d1=[str, str_d2]\lphi length_d2=[length_d1, length_d3]\lload t_d2_d1, [str_d1]\lbranch t_d2_d1 equals 0: for__4__break, for__4__body\ljump for__4__body",shape=box];
-		BasicBlock_5_for__4 -> BasicBlock_5_for__4__break [label="(length.2)"];
-		BasicBlock_5_for__4 -> BasicBlock_5_for__4__body [label="(length.1,length.2,str,str.1)"];
-		BasicBlock_5_for__4__break [label="for__4__break\lret length_d2\ljump strlen_A_Au8__ret",shape=box];
-		BasicBlock_5_for__4__break -> BasicBlock_5_strlen_A_Au8__ret;
+		BasicBlock_5_strlen_A_Au8 [label="strlen_A_Au8\lconst length_d1, 0\ljump for__5",shape=box];
+		BasicBlock_5_strlen_A_Au8 -> BasicBlock_5_for__5 [label="(length.1,length.3,str,str.2)"];
+		BasicBlock_5_for__5__body [label="for__5__body\lmove length_d3, length_d2\ladd length_d3, 1\lmove str_d2, str_d1\ladd str_d2, 1\ljump for__5",shape=box];
+		BasicBlock_5_for__5__body -> BasicBlock_5_for__5 [label="(length.1,length.3,str,str.2)"];
+		BasicBlock_5_for__5 [label="for__5\lphi str_d1=[str, str_d2]\lphi length_d2=[length_d1, length_d3]\lload t_d2_d1, [str_d1]\lbranch t_d2_d1 equals 0: for__5__break, for__5__body\ljump for__5__body",shape=box];
+		BasicBlock_5_for__5 -> BasicBlock_5_for__5__break [label="(length.2)"];
+		BasicBlock_5_for__5 -> BasicBlock_5_for__5__body [label="(length.1,length.2,str,str.1)"];
+		BasicBlock_5_for__5__break [label="for__5__break\lret length_d2\ljump strlen_A_Au8__ret",shape=box];
+		BasicBlock_5_for__5__break -> BasicBlock_5_strlen_A_Au8__ret;
 		BasicBlock_5_strlen_A_Au8__ret [label="strlen_A_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printStringLength_A_Au8_Au8 {

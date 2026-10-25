@@ -71,11 +71,23 @@ while_1:
 
 printIntLf@bool:
  Local variables
-	arg 0: number (bool/1)
-	var 1: t.1.1 (i64/8)
+	arg 0: value (bool/1)
+	var 1: number.1 (u8/1)
+	var 2: number.2 (u8/1)
+	var 3: number.3 (u8/1)
+	var 4: t.2.1 (i64/8)
 
-	cast t.1.1(i64), number(bool)
-	call printIntLf@i64[t.1.1]
+	const number.1, 0
+	; 43:2 if value
+	branch value notequals 0: if_3_then, printIntLf@bool.no_critical_edge_4
+	move number.2, number.1
+	jump if_3_end
+if_3_then:
+	const number.3, 1
+	move number.2, number.3
+if_3_end:
+	cast t.2.1(i64), number.2(u8)
+	call printIntLf@i64[t.2.1]
 
 printIntLf@i64:
  Local variables
@@ -83,14 +95,14 @@ printIntLf@i64:
 	var 1: number.1 (i64/8)
 	var 2: number.2 (i64/8)
 
-	branch number lt 0: if_3_then, printIntLf@i64.no_critical_edge_4
+	branch number lt 0: if_4_then, printIntLf@i64.no_critical_edge_4
 	move number.1, number
-	jump if_3_end
-if_3_then:
+	jump if_4_end
+if_4_then:
 	call printChar@u8[45]
 	neg number.2, number
 	move number.1, number.2
-if_3_end:
+if_4_end:
 	call printUint@i64[number.1]
 	call printChar@u8[10]
 
@@ -105,21 +117,21 @@ strlen@@u8:
 	var 6: str.2 (u8*/8)
 
 	const length.1, 0
-	; 64:2 for *str != 0
+	; 68:2 for *str != 0
 	move str.1, str
 	move length.2, length.1
-	jump for_4
-for_4_body:
+	jump for_5
+for_5_body:
 	move length.3, length.2
 	add length.3, 1
 	move str.2, str.1
 	add str.2, 1
 	move str.1, str.2
 	move length.2, length.3
-for_4:
+for_5:
 	load t.2.1, [str.1]
-	branch t.2.1 notequals 0: for_4_body, for_4_break
-	; 67:9 return length
+	branch t.2.1 notequals 0: for_5_body, for_5_break
+	; 71:9 return length
 	ret length.2
 
 printStringLength@@u8@u8:

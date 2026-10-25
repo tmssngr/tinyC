@@ -268,19 +268,49 @@ _while_1:
         ret
 
         ; void printIntLf@bool
-        ;   rsp+24: arg number
-        ;   rsp+0: var t.1.1
+        ;   rsp+24: arg value
+        ;   rsp+0: var number.1
+        ;   rsp+1: var number.2
+        ;   rsp+2: var number.3
+        ;   rsp+8: var t.2.1
 _printIntLf@bool:
         ; reserve space for local variables
         sub rsp, 16
-        ; cast t.1.1(i64), number(bool)
+        ; const number.1, 0
+        mov al, 0
+        lea rbx, [rsp+0]
+        mov [rbx], al
+        ; 43:2 if value
+        ; branch value notequals 0: if_3_then, printIntLf@bool.no_critical_edge_4
         lea rax, [rsp+24]
         mov bl, [rax]
+        cmp bl, 0
+        jne _if_3_then
+        ; move number.2, number.1
+        lea rax, [rsp+0]
+        mov bl, [rax]
+        lea rax, [rsp+1]
+        mov [rax], bl
+        jmp _if_3_end
+_if_3_then:
+        ; const number.3, 1
+        mov al, 1
+        lea rbx, [rsp+2]
+        mov [rbx], al
+        ; move number.2, number.3
+        lea rax, [rsp+2]
+        mov bl, [rax]
+        lea rax, [rsp+1]
+        mov [rax], bl
+_if_3_end:
+        ; cast t.2.1(i64), number.2(u8)
+        lea rax, [rsp+1]
+        mov bl, [rax]
         movzx rbx, bl
-        lea rax, [rsp+0]
+        lea rax, [rsp+8]
         mov [rax], rbx
-        ; call printIntLf@i64[t.1.1]
-        lea rax, [rsp+0]
+        ; call printIntLf@i64[t.2.1]
+        lea rax, [rsp+8]
         mov rbx, [rax]
         push rbx
           call _printIntLf@i64
@@ -296,18 +326,18 @@ _printIntLf@bool:
 _printIntLf@i64:
         ; reserve space for local variables
         sub rsp, 16
-        ; branch number lt 0: if_3_then, printIntLf@i64.no_critical_edge_4
+        ; branch number lt 0: if_4_then, printIntLf@i64.no_critical_edge_4
         lea rax, [rsp+24]
         mov rbx, [rax]
         cmp rbx, 0
-        jl _if_3_then
+        jl _if_4_then
         ; move number.1, number
         lea rax, [rsp+24]
         mov rbx, [rax]
         lea rax, [rsp+0]
         mov [rax], rbx
-        jmp _if_3_end
-_if_3_then:
+        jmp _if_4_end
+_if_4_then:
         ; call printChar@u8[45]
         mov  rax, 45
         push rax
@@ -324,7 +354,7 @@ _if_3_then:
         mov rbx, [rax]
         lea rax, [rsp+0]
         mov [rax], rbx
-_if_3_end:
+_if_4_end:
         ; call printUint@i64[number.1]
         lea rax, [rsp+0]
         mov rbx, [rax]
@@ -355,7 +385,7 @@ _strlen@@u8:
         mov rax, 0
         lea rbx, [rsp+0]
         mov [rbx], rax
-        ; 64:2 for *str != 0
+        ; 68:2 for *str != 0
         ; move str.1, str
         lea rax, [rsp+56]
         mov rbx, [rax]
@@ -366,8 +396,8 @@ _strlen@@u8:
         mov rbx, [rax]
         lea rax, [rsp+16]
         mov [rax], rbx
-        jmp _for_4
-_for_4_body:
+        jmp _for_5
+_for_5_body:
         ; move length.3, length.2
         lea rax, [rsp+16]
         mov rbx, [rax]
@@ -400,19 +430,19 @@ _for_4_body:
         mov rbx, [rax]
         lea rax, [rsp+16]
         mov [rax], rbx
-_for_4:
+_for_5:
         ; load t.2.1, [str.1]
         lea rax, [rsp+8]
         mov rbx, [rax]
         mov al, [rbx]
         lea rbx, [rsp+24]
         mov [rbx], al
-        ; branch t.2.1 notequals 0: for_4_body, for_4_break
+        ; branch t.2.1 notequals 0: for_5_body, for_5_break
         lea rax, [rsp+24]
         mov bl, [rax]
         cmp bl, 0
-        jne _for_4_body
-        ; 67:9 return length
+        jne _for_5_body
+        ; 71:9 return length
         ; ret length.2
         lea rax, [rsp+16]
         mov rbx, [rax]

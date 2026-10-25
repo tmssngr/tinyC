@@ -364,15 +364,15 @@ public final class TypeChecker {
 			return expression;
 		}
 
-		if (expression instanceof ExprIntLiteral literal) {
-			final int value = literal.value();
-			if (value < expectedType.min() || value > expectedType.max()) {
-				throw new SyntaxException(Messages.integerLiteralDoesNotFit(value, expectedType), literal.location());
+		if (expectedType.isInt() && type.isInt()) {
+			if (expression instanceof ExprIntLiteral literal) {
+				final int value = literal.value();
+				if (value < expectedType.min() || value > expectedType.max()) {
+					throw new SyntaxException(Messages.integerLiteralDoesNotFit(value, expectedType), literal.location());
+				}
+				return new ExprIntLiteral(value, expectedType, literal.location());
 			}
-			return new ExprIntLiteral(value, expectedType, literal.location());
-		}
 
-		if (expectedType.isInt()) {
 			throw new SyntaxException(Messages.needExplicitCast(type, expectedType), expression.location());
 		}
 
@@ -386,7 +386,7 @@ public final class TypeChecker {
 			return expression;
 		}
 
-		if (type.isPointer() != expressionType.isPointer()) {
+		if (!canBeCast(type, expressionType)) {
 			throw new SyntaxException(Messages.cantCastFromTo(expressionType, type), location);
 		}
 
@@ -450,7 +450,7 @@ public final class TypeChecker {
 		final Type type = getType(typeString, location);
 		final Expression expression = processExpression(cast.expression());
 		final Type expressionType = expression.typeNotNull();
-		if (type.isPointer() != expressionType.isPointer()) {
+		if (!canBeCast(type, expressionType)) {
 			throw new SyntaxException(Messages.cantCastFromTo(expressionType, type), location);
 		}
 
@@ -460,6 +460,11 @@ public final class TypeChecker {
 		}
 
 		return new ExprCast(typeString, expression, type, location);
+	}
+
+	private boolean canBeCast(Type type1, Type type2) {
+		return type1.isPointer() == type2.isPointer()
+		       && type1.isInt() == type2.isInt();
 	}
 
 	@NotNull

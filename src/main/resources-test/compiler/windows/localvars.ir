@@ -58,7 +58,7 @@ printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
 
-	; 54:2 if number < 0
+	; 58:2 if number < 0
 	branch number gteq 0: if_3_end, if_3_then
 if_3_then:
 	call printChar@u8[45]

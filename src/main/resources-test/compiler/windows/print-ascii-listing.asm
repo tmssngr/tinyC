@@ -86,7 +86,7 @@ _strlen@@u8:
         mov rax, 0
         lea rbx, [rsp+0]
         mov [rbx], rax
-        ; 64:2 for *str != 0
+        ; 68:2 for *str != 0
         ; move str.1, str
         lea rax, [rsp+56]
         mov rbx, [rax]
@@ -143,7 +143,7 @@ _for_1:
         mov bl, [rax]
         cmp bl, 0
         jne _for_1_body
-        ; 67:9 return length
+        ; 71:9 return length
         ; ret length.2
         lea rax, [rsp+16]
         mov rbx, [rax]
