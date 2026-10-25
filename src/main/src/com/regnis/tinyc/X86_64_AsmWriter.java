@@ -346,8 +346,8 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 	}
 
 	private int getNonVolatileRegistersToPushPop(List<IRInstruction> instructions) {
-		final int maxReg = IRUtils.getMaxReg(instructions);
-		return Math.max(0, maxReg - FIRST_NON_VOLATILE_REGISTER);
+		final int maxReg = IRUtils.getMaxUsedReg(instructions, null);
+		return Math.max(0, maxReg + 1 - FIRST_NON_VOLATILE_REGISTER);
 	}
 
 	private void writeVarOffsetAsComments(List<IRVarDef> localVars) throws IOException {
