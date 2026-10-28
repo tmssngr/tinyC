@@ -590,7 +590,7 @@ animateSlide:
 	const frame.1{r8}, 1
 	jump for_51
 for_51_body:
-	const remaining.1{r10}, 8
+	const remaining.1{r10}, 4
 	sub remaining.2{r10}, frame.2{r8}
 	call clearBoard[]
 	const source.1{r12}, 0
@@ -629,12 +629,12 @@ if_53_end:
 	mul t.24.1{r5}, remaining.2{r10}
 	mul t.25.1{r0}, frame.2{r8}
 	add t.23.1{r5}, t.25.1{r0}
-	shiftright row.1{r5}, 3
+	shiftright row.1{r5}, 2
 	mul t.27.1{r2}, remaining.2{r10}
 	mul t.28.1{r12}, frame.2{r8}
 	add t.26.1{r2}, t.28.1{r12}
 	move column.1{r12}, t.26.1{r2}
-	shiftright column.1{r12}, 3
+	shiftright column.1{r12}, 2
 	move t.29.1{r0}, row.1{r5}
 	add t.29.1{r0}, 3
 	move t.30.1{r2}, column.1{r12}
@@ -650,7 +650,7 @@ for_52:
 	call waitFrame[]
 	add frame.4{r8}, 1
 for_51:
-	branch frame.2{r8} lteq 8: for_51_body
+	branch frame.2{r8} lteq 4: for_51_body
 	call drawBoard[]
 
 drawScore:

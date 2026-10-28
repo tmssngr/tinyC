@@ -3,8 +3,10 @@
 
 #ifdef Z8
 const CLEAR_SCREEN = true;
+const ANIMATION_STEPS = 4;
 #else
 const CLEAR_SCREEN = false;
+const ANIMATION_STEPS = 8;
 #endif
 
 const BOARD_SIZE = 4;
@@ -19,7 +21,6 @@ const TILE_ROW_STEP = TILE_HEIGHT + 1;
 const BOARD_WIDTH = BOARD_SIZE * TILE_COLUMN_STEP - 1;
 const BOARD_HEIGHT = BOARD_SIZE * TILE_ROW_STEP - 1;
 const BOARD_CHARACTERS = BOARD_WIDTH * BOARD_HEIGHT;
-const ANIMATION_STEPS = 8;
 
 const MOVE_LEFT = 0;
 const MOVE_RIGHT = 1;

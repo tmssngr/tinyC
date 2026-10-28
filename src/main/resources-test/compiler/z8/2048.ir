@@ -696,9 +696,9 @@ animateSlide:
 
 	const frame, 1
 for_51:
-	branch frame gt 8: for_51_break, for_51_body
+	branch frame gt 4: for_51_break, for_51_body
 for_51_body:
-	const remaining, 8
+	const remaining, 4
 	sub remaining, frame
 	call clearBoard[]
 	const source, 0
@@ -730,11 +730,11 @@ if_53_end:
 	mul t.24, sourceRow, remaining
 	mul t.25, targetRow, frame
 	add t.23, t.24, t.25
-	shiftright row, t.23, 3
+	shiftright row, t.23, 2
 	mul t.27, sourceColumn, remaining
 	mul t.28, targetColumn, frame
 	add t.26, t.27, t.28
-	shiftright column, t.26, 3
+	shiftright column, t.26, 2
 	add t.29, row, 3
 	add t.30, column, 1
 	call drawTileAt@i16@i16@u8[t.29, t.30, exponent]

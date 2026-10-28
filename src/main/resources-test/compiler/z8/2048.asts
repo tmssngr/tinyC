@@ -371,8 +371,8 @@ void animateSlide() {
 	i16 column;
 
 	frame = 1;
-	for (; frame <= 8; frame = frame + 1) {
-		remaining = 8;
+	for (; frame <= 4; frame = frame + 1) {
+		remaining = 4;
 		remaining = remaining - frame;
 		clearBoard();
 		source = 0;
@@ -386,8 +386,8 @@ void animateSlide() {
 			sourceColumn = ((source & 3) as i16) * 9;
 			targetRow = ((target >> 2) as i16) << 2;
 			targetColumn = ((target & 3) as i16) * 9;
-			row = ((sourceRow * remaining) + (targetRow * frame)) >> 3;
-			column = ((sourceColumn * remaining) + (targetColumn * frame)) >> 3;
+			row = ((sourceRow * remaining) + (targetRow * frame)) >> 2;
+			column = ((sourceColumn * remaining) + (targetColumn * frame)) >> 2;
 			drawTileAt@i16@i16@u8(row + 3, column + 1, exponent);
 		}
 		presentBoard();
