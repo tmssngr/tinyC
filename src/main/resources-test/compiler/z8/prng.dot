@@ -1,0 +1,50 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printUint_Ai16 {
+		BasicBlock_0_printUint_Ai16 [label="printUint_Ai16\lcast t_d1_d1(i32), number(i16)\lcall printUint_Ai32[t_d1_d1]\ljump printUint_Ai16__ret",shape=box];
+		BasicBlock_0_printUint_Ai16 -> BasicBlock_0_printUint_Ai16__ret;
+		BasicBlock_0_printUint_Ai16__ret [label="printUint_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf_Au8 {
+		BasicBlock_1_printIntLf_Au8 [label="printIntLf_Au8\lcast t_d1_d1(i16), number(u8)\lcall printIntLf_Ai16[t_d1_d1]\ljump printIntLf_Au8__ret",shape=box];
+		BasicBlock_1_printIntLf_Au8 -> BasicBlock_1_printIntLf_Au8__ret;
+		BasicBlock_1_printIntLf_Au8__ret [label="printIntLf_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf_Ai16 {
+		BasicBlock_2_printIntLf_Ai16 [label="printIntLf_Ai16\lbranch number gteq 0: printIntLf_Ai16_dno__critical__edge__4, if__1__then\ljump if__1__then",shape=box];
+		BasicBlock_2_printIntLf_Ai16 -> BasicBlock_2_printIntLf_Ai16_dno__critical__edge__4 [label="(number)"];
+		BasicBlock_2_printIntLf_Ai16 -> BasicBlock_2_if__1__then [label="(number)"];
+		BasicBlock_2_printIntLf_Ai16_dno__critical__edge__4 [label="printIntLf_Ai16_dno__critical__edge__4\lmove number_d1, number\ljump if__1__end",shape=box];
+		BasicBlock_2_printIntLf_Ai16_dno__critical__edge__4 -> BasicBlock_2_if__1__end [label="(number.1)"];
+		BasicBlock_2_if__1__then [label="if__1__then\lcall printChar_Au8[45]\lneg number_d2, number\lmove number_d1, number_d2\ljump if__1__end",shape=box];
+		BasicBlock_2_if__1__then -> BasicBlock_2_if__1__end [label="(number.1)"];
+		BasicBlock_2_if__1__end [label="if__1__end\lcall printUint_Ai16[number_d1]\lcall printChar_Au8[13]\ljump printIntLf_Ai16__ret",shape=box];
+		BasicBlock_2_if__1__end -> BasicBlock_2_printIntLf_Ai16__ret;
+		BasicBlock_2_printIntLf_Ai16__ret [label="printIntLf_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_initRandom_Ai32 {
+		BasicBlock_3_initRandom_Ai32 [label="initRandom_Ai32\lmove t_d1_d1, salt\laddrof a_d2_d1, ____random____\lstore [a_d2_d1], t_d1_d1\ljump initRandom_Ai32__ret",shape=box];
+		BasicBlock_3_initRandom_Ai32 -> BasicBlock_3_initRandom_Ai32__ret;
+		BasicBlock_3_initRandom_Ai32__ret [label="initRandom_Ai32__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_random {
+		BasicBlock_4_random [label="random\laddrof a_d5_d1, ____random____\lload r_d1, [a_d5_d1]\lmove t_d6_d1, r_d1\land t_d6_d1, 524287\lmove b_d1, t_d6_d1\lmul b_d1, 48271\lmove t_d7_d1, r_d1\lshiftright t_d7_d1, 15\lmove c_d1, t_d7_d1\lmul c_d1, 48271\lmove t_d8_d1, c_d1\land t_d8_d1, 65535\lmove d_d1, t_d8_d1\lshiftleft d_d1, 15\lmove t_d10_d1, c_d1\lshiftright t_d10_d1, 16\lmove t_d9_d1, t_d10_d1\ladd t_d9_d1, b_d1\lmove e_d1, t_d9_d1\ladd e_d1, d_d1\lmove t_d12_d1, e_d1\land t_d12_d1, 2147483647\lmove t_d13_d1, e_d1\lshiftright t_d13_d1, 31\lmove t_d11_d1, t_d12_d1\ladd t_d11_d1, t_d13_d1\laddrof a_d14_d1, ____random____\lstore [a_d14_d1], t_d11_d1\laddrof a_d15_d1, ____random____\lload t_d16_d1, [a_d15_d1]\lret t_d16_d1\ljump random__ret",shape=box];
+		BasicBlock_4_random -> BasicBlock_4_random__ret;
+		BasicBlock_4_random__ret [label="random__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_randomU8 {
+		BasicBlock_5_randomU8 [label="randomU8\lcall t_d1_d1 = random[] -> i32\lcast t_d0_d1(u8), t_d1_d1(i32)\lret t_d0_d1\ljump randomU8__ret",shape=box];
+		BasicBlock_5_randomU8 -> BasicBlock_5_randomU8__ret;
+		BasicBlock_5_randomU8__ret [label="randomU8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_6_main [label="main\lconst t_d2_d1, 0\laddrof a_d3_d1, ____random____\lstore [a_d3_d1], t_d2_d1\lcall initRandom_Ai32[7439742]\lconst i_d1, 0\lmove i_d2, i_d1\ljump for__2",shape=box];
+		BasicBlock_6_main -> BasicBlock_6_for__2 [label="(i.2)"];
+		BasicBlock_6_for__2__body [label="for__2__body\lcall r_d1 = randomU8[] -> u8\lcall printIntLf_Au8[r_d1]\lmove i_d3, i_d2\ladd i_d3, 1\lmove i_d2, i_d3\ljump for__2",shape=box];
+		BasicBlock_6_for__2__body -> BasicBlock_6_for__2 [label="(i.2)"];
+		BasicBlock_6_for__2 [label="for__2\lbranch i_d2 gteq 50: main__ret, for__2__body\ljump for__2__body",shape=box];
+		BasicBlock_6_for__2 -> BasicBlock_6_main__ret;
+		BasicBlock_6_for__2 -> BasicBlock_6_for__2__body [label="(i.2)"];
+		BasicBlock_6_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}

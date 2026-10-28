@@ -1,0 +1,36 @@
+u8* chars[256];
+
+void printChar@u8(u8 chr) asm {
+}
+
+void printUint@i16(i16 number) {
+	printUint@i32(number as i32);
+}
+
+void printUint@i32(i32 number) asm {
+}
+
+void printIntLf@u8(u8 number) {
+	printIntLf@i16(number as i16);
+}
+
+void printIntLf@i16(i16 number) {
+	if (number < 0) {
+		printChar@u8(45);
+		number = -number;
+	}
+	printUint@i16(number);
+	printChar@u8(13);
+}
+
+void main() {
+	u8 chr;
+	u8 result;
+
+	chr = 32;
+	chars[0] = chr;
+	chars[1] = chars[0] + 1;
+	chars[(1 + 1) as i16] = chars[1] + 2;
+	result = chars[2];
+	printIntLf@u8(result);
+}

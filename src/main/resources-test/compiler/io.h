@@ -81,3 +81,6 @@ void printStringLength(u8* str, u8 length) {
 }
 
 #endif
+#ifdef Z8
+  #include "z8.h"
+#endif

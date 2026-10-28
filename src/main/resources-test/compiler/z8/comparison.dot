@@ -1,0 +1,37 @@
+digraph program {
+	edge[fontsize="10pt"];
+	subgraph fn_printUint_Ai16 {
+		BasicBlock_0_printUint_Ai16 [label="printUint_Ai16\lcast t_d1_d1(i32), number(i16)\lcall printUint_Ai32[t_d1_d1]\ljump printUint_Ai16__ret",shape=box];
+		BasicBlock_0_printUint_Ai16 -> BasicBlock_0_printUint_Ai16__ret;
+		BasicBlock_0_printUint_Ai16__ret [label="printUint_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf_Abool {
+		BasicBlock_1_printIntLf_Abool [label="printIntLf_Abool\lconst number_d1, 0\lbranch value equals 0: printIntLf_Abool_dno__critical__edge__4, if__1__then\ljump if__1__then",shape=box];
+		BasicBlock_1_printIntLf_Abool -> BasicBlock_1_printIntLf_Abool_dno__critical__edge__4 [label="(number.1)"];
+		BasicBlock_1_printIntLf_Abool -> BasicBlock_1_if__1__then;
+		BasicBlock_1_printIntLf_Abool_dno__critical__edge__4 [label="printIntLf_Abool_dno__critical__edge__4\lmove number_d2, number_d1\ljump if__1__end",shape=box];
+		BasicBlock_1_printIntLf_Abool_dno__critical__edge__4 -> BasicBlock_1_if__1__end [label="(number.2)"];
+		BasicBlock_1_if__1__then [label="if__1__then\lconst number_d3, 1\lmove number_d2, number_d3\ljump if__1__end",shape=box];
+		BasicBlock_1_if__1__then -> BasicBlock_1_if__1__end [label="(number.2)"];
+		BasicBlock_1_if__1__end [label="if__1__end\lcast t_d2_d1(i16), number_d2(u8)\lcall printIntLf_Ai16[t_d2_d1]\ljump printIntLf_Abool__ret",shape=box];
+		BasicBlock_1_if__1__end -> BasicBlock_1_printIntLf_Abool__ret;
+		BasicBlock_1_printIntLf_Abool__ret [label="printIntLf_Abool__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_printIntLf_Ai16 {
+		BasicBlock_2_printIntLf_Ai16 [label="printIntLf_Ai16\lbranch number gteq 0: printIntLf_Ai16_dno__critical__edge__4, if__2__then\ljump if__2__then",shape=box];
+		BasicBlock_2_printIntLf_Ai16 -> BasicBlock_2_printIntLf_Ai16_dno__critical__edge__4 [label="(number)"];
+		BasicBlock_2_printIntLf_Ai16 -> BasicBlock_2_if__2__then [label="(number)"];
+		BasicBlock_2_printIntLf_Ai16_dno__critical__edge__4 [label="printIntLf_Ai16_dno__critical__edge__4\lmove number_d1, number\ljump if__2__end",shape=box];
+		BasicBlock_2_printIntLf_Ai16_dno__critical__edge__4 -> BasicBlock_2_if__2__end [label="(number.1)"];
+		BasicBlock_2_if__2__then [label="if__2__then\lcall printChar_Au8[45]\lneg number_d2, number\lmove number_d1, number_d2\ljump if__2__end",shape=box];
+		BasicBlock_2_if__2__then -> BasicBlock_2_if__2__end [label="(number.1)"];
+		BasicBlock_2_if__2__end [label="if__2__end\lcall printUint_Ai16[number_d1]\lcall printChar_Au8[13]\ljump printIntLf_Ai16__ret",shape=box];
+		BasicBlock_2_if__2__end -> BasicBlock_2_printIntLf_Ai16__ret;
+		BasicBlock_2_printIntLf_Ai16__ret [label="printIntLf_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+	subgraph fn_main {
+		BasicBlock_3_main [label="main\lconst t_d4_d1, [string-0]\lcall printString_A_Au8[t_d4_d1]\lconst a_d1, 1\lconst b_d1, 2\llt t_d5_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d5_d1]\llt t_d6_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d6_d1]\lconst t_d7_d1, [string-1]\lcall printString_A_Au8[t_d7_d1]\lconst c_d1, 0\lconst d_d1, 128\llt t_d8_d1, c_d1, d_d1\lcall printIntLf_Abool[t_d8_d1]\llt t_d9_d1, d_d1, c_d1\lcall printIntLf_Abool[t_d9_d1]\lconst t_d10_d1, [string-2]\lcall printString_A_Au8[t_d10_d1]\llteq t_d11_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d11_d1]\llteq t_d12_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d12_d1]\lconst t_d13_d1, [string-3]\lcall printString_A_Au8[t_d13_d1]\llteq t_d14_d1, c_d1, d_d1\lcall printIntLf_Abool[t_d14_d1]\llteq t_d15_d1, d_d1, c_d1\lcall printIntLf_Abool[t_d15_d1]\lconst t_d16_d1, [string-4]\lcall printString_A_Au8[t_d16_d1]\lequals t_d17_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d17_d1]\lequals t_d18_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d18_d1]\lconst t_d19_d1, [string-5]\lcall printString_A_Au8[t_d19_d1]\lnotequals t_d20_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d20_d1]\lnotequals t_d21_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d21_d1]\lconst t_d22_d1, [string-6]\lcall printString_A_Au8[t_d22_d1]\lgteq t_d23_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d23_d1]\lgteq t_d24_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d24_d1]\lconst t_d25_d1, [string-7]\lcall printString_A_Au8[t_d25_d1]\lgteq t_d26_d1, c_d1, d_d1\lcall printIntLf_Abool[t_d26_d1]\lgteq t_d27_d1, d_d1, c_d1\lcall printIntLf_Abool[t_d27_d1]\lconst t_d28_d1, [string-8]\lcall printString_A_Au8[t_d28_d1]\lgt t_d29_d1, a_d1, b_d1\lcall printIntLf_Abool[t_d29_d1]\lgt t_d30_d1, b_d1, a_d1\lcall printIntLf_Abool[t_d30_d1]\lconst t_d31_d1, [string-9]\lcall printString_A_Au8[t_d31_d1]\lgt t_d32_d1, c_d1, d_d1\lcall printIntLf_Abool[t_d32_d1]\lgt t_d33_d1, d_d1, c_d1\lcall printIntLf_Abool[t_d33_d1]\ljump main__ret",shape=box];
+		BasicBlock_3_main -> BasicBlock_3_main__ret;
+		BasicBlock_3_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	}
+}
