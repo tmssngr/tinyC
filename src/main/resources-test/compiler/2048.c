@@ -18,6 +18,8 @@ const TILE_COLUMN_STEP = TILE_WIDTH + 1;
 const TILE_ROW_STEP = TILE_HEIGHT + 1;
 const BOARD_WIDTH = BOARD_SIZE * TILE_COLUMN_STEP - 1;
 const BOARD_HEIGHT = BOARD_SIZE * TILE_ROW_STEP - 1;
+const BOARD_CHARACTERS = BOARD_WIDTH * BOARD_HEIGHT;
+const ANIMATION_STEPS = 8;
 
 const MOVE_LEFT = 0;
 const MOVE_RIGHT = 1;
@@ -34,6 +36,8 @@ const STATE_LOST = 2;
 u8 tiles[BOARD_CELLS];
 u8 moveTiles[BOARD_CELLS];
 u8 moveTargets[BOARD_CELLS];
+u8 boardFrame[BOARD_CHARACTERS];
+u8 displayedFrame[BOARD_CHARACTERS];
 i32 score;
 u8 gameState;
 
@@ -159,45 +163,50 @@ bool canMove() {
 	return false;
 }
 
-void printTile(u8 exponent) {
+u8* tileText(u8 exponent) {
 	if (exponent == 0) {
-		printString("      ");
+		return "      ";
 	}
 	else if (exponent == 1) {
-		printString("  2   ");
+		return "   2  ";
 	}
 	else if (exponent == 2) {
-		printString("  4   ");
+		return "   4  ";
 	}
 	else if (exponent == 3) {
-		printString("  8   ");
+		return "   8  ";
 	}
 	else if (exponent == 4) {
-		printString("  16  ");
+		return "  16  ";
 	}
 	else if (exponent == 5) {
-		printString("  32  ");
+		return "  32  ";
 	}
 	else if (exponent == 6) {
-		printString("  64  ");
+		return "  64  ";
 	}
 	else if (exponent == 7) {
-		printString(" 128  ");
+		return "  128 ";
 	}
 	else if (exponent == 8) {
-		printString(" 256  ");
+		return "  256 ";
 	}
 	else if (exponent == 9) {
-		printString(" 512  ");
+		return "  512 ";
 	}
 	else if (exponent == 10) {
-		printString(" 1024 ");
+		return " 1024 ";
 	}
 	else if (exponent == WIN_TILE) {
-		printString(" 2048 ");
+		return " 2048 ";
 	}
-	else {
-		printString("  ?   ");
+	return "  ?   ";
+}
+
+void drawTileRow(i16 offset, u8* text) {
+	for (u8 index = 0; index < TILE_WIDTH; index += 1) {
+		boardFrame[offset] = text[index];
+		offset += 1;
 	}
 }
 
@@ -205,14 +214,16 @@ void drawTileAt(i16 row, i16 column, u8 exponent) {
 	if (exponent == 0) {
 		return;
 	}
-	setCursor(row, column);
-	printString("+------+");
-	setCursor(row + 1, column);
-	printChar('|');
-	printTile(exponent);
-	printChar('|');
-	setCursor(row + 2, column);
-	printString("+------+");
+	i16 offset = (row - BOARD_TOP) * BOARD_WIDTH + column - BOARD_LEFT;
+	drawTileRow(offset, "+------+");
+	offset += BOARD_WIDTH;
+	boardFrame[offset] = '|';
+	boardFrame[offset + TILE_WIDTH - 1] = '|';
+	u8* text = tileText(exponent);
+	for (u8 index = 0; index < TILE_WIDTH - 2; index += 1) {
+		boardFrame[offset + index as i16 + 1] = text[index];
+	}
+	drawTileRow(offset + BOARD_WIDTH, "+------+");
 }
 
 void drawFrame() {
@@ -224,10 +235,32 @@ void drawFrame() {
 }
 
 void clearBoard() {
-	for (i16 row = 0; row < BOARD_HEIGHT; row += 1) {
-		setCursor(row + BOARD_TOP, BOARD_LEFT as i16);
-		printString("                                   ");
+	for (i16 offset = 0; offset < BOARD_CHARACTERS; offset += 1) {
+		boardFrame[offset] = ' ';
 	}
+}
+
+void presentBoard() {
+	i16 offset = 0;
+	for (i16 row = 0; row < BOARD_HEIGHT; row += 1) {
+		bool printing = false;
+		for (i16 column = 0; column < BOARD_WIDTH; column += 1) {
+			u8 character = boardFrame[offset];
+			if (character != displayedFrame[offset]) {
+				if (!printing) {
+					setCursor(row + BOARD_TOP, column + BOARD_LEFT);
+					printing = true;
+				}
+				printChar(character);
+				displayedFrame[offset] = character;
+			}
+			else {
+				printing = false;
+			}
+			offset += 1;
+		}
+	}
+	setCursor(21i16, 0i16);
 }
 
 void drawBoard() {
@@ -243,6 +276,63 @@ void drawBoard() {
 		}
 		row += TILE_ROW_STEP;
 	}
+	presentBoard();
+}
+
+#ifdef Z8
+void waitFrame() asm {
+	"ld   r0, #0"
+	".loop:"
+	"djnz r0, .loop"
+	"ret"
+}
+#else
+  #ifdef __WINDOWS
+void waitFrame() asm {
+	"sub  rsp, 28h"
+	"mov  ecx, 20"
+	"call [Sleep]"
+	"add  rsp, 28h"
+	"ret"
+}
+  #else
+void waitFrame() asm {
+	"sub  rsp, 10h"
+	"mov  qword [rsp], 0"
+	"mov  qword [rsp+8], 20000000"
+	"mov  rdi, rsp"
+	"xor  esi, esi"
+	"mov  eax, 35"
+	"syscall"
+	"add  rsp, 10h"
+	"ret"
+}
+  #endif
+#endif
+
+void animateSlide() {
+	for (i16 frame = 1; frame <= ANIMATION_STEPS; frame += 1) {
+		i16 remaining = ANIMATION_STEPS;
+		remaining -= frame;
+		clearBoard();
+		for (u8 source = 0; source < BOARD_CELLS; source += 1) {
+			u8 exponent = moveTiles[source];
+			if (exponent == 0) {
+				continue;
+			}
+			u8 target = moveTargets[source];
+			i16 sourceRow = (source >> 2) as i16 * TILE_ROW_STEP;
+			i16 sourceColumn = (source & 3) as i16 * TILE_COLUMN_STEP;
+			i16 targetRow = (target >> 2) as i16 * TILE_ROW_STEP;
+			i16 targetColumn = (target & 3) as i16 * TILE_COLUMN_STEP;
+			i16 row = (sourceRow * remaining + targetRow * frame) / ANIMATION_STEPS;
+			i16 column = (sourceColumn * remaining + targetColumn * frame) / ANIMATION_STEPS;
+			drawTileAt(row + BOARD_TOP, column + BOARD_LEFT, exponent);
+		}
+		presentBoard();
+		waitFrame();
+	}
+	drawBoard();
 }
 
 void drawScore() {
@@ -312,6 +402,7 @@ void main() {
 			continue;
 		}
 
+		animateSlide();
 		spawnTile();
 		if (gameState == STATE_PLAYING && !canMove()) {
 			gameState = STATE_LOST;

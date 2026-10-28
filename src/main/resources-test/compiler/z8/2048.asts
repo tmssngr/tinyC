@@ -1,6 +1,8 @@
 u8* tiles[16];
 u8* moveTiles[16];
 u8* moveTargets[16];
+u8* boardFrame[525];
+u8* displayedFrame[525];
 i32 score;
 u8 gameState;
 
@@ -187,56 +189,53 @@ bool canMove() {
 	return false;
 }
 
-void printTile@u8(u8 exponent) {
+u8* tileText@u8(u8 exponent) {
 	if (exponent == 0) {
-		printString@@u8("      ");
+		return "      ";
 	}
 	else {
 		if (exponent == 1) {
-			printString@@u8("  2   ");
+			return "  2   ";
 		}
 		else {
 			if (exponent == 2) {
-				printString@@u8("  4   ");
+				return "  4   ";
 			}
 			else {
 				if (exponent == 3) {
-					printString@@u8("  8   ");
+					return "  8   ";
 				}
 				else {
 					if (exponent == 4) {
-						printString@@u8("  16  ");
+						return "  16  ";
 					}
 					else {
 						if (exponent == 5) {
-							printString@@u8("  32  ");
+							return "  32  ";
 						}
 						else {
 							if (exponent == 6) {
-								printString@@u8("  64  ");
+								return "  64  ";
 							}
 							else {
 								if (exponent == 7) {
-									printString@@u8(" 128  ");
+									return " 128  ";
 								}
 								else {
 									if (exponent == 8) {
-										printString@@u8(" 256  ");
+										return " 256  ";
 									}
 									else {
 										if (exponent == 9) {
-											printString@@u8(" 512  ");
+											return " 512  ";
 										}
 										else {
 											if (exponent == 10) {
-												printString@@u8(" 1024 ");
+												return " 1024 ";
 											}
 											else {
 												if (exponent == 11) {
-													printString@@u8(" 2048 ");
-												}
-												else {
-													printString@@u8("  ?   ");
+													return " 2048 ";
 												}
 											}
 										}
@@ -248,21 +247,39 @@ void printTile@u8(u8 exponent) {
 				}
 			}
 		}
+	}
+	return "  ?   ";
+}
+
+void drawTileRow@i16@@u8(i16 offset, u8* text) {
+	u8 index;
+
+	index = 0;
+	for (; index < 8; index = index + 1) {
+		boardFrame[offset] = text[index as i16];
+		offset = offset + 1;
 	}
 }
 
 void drawTileAt@i16@i16@u8(i16 row, i16 column, u8 exponent) {
+	i16 offset;
+	u8* text;
+	u8 index;
+
 	if (exponent == 0) {
 		return;
 	}
-	setCursor@i16@i16(row, column);
-	printString@@u8("+------+");
-	setCursor@i16@i16(row + 1, column);
-	printChar@u8(124);
-	printTile@u8(exponent);
-	printChar@u8(124);
-	setCursor@i16@i16(row + 2, column);
-	printString@@u8("+------+");
+	offset = (((row - 3) * 35) + column) - 1;
+	drawTileRow@i16@@u8(offset, "+------+");
+	offset = offset + 35;
+	boardFrame[offset] = 124;
+	boardFrame[(offset + 8) - 1] = 124;
+	text = tileText@u8(exponent);
+	index = 0;
+	for (; index < 6; index = index + 1) {
+		boardFrame[(offset + (index as i16)) + 1] = text[index as i16];
+	}
+	drawTileRow@i16@@u8(offset + 35, "+------+");
 }
 
 void drawFrame() {
@@ -274,13 +291,43 @@ void drawFrame() {
 }
 
 void clearBoard() {
-	i16 row;
+	i16 offset;
 
+	offset = 0;
+	for (; offset < 525; offset = offset + 1) {
+		boardFrame[offset] = 32;
+	}
+}
+
+void presentBoard() {
+	i16 offset;
+	i16 row;
+	bool printing;
+	i16 column;
+	u8 character;
+
+	offset = 0;
 	row = 0;
 	for (; row < 15; row = row + 1) {
-		setCursor@i16@i16(row + 3, 1);
-		printString@@u8("                                   ");
+		printing = false;
+		column = 0;
+		for (; column < 35; column = column + 1) {
+			character = boardFrame[offset];
+			if (character != displayedFrame[offset]) {
+				if (!printing) {
+					setCursor@i16@i16(row + 3, column + 1);
+					printing = true;
+				}
+				printChar@u8(character);
+				displayedFrame[offset] = character;
+			}
+			else {
+				printing = false;
+			}
+			offset = offset + 1;
+		}
 	}
+	setCursor@i16@i16(21, 0);
 }
 
 void drawBoard() {
@@ -304,6 +351,49 @@ void drawBoard() {
 		}
 		row = row + 4;
 	}
+	presentBoard();
+}
+
+void waitFrame() asm {
+}
+
+void animateSlide() {
+	i16 frame;
+	i16 remaining;
+	u8 source;
+	u8 exponent;
+	u8 target;
+	i16 sourceRow;
+	i16 sourceColumn;
+	i16 targetRow;
+	i16 targetColumn;
+	i16 row;
+	i16 column;
+
+	frame = 1;
+	for (; frame <= 8; frame = frame + 1) {
+		remaining = 8;
+		remaining = remaining - frame;
+		clearBoard();
+		source = 0;
+		for (; source < 16; source = source + 1) {
+			exponent = moveTiles[source as i16];
+			if (exponent == 0) {
+				continue;
+			}
+			target = moveTargets[source as i16];
+			sourceRow = ((source >> 2) as i16) << 2;
+			sourceColumn = ((source & 3) as i16) * 9;
+			targetRow = ((target >> 2) as i16) << 2;
+			targetColumn = ((target & 3) as i16) * 9;
+			row = ((sourceRow * remaining) + (targetRow * frame)) >> 3;
+			column = ((sourceColumn * remaining) + (targetColumn * frame)) >> 3;
+			drawTileAt@i16@i16@u8(row + 3, column + 1, exponent);
+		}
+		presentBoard();
+		waitFrame();
+	}
+	drawBoard();
 }
 
 void drawScore() {
@@ -385,6 +475,7 @@ void main() {
 		if ((direction == 255) || (!(slide@u8(direction)))) {
 			continue;
 		}
+		animateSlide();
 		spawnTile();
 		if ((gameState == 0) && (!(canMove()))) {
 			gameState = 2;
