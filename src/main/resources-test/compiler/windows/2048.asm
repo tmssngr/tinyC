@@ -1924,14 +1924,16 @@ _for_55:
         call _presentBoard
         ; call waitFrame[]
         call _waitFrame
-        ; add frame.4{r6}, 1
-        add bx, 1
+        ; move frame.4{r0}, frame.2{r6}
+        mov ax, bx
+        ; add frame.4{r0}, 1
+        add ax, 1
+        ; move frame.2{r6}, frame.4{r0}
+        mov bx, ax
 _for_54:
         ; branch frame.2{r6} lteq 8: for_54_body
         cmp bx, 8
         jle _for_54_body
-        ; call drawBoard[]
-        call _drawBoard
         add rsp, 32
         ; restore clobbered non-volatile registers
         pop r12

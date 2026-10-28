@@ -870,7 +870,7 @@ animateSlide:
 
 	const frame, 1
 for_54:
-	branch frame gt 8: for_54_break, for_54_body
+	branch frame gt 8: animateSlide_ret, for_54_body
 for_54_body:
 	const remaining, 8
 	sub remaining, frame
@@ -921,8 +921,6 @@ for_55_break:
 for_54_continue:
 	add frame, 1
 	jump for_54
-for_54_break:
-	call drawBoard[]
 animateSlide_ret:
 
 drawScore:

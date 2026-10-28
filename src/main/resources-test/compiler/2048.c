@@ -332,7 +332,6 @@ void animateSlide() {
 		presentBoard();
 		waitFrame();
 	}
-	drawBoard();
 }
 
 void drawScore() {

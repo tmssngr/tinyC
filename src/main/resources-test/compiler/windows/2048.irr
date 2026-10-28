@@ -960,10 +960,11 @@ for_55:
 	branch source.2{r0} lt 16: for_55_body
 	call presentBoard[]
 	call waitFrame[]
-	add frame.4{r6}, 1
+	move frame.4{r0}, frame.2{r6}
+	add frame.4{r0}, 1
+	move frame.2{r6}, frame.4{r0}
 for_54:
 	branch frame.2{r6} lteq 8: for_54_body
-	call drawBoard[]
 
 drawScore:
 	const arg.0.0{r1}, 0

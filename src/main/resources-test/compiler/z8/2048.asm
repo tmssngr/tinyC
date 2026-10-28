@@ -1773,8 +1773,14 @@ for__52:
         call presentBoard
         ; call waitFrame[]
         call waitFrame
-        ; add frame.4{r8}, 1
-        incw r8
+        ; move frame.4{r0}, frame.2{r8}
+        ld   r0, r8
+        ld   r1, r9
+        ; add frame.4{r0}, 1
+        incw r0
+        ; move frame.2{r8}, frame.4{r0}
+        ld   r9, r1
+        ld   r8, r0
 for__51:
         ; branch frame.2{r8} lteq 8: for_51_body
         cp   r8, #%00
@@ -1783,8 +1789,6 @@ for__51:
         cp   r9, #%08
         jr   ule, for__51__body
 .lt5:
-        ; call drawBoard[]
-        call drawBoard
         ; restore clobbered non-volatile registers
         pop  r15
         pop  r14
