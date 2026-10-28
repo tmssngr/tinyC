@@ -10,6 +10,14 @@ const CLEAR_SCREEN = false;
 const BOARD_SIZE = 4;
 const BOARD_CELLS = BOARD_SIZE * BOARD_SIZE;
 const WIN_TILE = 11;
+const BOARD_TOP = 3;
+const BOARD_LEFT = 1;
+const TILE_WIDTH = 8;
+const TILE_HEIGHT = 3;
+const TILE_COLUMN_STEP = TILE_WIDTH + 1;
+const TILE_ROW_STEP = TILE_HEIGHT + 1;
+const BOARD_WIDTH = BOARD_SIZE * TILE_COLUMN_STEP - 1;
+const BOARD_HEIGHT = BOARD_SIZE * TILE_ROW_STEP - 1;
 
 const MOVE_LEFT = 0;
 const MOVE_RIGHT = 1;
@@ -145,44 +153,58 @@ bool canMove() {
 
 void printTile(u8 exponent) {
 	if (exponent == 0) {
-		printString("        ");
+		printString("      ");
 	}
 	else if (exponent == 1) {
-		printString("   2    ");
+		printString("  2   ");
 	}
 	else if (exponent == 2) {
-		printString("   4    ");
+		printString("  4   ");
 	}
 	else if (exponent == 3) {
-		printString("   8    ");
+		printString("  8   ");
 	}
 	else if (exponent == 4) {
-		printString("   16   ");
+		printString("  16  ");
 	}
 	else if (exponent == 5) {
-		printString("   32   ");
+		printString("  32  ");
 	}
 	else if (exponent == 6) {
-		printString("   64   ");
+		printString("  64  ");
 	}
 	else if (exponent == 7) {
-		printString("  128   ");
+		printString(" 128  ");
 	}
 	else if (exponent == 8) {
-		printString("  256   ");
+		printString(" 256  ");
 	}
 	else if (exponent == 9) {
-		printString("  512   ");
+		printString(" 512  ");
 	}
 	else if (exponent == 10) {
-		printString("  1024  ");
+		printString(" 1024 ");
 	}
 	else if (exponent == WIN_TILE) {
-		printString("  2048  ");
+		printString(" 2048 ");
 	}
 	else {
-		printString("   ?    ");
+		printString("  ?   ");
 	}
+}
+
+void drawTileAt(i16 row, i16 column, u8 exponent) {
+	if (exponent == 0) {
+		return;
+	}
+	setCursor(row, column);
+	printString("+------+");
+	setCursor(row + 1, column);
+	printChar('|');
+	printTile(exponent);
+	printChar('|');
+	setCursor(row + 2, column);
+	printString("+------+");
 }
 
 void drawFrame() {
@@ -191,33 +213,27 @@ void drawFrame() {
 	}
 	setCursor(1i16, 0i16);
 	printString("Arrows/WASD  R restart  Esc quit");
+}
 
-	i16 row = 3;
-	for (u8 index = 0; index < BOARD_SIZE; index += 1) {
-		setCursor(row, 1i16);
-		printString("+--------+--------+--------+--------+");
-		setCursor(row + 1, 1i16);
-		printString("|        |        |        |        |");
-		setCursor(row + 2, 1i16);
-		printString("|        |        |        |        |");
-		row = row + 3;
+void clearBoard() {
+	for (i16 row = 0; row < BOARD_HEIGHT; row += 1) {
+		setCursor(row + BOARD_TOP, BOARD_LEFT as i16);
+		printString("                                   ");
 	}
-	setCursor(row, 1i16);
-	printString("+--------+--------+--------+--------+");
 }
 
 void drawBoard() {
+	clearBoard();
 	u8 index = 0;
-	i16 row = 5;
+	i16 row = BOARD_TOP;
 	for (u8 boardRow = 0; boardRow < BOARD_SIZE; boardRow += 1) {
-		i16 column = 2;
+		i16 column = BOARD_LEFT;
 		for (u8 boardColumn = 0; boardColumn < BOARD_SIZE; boardColumn += 1) {
-			setCursor(row, column);
-			printTile(tiles[index]);
+			drawTileAt(row, column, tiles[index]);
 			index += 1;
-			column += 9;
+			column += TILE_COLUMN_STEP;
 		}
-		row += 3;
+		row += TILE_ROW_STEP;
 	}
 }
 
@@ -229,9 +245,9 @@ void drawScore() {
 }
 
 void drawStatus() {
-	setCursor(18i16, 0i16);
+	setCursor((BOARD_TOP + BOARD_HEIGHT + 1) as i16, 0i16);
 	printString("                                      ");
-	setCursor(18i16, 0i16);
+	setCursor((BOARD_TOP + BOARD_HEIGHT + 1) as i16, 0i16);
 	if (gameState == STATE_WON) {
 		printString("2048! Press R to play again.");
 	}
