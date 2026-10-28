@@ -1,0 +1,381 @@
+u8* tiles[16];
+i32 score;
+u8 gameState;
+
+void printString@@u8(u8* str) asm {
+}
+
+void printChar@u8(u8 chr) asm {
+}
+
+void printUint@i32(i32 number) asm {
+}
+
+void setCursor@i16@i16(i16 row, i16 column) asm {
+}
+
+i16 getChar() asm {
+}
+
+void initRandom@i32(i32 salt) asm {
+}
+
+i16 random16() asm {
+}
+
+i32 tileValue@u8(u8 exponent) {
+	i32 value;
+	u8 index;
+
+	value = 1;
+	index = 0;
+	for (; index < exponent; index = index + 1) {
+		value = value << 1;
+	}
+	return value;
+}
+
+void spawnTile() {
+	u8 emptyCount;
+	u8 index;
+	u8 chosen;
+	u8 index;
+	u8 tile;
+
+	emptyCount = 0;
+	index = 0;
+	for (; index < 16; index = index + 1) {
+		if (tiles[index as i16] == 0) {
+			emptyCount = emptyCount + 1;
+		}
+	}
+	if (emptyCount == 0) {
+		return;
+	}
+	chosen = ((random16()) % (emptyCount as i16)) as u8;
+	index = 0;
+	for (; index < 16; index = index + 1) {
+		if (tiles[index as i16] != 0) {
+			continue;
+		}
+		if (chosen == 0) {
+			tile = 1;
+			if (((random16()) % 10) == 0) {
+				tile = 2;
+			}
+			tiles[index as i16] = tile;
+			return;
+		}
+		chosen = chosen - 1;
+	}
+}
+
+bool slideLine@u8@u8(u8 first, u8 step) {
+	u8 source;
+	u8 target;
+	bool previousMerged;
+	bool moved;
+	u8 position;
+	u8* sourceTile;
+	u8 tile;
+	bool merged;
+	u8 previous;
+	u8* previousTile;
+	u8 nextTile;
+
+	source = first;
+	target = first;
+	previousMerged = false;
+	moved = false;
+	position = 0;
+	for (; position < 4; position = position + 1) {
+		sourceTile = &tiles[source as i16];
+		tile = *sourceTile;
+		if (tile != 0) {
+			*sourceTile = 0;
+			merged = false;
+			if ((target != first) && (!previousMerged)) {
+				previous = target - step;
+				previousTile = &tiles[previous as i16];
+				if ((*previousTile) == tile) {
+					nextTile = tile + 1;
+					*previousTile = nextTile;
+					score = score + (tileValue@u8(nextTile));
+					if (nextTile == 11) {
+						gameState = 1;
+					}
+					merged = true;
+					previousMerged = true;
+					moved = true;
+				}
+			}
+			if (!merged) {
+				tiles[target as i16] = tile;
+				if (target != source) {
+					moved = true;
+				}
+				target = target + step;
+				previousMerged = false;
+			}
+		}
+		source = source + step;
+	}
+	return moved;
+}
+
+bool slide@u8(u8 direction) {
+	bool moved;
+	u8 line;
+	u8 first;
+	u8 step;
+
+	moved = false;
+	line = 0;
+	for (; line < 4; line = line + 1) {
+		first = line << 2;
+		step = 1;
+		if (direction == 1) {
+			first = first + 3;
+			step = 255;
+		}
+		else {
+			if (direction == 2) {
+				first = line;
+				step = 4;
+			}
+			else {
+				if (direction == 3) {
+					first = line + 12;
+					step = 252;
+				}
+			}
+		}
+		if (slideLine@u8@u8(first, step)) {
+			moved = true;
+		}
+	}
+	return moved;
+}
+
+bool canMove() {
+	u8 index;
+	u8 tile;
+
+	index = 0;
+	for (; index < 16; index = index + 1) {
+		tile = tiles[index as i16];
+		if (tile == 0) {
+			return true;
+		}
+		if (((index & 3) != 3) && (tiles[(index + 1) as i16] == tile)) {
+			return true;
+		}
+		if ((index < 12) && (tiles[(index + 4) as i16] == tile)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void printTile@u8(u8 exponent) {
+	if (exponent == 0) {
+		printString@@u8("        ");
+	}
+	else {
+		if (exponent == 1) {
+			printString@@u8("   2    ");
+		}
+		else {
+			if (exponent == 2) {
+				printString@@u8("   4    ");
+			}
+			else {
+				if (exponent == 3) {
+					printString@@u8("   8    ");
+				}
+				else {
+					if (exponent == 4) {
+						printString@@u8("   16   ");
+					}
+					else {
+						if (exponent == 5) {
+							printString@@u8("   32   ");
+						}
+						else {
+							if (exponent == 6) {
+								printString@@u8("   64   ");
+							}
+							else {
+								if (exponent == 7) {
+									printString@@u8("  128   ");
+								}
+								else {
+									if (exponent == 8) {
+										printString@@u8("  256   ");
+									}
+									else {
+										if (exponent == 9) {
+											printString@@u8("  512   ");
+										}
+										else {
+											if (exponent == 10) {
+												printString@@u8("  1024  ");
+											}
+											else {
+												if (exponent == 11) {
+													printString@@u8("  2048  ");
+												}
+												else {
+													printString@@u8("   ?    ");
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void drawFrame() {
+	i16 row;
+	u8 index;
+
+	if (true) {
+		printChar@u8(12);
+	}
+	setCursor@i16@i16(1, 0);
+	printString@@u8("Arrows/WASD  R restart  Esc quit");
+	row = 3;
+	index = 0;
+	for (; index < 4; index = index + 1) {
+		setCursor@i16@i16(row, 1);
+		printString@@u8("+--------+--------+--------+--------+");
+		setCursor@i16@i16(row + 1, 1);
+		printString@@u8("|        |        |        |        |");
+		setCursor@i16@i16(row + 2, 1);
+		printString@@u8("|        |        |        |        |");
+		row = row + 3;
+	}
+	setCursor@i16@i16(row, 1);
+	printString@@u8("+--------+--------+--------+--------+");
+}
+
+void drawBoard() {
+	u8 index;
+	i16 row;
+	u8 boardRow;
+	i16 column;
+	u8 boardColumn;
+
+	index = 0;
+	row = 5;
+	boardRow = 0;
+	for (; boardRow < 4; boardRow = boardRow + 1) {
+		column = 2;
+		boardColumn = 0;
+		for (; boardColumn < 4; boardColumn = boardColumn + 1) {
+			setCursor@i16@i16(row, column);
+			printTile@u8(tiles[index as i16]);
+			index = index + 1;
+			column = column + 9;
+		}
+		row = row + 3;
+	}
+}
+
+void drawScore() {
+	setCursor@i16@i16(0, 0);
+	printString@@u8("2048  Score: ");
+	printUint@i32(score);
+	printString@@u8("          ");
+}
+
+void drawStatus() {
+	setCursor@i16@i16(18, 0);
+	printString@@u8("                                      ");
+	setCursor@i16@i16(18, 0);
+	if (gameState == 1) {
+		printString@@u8("2048! Press R to play again.");
+	}
+	else {
+		if (gameState == 2) {
+			printString@@u8("No moves left. Press R to restart.");
+		}
+	}
+}
+
+void newGame() {
+	u8 index;
+
+	index = 0;
+	for (; index < 16; index = index + 1) {
+		tiles[index as i16] = 0;
+	}
+	score = 0;
+	gameState = 0;
+	spawnTile();
+	spawnTile();
+	drawBoard();
+	drawScore();
+	drawStatus();
+	setCursor@i16@i16(21, 0);
+}
+
+void main() {
+	i16 key;
+	u8 direction;
+
+	initRandom@i32(7439742);
+	drawFrame();
+	newGame();
+	while (true) {
+		key = getChar();
+		if (key == 27) {
+			break;
+		}
+		if ((key == 114) || (key == 82)) {
+			newGame();
+			continue;
+		}
+		if (gameState != 0) {
+			continue;
+		}
+		direction = 255;
+		if (((key == 1) || (key == 97)) || (key == 65)) {
+			direction = 0;
+		}
+		else {
+			if (((key == 2) || (key == 100)) || (key == 68)) {
+				direction = 1;
+			}
+			else {
+				if (((key == 3) || (key == 119)) || (key == 87)) {
+					direction = 2;
+				}
+				else {
+					if (((key == 4) || (key == 115)) || (key == 83)) {
+						direction = 3;
+					}
+				}
+			}
+		}
+		if ((direction == 255) || (!(slide@u8(direction)))) {
+			continue;
+		}
+		spawnTile();
+		if ((gameState == 0) && (!(canMove()))) {
+			gameState = 2;
+		}
+		drawBoard();
+		drawScore();
+		if (gameState != 0) {
+			drawStatus();
+		}
+		setCursor@i16@i16(21, 0);
+	}
+}
