@@ -1,4 +1,6 @@
 u8* tiles[16];
+u8* moveTiles[16];
+u8* moveTargets[16];
 i32 score;
 u8 gameState;
 
@@ -98,6 +100,7 @@ bool slideLine@u8@u8(u8 first, u8 step) {
 				previous = target - step;
 				previousTile = &tiles[previous as i16];
 				if ((*previousTile) == tile) {
+					moveTargets[source as i16] = previous;
 					nextTile = tile + 1;
 					*previousTile = nextTile;
 					score = score + (tileValue@u8(nextTile));
@@ -110,6 +113,7 @@ bool slideLine@u8@u8(u8 first, u8 step) {
 				}
 			}
 			if (!merged) {
+				moveTargets[source as i16] = target;
 				tiles[target as i16] = tile;
 				if (target != source) {
 					moved = true;
@@ -124,11 +128,17 @@ bool slideLine@u8@u8(u8 first, u8 step) {
 }
 
 bool slide@u8(u8 direction) {
+	u8 index;
 	bool moved;
 	u8 line;
 	u8 first;
 	u8 step;
 
+	index = 0;
+	for (; index < 16; index = index + 1) {
+		moveTiles[index as i16] = tiles[index as i16];
+		moveTargets[index as i16] = index;
+	}
 	moved = false;
 	line = 0;
 	for (; line < 4; line = line + 1) {

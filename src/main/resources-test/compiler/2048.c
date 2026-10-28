@@ -32,6 +32,8 @@ const STATE_WON = 1;
 const STATE_LOST = 2;
 
 u8 tiles[BOARD_CELLS];
+u8 moveTiles[BOARD_CELLS];
+u8 moveTargets[BOARD_CELLS];
 i32 score;
 u8 gameState;
 
@@ -86,6 +88,7 @@ bool slideLine(u8 first, u8 step) {
 				u8 previous = target - step;
 				u8* previousTile = &tiles[previous];
 				if (*previousTile == tile) {
+					moveTargets[source] = previous;
 					u8 nextTile = tile + 1;
 					*previousTile = nextTile;
 					score = score + tileValue(nextTile);
@@ -98,6 +101,7 @@ bool slideLine(u8 first, u8 step) {
 				}
 			}
 			if (!merged) {
+				moveTargets[source] = target;
 				tiles[target] = tile;
 				if (target != source) {
 					moved = true;
@@ -112,6 +116,10 @@ bool slideLine(u8 first, u8 step) {
 }
 
 bool slide(u8 direction) {
+	for (u8 index = 0; index < BOARD_CELLS; index += 1) {
+		moveTiles[index] = tiles[index];
+		moveTargets[index] = index;
+	}
 	bool moved = false;
 	for (u8 line = 0; line < BOARD_SIZE; line += 1) {
 		u8 first = line << 2;

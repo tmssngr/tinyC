@@ -71,7 +71,7 @@ slideLine@u8@u8:
 	var 2: position.2 (u8/1)
 	var 3: tile.1 (u8/1)
 	var 4: merged.2 (bool/1)
-	var 5: t.19.1 (i32/4)
+	var 5: t.21.1 (i32/4)
 
 	move param.first{r8}, first{r0}
 	move param.step{r9}, step{r1}
@@ -109,11 +109,11 @@ and_12:
 if_11_then:
 	move previous.1{r3}, target.2{r11}
 	sub previous.1{r3}, param.step{r9}
-	cast t.15.1{r3}(i16), previous.1{r3}(u8)
+	cast t.15.1{r4}(i16), previous.1{r3}(u8)
 	addrof previousTile.1{r6}, tiles
-	add previousTile.2{r6}, t.15.1{r3}
-	load t.16.1{r3}, [previousTile.2{r6}]
-	branch t.16.1{r3} equals tile.1{r1}: if_13_then
+	add previousTile.2{r6}, t.15.1{r4}
+	load t.16.1{r4}, [previousTile.2{r6}]
+	branch t.16.1{r4} equals tile.1{r1}: if_13_then
 	addrof memVarAddr{r14}, merged.2
 	store [memVarAddr{r14}], merged.2{r2}
 	addrof memVarAddr{r14}, tile.1
@@ -122,25 +122,29 @@ if_11_then:
 	move merged.2{r1}, merged.2{r2}
 	jump if_11_end
 if_13_then:
+	cast t.18.1{r12}(i16), source.2{r10}(u8)
+	addrof t.17.1{r4}, moveTargets
+	add t.17.2{r4}, t.18.1{r12}
+	store [t.17.2{r4}], previous.1{r3}
 	move nextTile.1{r12}, tile.1{r1}
 	addrof memVarAddr{r14}, tile.1
 	store [memVarAddr{r14}], tile.1{r1}
 	add nextTile.1{r12}, 1
 	store [previousTile.2{r6}], nextTile.1{r12}
-	addrof a.18.1{r2}, score
-	load t.19.1{r4}, [a.18.1{r2}]
-	addrof memVarAddr{r14}, t.19.1
-	store [memVarAddr{r14}], t.19.1{r4}
+	addrof a.20.1{r2}, score
+	load t.21.1{r4}, [a.20.1{r2}]
+	addrof memVarAddr{r14}, t.21.1
+	store [memVarAddr{r14}], t.21.1{r4}
 	move nextTile.1{r0}, nextTile.1{r12}
-	call t.20.1{r0} = tileValue@u8[nextTile.1{r0}] -> i32
-	load t.19.1{r4}, [memVarAddr{r14}]
-	add t.17.1{r4}, t.20.1{r0}
-	addrof a.21.1{r2}, score
-	store [a.21.1{r2}], t.17.1{r4}
+	call t.22.1{r0} = tileValue@u8[nextTile.1{r0}] -> i32
+	load t.21.1{r4}, [memVarAddr{r14}]
+	add t.19.1{r4}, t.22.1{r0}
+	addrof a.23.1{r2}, score
+	store [a.23.1{r2}], t.19.1{r4}
 	branch nextTile.1{r12} notequals 11: if_14_end
-	const t.22.1{r1}, 1
-	addrof a.23.1{r2}, gameState
-	store [a.23.1{r2}], t.22.1{r1}
+	const t.24.1{r1}, 1
+	addrof a.25.1{r2}, gameState
+	store [a.25.1{r2}], t.24.1{r1}
 if_14_end:
 	const merged.3{r1}, 1
 	const previousMerged.6{r2}, 1
@@ -149,12 +153,16 @@ if_14_end:
 	move moved.4{r13}, moved.7{r3}
 if_11_end:
 	branch merged.2{r1} notequals 0: if_10_end
-	cast t.25.1{r1}(i16), target.2{r11}(u8)
-	addrof t.24.1{r4}, tiles
-	add t.24.2{r4}, t.25.1{r1}
+	cast t.27.1{r1}(i16), source.2{r10}(u8)
+	addrof t.26.1{r4}, moveTargets
+	add t.26.2{r4}, t.27.1{r1}
+	store [t.26.2{r4}], target.2{r11}
+	cast t.29.1{r1}(i16), target.2{r11}(u8)
+	addrof t.28.1{r4}, tiles
+	add t.28.2{r4}, t.29.1{r1}
 	addrof memVarAddr{r14}, tile.1
 	load tile.1{r1}, [memVarAddr{r14}]
-	store [t.24.2{r4}], tile.1{r1}
+	store [t.28.2{r4}], tile.1{r1}
 	branch target.2{r11} notequals source.2{r10}: if_16_then
 	move moved.5{r1}, moved.4{r13}
 	jump if_16_end
@@ -183,98 +191,116 @@ slide@u8:
 	arg 0: direction (u8/1)
 
 	move param.direction{r8}, direction{r0}
-	const moved.1{r9}, 0
-	const line.1{r10}, 0
+	const index.1{r9}, 0
 	jump for_17
 for_17_body:
+	cast t.8.1{r10}(i16), index.2{r9}(u8)
+	addrof t.7.1{r12}, tiles
+	add t.7.2{r12}, t.8.1{r10}
+	load t.6.1{r10}, [t.7.2{r12}]
+	cast t.10.1{r11}(i16), index.2{r9}(u8)
+	addrof t.9.1{r2}, moveTiles
+	add t.9.2{r2}, t.10.1{r11}
+	store [t.9.2{r2}], t.6.1{r10}
+	move t.12.1{r10}, t.12.1{r11}
+	addrof t.11.1{r12}, moveTargets
+	add t.11.2{r12}, t.12.1{r10}
+	store [t.11.2{r12}], index.2{r9}
+	add index.3{r9}, 1
+for_17:
+	branch index.2{r9} lt 16: for_17_body
+	const moved.1{r9}, 0
+	const line.1{r10}, 0
+	jump for_18
+for_18_body:
 	move first.1{r11}, line.2{r10}
 	shiftleft first.1{r11}, 2
 	const step.1{r12}, 1
-	branch param.direction{r8} equals 1: if_18_then
-	branch param.direction{r8} notequals 2: if_19_else, if_19_then
-	jump if_19_then
-if_18_then:
+	branch param.direction{r8} equals 1: if_19_then
+	branch param.direction{r8} notequals 2: if_20_else, if_20_then
+	jump if_20_then
+if_19_then:
 	add first.2{r11}, 3
 	const step.2{r12}, 255
 	move first.3{r0}, first.2{r11}
 	move step.3{r1}, step.2{r12}
-	jump if_18_end
-if_19_else:
-	branch param.direction{r8} notequals 3: slide@u8.no_critical_edge_13, if_20_then
-	jump if_20_then
-if_19_then:
+	jump if_19_end
+if_20_else:
+	branch param.direction{r8} notequals 3: slide@u8.no_critical_edge_17, if_21_then
+	jump if_21_then
+if_20_then:
 	move first.4{r11}, line.2{r10}
 	const step.4{r12}, 4
 	move first.3{r0}, first.4{r11}
 	move step.3{r1}, step.4{r12}
-	jump if_18_end
-slide@u8.no_critical_edge_13:
+	jump if_19_end
+slide@u8.no_critical_edge_17:
 	move first.3{r0}, first.1{r11}
 	move step.3{r1}, step.1{r12}
-	jump if_18_end
-if_20_then:
+	jump if_19_end
+if_21_then:
 	move first.5{r11}, line.2{r10}
 	add first.5{r11}, 12
 	const step.5{r12}, 252
 	move first.3{r0}, first.5{r11}
 	move step.3{r1}, step.5{r12}
-if_18_end:
-	call t.5.1{r0} = slideLine@u8@u8[first.3{r0}, step.3{r1}] -> bool
-	branch t.5.1{r0} notequals 0: if_21_then
+if_19_end:
+	call t.13.1{r0} = slideLine@u8@u8[first.3{r0}, step.3{r1}] -> bool
+	branch t.13.1{r0} notequals 0: if_22_then
 	move moved.4{r1}, moved.2{r9}
-	jump for_17_continue
-if_21_then:
+	jump for_18_continue
+if_22_then:
 	const moved.5{r1}, 1
-for_17_continue:
+for_18_continue:
 	move line.5{r2}, line.2{r10}
 	add line.5{r2}, 1
 	move moved.2{r9}, moved.4{r1}
 	move line.2{r10}, line.5{r2}
-for_17:
-	branch line.2{r10} lt 4: for_17_body
+for_18:
+	branch line.2{r10} lt 4: for_18_body
 	move moved.2{r0}, moved.2{r9}
 
 canMove:
 	const index.1{r1}, 0
-	jump for_22
-for_22_body:
+	jump for_23
+for_23_body:
 	cast t.3.1{r2}(i16), index.2{r1}(u8)
 	addrof t.2.1{r4}, tiles
 	add t.2.2{r4}, t.3.1{r2}
 	load tile.1{r2}, [t.2.2{r4}]
-	branch tile.1{r2} equals 0: if_23_then
+	branch tile.1{r2} equals 0: if_24_then
 	move t.4.1{r3}, index.2{r1}
 	and t.4.1{r3}, 3
-	branch t.4.1{r3} equals 3: if_24_end
+	branch t.4.1{r3} equals 3: if_25_end
 	move t.8.1{r3}, index.2{r1}
 	add t.8.1{r3}, 1
 	cast t.7.1{r3}(i16), t.8.1{r3}(u8)
 	addrof t.6.1{r6}, tiles
 	add t.6.2{r6}, t.7.1{r3}
 	load t.5.1{r3}, [t.6.2{r6}]
-	branch t.5.1{r3} equals tile.1{r2}: if_24_then, if_24_end
-if_24_end:
-	branch index.2{r1} gteq 12: for_22_continue
+	branch t.5.1{r3} equals tile.1{r2}: if_25_then, if_25_end
+if_25_end:
+	branch index.2{r1} gteq 12: for_23_continue
 	move t.12.1{r3}, index.2{r1}
 	add t.12.1{r3}, 4
 	cast t.11.1{r3}(i16), t.12.1{r3}(u8)
 	addrof t.10.1{r6}, tiles
 	add t.10.2{r6}, t.11.1{r3}
 	load t.9.1{r3}, [t.10.2{r6}]
-	branch t.9.1{r3} equals tile.1{r2}: if_26_then, for_22_continue
-for_22_continue:
+	branch t.9.1{r3} equals tile.1{r2}: if_27_then, for_23_continue
+for_23_continue:
 	add index.5{r1}, 1
-for_22:
-	branch index.2{r1} lt 16: for_22_body
+for_23:
+	branch index.2{r1} lt 16: for_23_body
 	const {r0}, 0
-	jump canMove_ret
-if_23_then:
-	const {r0}, 1
 	jump canMove_ret
 if_24_then:
 	const {r0}, 1
 	jump canMove_ret
-if_26_then:
+if_25_then:
+	const {r0}, 1
+	jump canMove_ret
+if_27_then:
 	const {r0}, 1
 canMove_ret:
 
@@ -283,88 +309,88 @@ printTile@u8:
 	arg 0: exponent (u8/1)
 
 	move param.exponent{r8}, exponent{r0}
-	branch param.exponent{r8} equals 0: if_28_then
-	branch param.exponent{r8} notequals 1: if_29_else, if_29_then
-	jump if_29_then
-if_28_then:
+	branch param.exponent{r8} equals 0: if_29_then
+	branch param.exponent{r8} notequals 1: if_30_else, if_30_then
+	jump if_30_then
+if_29_then:
 	const t.1.1{r0}, [string-0]
 	call printString@@u8[t.1.1{r0}]
 	jump printTile@u8_ret
-if_29_else:
-	branch param.exponent{r8} notequals 2: if_30_else, if_30_then
-	jump if_30_then
-if_29_then:
+if_30_else:
+	branch param.exponent{r8} notequals 2: if_31_else, if_31_then
+	jump if_31_then
+if_30_then:
 	const t.2.1{r0}, [string-1]
 	call printString@@u8[t.2.1{r0}]
 	jump printTile@u8_ret
-if_30_else:
-	branch param.exponent{r8} notequals 3: if_31_else, if_31_then
-	jump if_31_then
-if_30_then:
+if_31_else:
+	branch param.exponent{r8} notequals 3: if_32_else, if_32_then
+	jump if_32_then
+if_31_then:
 	const t.3.1{r0}, [string-2]
 	call printString@@u8[t.3.1{r0}]
 	jump printTile@u8_ret
-if_31_else:
-	branch param.exponent{r8} notequals 4: if_32_else, if_32_then
-	jump if_32_then
-if_31_then:
+if_32_else:
+	branch param.exponent{r8} notequals 4: if_33_else, if_33_then
+	jump if_33_then
+if_32_then:
 	const t.4.1{r0}, [string-3]
 	call printString@@u8[t.4.1{r0}]
 	jump printTile@u8_ret
-if_32_else:
-	branch param.exponent{r8} notequals 5: if_33_else, if_33_then
-	jump if_33_then
-if_32_then:
+if_33_else:
+	branch param.exponent{r8} notequals 5: if_34_else, if_34_then
+	jump if_34_then
+if_33_then:
 	const t.5.1{r0}, [string-4]
 	call printString@@u8[t.5.1{r0}]
 	jump printTile@u8_ret
-if_33_else:
-	branch param.exponent{r8} notequals 6: if_34_else, if_34_then
-	jump if_34_then
-if_33_then:
+if_34_else:
+	branch param.exponent{r8} notequals 6: if_35_else, if_35_then
+	jump if_35_then
+if_34_then:
 	const t.6.1{r0}, [string-5]
 	call printString@@u8[t.6.1{r0}]
 	jump printTile@u8_ret
-if_34_else:
-	branch param.exponent{r8} notequals 7: if_35_else, if_35_then
-	jump if_35_then
-if_34_then:
+if_35_else:
+	branch param.exponent{r8} notequals 7: if_36_else, if_36_then
+	jump if_36_then
+if_35_then:
 	const t.7.1{r0}, [string-6]
 	call printString@@u8[t.7.1{r0}]
 	jump printTile@u8_ret
-if_35_else:
-	branch param.exponent{r8} notequals 8: if_36_else, if_36_then
-	jump if_36_then
-if_35_then:
+if_36_else:
+	branch param.exponent{r8} notequals 8: if_37_else, if_37_then
+	jump if_37_then
+if_36_then:
 	const t.8.1{r0}, [string-7]
 	call printString@@u8[t.8.1{r0}]
 	jump printTile@u8_ret
-if_36_else:
-	branch param.exponent{r8} notequals 9: if_37_else, if_37_then
-	jump if_37_then
-if_36_then:
+if_37_else:
+	branch param.exponent{r8} notequals 9: if_38_else, if_38_then
+	jump if_38_then
+if_37_then:
 	const t.9.1{r0}, [string-8]
 	call printString@@u8[t.9.1{r0}]
 	jump printTile@u8_ret
-if_37_else:
-	branch param.exponent{r8} notequals 10: if_38_else, if_38_then
-	jump if_38_then
-if_37_then:
+if_38_else:
+	branch param.exponent{r8} notequals 10: if_39_else, if_39_then
+	jump if_39_then
+if_38_then:
 	const t.10.1{r0}, [string-9]
 	call printString@@u8[t.10.1{r0}]
 	jump printTile@u8_ret
-if_38_else:
-	branch param.exponent{r8} notequals 11: if_39_else, if_39_then
-	jump if_39_then
-if_38_then:
+if_39_else:
+	branch param.exponent{r8} notequals 11: if_40_else, if_40_then
+	jump if_40_then
+if_39_then:
 	const t.11.1{r0}, [string-10]
 	call printString@@u8[t.11.1{r0}]
 	jump printTile@u8_ret
-if_39_else:
+if_40_else:
 	const t.13.1{r0}, [string-12]
 	call printString@@u8[t.13.1{r0}]
 	jump printTile@u8_ret
-if_39_then:
+if_40_then:
 	const t.12.1{r0}, [string-11]
 	call printString@@u8[t.12.1{r0}]
 printTile@u8_ret:
@@ -411,8 +437,8 @@ drawFrame:
 
 clearBoard:
 	const row.1{r8}, 0
-	jump for_41
-for_41_body:
+	jump for_42
+for_42_body:
 	move t.1.1{r0}, row.2{r8}
 	add t.1.1{r0}, 3
 	const arg.0.1{r2}, 1
@@ -422,8 +448,8 @@ for_41_body:
 	move row.3{r0}, row.2{r8}
 	add row.3{r0}, 1
 	move row.2{r8}, row.3{r0}
-for_41:
-	branch row.2{r8} lt 15: for_41_body
+for_42:
+	branch row.2{r8} lt 15: for_42_body
 
 drawBoard:
  Local variables
@@ -433,15 +459,15 @@ drawBoard:
 	const index.1{r8}, 0
 	const row.1{r9}, 3
 	const boardRow.1{r11}, 0
-	jump for_42
-for_42_body:
+	jump for_43
+for_43_body:
 	const column.1{r12}, 1
 	const boardColumn.1{r5}, 0
 	addrof memVarAddr{r14}, boardColumn.2
 	store [memVarAddr{r14}], boardColumn.2{r5}
 	move boardColumn.2{r3}, boardColumn.2{r5}
-	jump for_43
-for_43_body:
+	jump for_44
+for_44_body:
 	addrof memVarAddr{r14}, boardColumn.2
 	store [memVarAddr{r14}], boardColumn.2{r3}
 	cast t.7.1{r5}(i16), index.3{r8}(u8)
@@ -459,16 +485,16 @@ for_43_body:
 	add boardColumn.3{r3}, 1
 	move index.3{r8}, index.4{r0}
 	move column.2{r12}, column.3{r1}
-for_43:
-	branch boardColumn.2{r3} lt 4: for_43_body
+for_44:
+	branch boardColumn.2{r3} lt 4: for_44_body
 	move row.4{r0}, row.2{r9}
 	add row.4{r0}, 4
 	move boardRow.4{r2}, boardRow.2{r11}
 	add boardRow.4{r2}, 1
 	move row.2{r9}, row.4{r0}
 	move boardRow.2{r11}, boardRow.4{r2}
-for_42:
-	branch boardRow.2{r11} lt 4: for_42_body
+for_43:
+	branch boardRow.2{r11} lt 4: for_43_body
 
 drawScore:
 	const arg.0.0{r0}, 0
@@ -493,30 +519,30 @@ drawStatus:
 	call setCursor@i16@i16[arg.2.0{r0}, arg.2.1{r2}]
 	addrof a.1.1{r8}, gameState
 	load t.2.1{r10}, [a.1.1{r8}]
-	branch t.2.1{r10} equals 1: if_44_then
-	branch t.5.1{r10} notequals 2: drawStatus_ret, if_45_then
-	jump if_45_then
-if_44_then:
+	branch t.2.1{r10} equals 1: if_45_then
+	branch t.5.1{r10} notequals 2: drawStatus_ret, if_46_then
+	jump if_46_then
+if_45_then:
 	const t.3.1{r0}, [string-19]
 	call printString@@u8[t.3.1{r0}]
 	jump drawStatus_ret
-if_45_then:
+if_46_then:
 	const t.6.1{r0}, [string-20]
 	call printString@@u8[t.6.1{r0}]
 drawStatus_ret:
 
 newGame:
 	const index.1{r8}, 0
-	jump for_46
-for_46_body:
+	jump for_47
+for_47_body:
 	const t.1.1{r9}, 0
 	cast t.3.1{r10}(i16), index.2{r8}(u8)
 	addrof t.2.1{r12}, tiles
 	add t.2.2{r12}, t.3.1{r10}
 	store [t.2.2{r12}], t.1.1{r9}
 	add index.3{r8}, 1
-for_46:
-	branch index.2{r8} lt 16: for_46_body
+for_47:
+	branch index.2{r8} lt 16: for_47_body
 	const t.4.1{r8}, 0
 	addrof a.5.1{r12}, score
 	store [a.5.1{r12}], t.4.1{r8}
@@ -543,82 +569,82 @@ main:
 	call initRandom@i32[arg.0.0{r0}]
 	call drawFrame[]
 	call newGame[]
-	jump while_47
-if_48_end:
-	branch key.1{r8} equals 114: if_49_then
-	branch key.1{r8} equals 82: if_49_then
+	jump while_48
+if_49_end:
+	branch key.1{r8} equals 114: if_50_then
+	branch key.1{r8} equals 82: if_50_then
 	addrof a.6.1{r10}, gameState
 	load t.7.1{r12}, [a.6.1{r10}]
-	branch t.7.1{r12} notequals 0: while_47
+	branch t.7.1{r12} notequals 0: while_48
 	const direction.1{r10}, 255
-	branch key.1{r8} equals 1: if_52_then, or_54
-	jump or_54
-if_49_then:
+	branch key.1{r8} equals 1: if_53_then, or_55
+	jump or_55
+if_50_then:
 	call newGame[]
-	jump while_47
-or_54:
-	branch key.1{r8} equals 97: if_52_then
-	branch key.1{r8} equals 65: if_52_then
-	branch key.1{r8} equals 2: if_55_then
-	branch key.1{r8} equals 100: if_55_then, or_56
-	jump or_56
-if_52_then:
+	jump while_48
+or_55:
+	branch key.1{r8} equals 97: if_53_then
+	branch key.1{r8} equals 65: if_53_then
+	branch key.1{r8} equals 2: if_56_then
+	branch key.1{r8} equals 100: if_56_then, or_57
+	jump or_57
+if_53_then:
 	const direction.2{r8}, 0
 	move direction.3{r0}, direction.2{r8}
-	jump if_52_end
-or_56:
-	branch key.1{r8} equals 68: if_55_then
-	branch key.1{r8} equals 3: if_58_then
-	branch key.1{r8} equals 119: if_58_then, or_59
-	jump or_59
-if_55_then:
+	jump if_53_end
+or_57:
+	branch key.1{r8} equals 68: if_56_then
+	branch key.1{r8} equals 3: if_59_then
+	branch key.1{r8} equals 119: if_59_then, or_60
+	jump or_60
+if_56_then:
 	const direction.4{r8}, 1
 	move direction.3{r0}, direction.4{r8}
-	jump if_52_end
-or_59:
-	branch key.1{r8} equals 87: if_58_then
-	branch key.1{r8} equals 4: if_61_then
-	branch key.1{r8} equals 115: if_61_then, or_62
-	jump or_62
-if_58_then:
+	jump if_53_end
+or_60:
+	branch key.1{r8} equals 87: if_59_then
+	branch key.1{r8} equals 4: if_62_then
+	branch key.1{r8} equals 115: if_62_then, or_63
+	jump or_63
+if_59_then:
 	const direction.5{r8}, 2
 	move direction.3{r0}, direction.5{r8}
-	jump if_52_end
-or_62:
-	branch key.1{r8} equals 83: if_61_then
+	jump if_53_end
+or_63:
+	branch key.1{r8} equals 83: if_62_then
 	move direction.3{r0}, direction.1{r10}
-	jump if_52_end
-if_61_then:
+	jump if_53_end
+if_62_then:
 	const direction.6{r8}, 3
 	move direction.3{r0}, direction.6{r8}
-if_52_end:
-	branch direction.3{r0} equals 255: while_47
+if_53_end:
+	branch direction.3{r0} equals 255: while_48
 	call t.8.1{r0} = slide@u8[direction.3{r0}] -> bool
-	branch t.8.1{r0} equals 0: while_47
+	branch t.8.1{r0} equals 0: while_48
 	call spawnTile[]
 	addrof a.9.1{r8}, gameState
 	load t.10.1{r10}, [a.9.1{r8}]
-	branch t.10.1{r10} notequals 0: if_66_end
+	branch t.10.1{r10} notequals 0: if_67_end
 	call t.11.1{r0} = canMove[] -> bool
-	branch t.11.1{r0} notequals 0: if_66_end
+	branch t.11.1{r0} notequals 0: if_67_end
 	const t.12.1{r8}, 2
 	addrof a.13.1{r10}, gameState
 	store [a.13.1{r10}], t.12.1{r8}
-if_66_end:
+if_67_end:
 	call drawBoard[]
 	call drawScore[]
 	addrof a.14.1{r8}, gameState
 	load t.15.1{r10}, [a.14.1{r8}]
-	branch t.15.1{r10} equals 0: if_68_end
+	branch t.15.1{r10} equals 0: if_69_end
 	call drawStatus[]
-if_68_end:
+if_69_end:
 	const arg.10.0{r0}, 21
 	const arg.10.1{r2}, 0
 	call setCursor@i16@i16[arg.10.0{r0}, arg.10.1{r2}]
-while_47:
+while_48:
 	call key.1{r0} = getChar[] -> i16
 	move key.1{r8}, key.1{r0}
-	branch key.1{r8} notequals 27: if_48_end
+	branch key.1{r8} notequals 27: if_49_end
 
 printString@@u8:
 	ld   r2, r0
@@ -760,8 +786,10 @@ random16:
 
 Global variables
 	0: tiles[] (u8*/16)
-	1: score (i32/4)
-	2: gameState (u8/1)
+	1: moveTiles[] (u8*/16)
+	2: moveTargets[] (u8*/16)
+	3: score (i32/4)
+	4: gameState (u8/1)
 
 String literals
 	string lit 0 "      \0"
