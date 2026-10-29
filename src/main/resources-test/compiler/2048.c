@@ -89,7 +89,10 @@ u8 spawnTile() {
 	return TILE_NONE
 }
 
+// Close gaps and merge equal tiles toward first; step scans away from that edge.
+// Return true if any tile moves or merges.
 bool slideLine(u8 first, u8 step) {
+	// source reads old cells; target is the next slot in the packed result.
 	u8 source = first
 	u8 target = first
 	bool previousMerged = false
@@ -98,13 +101,17 @@ bool slideLine(u8 first, u8 step) {
 		u8* sourceTile = &tiles[source]
 		u8 tile = *sourceTile
 		if tile != 0 {
+			// Keep the value in tile while removing its old copy from the board.
 			*sourceTile = 0
 			bool merged = false
+			// Try the last placed tile, but never merge a result twice in one move.
+			// For example, tiles showing 2, 2, 4 become 4, 4, not 8.
 			if target != first && !previousMerged {
 				u8 previous = target - step
 				u8* previousTile = &tiles[previous]
 				if *previousTile == tile {
 					moveTargets[source] = previous
+					// Increasing the exponent by 1 doubles the displayed value.
 					u8 nextTile = tile + 1
 					*previousTile = nextTile
 					i32 mergedScore = tileValue(nextTile) as i32
@@ -117,6 +124,7 @@ bool slideLine(u8 first, u8 step) {
 					moved = true
 				}
 			}
+			// A separate tile needs a new slot; a merge reuses the previous slot.
 			if !merged {
 				moveTargets[source] = target
 				tiles[target] = tile
@@ -132,20 +140,26 @@ bool slideLine(u8 first, u8 step) {
 	return moved
 }
 
+// Reuse slideLine() for all four rows or columns in the requested direction.
 bool slide(u8 direction) {
+	// Save starting values for animation; destinations initially mean "stay put".
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		moveTiles[index] = tiles[index]
 		moveTargets[index] = index
 	}
 	bool moved = false
 	for u8 line = 0; line < BOARD_SIZE; line += 1 {
+		// Indices are row * 4 + column. Default: start at the left, scan right.
+		// The far edges are column 3 for right, or row 3 (offset 12) for down.
 		u8 first = line << 2
 		u8 step = 1
+		// Adding 255 or 252 wraps a u8 index, acting like subtracting 1 or 4.
 		if direction == MOVE_RIGHT {
 			first += 3
 			step = STEP_RIGHT
 		}
 		else if direction == MOVE_UP {
+			// Adding 4 moves to the next row in the same column.
 			first = line
 			step = 4
 		}
@@ -153,6 +167,7 @@ bool slide(u8 direction) {
 			first = line + 12
 			step = STEP_DOWN
 		}
+		// Keep any earlier success: later rows or columns may not change.
 		if slideLine(first, step) {
 			moved = true
 		}
@@ -160,15 +175,19 @@ bool slide(u8 direction) {
 	return moved
 }
 
+// A free cell or a pair of equal neighbors means the game can continue.
 bool canMove() {
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		u8 tile = tiles[index]
 		if tile == 0 {
 			return true
 		}
+		// Check right and down only; checking left and up would repeat pairs.
+		// index & 3 is the column, so skip right at the end of a row.
 		if (index & 3) != 3 && tiles[index + 1] == tile {
 			return true
 		}
+		// The bottom row (indices 12..15) has no cell below it.
 		if index < 12 && tiles[index + 4] == tile {
 			return true
 		}
@@ -216,6 +235,8 @@ u8* tileText(u8 exponent) {
 	return "  ?   "
 }
 
+// Copy one tile row (TILE_WIDTH characters) into boardFrame at offset.
+// offset counts characters from the buffer's start; nothing is drawn yet.
 void drawTileRow(i16 offset, u8* text) {
 	for u8 index = 0; index < TILE_WIDTH; index += 1 {
 		boardFrame[offset] = text[index]
@@ -253,13 +274,17 @@ void clearBoard() {
 	}
 }
 
+// boardFrame is the new image; displayedFrame remembers what is on screen.
+// Print only differences to avoid unnecessary character writes and flicker.
 void presentBoard() {
+	// Rows follow each other in the flat character buffer.
 	i16 offset = 0
 	for i16 row = 0; row < BOARD_HEIGHT; row += 1 {
 		bool printing = false
 		for i16 column = 0; column < BOARD_WIDTH; column += 1 {
 			u8 character = boardFrame[offset]
 			if character != displayedFrame[offset] {
+				// Position once for adjacent changes; printing advances the cursor.
 				if !printing {
 					setCursor(row + BOARD_TOP, column + BOARD_LEFT)
 					printing = true
@@ -268,11 +293,13 @@ void presentBoard() {
 				displayedFrame[offset] = character
 			}
 			else {
+				// A skipped cell means the next change needs a new cursor position.
 				printing = false
 			}
 			offset += 1
 		}
 	}
+	// Move the blinking cursor off the tiles between animation frames.
 	setCursor(21i16, 0i16)
 }
 
@@ -323,10 +350,14 @@ void waitFrame() asm {
   #endif
 #endif
 
+// Animate the saved starting tiles; tiles already holds the final move result.
+// main() draws the merged values and newly spawned tile after this finishes.
 void animateSlide() {
 	for i16 frame = 1; frame <= ANIMATION_STEPS; frame += 1 {
+		// frame counts steps done; remaining counts steps still to go.
 		i16 remaining = ANIMATION_STEPS
 		remaining -= frame
+		// Clear the next image in memory, not the screen, to remove old tile trails.
 		clearBoard()
 		for u8 source = 0; source < BOARD_CELLS; source += 1 {
 			u8 exponent = moveTiles[source]
@@ -334,14 +365,19 @@ void animateSlide() {
 				continue
 			}
 			u8 target = moveTargets[source]
+			// For a 4-wide board, index >> 2 is the row and index & 3 the column.
+			// Multiply by tile spacing to get character positions within the board.
 			i16 sourceRow = (source >> 2) as i16 * TILE_ROW_STEP
 			i16 sourceColumn = (source & 3) as i16 * TILE_COLUMN_STEP
 			i16 targetRow = (target >> 2) as i16 * TILE_ROW_STEP
 			i16 targetColumn = (target & 3) as i16 * TILE_COLUMN_STEP
+			// Blend start and target positions using the move's progress.
+			// When remaining reaches 0, this gives the exact target position.
 			i16 row = (sourceRow * remaining + targetRow * frame) / ANIMATION_STEPS
 			i16 column = (sourceColumn * remaining + targetColumn * frame) / ANIMATION_STEPS
 			drawTileAt(row + BOARD_TOP, column + BOARD_LEFT, exponent)
 		}
+		// Display the completed image, then pause before preparing the next one.
 		presentBoard()
 		waitFrame()
 	}
