@@ -197,6 +197,8 @@ spawnTile:
 	var 15: t.15 (i16/2)
 	var 16: t.16 (u8*/8)
 	var 17: t.17 (i64/8)
+	var 18: t.18 (u8/1)
+	var 19: a.19 (u8*/8)
 
 	const emptyCount, 0
 	const index, 0
@@ -245,6 +247,9 @@ if_11_end:
 	addrof t.16, tiles
 	add t.16, t.17
 	store [t.16], tile
+	move t.18, index
+	addrof a.19, spawnedTileIndex
+	store [a.19], t.18
 	jump spawnTile_ret
 if_10_end:
 	sub chosen, 1
@@ -1010,40 +1015,70 @@ newGame_ret:
 
 main:
  Local variables
-	var 0: key (i16/2)
-	var 1: direction (u8/1)
-	var 2: t.2 (i32/4)
-	var 3: a.3 (i32*/8)
+	var 0: row (i16/2)
+	var 1: column (i16/2)
+	var 2: key (i16/2)
+	var 3: direction (u8/1)
 	var 4: t.4 (i32/4)
 	var 5: a.5 (i32*/8)
 	var 6: t.6 (u8/1)
 	var 7: a.7 (u8*/8)
-	var 8: a.8 (u8*/8)
-	var 9: t.9 (u8/1)
-	var 10: t.10 (bool/1)
+	var 8: t.8 (i32/4)
+	var 9: a.9 (i32*/8)
+	var 10: t.10 (u8/1)
 	var 11: a.11 (u8*/8)
-	var 12: t.12 (u8/1)
-	var 13: t.13 (bool/1)
+	var 12: t.12 (i16/2)
+	var 13: t.13 (i16/2)
 	var 14: t.14 (u8/1)
 	var 15: a.15 (u8*/8)
-	var 16: a.16 (u8*/8)
-	var 17: t.17 (u8/1)
+	var 16: t.16 (u8/1)
+	var 17: t.17 (i16/2)
+	var 18: t.18 (i16/2)
+	var 19: t.19 (u8/1)
+	var 20: a.20 (u8*/8)
+	var 21: t.21 (u8/1)
+	var 22: a.22 (u8*/8)
+	var 23: t.23 (u8/1)
+	var 24: t.24 (bool/1)
+	var 25: a.25 (u8*/8)
+	var 26: t.26 (u8/1)
+	var 27: t.27 (bool/1)
+	var 28: t.28 (u8/1)
+	var 29: a.29 (u8*/8)
+	var 30: a.30 (u8*/8)
+	var 31: t.31 (u8/1)
 
-	const t.2, 0
-	addrof a.3, __random__
-	store [a.3], t.2
 	const t.4, 0
-	addrof a.5, score
+	addrof a.5, __random__
 	store [a.5], t.4
 	const t.6, 0
-	addrof a.7, gameState
+	addrof a.7, spawnedTileIndex
 	store [a.7], t.6
+	const t.8, 0
+	addrof a.9, score
+	store [a.9], t.8
+	const t.10, 0
+	addrof a.11, gameState
+	store [a.11], t.10
 	call initRandom@i32[7439742]
 	call drawFrame[]
 	call newGame[]
 while_60:
+	addrof a.15, spawnedTileIndex
+	load t.16, [a.15]
+	shiftright t.14, t.16, 2
+	cast t.13(i16), t.14(u8)
+	shiftleft t.12, t.13, 2
+	add row, t.12, 4
+	addrof a.20, spawnedTileIndex
+	load t.21, [a.20]
+	and t.19, t.21, 3
+	cast t.18(i16), t.19(u8)
+	mul t.17, t.18, 9
+	add column, t.17, 5
+	call setCursor@i16@i16[row, column]
 	call key = getChar[] -> i16
-	branch key equals 27: main_ret, if_61_end
+	branch key equals 27: while_60_break, if_61_end
 if_61_end:
 	branch key equals 114: if_62_then, or_63
 or_63:
@@ -1052,9 +1087,9 @@ if_62_then:
 	call newGame[]
 	jump while_60
 if_62_end:
-	addrof a.8, gameState
-	load t.9, [a.8]
-	branch t.9 notequals 0: while_60, if_64_end
+	addrof a.22, gameState
+	load t.23, [a.22]
+	branch t.23 notequals 0: while_60, if_64_end
 if_64_end:
 	const direction, 255
 	branch key equals -8117: if_65_then, or_67
@@ -1088,38 +1123,38 @@ if_71_else:
 or_76:
 	branch key equals 115: if_74_then, or_75
 or_75:
-	branch key notequals 83: if_65_end, if_74_then
+	branch key notequals 83: while_60, if_74_then
 if_74_then:
 	const direction, 3
 if_65_end:
-	branch direction equals 255: while_60, or_78
-or_78:
-	call t.10 = slide@u8[direction] -> bool
-	branch t.10 equals 0: while_60, if_77_end
+	call t.24 = slide@u8[direction] -> bool
+	branch t.24 equals 0: while_60, if_77_end
 if_77_end:
 	call animateSlide[]
 	call spawnTile[]
-	addrof a.11, gameState
-	load t.12, [a.11]
-	branch t.12 notequals 0: if_79_end, and_80
-and_80:
-	call t.13 = canMove[] -> bool
-	branch t.13 notequals 0: if_79_end, if_79_then
-if_79_then:
-	const t.14, 2
-	addrof a.15, gameState
-	store [a.15], t.14
-if_79_end:
+	addrof a.25, gameState
+	load t.26, [a.25]
+	branch t.26 notequals 0: if_78_end, and_79
+and_79:
+	call t.27 = canMove[] -> bool
+	branch t.27 notequals 0: if_78_end, if_78_then
+if_78_then:
+	const t.28, 2
+	addrof a.29, gameState
+	store [a.29], t.28
+if_78_end:
 	call drawBoard[]
 	call drawScore[]
-	addrof a.16, gameState
-	load t.17, [a.16]
-	branch t.17 equals 0: if_81_end, if_81_then
-if_81_then:
+	addrof a.30, gameState
+	load t.31, [a.30]
+	branch t.31 equals 0: if_80_end, if_80_then
+if_80_then:
 	call drawStatus[]
-if_81_end:
+if_80_end:
 	call setCursor@i16@i16[21, 0]
 	jump while_60
+while_60_break:
+	call setCursor@i16@i16[21, 0]
 main_ret:
 
 printStringLength@@u8@i64:
@@ -1176,24 +1211,25 @@ waitFrame:
 Global variables
 	0: __random__ (i32/4)
 	1: tiles[] (u8*/16)
-	2: moveTiles[] (u8*/16)
-	3: moveTargets[] (u8*/16)
-	4: boardFrame[] (u8*/525)
-	5: displayedFrame[] (u8*/525)
-	6: score (i32/4)
-	7: gameState (u8/1)
+	2: spawnedTileIndex (u8/1)
+	3: moveTiles[] (u8*/16)
+	4: moveTargets[] (u8*/16)
+	5: boardFrame[] (u8*/525)
+	6: displayedFrame[] (u8*/525)
+	7: score (i32/4)
+	8: gameState (u8/1)
 
 String literals
 	string lit 0 "      \0"
-	string lit 1 "  2   \0"
-	string lit 2 "  4   \0"
-	string lit 3 "  8   \0"
+	string lit 1 "   2  \0"
+	string lit 2 "   4  \0"
+	string lit 3 "   8  \0"
 	string lit 4 "  16  \0"
 	string lit 5 "  32  \0"
 	string lit 6 "  64  \0"
-	string lit 7 " 128  \0"
-	string lit 8 " 256  \0"
-	string lit 9 " 512  \0"
+	string lit 7 "  128 \0"
+	string lit 8 "  256 \0"
+	string lit 9 "  512 \0"
 	string lit 10 " 1024 \0"
 	string lit 11 " 2048 \0"
 	string lit 12 "  ?   \0"

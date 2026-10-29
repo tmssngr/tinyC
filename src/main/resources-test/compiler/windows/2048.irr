@@ -188,10 +188,13 @@ if_11_then:
 if_11_end:
 	addrof memVarAddr{r7}, index.4
 	load index.4{r1}, [memVarAddr{r7}]
-	cast t.17.1{r1}(i64), index.4{r1}(u8)
-	addrof t.16.1{r2}, tiles
-	add t.16.2{r2}, t.17.1{r1}
-	store [t.16.2{r2}], tile.2{r0}
+	cast t.17.1{r2}(i64), index.4{r1}(u8)
+	addrof t.16.1{r3}, tiles
+	add t.16.2{r3}, t.17.1{r2}
+	store [t.16.2{r3}], tile.2{r0}
+	move t.18.1{r0}, index.4{r1}
+	addrof a.19.1{r1}, spawnedTileIndex
+	store [a.19.1{r1}], t.18.1{r0}
 spawnTile_ret:
 
 slideLine@u8@u8:
@@ -1031,17 +1034,18 @@ for_59:
 	call setCursor@i16@i16[arg.5.0{r1}, arg.5.1{r2}]
 
 main:
- Local variables
-	var 0: direction.1 (u8/1)
-
-	const t.2.1{r6}, 0
-	addrof a.3.1{r0}, __random__
-	store [a.3.1{r0}], t.2.1{r6}
-	addrof a.5.1{r0}, score
+	const t.4.1{r6}, 0
+	addrof a.5.1{r0}, __random__
 	store [a.5.1{r0}], t.4.1{r6}
 	const t.6.1{r6}, 0
-	addrof a.7.1{r0}, gameState
+	addrof a.7.1{r0}, spawnedTileIndex
 	store [a.7.1{r0}], t.6.1{r6}
+	const t.8.1{r6}, 0
+	addrof a.9.1{r0}, score
+	store [a.9.1{r0}], t.8.1{r6}
+	const t.10.1{r6}, 0
+	addrof a.11.1{r0}, gameState
+	store [a.11.1{r0}], t.10.1{r6}
 	const arg.0.0{r1}, 7439742
 	call initRandom@i32[arg.0.0{r1}]
 	call drawFrame[]
@@ -1050,12 +1054,9 @@ main:
 if_61_end:
 	branch key.1{r6} equals 114: if_62_then
 	branch key.1{r6} equals 82: if_62_then
-	addrof a.8.1{r0}, gameState
-	load t.9.1{r0}, [a.8.1{r0}]
-	branch t.9.1{r0} notequals 0: while_60
-	const direction.1{r0}, 255
-	addrof memVarAddr{r7}, direction.1
-	store [memVarAddr{r7}], direction.1{r0}
+	addrof a.22.1{r0}, gameState
+	load t.23.1{r0}, [a.22.1{r0}]
+	branch t.23.1{r0} notequals 0: while_60
 	branch key.1{r6} equals -8117: if_65_then, or_67
 	jump or_67
 if_62_then:
@@ -1090,43 +1091,56 @@ if_71_then:
 	move direction.3{r1}, direction.5{r6}
 	jump if_65_end
 or_75:
-	branch key.1{r6} equals 83: if_74_then
-	addrof memVarAddr{r7}, direction.1
-	load direction.1{r6}, [memVarAddr{r7}]
-	move direction.3{r1}, direction.1{r6}
-	jump if_65_end
+	branch key.1{r6} notequals 83: while_60, if_74_then
 if_74_then:
 	const direction.6{r6}, 3
 	move direction.3{r1}, direction.6{r6}
 if_65_end:
-	branch direction.3{r1} equals 255: while_60
-	call t.10.1{r0} = slide@u8[direction.3{r1}] -> bool
-	branch t.10.1{r0} equals 0: while_60
+	call t.24.1{r0} = slide@u8[direction.3{r1}] -> bool
+	branch t.24.1{r0} equals 0: while_60
 	call animateSlide[]
 	call spawnTile[]
-	addrof a.11.1{r6}, gameState
-	load t.12.1{r6}, [a.11.1{r6}]
-	branch t.12.1{r6} notequals 0: if_79_end
-	call t.13.1{r0} = canMove[] -> bool
-	branch t.13.1{r0} notequals 0: if_79_end
-	const t.14.1{r6}, 2
-	addrof a.15.1{r0}, gameState
-	store [a.15.1{r0}], t.14.1{r6}
-if_79_end:
+	addrof a.25.1{r6}, gameState
+	load t.26.1{r6}, [a.25.1{r6}]
+	branch t.26.1{r6} notequals 0: if_78_end
+	call t.27.1{r0} = canMove[] -> bool
+	branch t.27.1{r0} notequals 0: if_78_end
+	const t.28.1{r6}, 2
+	addrof a.29.1{r0}, gameState
+	store [a.29.1{r0}], t.28.1{r6}
+if_78_end:
 	call drawBoard[]
 	call drawScore[]
-	addrof a.16.1{r6}, gameState
-	load t.17.1{r6}, [a.16.1{r6}]
-	branch t.17.1{r6} equals 0: if_81_end
+	addrof a.30.1{r6}, gameState
+	load t.31.1{r6}, [a.30.1{r6}]
+	branch t.31.1{r6} equals 0: if_80_end
 	call drawStatus[]
-if_81_end:
+if_80_end:
 	const arg.11.0{r1}, 21
 	const arg.11.1{r2}, 0
 	call setCursor@i16@i16[arg.11.0{r1}, arg.11.1{r2}]
 while_60:
+	addrof a.15.1{r6}, spawnedTileIndex
+	load t.16.1{r6}, [a.15.1{r6}]
+	shiftright t.14.1{r6}, 2
+	cast t.13.1{r6}(i16), t.14.1{r6}(u8)
+	shiftleft t.12.1{r6}, 2
+	move row.1{r1}, t.12.1{r6}
+	add row.1{r1}, 4
+	addrof a.20.1{r6}, spawnedTileIndex
+	load t.21.1{r6}, [a.20.1{r6}]
+	and t.19.1{r6}, 3
+	cast t.18.1{r6}(i16), t.19.1{r6}(u8)
+	mul t.17.1{r6}, 9
+	move column.1{r2}, t.17.1{r6}
+	add column.1{r2}, 5
+	call setCursor@i16@i16[row.1{r1}, column.1{r2}]
 	call key.1{r0} = getChar[] -> i16
 	move key.1{r6}, key.1{r0}
 	branch key.1{r6} notequals 27: if_61_end
+	const arg.14.0{r1}, 21
+	const arg.14.1{r2}, 0
+	call setCursor@i16@i16[arg.14.0{r1}, arg.14.1{r2}]
 
 printStringLength@@u8@i64:
 	mov     rdi, rsp
@@ -1182,24 +1196,25 @@ waitFrame:
 Global variables
 	0: __random__ (i32/4)
 	1: tiles[] (u8*/16)
-	2: moveTiles[] (u8*/16)
-	3: moveTargets[] (u8*/16)
-	4: boardFrame[] (u8*/525)
-	5: displayedFrame[] (u8*/525)
-	6: score (i32/4)
-	7: gameState (u8/1)
+	2: spawnedTileIndex (u8/1)
+	3: moveTiles[] (u8*/16)
+	4: moveTargets[] (u8*/16)
+	5: boardFrame[] (u8*/525)
+	6: displayedFrame[] (u8*/525)
+	7: score (i32/4)
+	8: gameState (u8/1)
 
 String literals
 	string lit 0 "      \0"
-	string lit 1 "  2   \0"
-	string lit 2 "  4   \0"
-	string lit 3 "  8   \0"
+	string lit 1 "   2  \0"
+	string lit 2 "   4  \0"
+	string lit 3 "   8  \0"
 	string lit 4 "  16  \0"
 	string lit 5 "  32  \0"
 	string lit 6 "  64  \0"
-	string lit 7 " 128  \0"
-	string lit 8 " 256  \0"
-	string lit 9 " 512  \0"
+	string lit 7 "  128 \0"
+	string lit 8 "  256 \0"
+	string lit 9 "  512 \0"
 	string lit 10 " 1024 \0"
 	string lit 11 " 2048 \0"
 	string lit 12 "  ?   \0"

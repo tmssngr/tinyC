@@ -38,6 +38,8 @@ spawnTile:
 	var 15: t.15 (i16/2)
 	var 16: t.16 (u8*/2)
 	var 17: t.17 (i16/2)
+	var 18: t.18 (u8/1)
+	var 19: a.19 (u8*/2)
 
 	const emptyCount, 0
 	const index, 0
@@ -86,6 +88,9 @@ if_8_end:
 	addrof t.16, tiles
 	add t.16, t.17
 	store [t.16], tile
+	move t.18, index
+	addrof a.19, spawnedTileIndex
+	store [a.19], t.18
 	jump spawnTile_ret
 if_7_end:
 	sub chosen, 1
@@ -696,7 +701,7 @@ animateSlide:
 
 	const frame, 1
 for_51:
-	branch frame gt 4: for_51_break, for_51_body
+	branch frame gt 4: animateSlide_ret, for_51_body
 for_51_body:
 	const remaining, 4
 	sub remaining, frame
@@ -747,8 +752,6 @@ for_52_break:
 for_51_continue:
 	add frame, 1
 	jump for_51
-for_51_break:
-	call drawBoard[]
 animateSlide_ret:
 
 drawScore:
@@ -838,35 +841,65 @@ newGame_ret:
 
 main:
  Local variables
-	var 0: key (i16/2)
-	var 1: direction (u8/1)
-	var 2: t.2 (i32/4)
-	var 3: a.3 (i32*/2)
+	var 0: row (i16/2)
+	var 1: column (i16/2)
+	var 2: key (i16/2)
+	var 3: direction (u8/1)
 	var 4: t.4 (u8/1)
 	var 5: a.5 (u8*/2)
-	var 6: a.6 (u8*/2)
-	var 7: t.7 (u8/1)
-	var 8: t.8 (bool/1)
+	var 6: t.6 (i32/4)
+	var 7: a.7 (i32*/2)
+	var 8: t.8 (u8/1)
 	var 9: a.9 (u8*/2)
-	var 10: t.10 (u8/1)
-	var 11: t.11 (bool/1)
+	var 10: t.10 (i16/2)
+	var 11: t.11 (i16/2)
 	var 12: t.12 (u8/1)
 	var 13: a.13 (u8*/2)
-	var 14: a.14 (u8*/2)
-	var 15: t.15 (u8/1)
+	var 14: t.14 (u8/1)
+	var 15: t.15 (i16/2)
+	var 16: t.16 (i16/2)
+	var 17: t.17 (u8/1)
+	var 18: a.18 (u8*/2)
+	var 19: t.19 (u8/1)
+	var 20: a.20 (u8*/2)
+	var 21: t.21 (u8/1)
+	var 22: t.22 (bool/1)
+	var 23: a.23 (u8*/2)
+	var 24: t.24 (u8/1)
+	var 25: t.25 (bool/1)
+	var 26: t.26 (u8/1)
+	var 27: a.27 (u8*/2)
+	var 28: a.28 (u8*/2)
+	var 29: t.29 (u8/1)
 
-	const t.2, 0
-	addrof a.3, score
-	store [a.3], t.2
 	const t.4, 0
-	addrof a.5, gameState
+	addrof a.5, spawnedTileIndex
 	store [a.5], t.4
+	const t.6, 0
+	addrof a.7, score
+	store [a.7], t.6
+	const t.8, 0
+	addrof a.9, gameState
+	store [a.9], t.8
 	call initRandom@i32[7439742]
 	call drawFrame[]
 	call newGame[]
 while_57:
+	addrof a.13, spawnedTileIndex
+	load t.14, [a.13]
+	shiftright t.12, t.14, 2
+	cast t.11(i16), t.12(u8)
+	shiftleft t.10, t.11, 2
+	add row, t.10, 4
+	addrof a.18, spawnedTileIndex
+	load t.19, [a.18]
+	and t.17, t.19, 3
+	cast t.16(i16), t.17(u8)
+	mul t.15, t.16, 9
+	add column, t.15, 5
+	call setCursor@i16@i16[row, column]
 	call key = getChar[] -> i16
-	branch key equals 27: main_ret, if_58_end
+	branch key equals 27: while_57_break, if_58_end
 if_58_end:
 	branch key equals 114: if_59_then, or_60
 or_60:
@@ -875,9 +908,9 @@ if_59_then:
 	call newGame[]
 	jump while_57
 if_59_end:
-	addrof a.6, gameState
-	load t.7, [a.6]
-	branch t.7 notequals 0: while_57, if_61_end
+	addrof a.20, gameState
+	load t.21, [a.20]
+	branch t.21 notequals 0: while_57, if_61_end
 if_61_end:
 	const direction, 255
 	branch key equals 1: if_62_then, or_64
@@ -911,38 +944,38 @@ if_68_else:
 or_73:
 	branch key equals 115: if_71_then, or_72
 or_72:
-	branch key notequals 83: if_62_end, if_71_then
+	branch key notequals 83: while_57, if_71_then
 if_71_then:
 	const direction, 3
 if_62_end:
-	branch direction equals 255: while_57, or_75
-or_75:
-	call t.8 = slide@u8[direction] -> bool
-	branch t.8 equals 0: while_57, if_74_end
+	call t.22 = slide@u8[direction] -> bool
+	branch t.22 equals 0: while_57, if_74_end
 if_74_end:
 	call animateSlide[]
 	call spawnTile[]
-	addrof a.9, gameState
-	load t.10, [a.9]
-	branch t.10 notequals 0: if_76_end, and_77
-and_77:
-	call t.11 = canMove[] -> bool
-	branch t.11 notequals 0: if_76_end, if_76_then
-if_76_then:
-	const t.12, 2
-	addrof a.13, gameState
-	store [a.13], t.12
-if_76_end:
+	addrof a.23, gameState
+	load t.24, [a.23]
+	branch t.24 notequals 0: if_75_end, and_76
+and_76:
+	call t.25 = canMove[] -> bool
+	branch t.25 notequals 0: if_75_end, if_75_then
+if_75_then:
+	const t.26, 2
+	addrof a.27, gameState
+	store [a.27], t.26
+if_75_end:
 	call drawBoard[]
 	call drawScore[]
-	addrof a.14, gameState
-	load t.15, [a.14]
-	branch t.15 equals 0: if_78_end, if_78_then
-if_78_then:
+	addrof a.28, gameState
+	load t.29, [a.28]
+	branch t.29 equals 0: if_77_end, if_77_then
+if_77_then:
 	call drawStatus[]
-if_78_end:
+if_77_end:
 	call setCursor@i16@i16[21, 0]
 	jump while_57
+while_57_break:
+	call setCursor@i16@i16[21, 0]
 main_ret:
 
 printString@@u8:
@@ -1091,24 +1124,25 @@ waitFrame:
 
 Global variables
 	0: tiles[] (u8*/16)
-	1: moveTiles[] (u8*/16)
-	2: moveTargets[] (u8*/16)
-	3: boardFrame[] (u8*/525)
-	4: displayedFrame[] (u8*/525)
-	5: score (i32/4)
-	6: gameState (u8/1)
+	1: spawnedTileIndex (u8/1)
+	2: moveTiles[] (u8*/16)
+	3: moveTargets[] (u8*/16)
+	4: boardFrame[] (u8*/525)
+	5: displayedFrame[] (u8*/525)
+	6: score (i32/4)
+	7: gameState (u8/1)
 
 String literals
 	string lit 0 "      \0"
-	string lit 1 "  2   \0"
-	string lit 2 "  4   \0"
-	string lit 3 "  8   \0"
+	string lit 1 "   2  \0"
+	string lit 2 "   4  \0"
+	string lit 3 "   8  \0"
 	string lit 4 "  16  \0"
 	string lit 5 "  32  \0"
 	string lit 6 "  64  \0"
-	string lit 7 " 128  \0"
-	string lit 8 " 256  \0"
-	string lit 9 " 512  \0"
+	string lit 7 "  128 \0"
+	string lit 8 "  256 \0"
+	string lit 9 "  512 \0"
 	string lit 10 " 1024 \0"
 	string lit 11 " 2048 \0"
 	string lit 12 "  ?   \0"

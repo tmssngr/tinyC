@@ -1,5 +1,6 @@
 i32 __random__;
 u8* tiles[16];
+u8 spawnedTileIndex;
 u8* moveTiles[16];
 u8* moveTargets[16];
 u8* boardFrame[525];
@@ -130,6 +131,7 @@ void spawnTile() {
 				tile = 2;
 			}
 			tiles[index as i64] = tile;
+			spawnedTileIndex = index;
 			return;
 		}
 		chosen = chosen - 1;
@@ -257,15 +259,15 @@ u8* tileText@u8(u8 exponent) {
 	}
 	else {
 		if (exponent == 1) {
-			return "  2   ";
+			return "   2  ";
 		}
 		else {
 			if (exponent == 2) {
-				return "  4   ";
+				return "   4  ";
 			}
 			else {
 				if (exponent == 3) {
-					return "  8   ";
+					return "   8  ";
 				}
 				else {
 					if (exponent == 4) {
@@ -281,15 +283,15 @@ u8* tileText@u8(u8 exponent) {
 							}
 							else {
 								if (exponent == 7) {
-									return " 128  ";
+									return "  128 ";
 								}
 								else {
 									if (exponent == 8) {
-										return " 256  ";
+										return "  256 ";
 									}
 									else {
 										if (exponent == 9) {
-											return " 512  ";
+											return "  512 ";
 										}
 										else {
 											if (exponent == 10) {
@@ -496,6 +498,8 @@ void newGame() {
 }
 
 void main() {
+	i16 row;
+	i16 column;
 	i16 key;
 	u8 direction;
 
@@ -503,6 +507,9 @@ void main() {
 	drawFrame();
 	newGame();
 	while (true) {
+		row = (((spawnedTileIndex >> 2) as i16) * 4) + ((3 + (3 / 2)) as i16);
+		column = (((spawnedTileIndex & 3) as i16) * 9) + ((1 + (8 / 2)) as i16);
+		setCursor@i16@i16(row, column);
 		key = getChar();
 		if (key == 27) {
 			break;
@@ -530,10 +537,13 @@ void main() {
 					if (((key == (57424 as i16)) || (key == 115)) || (key == 83)) {
 						direction = 3;
 					}
+					else {
+						continue;
+					}
 				}
 			}
 		}
-		if ((direction == 255) || (!(slide@u8(direction)))) {
+		if (!(slide@u8(direction))) {
 			continue;
 		}
 		animateSlide();
@@ -548,4 +558,5 @@ void main() {
 		}
 		setCursor@i16@i16(21, 0);
 	}
+	setCursor@i16@i16(21, 0);
 }

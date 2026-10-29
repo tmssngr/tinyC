@@ -35,6 +35,7 @@ const STATE_WON = 1;
 const STATE_LOST = 2;
 
 u8 tiles[BOARD_CELLS];
+u8 spawnedTileIndex;
 u8 moveTiles[BOARD_CELLS];
 u8 moveTargets[BOARD_CELLS];
 u8 boardFrame[BOARD_CHARACTERS];
@@ -72,6 +73,7 @@ void spawnTile() {
 				tile = 2;
 			}
 			tiles[index] = tile;
+			spawnedTileIndex = index;
 			return;
 		}
 		chosen -= 1;
@@ -373,6 +375,9 @@ void main() {
 	drawFrame();
 	newGame();
 	while (true) {
+		i16 row = (spawnedTileIndex >> 2) as i16 * TILE_ROW_STEP + (BOARD_TOP + TILE_HEIGHT / 2) as i16;
+		i16 column = (spawnedTileIndex & 3) as i16 * TILE_COLUMN_STEP + (BOARD_LEFT + TILE_WIDTH / 2) as i16;
+		setCursor(row, column);
 		i16 key = getChar();
 		if (key == ESCAPE) {
 			break;
@@ -417,4 +422,5 @@ void main() {
 		}
 		setCursor(21i16, 0i16);
 	}
+	setCursor(21i16, 0i16);
 }
