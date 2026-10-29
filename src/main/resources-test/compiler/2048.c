@@ -51,7 +51,9 @@ i16 tileValue(u8 exponent) {
 	return value
 }
 
+// Returns the spawned tile's board index, or TILE_NONE if the board is full.
 u8 spawnTile() {
+	// Count free cells so we can choose a position among them.
 	u8 emptyCount = 0
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		if tiles[index] == 0 {
@@ -62,12 +64,16 @@ u8 spawnTile() {
 		return TILE_NONE
 	}
 
+	// random16() is nonnegative, so chosen is between 0 and emptyCount - 1.
+	// This is an ordinal among empty cells, not a board index:
+	// chosen == 2 selects the third empty cell encountered below.
 	u8 chosen = (random16() % emptyCount as i16) as u8
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		if tiles[index] != 0 {
 			continue
 		}
 		if chosen == 0 {
+			// Tiles store exponents: 1 means 2, and 2 means 4 (roughly 10% of rolls).
 			u8 tile = 1
 			if random16() % 10 == 0 {
 				tile = 2
@@ -75,8 +81,11 @@ u8 spawnTile() {
 			tiles[index] = tile
 			return index
 		}
+		// Only skipped empty cells decrement the ordinal; occupied cells do not.
 		chosen -= 1
 	}
+	// The board is unchanged until we return, so the scan must find the chosen
+	// empty cell. This is unreachable, but the compiler requires a final return.
 	return TILE_NONE
 }
 
