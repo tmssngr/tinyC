@@ -398,7 +398,10 @@ void main() {
 		else if (key == CURSOR_DOWN || key == 's' || key == 'S') {
 			direction = MOVE_DOWN;
 		}
-		if (direction == MOVE_NONE || !slide(direction)) {
+		else {
+			continue
+		}
+		if !slide(direction) {
 			continue;
 		}
 
