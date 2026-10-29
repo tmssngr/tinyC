@@ -952,7 +952,7 @@ _if_24_then:
         ; move step.3{r2}, step.5{r0}
         mov sil, al
 _if_22_end:
-        ; 146:3 if slideLine@u8@u8([ExprVarAccess[varName=first, index=4, scope=function, type=u8, varIsArray=false, location=146:17], ExprVarAccess[varName=step, index=5, scope=function, type=u8, varIsArray=false, location=146:24]])
+        ; 146:3 if slideLine@u8@u8([ExprVarAccess[varName=first, index=4, scope=function, type=u8, varIsArray=false, location=146:16], ExprVarAccess[varName=step, index=5, scope=function, type=u8, varIsArray=false, location=146:23]])
         ; call t.13.1{r0} = slideLine@u8@u8[first.3{r1}, step.3{r2}] -> bool
         call _slideLine@u8@u8
         ; branch t.13.1{r0} notequals 0: if_25_then
