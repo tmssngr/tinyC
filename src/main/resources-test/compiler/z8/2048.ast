@@ -1,5 +1,4 @@
 u8* tiles[16];
-u8 spawnedTileIndex;
 u8* moveTiles[16];
 u8* moveTargets[16];
 u8* boardFrame[525];
@@ -40,7 +39,7 @@ i32 tileValue@u8(u8 exponent) {
 	return value;
 }
 
-void spawnTile() {
+u8 spawnTile() {
 	u8 emptyCount;
 	u8 index;
 	u8 chosen;
@@ -55,7 +54,7 @@ void spawnTile() {
 		}
 	}
 	if (emptyCount == 0) {
-		return;
+		return 255;
 	}
 	chosen = ((random16()) % (emptyCount as i16)) as u8;
 	index = 0;
@@ -69,11 +68,11 @@ void spawnTile() {
 				tile = 2;
 			}
 			tiles[index as i16] = tile;
-			spawnedTileIndex = index;
-			return;
+			return index;
 		}
 		chosen = chosen - 1;
 	}
+	return 255;
 }
 
 bool slideLine@u8@u8(u8 first, u8 step) {
@@ -418,8 +417,9 @@ void drawStatus() {
 	}
 }
 
-void newGame() {
+u8 newGame() {
 	u8 index;
+	u8 spawnedTileIndex;
 
 	index = 0;
 	for (; index < 16; index = index + 1) {
@@ -428,22 +428,25 @@ void newGame() {
 	score = 0;
 	gameState = 0;
 	spawnTile();
-	spawnTile();
+	spawnedTileIndex = spawnTile();
 	drawBoard();
 	drawScore();
 	drawStatus();
 	setCursor@i16@i16(21, 0);
+	return spawnedTileIndex;
 }
 
 void main() {
+	u8 spawnedTileIndex;
 	i16 row;
 	i16 column;
 	i16 key;
 	u8 direction;
+	u8 newTileIndex;
 
 	initRandom@i32(7439742);
 	drawFrame();
-	newGame();
+	spawnedTileIndex = newGame();
 	while (true) {
 		row = (((spawnedTileIndex >> 2) as i16) * 4) + ((3 + (3 / 2)) as i16);
 		column = (((spawnedTileIndex & 3) as i16) * 9) + ((1 + (8 / 2)) as i16);
@@ -453,7 +456,7 @@ void main() {
 			break;
 		}
 		if ((key == 114) || (key == 82)) {
-			newGame();
+			spawnedTileIndex = newGame();
 			continue;
 		}
 		if (gameState != 0) {
@@ -485,7 +488,10 @@ void main() {
 			continue;
 		}
 		animateSlide();
-		spawnTile();
+		newTileIndex = spawnTile();
+		if (newTileIndex != 255) {
+			spawnedTileIndex = newTileIndex;
+		}
 		if ((gameState == 0) && (!(canMove()))) {
 			gameState = 2;
 		}

@@ -12,6 +12,7 @@ const ANIMATION_STEPS = 8
 const BOARD_SIZE = 4
 const BOARD_CELLS = BOARD_SIZE * BOARD_SIZE
 const WIN_TILE = 11
+const TILE_NONE = 0xFF
 const BOARD_TOP = 3
 const BOARD_LEFT = 1
 const TILE_WIDTH = 8
@@ -35,7 +36,6 @@ const STATE_WON = 1
 const STATE_LOST = 2
 
 u8 tiles[BOARD_CELLS]
-u8 spawnedTileIndex
 u8 moveTiles[BOARD_CELLS]
 u8 moveTargets[BOARD_CELLS]
 u8 boardFrame[BOARD_CHARACTERS]
@@ -51,7 +51,7 @@ i32 tileValue(u8 exponent) {
 	return value
 }
 
-void spawnTile() {
+u8 spawnTile() {
 	u8 emptyCount = 0
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		if tiles[index] == 0 {
@@ -59,7 +59,7 @@ void spawnTile() {
 		}
 	}
 	if emptyCount == 0 {
-		return
+		return TILE_NONE
 	}
 
 	u8 chosen = (random16() % emptyCount as i16) as u8
@@ -73,11 +73,11 @@ void spawnTile() {
 				tile = 2
 			}
 			tiles[index] = tile
-			spawnedTileIndex = index
-			return
+			return index
 		}
 		chosen -= 1
 	}
+	return TILE_NONE
 }
 
 bool slideLine(u8 first, u8 step) {
@@ -356,24 +356,25 @@ void drawStatus() {
 	}
 }
 
-void newGame() {
+u8 newGame() {
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		tiles[index] = 0
 	}
 	score = 0
 	gameState = STATE_PLAYING
 	spawnTile()
-	spawnTile()
+	u8 spawnedTileIndex = spawnTile()
 	drawBoard()
 	drawScore()
 	drawStatus()
 	setCursor(21i16, 0i16)
+	return spawnedTileIndex
 }
 
 void main() {
 	initRandom(7439742)
 	drawFrame()
-	newGame()
+	u8 spawnedTileIndex = newGame()
 	while (true) {
 		i16 row = (spawnedTileIndex >> 2) as i16 * TILE_ROW_STEP + (BOARD_TOP + TILE_HEIGHT / 2) as i16
 		i16 column = (spawnedTileIndex & 3) as i16 * TILE_COLUMN_STEP + (BOARD_LEFT + TILE_WIDTH / 2) as i16
@@ -383,7 +384,7 @@ void main() {
 			break
 		}
 		if key == 'r' || key == 'R' {
-			newGame()
+			spawnedTileIndex = newGame()
 			continue
 		}
 		if gameState != STATE_PLAYING {
@@ -411,7 +412,10 @@ void main() {
 		}
 
 		animateSlide()
-		spawnTile()
+		u8 newTileIndex = spawnTile()
+		if newTileIndex != TILE_NONE {
+			spawnedTileIndex = newTileIndex
+		}
 		if gameState == STATE_PLAYING && !canMove() {
 			gameState = STATE_LOST
 		}
