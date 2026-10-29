@@ -2258,18 +2258,11 @@ _if_78_end:
         lea rbx, [var_8]
         ; load t.31.1{r6}, [a.30.1{r6}]
         mov bl, [rbx]
-        ; branch t.31.1{r6} equals 0: if_80_end
+        ; branch t.31.1{r6} equals 0: while_60
         cmp bl, 0
-        je _if_80_end
+        je _while_60
         ; call drawStatus[]
         call _drawStatus
-_if_80_end:
-        ; const arg.11.0{r1}, 21
-        mov cx, 21
-        ; const arg.11.1{r2}, 0
-        mov dx, 0
-        ; call setCursor@i16@i16[arg.11.0{r1}, arg.11.1{r2}]
-        call _setCursor@i16@i16
 _while_60:
         ; addrof a.15.1{r6}, spawnedTileIndex
         lea rbx, [var_2]
@@ -2310,11 +2303,11 @@ _while_60:
         ; branch key.1{r6} notequals 27: if_61_end
         cmp bx, 27
         jne _if_61_end
-        ; const arg.14.0{r1}, 21
+        ; const arg.13.0{r1}, 21
         mov cx, 21
-        ; const arg.14.1{r2}, 0
+        ; const arg.13.1{r2}, 0
         mov dx, 0
-        ; call setCursor@i16@i16[arg.14.0{r1}, arg.14.1{r2}]
+        ; call setCursor@i16@i16[arg.13.0{r1}, arg.13.1{r2}]
         call _setCursor@i16@i16
         add rsp, 32
         ; restore clobbered non-volatile registers

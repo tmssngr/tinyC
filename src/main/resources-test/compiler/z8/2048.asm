@@ -2232,20 +2232,11 @@ if__75__end:
         ld   r9, #lo(var_7)
         ; load t.29.1{r10}, [a.28.1{r8}]
         lde  r10, @rr8
-        ; branch t.29.1{r10} equals 0: if_77_end
+        ; branch t.29.1{r10} equals 0: while_57
         cp   r10, #%00
-        jr   eq, if__77__end
+        jr   eq, while__57
         ; call drawStatus[]
         call drawStatus
-if__77__end:
-        ; const arg.11.0{r0}, 21
-        ld   r0, #%00
-        ld   r1, #%15
-        ; const arg.11.1{r2}, 0
-        ld   r2, #%00
-        ld   r3, #%00
-        ; call setCursor@i16@i16[arg.11.0{r0}, arg.11.1{r2}]
-        call setCursor_Pi16_Pi16
 while__57:
         ; addrof a.13.1{r8}, spawnedTileIndex
         ld   r8, #hi(var_1)
@@ -2309,13 +2300,13 @@ while__57:
         jr   ne, if__58__end
         cp   r8, #%00
         jr   ne, if__58__end
-        ; const arg.14.0{r0}, 21
+        ; const arg.13.0{r0}, 21
         ld   r0, #%00
         ld   r1, #%15
-        ; const arg.14.1{r2}, 0
+        ; const arg.13.1{r2}, 0
         ld   r2, #%00
         ld   r3, #%00
-        ; call setCursor@i16@i16[arg.14.0{r0}, arg.14.1{r2}]
+        ; call setCursor@i16@i16[arg.13.0{r0}, arg.13.1{r2}]
         call setCursor_Pi16_Pi16
         ; restore clobbered non-volatile registers
         pop  r13

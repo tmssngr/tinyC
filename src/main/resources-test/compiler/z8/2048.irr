@@ -796,12 +796,8 @@ if_75_end:
 	call drawScore[]
 	addrof a.28.1{r8}, gameState
 	load t.29.1{r10}, [a.28.1{r8}]
-	branch t.29.1{r10} equals 0: if_77_end
+	branch t.29.1{r10} equals 0: while_57
 	call drawStatus[]
-if_77_end:
-	const arg.11.0{r0}, 21
-	const arg.11.1{r2}, 0
-	call setCursor@i16@i16[arg.11.0{r0}, arg.11.1{r2}]
 while_57:
 	addrof a.13.1{r8}, spawnedTileIndex
 	load t.14.1{r10}, [a.13.1{r8}]
@@ -821,9 +817,9 @@ while_57:
 	call key.1{r0} = getChar[] -> i16
 	move key.1{r8}, key.1{r0}
 	branch key.1{r8} notequals 27: if_58_end
-	const arg.14.0{r0}, 21
-	const arg.14.1{r2}, 0
-	call setCursor@i16@i16[arg.14.0{r0}, arg.14.1{r2}]
+	const arg.13.0{r0}, 21
+	const arg.13.1{r2}, 0
+	call setCursor@i16@i16[arg.13.0{r0}, arg.13.1{r2}]
 
 printString@@u8:
 	ld   r2, r0

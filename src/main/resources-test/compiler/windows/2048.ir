@@ -1147,11 +1147,9 @@ if_78_end:
 	call drawScore[]
 	addrof a.30, gameState
 	load t.31, [a.30]
-	branch t.31 equals 0: if_80_end, if_80_then
+	branch t.31 equals 0: while_60, if_80_then
 if_80_then:
 	call drawStatus[]
-if_80_end:
-	call setCursor@i16@i16[21, 0]
 	jump while_60
 while_60_break:
 	call setCursor@i16@i16[21, 0]

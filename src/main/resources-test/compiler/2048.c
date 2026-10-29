@@ -420,7 +420,6 @@ void main() {
 		if gameState != STATE_PLAYING {
 			drawStatus()
 		}
-		setCursor(21i16, 0i16)
 	}
 	setCursor(21i16, 0i16)
 }
