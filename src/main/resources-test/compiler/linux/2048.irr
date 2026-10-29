@@ -216,7 +216,6 @@ slideLine@u8@u8:
 	var 10: moved.4 (bool/1)
 	var 11: merged.2 (bool/1)
 	var 12: nextTile.1 (u8/1)
-	var 13: t.21.1 (i32/4)
 
 	move first{r8}, first{r1}
 	move source.1{r0}, first{r8}
@@ -240,9 +239,9 @@ for_12_body:
 	move previousMerged.2{r4}, previousMerged.2{r2}
 	move step{r2}, step{r5}
 	move moved.2{r5}, moved.2{r1}
-	cast t.13.1{r6}(i64), source.2{r0}(u8)
+	cast t.14.1{r6}(i64), source.2{r0}(u8)
 	addrof sourceTile.1{r7}, tiles
-	add sourceTile.2{r7}, t.13.1{r6}
+	add sourceTile.2{r7}, t.14.1{r6}
 	load tile.1{r6}, [sourceTile.2{r7}]
 	branch tile.1{r6} notequals 0: if_13_then
 	addrof memVarAddr{r9}, target.3
@@ -261,8 +260,8 @@ for_12_body:
 	load previousMerged.3{r2}, [memVarAddr{r9}]
 	jump if_13_end
 if_13_then:
-	const t.14.1{r1}, 0
-	store [sourceTile.2{r7}], t.14.1{r1}
+	const t.15.1{r1}, 0
+	store [sourceTile.2{r7}], t.15.1{r1}
 	const merged.1{r7}, 0
 	branch target.2{r3} notequals first{r8}: and_15
 	addrof memVarAddr{r9}, source.2
@@ -298,11 +297,11 @@ if_14_then:
 	sub previous.1{r1}, step{r2}
 	addrof memVarAddr{r9}, step
 	store [memVarAddr{r9}], step{r2}
-	cast t.15.1{r2}(i64), previous.1{r1}(u8)
+	cast t.16.1{r2}(i64), previous.1{r1}(u8)
 	addrof previousTile.1{r3}, tiles
-	add previousTile.2{r3}, t.15.1{r2}
-	load t.16.1{r2}, [previousTile.2{r3}]
-	branch t.16.1{r2} equals tile.1{r6}: if_16_then
+	add previousTile.2{r3}, t.16.1{r2}
+	load t.17.1{r2}, [previousTile.2{r3}]
+	branch t.17.1{r2} equals tile.1{r6}: if_16_then
 	addrof memVarAddr{r9}, previousMerged.4
 	store [memVarAddr{r9}], previousMerged.4{r4}
 	addrof memVarAddr{r9}, moved.4
@@ -319,35 +318,31 @@ if_14_then:
 	move previousMerged.4{r2}, previousMerged.4{r4}
 	jump if_14_end
 if_16_then:
-	cast t.18.1{r2}(i64), source.2{r0}(u8)
+	cast t.19.1{r2}(i64), source.2{r0}(u8)
 	addrof memVarAddr{r9}, source.2
 	store [memVarAddr{r9}], source.2{r0}
-	addrof t.17.1{r0}, moveTargets
-	add t.17.2{r0}, t.18.1{r2}
-	store [t.17.2{r0}], previous.1{r1}
+	addrof t.18.1{r0}, moveTargets
+	add t.18.2{r0}, t.19.1{r2}
+	store [t.18.2{r0}], previous.1{r1}
 	move nextTile.1{r1}, tile.1{r6}
 	addrof memVarAddr{r9}, tile.1
 	store [memVarAddr{r9}], tile.1{r6}
 	add nextTile.1{r1}, 1
 	store [previousTile.2{r3}], nextTile.1{r1}
-	addrof a.20.1{r0}, score
-	load t.21.1{r0}, [a.20.1{r0}]
-	addrof memVarAddr{r9}, t.21.1
-	store [memVarAddr{r9}], t.21.1{r0}
 	addrof memVarAddr{r9}, nextTile.1
 	store [memVarAddr{r9}], nextTile.1{r1}
-	call t.22.1{r0} = tileValue@u8[nextTile.1{r1}] -> i32
-	addrof memVarAddr{r9}, t.21.1
-	load t.21.1{r1}, [memVarAddr{r9}]
-	add t.19.1{r1}, t.22.1{r0}
-	addrof a.23.1{r2}, score
-	store [a.23.1{r2}], t.19.1{r1}
-	addrof memVarAddr{r9}, nextTile.1
+	call t.20.1{r0} = tileValue@u8[nextTile.1{r1}] -> i16
+	cast mergedScore.1{r1}(i32), t.20.1{r0}(i16)
+	addrof a.22.1{r2}, score
+	load t.23.1{r2}, [a.22.1{r2}]
+	add t.21.1{r2}, mergedScore.1{r1}
+	addrof a.24.1{r1}, score
+	store [a.24.1{r1}], t.21.1{r2}
 	load nextTile.1{r1}, [memVarAddr{r9}]
 	branch nextTile.1{r1} notequals 11: if_17_end
-	const t.24.1{r1}, 1
-	addrof a.25.1{r2}, gameState
-	store [a.25.1{r2}], t.24.1{r1}
+	const t.25.1{r1}, 1
+	addrof a.26.1{r2}, gameState
+	store [a.26.1{r2}], t.25.1{r1}
 if_17_end:
 	const merged.3{r1}, 1
 	const previousMerged.6{r2}, 1
@@ -366,16 +361,16 @@ if_18_then:
 	load target.2{r1}, [memVarAddr{r9}]
 	addrof memVarAddr{r9}, source.2
 	load source.2{r4}, [memVarAddr{r9}]
-	cast t.27.1{r2}(i64), source.2{r4}(u8)
-	addrof t.26.1{r5}, moveTargets
-	add t.26.2{r5}, t.27.1{r2}
-	store [t.26.2{r5}], target.2{r1}
-	cast t.29.1{r2}(i64), target.2{r1}(u8)
-	addrof t.28.1{r5}, tiles
-	add t.28.2{r5}, t.29.1{r2}
+	cast t.28.1{r2}(i64), source.2{r4}(u8)
+	addrof t.27.1{r5}, moveTargets
+	add t.27.2{r5}, t.28.1{r2}
+	store [t.27.2{r5}], target.2{r1}
+	cast t.30.1{r2}(i64), target.2{r1}(u8)
+	addrof t.29.1{r5}, tiles
+	add t.29.2{r5}, t.30.1{r2}
 	addrof memVarAddr{r9}, tile.1
 	load tile.1{r2}, [memVarAddr{r9}]
-	store [t.28.2{r5}], tile.1{r2}
+	store [t.29.2{r5}], tile.1{r2}
 	branch target.2{r1} equals source.2{r4}: if_19_end
 	const moved.6{r2}, 1
 	move moved.5{r3}, moved.6{r2}

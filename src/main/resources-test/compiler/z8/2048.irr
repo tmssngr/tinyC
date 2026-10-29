@@ -2,15 +2,15 @@ tileValue@u8:
  Local variables
 	arg 0: exponent (u8/1)
 
-	const value.1{r4}, 1
-	const index.1{r8}, 0
+	const value.1{r2}, 1
+	const index.1{r4}, 0
 	jump for_1
 for_1_body:
-	shiftleft value.3{r4}, 1
-	add index.3{r8}, 1
+	shiftleft value.3{r2}, 1
+	add index.3{r4}, 1
 for_1:
-	branch index.2{r8} lt param.exponent{r0}: for_1_body
-	move value.2{r0}, value.2{r4}
+	branch index.2{r4} lt param.exponent{r0}: for_1_body
+	move value.2{r0}, value.2{r2}
 
 spawnTile:
 	const emptyCount.1{r8}, 0
@@ -78,7 +78,7 @@ slideLine@u8@u8:
 	var 2: position.2 (u8/1)
 	var 3: tile.1 (u8/1)
 	var 4: merged.2 (bool/1)
-	var 5: t.21.1 (i32/4)
+	var 5: param.first (u8/1)
 
 	move param.first{r8}, first{r0}
 	move param.step{r9}, step{r1}
@@ -89,18 +89,23 @@ slideLine@u8@u8:
 	const position.1{r1}, 0
 	addrof memVarAddr{r14}, position.2
 	store [memVarAddr{r14}], position.2{r1}
+	addrof memVarAddr{r14}, param.first
+	store [memVarAddr{r14}], param.first{r8}
+	addrof memVarAddr{r14}, position.2
 	move position.2{r2}, position.2{r1}
 	jump for_9
 for_9_body:
 	addrof memVarAddr{r14}, position.2
 	store [memVarAddr{r14}], position.2{r2}
-	cast t.13.1{r1}(i16), source.2{r10}(u8)
+	addrof memVarAddr{r14}, param.first
+	load param.first{r8}, [memVarAddr{r14}]
+	cast t.14.1{r1}(i16), source.2{r10}(u8)
 	addrof sourceTile.1{r4}, tiles
-	add sourceTile.2{r4}, t.13.1{r1}
+	add sourceTile.2{r4}, t.14.1{r1}
 	load tile.1{r1}, [sourceTile.2{r4}]
 	branch tile.1{r1} equals 0: if_10_end
-	const t.14.1{r2}, 0
-	store [sourceTile.2{r4}], t.14.1{r2}
+	const t.15.1{r2}, 0
+	store [sourceTile.2{r4}], t.15.1{r2}
 	const merged.1{r2}, 0
 	branch target.2{r11} notequals param.first{r8}: and_12
 	addrof memVarAddr{r14}, tile.1
@@ -109,6 +114,8 @@ for_9_body:
 	jump if_11_end
 and_12:
 	branch previousMerged.2{r12} equals 0: if_11_then
+	addrof memVarAddr{r14}, param.first
+	store [memVarAddr{r14}], param.first{r8}
 	addrof memVarAddr{r14}, tile.1
 	store [memVarAddr{r14}], tile.1{r1}
 	move merged.2{r1}, merged.2{r2}
@@ -116,42 +123,45 @@ and_12:
 if_11_then:
 	move previous.1{r3}, target.2{r11}
 	sub previous.1{r3}, param.step{r9}
-	cast t.15.1{r4}(i16), previous.1{r3}(u8)
+	cast t.16.1{r4}(i16), previous.1{r3}(u8)
 	addrof previousTile.1{r6}, tiles
-	add previousTile.2{r6}, t.15.1{r4}
-	load t.16.1{r4}, [previousTile.2{r6}]
-	branch t.16.1{r4} equals tile.1{r1}: if_13_then
+	add previousTile.2{r6}, t.16.1{r4}
+	load t.17.1{r4}, [previousTile.2{r6}]
+	branch t.17.1{r4} equals tile.1{r1}: if_13_then
 	addrof memVarAddr{r14}, merged.2
 	store [memVarAddr{r14}], merged.2{r2}
+	addrof memVarAddr{r14}, param.first
+	store [memVarAddr{r14}], param.first{r8}
 	addrof memVarAddr{r14}, tile.1
 	store [memVarAddr{r14}], tile.1{r1}
 	addrof memVarAddr{r14}, merged.2
 	move merged.2{r1}, merged.2{r2}
 	jump if_11_end
 if_13_then:
-	cast t.18.1{r12}(i16), source.2{r10}(u8)
-	addrof t.17.1{r4}, moveTargets
-	add t.17.2{r4}, t.18.1{r12}
-	store [t.17.2{r4}], previous.1{r3}
+	cast t.19.1{r12}(i16), source.2{r10}(u8)
+	addrof t.18.1{r4}, moveTargets
+	add t.18.2{r4}, t.19.1{r12}
+	store [t.18.2{r4}], previous.1{r3}
 	move nextTile.1{r12}, tile.1{r1}
 	addrof memVarAddr{r14}, tile.1
 	store [memVarAddr{r14}], tile.1{r1}
 	add nextTile.1{r12}, 1
 	store [previousTile.2{r6}], nextTile.1{r12}
-	addrof a.20.1{r2}, score
-	load t.21.1{r4}, [a.20.1{r2}]
-	addrof memVarAddr{r14}, t.21.1
-	store [memVarAddr{r14}], t.21.1{r4}
 	move nextTile.1{r0}, nextTile.1{r12}
-	call t.22.1{r0} = tileValue@u8[nextTile.1{r0}] -> i32
-	load t.21.1{r4}, [memVarAddr{r14}]
-	add t.19.1{r4}, t.22.1{r0}
-	addrof a.23.1{r2}, score
-	store [a.23.1{r2}], t.19.1{r4}
+	call t.20.1{r0} = tileValue@u8[nextTile.1{r0}] -> i16
+	cast mergedScore.1{r1}(i32), t.20.1{r0}(i16)
+	addrof a.22.1{r6}, score
+	addrof memVarAddr{r14}, param.first
+	store [memVarAddr{r14}], param.first{r8}
+	load t.23.1{r8}, [a.22.1{r6}]
+	move t.21.1{r5}, t.23.1{r8}
+	add t.21.1{r5}, mergedScore.1{r1}
+	move a.24.1{r2}, a.24.1{r6}
+	store [a.24.1{r2}], t.21.1{r5}
 	branch nextTile.1{r12} notequals 11: if_14_end
-	const t.24.1{r1}, 1
-	addrof a.25.1{r2}, gameState
-	store [a.25.1{r2}], t.24.1{r1}
+	const t.25.1{r1}, 1
+	addrof a.26.1{r2}, gameState
+	store [a.26.1{r2}], t.25.1{r1}
 if_14_end:
 	const merged.3{r1}, 1
 	const previousMerged.6{r2}, 1
@@ -160,16 +170,16 @@ if_14_end:
 	move moved.4{r13}, moved.7{r3}
 if_11_end:
 	branch merged.2{r1} notequals 0: if_10_end
-	cast t.27.1{r1}(i16), source.2{r10}(u8)
-	addrof t.26.1{r4}, moveTargets
-	add t.26.2{r4}, t.27.1{r1}
-	store [t.26.2{r4}], target.2{r11}
-	cast t.29.1{r1}(i16), target.2{r11}(u8)
-	addrof t.28.1{r4}, tiles
-	add t.28.2{r4}, t.29.1{r1}
+	cast t.28.1{r1}(i16), source.2{r10}(u8)
+	addrof t.27.1{r4}, moveTargets
+	add t.27.2{r4}, t.28.1{r1}
+	store [t.27.2{r4}], target.2{r11}
+	cast t.30.1{r1}(i16), target.2{r11}(u8)
+	addrof t.29.1{r4}, tiles
+	add t.29.2{r4}, t.30.1{r1}
 	addrof memVarAddr{r14}, tile.1
 	load tile.1{r1}, [memVarAddr{r14}]
-	store [t.28.2{r4}], tile.1{r1}
+	store [t.29.2{r4}], tile.1{r1}
 	branch target.2{r11} notequals source.2{r10}: if_16_then
 	move moved.5{r1}, moved.4{r13}
 	jump if_16_end

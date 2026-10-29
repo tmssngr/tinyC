@@ -43,8 +43,8 @@ u8 displayedFrame[BOARD_CHARACTERS]
 i32 score
 u8 gameState
 
-i32 tileValue(u8 exponent) {
-	i32 value = 1
+i16 tileValue(u8 exponent) {
+	i16 value = 1
 	for u8 index = 0; index < exponent; index += 1 {
 		value <<= 1
 	}
@@ -98,7 +98,8 @@ bool slideLine(u8 first, u8 step) {
 					moveTargets[source] = previous
 					u8 nextTile = tile + 1
 					*previousTile = nextTile
-					score = score + tileValue(nextTile)
+					i32 mergedScore = tileValue(nextTile) as i32
+					score += mergedScore
 					if nextTile == WIN_TILE {
 						gameState = STATE_WON
 					}

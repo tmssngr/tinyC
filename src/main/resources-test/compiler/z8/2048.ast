@@ -27,8 +27,8 @@ void initRandom@i32(i32 salt) asm {
 i16 random16() asm {
 }
 
-i32 tileValue@u8(u8 exponent) {
-	i32 value;
+i16 tileValue@u8(u8 exponent) {
+	i16 value;
 	u8 index;
 
 	value = 1;
@@ -87,6 +87,7 @@ bool slideLine@u8@u8(u8 first, u8 step) {
 	u8 previous;
 	u8* previousTile;
 	u8 nextTile;
+	i32 mergedScore;
 
 	source = first;
 	target = first;
@@ -106,7 +107,8 @@ bool slideLine@u8@u8(u8 first, u8 step) {
 					moveTargets[source as i16] = previous;
 					nextTile = tile + 1;
 					*previousTile = nextTile;
-					score = score + (tileValue@u8(nextTile));
+					mergedScore = (tileValue@u8(nextTile)) as i32;
+					score = score + mergedScore;
 					if (nextTile == 11) {
 						gameState = 1;
 					}
