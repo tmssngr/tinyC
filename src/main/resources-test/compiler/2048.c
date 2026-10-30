@@ -12,7 +12,6 @@ const ANIMATION_STEPS = 8
 const BOARD_SIZE = 4
 const BOARD_CELLS = BOARD_SIZE * BOARD_SIZE
 const WIN_TILE = 11
-const TILE_NONE = 0xFF
 const BOARD_TOP = 3
 const BOARD_LEFT = 1
 const TILE_WIDTH = 8
@@ -51,8 +50,7 @@ i16 tileValue(u8 exponent) {
 	return value
 }
 
-// Returns the spawned tile's board index, or TILE_NONE if the board is full.
-u8 spawnTile() {
+void spawnTile() {
 	// Count free cells so we can choose a position among them.
 	u8 emptyCount = 0
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
@@ -61,7 +59,7 @@ u8 spawnTile() {
 		}
 	}
 	if emptyCount == 0 {
-		return TILE_NONE
+		return
 	}
 
 	// random16() is nonnegative, so chosen is between 0 and emptyCount - 1.
@@ -79,14 +77,13 @@ u8 spawnTile() {
 				tile = 2
 			}
 			tiles[index] = tile
-			return index
+			return
 		}
 		// Only skipped empty cells decrement the ordinal; occupied cells do not.
 		chosen -= 1
 	}
 	// The board is unchanged until we return, so the scan must find the chosen
 	// empty cell. This is unreachable, but the compiler requires a final return.
-	return TILE_NONE
 }
 
 // Close gaps and merge equal tiles toward first; step scans away from that edge.
@@ -402,35 +399,32 @@ void drawStatus() {
 	}
 }
 
-u8 newGame() {
+void newGame() {
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		tiles[index] = 0
 	}
 	score = 0
 	gameState = STATE_PLAYING
 	spawnTile()
-	u8 spawnedTileIndex = spawnTile()
+	spawnTile()
 	drawBoard()
 	drawScore()
 	drawStatus()
 	setCursor(21i16, 0i16)
-	return spawnedTileIndex
 }
 
 void main() {
 	initRandom(7439742)
 	drawFrame()
-	u8 spawnedTileIndex = newGame()
+	newGame()
 	while (true) {
-		i16 row = (spawnedTileIndex >> 2) as i16 * TILE_ROW_STEP + (BOARD_TOP + TILE_HEIGHT / 2) as i16
-		i16 column = (spawnedTileIndex & 3) as i16 * TILE_COLUMN_STEP + (BOARD_LEFT + TILE_WIDTH / 2) as i16
-		setCursor(row, column)
+		setCursor(21i16, 0i16)
 		i16 key = getChar()
 		if key == ESCAPE {
 			break
 		}
 		if key == 'r' || key == 'R' {
-			spawnedTileIndex = newGame()
+			newGame()
 			continue
 		}
 		if gameState != STATE_PLAYING {
@@ -458,10 +452,7 @@ void main() {
 		}
 
 		animateSlide()
-		u8 newTileIndex = spawnTile()
-		if newTileIndex != TILE_NONE {
-			spawnedTileIndex = newTileIndex
-		}
+		spawnTile()
 		if gameState == STATE_PLAYING && !canMove() {
 			gameState = STATE_LOST
 		}
@@ -471,5 +462,4 @@ void main() {
 			drawStatus()
 		}
 	}
-	setCursor(21i16, 0i16)
 }
