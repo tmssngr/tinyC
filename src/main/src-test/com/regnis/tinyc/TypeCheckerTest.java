@@ -1,10 +1,8 @@
 package com.regnis.tinyc;
 
 import com.regnis.tinyc.ast.*;
-import com.regnis.tinyc.ast.Function;
 
 import java.util.*;
-import java.util.function.*;
 
 import org.jetbrains.annotations.*;
 import org.junit.*;
@@ -733,6 +731,67 @@ public class TypeCheckerTest {
 						), loc(3, 2)))
 				), List.of(), loc(2, 0))
 		), List.of(), List.of()), program);
+	}
+
+	@Test
+	public void testReturn() {
+		testIllegal(Messages.functionMustReturnType(Type.U8), 1, 2,
+		            """
+				            u8 foo() {
+				              u8 b = 1
+				            }""");
+		testIllegal(Messages.functionMustReturnType(Type.U8), 1, 2,
+		            """
+				            u8 foo() {
+				              if true {
+				                return 1
+				              }
+				            }""");
+		testIllegal(Messages.functionMustReturnType(Type.U8), 5, 6,
+		            """
+				            u8 foo(u8 a) {
+				              if a > 1 {
+				                return 1
+				              }
+				              else {
+				                a = a + 1
+				              }
+				            }""");
+		testIllegal(Messages.functionMustReturnType(Type.U8), 2, 6,
+		            """
+				            u8 foo(u8 a) {
+				              if a > 1 {
+				                a = a + 1
+				              }
+				              else {
+				                a = a + 1
+				              }
+				            }""");
+		testIllegal(Messages.functionMustReturnType(Type.U8), 1, 2,
+		            """
+				            u8 foo(u8 a) {
+				              while a > 0 {
+				                a -= 1
+				              }
+				            }""");
+
+		final Program program = Parser.parse("""
+				                                     u8 bar() asm {
+				                                       "ret"
+				                                     }
+
+				                                     u8 foo() {
+				                                       while true {
+				                                         u8 b = bar()
+				                                         if b > 10 {
+				                                           return b
+				                                         }
+				                                       }
+				                                     }""", Set.of());
+		final List<Message> messages = new ArrayList<>();
+		final TypeChecker checker = new TypeChecker(Type.I64, messages::add);
+		checker.check(program);
+		Assert.assertTrue(messages.isEmpty());
 	}
 
 	@Test

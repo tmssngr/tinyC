@@ -166,7 +166,7 @@ public final class TypeChecker {
 			return new Function(function.name(), function.typeString(), function.returnTypeNotNull(), function.parameters(), List.of(), List.of(), function.asmLines(), function.location());
 		}
 
-		expectedReturnType = function.returnType();
+		expectedReturnType = function.returnTypeNotNull();
 		localVars = new LocalVars();
 		try {
 			for (Function.Parameter arg : function.parameters()) {
@@ -174,18 +174,67 @@ public final class TypeChecker {
 			}
 
 			final List<Statement> statements = processStatements(function.statements());
+			skipAllAfterReturn(statements);
 			if (expectedReturnType != Type.VOID) {
-				if (!(Utils.getLastOrNull(statements) instanceof StmtReturn)) {
-					throw new SyntaxException(Messages.functionMustReturnType(expectedReturnType), function.location());
+				final Location locationForNotReturning = checkForReturnWithType(statements, function.location());
+				if (locationForNotReturning != null) {
+					throw new SyntaxException(Messages.functionMustReturnType(expectedReturnType), locationForNotReturning);
 				}
 			}
-			skipAllAfterReturn(statements);
 			return Function.typedInstance(function.name(), function.typeString(), function.returnTypeNotNull(), function.parameters(), localVars.toList(), statements, List.of(), function.location());
 		}
 		finally {
 			localVars = null;
 			expectedReturnType = null;
 		}
+	}
+
+	@Nullable
+	private Location checkForReturnWithType(List<Statement> statements, Location location) {
+		final Statement lastStatement = Utils.getLastOrNull(statements);
+		if (lastStatement == null) {
+			return location;
+		}
+
+		switch (lastStatement) {
+		case StmtReturn r -> {
+			return null;
+		}
+		case StmtIf i -> {
+			Location branchLocation = checkForReturnWithType(i.thenStatements(), i.location());
+			if (branchLocation == null) {
+				branchLocation = checkForReturnWithType(i.elseStatements(), i.location());
+			}
+			return branchLocation;
+		}
+		case StmtLoop l -> {
+			final Expression condition = l.condition();
+			// endless loop?
+			if (condition instanceof ExprBoolLiteral literal && literal.value()) {
+				if (containsReturnInSomeBranch(l.bodyStatements())) {
+					return null;
+				}
+			}
+		}
+		default -> {}
+		}
+		return lastStatement.location();
+	}
+
+	private boolean containsReturnInSomeBranch(List<Statement> statements) {
+		for (Statement statement : statements) {
+			if (statement instanceof StmtReturn) {
+				return true;
+			}
+			if (statement instanceof StmtIf stmtIf) {
+				return containsReturnInSomeBranch(stmtIf.thenStatements())
+				       || containsReturnInSomeBranch(stmtIf.elseStatements());
+			}
+			if (statement instanceof StmtLoop loop) {
+				return containsReturnInSomeBranch(loop.bodyStatements());
+			}
+		}
+		return false;
 	}
 
 	@NotNull
