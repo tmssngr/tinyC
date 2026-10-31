@@ -26,19 +26,42 @@ const CURSOR_RIGHT = 0xE04D as i16
 const CURSOR_DOWN = 0xE050 as i16
 
 i16 getChar() asm {
-	"sub    rsp, 28h" // 8h to compensate for return address, 20h for calling _getch
-	"  call [_getch]"
-	"  test al, al"
-	"  js   .1"
-	"  jnz  .2"
-	"  dec  al"
-	".1:"
-	"  mov  rbx, rax"
-	"  shl  rbx, 8"
-	"  call [_getch]"
-	"  or   rax, rbx"
-	".2:"
-	"add    rsp, 28h"
+	// Assumes stdin is a terminal. termios needs 36 bytes; input goes at 40.
+	// Returns one byte (0..255), or -1 on EOF/read error.
+	"sub    rsp, 48"
+	"xor    edi, edi"       // fd = stdin throughout
+	"mov    eax, 16"        // ioctl(0, TCGETS, &termios)
+	"mov    esi, 5401h"
+	"mov    rdx, rsp"
+	"syscall"
+
+	// Save the fields we change: local flags, VTIME and VMIN.
+	"mov    r8d, [rsp+12]"
+	"mov    r9w, [rsp+22]"
+	"and    dword [rsp+12], not 4Ah" // no line buffering or echo
+	"mov    word [rsp+22], 100h"    // VTIME = 0, VMIN = 1: wait for a byte
+	"mov    eax, 16"        // ioctl(0, TCSETS, &termios)
+	"mov    esi, 5402h"
+	"syscall"
+
+	"xor    eax, eax"       // read(0, &input, 1)
+	"lea    rsi, [rsp+40]"
+	"mov    edx, 1"
+	"syscall"
+	"mov    r10d, -1"
+	"cmp    eax, 1"
+	"jne    .restore"
+	"movzx  r10d, byte [rsp+40]"
+
+	".restore:"
+	"mov    [rsp+12], r8d"
+	"mov    [rsp+22], r9w"
+	"mov    eax, 16"        // restore the original terminal settings
+	"mov    esi, 5402h"
+	"mov    rdx, rsp"
+	"syscall"
+	"mov    eax, r10d"
+	"add    rsp, 48"
 	"ret"
 }
 
