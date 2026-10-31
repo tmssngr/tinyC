@@ -25,7 +25,38 @@ const CURSOR_LEFT = 0xE04B as i16
 const CURSOR_RIGHT = 0xE04D as i16
 const CURSOR_DOWN = 0xE050 as i16
 
-i16 getChar() asm {
+i16 getChar() {
+	while (true) {
+		i16 c = __getChar()
+		if c != ESCAPE {
+			return c
+		}
+
+		c = __getChar()
+		if c == ESCAPE {
+			return c
+		}
+		if c != '[' {
+			continue
+		}
+
+		c = __getChar()
+		if c == 'A' {
+			return CURSOR_UP
+		}
+		if c == 'B' {
+			return CURSOR_DOWN
+		}
+		if c == 'C' {
+			return CURSOR_RIGHT
+		}
+		if c == 'D' {
+			return CURSOR_LEFT
+		}
+	}
+}
+
+i16 __getChar() asm {
 	// Assumes stdin is a terminal. The stack holds a 36-byte kernel termios
 	// structure at rsp and an input byte at rsp+40.
 	// Returns one byte (0..255), or -1 on EOF/read error.

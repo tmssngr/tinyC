@@ -4,7 +4,38 @@ u8* field[800];
 void printStringLength@@u8@i64(u8* str, i64 length) asm {
 }
 
-i16 getChar() asm {
+i16 getChar() {
+	i16 c;
+
+	while (true) {
+		c = __getChar();
+		if (c != 27) {
+			return c;
+		}
+		c = __getChar();
+		if (c == 27) {
+			return c;
+		}
+		if (c != 91) {
+			continue;
+		}
+		c = __getChar();
+		if (c == 65) {
+			return 57416 as i16;
+		}
+		if (c == 66) {
+			return 57424 as i16;
+		}
+		if (c == 67) {
+			return 57421 as i16;
+		}
+		if (c == 68) {
+			return 57419 as i16;
+		}
+	}
+}
+
+i16 __getChar() asm {
 }
 
 void setCursor@i16@i16(i16 x, i16 y) asm {
