@@ -363,8 +363,9 @@ public final class Parser {
 			case BREAK -> handleBreak();
 			case CONTINUE -> handleContinue();
 			case L_BRACE -> {
+				final Location location = getLocation();
 				final List<Statement> statements = getStatements();
-				yield new StmtCompound(statements);
+				yield new StmtCompound(statements, location);
 			}
 			default -> {
 				final Location location = getLocation();
@@ -592,7 +593,7 @@ public final class Parser {
 		}
 
 		initialization.add(new StmtLoop(condition, bodyStatements, iterate, location));
-		return new StmtCompound(initialization);
+		return new StmtCompound(initialization, location);
 	}
 
 	@NotNull

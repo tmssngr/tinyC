@@ -401,7 +401,7 @@ public class ParserTest {
 				                                    locS(1, 0)),
 				             new StmtVarDeclaration("u8", "bar", intLit(20, locS(2, 9)),
 				                                    locS(2, 0))
-		             )),
+		             ), locS(0, 0)),
 		             parseStatement("""
 				                            {
 				                            u16 foo = 10;
@@ -413,7 +413,7 @@ public class ParserTest {
 				                                    locS(1, 0)),
 				             new StmtVarDeclaration("u8", "bar", intLit(20, locS(2, 9)),
 				                                    locS(2, 0))
-		             )),
+		             ), locS(0, 0)),
 		             parseStatement("""
 				                            {
 				                            u16 foo = 10
@@ -531,7 +531,7 @@ public class ParserTest {
 						                                   ),
 						                                   locS(2, 4))
 				                        ), List.of(), locS(1, 2))
-		             )),
+		             ), locS(0, 0)),
 		             parseStatement("""
 				                            {
 				                              if (i > 0) {
@@ -592,7 +592,7 @@ public class ParserTest {
 				             List.of(),
 				             locS(2, 0)
 				)
-		)), parseStatement("""
+		), locS(0, 0)), parseStatement("""
 				                   {
 				                   u16 i = 5;
 				                   while (i > 0) {
@@ -621,7 +621,7 @@ public class ParserTest {
 				             List.of(),
 				             locS(2, 0)
 				)
-		)), parseStatement("""
+		), locS(0, 0)), parseStatement("""
 				                   {
 				                   u16 i = 5;
 				                   while i > 0 {
@@ -741,7 +741,7 @@ public class ParserTest {
 						                                     locS(0, 26))
 				                          ),
 				                          locS(0, 0))
-		             )),
+		             ), locS(0, 0)),
 		             parseStatement("""
 				                            for (i16 i = 0; i < 10; i = i + 1) {
 				                              print(i);
@@ -767,7 +767,7 @@ public class ParserTest {
 						                                     locS(0, 25))
 				                          ),
 				                          locS(0, 0))
-		             )),
+		             ), locS(0, 0)),
 		             parseStatement("""
 				                            for i16 i = 0; i < 10; i = i + 1 {
 				                              print(i);
@@ -791,7 +791,7 @@ public class ParserTest {
 				                          ),
 				                          locS(2, 0)
 				             )
-		             )),
+		             ), locS(0, 0)),
 		             parseStatement("""
 				                            {
 				                            u8 i = 1;
@@ -818,7 +818,7 @@ public class ParserTest {
 				                          ),
 				                          locS(2, 0)
 				             )
-		             )),
+		             ), locS(0, 0)),
 		             parseStatement("""
 				                            {
 				                            u8 i = 1;
@@ -846,7 +846,7 @@ public class ParserTest {
 				                          ),
 				                          List.of(),
 				                          locS(2, 0))
-		             )),
+		             ), locS(0, 0)),
 		             parseStatement("""
 				                            {
 				                            u8 i = 5;
@@ -875,7 +875,7 @@ public class ParserTest {
 				                          ),
 				                          List.of(),
 				                          locS(2, 0))
-		             )),
+		             ), locS(0, 0)),
 		             parseStatement("""
 				                            {
 				                            u8 i = 5;
@@ -901,7 +901,7 @@ public class ParserTest {
 				                          ),
 				                          List.of(),
 				                          locS(2, 0))
-		             )),
+		             ), locS(0, 0)),
 		             parseStatement("""
 				                            {
 				                            u8 i = 5;
@@ -927,7 +927,7 @@ public class ParserTest {
 				                          ),
 				                          List.of(),
 				                          locS(2, 0))
-		             )),
+		             ), locS(0, 0)),
 		             parseStatement("""
 				                            {
 				                            u8 i = 5;
@@ -1618,7 +1618,7 @@ public class ParserTest {
 								assignStmt(new ExprVarAccess("a", loc(9, 4)),
 								           new ExprIntLiteral(2, Type.U8, loc(9, 8)),
 								           loc(9, 6))
-						)),
+						), loc(7, 2)),
 						assignStmt(new ExprVarAccess("a", loc(11, 2)),
 						           new ExprIntLiteral(3, Type.U8, loc(11, 6)),
 						           loc(11, 4))
