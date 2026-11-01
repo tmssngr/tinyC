@@ -1,4 +1,4 @@
-#include "io.h"
+#include "io.tc"
 
 void main() {
 	doPrint(next(), next(), next(), next(), next());

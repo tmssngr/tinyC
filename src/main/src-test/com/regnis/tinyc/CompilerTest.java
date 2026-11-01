@@ -24,21 +24,21 @@ public class CompilerTest {
 				             5
 				             2
 				             4
-				             """, compileAndRun("arithmetics.c"));
+				             """, compileAndRun("arithmetics.tc"));
 	}
 
 	@Test
 	public void testArrays() throws IOException, InterruptedException {
 		assertEquals("""
 				             35
-				             """, compileAndRun("arrays.c"));
+				             """, compileAndRun("arrays.tc"));
 	}
 
 	@Test
 	public void testBasics() throws IOException, InterruptedException {
 		assertEquals("""
 				             01234
-				             """, compileAndRun("basics.c"));
+				             """, compileAndRun("basics.tc"));
 	}
 
 	@Test
@@ -49,12 +49,12 @@ public class CompilerTest {
 				             3
 				             4
 				             5
-				             """, compileAndRun("call.c"));
+				             """, compileAndRun("call.tc"));
 	}
 
 	@Test
 	public void testCfgNoReturn() throws IOException, InterruptedException {
-		final Path inputFile = absolutePath("cfg-no-return.c");
+		final Path inputFile = absolutePath("cfg-no-return.tc");
 		Compiler.compile(inputFile);
 	}
 
@@ -91,7 +91,7 @@ public class CompilerTest {
 				             > (unsigned)
 				             0
 				             1
-				             """, compileAndRun("comparison.c"));
+				             """, compileAndRun("comparison.tc"));
 	}
 
 	@Test
@@ -113,7 +113,7 @@ public class CompilerTest {
 				             377
 				             610
 				             987
-				             """, compileAndRun("fibonacci.c"));
+				             """, compileAndRun("fibonacci.tc"));
 	}
 
 	@Test
@@ -121,7 +121,7 @@ public class CompilerTest {
 		assertEquals("""
 				             63
 				             63
-				             """, compileAndRun("global vars.c"));
+				             """, compileAndRun("global vars.tc"));
 	}
 
 	@Test
@@ -133,26 +133,26 @@ public class CompilerTest {
 				             <2
 				             loop
 				             loop
-				             """, compileAndRun("global vars2.c"));
+				             """, compileAndRun("global vars2.tc"));
 	}
 
 	@Test
 	public void testIfElse() throws IOException, InterruptedException {
 		assertEquals("""
 				             1
-				             """, compileAndRun("ifelse.c"));
+				             """, compileAndRun("ifelse.tc"));
 	}
 
 	@Test
 	public void testLocalVars() throws IOException, InterruptedException {
 		assertEquals("""
 				             10
-				             """, compileAndRun("localvars.c"));
+				             """, compileAndRun("localvars.tc"));
 	}
 
 	@Test
 	public void testMine() throws IOException, InterruptedException {
-		final Path inputFile = absolutePath("mine.c");
+		final Path inputFile = absolutePath("mine.tc");
 		Compiler.compile(inputFile);
 	}
 
@@ -206,7 +206,7 @@ public class CompilerTest {
 				             -1
 				             -1
 				             254
-				             """, compileAndRun("operators.c"));
+				             """, compileAndRun("operators.tc"));
 	}
 
 	@Test
@@ -216,7 +216,7 @@ public class CompilerTest {
 				             9
 				             8
 				             1
-				             """, compileAndRun("pointers.c"));
+				             """, compileAndRun("pointers.tc"));
 	}
 
 	@Test
@@ -229,7 +229,7 @@ public class CompilerTest {
 				             50 PQRSTUVW XYZ[\\]^_
 				             60 `abcdefg hijklmno
 				             70 pqrstuvw xyz{|}~
-				             """, compileAndRun("print-ascii-listing.c"));
+				             """, compileAndRun("print-ascii-listing.tc"));
 	}
 
 	@Test
@@ -285,12 +285,12 @@ public class CompilerTest {
 				             134
 				             89
 				             54
-				             """, compileAndRun("prng.c"));
+				             """, compileAndRun("prng.tc"));
 	}
 
 	@Test
 	public void testRegAlloc() throws IOException, InterruptedException {
-		final Path inputFile = absolutePath("regalloc.c");
+		final Path inputFile = absolutePath("regalloc.tc");
 		Compiler.compile(inputFile);
 	}
 
@@ -326,7 +326,7 @@ public class CompilerTest {
 				             |   ***    **  **  ***   **   *|
 				             |  ** *   *** *** ** *  ***  **|
 				             | *****  ** *** ****** ** * ***|
-				             """, compileAndRun("rule110.c"));
+				             """, compileAndRun("rule110.tc"));
 	}
 
 	@Test
@@ -341,7 +341,7 @@ public class CompilerTest {
 				             0
 				             1
 				             4
-				             """, compileAndRun("types.c"));
+				             """, compileAndRun("types.tc"));
 	}
 
 	@Test
@@ -351,7 +351,7 @@ public class CompilerTest {
 				             12
 				             ello world
 				             104
-				             """, compileAndRun("strings.c"));
+				             """, compileAndRun("strings.tc"));
 	}
 
 	@Test
@@ -360,12 +360,12 @@ public class CompilerTest {
 				             1
 				             2
 				             1
-				             """, compileAndRun("structs.c"));
+				             """, compileAndRun("structs.tc"));
 	}
 
 	@Test
 	public void testUnused() throws IOException, InterruptedException {
-		assertEquals("", compileAndRun("unused.c"));
+		assertEquals("", compileAndRun("unused.tc"));
 	}
 
 	@Test
@@ -381,7 +381,7 @@ public class CompilerTest {
 				             2
 				             3
 				             4
-				             """, compileAndRun("while.c"));
+				             """, compileAndRun("while.tc"));
 	}
 
 	@NotNull

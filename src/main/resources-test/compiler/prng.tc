@@ -1,5 +1,5 @@
-#include "io.h"
-#include "random.h"
+#include "io.tc"
+#include "random.tc"
 
 void main() {
 	initRandom(7439742);

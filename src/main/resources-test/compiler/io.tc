@@ -1,5 +1,5 @@
 #ifdef X86_64
-#include "x86_64.h"
+#include "x86_64.tc"
 
 void printString(u8* str) {
 	i64 length = strlen(str);

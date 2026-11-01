@@ -48,7 +48,9 @@ void printStringLength(u8* str, i64 length) asm {
 
 ## Syntax
 
+TinyC uses the file extension `.tc`.
 The syntax combines elements of C and Go.
+
 Variables and function parameters are declared as in C.
 A line break can replace a statement's trailing semicolon:
 

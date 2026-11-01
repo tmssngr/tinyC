@@ -1,5 +1,5 @@
-#include "io.h"
-#include "random.h"
+#include "io.tc"
+#include "random.tc"
 
 const width = 40;
 const height = 20;

@@ -1,4 +1,4 @@
-#include "io.h"
+#include "io.tc"
 
 void testIf(u8 a) {
 	u8 b = 1

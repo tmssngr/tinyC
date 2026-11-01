@@ -1,4 +1,4 @@
-#include "io.h"
+#include "io.tc"
 
 void main() {
   for (u8 i = 250; i != 2; i += 1) {

@@ -1,4 +1,4 @@
-#include "io.h"
+#include "io.tc"
 
 bool getTrue()  { printString(" true");  return true;  }
 bool getFalse() { printString(" false"); return false; }

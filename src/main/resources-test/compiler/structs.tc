@@ -1,4 +1,4 @@
-#include "io.h"
+#include "io.tc"
 
 typedef Pos struct (u8 x, u8 y);
 
