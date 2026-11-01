@@ -16,7 +16,7 @@ tileValue_Pu8:
         ld   r3, #%01
         ; const index.1{r4}, 0
         ld   r4, #%00
-        ; 40:2 for index < exponent
+        ; 42:2 for index < exponent
         jr   for__1
 
 for__1__body:
@@ -29,7 +29,7 @@ for__1:
         ; branch index.2{r4} lt param.exponent{r0}: for_1_body
         cp   r4, r0
         jr   ult, for__1__body
-        ; 43:9 return value
+        ; 45:9 return value
         ; move value.2{r0}, value.2{r2}
         ld   r0, r2
         ld   r1, r3
@@ -48,11 +48,11 @@ spawnTile:
         ld   r8, #%00
         ; const index.1{r9}, 0
         ld   r9, #%00
-        ; 48:2 for index < 16
+        ; 50:2 for index < 16
         jr   for__2
 
 for__2__body:
-        ; 49:3 if [...] == 0
+        ; 51:3 if [...] == 0
         ; cast t.7.1{r10}(i16), index.2{r9}(u8)
         ld   r11, r9
         ld   r10, #0
@@ -101,11 +101,11 @@ for__2:
         ld   r8, r11
         ; const index.3{r9}, 0
         ld   r9, #%00
-        ; 58:2 for index < 16
+        ; 60:2 for index < 16
         jr   for__5
 
 for__5__body:
-        ; 59:3 if [...] != 0
+        ; 61:3 if [...] != 0
         ; cast t.13.1{r10}(i16), index.4{r9}(u8)
         ld   r11, r9
         ld   r10, #0
@@ -137,7 +137,7 @@ for__5:
 if__7__then:
         ; const tile.1{r8}, 1
         ld   r8, #%01
-        ; 64:4 if random16([]) % 10 == 0
+        ; 66:4 if random16([]) % 10 == 0
         ; call t.15.1{r0} = random16[] -> i16
         call random16
         ; mod t.14.1{r0}, 10
@@ -175,7 +175,7 @@ if__8__end:
         adc  r4, r1
         ; store [t.16.2{r4}], tile.2{r0}
         lde  @rr4, r0
-        ; 68:4 return
+        ; 70:4 return
 spawnTile__ret:
         ; restore clobbered non-volatile registers
         pop  r13
@@ -226,7 +226,7 @@ slideLine_Pu8_Pu8:
         ld   r13, #%00
         ; const position.1{r1}, 0
         ld   r1, #%00
-        ; 79:2 for position < 4
+        ; 81:2 for position < 4
         ; addrof memVarAddr{r14}, position.2
         ld   r14, SPH
         ld   r15, SPL
@@ -288,7 +288,7 @@ for__9__body:
         adc  r4, r1
         ; load tile.1{r1}, [sourceTile.2{r4}]
         lde  r1, @rr4
-        ; 82:3 if tile != 0
+        ; 84:3 if tile != 0
         ; branch tile.1{r1} notequals 0: if_10_then
         cp   r1, #%00
         jr   ne, if__10__then
@@ -305,7 +305,7 @@ if__10__then:
         lde  @rr4, r2
         ; const merged.1{r2}, 0
         ld   r2, #%00
-        ; 85:4 if target != first && !previousMerged
+        ; 87:4 if target != first && !previousMerged
         ; branch target.2{r11} notequals param.first{r8}: and_12
         cp   r11, r8
         jr   ne, and__12
@@ -396,20 +396,20 @@ if__11__then:
         ld   r3, r11
         ; sub previous.1{r3}, param.step{r9}
         sub  r3, r9
-        ; cast t.16.1{r3}(i16), previous.1{r3}(u8)
-        ld   r4, r3
-        ld   r3, #0
+        ; cast t.16.1{r4}(i16), previous.1{r3}(u8)
+        ld   r5, r3
+        ld   r4, #0
         ; addrof previousTile.1{r6}, tiles
         ld   r6, #hi(var_0)
         ld   r7, #lo(var_0)
-        ; add previousTile.2{r6}, t.16.1{r3}
-        add  r7, r4
-        adc  r6, r3
-        ; 88:5 if *previousTile == tile
-        ; load t.17.1{r3}, [previousTile.2{r6}]
-        lde  r3, @rr6
-        ; branch t.17.1{r3} equals tile.1{r1}: if_13_then
-        cp   r3, r1
+        ; add previousTile.2{r6}, t.16.1{r4}
+        add  r7, r5
+        adc  r6, r4
+        ; 90:5 if *previousTile == tile
+        ; load t.17.1{r4}, [previousTile.2{r6}]
+        lde  r4, @rr6
+        ; branch t.17.1{r4} equals tile.1{r1}: if_13_then
+        cp   r4, r1
         jr   eq, if__13__then
         ; addrof memVarAddr{r14}, merged.2
         ld   r14, SPH
@@ -463,6 +463,17 @@ if__11__then:
         jr   if__11__end
 
 if__13__then:
+        ; cast t.19.1{r12}(i16), source.2{r10}(u8)
+        ld   r13, r10
+        ld   r12, #0
+        ; addrof t.18.1{r4}, moveTargets
+        ld   r4, #hi(var_2)
+        ld   r5, #lo(var_2)
+        ; add t.18.2{r4}, t.19.1{r12}
+        add  r5, r13
+        adc  r4, r12
+        ; store [t.18.2{r4}], previous.1{r3}
+        lde  @rr4, r3
         ; move nextTile.1{r12}, tile.1{r1}
         ld   r12, r1
         ; addrof memVarAddr{r14}, tile.1
@@ -478,18 +489,18 @@ if__13__then:
         lde  @rr6, r12
         ; move nextTile.1{r0}, nextTile.1{r12}
         ld   r0, r12
-        ; call t.18.1{r0} = tileValue@u8[nextTile.1{r0}] -> i16
+        ; call t.20.1{r0} = tileValue@u8[nextTile.1{r0}] -> i16
         call tileValue_Pu8
-        ; cast mergedScore.1{r1}(i32), t.18.1{r0}(i16)
+        ; cast mergedScore.1{r1}(i32), t.20.1{r0}(i16)
         ld   r4, r1
         ld   r3, r0
         ld   r2, r3
         rl   r2
         sbc  r2, r2
         sbc  r1, r1
-        ; addrof a.20.1{r6}, score
-        ld   r6, #hi(var_1)
-        ld   r7, #lo(var_1)
+        ; addrof a.22.1{r6}, score
+        ld   r6, #hi(var_3)
+        ld   r7, #lo(var_3)
         ; addrof memVarAddr{r14}, param.first
         ld   r14, SPH
         ld   r15, SPL
@@ -518,7 +529,7 @@ if__13__then:
         adc  r14, #%00
         ; store [memVarAddr{r14}], target.2{r11}
         lde  @rr14, r11
-        ; load t.21.1{r8}, [a.20.1{r6}]
+        ; load t.23.1{r8}, [a.22.1{r6}]
         lde  r8, @rr6
         incw r6
         lde  r9, @rr6
@@ -528,20 +539,20 @@ if__13__then:
         lde  r11, @rr6
         sub  r7, #3
         sbc  r6, #0
-        ; move t.19.1{r5}, t.21.1{r8}
+        ; move t.21.1{r5}, t.23.1{r8}
         ld   r5, r8
         ld   r6, r9
         ld   r7, r10
         ld   r8, r11
-        ; add t.19.1{r5}, mergedScore.1{r1}
+        ; add t.21.1{r5}, mergedScore.1{r1}
         add  r8, r4
         adc  r7, r3
         adc  r6, r2
         adc  r5, r1
-        ; addrof a.22.1{r2}, score
-        ld   r2, #hi(var_1)
-        ld   r3, #lo(var_1)
-        ; store [a.22.1{r2}], t.19.1{r5}
+        ; addrof a.24.1{r2}, score
+        ld   r2, #hi(var_3)
+        ld   r3, #lo(var_3)
+        ; store [a.24.1{r2}], t.21.1{r5}
         lde  @rr2, r5
         incw r2
         lde  @rr2, r6
@@ -551,16 +562,16 @@ if__13__then:
         lde  @rr2, r8
         sub  r3, #3
         sbc  r2, #0
-        ; 93:6 if nextTile == 11
+        ; 96:6 if nextTile == 11
         ; branch nextTile.1{r12} notequals 11: if_14_end
         cp   r12, #%0b
         jr   ne, if__14__end
-        ; const t.23.1{r1}, 1
+        ; const t.25.1{r1}, 1
         ld   r1, #%01
-        ; addrof a.24.1{r2}, gameState
-        ld   r2, #hi(var_2)
-        ld   r3, #lo(var_2)
-        ; store [a.24.1{r2}], t.23.1{r1}
+        ; addrof a.26.1{r2}, gameState
+        ld   r2, #hi(var_4)
+        ld   r3, #lo(var_4)
+        ; store [a.26.1{r2}], t.25.1{r1}
         lde  @rr2, r1
 if__14__end:
         ; const merged.3{r1}, 1
@@ -610,25 +621,6 @@ if__15__then:
         adc  r14, #%00
         ; load target.2{r1}, [memVarAddr{r14}]
         lde  r1, @rr14
-        ; cast t.26.1{r2}(i16), target.2{r1}(u8)
-        ld   r3, r1
-        ld   r2, #0
-        ; addrof t.25.1{r4}, tiles
-        ld   r4, #hi(var_0)
-        ld   r5, #lo(var_0)
-        ; add t.25.2{r4}, t.26.1{r2}
-        add  r5, r3
-        adc  r4, r2
-        ; addrof memVarAddr{r14}, tile.1
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0b
-        adc  r14, #%00
-        ; load tile.1{r2}, [memVarAddr{r14}]
-        lde  r2, @rr14
-        ; store [t.25.2{r4}], tile.1{r2}
-        lde  @rr4, r2
-        ; 103:5 if target != source
         ; addrof memVarAddr{r14}, source.2
         ld   r14, SPH
         ld   r15, SPL
@@ -636,6 +628,36 @@ if__15__then:
         adc  r14, #%00
         ; load source.2{r2}, [memVarAddr{r14}]
         lde  r2, @rr14
+        ; cast t.28.1{r3}(i16), source.2{r2}(u8)
+        ld   r4, r2
+        ld   r3, #0
+        ; addrof t.27.1{r6}, moveTargets
+        ld   r6, #hi(var_2)
+        ld   r7, #lo(var_2)
+        ; add t.27.2{r6}, t.28.1{r3}
+        add  r7, r4
+        adc  r6, r3
+        ; store [t.27.2{r6}], target.2{r1}
+        lde  @rr6, r1
+        ; cast t.30.1{r3}(i16), target.2{r1}(u8)
+        ld   r4, r1
+        ld   r3, #0
+        ; addrof t.29.1{r6}, tiles
+        ld   r6, #hi(var_0)
+        ld   r7, #lo(var_0)
+        ; add t.29.2{r6}, t.30.1{r3}
+        add  r7, r4
+        adc  r6, r3
+        ; addrof memVarAddr{r14}, tile.1
+        ld   r14, SPH
+        ld   r15, SPL
+        add  r15, #%0b
+        adc  r14, #%00
+        ; load tile.1{r3}, [memVarAddr{r14}]
+        lde  r3, @rr14
+        ; store [t.29.2{r6}], tile.1{r3}
+        lde  @rr6, r3
+        ; 107:5 if target != source
         ; branch target.2{r1} notequals source.2{r2}: if_16_then
         cp   r1, r2
         jr   ne, if__16__then
@@ -686,7 +708,7 @@ for__9:
         ; branch position.2{r3} lt 4: for_9_body
         cp   r3, #%04
         jr   ult, for__9__body
-        ; 112:9 return moved
+        ; 116:9 return moved
         ; move moved.2{r0}, moved.2{r13}
         ld   r0, r13
         ; restore clobbered non-volatile registers
@@ -715,16 +737,62 @@ slide_Pu8:
         push r10
         push r11
         push r12
+        push r13
         ; move param.direction{r8}, direction{r0}
         ld   r8, r0
+        ; const index.1{r9}, 0
+        ld   r9, #%00
+        ; 120:2 for index < 16
+        jr   for__17
+
+for__17__body:
+        ; cast t.8.1{r10}(i16), index.2{r9}(u8)
+        ld   r11, r9
+        ld   r10, #0
+        ; addrof t.7.1{r12}, tiles
+        ld   r12, #hi(var_0)
+        ld   r13, #lo(var_0)
+        ; add t.7.2{r12}, t.8.1{r10}
+        add  r13, r11
+        adc  r12, r10
+        ; load t.6.1{r10}, [t.7.2{r12}]
+        lde  r10, @rr12
+        ; cast t.10.1{r11}(i16), index.2{r9}(u8)
+        ld   r12, r9
+        ld   r11, #0
+        ; addrof t.9.1{r2}, moveTiles
+        ld   r2, #hi(var_1)
+        ld   r3, #lo(var_1)
+        ; add t.9.2{r2}, t.10.1{r11}
+        add  r3, r12
+        adc  r2, r11
+        ; store [t.9.2{r2}], t.6.1{r10}
+        lde  @rr2, r10
+        ; move t.12.1{r10}, t.12.1{r11}
+        ld   r10, r11
+        ld   r11, r12
+        ; addrof t.11.1{r12}, moveTargets
+        ld   r12, #hi(var_2)
+        ld   r13, #lo(var_2)
+        ; add t.11.2{r12}, t.12.1{r10}
+        add  r13, r11
+        adc  r12, r10
+        ; store [t.11.2{r12}], index.2{r9}
+        lde  @rr12, r9
+        ; add index.3{r9}, 1
+        inc  r9
+for__17:
+        ; branch index.2{r9} lt 16: for_17_body
+        cp   r9, #%10
+        jr   ult, for__17__body
         ; const moved.1{r9}, 0
         ld   r9, #%00
         ; const line.1{r10}, 0
         ld   r10, #%00
-        ; 117:2 for line < 4
-        jr   for__17
+        ; 125:2 for line < 4
+        jr   for__18
 
-for__17__body:
+for__18__body:
         ; move first.1{r11}, line.2{r10}
         ld   r11, r10
         ; shiftleft first.1{r11}, 2
@@ -732,16 +800,16 @@ for__17__body:
         add r11, r11
         ; const step.1{r12}, 1
         ld   r12, #%01
-        ; 120:3 if direction == 1
-        ; branch param.direction{r8} equals 1: if_18_then
+        ; 128:3 if direction == 1
+        ; branch param.direction{r8} equals 1: if_19_then
         cp   r8, #%01
-        jr   eq, if__18__then
-        ; branch param.direction{r8} notequals 2: if_19_else, if_19_then
+        jr   eq, if__19__then
+        ; branch param.direction{r8} notequals 2: if_20_else, if_20_then
         cp   r8, #%02
-        jr   ne, if__19__else
-        jr   if__19__then
+        jr   ne, if__20__else
+        jr   if__20__then
 
-if__18__then:
+if__19__then:
         ; add first.2{r11}, 3
         add  r11, #%03
         ; const step.2{r12}, 255
@@ -750,15 +818,15 @@ if__18__then:
         ld   r0, r11
         ; move step.3{r1}, step.2{r12}
         ld   r1, r12
-        jr   if__18__end
+        jr   if__19__end
 
-if__19__else:
-        ; branch param.direction{r8} notequals 3: slide@u8.no_critical_edge_13, if_20_then
+if__20__else:
+        ; branch param.direction{r8} notequals 3: slide@u8.no_critical_edge_17, if_21_then
         cp   r8, #%03
-        jr   ne, slide_Pu8_2eno__critical__edge__13
-        jr   if__20__then
+        jr   ne, slide_Pu8_2eno__critical__edge__17
+        jr   if__21__then
 
-if__19__then:
+if__20__then:
         ; move first.4{r11}, line.2{r10}
         ld   r11, r10
         ; const step.4{r12}, 4
@@ -767,16 +835,16 @@ if__19__then:
         ld   r0, r11
         ; move step.3{r1}, step.4{r12}
         ld   r1, r12
-        jr   if__18__end
+        jr   if__19__end
 
-slide_Pu8_2eno__critical__edge__13:
+slide_Pu8_2eno__critical__edge__17:
         ; move first.3{r0}, first.1{r11}
         ld   r0, r11
         ; move step.3{r1}, step.1{r12}
         ld   r1, r12
-        jr   if__18__end
+        jr   if__19__end
 
-if__20__then:
+if__21__then:
         ; move first.5{r11}, line.2{r10}
         ld   r11, r10
         ; add first.5{r11}, 12
@@ -787,21 +855,21 @@ if__20__then:
         ld   r0, r11
         ; move step.3{r1}, step.5{r12}
         ld   r1, r12
-if__18__end:
-        ; 132:3 if slideLine@u8@u8([ExprVarAccess[varName=first, index=3, scope=function, type=u8, varIsArray=false, location=132:16], ExprVarAccess[varName=step, index=4, scope=function, type=u8, varIsArray=false, location=132:23]])
-        ; call t.5.1{r0} = slideLine@u8@u8[first.3{r0}, step.3{r1}] -> bool
+if__19__end:
+        ; 140:3 if slideLine@u8@u8([ExprVarAccess[varName=first, index=4, scope=function, type=u8, varIsArray=false, location=140:16], ExprVarAccess[varName=step, index=5, scope=function, type=u8, varIsArray=false, location=140:23]])
+        ; call t.13.1{r0} = slideLine@u8@u8[first.3{r0}, step.3{r1}] -> bool
         call slideLine_Pu8_Pu8
-        ; branch t.5.1{r0} notequals 0: if_21_then
+        ; branch t.13.1{r0} notequals 0: if_22_then
         cp   r0, #%00
-        jr   ne, if__21__then
+        jr   ne, if__22__then
         ; move moved.4{r1}, moved.2{r9}
         ld   r1, r9
-        jr   for__17__continue
+        jr   for__18__continue
 
-if__21__then:
+if__22__then:
         ; const moved.5{r1}, 1
         ld   r1, #%01
-for__17__continue:
+for__18__continue:
         ; move line.5{r2}, line.2{r10}
         ld   r2, r10
         ; add line.5{r2}, 1
@@ -810,14 +878,15 @@ for__17__continue:
         ld   r9, r1
         ; move line.2{r10}, line.5{r2}
         ld   r10, r2
-for__17:
-        ; branch line.2{r10} lt 4: for_17_body
+for__18:
+        ; branch line.2{r10} lt 4: for_18_body
         cp   r10, #%04
-        jr   ult, for__17__body
-        ; 136:9 return moved
+        jr   ult, for__18__body
+        ; 144:9 return moved
         ; move moved.2{r0}, moved.2{r9}
         ld   r0, r9
         ; restore clobbered non-volatile registers
+        pop  r13
         pop  r12
         pop  r11
         pop  r10
@@ -829,10 +898,10 @@ for__17:
 canMove:
         ; const index.1{r1}, 0
         ld   r1, #%00
-        ; 140:2 for index < 16
-        jr   for__22
+        ; 148:2 for index < 16
+        jr   for__23
 
-for__22__body:
+for__23__body:
         ; cast t.3.1{r2}(i16), index.2{r1}(u8)
         ld   r3, r1
         ld   r2, #0
@@ -844,18 +913,18 @@ for__22__body:
         adc  r4, r2
         ; load tile.1{r2}, [t.2.2{r4}]
         lde  r2, @rr4
-        ; 142:3 if tile == 0
-        ; branch tile.1{r2} equals 0: if_23_then
+        ; 150:3 if tile == 0
+        ; branch tile.1{r2} equals 0: if_24_then
         cp   r2, #%00
-        jr   eq, if__23__then
-        ; 145:3 if index & 3 != 3 && [...] == tile
+        jr   eq, if__24__then
+        ; 153:3 if index & 3 != 3 && [...] == tile
         ; move t.4.1{r3}, index.2{r1}
         ld   r3, r1
         ; and t.4.1{r3}, 3
         and  r3, #%03
-        ; branch t.4.1{r3} equals 3: if_24_end
+        ; branch t.4.1{r3} equals 3: if_25_end
         cp   r3, #%03
-        jr   eq, if__24__end
+        jr   eq, if__25__end
         ; move t.8.1{r3}, index.2{r1}
         ld   r3, r1
         ; add t.8.1{r3}, 1
@@ -871,13 +940,13 @@ for__22__body:
         adc  r6, r3
         ; load t.5.1{r3}, [t.6.2{r6}]
         lde  r3, @rr6
-        ; branch t.5.1{r3} equals tile.1{r2}: if_24_then, if_24_end
+        ; branch t.5.1{r3} equals tile.1{r2}: if_25_then, if_25_end
         cp   r3, r2
-        jr   eq, if__24__then
-if__24__end:
-        ; branch index.2{r1} gteq 12: for_22_continue
+        jr   eq, if__25__then
+if__25__end:
+        ; branch index.2{r1} gteq 12: for_23_continue
         cp   r1, #%0c
-        jr   uge, for__22__continue
+        jr   uge, for__23__continue
         ; move t.12.1{r3}, index.2{r1}
         ld   r3, r1
         ; add t.12.1{r3}, 4
@@ -893,23 +962,18 @@ if__24__end:
         adc  r6, r3
         ; load t.9.1{r3}, [t.10.2{r6}]
         lde  r3, @rr6
-        ; branch t.9.1{r3} equals tile.1{r2}: if_26_then, for_22_continue
+        ; branch t.9.1{r3} equals tile.1{r2}: if_27_then, for_23_continue
         cp   r3, r2
-        jr   eq, if__26__then
-for__22__continue:
+        jr   eq, if__27__then
+for__23__continue:
         ; add index.5{r1}, 1
         inc  r1
-for__22:
-        ; branch index.2{r1} lt 16: for_22_body
+for__23:
+        ; branch index.2{r1} lt 16: for_23_body
         cp   r1, #%10
-        jr   ult, for__22__body
+        jr   ult, for__23__body
         ; const {r0}, 0
         ld   r0, #%00
-        jr   canMove__ret
-
-if__23__then:
-        ; const {r0}, 1
-        ld   r0, #%01
         jr   canMove__ret
 
 if__24__then:
@@ -917,7 +981,12 @@ if__24__then:
         ld   r0, #%01
         jr   canMove__ret
 
-if__26__then:
+if__25__then:
+        ; const {r0}, 1
+        ld   r0, #%01
+        jr   canMove__ret
+
+if__27__then:
         ; const {r0}, 1
         ld   r0, #%01
 canMove__ret:
@@ -930,15 +999,15 @@ printTile_Pu8:
         push r8
         ; move param.exponent{r8}, exponent{r0}
         ld   r8, r0
-        ; branch param.exponent{r8} equals 0: if_28_then
+        ; branch param.exponent{r8} equals 0: if_29_then
         cp   r8, #%00
-        jr   eq, if__28__then
-        ; branch param.exponent{r8} notequals 1: if_29_else, if_29_then
+        jr   eq, if__29__then
+        ; branch param.exponent{r8} notequals 1: if_30_else, if_30_then
         cp   r8, #%01
-        jr   ne, if__29__else
-        jr   if__29__then
+        jr   ne, if__30__else
+        jr   if__30__then
 
-if__28__then:
+if__29__then:
         ; const t.1.1{r0}, [string-0]
         ld   r0, #hi(string_0)
         ld   r1, #lo(string_0)
@@ -946,13 +1015,13 @@ if__28__then:
         call printString_P_Pu8
         jr   printTile_Pu8__ret
 
-if__29__else:
-        ; branch param.exponent{r8} notequals 2: if_30_else, if_30_then
+if__30__else:
+        ; branch param.exponent{r8} notequals 2: if_31_else, if_31_then
         cp   r8, #%02
-        jr   ne, if__30__else
-        jr   if__30__then
+        jr   ne, if__31__else
+        jr   if__31__then
 
-if__29__then:
+if__30__then:
         ; const t.2.1{r0}, [string-1]
         ld   r0, #hi(string_1)
         ld   r1, #lo(string_1)
@@ -960,13 +1029,13 @@ if__29__then:
         call printString_P_Pu8
         jr   printTile_Pu8__ret
 
-if__30__else:
-        ; branch param.exponent{r8} notequals 3: if_31_else, if_31_then
+if__31__else:
+        ; branch param.exponent{r8} notequals 3: if_32_else, if_32_then
         cp   r8, #%03
-        jr   ne, if__31__else
-        jr   if__31__then
+        jr   ne, if__32__else
+        jr   if__32__then
 
-if__30__then:
+if__31__then:
         ; const t.3.1{r0}, [string-2]
         ld   r0, #hi(string_2)
         ld   r1, #lo(string_2)
@@ -974,13 +1043,13 @@ if__30__then:
         call printString_P_Pu8
         jr   printTile_Pu8__ret
 
-if__31__else:
-        ; branch param.exponent{r8} notequals 4: if_32_else, if_32_then
+if__32__else:
+        ; branch param.exponent{r8} notequals 4: if_33_else, if_33_then
         cp   r8, #%04
-        jr   ne, if__32__else
-        jr   if__32__then
+        jr   ne, if__33__else
+        jr   if__33__then
 
-if__31__then:
+if__32__then:
         ; const t.4.1{r0}, [string-3]
         ld   r0, #hi(string_3)
         ld   r1, #lo(string_3)
@@ -988,13 +1057,13 @@ if__31__then:
         call printString_P_Pu8
         jr   printTile_Pu8__ret
 
-if__32__else:
-        ; branch param.exponent{r8} notequals 5: if_33_else, if_33_then
+if__33__else:
+        ; branch param.exponent{r8} notequals 5: if_34_else, if_34_then
         cp   r8, #%05
-        jr   ne, if__33__else
-        jr   if__33__then
+        jr   ne, if__34__else
+        jr   if__34__then
 
-if__32__then:
+if__33__then:
         ; const t.5.1{r0}, [string-4]
         ld   r0, #hi(string_4)
         ld   r1, #lo(string_4)
@@ -1002,13 +1071,13 @@ if__32__then:
         call printString_P_Pu8
         jr   printTile_Pu8__ret
 
-if__33__else:
-        ; branch param.exponent{r8} notequals 6: if_34_else, if_34_then
+if__34__else:
+        ; branch param.exponent{r8} notequals 6: if_35_else, if_35_then
         cp   r8, #%06
-        jr   ne, if__34__else
-        jr   if__34__then
+        jr   ne, if__35__else
+        jr   if__35__then
 
-if__33__then:
+if__34__then:
         ; const t.6.1{r0}, [string-5]
         ld   r0, #hi(string_5)
         ld   r1, #lo(string_5)
@@ -1016,13 +1085,13 @@ if__33__then:
         call printString_P_Pu8
         jr   printTile_Pu8__ret
 
-if__34__else:
-        ; branch param.exponent{r8} notequals 7: if_35_else, if_35_then
+if__35__else:
+        ; branch param.exponent{r8} notequals 7: if_36_else, if_36_then
         cp   r8, #%07
-        jr   ne, if__35__else
-        jr   if__35__then
+        jr   ne, if__36__else
+        jr   if__36__then
 
-if__34__then:
+if__35__then:
         ; const t.7.1{r0}, [string-6]
         ld   r0, #hi(string_6)
         ld   r1, #lo(string_6)
@@ -1030,13 +1099,13 @@ if__34__then:
         call printString_P_Pu8
         jr   printTile_Pu8__ret
 
-if__35__else:
-        ; branch param.exponent{r8} notequals 8: if_36_else, if_36_then
+if__36__else:
+        ; branch param.exponent{r8} notequals 8: if_37_else, if_37_then
         cp   r8, #%08
-        jr   ne, if__36__else
-        jr   if__36__then
+        jr   ne, if__37__else
+        jr   if__37__then
 
-if__35__then:
+if__36__then:
         ; const t.8.1{r0}, [string-7]
         ld   r0, #hi(string_7)
         ld   r1, #lo(string_7)
@@ -1044,13 +1113,13 @@ if__35__then:
         call printString_P_Pu8
         jr   printTile_Pu8__ret
 
-if__36__else:
-        ; branch param.exponent{r8} notequals 9: if_37_else, if_37_then
+if__37__else:
+        ; branch param.exponent{r8} notequals 9: if_38_else, if_38_then
         cp   r8, #%09
-        jr   ne, if__37__else
-        jr   if__37__then
+        jr   ne, if__38__else
+        jr   if__38__then
 
-if__36__then:
+if__37__then:
         ; const t.9.1{r0}, [string-8]
         ld   r0, #hi(string_8)
         ld   r1, #lo(string_8)
@@ -1058,13 +1127,13 @@ if__36__then:
         call printString_P_Pu8
         jr   printTile_Pu8__ret
 
-if__37__else:
-        ; branch param.exponent{r8} notequals 10: if_38_else, if_38_then
+if__38__else:
+        ; branch param.exponent{r8} notequals 10: if_39_else, if_39_then
         cp   r8, #%0a
-        jr   ne, if__38__else
-        jr   if__38__then
+        jr   ne, if__39__else
+        jr   if__39__then
 
-if__37__then:
+if__38__then:
         ; const t.10.1{r0}, [string-9]
         ld   r0, #hi(string_9)
         ld   r1, #lo(string_9)
@@ -1072,13 +1141,13 @@ if__37__then:
         call printString_P_Pu8
         jr   printTile_Pu8__ret
 
-if__38__else:
-        ; branch param.exponent{r8} notequals 11: if_39_else, if_39_then
+if__39__else:
+        ; branch param.exponent{r8} notequals 11: if_40_else, if_40_then
         cp   r8, #%0b
-        jr   ne, if__39__else
-        jr   if__39__then
+        jr   ne, if__40__else
+        jr   if__40__then
 
-if__38__then:
+if__39__then:
         ; const t.11.1{r0}, [string-10]
         ld   r0, #hi(string_10)
         ld   r1, #lo(string_10)
@@ -1086,7 +1155,7 @@ if__38__then:
         call printString_P_Pu8
         jr   printTile_Pu8__ret
 
-if__39__else:
+if__40__else:
         ; const t.13.1{r0}, [string-12]
         ld   r0, #hi(string_12)
         ld   r1, #lo(string_12)
@@ -1094,7 +1163,7 @@ if__39__else:
         call printString_P_Pu8
         jr   printTile_Pu8__ret
 
-if__39__then:
+if__40__then:
         ; const t.12.1{r0}, [string-11]
         ld   r0, #hi(string_11)
         ld   r1, #lo(string_11)
@@ -1210,10 +1279,10 @@ clearBoard:
         ; const row.1{r8}, 0
         ld   r8, #%00
         ld   r9, #%00
-        ; 220:2 for row < 15
-        jr   for__41
+        ; 228:2 for row < 15
+        jr   for__42
 
-for__41__body:
+for__42__body:
         ; move t.1.1{r0}, row.2{r8}
         ld   r0, r8
         ld   r1, r9
@@ -1238,13 +1307,13 @@ for__41__body:
         ; move row.2{r8}, row.3{r0}
         ld   r9, r1
         ld   r8, r0
-for__41:
-        ; branch row.2{r8} lt 15: for_41_body
+for__42:
+        ; branch row.2{r8} lt 15: for_42_body
         cp   r8, #%00
-        jr   lt, for__41__body
+        jr   lt, for__42__body
         jr   ne, .lt2
         cp   r9, #%0f
-        jr   ult, for__41__body
+        jr   ult, for__42__body
 .lt2:
         ; restore clobbered non-volatile registers
         pop  r9
@@ -1273,16 +1342,16 @@ drawBoard:
         ld   r10, #%03
         ; const boardRow.1{r11}, 0
         ld   r11, #%00
-        ; 230:2 for boardRow < 4
-        jr   for__42
+        ; 238:2 for boardRow < 4
+        jr   for__43
 
-for__42__body:
+for__43__body:
         ; const column.1{r12}, 1
         ld   r12, #%00
         ld   r13, #%01
         ; const boardColumn.1{r5}, 0
         ld   r5, #%00
-        ; 232:3 for boardColumn < 4
+        ; 240:3 for boardColumn < 4
         ; addrof memVarAddr{r14}, boardColumn.2
         ld   r14, SPH
         ld   r15, SPL
@@ -1292,9 +1361,9 @@ for__42__body:
         lde  @rr14, r5
         ; move boardColumn.2{r3}, boardColumn.2{r5}
         ld   r3, r5
-        jr   for__43
+        jr   for__44
 
-for__43__body:
+for__44__body:
         ; addrof memVarAddr{r14}, boardColumn.2
         ld   r14, SPH
         ld   r15, SPL
@@ -1340,10 +1409,10 @@ for__43__body:
         ; move column.2{r12}, column.3{r1}
         ld   r13, r2
         ld   r12, r1
-for__43:
-        ; branch boardColumn.2{r3} lt 4: for_43_body
+for__44:
+        ; branch boardColumn.2{r3} lt 4: for_44_body
         cp   r3, #%04
-        jr   ult, for__43__body
+        jr   ult, for__44__body
         ; move row.4{r0}, row.2{r9}
         ld   r0, r9
         ld   r1, r10
@@ -1359,10 +1428,10 @@ for__43:
         ld   r9, r0
         ; move boardRow.2{r11}, boardRow.4{r2}
         ld   r11, r2
-for__42:
-        ; branch boardRow.2{r11} lt 4: for_42_body
+for__43:
+        ; branch boardRow.2{r11} lt 4: for_43_body
         cp   r11, #%04
-        jr   ult, for__42__body
+        jr   ult, for__43__body
         ; restore clobbered non-volatile registers
         pop  r15
         pop  r14
@@ -1394,8 +1463,8 @@ drawScore:
         ; call printString@@u8[t.0.1{r0}]
         call printString_P_Pu8
         ; addrof a.1.1{r8}, score
-        ld   r8, #hi(var_1)
-        ld   r9, #lo(var_1)
+        ld   r8, #hi(var_3)
+        ld   r9, #lo(var_3)
         ; load t.2.1{r0}, [a.1.1{r8}]
         lde  r0, @rr8
         incw r8
@@ -1445,22 +1514,22 @@ drawStatus:
         ld   r3, #%00
         ; call setCursor@i16@i16[arg.2.0{r0}, arg.2.1{r2}]
         call setCursor_Pi16_Pi16
-        ; 252:2 if gameState == 1
+        ; 260:2 if gameState == 1
         ; addrof a.1.1{r8}, gameState
-        ld   r8, #hi(var_2)
-        ld   r9, #lo(var_2)
+        ld   r8, #hi(var_4)
+        ld   r9, #lo(var_4)
         ; load t.2.1{r10}, [a.1.1{r8}]
         lde  r10, @rr8
-        ; branch t.2.1{r10} equals 1: if_44_then
+        ; branch t.2.1{r10} equals 1: if_45_then
         cp   r10, #%01
-        jr   eq, if__44__then
-        ; 255:7 if gameState == 2
-        ; branch t.5.1{r10} notequals 2: drawStatus_ret, if_45_then
+        jr   eq, if__45__then
+        ; 263:7 if gameState == 2
+        ; branch t.5.1{r10} notequals 2: drawStatus_ret, if_46_then
         cp   r10, #%02
         jr   ne, drawStatus__ret
-        jr   if__45__then
+        jr   if__46__then
 
-if__44__then:
+if__45__then:
         ; const t.3.1{r0}, [string-19]
         ld   r0, #hi(string_19)
         ld   r1, #lo(string_19)
@@ -1468,7 +1537,7 @@ if__44__then:
         call printString_P_Pu8
         jr   drawStatus__ret
 
-if__45__then:
+if__46__then:
         ; const t.6.1{r0}, [string-20]
         ld   r0, #hi(string_20)
         ld   r1, #lo(string_20)
@@ -1492,10 +1561,10 @@ newGame:
         push r13
         ; const index.1{r8}, 0
         ld   r8, #%00
-        ; 261:2 for index < 16
-        jr   for__46
+        ; 269:2 for index < 16
+        jr   for__47
 
-for__46__body:
+for__47__body:
         ; const t.1.1{r9}, 0
         ld   r9, #%00
         ; cast t.3.1{r10}(i16), index.2{r8}(u8)
@@ -1511,18 +1580,18 @@ for__46__body:
         lde  @rr12, r9
         ; add index.3{r8}, 1
         inc  r8
-for__46:
-        ; branch index.2{r8} lt 16: for_46_body
+for__47:
+        ; branch index.2{r8} lt 16: for_47_body
         cp   r8, #%10
-        jr   ult, for__46__body
+        jr   ult, for__47__body
         ; const t.4.1{r8}, 0
         ld   r8, #%00
         ld   r9, #%00
         ld   r10, #%00
         ld   r11, #%00
         ; addrof a.5.1{r12}, score
-        ld   r12, #hi(var_1)
-        ld   r13, #lo(var_1)
+        ld   r12, #hi(var_3)
+        ld   r13, #lo(var_3)
         ; store [a.5.1{r12}], t.4.1{r8}
         lde  @rr12, r8
         incw r12
@@ -1536,8 +1605,8 @@ for__46:
         ; const t.6.1{r8}, 0
         ld   r8, #%00
         ; addrof a.7.1{r10}, gameState
-        ld   r10, #hi(var_2)
-        ld   r11, #lo(var_2)
+        ld   r10, #hi(var_4)
+        ld   r11, #lo(var_4)
         ; store [a.7.1{r10}], t.6.1{r8}
         lde  @rr10, r8
         ; call spawnTile[]
@@ -1583,8 +1652,8 @@ main:
         ld   r10, #%00
         ld   r11, #%00
         ; addrof a.3.1{r12}, score
-        ld   r12, #hi(var_1)
-        ld   r13, #lo(var_1)
+        ld   r12, #hi(var_3)
+        ld   r13, #lo(var_3)
         ; store [a.3.1{r12}], t.2.1{r8}
         lde  @rr12, r8
         incw r12
@@ -1598,8 +1667,8 @@ main:
         ; const t.4.1{r8}, 0
         ld   r8, #%00
         ; addrof a.5.1{r10}, gameState
-        ld   r10, #hi(var_2)
-        ld   r11, #lo(var_2)
+        ld   r10, #hi(var_4)
+        ld   r11, #lo(var_4)
         ; store [a.5.1{r10}], t.4.1{r8}
         lde  @rr10, r8
         ; end initialize global variables
@@ -1614,192 +1683,192 @@ main:
         call drawFrame
         ; call newGame[]
         call newGame
-        ; 278:2 while true
-        jr   while__47
+        ; 286:2 while true
+        jr   while__48
 
-if__48__end:
-        ; branch key.1{r8} equals 114: if_49_then
+if__49__end:
+        ; branch key.1{r8} equals 114: if_50_then
         cp   r9, #%72
         jr   ne, .notEquals3
         cp   r8, #%00
-        jr   eq, if__49__then
+        jr   eq, if__50__then
 .notEquals3:
-        ; branch key.1{r8} equals 82: if_49_then
+        ; branch key.1{r8} equals 82: if_50_then
         cp   r9, #%52
         jr   ne, .notEquals4
         cp   r8, #%00
-        jr   eq, if__49__then
+        jr   eq, if__50__then
 .notEquals4:
-        ; 287:3 if gameState != 0
+        ; 295:3 if gameState != 0
         ; addrof a.6.1{r10}, gameState
-        ld   r10, #hi(var_2)
-        ld   r11, #lo(var_2)
+        ld   r10, #hi(var_4)
+        ld   r11, #lo(var_4)
         ; load t.7.1{r12}, [a.6.1{r10}]
         lde  r12, @rr10
-        ; branch t.7.1{r12} notequals 0: while_47
+        ; branch t.7.1{r12} notequals 0: while_48
         cp   r12, #%00
-        jr   ne, while__47
-        ; branch key.1{r8} equals 1: if_52_then, or_54
+        jr   ne, while__48
+        ; branch key.1{r8} equals 1: if_53_then, or_55
         cp   r9, #%01
         jr   ne, .notEquals5
         cp   r8, #%00
-        jr   eq, if__52__then
+        jr   eq, if__53__then
 .notEquals5:
-        jr   or__54
+        jr   or__55
 
-if__49__then:
+if__50__then:
         ; call newGame[]
         call newGame
-        jr   while__47
+        jr   while__48
 
-or__54:
-        ; branch key.1{r8} equals 97: if_52_then
+or__55:
+        ; branch key.1{r8} equals 97: if_53_then
         cp   r9, #%61
         jr   ne, .notEquals6
         cp   r8, #%00
-        jr   eq, if__52__then
+        jr   eq, if__53__then
 .notEquals6:
-        ; branch key.1{r8} equals 65: if_52_then
+        ; branch key.1{r8} equals 65: if_53_then
         cp   r9, #%41
         jr   ne, .notEquals7
         cp   r8, #%00
-        jr   eq, if__52__then
+        jr   eq, if__53__then
 .notEquals7:
-        ; branch key.1{r8} equals 2: if_55_then
+        ; branch key.1{r8} equals 2: if_56_then
         cp   r9, #%02
         jr   ne, .notEquals8
         cp   r8, #%00
-        jr   eq, if__55__then
+        jr   eq, if__56__then
 .notEquals8:
-        ; branch key.1{r8} equals 100: if_55_then, or_56
+        ; branch key.1{r8} equals 100: if_56_then, or_57
         cp   r9, #%64
         jr   ne, .notEquals9
         cp   r8, #%00
-        jr   eq, if__55__then
+        jr   eq, if__56__then
 .notEquals9:
-        jr   or__56
+        jr   or__57
 
-if__52__then:
+if__53__then:
         ; const direction.2{r8}, 0
         ld   r8, #%00
         ; move direction.3{r0}, direction.2{r8}
         ld   r0, r8
-        jr   if__52__end
+        jr   if__53__end
 
-or__56:
-        ; branch key.1{r8} equals 68: if_55_then
+or__57:
+        ; branch key.1{r8} equals 68: if_56_then
         cp   r9, #%44
         jr   ne, .notEquals10
         cp   r8, #%00
-        jr   eq, if__55__then
+        jr   eq, if__56__then
 .notEquals10:
-        ; branch key.1{r8} equals 3: if_58_then
+        ; branch key.1{r8} equals 3: if_59_then
         cp   r9, #%03
         jr   ne, .notEquals11
         cp   r8, #%00
-        jr   eq, if__58__then
+        jr   eq, if__59__then
 .notEquals11:
-        ; branch key.1{r8} equals 119: if_58_then, or_59
+        ; branch key.1{r8} equals 119: if_59_then, or_60
         cp   r9, #%77
         jr   ne, .notEquals12
         cp   r8, #%00
-        jr   eq, if__58__then
+        jr   eq, if__59__then
 .notEquals12:
-        jr   or__59
+        jr   or__60
 
-if__55__then:
+if__56__then:
         ; const direction.4{r8}, 1
         ld   r8, #%01
         ; move direction.3{r0}, direction.4{r8}
         ld   r0, r8
-        jr   if__52__end
+        jr   if__53__end
 
-or__59:
-        ; branch key.1{r8} equals 87: if_58_then
+or__60:
+        ; branch key.1{r8} equals 87: if_59_then
         cp   r9, #%57
         jr   ne, .notEquals13
         cp   r8, #%00
-        jr   eq, if__58__then
+        jr   eq, if__59__then
 .notEquals13:
-        ; branch key.1{r8} equals 4: if_61_then
+        ; branch key.1{r8} equals 4: if_62_then
         cp   r9, #%04
         jr   ne, .notEquals14
         cp   r8, #%00
-        jr   eq, if__61__then
+        jr   eq, if__62__then
 .notEquals14:
-        ; branch key.1{r8} equals 115: if_61_then, or_62
+        ; branch key.1{r8} equals 115: if_62_then, or_63
         cp   r9, #%73
         jr   ne, .notEquals15
         cp   r8, #%00
-        jr   eq, if__61__then
+        jr   eq, if__62__then
 .notEquals15:
-        jr   or__62
+        jr   or__63
 
-if__58__then:
+if__59__then:
         ; const direction.5{r8}, 2
         ld   r8, #%02
         ; move direction.3{r0}, direction.5{r8}
         ld   r0, r8
-        jr   if__52__end
+        jr   if__53__end
 
-or__62:
-        ; branch key.1{r8} notequals 83: while_47, if_61_then
+or__63:
+        ; branch key.1{r8} notequals 83: while_48, if_62_then
         cp   r9, #%53
-        jr   ne, while__47
+        jr   ne, while__48
         cp   r8, #%00
-        jr   ne, while__47
-if__61__then:
+        jr   ne, while__48
+if__62__then:
         ; const direction.6{r8}, 3
         ld   r8, #%03
         ; move direction.3{r0}, direction.6{r8}
         ld   r0, r8
-if__52__end:
-        ; 307:3 if !slide@u8([ExprVarAccess[varName=direction, index=1, scope=function, type=u8, varIsArray=false, location=307:13]])
+if__53__end:
+        ; 315:3 if !slide@u8([ExprVarAccess[varName=direction, index=1, scope=function, type=u8, varIsArray=false, location=315:13]])
         ; call t.8.1{r0} = slide@u8[direction.3{r0}] -> bool
         call slide_Pu8
-        ; branch t.8.1{r0} equals 0: while_47
+        ; branch t.8.1{r0} equals 0: while_48
         cp   r0, #%00
-        jr   eq, while__47
+        jr   eq, while__48
         ; call spawnTile[]
         call spawnTile
-        ; 312:3 if gameState == 0 && !canMove([])
+        ; 320:3 if gameState == 0 && !canMove([])
         ; addrof a.9.1{r8}, gameState
-        ld   r8, #hi(var_2)
-        ld   r9, #lo(var_2)
+        ld   r8, #hi(var_4)
+        ld   r9, #lo(var_4)
         ; load t.10.1{r10}, [a.9.1{r8}]
         lde  r10, @rr8
-        ; branch t.10.1{r10} notequals 0: if_65_end
+        ; branch t.10.1{r10} notequals 0: if_66_end
         cp   r10, #%00
-        jr   ne, if__65__end
+        jr   ne, if__66__end
         ; call t.11.1{r0} = canMove[] -> bool
         call canMove
-        ; branch t.11.1{r0} notequals 0: if_65_end
+        ; branch t.11.1{r0} notequals 0: if_66_end
         cp   r0, #%00
-        jr   ne, if__65__end
+        jr   ne, if__66__end
         ; const t.12.1{r8}, 2
         ld   r8, #%02
         ; addrof a.13.1{r10}, gameState
-        ld   r10, #hi(var_2)
-        ld   r11, #lo(var_2)
+        ld   r10, #hi(var_4)
+        ld   r11, #lo(var_4)
         ; store [a.13.1{r10}], t.12.1{r8}
         lde  @rr10, r8
-if__65__end:
+if__66__end:
         ; call drawBoard[]
         call drawBoard
         ; call drawScore[]
         call drawScore
-        ; 317:3 if gameState != 0
+        ; 325:3 if gameState != 0
         ; addrof a.14.1{r8}, gameState
-        ld   r8, #hi(var_2)
-        ld   r9, #lo(var_2)
+        ld   r8, #hi(var_4)
+        ld   r9, #lo(var_4)
         ; load t.15.1{r10}, [a.14.1{r8}]
         lde  r10, @rr8
-        ; branch t.15.1{r10} equals 0: if_67_end
+        ; branch t.15.1{r10} equals 0: if_68_end
         cp   r10, #%00
-        jr   eq, if__67__end
+        jr   eq, if__68__end
         ; call drawStatus[]
         call drawStatus
-if__67__end:
+if__68__end:
         ; const arg.10.0{r0}, 21
         ld   r0, #%00
         ld   r1, #%15
@@ -1808,18 +1877,18 @@ if__67__end:
         ld   r3, #%00
         ; call setCursor@i16@i16[arg.10.0{r0}, arg.10.1{r2}]
         call setCursor_Pi16_Pi16
-while__47:
+while__48:
         ; call key.1{r0} = getChar[] -> i16
         call getChar
         ; move key.1{r8}, key.1{r0}
         ld   r9, r1
         ld   r8, r0
-        ; 280:3 if key == 27
-        ; branch key.1{r8} notequals 27: if_48_end
+        ; 288:3 if key == 27
+        ; branch key.1{r8} notequals 27: if_49_end
         cp   r9, #%1b
-        jr   ne, if__48__end
+        jr   ne, if__49__end
         cp   r8, #%00
-        jr   ne, if__48__end
+        jr   ne, if__49__end
         ; restore clobbered non-volatile registers
         pop  r13
         pop  r12
@@ -1977,11 +2046,17 @@ random16:
         ; variable 0: tiles[] (u8*/16)
 var_0:
         .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
-        ; variable 1: score (i32/4)
+        ; variable 1: moveTiles[] (u8*/16)
 var_1:
-        .data %00 %00 %00 %00
-        ; variable 2: gameState (u8/1)
+        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
+        ; variable 2: moveTargets[] (u8*/16)
 var_2:
+        .data %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00 %00
+        ; variable 3: score (i32/4)
+var_3:
+        .data %00 %00 %00 %00
+        ; variable 4: gameState (u8/1)
+var_4:
         .data %00
 
 string_0:
