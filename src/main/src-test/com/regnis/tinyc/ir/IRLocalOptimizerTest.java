@@ -1,6 +1,7 @@
 package com.regnis.tinyc.ir;
 
 import com.regnis.tinyc.ast.*;
+import com.regnis.tinyc.linearscanregalloc.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -12,6 +13,54 @@ import org.junit.*;
  * @author Thomas Singer
  */
 public class IRLocalOptimizerTest {
+
+	@Test
+	public void testWideWriteInvalidatesOverlappingPointerZ8() {
+		final IRVar score = new IRVar("score", 0, VariableScope.global, Type.I32);
+		final IRVar address = new IRVar("address", 6, VariableScope.register, Type.pointer(Type.I32));
+		final IRVar newAddress = new IRVar("address", 2, VariableScope.register, address.type());
+		final IRVar value = new IRVar("value", 5, VariableScope.register, Type.I32);
+		final List<IRInstruction> instructions = List.of(
+				new IRAddrOf(address, score),
+				new IRMove(value, new IRVar("value", 8, VariableScope.register, Type.I32)),
+				new IRAddrOf(newAddress, score)
+		);
+		Assert.assertEquals(instructions, IRLocalOptimizer.cleanUp(instructions, new LSArchitecture.Z8()));
+	}
+
+	@Test
+	public void testNarrowWriteInvalidatesOverlappingPointerZ8() {
+		final IRVar score = new IRVar("score", 0, VariableScope.global, Type.I32);
+		final IRVar address = new IRVar("address", 6, VariableScope.register, Type.pointer(Type.I32));
+		for (int register = 6; register <= 7; register++) {
+			final List<IRInstruction> instructions = List.of(
+					new IRAddrOf(address, score),
+					new IRMove(rU8("byte", register), 1),
+					new IRAddrOf(new IRVar("address", 2, VariableScope.register, address.type()), score)
+			);
+			Assert.assertEquals(instructions, IRLocalOptimizer.cleanUp(instructions, new LSArchitecture.Z8()));
+		}
+	}
+
+	@Test
+	public void testReadWithDifferentRegisterWidthZ8() {
+		final List<IRInstruction> instructions = List.of(
+				new IRMove(rU8("byte", 0), rU8("byte", 4)),
+				new IRMove(rI16("word", 0), rI16("word", 4))
+		);
+		Assert.assertEquals(instructions, IRLocalOptimizer.cleanUp(instructions, new LSArchitecture.Z8()));
+	}
+
+	@Test
+	public void testCompareInvalidatesCachedRegister() {
+		final IRVar flag = new IRVar("flag", 0, VariableScope.register, Type.BOOL);
+		final List<IRInstruction> instructions = List.of(
+				new IRMove(flag, 0),
+				new IRCompare(flag, IRCompare.Op.Equals, rU8("a", 1), rU8("b", 2)),
+				new IRMove(flag, 0)
+		);
+		Assert.assertEquals(instructions, cleanup(instructions));
+	}
 
 	@Test
 	public void testMoveBackAndForth() {
