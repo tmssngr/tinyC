@@ -1,11 +1,11 @@
 #include "io.tc"
 
-i16 space = 0x20;
-i16 next = '?';
-i16* ptrToSpace = &space;
+i16 space = 0x20
+i16 next = '?'
+i16* ptrToSpace = &space
 
 void main() {
-	printIntLf(next);
-	ptrToSpace += 1;
-	printIntLf(*ptrToSpace);
+	printIntLf(next)
+	ptrToSpace += 1
+	printIntLf(*ptrToSpace)
 }
