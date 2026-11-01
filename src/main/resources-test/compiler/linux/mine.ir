@@ -49,6 +49,20 @@ if_8_then:
 	jump getChar_ret
 getChar_ret:
 
+setCursor@i16@i16:
+ Local variables
+	arg 0: x (i16/2)
+	arg 1: y (i16/2)
+	var 2: t.2 (u8*/8)
+
+	const t.2, [string-0]
+	call printString@@u8[t.2]
+	call printUint@i16[y]
+	call printChar@u8[59]
+	call printUint@i16[x]
+	call printChar@u8[72]
+setCursor@i16@i16_ret:
+
 printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
@@ -466,7 +480,7 @@ for_27_continue:
 for_27_break:
 	call spacer = getSpacer@i16@i16@i16@i16[row, 40, rowCursor, columnCursor] -> u8
 	call printChar@u8[spacer]
-	const t.7, [string-0]
+	const t.7, [string-1]
 	call printString@@u8[t.7]
 for_26_continue:
 	add row, 1
@@ -751,7 +765,7 @@ main:
 	const curr_c, 20
 	const curr_r, 10
 	call setCursor@i16@i16[20, 0]
-	const t.8, [string-1]
+	const t.8, [string-2]
 	call printString@@u8[t.8]
 	; 221:2 while true
 while_48:
@@ -763,7 +777,7 @@ if_49_then:
 	call t.9 = printLeft[] -> bool
 	branch t.9 equals 0: if_49_end, if_50_then
 if_50_then:
-	const t.10, [string-2]
+	const t.10, [string-3]
 	call printString@@u8[t.10]
 	jump main_ret
 if_49_end:
@@ -838,7 +852,7 @@ if_61_end:
 	branch t.20 equals 0: if_62_end, if_62_then
 if_62_then:
 	call printField@i16@i16[curr_r, curr_c]
-	const t.21, [string-3]
+	const t.21, [string-4]
 	call printString@@u8[t.21]
 	jump main_ret
 if_62_end:
@@ -887,24 +901,13 @@ __getChar:
 	add    rsp, 48
 	ret
 
-setCursor@i16@i16:
-	sub     rsp, 28h
-	shl     rcx, 16
-	movsxd  rcx, ecx
-	movsx   rdx, dx
-	add     rdx, rcx
-	lea     rcx, [hStdOut]
-	mov     rcx, [rcx]
-	call   [SetConsoleCursorPosition]
-	add     rsp, 28h
-	ret
-
 Global variables
 	0: __random__ (i32/4)
 	1: field[] (u8*/800)
 
 String literals
-	string lit 0 "|\n\0"
-	string lit 1 "Left:\0"
-	string lit 2 " You've cleaned the field!\0"
-	string lit 3 "boom! you've lost\0"
+	string lit 0 "\u001b[\0"
+	string lit 1 "|\n\0"
+	string lit 2 "Left:\0"
+	string lit 3 " You've cleaned the field!\0"
+	string lit 4 "boom! you've lost\0"

@@ -45,10 +45,10 @@ main:
 	jump while_2
 if_3_end:
 	branch n.1{r8} gteq 2: while_2
-	const t.4.1{r1}, [string-1]
+	const t.4.1{r1}, [string-2]
 	call printString@@u8[t.4.1{r1}]
 while_2:
-	const t.3.1{r1}, [string-0]
+	const t.3.1{r1}, [string-1]
 	call printString@@u8[t.3.1{r1}]
 	call n.1{r0} = next[] -> u8
 	move n.1{r8}, n.1{r0}
@@ -67,5 +67,6 @@ Global variables
 	0: global (u8/1)
 
 String literals
-	string lit 0 "loop\n\0"
-	string lit 1 "<2\n\0"
+	string lit 0 "\u001b[\0"
+	string lit 1 "loop\n\0"
+	string lit 2 "<2\n\0"

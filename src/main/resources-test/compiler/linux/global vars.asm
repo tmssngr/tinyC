@@ -236,3 +236,6 @@ segment readable writable
         ; variable 2: ptrToSpace (i16*/8)
         var_2 rb 8
 
+segment readable
+        string_0 db 0x1b, '[', 0x00
+

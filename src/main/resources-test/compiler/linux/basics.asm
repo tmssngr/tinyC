@@ -240,3 +240,6 @@ segment readable writable
         ; variable 3: threeFour (u8/1)
         var_3 rb 1
 
+segment readable
+        string_0 db 0x1b, '[', 0x00
+

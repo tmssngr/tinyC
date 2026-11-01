@@ -202,3 +202,6 @@ _printStringLength@@u8@i64:
         syscall
         ret
 
+segment readable
+        string_0 db 0x1b, '[', 0x00
+

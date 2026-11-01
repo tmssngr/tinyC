@@ -138,7 +138,7 @@ getTrue:
  Local variables
 	var 0: t.0 (u8*/8)
 
-	const t.0, [string-0]
+	const t.0, [string-1]
 	call printString@@u8[t.0]
 	ret 1
 	jump getTrue_ret
@@ -148,7 +148,7 @@ getFalse:
  Local variables
 	var 0: t.0 (u8*/8)
 
-	const t.0, [string-1]
+	const t.0, [string-2]
 	call printString@@u8[t.0]
 	ret 0
 	jump getFalse_ret
@@ -158,7 +158,7 @@ printPass:
  Local variables
 	var 0: t.0 (u8*/8)
 
-	const t.0, [string-2]
+	const t.0, [string-3]
 	call printString@@u8[t.0]
 printPass_ret:
 
@@ -166,7 +166,7 @@ printError:
  Local variables
 	var 0: t.0 (u8*/8)
 
-	const t.0, [string-3]
+	const t.0, [string-4]
 	call printString@@u8[t.0]
 printError_ret:
 
@@ -180,7 +180,7 @@ logicNot:
 	var 5: t.5 (bool/1)
 	var 6: t.6 (bool/1)
 
-	const t.2, [string-4]
+	const t.2, [string-5]
 	call printString@@u8[t.2]
 	const t, 1
 	const f, 0
@@ -242,7 +242,7 @@ logicAnd:
 	var 29: t.29 (bool/1)
 	var 30: t.30 (bool/1)
 
-	const t.2, [string-5]
+	const t.2, [string-6]
 	call printString@@u8[t.2]
 	const t, 1
 	const f, 0
@@ -422,7 +422,7 @@ logicOr:
 	var 13: t.13 (bool/1)
 	var 14: t.14 (bool/1)
 
-	const t.2, [string-6]
+	const t.2, [string-7]
 	call printString@@u8[t.2]
 	const t, 1
 	const f, 0
@@ -545,7 +545,7 @@ main:
 	var 36: t.36 (i16/2)
 	var 37: t.37 (u8/1)
 
-	const t.9, [string-7]
+	const t.9, [string-8]
 	call printString@@u8[t.9]
 	const a, 0
 	const b, 1
@@ -561,7 +561,7 @@ main:
 	call printIntLf@i16[t.12]
 	and t.13, b, b
 	call printIntLf@i16[t.13]
-	const t.14, [string-8]
+	const t.14, [string-9]
 	call printString@@u8[t.14]
 	or t.15, a, a
 	call printIntLf@i16[t.15]
@@ -571,7 +571,7 @@ main:
 	call printIntLf@i16[t.17]
 	or t.18, b, b
 	call printIntLf@i16[t.18]
-	const t.19, [string-9]
+	const t.19, [string-10]
 	call printString@@u8[t.19]
 	xor t.20, a, a
 	call printIntLf@i16[t.20]
@@ -621,7 +621,7 @@ and_next_50:
 	notlog t.28, t.30
 or_next_48:
 	call printIntLf@bool[t.28]
-	const t.31, [string-10]
+	const t.31, [string-11]
 	call printString@@u8[t.31]
 	const b10, 10
 	const b6, 6
@@ -659,14 +659,15 @@ printStringLength@@u8@i64:
 	ret
 
 String literals
-	string lit 0 " true\0"
-	string lit 1 " false\0"
-	string lit 2 " -> pass \0"
-	string lit 3 " -> ERROR \0"
-	string lit 4 "\nLogic-!:\n\0"
-	string lit 5 "\nLogic-&&:\n\0"
-	string lit 6 "\nLogic-||:\n\0"
-	string lit 7 "Bit-&:\n\0"
-	string lit 8 "\nBit-|:\n\0"
-	string lit 9 "\nBit-^:\n\0"
-	string lit 10 "\n\nmisc:\n\0"
+	string lit 0 "\u001b[\0"
+	string lit 1 " true\0"
+	string lit 2 " false\0"
+	string lit 3 " -> pass \0"
+	string lit 4 " -> ERROR \0"
+	string lit 5 "\nLogic-!:\n\0"
+	string lit 6 "\nLogic-&&:\n\0"
+	string lit 7 "\nLogic-||:\n\0"
+	string lit 8 "Bit-&:\n\0"
+	string lit 9 "\nBit-|:\n\0"
+	string lit 10 "\nBit-^:\n\0"
+	string lit 11 "\n\nmisc:\n\0"

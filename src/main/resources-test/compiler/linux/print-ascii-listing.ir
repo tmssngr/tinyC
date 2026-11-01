@@ -82,7 +82,7 @@ main:
 	var 5: t.5 (u8/1)
 	var 6: t.6 (u8/1)
 
-	const t.2, [string-0]
+	const t.2, [string-1]
 	call printString@@u8[t.2]
 	const i, 0
 	; 19:2 for i < 16
@@ -138,4 +138,5 @@ printStringLength@@u8@i64:
 	ret
 
 String literals
-	string lit 0 " x\0"
+	string lit 0 "\u001b[\0"
+	string lit 1 " x\0"

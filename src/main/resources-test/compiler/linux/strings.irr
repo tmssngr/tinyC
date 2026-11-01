@@ -157,3 +157,4 @@ Global variables
 
 String literals
 	string lit 0 "hello world\n\0"
+	string lit 1 "\u001b[\0"

@@ -38,7 +38,12 @@ i16 getChar() {
 i16 __getChar() asm {
 }
 
-void setCursor@i16@i16(i16 x, i16 y) asm {
+void setCursor@i16@i16(i16 x, i16 y) {
+	printString@@u8("\u001b[");
+	printUint@i16(y);
+	printChar@u8(59);
+	printUint@i16(x);
+	printChar@u8(72);
 }
 
 void printString@@u8(u8* str) {

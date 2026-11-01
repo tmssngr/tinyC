@@ -332,4 +332,5 @@ segment readable writable
 
 segment readable
         string_0 db 'hello world', 0x0a, 0x00
+        string_1 db 0x1b, '[', 0x00
 

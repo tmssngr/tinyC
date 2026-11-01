@@ -293,3 +293,6 @@ segment readable writable
         ; variable 0: __random__ (i32/4)
         var_0 rb 4
 
+segment readable
+        string_0 db 0x1b, '[', 0x00
+

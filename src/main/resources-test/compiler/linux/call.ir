@@ -148,3 +148,5 @@ printStringLength@@u8@i64:
 Global variables
 	0: i (u8/1)
 
+String literals
+	string lit 0 "\u001b[\0"

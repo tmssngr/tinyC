@@ -35,6 +35,24 @@ if_8_then:
 	const {r0}, -8117
 getChar_ret:
 
+setCursor@i16@i16:
+ Local variables
+	arg 0: x (i16/2)
+	arg 1: y (i16/2)
+
+	move x{r8}, x{r1}
+	move y{r9}, y{r2}
+	const t.2.1{r1}, [string-0]
+	call printString@@u8[t.2.1{r1}]
+	move y{r1}, y{r9}
+	call printUint@i16[y{r1}]
+	const arg.2.0{r1}, 59
+	call printChar@u8[arg.2.0{r1}]
+	move x{r1}, x{r8}
+	call printUint@i16[x{r1}]
+	const arg.4.0{r1}, 72
+	call printChar@u8[arg.4.0{r1}]
+
 printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
@@ -474,7 +492,7 @@ for_27:
 	call spacer.1{r0} = getSpacer@i16@i16@i16@i16[row.2{r1}, arg.6.1{r2}, rowCursor{r3}, columnCursor{r4}] -> u8
 	move spacer.1{r1}, spacer.1{r0}
 	call printChar@u8[spacer.1{r1}]
-	const t.7.1{r1}, [string-0]
+	const t.7.1{r1}, [string-1]
 	call printString@@u8[t.7.1{r1}]
 	addrof memVarAddr{r9}, row.2
 	load row.2{r0}, [memVarAddr{r9}]
@@ -822,7 +840,7 @@ main:
 	const arg.2.0{r1}, 20
 	const arg.2.1{r2}, 0
 	call setCursor@i16@i16[arg.2.0{r1}, arg.2.1{r2}]
-	const t.8.1{r1}, [string-1]
+	const t.8.1{r1}, [string-2]
 	call printString@@u8[t.8.1{r1}]
 	; 221:2 while true
 	addrof memVarAddr{r9}, curr_c.1
@@ -1010,7 +1028,7 @@ while_48:
 	branch needsInitialize.2{r8} notequals 0: if_49_end, if_49_then
 	jump if_49_then
 if_50_then:
-	const t.10.1{r1}, [string-2]
+	const t.10.1{r1}, [string-3]
 	call printString@@u8[t.10.1{r1}]
 	jump main_ret
 if_62_then:
@@ -1019,7 +1037,7 @@ if_62_then:
 	addrof memVarAddr{r9}, curr_c.2
 	load curr_c.2{r2}, [memVarAddr{r9}]
 	call printField@i16@i16[curr_r.2{r1}, curr_c.2{r2}]
-	const t.21.1{r1}, [string-3]
+	const t.21.1{r1}, [string-4]
 	call printString@@u8[t.21.1{r1}]
 main_ret:
 
@@ -1064,24 +1082,13 @@ __getChar:
 	add    rsp, 48
 	ret
 
-setCursor@i16@i16:
-	sub     rsp, 28h
-	shl     rcx, 16
-	movsxd  rcx, ecx
-	movsx   rdx, dx
-	add     rdx, rcx
-	lea     rcx, [hStdOut]
-	mov     rcx, [rcx]
-	call   [SetConsoleCursorPosition]
-	add     rsp, 28h
-	ret
-
 Global variables
 	0: __random__ (i32/4)
 	1: field[] (u8*/800)
 
 String literals
-	string lit 0 "|\n\0"
-	string lit 1 "Left:\0"
-	string lit 2 " You've cleaned the field!\0"
-	string lit 3 "boom! you've lost\0"
+	string lit 0 "\u001b[\0"
+	string lit 1 "|\n\0"
+	string lit 2 "Left:\0"
+	string lit 3 " You've cleaned the field!\0"
+	string lit 4 "boom! you've lost\0"

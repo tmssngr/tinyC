@@ -42,7 +42,7 @@ digraph program {
 		BasicBlock_4_for__2 [label="for__2\lbranch i_d2 gteq 30: for__2__break, for__2__body\ljump for__2__body",shape=box];
 		BasicBlock_4_for__2 -> BasicBlock_4_for__2__break;
 		BasicBlock_4_for__2 -> BasicBlock_4_for__2__body [label="(i.2)"];
-		BasicBlock_4_for__2__break [label="for__2__break\lconst t_d4_d1, [string-0]\lcall printString_A_Au8[t_d4_d1]\ljump printBoard__ret",shape=box];
+		BasicBlock_4_for__2__break [label="for__2__break\lconst t_d4_d1, [string-1]\lcall printString_A_Au8[t_d4_d1]\ljump printBoard__ret",shape=box];
 		BasicBlock_4_for__2__break -> BasicBlock_4_printBoard__ret;
 		BasicBlock_4_printBoard__ret [label="printBoard__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}

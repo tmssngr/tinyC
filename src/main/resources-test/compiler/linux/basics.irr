@@ -116,3 +116,5 @@ Global variables
 	2: two (u8/1)
 	3: threeFour (u8/1)
 
+String literals
+	string lit 0 "\u001b[\0"

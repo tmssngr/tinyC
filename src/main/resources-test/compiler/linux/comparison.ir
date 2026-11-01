@@ -153,7 +153,7 @@ main:
 	var 32: t.32 (bool/1)
 	var 33: t.33 (bool/1)
 
-	const t.4, [string-0]
+	const t.4, [string-1]
 	call printString@@u8[t.4]
 	const a, 1
 	const b, 2
@@ -161,7 +161,7 @@ main:
 	call printIntLf@bool[t.5]
 	lt t.6, b, a
 	call printIntLf@bool[t.6]
-	const t.7, [string-1]
+	const t.7, [string-2]
 	call printString@@u8[t.7]
 	const c, 0
 	const d, 128
@@ -169,49 +169,49 @@ main:
 	call printIntLf@bool[t.8]
 	lt t.9, d, c
 	call printIntLf@bool[t.9]
-	const t.10, [string-2]
+	const t.10, [string-3]
 	call printString@@u8[t.10]
 	lteq t.11, a, b
 	call printIntLf@bool[t.11]
 	lteq t.12, b, a
 	call printIntLf@bool[t.12]
-	const t.13, [string-3]
+	const t.13, [string-4]
 	call printString@@u8[t.13]
 	lteq t.14, c, d
 	call printIntLf@bool[t.14]
 	lteq t.15, d, c
 	call printIntLf@bool[t.15]
-	const t.16, [string-4]
+	const t.16, [string-5]
 	call printString@@u8[t.16]
 	equals t.17, a, b
 	call printIntLf@bool[t.17]
 	equals t.18, b, a
 	call printIntLf@bool[t.18]
-	const t.19, [string-5]
+	const t.19, [string-6]
 	call printString@@u8[t.19]
 	notequals t.20, a, b
 	call printIntLf@bool[t.20]
 	notequals t.21, b, a
 	call printIntLf@bool[t.21]
-	const t.22, [string-6]
+	const t.22, [string-7]
 	call printString@@u8[t.22]
 	gteq t.23, a, b
 	call printIntLf@bool[t.23]
 	gteq t.24, b, a
 	call printIntLf@bool[t.24]
-	const t.25, [string-7]
+	const t.25, [string-8]
 	call printString@@u8[t.25]
 	gteq t.26, c, d
 	call printIntLf@bool[t.26]
 	gteq t.27, d, c
 	call printIntLf@bool[t.27]
-	const t.28, [string-8]
+	const t.28, [string-9]
 	call printString@@u8[t.28]
 	gt t.29, a, b
 	call printIntLf@bool[t.29]
 	gt t.30, b, a
 	call printIntLf@bool[t.30]
-	const t.31, [string-9]
+	const t.31, [string-10]
 	call printString@@u8[t.31]
 	gt t.32, c, d
 	call printIntLf@bool[t.32]
@@ -228,13 +228,14 @@ printStringLength@@u8@i64:
 	ret
 
 String literals
-	string lit 0 "< (signed)\n\0"
-	string lit 1 "< (unsigned)\n\0"
-	string lit 2 "<= (signed)\n\0"
-	string lit 3 "<= (unsigned)\n\0"
-	string lit 4 "==\n\0"
-	string lit 5 "!=\n\0"
-	string lit 6 ">= (signed)\n\0"
-	string lit 7 ">= (unsigned)\n\0"
-	string lit 8 "> (signed)\n\0"
-	string lit 9 "> (unsigned)\n\0"
+	string lit 0 "\u001b[\0"
+	string lit 1 "< (signed)\n\0"
+	string lit 2 "< (unsigned)\n\0"
+	string lit 3 "<= (signed)\n\0"
+	string lit 4 "<= (unsigned)\n\0"
+	string lit 5 "==\n\0"
+	string lit 6 "!=\n\0"
+	string lit 7 ">= (signed)\n\0"
+	string lit 8 ">= (unsigned)\n\0"
+	string lit 9 "> (signed)\n\0"
+	string lit 10 "> (unsigned)\n\0"

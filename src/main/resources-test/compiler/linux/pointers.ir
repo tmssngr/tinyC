@@ -165,3 +165,5 @@ printStringLength@@u8@i64:
 	syscall
 	ret
 
+String literals
+	string lit 0 "\u001b[\0"

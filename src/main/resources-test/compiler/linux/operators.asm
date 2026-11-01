@@ -259,8 +259,8 @@ _printStringLength@@u8@u8:
         ; bool getTrue
 _getTrue:
         sub rsp, 8
-        ; const t.0.1{r1}, [string-0]
-        lea rdi, [string_0]
+        ; const t.0.1{r1}, [string-1]
+        lea rdi, [string_1]
         ; call printString@@u8[t.0.1{r1}]
         call _printString@@u8
         ; const {r0}, 1
@@ -271,8 +271,8 @@ _getTrue:
         ; bool getFalse
 _getFalse:
         sub rsp, 8
-        ; const t.0.1{r1}, [string-1]
-        lea rdi, [string_1]
+        ; const t.0.1{r1}, [string-2]
+        lea rdi, [string_2]
         ; call printString@@u8[t.0.1{r1}]
         call _printString@@u8
         ; const {r0}, 0
@@ -283,8 +283,8 @@ _getFalse:
         ; void printPass
 _printPass:
         sub rsp, 8
-        ; const t.0.1{r1}, [string-2]
-        lea rdi, [string_2]
+        ; const t.0.1{r1}, [string-3]
+        lea rdi, [string_3]
         ; call printString@@u8[t.0.1{r1}]
         call _printString@@u8
         add rsp, 8
@@ -293,8 +293,8 @@ _printPass:
         ; void printError
 _printError:
         sub rsp, 8
-        ; const t.0.1{r1}, [string-3]
-        lea rdi, [string_3]
+        ; const t.0.1{r1}, [string-4]
+        lea rdi, [string_4]
         ; call printString@@u8[t.0.1{r1}]
         call _printString@@u8
         add rsp, 8
@@ -308,8 +308,8 @@ _logicNot:
         push r10
         push rbx
         push r12
-        ; const t.2.1{r1}, [string-4]
-        lea rdi, [string_4]
+        ; const t.2.1{r1}, [string-5]
+        lea rdi, [string_5]
         ; call printString@@u8[t.2.1{r1}]
         call _printString@@u8
         ; const t.1{r8}, 1
@@ -368,8 +368,8 @@ _logicAnd:
         push r10
         push rbx
         push r12
-        ; const t.2.1{r1}, [string-5]
-        lea rdi, [string_5]
+        ; const t.2.1{r1}, [string-6]
+        lea rdi, [string_6]
         ; call printString@@u8[t.2.1{r1}]
         call _printString@@u8
         ; const t.1{r8}, 1
@@ -648,8 +648,8 @@ _logicOr:
         push r10
         push rbx
         push r12
-        ; const t.2.1{r1}, [string-6]
-        lea rdi, [string_6]
+        ; const t.2.1{r1}, [string-7]
+        lea rdi, [string_7]
         ; call printString@@u8[t.2.1{r1}]
         call _printString@@u8
         ; const t.1{r8}, 1
@@ -814,8 +814,8 @@ _main:
         push r10
         push rbx
         push r12
-        ; const t.9.1{r1}, [string-7]
-        lea rdi, [string_7]
+        ; const t.9.1{r1}, [string-8]
+        lea rdi, [string_8]
         ; call printString@@u8[t.9.1{r1}]
         call _printString@@u8
         ; const a.1{r8}, 0
@@ -882,8 +882,8 @@ _main:
         and di, ax
         ; call printIntLf@i16[t.13.1{r1}]
         call _printIntLf@i16
-        ; const t.14.1{r1}, [string-8]
-        lea rdi, [string_8]
+        ; const t.14.1{r1}, [string-9]
+        lea rdi, [string_9]
         ; call printString@@u8[t.14.1{r1}]
         call _printString@@u8
         ; move t.15.1{r1}, a.1{r8}
@@ -916,8 +916,8 @@ _main:
         or di, ax
         ; call printIntLf@i16[t.18.1{r1}]
         call _printIntLf@i16
-        ; const t.19.1{r1}, [string-9]
-        lea rdi, [string_9]
+        ; const t.19.1{r1}, [string-10]
+        lea rdi, [string_10]
         ; call printString@@u8[t.19.1{r1}]
         call _printString@@u8
         ; move t.20.1{r1}, a.1{r8}
@@ -1025,8 +1025,8 @@ _or_2nd_48:
 _or_next_48:
         ; call printIntLf@bool[t.28.2{r1}]
         call _printIntLf@bool
-        ; const t.31.1{r1}, [string-10]
-        lea rdi, [string_10]
+        ; const t.31.1{r1}, [string-11]
+        lea rdi, [string_11]
         ; call printString@@u8[t.31.1{r1}]
         call _printString@@u8
         ; const b10.1{r0}, 10
@@ -1143,15 +1143,16 @@ _printStringLength@@u8@i64:
         ret
 
 segment readable
-        string_0 db ' true', 0x00
-        string_1 db ' false', 0x00
-        string_2 db ' -> pass ', 0x00
-        string_3 db ' -> ERROR ', 0x00
-        string_4 db 0x0a, 'Logic-!:', 0x0a, 0x00
-        string_5 db 0x0a, 'Logic-&&:', 0x0a, 0x00
-        string_6 db 0x0a, 'Logic-||:', 0x0a, 0x00
-        string_7 db 'Bit-&:', 0x0a, 0x00
-        string_8 db 0x0a, 'Bit-|:', 0x0a, 0x00
-        string_9 db 0x0a, 'Bit-^:', 0x0a, 0x00
-        string_10 db 0x0a, 0x0a, 'misc:', 0x0a, 0x00
+        string_0 db 0x1b, '[', 0x00
+        string_1 db ' true', 0x00
+        string_2 db ' false', 0x00
+        string_3 db ' -> pass ', 0x00
+        string_4 db ' -> ERROR ', 0x00
+        string_5 db 0x0a, 'Logic-!:', 0x0a, 0x00
+        string_6 db 0x0a, 'Logic-&&:', 0x0a, 0x00
+        string_7 db 0x0a, 'Logic-||:', 0x0a, 0x00
+        string_8 db 'Bit-&:', 0x0a, 0x00
+        string_9 db 0x0a, 'Bit-|:', 0x0a, 0x00
+        string_10 db 0x0a, 'Bit-^:', 0x0a, 0x00
+        string_11 db 0x0a, 0x0a, 'misc:', 0x0a, 0x00
 

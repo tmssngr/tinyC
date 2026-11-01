@@ -67,7 +67,7 @@ for_2_continue:
 	add i.4{r8}, 1
 for_2:
 	branch i.2{r8} lt 30: for_2_body
-	const t.4.1{r1}, [string-0]
+	const t.4.1{r1}, [string-1]
 	call printString@@u8[t.4.1{r1}]
 
 main:
@@ -146,4 +146,5 @@ Global variables
 	0: board[] (u8*/30)
 
 String literals
-	string lit 0 "|\n\0"
+	string lit 0 "\u001b[\0"
+	string lit 1 "|\n\0"

@@ -138,3 +138,5 @@ printStringLength@@u8@i64:
 Global variables
 	0: __random__ (i32/4)
 
+String literals
+	string lit 0 "\u001b[\0"

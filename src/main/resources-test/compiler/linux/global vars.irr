@@ -108,3 +108,5 @@ Global variables
 	1: next (i16/2)
 	2: ptrToSpace (i16*/8)
 
+String literals
+	string lit 0 "\u001b[\0"

@@ -145,8 +145,8 @@ _for_2:
         ; branch i.2{r8} lt 30: for_2_body
         cmp bl, 30
         jb _for_2_body
-        ; const t.4.1{r1}, [string-0]
-        lea rdi, [string_0]
+        ; const t.4.1{r1}, [string-1]
+        lea rdi, [string_1]
         ; call printString@@u8[t.4.1{r1}]
         call _printString@@u8
         ; restore clobbered non-volatile registers
@@ -296,5 +296,6 @@ segment readable writable
         var_0 rb 30
 
 segment readable
-        string_0 db '|', 0x0a, 0x00
+        string_0 db 0x1b, '[', 0x00
+        string_1 db '|', 0x0a, 0x00
 

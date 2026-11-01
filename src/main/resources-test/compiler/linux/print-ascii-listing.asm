@@ -166,8 +166,8 @@ _main:
         push r10
         push rbx
         push r12
-        ; const t.2.1{r1}, [string-0]
-        lea rdi, [string_0]
+        ; const t.2.1{r1}, [string-1]
+        lea rdi, [string_1]
         ; call printString@@u8[t.2.1{r1}]
         call _printString@@u8
         ; const i.1{r8}, 0
@@ -278,5 +278,6 @@ _printStringLength@@u8@i64:
         ret
 
 segment readable
-        string_0 db ' x', 0x00
+        string_0 db 0x1b, '[', 0x00
+        string_1 db ' x', 0x00
 

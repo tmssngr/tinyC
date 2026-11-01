@@ -234,3 +234,6 @@ segment readable writable
         ; variable 0: chars[] (u8*/256)
         var_0 rb 256
 
+segment readable
+        string_0 db 0x1b, '[', 0x00
+

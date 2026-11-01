@@ -109,7 +109,7 @@ main:
 	var 1: c.1 (u8/1)
 	var 2: d.1 (u8/1)
 
-	const t.4.1{r1}, [string-0]
+	const t.4.1{r1}, [string-1]
 	call printString@@u8[t.4.1{r1}]
 	const a.1{r8}, 1
 	const b.1{r0}, 2
@@ -120,7 +120,7 @@ main:
 	load b.1{r0}, [memVarAddr{r9}]
 	lt t.6.1{r1}, b.1{r0}, a.1{r8}
 	call printIntLf@bool[t.6.1{r1}]
-	const t.7.1{r1}, [string-1]
+	const t.7.1{r1}, [string-2]
 	call printString@@u8[t.7.1{r1}]
 	const c.1{r0}, 0
 	const d.1{r2}, 128
@@ -136,7 +136,7 @@ main:
 	load d.1{r0}, [memVarAddr{r9}]
 	lt t.9.1{r1}, d.1{r0}, c.1{r2}
 	call printIntLf@bool[t.9.1{r1}]
-	const t.10.1{r1}, [string-2]
+	const t.10.1{r1}, [string-3]
 	call printString@@u8[t.10.1{r1}]
 	addrof memVarAddr{r9}, b.1
 	load b.1{r0}, [memVarAddr{r9}]
@@ -145,7 +145,7 @@ main:
 	load b.1{r0}, [memVarAddr{r9}]
 	lteq t.12.1{r1}, b.1{r0}, a.1{r8}
 	call printIntLf@bool[t.12.1{r1}]
-	const t.13.1{r1}, [string-3]
+	const t.13.1{r1}, [string-4]
 	call printString@@u8[t.13.1{r1}]
 	addrof memVarAddr{r9}, c.1
 	load c.1{r0}, [memVarAddr{r9}]
@@ -159,7 +159,7 @@ main:
 	load d.1{r0}, [memVarAddr{r9}]
 	lteq t.15.1{r1}, d.1{r0}, c.1{r2}
 	call printIntLf@bool[t.15.1{r1}]
-	const t.16.1{r1}, [string-4]
+	const t.16.1{r1}, [string-5]
 	call printString@@u8[t.16.1{r1}]
 	addrof memVarAddr{r9}, b.1
 	load b.1{r0}, [memVarAddr{r9}]
@@ -168,7 +168,7 @@ main:
 	load b.1{r0}, [memVarAddr{r9}]
 	equals t.18.1{r1}, b.1{r0}, a.1{r8}
 	call printIntLf@bool[t.18.1{r1}]
-	const t.19.1{r1}, [string-5]
+	const t.19.1{r1}, [string-6]
 	call printString@@u8[t.19.1{r1}]
 	load b.1{r0}, [memVarAddr{r9}]
 	notequals t.20.1{r1}, a.1{r8}, b.1{r0}
@@ -176,7 +176,7 @@ main:
 	load b.1{r0}, [memVarAddr{r9}]
 	notequals t.21.1{r1}, b.1{r0}, a.1{r8}
 	call printIntLf@bool[t.21.1{r1}]
-	const t.22.1{r1}, [string-6]
+	const t.22.1{r1}, [string-7]
 	call printString@@u8[t.22.1{r1}]
 	load b.1{r0}, [memVarAddr{r9}]
 	gteq t.23.1{r1}, a.1{r8}, b.1{r0}
@@ -184,7 +184,7 @@ main:
 	load b.1{r0}, [memVarAddr{r9}]
 	gteq t.24.1{r1}, b.1{r0}, a.1{r8}
 	call printIntLf@bool[t.24.1{r1}]
-	const t.25.1{r1}, [string-7]
+	const t.25.1{r1}, [string-8]
 	call printString@@u8[t.25.1{r1}]
 	addrof memVarAddr{r9}, c.1
 	load c.1{r0}, [memVarAddr{r9}]
@@ -198,7 +198,7 @@ main:
 	load d.1{r0}, [memVarAddr{r9}]
 	gteq t.27.1{r1}, d.1{r0}, c.1{r2}
 	call printIntLf@bool[t.27.1{r1}]
-	const t.28.1{r1}, [string-8]
+	const t.28.1{r1}, [string-9]
 	call printString@@u8[t.28.1{r1}]
 	addrof memVarAddr{r9}, b.1
 	load b.1{r0}, [memVarAddr{r9}]
@@ -207,7 +207,7 @@ main:
 	load b.1{r0}, [memVarAddr{r9}]
 	gt t.30.1{r1}, b.1{r0}, a.1{r8}
 	call printIntLf@bool[t.30.1{r1}]
-	const t.31.1{r1}, [string-9]
+	const t.31.1{r1}, [string-10]
 	call printString@@u8[t.31.1{r1}]
 	addrof memVarAddr{r9}, c.1
 	load c.1{r8}, [memVarAddr{r9}]
@@ -228,13 +228,14 @@ printStringLength@@u8@i64:
 	ret
 
 String literals
-	string lit 0 "< (signed)\n\0"
-	string lit 1 "< (unsigned)\n\0"
-	string lit 2 "<= (signed)\n\0"
-	string lit 3 "<= (unsigned)\n\0"
-	string lit 4 "==\n\0"
-	string lit 5 "!=\n\0"
-	string lit 6 ">= (signed)\n\0"
-	string lit 7 ">= (unsigned)\n\0"
-	string lit 8 "> (signed)\n\0"
-	string lit 9 "> (unsigned)\n\0"
+	string lit 0 "\u001b[\0"
+	string lit 1 "< (signed)\n\0"
+	string lit 2 "< (unsigned)\n\0"
+	string lit 3 "<= (signed)\n\0"
+	string lit 4 "<= (unsigned)\n\0"
+	string lit 5 "==\n\0"
+	string lit 6 "!=\n\0"
+	string lit 7 ">= (signed)\n\0"
+	string lit 8 ">= (unsigned)\n\0"
+	string lit 9 "> (signed)\n\0"
+	string lit 10 "> (unsigned)\n\0"

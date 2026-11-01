@@ -74,27 +74,27 @@ digraph program {
 		BasicBlock_8_printStringLength_A_Au8_Au8__ret [label="printStringLength_A_Au8_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_getTrue {
-		BasicBlock_9_getTrue [label="getTrue\lconst t_d0_d1, [string-0]\lcall printString_A_Au8[t_d0_d1]\lret 1\ljump getTrue__ret",shape=box];
+		BasicBlock_9_getTrue [label="getTrue\lconst t_d0_d1, [string-1]\lcall printString_A_Au8[t_d0_d1]\lret 1\ljump getTrue__ret",shape=box];
 		BasicBlock_9_getTrue -> BasicBlock_9_getTrue__ret;
 		BasicBlock_9_getTrue__ret [label="getTrue__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_getFalse {
-		BasicBlock_10_getFalse [label="getFalse\lconst t_d0_d1, [string-1]\lcall printString_A_Au8[t_d0_d1]\lret 0\ljump getFalse__ret",shape=box];
+		BasicBlock_10_getFalse [label="getFalse\lconst t_d0_d1, [string-2]\lcall printString_A_Au8[t_d0_d1]\lret 0\ljump getFalse__ret",shape=box];
 		BasicBlock_10_getFalse -> BasicBlock_10_getFalse__ret;
 		BasicBlock_10_getFalse__ret [label="getFalse__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printPass {
-		BasicBlock_11_printPass [label="printPass\lconst t_d0_d1, [string-2]\lcall printString_A_Au8[t_d0_d1]\ljump printPass__ret",shape=box];
+		BasicBlock_11_printPass [label="printPass\lconst t_d0_d1, [string-3]\lcall printString_A_Au8[t_d0_d1]\ljump printPass__ret",shape=box];
 		BasicBlock_11_printPass -> BasicBlock_11_printPass__ret;
 		BasicBlock_11_printPass__ret [label="printPass__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_printError {
-		BasicBlock_12_printError [label="printError\lconst t_d0_d1, [string-3]\lcall printString_A_Au8[t_d0_d1]\ljump printError__ret",shape=box];
+		BasicBlock_12_printError [label="printError\lconst t_d0_d1, [string-4]\lcall printString_A_Au8[t_d0_d1]\ljump printError__ret",shape=box];
 		BasicBlock_12_printError -> BasicBlock_12_printError__ret;
 		BasicBlock_12_printError__ret [label="printError__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_logicNot {
-		BasicBlock_13_logicNot [label="logicNot\lconst t_d2_d1, [string-4]\lcall printString_A_Au8[t_d2_d1]\lconst t_d1, 1\lconst f_d1, 0\lcall t_d3_d1 = getFalse[] -> bool\lbranch t_d3_d1 notequals 0: if__6__else, if__6__then\ljump if__6__then",shape=box];
+		BasicBlock_13_logicNot [label="logicNot\lconst t_d2_d1, [string-5]\lcall printString_A_Au8[t_d2_d1]\lconst t_d1, 1\lconst f_d1, 0\lcall t_d3_d1 = getFalse[] -> bool\lbranch t_d3_d1 notequals 0: if__6__else, if__6__then\ljump if__6__then",shape=box];
 		BasicBlock_13_logicNot -> BasicBlock_13_if__6__else [label="(f.1,t.1)"];
 		BasicBlock_13_logicNot -> BasicBlock_13_if__6__then [label="(f.1,t.1)"];
 		BasicBlock_13_if__6__else [label="if__6__else\lcall printError[]\ljump if__6__end",shape=box];
@@ -113,7 +113,7 @@ digraph program {
 		BasicBlock_13_logicNot__ret [label="logicNot__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_logicAnd {
-		BasicBlock_14_logicAnd [label="logicAnd\lconst t_d2_d1, [string-5]\lcall printString_A_Au8[t_d2_d1]\lconst t_d1, 1\lconst f_d1, 0\lcall t_d3_d1 = getFalse[] -> bool\lbranch t_d3_d1 equals 0: logicAnd_dno__critical__edge__50, and__9\ljump and__9",shape=box];
+		BasicBlock_14_logicAnd [label="logicAnd\lconst t_d2_d1, [string-6]\lcall printString_A_Au8[t_d2_d1]\lconst t_d1, 1\lconst f_d1, 0\lcall t_d3_d1 = getFalse[] -> bool\lbranch t_d3_d1 equals 0: logicAnd_dno__critical__edge__50, and__9\ljump and__9",shape=box];
 		BasicBlock_14_logicAnd -> BasicBlock_14_logicAnd_dno__critical__edge__50 [label="(f.1,t.1)"];
 		BasicBlock_14_logicAnd -> BasicBlock_14_and__9 [label="(f.1,t.1)"];
 		BasicBlock_14_logicAnd_dno__critical__edge__50 [label="logicAnd_dno__critical__edge__50\ljump if__8__else",shape=box];
@@ -286,7 +286,7 @@ digraph program {
 		BasicBlock_14_logicAnd__ret [label="logicAnd__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_logicOr {
-		BasicBlock_15_logicOr [label="logicOr\lconst t_d2_d1, [string-6]\lcall printString_A_Au8[t_d2_d1]\lconst t_d1, 1\lconst f_d1, 0\lcall t_d3_d1 = getFalse[] -> bool\lbranch t_d3_d1 notequals 0: logicOr_dno__critical__edge__26, or__33\ljump or__33",shape=box];
+		BasicBlock_15_logicOr [label="logicOr\lconst t_d2_d1, [string-7]\lcall printString_A_Au8[t_d2_d1]\lconst t_d1, 1\lconst f_d1, 0\lcall t_d3_d1 = getFalse[] -> bool\lbranch t_d3_d1 notequals 0: logicOr_dno__critical__edge__26, or__33\ljump or__33",shape=box];
 		BasicBlock_15_logicOr -> BasicBlock_15_logicOr_dno__critical__edge__26 [label="(f.1,t.1)"];
 		BasicBlock_15_logicOr -> BasicBlock_15_or__33 [label="(f.1,t.1)"];
 		BasicBlock_15_logicOr_dno__critical__edge__26 [label="logicOr_dno__critical__edge__26\ljump if__32__then",shape=box];
@@ -375,7 +375,7 @@ digraph program {
 		BasicBlock_15_logicOr__ret [label="logicOr__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_16_main [label="main\lconst t_d9_d1, [string-7]\lcall printString_A_Au8[t_d9_d1]\lconst a_d1, 0\lconst b_d1, 1\lconst c_d1, 2\lconst d_d1, 3\lconst t_d1, 1\lconst f_d1, 0\lmove t_d10_d1, a_d1\land t_d10_d1, a_d1\lcall printIntLf_Ai16[t_d10_d1]\lmove t_d11_d1, a_d1\land t_d11_d1, b_d1\lcall printIntLf_Ai16[t_d11_d1]\lmove t_d12_d1, b_d1\land t_d12_d1, a_d1\lcall printIntLf_Ai16[t_d12_d1]\lmove t_d13_d1, b_d1\land t_d13_d1, b_d1\lcall printIntLf_Ai16[t_d13_d1]\lconst t_d14_d1, [string-8]\lcall printString_A_Au8[t_d14_d1]\lmove t_d15_d1, a_d1\lor t_d15_d1, a_d1\lcall printIntLf_Ai16[t_d15_d1]\lmove t_d16_d1, a_d1\lor t_d16_d1, b_d1\lcall printIntLf_Ai16[t_d16_d1]\lmove t_d17_d1, b_d1\lor t_d17_d1, a_d1\lcall printIntLf_Ai16[t_d17_d1]\lmove t_d18_d1, b_d1\lor t_d18_d1, b_d1\lcall printIntLf_Ai16[t_d18_d1]\lconst t_d19_d1, [string-9]\lcall printString_A_Au8[t_d19_d1]\lmove t_d20_d1, a_d1\lxor t_d20_d1, a_d1\lcall printIntLf_Ai16[t_d20_d1]\lmove t_d21_d1, a_d1\lxor t_d21_d1, c_d1\lcall printIntLf_Ai16[t_d21_d1]\lmove t_d22_d1, b_d1\lxor t_d22_d1, a_d1\lcall printIntLf_Ai16[t_d22_d1]\lmove t_d23_d1, b_d1\lxor t_d23_d1, c_d1\lcall printIntLf_Ai16[t_d23_d1]\lcall logicNot[]\lcall logicAnd[]\lcall logicOr[]\lcall t_d24_d1 = getTrue[] -> bool\lbranch t_d24_d1 equals 0: main_dno__critical__edge__18, and__46\ljump and__46",shape=box];
+		BasicBlock_16_main [label="main\lconst t_d9_d1, [string-8]\lcall printString_A_Au8[t_d9_d1]\lconst a_d1, 0\lconst b_d1, 1\lconst c_d1, 2\lconst d_d1, 3\lconst t_d1, 1\lconst f_d1, 0\lmove t_d10_d1, a_d1\land t_d10_d1, a_d1\lcall printIntLf_Ai16[t_d10_d1]\lmove t_d11_d1, a_d1\land t_d11_d1, b_d1\lcall printIntLf_Ai16[t_d11_d1]\lmove t_d12_d1, b_d1\land t_d12_d1, a_d1\lcall printIntLf_Ai16[t_d12_d1]\lmove t_d13_d1, b_d1\land t_d13_d1, b_d1\lcall printIntLf_Ai16[t_d13_d1]\lconst t_d14_d1, [string-9]\lcall printString_A_Au8[t_d14_d1]\lmove t_d15_d1, a_d1\lor t_d15_d1, a_d1\lcall printIntLf_Ai16[t_d15_d1]\lmove t_d16_d1, a_d1\lor t_d16_d1, b_d1\lcall printIntLf_Ai16[t_d16_d1]\lmove t_d17_d1, b_d1\lor t_d17_d1, a_d1\lcall printIntLf_Ai16[t_d17_d1]\lmove t_d18_d1, b_d1\lor t_d18_d1, b_d1\lcall printIntLf_Ai16[t_d18_d1]\lconst t_d19_d1, [string-10]\lcall printString_A_Au8[t_d19_d1]\lmove t_d20_d1, a_d1\lxor t_d20_d1, a_d1\lcall printIntLf_Ai16[t_d20_d1]\lmove t_d21_d1, a_d1\lxor t_d21_d1, c_d1\lcall printIntLf_Ai16[t_d21_d1]\lmove t_d22_d1, b_d1\lxor t_d22_d1, a_d1\lcall printIntLf_Ai16[t_d22_d1]\lmove t_d23_d1, b_d1\lxor t_d23_d1, c_d1\lcall printIntLf_Ai16[t_d23_d1]\lcall logicNot[]\lcall logicAnd[]\lcall logicOr[]\lcall t_d24_d1 = getTrue[] -> bool\lbranch t_d24_d1 equals 0: main_dno__critical__edge__18, and__46\ljump and__46",shape=box];
 		BasicBlock_16_main -> BasicBlock_16_main_dno__critical__edge__18 [label="(b.1,c.1,d.1,f.1,t.1)"];
 		BasicBlock_16_main -> BasicBlock_16_and__46 [label="(b.1,c.1,d.1,f.1,t.1)"];
 		BasicBlock_16_main_dno__critical__edge__18 [label="main_dno__critical__edge__18\ljump if__44__then",shape=box];
@@ -420,7 +420,7 @@ digraph program {
 		BasicBlock_16_and__2nd__50 -> BasicBlock_16_and__next__50 [label="(b.1,c.1,d.1,t.30.2)"];
 		BasicBlock_16_and__next__50 [label="and__next__50\lnotlog t_d28_d3, t_d30_d2\lmove t_d28_d2, t_d28_d3\ljump or__next__48",shape=box];
 		BasicBlock_16_and__next__50 -> BasicBlock_16_or__next__48 [label="(b.1,c.1,d.1,t.28.2)"];
-		BasicBlock_16_or__next__48 [label="or__next__48\lcall printIntLf_Abool[t_d28_d2]\lconst t_d31_d1, [string-10]\lcall printString_A_Au8[t_d31_d1]\lconst b10_d1, 10\lconst b6_d1, 6\lconst b1_d1, 1\lmove t_d33_d1, b10_d1\land t_d33_d1, b6_d1\lmove t_d32_d1, t_d33_d1\lor t_d32_d1, b1_d1\lcall printIntLf_Au8[t_d32_d1]\lequals t_d34_d1, b_d1, c_d1\lbranch t_d34_d1 notequals 0: main_dno__critical__edge__21, or__2nd__51\ljump or__2nd__51",shape=box];
+		BasicBlock_16_or__next__48 [label="or__next__48\lcall printIntLf_Abool[t_d28_d2]\lconst t_d31_d1, [string-11]\lcall printString_A_Au8[t_d31_d1]\lconst b10_d1, 10\lconst b6_d1, 6\lconst b1_d1, 1\lmove t_d33_d1, b10_d1\land t_d33_d1, b6_d1\lmove t_d32_d1, t_d33_d1\lor t_d32_d1, b1_d1\lcall printIntLf_Au8[t_d32_d1]\lequals t_d34_d1, b_d1, c_d1\lbranch t_d34_d1 notequals 0: main_dno__critical__edge__21, or__2nd__51\ljump or__2nd__51",shape=box];
 		BasicBlock_16_or__next__48 -> BasicBlock_16_main_dno__critical__edge__21 [label="(b.1,b1.1,c.1,d.1,t.34.1)"];
 		BasicBlock_16_or__next__48 -> BasicBlock_16_or__2nd__51 [label="(b.1,b1.1,c.1,d.1)"];
 		BasicBlock_16_main_dno__critical__edge__21 [label="main_dno__critical__edge__21\lmove t_d34_d2, t_d34_d1\ljump or__next__51",shape=box];

@@ -118,25 +118,25 @@ printStringLength@@u8@u8:
 	call printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
 
 getTrue:
-	const t.0.1{r1}, [string-0]
+	const t.0.1{r1}, [string-1]
 	call printString@@u8[t.0.1{r1}]
 	const {r0}, 1
 
 getFalse:
-	const t.0.1{r1}, [string-1]
+	const t.0.1{r1}, [string-2]
 	call printString@@u8[t.0.1{r1}]
 	const {r0}, 0
 
 printPass:
-	const t.0.1{r1}, [string-2]
-	call printString@@u8[t.0.1{r1}]
-
-printError:
 	const t.0.1{r1}, [string-3]
 	call printString@@u8[t.0.1{r1}]
 
+printError:
+	const t.0.1{r1}, [string-4]
+	call printString@@u8[t.0.1{r1}]
+
 logicNot:
-	const t.2.1{r1}, [string-4]
+	const t.2.1{r1}, [string-5]
 	call printString@@u8[t.2.1{r1}]
 	const t.1{r8}, 1
 	const f.1{r9}, 0
@@ -162,7 +162,7 @@ if_7_end:
 	call printIntLf@bool[t.6.1{r1}]
 
 logicAnd:
-	const t.2.1{r1}, [string-5]
+	const t.2.1{r1}, [string-6]
 	call printString@@u8[t.2.1{r1}]
 	const t.1{r8}, 1
 	const f.1{r9}, 0
@@ -310,7 +310,7 @@ if_29_end:
 	call printIntLf@bool[t.29.1{r1}]
 
 logicOr:
-	const t.2.1{r1}, [string-6]
+	const t.2.1{r1}, [string-7]
 	call printString@@u8[t.2.1{r1}]
 	const t.1{r8}, 1
 	const f.1{r9}, 0
@@ -402,7 +402,7 @@ main:
 	var 4: f.1 (bool/1)
 	var 5: b1.1 (u8/1)
 
-	const t.9.1{r1}, [string-7]
+	const t.9.1{r1}, [string-8]
 	call printString@@u8[t.9.1{r1}]
 	const a.1{r8}, 0
 	const b.1{r0}, 1
@@ -436,7 +436,7 @@ main:
 	move t.13.1{r1}, b.1{r0}
 	and t.13.1{r1}, b.1{r0}
 	call printIntLf@i16[t.13.1{r1}]
-	const t.14.1{r1}, [string-8]
+	const t.14.1{r1}, [string-9]
 	call printString@@u8[t.14.1{r1}]
 	move t.15.1{r1}, a.1{r8}
 	or t.15.1{r1}, a.1{r8}
@@ -453,7 +453,7 @@ main:
 	move t.18.1{r1}, b.1{r0}
 	or t.18.1{r1}, b.1{r0}
 	call printIntLf@i16[t.18.1{r1}]
-	const t.19.1{r1}, [string-9]
+	const t.19.1{r1}, [string-10]
 	call printString@@u8[t.19.1{r1}]
 	move t.20.1{r1}, a.1{r8}
 	xor t.20.1{r1}, a.1{r8}
@@ -509,7 +509,7 @@ or_2nd_48:
 	move t.28.2{r1}, t.28.3{r0}
 or_next_48:
 	call printIntLf@bool[t.28.2{r1}]
-	const t.31.1{r1}, [string-10]
+	const t.31.1{r1}, [string-11]
 	call printString@@u8[t.31.1{r1}]
 	const b10.1{r0}, 10
 	const b6.1{r2}, 6
@@ -569,14 +569,15 @@ printStringLength@@u8@i64:
 	ret
 
 String literals
-	string lit 0 " true\0"
-	string lit 1 " false\0"
-	string lit 2 " -> pass \0"
-	string lit 3 " -> ERROR \0"
-	string lit 4 "\nLogic-!:\n\0"
-	string lit 5 "\nLogic-&&:\n\0"
-	string lit 6 "\nLogic-||:\n\0"
-	string lit 7 "Bit-&:\n\0"
-	string lit 8 "\nBit-|:\n\0"
-	string lit 9 "\nBit-^:\n\0"
-	string lit 10 "\n\nmisc:\n\0"
+	string lit 0 "\u001b[\0"
+	string lit 1 " true\0"
+	string lit 2 " false\0"
+	string lit 3 " -> pass \0"
+	string lit 4 " -> ERROR \0"
+	string lit 5 "\nLogic-!:\n\0"
+	string lit 6 "\nLogic-&&:\n\0"
+	string lit 7 "\nLogic-||:\n\0"
+	string lit 8 "Bit-&:\n\0"
+	string lit 9 "\nBit-|:\n\0"
+	string lit 10 "\nBit-^:\n\0"
+	string lit 11 "\n\nmisc:\n\0"

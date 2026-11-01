@@ -245,8 +245,8 @@ _main:
         push r10
         push rbx
         push r12
-        ; const t.4.1{r1}, [string-0]
-        lea rdi, [string_0]
+        ; const t.4.1{r1}, [string-1]
+        lea rdi, [string_1]
         ; call printString@@u8[t.4.1{r1}]
         call _printString@@u8
         ; const a.1{r8}, 1
@@ -269,8 +269,8 @@ _main:
         setl dil
         ; call printIntLf@bool[t.6.1{r1}]
         call _printIntLf@bool
-        ; const t.7.1{r1}, [string-1]
-        lea rdi, [string_1]
+        ; const t.7.1{r1}, [string-2]
+        lea rdi, [string_2]
         ; call printString@@u8[t.7.1{r1}]
         call _printString@@u8
         ; const c.1{r0}, 0
@@ -303,8 +303,8 @@ _main:
         setb dil
         ; call printIntLf@bool[t.9.1{r1}]
         call _printIntLf@bool
-        ; const t.10.1{r1}, [string-2]
-        lea rdi, [string_2]
+        ; const t.10.1{r1}, [string-3]
+        lea rdi, [string_3]
         ; call printString@@u8[t.10.1{r1}]
         call _printString@@u8
         ; addrof memVarAddr{r9}, b.1
@@ -323,8 +323,8 @@ _main:
         setle dil
         ; call printIntLf@bool[t.12.1{r1}]
         call _printIntLf@bool
-        ; const t.13.1{r1}, [string-3]
-        lea rdi, [string_3]
+        ; const t.13.1{r1}, [string-4]
+        lea rdi, [string_4]
         ; call printString@@u8[t.13.1{r1}]
         call _printString@@u8
         ; addrof memVarAddr{r9}, c.1
@@ -353,8 +353,8 @@ _main:
         setbe dil
         ; call printIntLf@bool[t.15.1{r1}]
         call _printIntLf@bool
-        ; const t.16.1{r1}, [string-4]
-        lea rdi, [string_4]
+        ; const t.16.1{r1}, [string-5]
+        lea rdi, [string_5]
         ; call printString@@u8[t.16.1{r1}]
         call _printString@@u8
         ; addrof memVarAddr{r9}, b.1
@@ -373,8 +373,8 @@ _main:
         sete dil
         ; call printIntLf@bool[t.18.1{r1}]
         call _printIntLf@bool
-        ; const t.19.1{r1}, [string-5]
-        lea rdi, [string_5]
+        ; const t.19.1{r1}, [string-6]
+        lea rdi, [string_6]
         ; call printString@@u8[t.19.1{r1}]
         call _printString@@u8
         ; load b.1{r0}, [memVarAddr{r9}]
@@ -391,8 +391,8 @@ _main:
         setne dil
         ; call printIntLf@bool[t.21.1{r1}]
         call _printIntLf@bool
-        ; const t.22.1{r1}, [string-6]
-        lea rdi, [string_6]
+        ; const t.22.1{r1}, [string-7]
+        lea rdi, [string_7]
         ; call printString@@u8[t.22.1{r1}]
         call _printString@@u8
         ; load b.1{r0}, [memVarAddr{r9}]
@@ -409,8 +409,8 @@ _main:
         setge dil
         ; call printIntLf@bool[t.24.1{r1}]
         call _printIntLf@bool
-        ; const t.25.1{r1}, [string-7]
-        lea rdi, [string_7]
+        ; const t.25.1{r1}, [string-8]
+        lea rdi, [string_8]
         ; call printString@@u8[t.25.1{r1}]
         call _printString@@u8
         ; addrof memVarAddr{r9}, c.1
@@ -439,8 +439,8 @@ _main:
         setae dil
         ; call printIntLf@bool[t.27.1{r1}]
         call _printIntLf@bool
-        ; const t.28.1{r1}, [string-8]
-        lea rdi, [string_8]
+        ; const t.28.1{r1}, [string-9]
+        lea rdi, [string_9]
         ; call printString@@u8[t.28.1{r1}]
         call _printString@@u8
         ; addrof memVarAddr{r9}, b.1
@@ -459,8 +459,8 @@ _main:
         setg dil
         ; call printIntLf@bool[t.30.1{r1}]
         call _printIntLf@bool
-        ; const t.31.1{r1}, [string-9]
-        lea rdi, [string_9]
+        ; const t.31.1{r1}, [string-10]
+        lea rdi, [string_10]
         ; call printString@@u8[t.31.1{r1}]
         call _printString@@u8
         ; addrof memVarAddr{r9}, c.1
@@ -501,14 +501,15 @@ _printStringLength@@u8@i64:
         ret
 
 segment readable
-        string_0 db '< (signed)', 0x0a, 0x00
-        string_1 db '< (unsigned)', 0x0a, 0x00
-        string_2 db '<= (signed)', 0x0a, 0x00
-        string_3 db '<= (unsigned)', 0x0a, 0x00
-        string_4 db '==', 0x0a, 0x00
-        string_5 db '!=', 0x0a, 0x00
-        string_6 db '>= (signed)', 0x0a, 0x00
-        string_7 db '>= (unsigned)', 0x0a, 0x00
-        string_8 db '> (signed)', 0x0a, 0x00
-        string_9 db '> (unsigned)', 0x0a, 0x00
+        string_0 db 0x1b, '[', 0x00
+        string_1 db '< (signed)', 0x0a, 0x00
+        string_2 db '< (unsigned)', 0x0a, 0x00
+        string_3 db '<= (signed)', 0x0a, 0x00
+        string_4 db '<= (unsigned)', 0x0a, 0x00
+        string_5 db '==', 0x0a, 0x00
+        string_6 db '!=', 0x0a, 0x00
+        string_7 db '>= (signed)', 0x0a, 0x00
+        string_8 db '>= (unsigned)', 0x0a, 0x00
+        string_9 db '> (signed)', 0x0a, 0x00
+        string_10 db '> (unsigned)', 0x0a, 0x00
 

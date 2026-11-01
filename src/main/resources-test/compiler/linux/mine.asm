@@ -78,6 +78,48 @@ _getChar_ret:
         pop r9
         ret
 
+        ; void setCursor@i16@i16
+        ;   rsp+32: arg x
+        ;   rsp+34: arg y
+_setCursor@i16@i16:
+        sub rsp, 8
+        ; save clobbered non-volatile registers
+        push r9
+        push r10
+        push rbx
+        push r12
+        ; move x{r8}, x{r1}
+        mov bx, di
+        ; move y{r9}, y{r2}
+        mov r12w, si
+        ; const t.2.1{r1}, [string-0]
+        lea rdi, [string_0]
+        ; call printString@@u8[t.2.1{r1}]
+        call _printString@@u8
+        ; move y{r1}, y{r9}
+        mov di, r12w
+        ; call printUint@i16[y{r1}]
+        call _printUint@i16
+        ; const arg.2.0{r1}, 59
+        mov dil, 59
+        ; call printChar@u8[arg.2.0{r1}]
+        call _printChar@u8
+        ; move x{r1}, x{r8}
+        mov di, bx
+        ; call printUint@i16[x{r1}]
+        call _printUint@i16
+        ; const arg.4.0{r1}, 72
+        mov dil, 72
+        ; call printChar@u8[arg.4.0{r1}]
+        call _printChar@u8
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
+        pop r10
+        pop r9
+        add rsp, 8
+        ret
+
         ; void printString@@u8
         ;   rsp+24: arg str
 _printString@@u8:
@@ -895,8 +937,8 @@ _for_27:
         mov dil, al
         ; call printChar@u8[spacer.1{r1}]
         call _printChar@u8
-        ; const t.7.1{r1}, [string-0]
-        lea rdi, [string_0]
+        ; const t.7.1{r1}, [string-1]
+        lea rdi, [string_1]
         ; call printString@@u8[t.7.1{r1}]
         call _printString@@u8
         ; addrof memVarAddr{r9}, row.2
@@ -1585,8 +1627,8 @@ _main:
         mov si, 0
         ; call setCursor@i16@i16[arg.2.0{r1}, arg.2.1{r2}]
         call _setCursor@i16@i16
-        ; const t.8.1{r1}, [string-1]
-        lea rdi, [string_1]
+        ; const t.8.1{r1}, [string-2]
+        lea rdi, [string_2]
         ; call printString@@u8[t.8.1{r1}]
         call _printString@@u8
         ; 221:2 while true
@@ -1941,8 +1983,8 @@ _while_48:
         jne _if_49_end
         jmp _if_49_then
 _if_50_then:
-        ; const t.10.1{r1}, [string-2]
-        lea rdi, [string_2]
+        ; const t.10.1{r1}, [string-3]
+        lea rdi, [string_3]
         ; call printString@@u8[t.10.1{r1}]
         call _printString@@u8
         jmp _main_ret
@@ -1957,8 +1999,8 @@ _if_62_then:
         mov si, [r12]
         ; call printField@i16@i16[curr_r.2{r1}, curr_c.2{r2}]
         call _printField@i16@i16
-        ; const t.21.1{r1}, [string-3]
-        lea rdi, [string_3]
+        ; const t.21.1{r1}, [string-4]
+        lea rdi, [string_4]
         ; call printString@@u8[t.21.1{r1}]
         call _printString@@u8
 _main_ret:
@@ -2013,19 +2055,6 @@ ___getChar:
         add    rsp, 48
         ret
 
-        ; void setCursor@i16@i16
-_setCursor@i16@i16:
-        sub     rsp, 28h
-        shl     rcx, 16
-        movsxd  rcx, ecx
-        movsx   rdx, dx
-        add     rdx, rcx
-        lea     rcx, [hStdOut]
-        mov     rcx, [rcx]
-        call   [SetConsoleCursorPosition]
-        add     rsp, 28h
-        ret
-
 segment readable writable
         ; variable 0: __random__ (i32/4)
         var_0 rb 4
@@ -2033,8 +2062,9 @@ segment readable writable
         var_1 rb 800
 
 segment readable
-        string_0 db '|', 0x0a, 0x00
-        string_1 db 'Left:', 0x00
-        string_2 db ' You', 0x27, 've cleaned the field!', 0x00
-        string_3 db 'boom! you', 0x27, 've lost', 0x00
+        string_0 db 0x1b, '[', 0x00
+        string_1 db '|', 0x0a, 0x00
+        string_2 db 'Left:', 0x00
+        string_3 db ' You', 0x27, 've cleaned the field!', 0x00
+        string_4 db 'boom! you', 0x27, 've lost', 0x00
 

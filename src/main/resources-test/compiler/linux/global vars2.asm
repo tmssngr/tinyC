@@ -101,13 +101,13 @@ _if_3_end:
         ; branch n.1{r8} gteq 2: while_2
         cmp bl, 2
         jae _while_2
-        ; const t.4.1{r1}, [string-1]
-        lea rdi, [string_1]
+        ; const t.4.1{r1}, [string-2]
+        lea rdi, [string_2]
         ; call printString@@u8[t.4.1{r1}]
         call _printString@@u8
 _while_2:
-        ; const t.3.1{r1}, [string-0]
-        lea rdi, [string_0]
+        ; const t.3.1{r1}, [string-1]
+        lea rdi, [string_1]
         ; call printString@@u8[t.3.1{r1}]
         call _printString@@u8
         ; call n.1{r0} = next[] -> u8
@@ -138,6 +138,7 @@ segment readable writable
         var_0 rb 1
 
 segment readable
-        string_0 db 'loop', 0x0a, 0x00
-        string_1 db '<2', 0x0a, 0x00
+        string_0 db 0x1b, '[', 0x00
+        string_1 db 'loop', 0x0a, 0x00
+        string_2 db '<2', 0x0a, 0x00
 
