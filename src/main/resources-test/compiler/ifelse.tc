@@ -1,12 +1,12 @@
 #include "io.tc"
 
 void main() {
-	i16 a = 1;
+	i16 a = 1
 	if (a > 0) {
-		printIntLf(a);
+		printIntLf(a)
 	}
 	else {
-		a = -a;
-		printIntLf(a);
+		a = -a
+		printIntLf(a)
 	}
 }

@@ -1,22 +1,22 @@
 #include "io.tc"
 
 void main() {
-	u8 i = 5;
+	u8 i = 5
 	while (i > 0) {
-		printIntLf(i);
-		i -= 1;
+		printIntLf(i)
+		i -= 1
 	}
 
 	while (true) {
-		printIntLf(i);
-		i += 1;
+		printIntLf(i)
+		i += 1
 		if (i < 5) {
-			continue;
+			continue
 		}
-		break;
+		break
 	}
 
 	while (true) {
-		return;
+		return
 	}
 }
