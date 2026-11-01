@@ -166,6 +166,12 @@ public class CompilerTest {
 	}
 
 	@Test
+	public void test2048() throws IOException, InterruptedException {
+		final Path inputFile = absolutePath("2048.tc");
+		Compiler.compile(inputFile);
+	}
+
+	@Test
 	public void testMine() throws IOException, InterruptedException {
 		final Path inputFile = absolutePath("mine.tc");
 		Compiler.compile(inputFile);
