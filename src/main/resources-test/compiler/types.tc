@@ -2,9 +2,9 @@
 
 void main() {
   for (u8 i = 250; i != 2; i += 1) {
-    printIntLf(i);
+    printIntLf(i)
   }
 
-  i16 v = 260;
-  printIntLf(v as u8);
+  i16 v = 260
+  printIntLf(v as u8)
 }
