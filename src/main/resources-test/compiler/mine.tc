@@ -258,7 +258,7 @@ void main() {
 				}
 			}
 		}
-		else if (chr == 0x0D) {
+		else if (chr == ENTER) {
 			if (needsInitialize) {
 				needsInitialize = false
 				initField(curr_r, curr_c)
