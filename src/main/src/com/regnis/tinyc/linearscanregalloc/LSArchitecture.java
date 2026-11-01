@@ -97,4 +97,58 @@ public interface LSArchitecture {
 			return argRegisterCount;
 		}
 	}
+
+	class Z8 implements LSArchitecture, IRLocalOptimizer.PlatformSpecificInstructionBehavior {
+		public Z8() {
+		}
+
+		@Override
+		public Type getPointerIntType() {
+			return Z8CallingConventionProvider.POINTER_INT_TYPE;
+		}
+
+		@NotNull
+		@Override
+		public LSCallingConventionProvider getCallingConventionProvider() {
+			return Z8CallingConventionProvider.INSTANCE;
+		}
+
+		@Override
+		public int registerCount() {
+			return 16;
+		}
+
+		@NotNull
+		@Override
+		public IRLocalOptimizer.PlatformSpecificInstructionBehavior getIROptimizationBehavior() {
+			return this;
+		}
+
+		@Nullable
+		@Override
+		public IntPredicate getClobberedRegisters(@NotNull IRInstruction instruction) {
+			return Z8CallingConventionProvider.getClobberedRegisters(instruction);
+		}
+
+		@Override
+		public boolean isUsefulToBeReplacedWithMove(@NotNull IRInstruction instruction) {
+			switch (instruction) {
+			case IRBinary binary -> {
+				final IRBinary.Op op = binary.op();
+				if (op == IRBinary.Op.Add || op == IRBinary.Op.Sub) {
+					final IRValue right = binary.right();
+					if (right.type() == Type.I16
+					    && right.var() == null && right.value() == 1) {
+						return false;
+					}
+				}
+			}
+			case IRMove ignored -> {
+				return false;
+			}
+			default -> {}
+			}
+			return true;
+		}
+	}
 }

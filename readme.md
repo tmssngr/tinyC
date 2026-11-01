@@ -4,8 +4,9 @@ This is an experimental, not-ready-to-use compiler implemented in Java that pars
 It is not meant to be a serious alternative to any mature compiler, but a hobby project for learning compiler techniques.
 The main goal is to have a compiler for a language slightly higher-level than assembly for an old 8-bit machine (using a [Z8 microcontroller](https://en.wikipedia.org/wiki/Zilog_Z8)).
 
-For easier testing, it currently compiles to **x86_64 binaries for both Windows and Linux** using the [FASM assembler](http://flatassembler.net/).
-The Z8 is the intended target; the currently implemented x86_64 backend prioritizes simplicity over performance.
+For the Z8 target it produces assembly code to feed into [Z8Asm](https://github.com/tmssngr/z8asm).
+For easier testing, it also compiles to **x86_64 binaries for both Windows and Linux** using the [FASM assembler](http://flatassembler.net/).
+The Z8 is the intended target; the x86_64 backends prioritize simplicity over performance.
 
 ## Assembler
 
@@ -17,11 +18,13 @@ The compiler does not generate a prologue or epilogue for `asm` functions.
 ### Windows Example
 
 This example uses the `hStdOut` and `WriteFile` symbols provided by the Windows backend.
+It reserves shadow space, a fifth argument and storage for the bytes-written result, while keeping the stack aligned for the API call.
 
-```
+```c
 void printStringLength(u8* str, i64 length) asm {
 	// rsp+0    return address
-	// rsp+8    padding (rsp is 8 modulo 10h at function entry)
+	// rsp+8h   start of caller-provided 20h-byte shadow space
+	// rsp is 8 modulo 10h at function entry
 	// rcx      str
 	// rdx      length
 	// BOOL WriteFile(
@@ -31,23 +34,23 @@ void printStringLength(u8* str, i64 length) asm {
 	//  [out, optional]     LPDWORD      lpNumberOfBytesWritten,   r9
 	//  [in, out, optional] LPOVERLAPPED lpOverlapped              stack
 	// );
-	"mov     rdi, rsp"
-	""
-	"mov     r8, rdx"
+	"sub     rsp, 38h"
+	"mov     r8d, edx"
 	"mov     rdx, rcx"
-	"lea     rcx, [hStdOut]"
-	"mov     rcx, [rcx]"
-	"xor     r9, r9"
-	"push    0"
-	"sub     rsp, 20h"
-	"  call    [WriteFile]"
-	"mov     rsp, rdi"
+	"mov     rcx, [hStdOut]"
+	"lea     r9, [rsp+28h]"
+	"mov     qword [rsp+20h], 0"
+	"call    [WriteFile]"
+	"add     rsp, 38h"
 	"ret"
 }
 ```
 
 ### Linux Example
-```
+
+This function receives arguments using the System V AMD64 calling convention and rearranges them for the Linux `write` syscall.
+
+```c
 void printStringLength(u8* str, i64 length) asm {
 	// rdi      str
 	// rsi      length
@@ -81,11 +84,11 @@ The two semicolons separating the clauses of a `for` loop are required:
 
 ```c
 if a < b {
-    // ...
+    a = b
 }
 
 for u8 i = 0; i < 10; i += 1 {
-    // ...
+    a += i
 }
 ```
 
@@ -141,21 +144,27 @@ void foo() {
 
 ## Platform Support
 
-TinyC supports following architectures:
+TinyC supports the following targets:
 
 | Platform | Architecture | Calling Convention | Output Format    | File Extension  | Predefined Conditional Symbols |
 |----------|--------------|--------------------|------------------|-----------------|--------------------------------|
+| Z8       | Z8           | TinyC-specific     | Assembly         | `.asm`          | `Z8`, `__Z8`                   |
 | Windows  | x86_64       | Microsoft x64      | PE64 console     | `.exe`          | `X86_64`, `__WINDOWS`          |
 | Linux    | x86_64       | System V AMD64     | ELF64 executable | `.bin`          | `X86_64`, `__LINUX`            |
 
-The compiler uses **FASM** (Flat Assembler) for both platforms.
-On Windows, it generates code that calls Win32 API functions (e.g., `WriteFile`, `GetStdHandle`, `_getch`).
-On Linux, it uses direct system calls (e.g., `sys_write`, `sys_read`, `sys_ioctl`) for terminal I/O.
+The compiler emits assembly into `z8/`, `windows/` and `linux/` directories next to the input file.
+It then runs **FASM** (Flat Assembler) for the host x86_64 platform: Windows produces an `.exe`, and Linux produces a `.bin`.
+Z8 assembly is left for Z8Asm to assemble separately.
+The Windows backend supplies imports from the Windows API and C runtime, including `WriteFile`, `GetStdHandle` and `_getch`.
+The Linux backend uses the `exit` syscall, and the Linux assembly example above uses `write` for output.
 
-Extremely rudimentary platform-specific runtime functions are provided in header files:
-- `win_x86_64.h` — Windows system calls and console I/O
-- `linux_x86_64.h` — Linux system calls
+Rudimentary runtime helpers are provided under [`src/main/resources-test/compiler`](src/main/resources-test/compiler):
 
+- `win_x86_64.h` — Windows API and C runtime calls for console I/O
+- `linux_x86_64.h` — Linux `write` wrapper; `getChar` and `setCursor` still contain Windows-specific code
+- `z8.h` — Z8 helpers for the intended machine
+
+`io.h` selects the target header using the predefined conditional symbols.
 
 ## Stages
 
@@ -176,6 +185,7 @@ In the next step a type checker (class `TypeChecker`) assigns types to the nodes
 
 Variables are divided into global variables, local variables (defined within a function) and parameters.
 Internally, a variable has a scope (`VariableScope`: `global`, `function` or `parameter`) and an integer index, as well as its name and type.
+The IR also uses the `register` scope for assigned or constrained registers.
 
 ### Build the IR (intermediate representation)
 
@@ -321,42 +331,46 @@ The implementation scans the blocks in reverse order repeatedly until no live se
 `SsaFactory` converts eligible variables into static single assignment (SSA) form: each new value gets a distinct variable name.
 Phi nodes at joins select the value arriving from each predecessor.
 Variables whose addresses are taken remain in memory and are excluded from this renaming.
-`IRConverter` prepares binary operations for the backend's two-operand form, and `RemoveNotLiveResults` removes instructions that produce unused values.
+`IRConverter` prepares binary operations for the backends' two-operand form.
+`PhiElimination` then replaces phi nodes with copies in predecessor blocks, and `RemoveNotLiveResults` removes instructions that produce unused values.
 Calls are retained for their possible side effects even when their return values are unused.
-Finally, `PhiElimination` replaces phi nodes with copies in predecessor blocks, and the IR optimizer simplifies the resulting instruction list.
+The resulting IR is passed to register allocation, followed by IR optimization and cleanup of unused local variables.
 
 ### Register Allocation
-Register allocation means which variable to store in what processor register or whether/when to keep in memory.
-A extremely simple register allocation would be to store all variables in memory and only load them when needed by a IR instruction.
-Of course, this would be very inefficient, e.g. `const t2, 0` from the above example would store the value `0` in the variable `t2` (in memory)
-  while the next instruction `lt t1, number, t2` would already need it again, hence loading from memory.
 
-#### Linear Register Allocation
-There are multiple numbers of register allocation algorithms.
-The Linear Register Allocation is easy to understand, fast (linear) and though produces good results.
-The idea of the Linear Register Allocation is to "cache" values in registers.
-It treats each basic block separately, with no used register between different basic blocks.
-To implement this in the intermediate representation, we extend the variable scope enum by a new `register` value.
-If a variable is needed, it is loaded into a register:
-```
-  copy r.0, number
-```
-With the help of the previously performed Variable Liveness Analysis, we know whether a written variable is used at all, and can ignore any instructions (except for call return values) which would produce an unused variable.
-We also know when a variable is used the last time.
-Then we can free the variable's register.
-It then could be reused for storing a different variable, even the result of an instruction.
+Register allocation assigns live values to processor registers and spills them to memory when necessary.
+`LSRegAlloc` uses linear-scan register allocation across a whole function. Values can remain in registers across basic-block boundaries.
 
-At the end of a basic block (before the `jump` or `branch`) we store all modified registers back into their stack positions.
+#### Linear-scan register allocation
+
+`LSPreprocessor` introduces the register constraints required by the calling convention and, on x86_64, instructions such as division and shifts.
+`LSIntervalFactory` builds live intervals from the control flow graph and variable liveness, including fixed intervals for registers required or clobbered by instructions.
+`LSAlgorithm` scans intervals in start-position order, assigning registers, splitting intervals and spilling values when registers are unavailable.
+On Z8, values can occupy several consecutive byte registers, and pointers require an even-numbered register pair.
+
+`LSRegAlloc` rewrites operands to use the assigned registers and inserts moves, loads and stores for spills and changes of location.
+Moves on control-flow edges reconcile the locations assigned in predecessor and successor blocks; `LSParallelMove` resolves conflicting transfers.
+Register operands use `VariableScope.register` and print as `r0`, `r1`, etc., or as `name{r0}` when variable names are included.
+For example, a register-to-register copy uses the `move` instruction:
+
+```text
+  move r0, r1
+```
+
+The register indices are mapped to physical registers by the target backend. More detail is available in [lsra.md](lsra.md).
 
 #### Variables addressed with pointers
 
-In a previous step we have remembered all variables for which the address is requested (`&foo`).
-Those might be read or written indirectly through their address.
-To prevent their cached register values from their memory values, we only keep them in registers until a memory address is read or written.
+Variables whose addresses are taken (`&foo`) keep memory locations and are excluded from register allocation.
+The IR uses explicit address, load and store instructions for these accesses, so indirect writes cannot leave a cached variable value out of date.
 
 #### Calls
 
-Before a call, we also store all modified registers back into their memory positions (and forget all unmodified register-cached variables), so the called function can use all the registers.
+Calling-convention constraints place arguments and results in the required registers or stack locations.
+Fixed intervals account for registers clobbered by calls. Values live across a call can remain in nonvolatile registers or be spilled and reloaded as needed.
+The assembly backends generate the required saves and restores for nonvolatile registers used by ordinary compiled functions.
 
 ### Convert to ASM
-The IR can be converted to different assembler outputs for each target platform, producing the final executable.
+
+The target-specific assembly writer translates the allocated IR into assembly: `Z8AsmWriter`, `X86_64_WindowsAsmWriter` or `X86_64_LinuxAsmWriter`.
+FASM assembles the host's x86_64 output into an executable; the Z8 output is assembly source for Z8Asm.
