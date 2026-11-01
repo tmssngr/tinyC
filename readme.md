@@ -1,16 +1,27 @@
 # TinyC
 
-This is a compiler implemented in Java to parse a language similar to a subset of C.
-Currently, it produced X86_64 binaries for Windows using the excellent [FASM assembler](http://flatassembler.net/).
+This is an experimental, not-ready-to-use compiler implemented in Java that parses a language loosely similar to a simplified version of C with syntax inspirations from Go.
+It is not meant to be a serious alternative to any mature compiler, but a hobby project for learning compiler techniques.
+The main goal is to have a compiler for a language slightly higher-level than assembly for an old 8-bit machine (using a [Z8 microcontroller](https://en.wikipedia.org/wiki/Zilog_Z8)).
+
+For easier testing, it currently compiles to **x86_64 binaries for Windows** using the [FASM assembler](http://flatassembler.net/).
+The Z8 is the intended target; the currently implemented x86_64 backend prioritizes simplicity over performance.
 
 ## Assembler
 
-To be able to implement more functions, it is possible to implement functions completely in ASM.
+Functions can be implemented in platform-specific assembly by adding `asm` after the parameter list.
+Each assembly instruction is provided as a string literal in the function body and is emitted literally in the generated assembly file.
+These functions must follow the target's calling convention, preserve its nonvolatile registers and include their own return instruction.
+The compiler does not generate a prologue or epilogue for `asm` functions.
+
+### Windows Example
+
+This example uses the `hStdOut` and `WriteFile` symbols provided by the Windows backend.
 
 ```
 void printStringLength(u8* str, i64 length) asm {
-	// rsp+0    calling address
-	// rsp+8    nothing (offset to get rsp % 10 == 0)
+	// rsp+0    return address
+	// rsp+8    padding (rsp is 8 modulo 10h at function entry)
 	// rsp+10h  length
 	// rsp+18h  str
 	// BOOL WriteFile(
@@ -19,7 +30,7 @@ void printStringLength(u8* str, i64 length) asm {
 	//  [in]                DWORD        nNumberOfBytesToWrite,    r8
 	//  [out, optional]     LPDWORD      lpNumberOfBytesWritten,   r9
 	//  [in, out, optional] LPOVERLAPPED lpOverlapped              stack
-	//);
+	// );
 	"mov     rdi, rsp"
 	""
 	"lea     rcx, [hStdOut]"
@@ -35,159 +46,257 @@ void printStringLength(u8* str, i64 length) asm {
 }
 ```
 
-## Constants
+## Syntax
 
-Constants can be defined globally using this syntax:
+The syntax combines elements of C and Go.
+Variables and function parameters are declared as in C.
+A line break can replace a statement's trailing semicolon:
 
+```c
+u8 twoTimes(u8 a) {
+    u8 c = a * 2
+    return c
+}
 ```
+
+Parentheses around the clauses of a `for` loop and the conditions of `if` and `while` statements are optional, but braces around their bodies are required.
+The two semicolons separating the clauses of a `for` loop are required:
+
+```c
+if a < b {
+    // ...
+}
+
+for u8 i = 0; i < 10; i += 1 {
+    // ...
+}
+```
+
+The built-in value types are:
+
+- `bool` — Boolean values (`true` and `false`)
+- `u8` — unsigned 8-bit integer
+- `i16`, `i32` and `i64` — signed 16-, 32- and 64-bit integers
+
+Functions can also return `void`.
+Pointers, arrays and user-defined struct types are supported.
+
+Pre/post-increment/decrement expressions (e.g. `++i` or `i++`) are not supported, but compound assignment operators (e.g. `+=`) can be used instead.
+
+`a = b` is an assignment statement, not an expression.
+
+Casts are done using the `as` keyword: `u8 a = i16Number as u8` and bind more tightly than binary arithmetic operators.
+If the type is a pointer, you need to add surrounding parentheses: `ptr = anotherPtr as (u8*)`.
+
+Constants can be defined globally using this syntax (the semicolon is optional):
+
+```c
 const NAME = 10 * 2;
 ```
 
-The expression at the right must be fully interpretable at this point.
-You can use other constants, a lot of unary or binary operations (but not all).
+The expression on the right must be evaluable at compile time.
+Constants are resolved while parsing.
+Supported expressions include integer and Boolean literals, previously defined constants, unary and binary operators.
 
-# Stages
+Functions can be overloaded.
+The argument types for invocation of overloaded functions must match exactly.
+For a function with a single signature, integer literals are implicitly converted to the parameter types if their values fit.
+Other integer conversions require an explicit cast:
+
+```c
+void nonOverloaded(i16 a) {
+}
+
+void overloaded(u8 a, u8 b) {
+}
+
+void overloaded(i16 a, u8 b) {
+}
+
+void foo() {
+    // ...
+    nonOverloaded(10)
+    // ...
+    overloaded(10 as i16, 'x')
+    // ...
+}
+```
+
+## Stages
 
 A compiler works in multiple stages.
 
-## Build the AST (abstract syntax tree).
-The lexer (class `Lexer`) takes the input files and splits the character streams into tokens, e.g. `if` will become the if-token, `13` an integer literal, `"foo"` a string literal, `foo` an identifier, or `<=` an less-or-equal-token.
-The parser will receive the stream of tokens and builds the AST.
+### Build the AST (abstract syntax tree)
+
+The lexer (class `Lexer`) takes the input files and splits the character streams into tokens, e.g. `if` will become the if-token, `13` an integer literal, `"foo"` a string literal, `foo` an identifier, or `<=` a less-than-or-equal token.
+The parser receives the stream of tokens and builds the AST.
 The root object of the AST is `Program` which has children for type definitions (`TypeDef`), global variables, functions (`Function`) and string literals.
 Each function has a name, return type, zero or more arguments and a list of statements (`Statement`).
 Statements can be, e.g., control flow statements like `StmtIf` or `StmtLoop`, expression-statements or others (e.g. for `break`, `continue` or `return a`).
 Control flow statements have nested statements, e.g. for the then- or else-branches, and expressions for the conditions.
 
-In the next step a type checker (class `TypeChecker`) assigns types to the nodes of the AST, verifies the types (e.g. rejects multiplying two pointers) and adds autocasts where necessary.
+In the next step a type checker (class `TypeChecker`) assigns types to the nodes of the AST, verifies the types (e.g. rejects multiplying two pointers) and inserts implicit casts where permitted.
 
-### Variables
-Variables are distinguished by global ones, local ones (defined within a function) and parameters.
-We decided to refer to variables internally with a scope enum (`VariableScope`: `global`, `function` and `argument`) and an (integer) index.
+#### Variables
 
-## Build the IR (intermediate representation)
+Variables are divided into global variables, local variables (defined within a function) and parameters.
+Internally, a variable has a scope (`VariableScope`: `global`, `function` or `parameter`) and an integer index, as well as its name and type.
+
+### Build the IR (intermediate representation)
+
 An intermediate representation is used as a flat list of instructions similar to a high-level assembly language.
-Control flow statements are converted to label, conditional (`branch`) and unconditional (`jump`) jump instructions.
-```
-@printInt:                    // label
-  const t2, 0                 // assign zero to variable "t2"
-  lt t1, number, t2           // set the variable "t1" to true if the variable "number" has the same value as the variable "t2"
-  branch t1, false, @if_3_end // if the variable "t1" is false, jump to the label "if_3_end"
-  const t3, 45                // assign 45 to variable "t3"
-  call _, printChar, t3       // call method "printChar", pass the content of variable "t3" as (first) argument, "_" means it has no return value
-  neg number, number          // store the negated value of the variable "number" in the variable "number"
-@if_3_end:                    // label
-  call _, printUint, number   // call method "printUint", pass the content of variable "number" as (first) argument, expect no return value
+Control flow statements are converted to labels, conditional branches (`branch`) and unconditional jumps (`jump`).
+The following illustrative fragment shows the IR syntax.
+Internal function names include parameter-type suffixes, such as `printInt@i64`.
+A `branch` instruction lists its comparison, the target when it is true, and the target when it is false.
+
+```text
+printInt@i64:                                // function entry
+  const t2, 0                                // t2 = 0
+  branch number gteq t2: if_3_end, if_3_then // skip the minus sign if number >= 0
+if_3_then:
+  const t3, 45                               // t3 = '-' (45)
+  call printChar@u8[t3]                      // print the minus sign
+  neg number, number                         // number = -number
+if_3_end:                                    // label
+  call printUint@i64[number]                 // print the magnitude
 ```
 
-## Control Flow Graph
-For the simplest compiler a control flow graph (CFG) is not necessary, but it helps for performing optimizations like dead code removal, or for register allocation (mapping from the variables to the limited number of processor registers).
+### Control Flow Graph
 
-We look at each function separately and build a directed graph of *basic block*.
-A basic block is a series of consecutive instructions that usually start with a label and end with a jump or branch.
-Because each basic block starts with a unique label, we can use it to identify basic blocks.
+A control flow graph (CFG) supports optimizations such as unreachable-code removal and is used for detecting variable liveness.
+It can also support register allocation (mapping variables to the limited number of processor registers).
+
+We look at each function separately and build a directed graph of *basic blocks*.
+A basic block is a sequence of instructions with a single entry point and no internal control-flow splits.
+In this implementation, each block has a unique name; labels identify block boundaries but are not stored as instructions inside a block.
+Blocks with successors end with a `jump` or with a `branch` followed by a `jump` for the other path.
 Each basic block can have multiple predecessors (those basic blocks that jump to the current basic block) and successors (the target basic block(s) that are jumped to from the current basic block).
 
-The summary of all these basic blocks of a function form the control flow graph of that function.
+Together, these blocks and their edges form the control flow graph of the function.
 
-### Implementation
-We are iterating over all instructions and create basic blocks after a branch or jump, or before a label.
-Then we iterate the blocks in execution order starting with the first and proceeding with the next ones until all next blocks were already processed.
-Those blocks which were not iterated now can be removed because they are dead code.
+#### Implementation
 
-For the above instructions this will create following:
-```
+We split the instruction list at labels and after branches or jumps, adding explicit jumps for fall-through paths.
+Starting at the entry block, we follow successor edges to identify reachable blocks.
+Unreachable blocks can be discarded.
+
+The compiler also splits critical edges: edges from a block with multiple successors to a block with multiple predecessors.
+An intermediate block on each such edge makes it possible to insert copies for SSA phi nodes later.
+
+Before critical-edge splitting, the fragment above has the following block structure.
+The labels below stand for block names:
+
+```text
 // no predecessors
-@printInt:
+printInt@i64:
   const t2, 0
-  lt t1, number, t2
-  branch t1, false, @if_3_end
-  jump @if_3_then
-// successors: @if_3_then, @if_3_end
+  branch number gteq t2: if_3_end, if_3_then
+  jump if_3_then
+// successors: if_3_then, if_3_end
 
-// predecessor: @printInt
-@if_3_then:
+// predecessor: printInt@i64
+if_3_then:
   const t3, 45
-  call _, printChar, t3
+  call printChar@u8[t3]
   neg number, number
-  jump @if_3_end
-// successor: @if_3_end
+  jump if_3_end
+// successor: if_3_end
 
-// predecessor: @printInt, @if_3_then
-@if_3_end:
-  call _, printUint, number
+// predecessor: printInt@i64, if_3_then
+if_3_end:
+  call printUint@i64[number]
 // no successor
 ```
 
-### Variable Liveness Analysis
-For each basic block we are also performing the variable liveness analysis.
-In other words, we remember for each instruction which variables are still *live* (will be required later).
+#### Variable Liveness Analysis
 
-This best is done in reverse order.
-We start with the last block and assume, that no variable is needed after the last instruction.
-Using the above example, we look at the last instruction `call _, printUint, number`.
-This require the variable `number` to be live before this instruction.
-As there is no live variable `number` already, we add it - and also remember it as last use.
-The label instruction does not change anything on the live variables.
-```
-                            // live: number
-@if_3_end:
-                            // live: number
-  call _, printUint, number // last use: number
-                            // nothing live
-```
-No we need to look at the predecessor blocks.
-Let's assume, we look first at the `@printInt` block and put the block `@if_3_then` on a stack, so we don't forget to look at it later.
+Variable liveness analysis records which variables' current values may be read later, before being overwritten.
+It works in reverse order of the instructions (starting with the last instruction).
+A block's live-out set is the union of its successors' live-in sets.
+For each instruction, we remove the variables it defines and add the variables it reads.
+We repeat this analysis until the live sets stop changing, which also handles loops.
+Address-taken local variables are conservatively kept live at block boundaries to account for indirect accesses.
 
-The block `@printInt` has the successors `@if_3_then` and `@if_3_end`.
-As we only have processed block `@if_3_end` yet, we know that it requires the variable `number`.
+For clarity, the liveness walkthrough below uses the three-block graph above, before critical-edge splitting and SSA conversion.
+
+For this example, no variable is needed after the last instruction of the exit block.
+Using the above example, we look at the last instruction `call printUint@i64[number]`.
+This requires the variable `number` to be live before this instruction.
+We add `number` to the live set; this instruction is its last use on this path.
+The block label does not change the live set.
+
+```text
+                                             // live: number
+if_3_end:
+                                             // live: number
+  call printUint@i64[number]                 // last use: number
+                                             // nothing live
+```
+
+Now we look at the predecessor blocks.
+For this walkthrough, we look first at the `printInt@i64` block and put the block `if_3_then` on a stack, so we don't forget to look at it later.
+
+The block `printInt@i64` has the successors `if_3_then` and `if_3_end`.
+We have processed only `if_3_end` so far, so we use its live-in set, containing `number`, for this first pass.
 The `jump` instruction does not require any variable.
-But the `branch` instruction requires the variable `t1` and it is the last use for it.
-The `lt` instruction writes the variable `t1`, so it is not required before any more.
-But it requires the variables `number` and `t2`.
-As `number` is already in the list of live variables, we only add `t2` to it.
+But the `branch` instruction requires the variables `number` and `t2`.
+As `number` is already in the set of live variables, we only add `t2` to it.
 The `const` instruction writes the constant `0` to `t2`.
-Hence it will be removed from the list of live variables:
-```
-                               // live: number
-@printInt:
-                               // live: number
-  const t2, 0
-                               // live: number, t2
-  lt t1, number, t2            // last use: t2
-                               // live: number, t1
-  branch t1, false, @if_3_end  // last use: t1
-                               // live: number
-  jump @if_3_then
-                               // live: number (from @if_3_end)
-```
-This block has no predecessors any more, so we can take the block `@if_3_then` from the stack.
-It has the successor `@if_3_end` which requires the variable `number`.
-The `neg` instruction writes the variable `number`, but also uses it, so it actually does not change anything on the live variables.
-The `call` instruction requires the variable `t3` (also as last use).
-The `const` instruction writes `t3`, so we can remove it from the list of live variable.
-```
-                               // live: number
-@if_3_then:
-                               // live: number
-  const t3, 45
-                               // live: number, t3
-  call _, printChar, t3        // last use: t3
-                               // live: number
-  neg number, number
-                               // live: number
-  jump @if_3_end
-                               // live: number (from @if_3_end)
-```
-The predecessor of the `@if_3_then` block is block `@printInt`.
-Because the live variables from the blocks `@if_3_then` and `@if_3_end` (the successors of block `@printInt`) are the same, we don't need to process the block `@printInt` again.
+Hence `t2` will be removed from the list of live variables:
 
-## Register Allocation
+```text
+                                             // live: number
+printInt@i64:
+                                             // live: number
+  const t2, 0
+                                             // live: number, t2
+  branch number gteq t2: if_3_end, if_3_then // last use: t2
+                                             // live: number
+  jump if_3_then
+                                             // live: number (from if_3_end)
+```
+
+This block has no predecessors, so we can take the block `if_3_then` from the stack.
+It has the successor `if_3_end` which requires the variable `number`.
+The `neg` instruction writes the variable `number`, but also uses it, so it actually does not change the live set.
+The `call` instruction requires the variable `t3` (also as last use).
+The `const` instruction writes `t3`, so we can remove it from the list of live variables.
+
+```text
+                                             // live: number
+if_3_then:
+                                             // live: number
+  const t3, 45
+                                             // live: number, t3
+  call printChar@u8[t3]                      // last use: t3
+                                             // live: number
+  neg number, number
+                                             // live: number
+  jump if_3_end
+                                             // live: number (from if_3_end)
+```
+
+The predecessor of the `if_3_then` block is block `printInt@i64`.
+Because the live variables from the blocks `if_3_then` and `if_3_end` (the successors of block `printInt@i64`) are the same, the live-in set for `printInt@i64` does not change when we account for both successors.
+The implementation scans the blocks in reverse order repeatedly until no live set changes.
+
+### SSA and IR preparation
+
+`SsaFactory` converts eligible variables into static single assignment (SSA) form: each new value gets a distinct variable name.
+Phi nodes at joins select the value arriving from each predecessor.
+Variables whose addresses are taken remain in memory and are excluded from this renaming.
+`IRConverter` prepares binary operations for the backend's two-operand form, and `RemoveNotLiveResults` removes instructions that produce unused values.
+Calls are retained for their possible side effects even when their return values are unused.
+Finally, `PhiElimination` replaces phi nodes with copies in predecessor blocks, and the IR optimizer simplifies the resulting instruction list.
+
+### Register Allocation
 Register allocation means which variable to store in what processor register or whether/when to keep in memory.
 A extremely simple register allocation would be to store all variables in memory and only load them when needed by a IR instruction.
 Of course, this would be very inefficient, e.g. `const t2, 0` from the above example would store the value `0` in the variable `t2` (in memory)
   while the next instruction `lt t1, number, t2` would already need it again, hence loading from memory.
 
-### Linear Register Allocation
+#### Linear Register Allocation
 There are multiple numbers of register allocation algorithms.
 The Linear Register Allocation is easy to understand, fast (linear) and though produces good results.
 The idea of the Linear Register Allocation is to "cache" values in registers.
@@ -214,5 +323,5 @@ To prevent their cached register values from their memory values, we only keep t
 
 Before a call, we also store all modified registers back into their memory positions (and forget all unmodified register-cached variables), so the called function can use all the registers.
 
-## Convert to ASM
-The IR can be converted to different assembler outputs.
+### Convert to ASM
+The IR can be converted to different assembler outputs for each target platform, producing the final executable.
