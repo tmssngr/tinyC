@@ -4,8 +4,9 @@ This is an experimental, not-ready-to-use compiler implemented in Java that pars
 It is not meant to be a serious alternative to any mature compiler, but a hobby project for learning compiler techniques.
 The main goal is to have a compiler for a language slightly higher-level than assembly for an old 8-bit machine (using a [Z8 microcontroller](https://en.wikipedia.org/wiki/Zilog_Z8)).
 
-For easier testing, it currently compiles to **x86_64 binaries for both Windows and Linux** using the [FASM assembler](http://flatassembler.net/).
-The Z8 is the intended target; the currently implemented x86_64 backend prioritizes simplicity over performance.
+For the Z8 target it produces assembly code to feed into [Z8Asm](https://github.com/tmssngr/z8asm).
+For easier testing, it also compiles to **x86_64 binaries for both Windows and Linux** using the [FASM assembler](http://flatassembler.net/).
+The Z8 is the intended target; the x86_64 backends prioritize simplicity over performance.
 
 ## Assembler
 
@@ -17,11 +18,13 @@ The compiler does not generate a prologue or epilogue for `asm` functions.
 ### Windows Example
 
 This example uses the `hStdOut` and `WriteFile` symbols provided by the Windows backend.
+It reserves shadow space, a fifth argument and storage for the bytes-written result, while keeping the stack aligned for the API call.
 
-```
+```c
 void printStringLength(u8* str, i64 length) asm {
 	// rsp+0    return address
-	// rsp+8    padding (rsp is 8 modulo 10h at function entry)
+	// rsp+8h   start of caller-provided 20h-byte shadow space
+	// rsp is 8 modulo 10h at function entry
 	// rcx      str
 	// rdx      length
 	// BOOL WriteFile(
@@ -31,23 +34,23 @@ void printStringLength(u8* str, i64 length) asm {
 	//  [out, optional]     LPDWORD      lpNumberOfBytesWritten,   r9
 	//  [in, out, optional] LPOVERLAPPED lpOverlapped              stack
 	// );
-	"mov     rdi, rsp"
-	""
-	"mov     r8, rdx"
+	"sub     rsp, 38h"
+	"mov     r8d, edx"
 	"mov     rdx, rcx"
-	"lea     rcx, [hStdOut]"
-	"mov     rcx, [rcx]"
-	"xor     r9, r9"
-	"push    0"
-	"sub     rsp, 20h"
-	"  call    [WriteFile]"
-	"mov     rsp, rdi"
+	"mov     rcx, [hStdOut]"
+	"lea     r9, [rsp+28h]"
+	"mov     qword [rsp+20h], 0"
+	"call    [WriteFile]"
+	"add     rsp, 38h"
 	"ret"
 }
 ```
 
 ### Linux Example
-```
+
+This function receives arguments using the System V AMD64 calling convention and rearranges them for the Linux `write` syscall.
+
+```c
 void printStringLength(u8* str, i64 length) asm {
 	// rdi      str
 	// rsi      length
@@ -81,11 +84,11 @@ The two semicolons separating the clauses of a `for` loop are required:
 
 ```c
 if a < b {
-    // ...
+    a = b
 }
 
 for u8 i = 0; i < 10; i += 1 {
-    // ...
+    a += i
 }
 ```
 
@@ -141,21 +144,27 @@ void foo() {
 
 ## Platform Support
 
-TinyC supports following architectures:
+TinyC supports the following targets:
 
 | Platform | Architecture | Calling Convention | Output Format    | File Extension  | Predefined Conditional Symbols |
 |----------|--------------|--------------------|------------------|-----------------|--------------------------------|
+| Z8       | Z8           | TinyC-specific     | Assembly         | `.asm`          | `Z8`, `__Z8`                   |
 | Windows  | x86_64       | Microsoft x64      | PE64 console     | `.exe`          | `X86_64`, `__WINDOWS`          |
 | Linux    | x86_64       | System V AMD64     | ELF64 executable | `.bin`          | `X86_64`, `__LINUX`            |
 
-The compiler uses **FASM** (Flat Assembler) for both platforms.
-On Windows, it generates code that calls Win32 API functions (e.g., `WriteFile`, `GetStdHandle`, `_getch`).
-On Linux, it uses direct system calls (e.g., `sys_write`, `sys_read`, `sys_ioctl`) for terminal I/O.
+The compiler emits assembly into `z8/`, `windows/` and `linux/` directories next to the input file.
+It then runs **FASM** (Flat Assembler) for the host x86_64 platform: Windows produces an `.exe`, and Linux produces a `.bin`.
+Z8 assembly is left for Z8Asm to assemble separately.
+The Windows backend supplies imports from the Windows API and C runtime, including `WriteFile`, `GetStdHandle` and `_getch`.
+The Linux backend uses the `exit` syscall, and the Linux assembly example above uses `write` for output.
 
-Extremely rudimentary platform-specific runtime functions are provided in header files:
-- `win_x86_64.h` — Windows system calls and console I/O
-- `linux_x86_64.h` — Linux system calls
+Rudimentary runtime helpers are provided under [`src/main/resources-test/compiler`](src/main/resources-test/compiler):
 
+- `win_x86_64.h` — Windows API and C runtime calls for console I/O
+- `linux_x86_64.h` — Linux `write` wrapper; `getChar` and `setCursor` still contain Windows-specific code
+- `z8.h` — Z8 helpers for the intended machine
+
+`io.h` selects the target header using the predefined conditional symbols.
 
 ## Compiler internals
 

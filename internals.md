@@ -17,6 +17,7 @@ In the next step a type checker (class `TypeChecker`) assigns types to the nodes
 
 Variables are divided into global variables, local variables (defined within a function) and parameters.
 Internally, a variable has a scope (`VariableScope`: `global`, `function` or `parameter`) and an integer index, as well as its name and type.
+The IR also uses the `register` scope for assigned or constrained registers.
 
 ## Build the IR (intermediate representation)
 
@@ -162,42 +163,46 @@ The implementation scans the blocks in reverse order repeatedly until no live se
 `SsaFactory` converts eligible variables into static single assignment (SSA) form: each new value gets a distinct variable name.
 Phi nodes at joins select the value arriving from each predecessor.
 Variables whose addresses are taken remain in memory and are excluded from this renaming.
-`IRConverter` prepares binary operations for the backend's two-operand form, and `RemoveNotLiveResults` removes instructions that produce unused values.
+`IRConverter` prepares binary operations for the backends' two-operand form.
+`PhiElimination` then replaces phi nodes with copies in predecessor blocks, and `RemoveNotLiveResults` removes instructions that produce unused values.
 Calls are retained for their possible side effects even when their return values are unused.
-Finally, `PhiElimination` replaces phi nodes with copies in predecessor blocks, and the IR optimizer simplifies the resulting instruction list.
+The resulting IR is passed to register allocation, followed by IR optimization and cleanup of unused local variables.
 
 ## Register Allocation
-Register allocation means which variable to store in what processor register or whether/when to keep in memory.
-A extremely simple register allocation would be to store all variables in memory and only load them when needed by a IR instruction.
-Of course, this would be very inefficient, e.g. `const t2, 0` from the above example would store the value `0` in the variable `t2` (in memory)
-  while the next instruction `lt t1, number, t2` would already need it again, hence loading from memory.
 
-### Linear Register Allocation
-There are multiple numbers of register allocation algorithms.
-The Linear Register Allocation is easy to understand, fast (linear) and though produces good results.
-The idea of the Linear Register Allocation is to "cache" values in registers.
-It treats each basic block separately, with no used register between different basic blocks.
-To implement this in the intermediate representation, we extend the variable scope enum by a new `register` value.
-If a variable is needed, it is loaded into a register:
-```
-  copy r.0, number
-```
-With the help of the previously performed Variable Liveness Analysis, we know whether a written variable is used at all, and can ignore any instructions (except for call return values) which would produce an unused variable.
-We also know when a variable is used the last time.
-Then we can free the variable's register.
-It then could be reused for storing a different variable, even the result of an instruction.
+Register allocation assigns live values to processor registers and spills them to memory when necessary.
+`LSRegAlloc` uses linear-scan register allocation across a whole function. Values can remain in registers across basic-block boundaries.
 
-At the end of a basic block (before the `jump` or `branch`) we store all modified registers back into their stack positions.
+### Linear-scan register allocation
+
+`LSPreprocessor` introduces the register constraints required by the calling convention and, on x86_64, instructions such as division and shifts.
+`LSIntervalFactory` builds live intervals from the control flow graph and variable liveness, including fixed intervals for registers required or clobbered by instructions.
+`LSAlgorithm` scans intervals in start-position order, assigning registers, splitting intervals and spilling values when registers are unavailable.
+On Z8, values can occupy several consecutive byte registers, and pointers require an even-numbered register pair.
+
+`LSRegAlloc` rewrites operands to use the assigned registers and inserts moves, loads and stores for spills and changes of location.
+Moves on control-flow edges reconcile the locations assigned in predecessor and successor blocks; `LSParallelMove` resolves conflicting transfers.
+Register operands use `VariableScope.register` and print as `r0`, `r1`, etc., or as `name{r0}` when variable names are included.
+For example, a register-to-register copy uses the `move` instruction:
+
+```text
+  move r0, r1
+```
+
+The register indices are mapped to physical registers by the target backend. More detail is available in [lsra.md](lsra.md).
 
 ### Variables addressed with pointers
 
-In a previous step we have remembered all variables for which the address is requested (`&foo`).
-Those might be read or written indirectly through their address.
-To prevent their cached register values from their memory values, we only keep them in registers until a memory address is read or written.
+Variables whose addresses are taken (`&foo`) keep memory locations and are excluded from register allocation.
+The IR uses explicit address, load and store instructions for these accesses, so indirect writes cannot leave a cached variable value out of date.
 
 ### Calls
 
-Before a call, we also store all modified registers back into their memory positions (and forget all unmodified register-cached variables), so the called function can use all the registers.
+Calling-convention constraints place arguments and results in the required registers or stack locations.
+Fixed intervals account for registers clobbered by calls. Values live across a call can remain in nonvolatile registers or be spilled and reloaded as needed.
+The assembly backends generate the required saves and restores for nonvolatile registers used by ordinary compiled functions.
 
 ## Convert to ASM
-The IR can be converted to different assembler outputs for each target platform, producing the final executable.
+
+The target-specific assembly writer translates the allocated IR into assembly: `Z8AsmWriter`, `X86_64_WindowsAsmWriter` or `X86_64_LinuxAsmWriter`.
+FASM assembles the host's x86_64 output into an executable; the Z8 output is assembly source for Z8Asm.

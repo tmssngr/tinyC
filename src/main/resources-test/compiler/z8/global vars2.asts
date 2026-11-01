@@ -1,0 +1,27 @@
+u8 global;
+
+void printString@@u8(u8* str) asm {
+}
+
+u8 next() {
+	u8 copy;
+
+	copy = global;
+	global = global + 1;
+	return copy;
+}
+
+void main() {
+	u8 n;
+
+	while (true) {
+		printString@@u8("loop\n");
+		n = next();
+		if (n == 3) {
+			break;
+		}
+		if (n < 2) {
+			printString@@u8("<2\n");
+		}
+	}
+}
