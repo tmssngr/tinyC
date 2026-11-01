@@ -190,9 +190,10 @@ public final class IRLocalOptimizer {
 		if (clobberedRegisters == null) {
 			return;
 		}
+		// Clobbering any byte invalidates the cached value of the whole group.
 		removeObsoleteValues(container ->
-				                     container instanceof ValueContainer.Reg(int index)
-				                     && clobberedRegisters.test(index));
+				                     container instanceof ValueContainer.Reg reg
+				                     && reg.containsAny(clobberedRegisters));
 	}
 
 	private void removeObsoleteValues(Predicate<ValueContainer> isObsolete) {
@@ -209,7 +210,10 @@ public final class IRLocalOptimizer {
 	private IRInstruction checkOtherRegistersForValue(IRVar target, Value value, IRInstruction instruction) {
 		for (Map.Entry<ValueContainer, Value> entry : locationToValue.entrySet()) {
 			final ValueContainer container = entry.getKey();
-			if (!(container instanceof ValueContainer.Reg(int index))) {
+			// A matching value in a narrower group does not describe all bytes
+			// that the replacement move would read.
+			if (!(container instanceof ValueContainer.Reg(int index, int amount))
+			    || amount != psib.getRegisterAmount(target.type())) {
 				continue;
 			}
 
@@ -234,6 +238,15 @@ public final class IRLocalOptimizer {
 
 	@Nullable
 	private IRInstruction store(@NotNull ValueContainer location, @NotNull Value value, @NotNull IRInstruction instruction) {
+		if (location instanceof ValueContainer.Reg target) {
+			// For example, an i32 write to r5-r8 destroys a pointer in r6-r7.
+			// Forget every partially overlapping cached group, but keep the exact
+			// target entry until put() so redundant writes can still be detected.
+			removeObsoleteValues(container -> container instanceof ValueContainer.Reg reg
+			                                  && !reg.equals(target)
+			                                  && reg.index < target.index + target.amount
+			                                  && target.index < reg.index + reg.amount);
+		}
 		final Value prev = locationToValue.put(location, value);
 		if (Objects.equals(prev, value)) {
 			if (debug) {
@@ -275,7 +288,7 @@ public final class IRLocalOptimizer {
 	@NotNull
 	private ValueContainer getLocation(@NotNull IRVar var) {
 		return switch (var.scope()) {
-			case register -> new ValueContainer.Reg(var.index());
+			case register -> new ValueContainer.Reg(var.index(), psib.getRegisterAmount(var.type()));
 			case function, parameter -> new ValueContainer.Stack(var.index());
 			case global -> new ValueContainer.Global(var.index());
 		};
@@ -295,7 +308,17 @@ public final class IRLocalOptimizer {
 			}
 		}
 
-		record Reg(int index) implements ValueContainer {
+		// Width is part of the cache key: knowing r4 does not mean we know r4-r5.
+		record Reg(int index, int amount) implements ValueContainer {
+			boolean containsAny(IntPredicate registers) {
+				for (int register = index; register < index + amount; register++) {
+					if (registers.test(register)) {
+						return true;
+					}
+				}
+				return false;
+			}
+
 			@NotNull
 			@Override
 			public String toString() {
@@ -369,6 +392,12 @@ public final class IRLocalOptimizer {
 	}
 
 	public interface PlatformSpecificInstructionBehavior {
+		// x86 values use one allocator register regardless of their byte width.
+		// Targets with byte registers override this to describe the whole group.
+		default int getRegisterAmount(@NotNull Type type) {
+			return 1;
+		}
+
 		@Nullable
 		IntPredicate getClobberedRegisters(@NotNull IRInstruction instruction);
 

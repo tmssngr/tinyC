@@ -103,6 +103,12 @@ public interface LSArchitecture {
 		}
 
 		@Override
+		public int getRegisterAmount(@NotNull Type type) {
+			// Each Z8 register holds one byte; pointers therefore occupy two.
+			return Type.getSize(type, getPointerIntType());
+		}
+
+		@Override
 		public Type getPointerIntType() {
 			return Z8CallingConventionProvider.POINTER_INT_TYPE;
 		}
