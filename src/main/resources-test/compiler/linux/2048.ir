@@ -615,46 +615,61 @@ if_50_else:
 	call printString@@u8[t.13]
 printTile@u8_ret:
 
-drawFrame:
+drawTileAt@i16@i16@u8:
  Local variables
-	var 0: row (i16/2)
-	var 1: index (u8/1)
-	var 2: t.2 (u8*/8)
+	arg 0: row (i16/2)
+	arg 1: column (i16/2)
+	arg 2: exponent (u8/1)
 	var 3: t.3 (u8*/8)
 	var 4: t.4 (i16/2)
-	var 5: t.5 (u8*/8)
-	var 6: t.6 (i16/2)
-	var 7: t.7 (u8*/8)
-	var 8: t.8 (u8*/8)
+	var 5: t.5 (i16/2)
+	var 6: t.6 (u8*/8)
 
-	call setCursor@i16@i16[1, 0]
-	const t.2, [string-14]
-	call printString@@u8[t.2]
-	const row, 3
-	const index, 0
-for_51:
-	branch index gteq 4: for_51_break, for_51_body
-for_51_body:
-	call setCursor@i16@i16[row, 1]
-	const t.3, [string-15]
+	branch exponent notequals 0: if_51_end, if_51_then
+if_51_then:
+	jump drawTileAt@i16@i16@u8_ret
+if_51_end:
+	call setCursor@i16@i16[row, column]
+	const t.3, [string-14]
 	call printString@@u8[t.3]
 	add t.4, row, 1
-	call setCursor@i16@i16[t.4, 1]
-	const t.5, [string-16]
-	call printString@@u8[t.5]
-	add t.6, row, 2
-	call setCursor@i16@i16[t.6, 1]
-	const t.7, [string-16]
-	call printString@@u8[t.7]
-	add row, 3
-for_51_continue:
-	add index, 1
-	jump for_51
-for_51_break:
-	call setCursor@i16@i16[row, 1]
-	const t.8, [string-15]
-	call printString@@u8[t.8]
+	call setCursor@i16@i16[t.4, column]
+	call printChar@u8[124]
+	call printTile@u8[exponent]
+	call printChar@u8[124]
+	add t.5, row, 2
+	call setCursor@i16@i16[t.5, column]
+	const t.6, [string-14]
+	call printString@@u8[t.6]
+drawTileAt@i16@i16@u8_ret:
+
+drawFrame:
+ Local variables
+	var 0: t.0 (u8*/8)
+
+	call setCursor@i16@i16[1, 0]
+	const t.0, [string-15]
+	call printString@@u8[t.0]
 drawFrame_ret:
+
+clearBoard:
+ Local variables
+	var 0: row (i16/2)
+	var 1: t.1 (i16/2)
+	var 2: t.2 (u8*/8)
+
+	const row, 0
+for_52:
+	branch row gteq 15: clearBoard_ret, for_52_body
+for_52_body:
+	add t.1, row, 3
+	call setCursor@i16@i16[t.1, 1]
+	const t.2, [string-16]
+	call printString@@u8[t.2]
+for_52_continue:
+	add row, 1
+	jump for_52
+clearBoard_ret:
 
 drawBoard:
  Local variables
@@ -667,33 +682,33 @@ drawBoard:
 	var 6: t.6 (u8*/8)
 	var 7: t.7 (i64/8)
 
+	call clearBoard[]
 	const index, 0
-	const row, 5
+	const row, 3
 	const boardRow, 0
-for_52:
-	branch boardRow gteq 4: drawBoard_ret, for_52_body
-for_52_body:
-	const column, 2
-	const boardColumn, 0
 for_53:
-	branch boardColumn gteq 4: for_53_break, for_53_body
+	branch boardRow gteq 4: drawBoard_ret, for_53_body
 for_53_body:
-	call setCursor@i16@i16[row, column]
+	const column, 1
+	const boardColumn, 0
+for_54:
+	branch boardColumn gteq 4: for_54_break, for_54_body
+for_54_body:
 	cast t.7(i64), index(u8)
 	addrof t.6, tiles
 	add t.6, t.7
 	load t.5, [t.6]
-	call printTile@u8[t.5]
+	call drawTileAt@i16@i16@u8[row, column, t.5]
 	add index, 1
 	add column, 9
-for_53_continue:
+for_54_continue:
 	add boardColumn, 1
-	jump for_53
-for_53_break:
-	add row, 3
-for_52_continue:
+	jump for_54
+for_54_break:
+	add row, 4
+for_53_continue:
 	add boardRow, 1
-	jump for_52
+	jump for_53
 drawBoard_ret:
 
 drawScore:
@@ -723,22 +738,22 @@ drawStatus:
 	var 5: t.5 (u8/1)
 	var 6: t.6 (u8*/8)
 
-	call setCursor@i16@i16[18, 0]
+	call setCursor@i16@i16[19, 0]
 	const t.0, [string-19]
 	call printString@@u8[t.0]
-	call setCursor@i16@i16[18, 0]
+	call setCursor@i16@i16[19, 0]
 	addrof a.1, gameState
 	load t.2, [a.1]
-	branch t.2 notequals 1: if_54_else, if_54_then
-if_54_then:
+	branch t.2 notequals 1: if_55_else, if_55_then
+if_55_then:
 	const t.3, [string-20]
 	call printString@@u8[t.3]
 	jump drawStatus_ret
-if_54_else:
+if_55_else:
 	addrof a.4, gameState
 	load t.5, [a.4]
-	branch t.5 notequals 2: drawStatus_ret, if_55_then
-if_55_then:
+	branch t.5 notequals 2: drawStatus_ret, if_56_then
+if_56_then:
 	const t.6, [string-21]
 	call printString@@u8[t.6]
 drawStatus_ret:
@@ -755,18 +770,18 @@ newGame:
 	var 7: a.7 (u8*/8)
 
 	const index, 0
-for_56:
-	branch index gteq 16: for_56_break, for_56_body
-for_56_body:
+for_57:
+	branch index gteq 16: for_57_break, for_57_body
+for_57_body:
 	const t.1, 0
 	cast t.3(i64), index(u8)
 	addrof t.2, tiles
 	add t.2, t.3
 	store [t.2], t.1
-for_56_continue:
+for_57_continue:
 	add index, 1
-	jump for_56
-for_56_break:
+	jump for_57
+for_57_break:
 	const t.4, 0
 	addrof a.5, score
 	store [a.5], t.4
@@ -814,82 +829,82 @@ main:
 	call initRandom@i32[7439742]
 	call drawFrame[]
 	call newGame[]
-while_57:
+while_58:
 	call key = getChar[] -> i16
-	branch key equals 27: main_ret, if_58_end
-if_58_end:
-	branch key equals 114: if_59_then, or_60
-or_60:
-	branch key notequals 82: if_59_end, if_59_then
-if_59_then:
-	call newGame[]
-	jump while_57
+	branch key equals 27: main_ret, if_59_end
 if_59_end:
+	branch key equals 114: if_60_then, or_61
+or_61:
+	branch key notequals 82: if_60_end, if_60_then
+if_60_then:
+	call newGame[]
+	jump while_58
+if_60_end:
 	addrof a.8, gameState
 	load t.9, [a.8]
-	branch t.9 notequals 0: while_57, if_61_end
-if_61_end:
-	const direction, 255
-	branch key equals -8117: if_62_then, or_64
-or_64:
-	branch key equals 97: if_62_then, or_63
-or_63:
-	branch key notequals 65: if_62_else, if_62_then
-if_62_then:
-	const direction, 0
-	jump if_62_end
-if_62_else:
-	branch key equals -8115: if_65_then, or_67
-or_67:
-	branch key equals 100: if_65_then, or_66
-or_66:
-	branch key notequals 68: if_65_else, if_65_then
-if_65_then:
-	const direction, 1
-	jump if_62_end
-if_65_else:
-	branch key equals -8120: if_68_then, or_70
-or_70:
-	branch key equals 119: if_68_then, or_69
-or_69:
-	branch key notequals 87: if_68_else, if_68_then
-if_68_then:
-	const direction, 2
-	jump if_62_end
-if_68_else:
-	branch key equals -8112: if_71_then, or_73
-or_73:
-	branch key equals 115: if_71_then, or_72
-or_72:
-	branch key notequals 83: while_57, if_71_then
-if_71_then:
-	const direction, 3
+	branch t.9 notequals 0: while_58, if_62_end
 if_62_end:
+	const direction, 255
+	branch key equals -8117: if_63_then, or_65
+or_65:
+	branch key equals 97: if_63_then, or_64
+or_64:
+	branch key notequals 65: if_63_else, if_63_then
+if_63_then:
+	const direction, 0
+	jump if_63_end
+if_63_else:
+	branch key equals -8115: if_66_then, or_68
+or_68:
+	branch key equals 100: if_66_then, or_67
+or_67:
+	branch key notequals 68: if_66_else, if_66_then
+if_66_then:
+	const direction, 1
+	jump if_63_end
+if_66_else:
+	branch key equals -8120: if_69_then, or_71
+or_71:
+	branch key equals 119: if_69_then, or_70
+or_70:
+	branch key notequals 87: if_69_else, if_69_then
+if_69_then:
+	const direction, 2
+	jump if_63_end
+if_69_else:
+	branch key equals -8112: if_72_then, or_74
+or_74:
+	branch key equals 115: if_72_then, or_73
+or_73:
+	branch key notequals 83: while_58, if_72_then
+if_72_then:
+	const direction, 3
+if_63_end:
 	call t.10 = slide@u8[direction] -> bool
-	branch t.10 equals 0: while_57, if_74_end
-if_74_end:
+	branch t.10 equals 0: while_58, if_75_end
+if_75_end:
 	call spawnTile[]
 	addrof a.11, gameState
 	load t.12, [a.11]
-	branch t.12 notequals 0: if_75_end, and_76
-and_76:
+	branch t.12 notequals 0: if_76_end, and_77
+and_77:
 	call t.13 = canMove[] -> bool
-	branch t.13 notequals 0: if_75_end, if_75_then
-if_75_then:
+	branch t.13 notequals 0: if_76_end, if_76_then
+if_76_then:
 	const t.14, 2
 	addrof a.15, gameState
 	store [a.15], t.14
-if_75_end:
+if_76_end:
 	call drawBoard[]
 	call drawScore[]
 	addrof a.16, gameState
 	load t.17, [a.16]
-	branch t.17 equals 0: if_77_end, if_77_then
-if_77_then:
+	branch t.17 equals 0: if_78_end, if_78_then
+if_78_then:
 	call drawStatus[]
-if_77_end:
+if_78_end:
 	call setCursor@i16@i16[21, 0]
-	jump while_57
+	jump while_58
 main_ret:
 
 printStringLength@@u8@i64:
@@ -941,22 +956,22 @@ Global variables
 
 String literals
 	string lit 0 "\u001b[\0"
-	string lit 1 "        \0"
-	string lit 2 "   2    \0"
-	string lit 3 "   4    \0"
-	string lit 4 "   8    \0"
-	string lit 5 "   16   \0"
-	string lit 6 "   32   \0"
-	string lit 7 "   64   \0"
-	string lit 8 "  128   \0"
-	string lit 9 "  256   \0"
-	string lit 10 "  512   \0"
-	string lit 11 "  1024  \0"
-	string lit 12 "  2048  \0"
-	string lit 13 "   ?    \0"
-	string lit 14 "Arrows/WASD  R restart  Esc quit\0"
-	string lit 15 "+--------+--------+--------+--------+\0"
-	string lit 16 "|        |        |        |        |\0"
+	string lit 1 "      \0"
+	string lit 2 "  2   \0"
+	string lit 3 "  4   \0"
+	string lit 4 "  8   \0"
+	string lit 5 "  16  \0"
+	string lit 6 "  32  \0"
+	string lit 7 "  64  \0"
+	string lit 8 " 128  \0"
+	string lit 9 " 256  \0"
+	string lit 10 " 512  \0"
+	string lit 11 " 1024 \0"
+	string lit 12 " 2048 \0"
+	string lit 13 "  ?   \0"
+	string lit 14 "+------+\0"
+	string lit 15 "Arrows/WASD  R restart  Esc quit\0"
+	string lit 16 "                                   \0"
 	string lit 17 "2048  Score: \0"
 	string lit 18 "          \0"
 	string lit 19 "                                      \0"
