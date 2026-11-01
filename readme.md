@@ -4,7 +4,7 @@ This is an experimental, not-ready-to-use compiler implemented in Java that pars
 It is not meant to be a serious alternative to any mature compiler, but a hobby project for learning compiler techniques.
 The main goal is to have a compiler for a language slightly higher-level than assembly for an old 8-bit machine (using a [Z8 microcontroller](https://en.wikipedia.org/wiki/Zilog_Z8)).
 
-For easier testing, it currently compiles to **x86_64 binaries for Windows** using the [FASM assembler](http://flatassembler.net/).
+For easier testing, it currently compiles to **x86_64 binaries for both Windows and Linux** using the [FASM assembler](http://flatassembler.net/).
 The Z8 is the intended target; the currently implemented x86_64 backend prioritizes simplicity over performance.
 
 ## Assembler
@@ -42,6 +42,21 @@ void printStringLength(u8* str, i64 length) asm {
 	"sub     rsp, 20h"
 	"  call    [WriteFile]"
 	"mov     rsp, rdi"
+	"ret"
+}
+```
+
+### Linux Example
+```
+void printStringLength(u8* str, i64 length) asm {
+	// rdi      str
+	// rsi      length
+	// sys_write(1, str, length)
+	"mov rdx, rsi"
+	"mov rsi, rdi"
+	"mov rdi, 1"    // stdout
+	"mov rax, 1"    // sys_write
+	"syscall"
 	"ret"
 }
 ```
@@ -123,6 +138,24 @@ void foo() {
     // ...
 }
 ```
+
+## Platform Support
+
+TinyC supports following architectures:
+
+| Platform | Architecture | Calling Convention | Output Format    | File Extension  | Predefined Conditional Symbols |
+|----------|--------------|--------------------|------------------|-----------------|--------------------------------|
+| Windows  | x86_64       | Microsoft x64      | PE64 console     | `.exe`          | `X86_64`, `__WINDOWS`          |
+| Linux    | x86_64       | System V AMD64     | ELF64 executable | `.bin`          | `X86_64`, `__LINUX`            |
+
+The compiler uses **FASM** (Flat Assembler) for both platforms.
+On Windows, it generates code that calls Win32 API functions (e.g., `WriteFile`, `GetStdHandle`, `_getch`).
+On Linux, it uses direct system calls (e.g., `sys_write`, `sys_read`, `sys_ioctl`) for terminal I/O.
+
+Extremely rudimentary platform-specific runtime functions are provided in header files:
+- `win_x86_64.h` — Windows system calls and console I/O
+- `linux_x86_64.h` — Linux system calls
+
 
 ## Stages
 
