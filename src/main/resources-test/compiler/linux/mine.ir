@@ -2,47 +2,47 @@ getChar:
  Local variables
 	var 0: c (i16/2)
 
-	; 29:2 while true
+	; 30:2 while true
 while_1:
 	call c = __getChar[] -> i16
-	; 31:3 if c != 27
+	; 32:3 if c != 27
 	branch c equals 27: if_2_end, if_2_then
 if_2_then:
-	; 32:11 return c
+	; 33:11 return c
 	ret c
 	jump getChar_ret
 if_2_end:
 	call c = __getChar[] -> i16
-	; 36:3 if c == 27
+	; 37:3 if c == 27
 	branch c notequals 27: if_3_end, if_3_then
 if_3_then:
-	; 37:11 return c
+	; 38:11 return c
 	ret c
 	jump getChar_ret
 if_3_end:
-	; 39:3 if c != 91
+	; 40:3 if c != 91
 	branch c notequals 91: while_1, if_4_end
 if_4_end:
 	call c = __getChar[] -> i16
-	; 44:3 if c == 65
+	; 45:3 if c == 65
 	branch c notequals 65: if_5_end, if_5_then
 if_5_then:
 	ret -8120
 	jump getChar_ret
 if_5_end:
-	; 47:3 if c == 66
+	; 48:3 if c == 66
 	branch c notequals 66: if_6_end, if_6_then
 if_6_then:
 	ret -8112
 	jump getChar_ret
 if_6_end:
-	; 50:3 if c == 67
+	; 51:3 if c == 67
 	branch c notequals 67: if_7_end, if_7_then
 if_7_then:
 	ret -8115
 	jump getChar_ret
 if_7_end:
-	; 53:3 if c == 68
+	; 54:3 if c == 68
 	branch c notequals 68: while_1, if_8_then
 if_8_then:
 	ret -8117
@@ -51,15 +51,15 @@ getChar_ret:
 
 setCursor@i16@i16:
  Local variables
-	arg 0: x (i16/2)
-	arg 1: y (i16/2)
+	arg 0: row (i16/2)
+	arg 1: column (i16/2)
 	var 2: t.2 (u8*/8)
 
 	const t.2, [string-0]
 	call printString@@u8[t.2]
-	call printUint@i16[y]
+	call printUint@i16[row]
 	call printChar@u8[59]
-	call printUint@i16[x]
+	call printUint@i16[column]
 	call printChar@u8[72]
 setCursor@i16@i16_ret:
 
@@ -830,8 +830,8 @@ if_58_then:
 	call setCell@i16@i16@u8[curr_r, curr_c, cell]
 	jump while_48
 if_56_else:
-	; 261:8 if chr == 13
-	branch chr notequals 13: while_48, if_59_then
+	; 261:8 if chr == 10
+	branch chr notequals 10: while_48, if_59_then
 if_59_then:
 	; 262:4 if needsInitialize
 	branch needsInitialize equals 0: if_60_end, if_60_then

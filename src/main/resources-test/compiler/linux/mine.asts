@@ -38,11 +38,11 @@ i16 getChar() {
 i16 __getChar() asm {
 }
 
-void setCursor@i16@i16(i16 x, i16 y) {
+void setCursor@i16@i16(i16 row, i16 column) {
 	printString@@u8("\u001b[");
-	printUint@i16(y);
+	printUint@i16(row);
 	printChar@u8(59);
-	printUint@i16(x);
+	printUint@i16(column);
 	printChar@u8(72);
 }
 
@@ -410,7 +410,7 @@ void main() {
 							}
 						}
 						else {
-							if (chr == 13) {
+							if (chr == 10) {
 								if (needsInitialize) {
 									needsInitialize = false;
 									initField@i16@i16(curr_r, curr_c);

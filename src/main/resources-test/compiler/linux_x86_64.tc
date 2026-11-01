@@ -19,7 +19,8 @@ void printStringLength(u8* str, i64 length) asm {
 	"ret"
 }
 
-const ESCAPE = 0x1b;
+const ENTER = 0x0a
+const ESCAPE = 0x1b
 const CURSOR_UP = 0xE048 as i16
 const CURSOR_LEFT = 0xE04B as i16
 const CURSOR_RIGHT = 0xE04D as i16
@@ -116,10 +117,10 @@ i16 __getChar() asm {
 	"ret"
 }
 
-void setCursor(i16 x, i16 y) {
+void setCursor(i16 row, i16 column) {
 	printString("\x1b[")
-	printUint(y)
+	printUint(row)
 	printChar(';')
-	printUint(x)
+	printUint(column)
 	printChar('H')
 }

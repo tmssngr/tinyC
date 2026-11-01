@@ -20,7 +20,7 @@ _if_2_end:
         call ___getChar
         ; move c.2{r8}, c.2{r0}
         mov bx, ax
-        ; 36:3 if c == 27
+        ; 37:3 if c == 27
         ; branch c.2{r8} equals 27: if_3_then
         cmp bx, 27
         je _if_3_then
@@ -29,7 +29,7 @@ _if_2_end:
         jne _while_1
         ; call c.3{r0} = __getChar[] -> i16
         call ___getChar
-        ; 44:3 if c == 65
+        ; 45:3 if c == 65
         ; branch c.3{r0} equals 65: if_5_then
         cmp ax, 65
         je _if_5_then
@@ -45,14 +45,14 @@ _if_2_end:
 _while_1:
         ; call c.1{r0} = __getChar[] -> i16
         call ___getChar
-        ; 31:3 if c != 27
+        ; 32:3 if c != 27
         ; branch c.1{r0} equals 27: if_2_end
         cmp ax, 27
         je _if_2_end
-        ; 32:11 return c
+        ; 33:11 return c
         jmp _getChar_ret
 _if_3_then:
-        ; 37:11 return c
+        ; 38:11 return c
         ; move c.2{r0}, c.2{r8}
         mov ax, bx
         jmp _getChar_ret
@@ -79,8 +79,8 @@ _getChar_ret:
         ret
 
         ; void setCursor@i16@i16
-        ;   rsp+32: arg x
-        ;   rsp+34: arg y
+        ;   rsp+32: arg row
+        ;   rsp+34: arg column
 _setCursor@i16@i16:
         sub rsp, 8
         ; save clobbered non-volatile registers
@@ -88,25 +88,25 @@ _setCursor@i16@i16:
         push r10
         push rbx
         push r12
-        ; move x{r8}, x{r1}
+        ; move row{r8}, row{r1}
         mov bx, di
-        ; move y{r9}, y{r2}
+        ; move column{r9}, column{r2}
         mov r12w, si
         ; const t.2.1{r1}, [string-0]
         lea rdi, [string_0]
         ; call printString@@u8[t.2.1{r1}]
         call _printString@@u8
-        ; move y{r1}, y{r9}
-        mov di, r12w
-        ; call printUint@i16[y{r1}]
+        ; move row{r1}, row{r8}
+        mov di, bx
+        ; call printUint@i16[row{r1}]
         call _printUint@i16
         ; const arg.2.0{r1}, 59
         mov dil, 59
         ; call printChar@u8[arg.2.0{r1}]
         call _printChar@u8
-        ; move x{r1}, x{r8}
-        mov di, bx
-        ; call printUint@i16[x{r1}]
+        ; move column{r1}, column{r9}
+        mov di, r12w
+        ; call printUint@i16[column{r1}]
         call _printUint@i16
         ; const arg.4.0{r1}, 72
         mov dil, 72
@@ -1790,8 +1790,8 @@ _if_55_then:
         mov si, r8w
         jmp _while_48
 _if_56_else:
-        ; branch chr.1{r5} notequals 13: while_48, if_59_then
-        cmp r8w, 13
+        ; branch chr.1{r5} notequals 10: while_48, if_59_then
+        cmp r8w, 10
         jne _while_48
         jmp _if_59_then
 _if_56_then:

@@ -43,7 +43,7 @@ digraph program {
 		BasicBlock_0_getChar__ret [label="getChar__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_setCursor_Ai16_Ai16 {
-		BasicBlock_1_setCursor_Ai16_Ai16 [label="setCursor_Ai16_Ai16\lconst t_d2_d1, [string-0]\lcall printString_A_Au8[t_d2_d1]\lcall printUint_Ai16[y]\lcall printChar_Au8[59]\lcall printUint_Ai16[x]\lcall printChar_Au8[72]\ljump setCursor_Ai16_Ai16__ret",shape=box];
+		BasicBlock_1_setCursor_Ai16_Ai16 [label="setCursor_Ai16_Ai16\lconst t_d2_d1, [string-0]\lcall printString_A_Au8[t_d2_d1]\lcall printUint_Ai16[row]\lcall printChar_Au8[59]\lcall printUint_Ai16[column]\lcall printChar_Au8[72]\ljump setCursor_Ai16_Ai16__ret",shape=box];
 		BasicBlock_1_setCursor_Ai16_Ai16 -> BasicBlock_1_setCursor_Ai16_Ai16__ret;
 		BasicBlock_1_setCursor_Ai16_Ai16__ret [label="setCursor_Ai16_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
@@ -449,7 +449,7 @@ digraph program {
 		BasicBlock_29_if__55__else -> BasicBlock_29_if__56__then [label="(curr_c.2,curr_r.2,needsInitialize.2)"];
 		BasicBlock_29_if__55__then [label="if__55__then\lmove t_d16_d1, curr__c_d2\ladd t_d16_d1, 1\lmove curr__c_d5, t_d16_d1\lmod curr__c_d5, 40\lmove needsInitialize_d2, needsInitialize_d2\lmove curr__c_d2, curr__c_d5\lmove curr__r_d2, curr__r_d2\ljump while__48",shape=box];
 		BasicBlock_29_if__55__then -> BasicBlock_29_while__48 [label="(curr_c.2,curr_r.2,needsInitialize.2)"];
-		BasicBlock_29_if__56__else [label="if__56__else\lbranch chr_d1 notequals 13: main_dno__critical__edge__28, if__59__then\ljump if__59__then",shape=box];
+		BasicBlock_29_if__56__else [label="if__56__else\lbranch chr_d1 notequals 10: main_dno__critical__edge__28, if__59__then\ljump if__59__then",shape=box];
 		BasicBlock_29_if__56__else -> BasicBlock_29_main_dno__critical__edge__28 [label="(curr_c.2,curr_r.2,needsInitialize.2)"];
 		BasicBlock_29_if__56__else -> BasicBlock_29_if__59__then [label="(curr_c.2,curr_r.2,needsInitialize.2)"];
 		BasicBlock_29_if__56__then [label="if__56__then\lbranch needsInitialize_d2 notequals 0: main_dno__critical__edge__31, if__57__then\ljump if__57__then",shape=box];

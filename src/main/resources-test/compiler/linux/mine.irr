@@ -3,23 +3,23 @@ getChar:
 if_2_end:
 	call c.2{r0} = __getChar[] -> i16
 	move c.2{r8}, c.2{r0}
-	; 36:3 if c == 27
+	; 37:3 if c == 27
 	branch c.2{r8} equals 27: if_3_then
 	branch c.2{r8} notequals 91: while_1
 	call c.3{r0} = __getChar[] -> i16
-	; 44:3 if c == 65
+	; 45:3 if c == 65
 	branch c.3{r0} equals 65: if_5_then
 	branch c.3{r0} equals 66: if_6_then
 	branch c.3{r0} equals 67: if_7_then
 	branch c.3{r0} equals 68: if_8_then, while_1
 while_1:
 	call c.1{r0} = __getChar[] -> i16
-	; 31:3 if c != 27
+	; 32:3 if c != 27
 	branch c.1{r0} equals 27: if_2_end
-	; 32:11 return c
+	; 33:11 return c
 	jump getChar_ret
 if_3_then:
-	; 37:11 return c
+	; 38:11 return c
 	move c.2{r0}, c.2{r8}
 	jump getChar_ret
 if_5_then:
@@ -37,19 +37,19 @@ getChar_ret:
 
 setCursor@i16@i16:
  Local variables
-	arg 0: x (i16/2)
-	arg 1: y (i16/2)
+	arg 0: row (i16/2)
+	arg 1: column (i16/2)
 
-	move x{r8}, x{r1}
-	move y{r9}, y{r2}
+	move row{r8}, row{r1}
+	move column{r9}, column{r2}
 	const t.2.1{r1}, [string-0]
 	call printString@@u8[t.2.1{r1}]
-	move y{r1}, y{r9}
-	call printUint@i16[y{r1}]
+	move row{r1}, row{r8}
+	call printUint@i16[row{r1}]
 	const arg.2.0{r1}, 59
 	call printChar@u8[arg.2.0{r1}]
-	move x{r1}, x{r8}
-	call printUint@i16[x{r1}]
+	move column{r1}, column{r9}
+	call printUint@i16[column{r1}]
 	const arg.4.0{r1}, 72
 	call printChar@u8[arg.4.0{r1}]
 
@@ -923,7 +923,7 @@ if_55_then:
 	move curr_c.2{r2}, curr_c.5{r5}
 	jump while_48
 if_56_else:
-	branch chr.1{r5} notequals 13: while_48, if_59_then
+	branch chr.1{r5} notequals 10: while_48, if_59_then
 	jump if_59_then
 if_56_then:
 	branch needsInitialize.2{r8} notequals 0: while_48, if_57_then
