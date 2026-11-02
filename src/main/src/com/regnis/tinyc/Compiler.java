@@ -103,6 +103,7 @@ public class Compiler {
 		launchGraphViz(dotFile, svgFile);
 
 		irProgram = irProgram.derive(functions);
+		irProgram = CleanupUnusedStringLiterals.process(irProgram);
 		write(irProgram, irRegFile);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
