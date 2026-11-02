@@ -240,6 +240,26 @@ public class Messages {
 		return "Expression is always " + trueOrFalse;
 	}
 
+	@NotNull
+	public static String unterminatedBlockComment() {
+		return "Unterminated block comment starts here";
+	}
+
+	@NotNull
+	public static String unterminatedCharacterLiteral() {
+		return "Unterminated character literal starts here";
+	}
+
+	@NotNull
+	public static String unterminatedStringLiteral() {
+		return "Unterminated string literal starts here";
+	}
+
+	@NotNull
+	public static String invalidCharLiteral() {
+		return "A character literal only may contain exactly one character";
+	}
+
 	private static void functionWithType(String name, List<Type> argTypes, StringBuilder buffer) {
 		buffer.append(name);
 		buffer.append("(");

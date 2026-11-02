@@ -61,7 +61,7 @@ public final class Lexer {
 			}
 
 			if (chr == '*') {
-				text = detectBlockComment();
+				text = detectBlockComment(location);
 				return TokenType.COMMENT;
 			}
 
@@ -129,11 +129,11 @@ public final class Lexer {
 			return TokenType.R_BRACKET;
 		}
 		if (isConsume('"')) {
-			text = detectStringOrChar('"');
+			text = detectStringOrChar('"', location);
 			return TokenType.STRING;
 		}
 		if (isConsume('\'')) {
-			final String text = detectStringOrChar('\'');
+			final String text = detectStringOrChar('\'', location);
 			intValue = text.charAt(0);
 			this.text = "";
 			return TokenType.INT_LITERAL;
@@ -309,14 +309,14 @@ public final class Lexer {
 		return buffer.toString();
 	}
 
-	private String detectBlockComment() {
+	private String detectBlockComment(Location location) {
 		final StringBuilder buffer = new StringBuilder();
 		buffer.append("/*");
 		int prev = 0;
 		while (true) {
 			consume();
 			if (chr < 0) {
-				throw new InvalidTokenException("Block comment needs to be closed", location);
+				throw new InvalidTokenException(Messages.unterminatedBlockComment(), location);
 			}
 
 			append(buffer);
@@ -329,15 +329,27 @@ public final class Lexer {
 		}
 	}
 
-	private String detectStringOrChar(char endChar) {
+	private String detectStringOrChar(char endChar, Location location) {
 		final StringBuilder buffer = new StringBuilder();
 		Location escapeStartLocation = null;
 		while (true) {
 			if (chr < 0 || isLineBreak()) {
 				if (endChar == '\'') {
-					throw new InvalidTokenException("A char must end with a quote", location);
+					throw new InvalidTokenException(Messages.unterminatedCharacterLiteral(), location);
 				}
-				throw new InvalidTokenException("String must end with a double-quote", new Location(line, column));
+				throw new InvalidTokenException(Messages.unterminatedStringLiteral(), location);
+			}
+
+			if (chr == endChar && escapeStartLocation == null) {
+				if (endChar == '\'' && buffer.length() != 1) {
+					throw new InvalidTokenException(Messages.invalidCharLiteral(), new Location(line, column));
+				}
+				consume();
+				break;
+			}
+
+			if (endChar == '\'' && buffer.length() > 0) {
+				throw new InvalidTokenException(Messages.invalidCharLiteral(), new Location(line, column));
 			}
 
 			if (escapeStartLocation != null) {
@@ -376,11 +388,6 @@ public final class Lexer {
 				}
 				escapeStartLocation = null;
 				continue;
-			}
-
-			if (chr == endChar) {
-				consume();
-				break;
 			}
 
 			if (chr == '\\') {
