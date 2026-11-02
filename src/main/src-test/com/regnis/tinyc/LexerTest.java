@@ -31,6 +31,22 @@ public class LexerTest {
 				assertEof();
 			}
 		}.test();
+
+		new LexerTester("""
+				                 /*
+				                bla""") {
+			@Override
+			protected void test() {
+				assertWhitespace();
+				try {
+					next();
+					fail();
+				}
+				catch (InvalidTokenException e) {
+					assertEquals("1:2 " + Messages.unterminatedBlockComment(), e.getMessage());
+				}
+			}
+		}.test();
 	}
 
 	@Test
@@ -80,6 +96,102 @@ public class LexerTest {
 				assertLocation(0, 29);
 
 				assertEof();
+			}
+		}.test();
+
+		new LexerTester("""
+				                 'a
+				               """) {
+			@Override
+			protected void test() {
+				assertWhitespace();
+				try {
+					next();
+					fail();
+				}
+				catch (InvalidTokenException e) {
+					assertEquals("1:3 " + Messages.unterminatedCharacterLiteral(), e.getMessage());
+				}
+			}
+		}.test();
+
+		new LexerTester("""
+				                 'ab""") {
+			@Override
+			protected void test() {
+				try {
+					next();
+					fail();
+				}
+				catch (InvalidTokenException e) {
+					assertEquals("1:3 " + Messages.invalidCharLiteral(), e.getMessage());
+				}
+			}
+		}.test();
+
+		new LexerTester("""
+				                 ''""") {
+			@Override
+			protected void test() {
+				try {
+					next();
+					fail();
+				}
+				catch (InvalidTokenException e) {
+					assertEquals("1:2 " + Messages.invalidCharLiteral(), e.getMessage());
+				}
+			}
+		}.test();
+
+		new LexerTester("""
+				                 'a""") {
+			@Override
+			protected void test() {
+				try {
+					next();
+					fail();
+				}
+				catch (InvalidTokenException e) {
+					assertEquals("1:1 " + Messages.unterminatedCharacterLiteral(), e.getMessage());
+				}
+			}
+		}.test();
+	}
+
+	@Test
+	public void testStringLiterals() {
+		new LexerTester("""
+				                 "\\"\\x1234"
+				                """) {
+			@Override
+			protected void test() {
+				assertWhitespace();
+				assertLocation(0, 0);
+
+				assertType(TokenType.STRING);
+				assertLocation(0, 1);
+				assertText("\"\u1234");
+
+				assertLineBreak();
+				assertLocation(0, 11);
+
+				assertEof();
+			}
+		}.test();
+
+		new LexerTester("""
+				                 "a
+				               """) {
+			@Override
+			protected void test() {
+				assertWhitespace();
+				try {
+					next();
+					fail();
+				}
+				catch (InvalidTokenException e) {
+					assertEquals("1:3 " + Messages.unterminatedStringLiteral(), e.getMessage());
+				}
 			}
 		}.test();
 	}
@@ -504,7 +616,7 @@ public class LexerTest {
 			assertEquals(expected, lexer.getIntValue());
 		}
 
-		private TokenType next() {
+		protected TokenType next() {
 			while (true) {
 				final TokenType type = lexer.next();
 				if (skipWhitespace && type == TokenType.WHITESPACE) {
