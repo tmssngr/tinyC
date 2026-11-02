@@ -442,11 +442,11 @@ public final class Lexer {
 	}
 
 	private boolean isWhitespace() {
-		return " \t".indexOf(chr) >= 0;
+		return chr == ' ' || chr == '\t';
 	}
 
 	private boolean isLineBreak() {
-		return "\r\n".indexOf(chr) >= 0;
+		return chr == '\r' || chr == '\n';
 	}
 
 	private void append(StringBuilder buffer) {
