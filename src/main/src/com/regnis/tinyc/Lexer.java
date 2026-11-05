@@ -14,9 +14,6 @@ public final class Lexer {
 	private int line;
 	private int column;
 	private int chr;
-	private int intValue;
-	private String text;
-	private Location location;
 
 	public Lexer(@NotNull String text) {
 		this(new CharSource() {
@@ -37,132 +34,130 @@ public final class Lexer {
 		chr = source.next();
 	}
 
-	public TokenType next() {
-		text = "";
-		intValue = 0;
-		location = new Location(line, column);
+	public Token next() {
+		final Location location = new Location(line, column);
 
 		if (chr < 0) {
-			return TokenType.EOF;
+			return new Token(TokenType.EOF, 0, "", location);
 		}
 
 		if (isWhitespace()) {
-			text = detect(this::isWhitespace);
-			return TokenType.WHITESPACE;
+			final String text = detect(this::isWhitespace);
+			return new Token(TokenType.WHITESPACE, 0, text, location);
 		}
 		if (isLineBreak()) {
-			text = detect(this::isLineBreak);
-			return TokenType.LINEBREAK;
+			final String text = detect(this::isLineBreak);
+			return new Token(TokenType.LINEBREAK, 0, text, location);
 		}
 		if (isConsume('/')) {
 			if (chr == '/') {
-				text = detectLineComment();
-				return TokenType.COMMENT;
+				final String text = detectLineComment();
+				return new Token(TokenType.COMMENT, 0, text, location);
 			}
 
 			if (chr == '*') {
-				text = detectBlockComment(location);
-				return TokenType.COMMENT;
+				final String text = detectBlockComment(location);
+				return new Token(TokenType.COMMENT, 0, text, location);
 			}
 
-			return isConsume('=') ? TokenType.SLASH_EQ : TokenType.SLASH;
+			return new Token(isConsume('=') ? TokenType.SLASH_EQ : TokenType.SLASH, 0, "", location);
 		}
 
 		if (isConsume(';')) {
-			return TokenType.SEMI;
+			return new Token(TokenType.SEMI, 0, "", location);
 		}
 		if (isConsume(',')) {
-			return TokenType.COMMA;
+			return new Token(TokenType.COMMA, 0, "", location);
 		}
 		if (isConsume('+')) {
-			return isConsume('=') ? TokenType.PLUS_EQ : TokenType.PLUS;
+			return new Token(isConsume('=') ? TokenType.PLUS_EQ : TokenType.PLUS, 0, "", location);
 		}
 		if (isConsume('-')) {
-			return isConsume('=') ? TokenType.MINUS_EQ : TokenType.MINUS;
+			return new Token(isConsume('=') ? TokenType.MINUS_EQ : TokenType.MINUS, 0, "", location);
 		}
 		if (isConsume('*')) {
-			return isConsume('=') ? TokenType.STAR_EQ : TokenType.STAR;
+			return new Token(isConsume('=') ? TokenType.STAR_EQ : TokenType.STAR, 0, "", location);
 		}
 		if (isConsume('%')) {
-			return isConsume('=') ? TokenType.PERCENT_EQ : TokenType.PERCENT;
+			return new Token(isConsume('=') ? TokenType.PERCENT_EQ : TokenType.PERCENT, 0, "", location);
 		}
 		if (isConsume('!')) {
-			return isConsume('=') ? TokenType.EXCL_EQ : TokenType.EXCL;
+			return new Token(isConsume('=') ? TokenType.EXCL_EQ : TokenType.EXCL, 0, "", location);
 		}
 		if (isConsume('=')) {
-			return isConsume('=') ? TokenType.EQ_EQ : TokenType.EQUAL;
+			return new Token(isConsume('=') ? TokenType.EQ_EQ : TokenType.EQUAL, 0, "", location);
 		}
 		if (isConsume('<')) {
 			if (isConsume('<')) {
-				return isConsume('=') ? TokenType.LT_LT_EQ : TokenType.LT_LT;
+				return new Token(isConsume('=') ? TokenType.LT_LT_EQ : TokenType.LT_LT, 0, "", location);
 			}
 			if (isConsume('=')) {
-				return TokenType.LT_EQ;
+				return new Token(TokenType.LT_EQ, 0, "", location);
 			}
-			return TokenType.LT;
+			return new Token(TokenType.LT, 0, "", location);
 		}
 		if (isConsume('>')) {
 			if (isConsume('>')) {
-				return isConsume('=') ? TokenType.GT_GT_EQ : TokenType.GT_GT;
+				return new Token(isConsume('=') ? TokenType.GT_GT_EQ : TokenType.GT_GT, 0, "", location);
 			}
 			if (isConsume('=')) {
-				return TokenType.GT_EQ;
+				return new Token(TokenType.GT_EQ, 0, "", location);
 			}
-			return TokenType.GT;
+			return new Token(TokenType.GT, 0, "", location);
 		}
 		if (isConsume('(')) {
-			return TokenType.L_PAREN;
+			return new Token(TokenType.L_PAREN, 0, "", location);
 		}
 		if (isConsume(')')) {
-			return TokenType.R_PAREN;
+			return new Token(TokenType.R_PAREN, 0, "", location);
 		}
 		if (isConsume('{')) {
-			return TokenType.L_BRACE;
+			return new Token(TokenType.L_BRACE, 0, "", location);
 		}
 		if (isConsume('}')) {
-			return TokenType.R_BRACE;
+			return new Token(TokenType.R_BRACE, 0, "", location);
 		}
 		if (isConsume('[')) {
-			return TokenType.L_BRACKET;
+			return new Token(TokenType.L_BRACKET, 0, "", location);
 		}
 		if (isConsume(']')) {
-			return TokenType.R_BRACKET;
+			return new Token(TokenType.R_BRACKET, 0, "", location);
 		}
 		if (isConsume('"')) {
-			text = detectStringOrChar('"', location);
-			return TokenType.STRING;
+			final String text = detectStringOrChar('"', location);
+			return new Token(TokenType.STRING, 0, text, location);
 		}
 		if (isConsume('\'')) {
 			final String text = detectStringOrChar('\'', location);
-			intValue = text.charAt(0);
-			return TokenType.INT_LITERAL;
+			final char value = text.charAt(0);
+			return new Token(TokenType.INT_LITERAL, value, "", location);
 		}
 		if (isConsume('&')) {
 			if (isConsume('=')) {
-				return TokenType.AMP_EQ;
+				return new Token(TokenType.AMP_EQ, 0, "", location);
 			}
 			if (isConsume('&')) {
-				return TokenType.AMP_AMP;
+				return new Token(TokenType.AMP_AMP, 0, "", location);
 			}
-			return TokenType.AMP;
+			return new Token(TokenType.AMP, 0, "", location);
 		}
 		if (isConsume('|')) {
 			if (isConsume('=')) {
-				return TokenType.PIPE_EQ;
+				return new Token(TokenType.PIPE_EQ, 0, "", location);
 			}
 			if (isConsume('|')) {
-				return TokenType.PIPE_PIPE;
+				return new Token(TokenType.PIPE_PIPE, 0, "", location);
 			}
-			return TokenType.PIPE;
+			return new Token(TokenType.PIPE, 0, "", location);
 		}
 		if (isConsume('^')) {
-			return isConsume('=') ? TokenType.CARET_EQ : TokenType.CARET;
+			return new Token(isConsume('=') ? TokenType.CARET_EQ : TokenType.CARET, 0, "", location);
 		}
 		if (isConsume('~')) {
-			return TokenType.TILDE;
+			return new Token(TokenType.TILDE, 0, "", location);
 		}
 		if (isConsume('.')) {
-			return TokenType.DOT;
+			return new Token(TokenType.DOT, 0, "", location);
 		}
 
 		final StringBuilder buffer = new StringBuilder();
@@ -177,12 +172,12 @@ public final class Lexer {
 		);
 		final String text = buffer.toString();
 
-		if (detectInt(text)) {
-			return TokenType.INT_LITERAL;
+		final Token intLiteral = detectInt(text, location);
+		if (intLiteral != null) {
+			return intLiteral;
 		}
 
-		this.text = text;
-		return switch (text) {
+		return new Token(switch (text) {
 			case "true" -> TokenType.TRUE;
 			case "false" -> TokenType.FALSE;
 			case "return" -> TokenType.RETURN;
@@ -202,57 +197,48 @@ public final class Lexer {
 			case "const" -> TokenType.CONST;
 			case "as" -> TokenType.AS;
 			default -> TokenType.IDENTIFIER;
-		};
+		}, 0, text, location);
 	}
 
-	@NotNull
-	public String getText() {
-		return text;
-	}
-
-	public int getIntValue() {
-		return intValue;
-	}
-
-	@NotNull
-	public Location getLocation() {
-		return location;
-	}
-
-	private boolean detectInt(String text) {
+	@Nullable
+	private Token detectInt(String text, Location location) {
 		if (text.startsWith("0b")) {
 			text = text.substring(2);
-			if (detectInt(text, 2,
-			              c -> c >= '0' && c <= '1')) {
-				return true;
+			final Token result = detectInt(text, 2,
+			                               c -> c >= '0' && c <= '1', location);
+			if (result != null) {
+				return result;
 			}
 			throw new InvalidTokenException("Invalid number", location);
 		}
 
 		if (text.startsWith("0x")) {
 			text = text.substring(2);
-			if (detectInt(text, 16,
-			              c -> {
-				              if (c >= '0' && c <= '9') {
-					              return true;
-				              }
-				              if (c >= 'A' && c <= 'F') {
-					              return true;
-				              }
-				              return c >= 'a' && c <= 'f';
-			              })) {
-				return true;
+			final Token result = detectInt(text, 16,
+			                               c -> {
+				                               if (c >= '0' && c <= '9') {
+					                               return true;
+				                               }
+				                               if (c >= 'A' && c <= 'F') {
+					                               return true;
+				                               }
+				                               return c >= 'a' && c <= 'f';
+			                               }, location);
+			if (result != null) {
+				return result;
 			}
 			throw new InvalidTokenException("Invalid number", location);
 		}
 
 		return detectInt(text, 10,
-		                 c -> c >= '0' && c <= '9');
+		                 c -> c >= '0' && c <= '9', location);
 	}
 
-	private boolean detectInt(String text, int radix, ValidCharPredicate charChecker) {
+	@Nullable
+	private Token detectInt(String text, int radix, ValidCharPredicate charChecker, Location location) {
 		final StringBuilder buffer = new StringBuilder();
 		boolean lastWasUnderscore = false;
+		String suffix = "";
 		for (int i = 0; i < text.length(); i++) {
 			final char c = text.charAt(i);
 			if (charChecker.isValid(c)) {
@@ -262,28 +248,28 @@ public final class Lexer {
 			}
 			if (c == '_') {
 				if (buffer.isEmpty()) {
-					return false;
+					return null;
 				}
 
 				lastWasUnderscore = true;
 				continue;
 			}
 			if (lastWasUnderscore || buffer.isEmpty()) {
-				return false;
+				return null;
 			}
-			this.text = text.substring(i);
+			suffix = text.substring(i);
 			break;
 		}
 		if (lastWasUnderscore) {
-			return false;
+			return null;
 		}
 
 		try {
-			intValue = Integer.parseInt(buffer.toString(), radix);
-			return true;
+			final int value = Integer.parseInt(buffer.toString(), radix);
+			return new Token(TokenType.INT_LITERAL, value, suffix, location);
 		}
 		catch (NumberFormatException e) {
-			return false;
+			return null;
 		}
 	}
 
