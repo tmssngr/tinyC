@@ -111,6 +111,7 @@ public final class X86_64_WindowsAsmWriter extends X86_64_AsmWriter {
 				                  ExitProcess,'ExitProcess',\\
 				                  GetStdHandle,'GetStdHandle',\\
 				                  SetConsoleCursorPosition,'SetConsoleCursorPosition',\\
+				                  Sleep,'Sleep',\\
 				                  WriteFile,'WriteFile'
 
 				           import msvcrt,\\

@@ -3,8 +3,10 @@
 
 #ifdef Z8
 const CLEAR_SCREEN = true
+const ANIMATION_STEPS = 4
 #else
 const CLEAR_SCREEN = false
+const ANIMATION_STEPS = 8
 #endif
 
 const BOARD_SIZE = 4
@@ -18,6 +20,7 @@ const TILE_COLUMN_STEP = TILE_WIDTH + 1
 const TILE_ROW_STEP = TILE_HEIGHT + 1
 const BOARD_WIDTH = BOARD_SIZE * TILE_COLUMN_STEP - 1
 const BOARD_HEIGHT = BOARD_SIZE * TILE_ROW_STEP - 1
+const BOARD_CHARACTERS = BOARD_WIDTH * BOARD_HEIGHT
 
 const MOVE_LEFT = 0
 const MOVE_RIGHT = 1
@@ -34,6 +37,8 @@ const STATE_LOST = 2
 u8 tiles[BOARD_CELLS]
 u8 moveTiles[BOARD_CELLS]
 u8 moveTargets[BOARD_CELLS]
+u8 boardFrame[BOARD_CHARACTERS]
+u8 displayedFrame[BOARD_CHARACTERS]
 i32 score
 u8 gameState
 
@@ -46,6 +51,7 @@ i16 tileValue(u8 exponent) {
 }
 
 void spawnTile() {
+	// count free cells so we can choose a position among them
 	u8 emptyCount = 0
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		if tiles[index] == 0 {
@@ -56,6 +62,9 @@ void spawnTile() {
 		return
 	}
 
+	// random16() is nonnegative, so chosen is between 0 and emptyCount - 1.
+	// This is an ordinal among empty cells, not a board index:
+	// chosen == 2 selects the third empty cell encountered below.
 	u8 chosen = (random16() % emptyCount as i16) as u8
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		if tiles[index] != 0 {
@@ -73,7 +82,10 @@ void spawnTile() {
 	}
 }
 
+// Close gaps and merge equal tiles toward first; step scans away from that edge.
+// Return true if any tile moves or merges.
 bool slideLine(u8 first, u8 step) {
+	// source reads old cells; target is the next slot in the packed result.
 	u8 source = first
 	u8 target = first
 	bool previousMerged = false
@@ -82,13 +94,17 @@ bool slideLine(u8 first, u8 step) {
 		u8* sourceTile = &tiles[source]
 		u8 tile = *sourceTile
 		if tile != 0 {
+			// Keep the value in tile while removing its old copy from the board.
 			*sourceTile = 0
 			bool merged = false
+			// Try the last placed tile, but never merge a result twice in one move.
+			// For example, tiles showing 2, 2, 4 become 4, 4, not 8.
 			if target != first && !previousMerged {
 				u8 previous = target - step
 				u8* previousTile = &tiles[previous]
 				if *previousTile == tile {
 					moveTargets[source] = previous
+					// Increasing the exponent by 1 doubles the displayed value.
 					u8 nextTile = tile + 1
 					*previousTile = nextTile
 					i32 mergedScore = tileValue(nextTile) as i32
@@ -101,6 +117,7 @@ bool slideLine(u8 first, u8 step) {
 					moved = true
 				}
 			}
+			// A separate tile needs a new slot; a merge reuses the previous slot.
 			if !merged {
 				moveTargets[source] = target
 				tiles[target] = tile
@@ -116,20 +133,26 @@ bool slideLine(u8 first, u8 step) {
 	return moved
 }
 
+// Reuse slideLine() for all four rows or columns in the requested direction.
 bool slide(u8 direction) {
+	// Save starting values for animation; destinations initially mean "stay put".
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		moveTiles[index] = tiles[index]
 		moveTargets[index] = index
 	}
 	bool moved = false
 	for u8 line = 0; line < BOARD_SIZE; line += 1 {
+		// Indices are row * 4 + column. Default: start at the left, scan right.
+		// The far edges are column 3 for right, or row 3 (offset 12) for down.
 		u8 first = line << 2
 		u8 step = 1
+		// Adding 255 or 252 wraps a u8 index, acting like subtracting 1 or 4.
 		if direction == MOVE_RIGHT {
 			first += 3
 			step = STEP_RIGHT
 		}
 		else if direction == MOVE_UP {
+			// Adding 4 moves to the next row in the same column.
 			first = line
 			step = 4
 		}
@@ -137,6 +160,7 @@ bool slide(u8 direction) {
 			first = line + 12
 			step = STEP_DOWN
 		}
+		// Keep any earlier success: later rows or columns may not change.
 		if slideLine(first, step) {
 			moved = true
 		}
@@ -144,15 +168,19 @@ bool slide(u8 direction) {
 	return moved
 }
 
+// A free cell or a pair of equal neighbors means the game can continue.
 bool canMove() {
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		u8 tile = tiles[index]
 		if tile == 0 {
 			return true
 		}
+		// Check right and down only; checking left and up would repeat pairs.
+		// index & 3 is the column, so skip right at the end of a row.
 		if (index & 3) != 3 && tiles[index + 1] == tile {
 			return true
 		}
+		// The bottom row (indices 12..15) has no cell below it.
 		if index < 12 && tiles[index + 4] == tile {
 			return true
 		}
@@ -160,45 +188,52 @@ bool canMove() {
 	return false
 }
 
-void printTile(u8 exponent) {
+u8* tileText(u8 exponent) {
 	if exponent == 0 {
-		printString("      ")
+		return "      "
 	}
 	else if exponent == 1 {
-		printString("  2   ")
+		return "   2  "
 	}
 	else if exponent == 2 {
-		printString("  4   ")
+		return "   4  "
 	}
 	else if exponent == 3 {
-		printString("  8   ")
+		return "   8  "
 	}
 	else if exponent == 4 {
-		printString("  16  ")
+		return "  16  "
 	}
 	else if exponent == 5 {
-		printString("  32  ")
+		return "  32  "
 	}
 	else if exponent == 6 {
-		printString("  64  ")
+		return "  64  "
 	}
 	else if exponent == 7 {
-		printString(" 128  ")
+		return "  128 "
 	}
 	else if exponent == 8 {
-		printString(" 256  ")
+		return "  256 "
 	}
 	else if exponent == 9 {
-		printString(" 512  ")
+		return "  512 "
 	}
 	else if exponent == 10 {
-		printString(" 1024 ")
+		return " 1024 "
 	}
 	else if exponent == WIN_TILE {
-		printString(" 2048 ")
+		return " 2048 "
 	}
-	else {
-		printString("  ?   ")
+	return "  ?   "
+}
+
+// Copy one tile row (TILE_WIDTH characters) into boardFrame at offset.
+// offset counts characters from the buffer's start; nothing is drawn yet.
+void drawTileRow(i16 offset, u8* text) {
+	for u8 index = 0; index < TILE_WIDTH; index += 1 {
+		boardFrame[offset] = text[index]
+		offset += 1
 	}
 }
 
@@ -206,14 +241,16 @@ void drawTileAt(i16 row, i16 column, u8 exponent) {
 	if exponent == 0 {
 		return
 	}
-	setCursor(row, column)
-	printString("+------+")
-	setCursor(row + 1, column)
-	printChar('|')
-	printTile(exponent)
-	printChar('|')
-	setCursor(row + 2, column)
-	printString("+------+")
+	i16 offset = (row - BOARD_TOP) * BOARD_WIDTH + column - BOARD_LEFT
+	drawTileRow(offset, "+------+")
+	offset += BOARD_WIDTH
+	boardFrame[offset] = '|'
+	boardFrame[offset + TILE_WIDTH - 1] = '|'
+	u8* text = tileText(exponent)
+	for u8 index = 0; index < TILE_WIDTH - 2; index += 1 {
+		boardFrame[offset + index as i16 + 1] = text[index]
+	}
+	drawTileRow(offset + BOARD_WIDTH, "+------+")
 }
 
 void drawFrame() {
@@ -225,10 +262,38 @@ void drawFrame() {
 }
 
 void clearBoard() {
-	for i16 row = 0; row < BOARD_HEIGHT; row += 1 {
-		setCursor(row + BOARD_TOP, BOARD_LEFT as i16)
-		printString("                                   ")
+	for i16 offset = 0; offset < BOARD_CHARACTERS; offset += 1 {
+		boardFrame[offset] = ' '
 	}
+}
+
+// boardFrame is the new image; displayedFrame remembers what is on screen.
+// Print only differences to avoid unnecessary character writes and flicker.
+void presentBoard() {
+	// Rows follow each other in the flat character buffer.
+	i16 offset = 0
+	for i16 row = 0; row < BOARD_HEIGHT; row += 1 {
+		bool printing = false
+		for i16 column = 0; column < BOARD_WIDTH; column += 1 {
+			u8 character = boardFrame[offset]
+			if character != displayedFrame[offset] {
+				// Position once for adjacent changes; printing advances the cursor.
+				if !printing {
+					setCursor(row + BOARD_TOP, column + BOARD_LEFT)
+					printing = true
+				}
+				printChar(character)
+				displayedFrame[offset] = character
+			}
+			else {
+				// A skipped cell means the next change needs a new cursor position.
+				printing = false
+			}
+			offset += 1
+		}
+	}
+	// Move the blinking cursor off the tiles between animation frames.
+	setCursor(21i16, 0i16)
 }
 
 void drawBoard() {
@@ -243,6 +308,67 @@ void drawBoard() {
 			column += TILE_COLUMN_STEP
 		}
 		row += TILE_ROW_STEP
+	}
+	presentBoard()
+}
+
+void waitFrame() asm {
+#ifdef Z8
+	"ld   r0, #0"
+	".loop:"
+	"djnz r0, .loop"
+	"ret"
+#else
+  #ifdef __WINDOWS
+	"sub  rsp, 28h"
+	"mov  ecx, 20"
+	"call [Sleep]"
+	"add  rsp, 28h"
+	"ret"
+  #else
+	"sub  rsp, 10h"
+	"mov  qword [rsp], 0"
+	"mov  qword [rsp+8], 20000000"
+	"mov  rdi, rsp"
+	"xor  esi, esi"
+	"mov  eax, 35"
+	"syscall"
+	"add  rsp, 10h"
+	"ret"
+  #endif
+#endif
+}
+
+// Animate the saved starting tiles; tiles already holds the final move result.
+// main() draws the merged values and newly spawned tile after this finishes.
+void animateSlide() {
+	for i16 frame = 1; frame <= ANIMATION_STEPS; frame += 1 {
+		// frame counts steps done; remaining counts steps still to go.
+		i16 remaining = ANIMATION_STEPS
+		remaining -= frame
+		// Clear the next image in memory, not the screen, to remove old tile trails.
+		clearBoard()
+		for u8 source = 0; source < BOARD_CELLS; source += 1 {
+			u8 exponent = moveTiles[source]
+			if exponent == 0 {
+				continue
+			}
+			u8 target = moveTargets[source]
+			// For a 4-wide board, index >> 2 is the row and index & 3 the column.
+			// Multiply by tile spacing to get character positions within the board.
+			i16 sourceRow = (source >> 2) as i16 * TILE_ROW_STEP
+			i16 sourceColumn = (source & 3) as i16 * TILE_COLUMN_STEP
+			i16 targetRow = (target >> 2) as i16 * TILE_ROW_STEP
+			i16 targetColumn = (target & 3) as i16 * TILE_COLUMN_STEP
+			// Blend start and target positions using the move's progress.
+			// When remaining reaches 0, this gives the exact target position.
+			i16 row = (sourceRow * remaining + targetRow * frame) / ANIMATION_STEPS
+			i16 column = (sourceColumn * remaining + targetColumn * frame) / ANIMATION_STEPS
+			drawTileAt(row + BOARD_TOP, column + BOARD_LEFT, exponent)
+		}
+		// Display the completed image, then pause before preparing the next one.
+		presentBoard()
+		waitFrame()
 	}
 }
 
@@ -316,6 +442,7 @@ void main() {
 			continue
 		}
 
+		animateSlide()
 		spawnTile()
 		if gameState == STATE_PLAYING && !canMove() {
 			gameState = STATE_LOST

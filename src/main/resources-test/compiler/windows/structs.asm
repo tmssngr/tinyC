@@ -273,6 +273,7 @@ import kernel32,\
        ExitProcess,'ExitProcess',\
        GetStdHandle,'GetStdHandle',\
        SetConsoleCursorPosition,'SetConsoleCursorPosition',\
+       Sleep,'Sleep',\
        WriteFile,'WriteFile'
 
 import msvcrt,\
