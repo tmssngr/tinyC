@@ -50,7 +50,7 @@ public final class Parser {
 	private final Project project;
 	private final IfDefHandling ifDefHandling;
 
-	private TokenType token;
+	private Token token;
 
 	private Parser(@NotNull Lexer lexer, @NotNull IncludeHandler includeHandler, @NotNull Project project) {
 		this.lexer = lexer;
@@ -66,19 +66,15 @@ public final class Parser {
 	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
 		buffer.append(token.toString());
-		if (token == TokenType.IDENTIFIER) {
-			buffer.append(": ");
-			buffer.append(getText());
-		}
 		return buffer.toString();
 	}
 
 	public void parse() {
-		while (token != TokenType.EOF) {
-			Location location = getLocation();
+		while (token.type() != TokenType.EOF) {
+			Location location = token.location();
 			if (isConsume(TokenType.HASH_IFDEF, false)) {
 				expectType(TokenType.IDENTIFIER, null);
-				final String name = getText();
+				final String name = token.text();
 				consume(false);
 				consume(TokenType.LINEBREAK);
 				ifDefHandling.processIfDef(name, location);
@@ -102,22 +98,22 @@ public final class Parser {
 				continue;
 			}
 
-			if (token == TokenType.IDENTIFIER) {
-				final String type = getText();
+			if (token.type() == TokenType.IDENTIFIER) {
+				final String type = token.text();
 				consume(false);
 				final String typeString = getTypeString(type);
 				expectType(TokenType.IDENTIFIER, null);
-				final String name = getText();
+				final String name = token.text();
 				consume(false);
 				if (isConsume(TokenType.L_PAREN)) {
 					final List<Function.Parameter> args = new ArrayList<>();
 					while (!isConsume(TokenType.R_PAREN)) {
-						final Location argLocation = getLocation();
+						final Location argLocation = token.location();
 						final String identifier = consumeIdentifier();
 						final String argType = getTypeString(identifier);
 						final String argName = consumeIdentifier();
 						args.add(new Function.Parameter(argType, argName, argLocation));
-						if (token != TokenType.R_PAREN) {
+						if (token.type() != TokenType.R_PAREN) {
 							consume(TokenType.COMMA);
 						}
 					}
@@ -135,19 +131,19 @@ public final class Parser {
 
 				if (isConsume(TokenType.EQUAL)) {
 					final Expression expression = getExpression();
-					if (token != TokenType.EOF) {
+					if (token.type() != TokenType.EOF) {
 						consumeSemiOrLineBreak();
 					}
 					project.addGlobalVar(new StmtVarDeclaration(typeString, name, expression, location));
 					continue;
 				}
-				if (isConsume(TokenType.SEMI) || isConsume(TokenType.LINEBREAK) || token == TokenType.EOF) {
+				if (isConsume(TokenType.SEMI) || isConsume(TokenType.LINEBREAK) || token.type() == TokenType.EOF) {
 					project.addGlobalVar(new StmtVarDeclaration(typeString, name, null, location));
 					continue;
 				}
 				if (isConsume(TokenType.L_BRACKET)) {
 					final StmtArrayDeclaration array = getArrayDeclaration(typeString, name, location);
-					if (token != TokenType.EOF) {
+					if (token.type() != TokenType.EOF) {
 						consumeSemiOrLineBreak();
 					}
 					project.addGlobalVar(array);
@@ -160,7 +156,7 @@ public final class Parser {
 				consume(TokenType.L_PAREN);
 				final List<TypeDef.Part> parts = new ArrayList<>();
 				do {
-					final Location partLocation = getLocation();
+					final Location partLocation = token.location();
 					String partType = consumeIdentifier();
 					partType = getTypeString(partType);
 					final String partName = consumeIdentifier();
@@ -169,7 +165,7 @@ public final class Parser {
 				while (isConsume(TokenType.COMMA));
 				expectType(TokenType.R_PAREN, null);
 				consume(false);
-				if (token != TokenType.EOF) {
+				if (token.type() != TokenType.EOF) {
 					consumeSemiOrLineBreak();
 				}
 				project.addTypeDef(new TypeDef(typeName, null, parts, location));
@@ -182,7 +178,7 @@ public final class Parser {
 				continue;
 			}
 			else if (isConsume(TokenType.CONST)) {
-				location = getLocation();
+				location = token.location();
 				final String name = consumeIdentifier();
 				final Expression prevExpr = project.getConstant(name);
 				if (prevExpr != null) {
@@ -355,7 +351,7 @@ public final class Parser {
 
 	@Nullable
 	private Statement getStatement() {
-		return switch (token) {
+		return switch (token.type()) {
 			case IF -> handleIf();
 			case FOR -> handleFor();
 			case WHILE -> handleWhile();
@@ -363,12 +359,12 @@ public final class Parser {
 			case BREAK -> handleBreak();
 			case CONTINUE -> handleContinue();
 			case L_BRACE -> {
-				final Location location = getLocation();
+				final Location location = token.location();
 				final List<Statement> statements = getStatements();
 				yield new StmtCompound(statements, location);
 			}
 			default -> {
-				final Location location = getLocation();
+				final Location location = token.location();
 				final Statement statement = getVarDeclarationOrExpressionStatement(location);
 				//noinspection IfCanBeSwitch
 				if (statement == null) {
@@ -398,14 +394,14 @@ public final class Parser {
 	private List<Expression> getCallArgExpressions() {
 		final List<Expression> argExpressions = new ArrayList<>();
 		while (true) {
-			if (token == TokenType.R_PAREN) {
+			if (token.type() == TokenType.R_PAREN) {
 				consume(false);
 				return argExpressions;
 			}
 
 			final Expression expression = getExpression();
 			argExpressions.add(expression);
-			if (token != TokenType.R_PAREN) {
+			if (token.type() != TokenType.R_PAREN) {
 				expectType(TokenType.COMMA, Messages.expected(", or )"));
 				consume();
 			}
@@ -414,7 +410,7 @@ public final class Parser {
 
 	@Nullable
 	private Statement getSimpleStatement() {
-		final Location location = getLocation();
+		final Location location = token.location();
 		final Statement statement = getVarDeclarationOrExpressionStatement(location);
 		if (statement == null || statement instanceof StmtVarDeclaration) {
 			return statement;
@@ -430,12 +426,12 @@ public final class Parser {
 	@Nullable
 	private Statement getVarDeclarationOrExpressionStatement(Location location) {
 		final Expression left;
-		if (token == TokenType.IDENTIFIER) {
-			final String identifier1 = getText();
+		if (token.type() == TokenType.IDENTIFIER) {
+			final String identifier1 = token.text();
 			consume(false);
 			final String typeString = getTypeString(identifier1);
-			if (token == TokenType.IDENTIFIER) {
-				final String identifier2 = getText();
+			if (token.type() == TokenType.IDENTIFIER) {
+				final String identifier2 = token.text();
 				consume(false);
 				if (isConsume(TokenType.L_BRACKET)) {
 					return getArrayDeclaration(typeString, identifier2, location);
@@ -472,8 +468,8 @@ public final class Parser {
 		default -> throw new SyntaxException(Messages.expectedLValue(), location);
 		}
 
-		final Location equalLocation = getLocation();
-		switch (token) {
+		final Location equalLocation = token.location();
+		switch (token.type()) {
 		case EQUAL -> {
 			consume();
 			final Expression right = getExpression();
@@ -509,7 +505,7 @@ public final class Parser {
 		case GT_GT_EQ -> {
 			return handleBinaryAssignment(ExprBinary.Op.ShiftRight, left, equalLocation);
 		}
-		case null, default -> throw new SyntaxException(Messages.expected("=, +=, -=, ..."), getLocation());
+		case null, default -> throw new SyntaxException(Messages.expected("=, +=, -=, ..."), token.location());
 		}
 	}
 
@@ -548,7 +544,7 @@ public final class Parser {
 
 	@NotNull
 	private StmtIf handleIf() {
-		final Location location = getLocation();
+		final Location location = token.location();
 		consume(TokenType.IF);
 
 		final Expression condition = getExpression();
@@ -556,7 +552,7 @@ public final class Parser {
 		final List<Statement> thenStatements = getStatements();
 		List<Statement> elseStatements = List.of();
 		if (isConsume(TokenType.ELSE)) {
-			if (token == TokenType.IF) {
+			if (token.type() == TokenType.IF) {
 				elseStatements = List.of(handleIf());
 			}
 			else {
@@ -568,7 +564,7 @@ public final class Parser {
 
 	@NotNull
 	private Statement handleFor() {
-		final Location location = getLocation();
+		final Location location = token.location();
 		consume(TokenType.FOR);
 
 		final boolean isParen = isConsume(TokenType.L_PAREN);
@@ -603,7 +599,7 @@ public final class Parser {
 			final Statement statement = getSimpleStatement();
 			if (statement != null) {
 				statements.add(statement);
-				if (token == TokenType.COMMA) {
+				if (token.type() == TokenType.COMMA) {
 					consume();
 					continue;
 				}
@@ -615,7 +611,7 @@ public final class Parser {
 
 	@NotNull
 	private Statement handleWhile() {
-		final Location location = getLocation();
+		final Location location = token.location();
 		consume(TokenType.WHILE);
 
 		final Expression condition = getExpression();
@@ -626,7 +622,7 @@ public final class Parser {
 
 	@NotNull
 	private StmtBreakContinue handleBreak() {
-		final Location location = getLocation();
+		final Location location = token.location();
 		expectType(TokenType.BREAK, null);
 		consume(false);
 		consumeSemiOrLineBreak();
@@ -635,7 +631,7 @@ public final class Parser {
 
 	@NotNull
 	private StmtBreakContinue handleContinue() {
-		final Location location = getLocation();
+		final Location location = token.location();
 		expectType(TokenType.CONTINUE, null);
 		consume(false);
 		consumeSemiOrLineBreak();
@@ -644,12 +640,12 @@ public final class Parser {
 
 	@NotNull
 	private StmtReturn handleReturn() {
-		final Location location = getLocation();
+		final Location location = token.location();
 		expectType(TokenType.RETURN, null);
 		consume(false);
 
 		Expression expression = null;
-		if (token == TokenType.SEMI || token == TokenType.LINEBREAK) {
+		if (token.type() == TokenType.SEMI || token.type() == TokenType.LINEBREAK) {
 			consume();
 		}
 		else {
@@ -666,7 +662,7 @@ public final class Parser {
 
 	@NotNull
 	private Expression getExpression(int minPrecedence) {
-		final Location location = getLocation();
+		final Location location = token.location();
 		final Expression primary = getExpressionPrimaryNotNull(location);
 		return getExpression(primary, minPrecedence);
 	}
@@ -674,21 +670,21 @@ public final class Parser {
 	@NotNull
 	private Expression getExpression(@NotNull Expression left, int minPrecedence) {
 		while (true) {
-			final int precedence = getPrecedence(token);
+			final int precedence = getPrecedence(token.type());
 			if (precedence <= minPrecedence) {
 				return left;
 			}
 
-			final Location location = getLocation();
-			final TokenType operationToken = token;
+			final Location location = token.location();
+			final TokenType type = token.type();
 			consume();
-			if (operationToken == TokenType.AS) {
+			if (type == TokenType.AS) {
 				left = getCast(left);
 				continue;
 			}
 
 			final Expression right = getExpression(precedence);
-			left = switch (operationToken) {
+			left = switch (type) {
 				case PLUS -> new ExprBinary(ExprBinary.Op.Add, left, right, location);
 				case MINUS -> new ExprBinary(ExprBinary.Op.Sub, left, right, location);
 				case STAR -> new ExprBinary(ExprBinary.Op.Multiply, left, right, location);
@@ -710,20 +706,20 @@ public final class Parser {
 				case PIPE -> new ExprBinary(ExprBinary.Op.Or, left, right, location);
 				case PIPE_PIPE -> new ExprBinary(ExprBinary.Op.OrLog, left, right, location);
 				case CARET -> new ExprBinary(ExprBinary.Op.Xor, left, right, location);
-				default -> throw new IllegalStateException("Unsupported operation " + operationToken);
+				default -> throw new IllegalStateException("Unsupported operation " + type);
 			};
 		}
 	}
 
 	@NotNull
 	private Expression getCast(@NotNull Expression left) {
-		final boolean expectBrace = token == TokenType.L_PAREN;
+		final boolean expectBrace = token.type() == TokenType.L_PAREN;
 		if (expectBrace) {
 			consume(false);
 		}
-		final Location location = getLocation();
+		final Location location = token.location();
 		expectType(TokenType.IDENTIFIER, Messages.expected("( or type"));
-		String typeString = getText();
+		String typeString = token.text();
 		consume(false);
 		if (expectBrace) {
 			typeString = getTypeString(typeString);
@@ -745,10 +741,10 @@ public final class Parser {
 
 	@Nullable
 	private Expression getExpressionPrimary(Location location) {
-		return switch (token) {
+		return switch (token.type()) {
 			case INT_LITERAL -> {
-				final int value = getIntValue();
-				final String text = getText();
+				final int value = token.intValue();
+				final String text = token.text();
 				consume(false);
 				if (text.isEmpty()) {
 					yield ExprIntLiteral.autoType(value, location);
@@ -764,12 +760,12 @@ public final class Parser {
 				yield new ExprIntLiteral(value, type, location);
 			}
 			case TRUE, FALSE -> {
-				final boolean value = token == TokenType.TRUE;
+				final boolean value = token.type() == TokenType.TRUE;
 				consume(false);
 				yield new ExprBoolLiteral(value, location);
 			}
 			case STRING -> {
-				final String text = getText();
+				final String text = token.text();
 				consume(false);
 				yield new ExprStringLiteral(text, -1, location);
 			}
@@ -781,7 +777,7 @@ public final class Parser {
 				yield expression;
 			}
 			case IDENTIFIER -> {
-				final String identifier = getText();
+				final String identifier = token.text();
 				consume(false);
 				yield getExpressionPrimaryDot(identifier, location);
 			}
@@ -797,7 +793,7 @@ public final class Parser {
 	@NotNull
 	private ExprUnary getUnary(ExprUnary.Op op, Location location) {
 		consume();
-		final Location exprLocation = getLocation();
+		final Location exprLocation = token.location();
 		final Expression expression = getExpressionPrimaryNotNull(exprLocation);
 		return new ExprUnary(op, expression, location);
 	}
@@ -806,9 +802,9 @@ public final class Parser {
 	private Expression getExpressionPrimaryDot(String identifier, Location location) {
 		Expression expression = getExpressionPrimary(identifier, location);
 		if (isConsume(TokenType.DOT)) {
-			final Location memberLocation = getLocation();
+			final Location memberLocation = token.location();
 			expectType(TokenType.IDENTIFIER, null);
-			final String member = getText();
+			final String member = token.text();
 			consume(false);
 			expression = new ExprMemberAccess(expression, member, null, memberLocation);
 		}
@@ -856,32 +852,18 @@ public final class Parser {
 
 	@NotNull
 	private String consumeText() {
-		final String text = getText();
+		final String text = token.text();
 		consume();
 		return text;
 	}
 
 	private void expectType(@NotNull TokenType type, @Nullable String message) {
-		if (token != type) {
+		if (token.type() != type) {
 			if (message == null) {
-				message = "Expected " + type + " but got " + token;
+				message = "Expected " + type + " but got " + token.type();
 			}
-			throw new SyntaxException(message, getLocation());
+			throw new SyntaxException(message, token.location());
 		}
-	}
-
-	private int getIntValue() {
-		return lexer.getIntValue();
-	}
-
-	@NotNull
-	private String getText() {
-		return lexer.getText();
-	}
-
-	@NotNull
-	private Location getLocation() {
-		return lexer.getLocation();
 	}
 
 	private boolean isConsume(@NotNull TokenType type) {
@@ -889,7 +871,7 @@ public final class Parser {
 	}
 
 	private boolean isConsume(@NotNull TokenType type, boolean skipLineBreaks) {
-		if (token != type) {
+		if (token.type() != type) {
 			return false;
 		}
 
@@ -898,8 +880,8 @@ public final class Parser {
 	}
 
 	private void consumeSemiOrLineBreak() {
-		if (token != TokenType.SEMI && token != TokenType.LINEBREAK) {
-			throw new SyntaxException("Expected line-break or semicolon but got " + token, getLocation());
+		if (token.type() != TokenType.SEMI && token.type() != TokenType.LINEBREAK) {
+			throw new SyntaxException("Expected line-break or semicolon but got " + token, token.location());
 		}
 		consume();
 	}
@@ -915,12 +897,13 @@ public final class Parser {
 
 	private void consume(boolean skipLineBreaks) {
 		while (true) {
-			token = lexer.next();
-			if (token == TokenType.WHITESPACE
-			    || token == TokenType.COMMENT) {
+			this.token = lexer.next();
+			final TokenType type = token.type();
+			if (type == TokenType.WHITESPACE
+			    || type == TokenType.COMMENT) {
 				continue;
 			}
-			if (token == TokenType.LINEBREAK && skipLineBreaks) {
+			if (type == TokenType.LINEBREAK && skipLineBreaks) {
 				continue;
 			}
 			return;
@@ -928,8 +911,8 @@ public final class Parser {
 	}
 
 	// see https://en.cppreference.com/w/c/language/operator_precedence
-	private static int getPrecedence(TokenType token) {
-		return switch (token) {
+	private static int getPrecedence(TokenType type) {
+		return switch (type) {
 			case PIPE_PIPE -> 1;
 			case AMP_AMP -> 2;
 			case PIPE -> 3;

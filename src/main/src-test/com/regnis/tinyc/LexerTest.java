@@ -412,7 +412,7 @@ public class LexerTest {
 
 		public void nextInvalidTokenException(String expectedMessage) {
 			try {
-				nextTokenType();
+				fetchToken();
 				fail();
 			}
 			catch (InvalidTokenException ex) {
@@ -422,16 +422,16 @@ public class LexerTest {
 
 		private void nextToken(TokenType expectedType, int expectedIntValue, String expectedText,
 		                       int expectedLine, int expectedColumn) {
-			final TokenType tokenType = nextTokenType();
-			assertEquals(expectedType, tokenType);
-			assertEquals(expectedIntValue, lexer.getIntValue());
-			assertEquals(expectedText, lexer.getText());
-			final Location location = lexer.getLocation();
+			final Token token = fetchToken();
+			assertEquals(expectedType, token.type());
+			assertEquals(expectedIntValue, token.intValue());
+			assertEquals(expectedText, token.text());
+			final Location location = token.location();
 			assertEquals(expectedLine, location.line());
 			assertEquals(expectedColumn, location.column());
 		}
 
-		private TokenType nextTokenType() {
+		private Token fetchToken() {
 			return lexer.next();
 		}
 	}
