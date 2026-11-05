@@ -48,16 +48,13 @@ public final class Parser {
 	private final Lexer lexer;
 	private final IncludeHandler includeHandler;
 	private final Project project;
-	private final IfDefHandling ifDefHandling;
 
 	private Token token;
 
 	private Parser(@NotNull Lexer lexer, @NotNull IncludeHandler includeHandler, @NotNull Project project) {
-		this.lexer = lexer;
+		this.lexer = new IfDefPreprocessorLexer(lexer, new IfDefHandling(project.defines));
 		this.includeHandler = includeHandler;
 		this.project = project;
-
-		ifDefHandling = new IfDefHandling(project.defines);
 
 		consume();
 	}
@@ -72,31 +69,6 @@ public final class Parser {
 	public void parse() {
 		while (token.type() != TokenType.EOF) {
 			Location location = token.location();
-			if (isConsume(TokenType.HASH_IFDEF, false)) {
-				expectType(TokenType.IDENTIFIER, null);
-				final String name = token.text();
-				consume(false);
-				consume(TokenType.LINEBREAK);
-				ifDefHandling.processIfDef(name, location);
-				continue;
-			}
-
-			if (isConsume(TokenType.HASH_ELSE, false)) {
-				consume(TokenType.LINEBREAK);
-				ifDefHandling.processElse(location);
-				continue;
-			}
-
-			if (isConsume(TokenType.HASH_ENDIF, false)) {
-				consume(TokenType.LINEBREAK);
-				ifDefHandling.processEndIf(location);
-				continue;
-			}
-
-			if (ifDefHandling.isSkip()) {
-				consume();
-				continue;
-			}
 
 			if (token.type() == TokenType.IDENTIFIER) {
 				final String type = token.text();
@@ -195,7 +167,6 @@ public final class Parser {
 			throw new SyntaxException(Messages.expectedRootElement(), location);
 		}
 
-		ifDefHandling.eof();
 	}
 
 	private Expression resolveConstExpression(Expression expression) {
