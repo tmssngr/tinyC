@@ -1,5 +1,6 @@
 package com.regnis.tinyc;
 
+import org.jetbrains.annotations.*;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -17,18 +18,14 @@ public class LexerTest {
 				                bazz* / */ blupp""") {
 			@Override
 			protected void test() {
-				assertText(TokenType.COMMENT, "// line");
-				assertLocation(0, 0);
-				assertLineBreak();
-				assertIdentifier("foo");
-				assertLocation(1, 0);
-				assertWhitespace();
-				assertText(TokenType.COMMENT, "/* bar\nbazz* / */");
-				assertLocation(1, 4);
-				assertWhitespace();
-				assertIdentifier("blupp");
-				assertLocation(2, 11);
-				assertEof();
+				nextText(TokenType.COMMENT, "// line", 0, 0);
+				nextLineBreak(0, 7);
+				nextIdentifier("foo", 1, 0);
+				nextWhitespace(" ", 1, 3);
+				nextText(TokenType.COMMENT, "/* bar\nbazz* / */", 1, 4);
+				nextWhitespace(" ", 2, 10);
+				nextIdentifier("blupp", 2, 11);
+				nextEof(2, 16);
 			}
 		}.test();
 
@@ -37,14 +34,8 @@ public class LexerTest {
 				                bla""") {
 			@Override
 			protected void test() {
-				assertWhitespace();
-				try {
-					next();
-					fail();
-				}
-				catch (InvalidTokenException e) {
-					assertEquals("1:2 " + Messages.unterminatedBlockComment(), e.getMessage());
-				}
+				nextWhitespace(" ", 0, 0);
+				nextInvalidTokenException("1:2 " + Messages.unterminatedBlockComment());
 			}
 		}.test();
 	}
@@ -55,47 +46,20 @@ public class LexerTest {
 		new LexerTester("1 2_3 0b10 0x20 0xCafe 10i16 '0'") {
 			@Override
 			protected void test() {
-				assertIntLiteral(1);
-				assertText("");
-				assertLocation(0, 0);
-
-				assertWhitespace();
-
-				assertIntLiteral(23);
-				assertText("");
-				assertLocation(0, 2);
-
-				assertWhitespace();
-
-				assertIntLiteral(2);
-				assertText("");
-				assertLocation(0, 6);
-
-				assertWhitespace();
-
-				assertIntLiteral(0x20);
-				assertText("");
-				assertLocation(0, 11);
-
-				assertWhitespace();
-
-				assertIntLiteral(0xCafe);
-				assertText("");
-				assertLocation(0, 16);
-
-				assertWhitespace();
-
-				assertIntLiteral(10);
-				assertText("i16");
-				assertLocation(0, 23);
-
-				assertWhitespace();
-
-				assertIntLiteral('0');
-				assertText("");
-				assertLocation(0, 29);
-
-				assertEof();
+				nextIntValue(1, 0, 0);
+				nextWhitespace(" ", 0, 1);
+				nextIntValue(23, 0, 2);
+				nextWhitespace(" ", 0, 5);
+				nextIntValue(2, 0, 6);
+				nextWhitespace(" ", 0, 10);
+				nextIntValue(0x20, 0, 11);
+				nextWhitespace(" ", 0, 15);
+				nextIntValue(0xCafe, 0, 16);
+				nextWhitespace(" ", 0, 22);
+				nextIntValue(10, "i16", 0, 23);
+				nextWhitespace(" ", 0, 28);
+				nextIntValue('0', 0, 29);
+				nextEof(0, 32);
 			}
 		}.test();
 
@@ -104,14 +68,8 @@ public class LexerTest {
 				               """) {
 			@Override
 			protected void test() {
-				assertWhitespace();
-				try {
-					next();
-					fail();
-				}
-				catch (InvalidTokenException e) {
-					assertEquals("1:3 " + Messages.unterminatedCharacterLiteral(), e.getMessage());
-				}
+				nextWhitespace("  ", 0, 0);
+				nextInvalidTokenException("1:3 " + Messages.unterminatedCharacterLiteral());
 			}
 		}.test();
 
@@ -119,13 +77,7 @@ public class LexerTest {
 				                 'ab""") {
 			@Override
 			protected void test() {
-				try {
-					next();
-					fail();
-				}
-				catch (InvalidTokenException e) {
-					assertEquals("1:3 " + Messages.invalidCharLiteral(), e.getMessage());
-				}
+				nextInvalidTokenException("1:3 " + Messages.invalidCharLiteral());
 			}
 		}.test();
 
@@ -133,13 +85,7 @@ public class LexerTest {
 				                 ''""") {
 			@Override
 			protected void test() {
-				try {
-					next();
-					fail();
-				}
-				catch (InvalidTokenException e) {
-					assertEquals("1:2 " + Messages.invalidCharLiteral(), e.getMessage());
-				}
+				nextInvalidTokenException("1:2 " + Messages.invalidCharLiteral());
 			}
 		}.test();
 
@@ -147,13 +93,7 @@ public class LexerTest {
 				                 'a""") {
 			@Override
 			protected void test() {
-				try {
-					next();
-					fail();
-				}
-				catch (InvalidTokenException e) {
-					assertEquals("1:1 " + Messages.unterminatedCharacterLiteral(), e.getMessage());
-				}
+				nextInvalidTokenException("1:1 " + Messages.unterminatedCharacterLiteral());
 			}
 		}.test();
 	}
@@ -165,17 +105,11 @@ public class LexerTest {
 				                """) {
 			@Override
 			protected void test() {
-				assertWhitespace();
-				assertLocation(0, 0);
+				nextWhitespace(" ", 0, 0);
+				nextText(TokenType.STRING, "\"\u1234", 0, 1);
 
-				assertType(TokenType.STRING);
-				assertLocation(0, 1);
-				assertText("\"\u1234");
-
-				assertLineBreak();
-				assertLocation(0, 11);
-
-				assertEof();
+				nextLineBreak(0, 11);
+				nextEof(1, 0);
 			}
 		}.test();
 
@@ -184,14 +118,8 @@ public class LexerTest {
 				               """) {
 			@Override
 			protected void test() {
-				assertWhitespace();
-				try {
-					next();
-					fail();
-				}
-				catch (InvalidTokenException e) {
-					assertEquals("1:3 " + Messages.unterminatedStringLiteral(), e.getMessage());
-				}
+				nextWhitespace("  ", 0, 0);
+				nextInvalidTokenException("1:3 " + Messages.unterminatedStringLiteral());
 			}
 		}.test();
 	}
@@ -202,27 +130,15 @@ public class LexerTest {
 		new LexerTester("const BOARD_CAP = 30;") {
 			@Override
 			protected void test() {
-				assertType(TokenType.CONST);
-				assertLocation(0, 0);
-
-				assertWhitespace();
-
-				assertIdentifier("BOARD_CAP");
-				assertLocation(0, 6);
-
-				assertWhitespace();
-
-				assertType(TokenType.EQUAL);
-				assertLocation(0, 16);
-
-				assertWhitespace();
-
-				assertIntLiteral(30);
-				assertLocation(0, 18);
-
-				assertType(TokenType.SEMI);
-				assertLocation(0, 20);
-				assertEof();
+				nextText(TokenType.CONST, "const", 0, 0);
+				nextWhitespace(" ", 0, 5);
+				nextIdentifier("BOARD_CAP", 0, 6);
+				nextWhitespace(" ", 0, 15);
+				nextType(TokenType.EQUAL, 0, 16);
+				nextWhitespace(" ", 0, 17);
+				nextIntValue(30, 0, 18);
+				nextType(TokenType.SEMI, 0, 20);
+				nextEof(0, 21);
 			}
 		}.test();
 	}
@@ -233,44 +149,22 @@ public class LexerTest {
 		new LexerTester("i16 foo = bar - bazz - blup") {
 			@Override
 			protected void test() {
-				assertIdentifier("i16");
-				assertLocation(0, 0);
-
-				assertWhitespace();
-
-				assertIdentifier("foo");
-				assertLocation(0, 4);
-
-				assertWhitespace();
-
-				assertType(TokenType.EQUAL);
-				assertLocation(0, 8);
-
-				assertWhitespace();
-
-				assertIdentifier("bar");
-				assertLocation(0, 10);
-
-				assertWhitespace();
-
-				assertType(TokenType.MINUS);
-				assertLocation(0, 14);
-
-				assertWhitespace();
-
-				assertIdentifier("bazz");
-				assertLocation(0, 16);
-
-				assertWhitespace();
-
-				assertType(TokenType.MINUS);
-				assertLocation(0, 21);
-
-				assertWhitespace();
-
-				assertIdentifier("blup");
-				assertLocation(0, 23);
-				assertEof();
+				nextIdentifier("i16", 0, 0);
+				nextWhitespace(" ", 0, 3);
+				nextIdentifier("foo", 0, 4);
+				nextWhitespace(" ", 0, 7);
+				nextType(TokenType.EQUAL, 0, 8);
+				nextWhitespace(" ", 0, 9);
+				nextIdentifier("bar", 0, 10);
+				nextWhitespace(" ", 0, 13);
+				nextType(TokenType.MINUS, 0, 14);
+				nextWhitespace(" ", 0, 15);
+				nextIdentifier("bazz", 0, 16);
+				nextWhitespace(" ", 0, 20);
+				nextType(TokenType.MINUS, 0, 21);
+				nextWhitespace(" ", 0, 22);
+				nextIdentifier("blup", 0, 23);
+				nextEof(0, 27);
 			}
 		}.test();
 
@@ -278,25 +172,14 @@ public class LexerTest {
 		new LexerTester("u8 one = 1;") {
 			@Override
 			protected void test() {
-				assertIdentifier("u8");
-				assertLocation(0, 0);
-
-				assertWhitespace();
-
-				assertIdentifier("one");
-				assertLocation(0, 3);
-
-				assertWhitespace();
-
-				assertType(TokenType.EQUAL);
-				assertLocation(0, 7);
-
-				assertWhitespace();
-
-				assertIntLiteral(1);
-				assertLocation(0, 9);
-
-				assertType(TokenType.SEMI);
+				nextIdentifier("u8", 0, 0);
+				nextWhitespace(" ", 0, 2);
+				nextIdentifier("one", 0, 3);
+				nextWhitespace(" ", 0, 6);
+				nextType(TokenType.EQUAL, 0, 7);
+				nextWhitespace(" ", 0, 8);
+				nextIntValue(1, 0, 9);
+				nextType(TokenType.SEMI, 0, 10);
 			}
 		}.test();
 
@@ -304,24 +187,14 @@ public class LexerTest {
 		new LexerTester("u8 qm = '?';") {
 			@Override
 			protected void test() {
-				assertIdentifier("u8");
-				assertLocation(0, 0);
-				assertWhitespace();
-
-				assertIdentifier("qm");
-				assertLocation(0, 3);
-
-				assertWhitespace();
-
-				assertType(TokenType.EQUAL);
-				assertLocation(0, 6);
-
-				assertWhitespace();
-
-				assertIntLiteral('?');
-				assertLocation(0, 8);
-
-				assertType(TokenType.SEMI);
+				nextIdentifier("u8", 0, 0);
+				nextWhitespace(" ", 0, 2);
+				nextIdentifier("qm", 0, 3);
+				nextWhitespace(" ", 0, 5);
+				nextType(TokenType.EQUAL, 0, 6);
+				nextWhitespace(" ", 0, 7);
+				nextIntValue('?', 0, 8);
+				nextType(TokenType.SEMI, 0, 11);
 			}
 		}.test();
 	}
@@ -332,39 +205,20 @@ public class LexerTest {
 		new LexerTester("< <= == != >= > !") {
 			@Override
 			protected void test() {
-				assertType(TokenType.LT);
-				assertLocation(0, 0);
-
-				assertWhitespace();
-
-				assertType(TokenType.LT_EQ);
-				assertLocation(0, 2);
-
-				assertWhitespace();
-
-				assertType(TokenType.EQ_EQ);
-				assertLocation(0, 5);
-
-				assertWhitespace();
-
-				assertType(TokenType.EXCL_EQ);
-				assertLocation(0, 8);
-
-				assertWhitespace();
-
-				assertType(TokenType.GT_EQ);
-				assertLocation(0, 11);
-
-				assertWhitespace();
-
-				assertType(TokenType.GT);
-				assertLocation(0, 14);
-
-				assertWhitespace();
-
-				assertType(TokenType.EXCL);
-				assertLocation(0, 16);
-				assertEof();
+				nextType(TokenType.LT, 0, 0);
+				nextWhitespace(" ", 0, 1);
+				nextType(TokenType.LT_EQ, 0, 2);
+				nextWhitespace(" ", 0, 4);
+				nextType(TokenType.EQ_EQ, 0, 5);
+				nextWhitespace(" ", 0, 7);
+				nextType(TokenType.EXCL_EQ, 0, 8);
+				nextWhitespace(" ", 0, 10);
+				nextType(TokenType.GT_EQ, 0, 11);
+				nextWhitespace(" ", 0, 13);
+				nextType(TokenType.GT, 0, 14);
+				nextWhitespace(" ", 0, 15);
+				nextType(TokenType.EXCL, 0, 16);
+				nextEof(0, 17);
 			}
 		}.test();
 	}
@@ -380,67 +234,51 @@ public class LexerTest {
 				                }""") {
 			@Override
 			protected void test() {
-				skipWhitespace = true;
+				nextText(TokenType.IF, "if", 0, 0);
+				nextWhitespace(" ", 0, 2);
+				nextType(TokenType.L_PAREN, 0, 3);
+				nextIntValue(1, 0, 4);
+				nextWhitespace(" ", 0, 5);
+				nextType(TokenType.LT, 0, 6);
+				nextWhitespace(" ", 0, 7);
+				nextIntValue(2, 0, 8);
+				nextType(TokenType.R_PAREN, 0, 9);
+				nextWhitespace(" ", 0, 10);
+				nextType(TokenType.L_BRACE, 0, 11);
 
-				assertType(TokenType.IF);
-				assertLocation(0, 0);
-				assertType(TokenType.L_PAREN);
-				assertLocation(0, 3);
-				assertIntLiteral(1);
-				assertLocation(0, 4);
-				assertType(TokenType.LT);
-				assertLocation(0, 6);
-				assertIntLiteral(2);
-				assertLocation(0, 8);
-				assertType(TokenType.R_PAREN);
-				assertLocation(0, 9);
-				assertType(TokenType.L_BRACE);
-				assertLocation(0, 11);
+				nextLineBreak(0, 12);
 
-				assertLineBreak();
+				nextWhitespace("  ", 1, 0);
+				nextIdentifier("print", 1, 2);
+				nextType(TokenType.L_PAREN, 1, 7);
+				nextIntValue(1, 1, 8);
+				nextType(TokenType.R_PAREN, 1, 9);
+				nextType(TokenType.SEMI, 1, 10);
 
-				assertIdentifier("print");
-				assertLocation(1, 2);
-				assertType(TokenType.L_PAREN);
-				assertLocation(1, 7);
-				assertIntLiteral(1);
-				assertLocation(1, 8);
-				assertType(TokenType.R_PAREN);
-				assertLocation(1, 9);
-				assertType(TokenType.SEMI);
-				assertLocation(1, 10);
+				nextLineBreak(1, 11);
 
-				assertLineBreak();
+				nextType(TokenType.R_BRACE, 2, 0);
 
-				assertType(TokenType.R_BRACE);
-				assertLocation(2, 0);
+				nextLineBreak(2, 1);
 
-				assertLineBreak();
+				nextText(TokenType.ELSE, "else", 3, 0);
+				nextWhitespace(" ", 3, 4);
+				nextType(TokenType.L_BRACE, 3, 5);
 
-				assertType(TokenType.ELSE);
-				assertLocation(3, 0);
-				assertType(TokenType.L_BRACE);
-				assertLocation(3, 5);
+				nextLineBreak(3, 6);
 
-				assertLineBreak();
+				nextWhitespace("  ", 4, 0);
+				nextIdentifier("print", 4, 2);
+				nextType(TokenType.L_PAREN, 4, 7);
+				nextIntValue(2, 4, 8);
+				nextType(TokenType.R_PAREN, 4, 9);
+				nextType(TokenType.SEMI, 4, 10);
 
-				assertIdentifier("print");
-				assertLocation(4, 2);
-				assertType(TokenType.L_PAREN);
-				assertLocation(4, 7);
-				assertIntLiteral(2);
-				assertLocation(4, 8);
-				assertType(TokenType.R_PAREN);
-				assertLocation(4, 9);
-				assertType(TokenType.SEMI);
-				assertLocation(4, 10);
+				nextLineBreak(4, 11);
 
-				assertLineBreak();
+				nextType(TokenType.R_BRACE, 5, 0);
 
-				assertType(TokenType.R_BRACE);
-				assertLocation(5, 0);
-
-				assertEof();
+				nextEof(5, 1);
 			}
 		}.test();
 	}
@@ -454,56 +292,46 @@ public class LexerTest {
 				                }""") {
 			@Override
 			protected void test() {
-				skipWhitespace = true;
-				assertType(TokenType.WHILE);
-				assertLocation(0, 0);
-				assertType(TokenType.L_PAREN);
-				assertLocation(0, 6);
-				assertIdentifier("i");
-				assertLocation(0, 7);
-				assertType(TokenType.GT);
-				assertLocation(0, 9);
-				assertIntLiteral(0);
-				assertLocation(0, 11);
-				assertType(TokenType.R_PAREN);
-				assertLocation(0, 12);
-				assertType(TokenType.L_BRACE);
-				assertLocation(0, 14);
+				nextText(TokenType.WHILE, "while", 0, 0);
+				nextWhitespace(" ", 0, 5);
+				nextType(TokenType.L_PAREN, 0, 6);
+				nextIdentifier("i", 0, 7);
+				nextWhitespace(" ", 0, 8);
+				nextType(TokenType.GT, 0, 9);
+				nextWhitespace(" ", 0, 10);
+				nextIntValue(0, 0, 11);
+				nextType(TokenType.R_PAREN, 0, 12);
+				nextWhitespace(" ", 0, 13);
+				nextType(TokenType.L_BRACE, 0, 14);
 
-				assertLineBreak();
+				nextLineBreak(0, 15);
 
-				assertIdentifier("print");
-				assertLocation(1, 2);
-				assertType(TokenType.L_PAREN);
-				assertLocation(1, 7);
-				assertIdentifier("i");
-				assertLocation(1, 8);
-				assertType(TokenType.R_PAREN);
-				assertLocation(1, 9);
-				assertType(TokenType.SEMI);
-				assertLocation(1, 10);
+				nextWhitespace("  ", 1, 0);
+				nextIdentifier("print", 1, 2);
+				nextType(TokenType.L_PAREN, 1, 7);
+				nextIdentifier("i", 1, 8);
+				nextType(TokenType.R_PAREN, 1, 9);
+				nextType(TokenType.SEMI, 1, 10);
 
-				assertLineBreak();
+				nextLineBreak(1, 11);
 
-				assertIdentifier("i");
-				assertLocation(2, 2);
-				assertType(TokenType.EQUAL);
-				assertLocation(2, 4);
-				assertIdentifier("i");
-				assertLocation(2, 6);
-				assertType(TokenType.MINUS);
-				assertLocation(2, 8);
-				assertIntLiteral(1);
-				assertLocation(2, 10);
-				assertType(TokenType.SEMI);
-				assertLocation(2, 11);
+				nextWhitespace("  ", 2, 0);
+				nextIdentifier("i", 2, 2);
+				nextWhitespace(" ", 2, 3);
+				nextType(TokenType.EQUAL, 2, 4);
+				nextWhitespace(" ", 2, 5);
+				nextIdentifier("i", 2, 6);
+				nextWhitespace(" ", 2, 7);
+				nextType(TokenType.MINUS, 2, 8);
+				nextWhitespace(" ", 2, 9);
+				nextIntValue(1, 2, 10);
+				nextType(TokenType.SEMI, 2, 11);
 
-				assertLineBreak();
+				nextLineBreak(2, 12);
 
-				assertType(TokenType.R_BRACE);
-				assertLocation(3, 0);
+				nextType(TokenType.R_BRACE, 3, 0);
 
-				assertEof();
+				nextEof(3, 1);
 			}
 		}.test();
 	}
@@ -515,35 +343,28 @@ public class LexerTest {
 				                u8 *ptrToChar = &char;""") {
 			@Override
 			protected void test() {
-				skipWhitespace = true;
-				assertIdentifier("u8");
-				assertLocation(0, 0);
-				assertIdentifier("char");
-				assertLocation(0, 3);
-				assertType(TokenType.EQUAL);
-				assertLocation(0, 8);
-				assertIntLiteral(32);
-				assertLocation(0, 10);
-				assertType(TokenType.SEMI);
-				assertLocation(0, 14);
+				nextIdentifier("u8", 0, 0);
+				nextWhitespace(" ", 0, 2);
+				nextIdentifier("char", 0, 3);
+				nextWhitespace(" ", 0, 7);
+				nextType(TokenType.EQUAL, 0, 8);
+				nextWhitespace(" ", 0, 9);
+				nextIntValue(32, 0, 10);
+				nextType(TokenType.SEMI, 0, 14);
 
-				assertLineBreak();
+				nextLineBreak(0, 15);
 
-				assertIdentifier("u8");
-				assertLocation(1, 0);
-				assertType(TokenType.STAR);
-				assertLocation(1, 3);
-				assertIdentifier("ptrToChar");
-				assertLocation(1, 4);
-				assertType(TokenType.EQUAL);
-				assertLocation(1, 14);
-				assertType(TokenType.AMP);
-				assertLocation(1, 16);
-				assertIdentifier("char");
-				assertLocation(1, 17);
-				assertType(TokenType.SEMI);
-				assertLocation(1, 21);
-				assertEof();
+				nextIdentifier("u8", 1, 0);
+				nextWhitespace(" ", 1, 2);
+				nextType(TokenType.STAR, 1, 3);
+				nextIdentifier("ptrToChar", 1, 4);
+				nextWhitespace(" ", 1, 13);
+				nextType(TokenType.EQUAL, 1, 14);
+				nextWhitespace(" ", 1, 15);
+				nextType(TokenType.AMP, 1, 16);
+				nextIdentifier("char", 1, 17);
+				nextType(TokenType.SEMI, 1, 21);
+				nextEof(1, 22);
 			}
 		}.test();
 	}
@@ -553,77 +374,65 @@ public class LexerTest {
 
 		private final Lexer lexer;
 
-		protected boolean skipWhitespace;
-
 		public LexerTester(String text) {
 			this.lexer = new Lexer(text);
 		}
 
-		public void assertLocation(int expectedLine, int expectedColumn) {
+		public void nextType(TokenType expectedType, int expectedLine, int expectedColumn) {
+			nextToken(expectedType, 0, null, expectedLine, expectedColumn);
+		}
+
+		public void nextText(TokenType expectedType, String expectedText, int expectedLine, int expectedColumn) {
+			nextToken(expectedType, 0, expectedText, expectedLine, expectedColumn);
+		}
+
+		public void nextIntValue(int expectedValue, int expectedLine, int expectedColumn) {
+			nextIntValue(expectedValue, "", expectedLine, expectedColumn);
+		}
+
+		public void nextIntValue(int expectedValue, String expectedText, int expectedLine, int expectedColumn) {
+			nextToken(TokenType.INT_LITERAL, expectedValue, expectedText, expectedLine, expectedColumn);
+		}
+
+		public void nextIdentifier(String expectedText, int expectedLine, int expectedColumn) {
+			nextText(TokenType.IDENTIFIER, expectedText, expectedLine, expectedColumn);
+		}
+
+		public void nextLineBreak(int expectedLine, int expectedColumn) {
+			nextText(TokenType.LINEBREAK, "\n", expectedLine, expectedColumn);
+		}
+
+		public void nextWhitespace(String expectedText, int expectedLine, int expectedColumn) {
+			nextText(TokenType.WHITESPACE, expectedText, expectedLine, expectedColumn);
+		}
+
+		public void nextEof(int expectedLine, int expectedColumn) {
+			nextType(TokenType.EOF, expectedLine, expectedColumn);
+		}
+
+		public void nextInvalidTokenException(String expectedMessage) {
+			try {
+				nextTokenType();
+				fail();
+			}
+			catch (InvalidTokenException ex) {
+				assertEquals(expectedMessage, ex.getMessage());
+			}
+		}
+
+		private void nextToken(TokenType expectedType, int expectedIntValue, @Nullable String expectedText,
+		                       int expectedLine, int expectedColumn) {
+			final TokenType tokenType = nextTokenType();
+			assertEquals(expectedType, tokenType);
+			assertEquals(expectedIntValue, lexer.getIntValue());
+			assertEquals(expectedText, lexer.getText());
 			final Location location = lexer.getLocation();
 			assertEquals(expectedLine, location.line());
 			assertEquals(expectedColumn, location.column());
 		}
 
-		public void assertLineBreak() {
-			assertType(TokenType.LINEBREAK);
-		}
-
-		public void assertWhitespace() {
-			assertType(TokenType.WHITESPACE);
-		}
-
-		public void assertEof() {
-			assertType(TokenType.EOF);
-		}
-
-		public void assertIdentifier(String expected) {
-			assertText(TokenType.IDENTIFIER, expected);
-		}
-
-		public void assertIntLiteral(int expected) {
-			assertValue(TokenType.INT_LITERAL, expected);
-		}
-
-		public void assertInvalidTokenException(String expectedMsg, int expectedLine, int expectedColumn) {
-			try {
-				next();
-				fail();
-			}
-			catch (InvalidTokenException ex) {
-				assertEquals(expectedMsg, ex.getMessage());
-				assertEquals(expectedLine, ex.location.line());
-				assertEquals(expectedColumn, ex.location.column());
-			}
-		}
-
-		public void assertType(TokenType type) {
-			final TokenType next = next();
-			assertEquals(type, next);
-		}
-
-		public void assertText(String expected) {
-			assertEquals(expected, lexer.getText());
-		}
-
-		public void assertText(TokenType type, String expected) {
-			assertType(type);
-			assertText(expected);
-		}
-
-		private void assertValue(TokenType type, int expected) {
-			assertType(type);
-			assertEquals(expected, lexer.getIntValue());
-		}
-
-		protected TokenType next() {
-			while (true) {
-				final TokenType type = lexer.next();
-				if (skipWhitespace && type == TokenType.WHITESPACE) {
-					continue;
-				}
-				return type;
-			}
+		private TokenType nextTokenType() {
+			return lexer.next();
 		}
 	}
 }
