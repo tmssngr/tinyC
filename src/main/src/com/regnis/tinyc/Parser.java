@@ -25,7 +25,7 @@ public final class Parser {
 
 			@Override
 			public void parse() {
-				final Parser parser = new Parser(new Lexer(input), this, project);
+				final Parser parser = new Parser(new LexerImpl(input), this, project);
 				parser.parse();
 			}
 		}.parse();
@@ -958,7 +958,7 @@ public final class Parser {
 
 		public void parse() {
 			try (final BufferedReader reader = Files.newBufferedReader(file)) {
-				final Parser parser = new Parser(new Lexer(() -> {
+				final Parser parser = new Parser(new LexerImpl(() -> {
 					try {
 						return reader.read();
 					}

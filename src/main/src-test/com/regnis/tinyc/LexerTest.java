@@ -1,6 +1,5 @@
 package com.regnis.tinyc;
 
-import org.jetbrains.annotations.*;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -375,7 +374,7 @@ public class LexerTest {
 		private final Lexer lexer;
 
 		public LexerTester(String text) {
-			this.lexer = new Lexer(text);
+			this.lexer = new LexerImpl(text);
 		}
 
 		public void nextType(TokenType expectedType, int expectedLine, int expectedColumn) {
