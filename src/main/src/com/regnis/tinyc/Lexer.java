@@ -38,7 +38,7 @@ public final class Lexer {
 	}
 
 	public TokenType next() {
-		text = null;
+		text = "";
 		intValue = 0;
 		location = new Location(line, column);
 
@@ -135,7 +135,6 @@ public final class Lexer {
 		if (isConsume('\'')) {
 			final String text = detectStringOrChar('\'', location);
 			intValue = text.charAt(0);
-			this.text = "";
 			return TokenType.INT_LITERAL;
 		}
 		if (isConsume('&')) {
@@ -176,7 +175,6 @@ public final class Lexer {
 		       && !isWhitespace()
 		       && !isLineBreak()
 		);
-		text = "";
 		final String text = buffer.toString();
 
 		if (detectInt(text)) {
@@ -216,6 +214,7 @@ public final class Lexer {
 		return intValue;
 	}
 
+	@NotNull
 	public Location getLocation() {
 		return location;
 	}

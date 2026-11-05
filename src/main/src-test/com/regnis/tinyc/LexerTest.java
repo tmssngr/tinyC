@@ -379,7 +379,7 @@ public class LexerTest {
 		}
 
 		public void nextType(TokenType expectedType, int expectedLine, int expectedColumn) {
-			nextToken(expectedType, 0, null, expectedLine, expectedColumn);
+			nextToken(expectedType, 0, "", expectedLine, expectedColumn);
 		}
 
 		public void nextText(TokenType expectedType, String expectedText, int expectedLine, int expectedColumn) {
@@ -420,7 +420,7 @@ public class LexerTest {
 			}
 		}
 
-		private void nextToken(TokenType expectedType, int expectedIntValue, @Nullable String expectedText,
+		private void nextToken(TokenType expectedType, int expectedIntValue, String expectedText,
 		                       int expectedLine, int expectedColumn) {
 			final TokenType tokenType = nextTokenType();
 			assertEquals(expectedType, tokenType);
