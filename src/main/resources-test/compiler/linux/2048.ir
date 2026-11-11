@@ -904,21 +904,21 @@ animateSlide:
  Local variables
 	var 0: frame (i16/2)
 	var 1: remaining (i16/2)
-	var 2: source (u8/1)
-	var 3: exponent (u8/1)
-	var 4: target (u8/1)
-	var 5: sourceRow (i16/2)
-	var 6: sourceColumn (i16/2)
-	var 7: targetRow (i16/2)
-	var 8: targetColumn (i16/2)
-	var 9: row (i16/2)
-	var 10: column (i16/2)
-	var 11: t.11 (u8*/8)
-	var 12: t.12 (i64/8)
+	var 2: layer (u8/1)
+	var 3: source (u8/1)
+	var 4: exponent (u8/1)
+	var 5: target (u8/1)
+	var 6: moving (bool/1)
+	var 7: sourceRow (i16/2)
+	var 8: sourceColumn (i16/2)
+	var 9: targetRow (i16/2)
+	var 10: targetColumn (i16/2)
+	var 11: row (i16/2)
+	var 12: column (i16/2)
 	var 13: t.13 (u8*/8)
 	var 14: t.14 (i64/8)
-	var 15: t.15 (i16/2)
-	var 16: t.16 (u8/1)
+	var 15: t.15 (u8*/8)
+	var 16: t.16 (i64/8)
 	var 17: t.17 (i16/2)
 	var 18: t.18 (u8/1)
 	var 19: t.19 (i16/2)
@@ -926,13 +926,15 @@ animateSlide:
 	var 21: t.21 (i16/2)
 	var 22: t.22 (u8/1)
 	var 23: t.23 (i16/2)
-	var 24: t.24 (i16/2)
+	var 24: t.24 (u8/1)
 	var 25: t.25 (i16/2)
 	var 26: t.26 (i16/2)
 	var 27: t.27 (i16/2)
 	var 28: t.28 (i16/2)
 	var 29: t.29 (i16/2)
 	var 30: t.30 (i16/2)
+	var 31: t.31 (i16/2)
+	var 32: t.32 (i16/2)
 
 	const frame, 1
 for_62:
@@ -941,45 +943,61 @@ for_62_body:
 	const remaining, 8
 	sub remaining, frame
 	call clearBoard[]
-	const source, 0
+	const layer, 0
 for_63:
-	branch source gteq 16: for_63_break, for_63_body
+	branch layer gteq 2: for_63_break, for_63_body
 for_63_body:
-	cast t.12(i64), source(u8)
-	addrof t.11, moveTiles
-	add t.11, t.12
-	load exponent, [t.11]
-	branch exponent equals 0: for_63_continue, if_64_end
-if_64_end:
+	const source, 0
+for_64:
+	branch source gteq 16: for_63_continue, for_64_body
+for_64_body:
 	cast t.14(i64), source(u8)
-	addrof t.13, moveTargets
+	addrof t.13, moveTiles
 	add t.13, t.14
-	load target, [t.13]
-	shiftright t.16, source, 2
-	cast t.15(i16), t.16(u8)
-	shiftleft sourceRow, t.15, 2
-	and t.18, source, 3
+	load exponent, [t.13]
+	branch exponent equals 0: for_64_continue, if_65_end
+if_65_end:
+	cast t.16(i64), source(u8)
+	addrof t.15, moveTargets
+	add t.15, t.16
+	load target, [t.15]
+	notequals moving, target, source
+	branch layer notequals 0: or_67, and_68
+and_68:
+	branch moving notequals 0: for_64_continue, or_67
+or_67:
+	branch layer notequals 1: if_66_end, and_69
+and_69:
+	branch moving equals 0: for_64_continue, if_66_end
+if_66_end:
+	shiftright t.18, source, 2
 	cast t.17(i16), t.18(u8)
-	mul sourceColumn, t.17, 9
-	shiftright t.20, target, 2
+	shiftleft sourceRow, t.17, 2
+	and t.20, source, 3
 	cast t.19(i16), t.20(u8)
-	shiftleft targetRow, t.19, 2
-	and t.22, target, 3
+	mul sourceColumn, t.19, 9
+	shiftright t.22, target, 2
 	cast t.21(i16), t.22(u8)
-	mul targetColumn, t.21, 9
-	mul t.24, sourceRow, remaining
-	mul t.25, targetRow, frame
-	add t.23, t.24, t.25
-	shiftright row, t.23, 3
-	mul t.27, sourceColumn, remaining
-	mul t.28, targetColumn, frame
-	add t.26, t.27, t.28
-	shiftright column, t.26, 3
-	add t.29, row, 3
-	add t.30, column, 1
-	call drawTileAt@i16@i16@u8[t.29, t.30, exponent]
-for_63_continue:
+	shiftleft targetRow, t.21, 2
+	and t.24, target, 3
+	cast t.23(i16), t.24(u8)
+	mul targetColumn, t.23, 9
+	mul t.26, sourceRow, remaining
+	mul t.27, targetRow, frame
+	add t.25, t.26, t.27
+	shiftright row, t.25, 3
+	mul t.29, sourceColumn, remaining
+	mul t.30, targetColumn, frame
+	add t.28, t.29, t.30
+	shiftright column, t.28, 3
+	add t.31, row, 3
+	add t.32, column, 1
+	call drawTileAt@i16@i16@u8[t.31, t.32, exponent]
+for_64_continue:
 	add source, 1
+	jump for_64
+for_63_continue:
+	add layer, 1
 	jump for_63
 for_63_break:
 	call presentBoard[]
@@ -1022,16 +1040,16 @@ drawStatus:
 	call setCursor@i16@i16[19, 0]
 	addrof a.1, gameState
 	load t.2, [a.1]
-	branch t.2 notequals 1: if_65_else, if_65_then
-if_65_then:
+	branch t.2 notequals 1: if_70_else, if_70_then
+if_70_then:
 	const t.3, [string-19]
 	call printString@@u8[t.3]
 	jump drawStatus_ret
-if_65_else:
+if_70_else:
 	addrof a.4, gameState
 	load t.5, [a.4]
-	branch t.5 notequals 2: drawStatus_ret, if_66_then
-if_66_then:
+	branch t.5 notequals 2: drawStatus_ret, if_71_then
+if_71_then:
 	const t.6, [string-20]
 	call printString@@u8[t.6]
 drawStatus_ret:
@@ -1048,18 +1066,18 @@ newGame:
 	var 7: a.7 (u8*/8)
 
 	const index, 0
-for_67:
-	branch index gteq 16: for_67_break, for_67_body
-for_67_body:
+for_72:
+	branch index gteq 16: for_72_break, for_72_body
+for_72_body:
 	const t.1, 0
 	cast t.3(i64), index(u8)
 	addrof t.2, tiles
 	add t.2, t.3
 	store [t.2], t.1
-for_67_continue:
+for_72_continue:
 	add index, 1
-	jump for_67
-for_67_break:
+	jump for_72
+for_72_break:
 	const t.4, 0
 	addrof a.5, score
 	store [a.5], t.4
@@ -1107,83 +1125,83 @@ main:
 	call initRandom@i32[7439742]
 	call drawFrame[]
 	call newGame[]
-while_68:
+while_73:
 	call key = getChar[] -> i16
-	branch key equals 27: main_ret, if_69_end
-if_69_end:
-	branch key equals 114: if_70_then, or_71
-or_71:
-	branch key notequals 82: if_70_end, if_70_then
-if_70_then:
+	branch key equals 27: main_ret, if_74_end
+if_74_end:
+	branch key equals 114: if_75_then, or_76
+or_76:
+	branch key notequals 82: if_75_end, if_75_then
+if_75_then:
 	call newGame[]
-	jump while_68
-if_70_end:
+	jump while_73
+if_75_end:
 	addrof a.8, gameState
 	load t.9, [a.8]
-	branch t.9 notequals 0: while_68, if_72_end
-if_72_end:
+	branch t.9 notequals 0: while_73, if_77_end
+if_77_end:
 	const direction, 255
-	branch key equals -8117: if_73_then, or_75
-or_75:
-	branch key equals 97: if_73_then, or_74
-or_74:
-	branch key notequals 65: if_73_else, if_73_then
-if_73_then:
-	const direction, 0
-	jump if_73_end
-if_73_else:
-	branch key equals -8115: if_76_then, or_78
-or_78:
-	branch key equals 100: if_76_then, or_77
-or_77:
-	branch key notequals 68: if_76_else, if_76_then
-if_76_then:
-	const direction, 1
-	jump if_73_end
-if_76_else:
-	branch key equals -8120: if_79_then, or_81
-or_81:
-	branch key equals 119: if_79_then, or_80
+	branch key equals -8117: if_78_then, or_80
 or_80:
-	branch key notequals 87: if_79_else, if_79_then
-if_79_then:
-	const direction, 2
-	jump if_73_end
-if_79_else:
-	branch key equals -8112: if_82_then, or_84
-or_84:
-	branch key equals 115: if_82_then, or_83
+	branch key equals 97: if_78_then, or_79
+or_79:
+	branch key notequals 65: if_78_else, if_78_then
+if_78_then:
+	const direction, 0
+	jump if_78_end
+if_78_else:
+	branch key equals -8115: if_81_then, or_83
 or_83:
-	branch key notequals 83: while_68, if_82_then
-if_82_then:
+	branch key equals 100: if_81_then, or_82
+or_82:
+	branch key notequals 68: if_81_else, if_81_then
+if_81_then:
+	const direction, 1
+	jump if_78_end
+if_81_else:
+	branch key equals -8120: if_84_then, or_86
+or_86:
+	branch key equals 119: if_84_then, or_85
+or_85:
+	branch key notequals 87: if_84_else, if_84_then
+if_84_then:
+	const direction, 2
+	jump if_78_end
+if_84_else:
+	branch key equals -8112: if_87_then, or_89
+or_89:
+	branch key equals 115: if_87_then, or_88
+or_88:
+	branch key notequals 83: while_73, if_87_then
+if_87_then:
 	const direction, 3
-if_73_end:
+if_78_end:
 	call t.10 = slide@u8[direction] -> bool
-	branch t.10 equals 0: while_68, if_85_end
-if_85_end:
+	branch t.10 equals 0: while_73, if_90_end
+if_90_end:
 	call animateSlide[]
 	call spawnTile[]
 	addrof a.11, gameState
 	load t.12, [a.11]
-	branch t.12 notequals 0: if_86_end, and_87
-and_87:
+	branch t.12 notequals 0: if_91_end, and_92
+and_92:
 	call t.13 = canMove[] -> bool
-	branch t.13 notequals 0: if_86_end, if_86_then
-if_86_then:
+	branch t.13 notequals 0: if_91_end, if_91_then
+if_91_then:
 	const t.14, 2
 	addrof a.15, gameState
 	store [a.15], t.14
-if_86_end:
+if_91_end:
 	call drawBoard[]
 	call drawScore[]
 	addrof a.16, gameState
 	load t.17, [a.16]
-	branch t.17 equals 0: if_88_end, if_88_then
-if_88_then:
+	branch t.17 equals 0: if_93_end, if_93_then
+if_93_then:
 	call drawStatus[]
-if_88_end:
+if_93_end:
 	call setCursor@i16@i16[21, 0]
-	jump while_68
+	jump while_73
 main_ret:
 
 printStringLength@@u8@i64:

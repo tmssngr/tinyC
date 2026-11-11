@@ -348,23 +348,30 @@ void animateSlide() {
 		remaining -= frame
 		// Clear the next image in memory, not the screen, to remove old tile trails.
 		clearBoard()
-		for u8 source = 0; source < BOARD_CELLS; source += 1 {
-			u8 exponent = moveTiles[source]
-			if exponent == 0 {
-				continue
+		// Draw stationary tiles first so moving tiles stay visible when they overlap.
+		for u8 layer = 0; layer < 2; layer += 1 {
+			for u8 source = 0; source < BOARD_CELLS; source += 1 {
+				u8 exponent = moveTiles[source]
+				if exponent == 0 {
+					continue
+				}
+				u8 target = moveTargets[source]
+				bool moving = target != source
+				if (layer == 0 && moving) || (layer == 1 && !moving) {
+					continue
+				}
+				// For a 4-wide board, index >> 2 is the row and index & 3 the column.
+				// Multiply by tile spacing to get character positions within the board.
+				i16 sourceRow = (source >> 2) as i16 * TILE_ROW_STEP
+				i16 sourceColumn = (source & 3) as i16 * TILE_COLUMN_STEP
+				i16 targetRow = (target >> 2) as i16 * TILE_ROW_STEP
+				i16 targetColumn = (target & 3) as i16 * TILE_COLUMN_STEP
+				// Blend start and target positions using the move's progress.
+				// When remaining reaches 0, this gives the exact target position.
+				i16 row = (sourceRow * remaining + targetRow * frame) / ANIMATION_STEPS
+				i16 column = (sourceColumn * remaining + targetColumn * frame) / ANIMATION_STEPS
+				drawTileAt(row + BOARD_TOP, column + BOARD_LEFT, exponent)
 			}
-			u8 target = moveTargets[source]
-			// For a 4-wide board, index >> 2 is the row and index & 3 the column.
-			// Multiply by tile spacing to get character positions within the board.
-			i16 sourceRow = (source >> 2) as i16 * TILE_ROW_STEP
-			i16 sourceColumn = (source & 3) as i16 * TILE_COLUMN_STEP
-			i16 targetRow = (target >> 2) as i16 * TILE_ROW_STEP
-			i16 targetColumn = (target & 3) as i16 * TILE_COLUMN_STEP
-			// Blend start and target positions using the move's progress.
-			// When remaining reaches 0, this gives the exact target position.
-			i16 row = (sourceRow * remaining + targetRow * frame) / ANIMATION_STEPS
-			i16 column = (sourceColumn * remaining + targetColumn * frame) / ANIMATION_STEPS
-			drawTileAt(row + BOARD_TOP, column + BOARD_LEFT, exponent)
 		}
 		// Display the completed image, then pause before preparing the next one.
 		presentBoard()

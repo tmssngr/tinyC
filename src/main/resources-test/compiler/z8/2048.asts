@@ -362,9 +362,11 @@ void waitFrame() asm {
 void animateSlide() {
 	i16 frame;
 	i16 remaining;
+	u8 layer;
 	u8 source;
 	u8 exponent;
 	u8 target;
+	bool moving;
 	i16 sourceRow;
 	i16 sourceColumn;
 	i16 targetRow;
@@ -377,20 +379,27 @@ void animateSlide() {
 		remaining = 4;
 		remaining = remaining - frame;
 		clearBoard();
-		source = 0;
-		for (; source < 16; source = source + 1) {
-			exponent = moveTiles[source as i16];
-			if (exponent == 0) {
-				continue;
+		layer = 0;
+		for (; layer < 2; layer = layer + 1) {
+			source = 0;
+			for (; source < 16; source = source + 1) {
+				exponent = moveTiles[source as i16];
+				if (exponent == 0) {
+					continue;
+				}
+				target = moveTargets[source as i16];
+				moving = target != source;
+				if (((layer == 0) && moving) || ((layer == 1) && (!moving))) {
+					continue;
+				}
+				sourceRow = ((source >> 2) as i16) << 2;
+				sourceColumn = ((source & 3) as i16) * 9;
+				targetRow = ((target >> 2) as i16) << 2;
+				targetColumn = ((target & 3) as i16) * 9;
+				row = ((sourceRow * remaining) + (targetRow * frame)) >> 2;
+				column = ((sourceColumn * remaining) + (targetColumn * frame)) >> 2;
+				drawTileAt@i16@i16@u8(row + 3, column + 1, exponent);
 			}
-			target = moveTargets[source as i16];
-			sourceRow = ((source >> 2) as i16) << 2;
-			sourceColumn = ((source & 3) as i16) * 9;
-			targetRow = ((target >> 2) as i16) << 2;
-			targetColumn = ((target & 3) as i16) * 9;
-			row = ((sourceRow * remaining) + (targetRow * frame)) >> 2;
-			column = ((sourceColumn * remaining) + (targetColumn * frame)) >> 2;
-			drawTileAt@i16@i16@u8(row + 3, column + 1, exponent);
 		}
 		presentBoard();
 		waitFrame();
