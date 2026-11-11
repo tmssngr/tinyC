@@ -3,10 +3,10 @@
 
 #ifdef Z8
 const CLEAR_SCREEN = true
-const ANIMATION_STEPS = 4
+const ANIMATION_FRAMES_PER_CELL = 4
 #else
 const CLEAR_SCREEN = false
-const ANIMATION_STEPS = 8
+const ANIMATION_FRAMES_PER_CELL = 8
 #endif
 
 const BOARD_SIZE = 4
@@ -339,13 +339,37 @@ void waitFrame() asm {
 #endif
 }
 
+i16 tileMoveDistance(u8 source, u8 target) {
+	i16 sourceRow = (source >> 2) as i16
+	i16 sourceColumn = (source & 3) as i16
+	i16 targetRow = (target >> 2) as i16
+	i16 targetColumn = (target & 3) as i16
+	i16 rowDistance = targetRow - sourceRow
+	i16 columnDistance = targetColumn - sourceColumn
+	if rowDistance < 0 {
+		rowDistance = 0i16 - rowDistance
+	}
+	if columnDistance < 0 {
+		columnDistance = 0i16 - columnDistance
+	}
+	return rowDistance + columnDistance
+}
+
 // Animate the saved starting tiles; tiles already holds the final move result.
 // main() draws the merged values and newly spawned tile after this finishes.
 void animateSlide() {
-	for i16 frame = 1; frame <= ANIMATION_STEPS; frame += 1 {
-		// frame counts steps done; remaining counts steps still to go.
-		i16 remaining = ANIMATION_STEPS
-		remaining -= frame
+	// Give every tile the same frames-per-cell speed; the longest move sets the duration.
+	i16 animationFrames = 0
+	for u8 source = 0; source < BOARD_CELLS; source += 1 {
+		if moveTiles[source] == 0 {
+			continue
+		}
+		i16 tileFrames = tileMoveDistance(source, moveTargets[source]) * ANIMATION_FRAMES_PER_CELL
+		if tileFrames > animationFrames {
+			animationFrames = tileFrames
+		}
+	}
+	for i16 frame = 1; frame <= animationFrames; frame += 1 {
 		// Clear the next image in memory, not the screen, to remove old tile trails.
 		clearBoard()
 		// Draw stationary tiles first so moving tiles stay visible when they overlap.
@@ -366,10 +390,18 @@ void animateSlide() {
 				i16 sourceColumn = (source & 3) as i16 * TILE_COLUMN_STEP
 				i16 targetRow = (target >> 2) as i16 * TILE_ROW_STEP
 				i16 targetColumn = (target & 3) as i16 * TILE_COLUMN_STEP
-				// Blend start and target positions using the move's progress.
-				// When remaining reaches 0, this gives the exact target position.
-				i16 row = (sourceRow * remaining + targetRow * frame) / ANIMATION_STEPS
-				i16 column = (sourceColumn * remaining + targetColumn * frame) / ANIMATION_STEPS
+				i16 row = sourceRow
+				i16 column = sourceColumn
+				if moving {
+					// Short moves stop at their target while longer moves keep going.
+					i16 tileFrames = tileMoveDistance(source, target) * ANIMATION_FRAMES_PER_CELL
+					i16 tileFrame = frame
+					if tileFrame > tileFrames {
+						tileFrame = tileFrames
+					}
+					row = sourceRow + (targetRow - sourceRow) * tileFrame / tileFrames
+					column = sourceColumn + (targetColumn - sourceColumn) * tileFrame / tileFrames
+				}
 				drawTileAt(row + BOARD_TOP, column + BOARD_LEFT, exponent)
 			}
 		}

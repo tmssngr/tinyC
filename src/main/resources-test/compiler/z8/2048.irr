@@ -647,111 +647,235 @@ for_49:
 	branch boardRow.2{r11} lt 4: for_49_body
 	call presentBoard[]
 
+tileMoveDistance@u8@u8:
+ Local variables
+	arg 0: source (u8/1)
+	arg 1: target (u8/1)
+
+	move t.8.1{r2}, param.source{r0}
+	shiftright t.8.1{r2}, 2
+	cast sourceRow.1{r2}(i16), t.8.1{r2}(u8)
+	move t.9.1{r4}, param.source{r0}
+	and t.9.1{r4}, 3
+	cast sourceColumn.1{r4}(i16), t.9.1{r4}(u8)
+	move t.10.1{r6}, param.target{r1}
+	shiftright t.10.1{r6}, 2
+	cast targetRow.1{r6}(i16), t.10.1{r6}(u8)
+	move t.11.1{r8}, param.target{r1}
+	and t.11.1{r8}, 3
+	cast targetColumn.1{r8}(i16), t.11.1{r8}(u8)
+	sub rowDistance.1{r6}, sourceRow.1{r2}
+	move columnDistance.1{r2}, targetColumn.1{r8}
+	sub columnDistance.1{r2}, sourceColumn.1{r4}
+	branch rowDistance.1{r6} lt 0: if_51_then
+	move rowDistance.2{r4}, rowDistance.1{r6}
+	jump if_51_end
+if_51_then:
+	const t.12.1{r4}, 0
+	sub rowDistance.3{r4}, rowDistance.1{r6}
+if_51_end:
+	branch columnDistance.1{r2} gteq 0: if_52_end
+	const t.13.1{r6}, 0
+	sub columnDistance.4{r6}, columnDistance.1{r2}
+	move columnDistance.3{r2}, columnDistance.4{r6}
+if_52_end:
+	move t.14.1{r0}, rowDistance.2{r4}
+	add t.14.1{r0}, columnDistance.3{r2}
+
 animateSlide:
  Local variables
-	var 0: layer.2 (u8/1)
-	var 1: source.2 (u8/1)
+	var 0: animationFrames.2 (i16/2)
+	var 1: frame.2 (i16/2)
+	var 2: exponent.1 (u8/1)
+	var 3: sourceRow.1 (i16/2)
+	var 4: sourceColumn.1 (i16/2)
+	var 5: targetRow.1 (i16/2)
+	var 6: targetColumn.1 (i16/2)
+	var 7: column.2 (i16/2)
 
-	const frame.1{r8}, 1
-	jump for_51
-for_51_body:
-	const remaining.1{r10}, 4
-	sub remaining.2{r10}, frame.2{r8}
-	call clearBoard[]
-	const layer.1{r12}, 0
-	jump for_52
-for_52_body:
-	const source.1{r13}, 0
-	addrof memVarAddr{r14}, layer.2
-	store [memVarAddr{r14}], layer.2{r12}
-	move source.2{r12}, source.2{r13}
+	const animationFrames.1{r8}, 0
+	const source.1{r10}, 0
 	jump for_53
 for_53_body:
-	move source.2{r13}, source.2{r12}
-	addrof memVarAddr{r14}, layer.2
-	load layer.2{r12}, [memVarAddr{r14}]
-	cast t.14.1{r5}(i16), source.2{r13}(u8)
-	addrof t.13.1{r2}, moveTiles
-	add t.13.2{r2}, t.14.1{r5}
-	load exponent.1{r4}, [t.13.2{r2}]
-	branch exponent.1{r4} notequals 0: if_54_end
-	addrof memVarAddr{r14}, source.2
-	store [memVarAddr{r14}], source.2{r13}
-	jump for_53_continue
-if_54_end:
-	cast t.16.1{r5}(i16), source.2{r13}(u8)
-	addrof t.15.1{r2}, moveTargets
-	add t.15.2{r2}, t.16.1{r5}
-	load target.1{r5}, [t.15.2{r2}]
-	notequals moving.1{r6}, target.1{r5}, source.2{r13}
-	branch layer.2{r12} notequals 0: or_56
-	branch moving.1{r6} equals 0: or_56
-	addrof memVarAddr{r14}, layer.2
-	store [memVarAddr{r14}], layer.2{r12}
-	addrof memVarAddr{r14}, source.2
-	store [memVarAddr{r14}], source.2{r13}
-	jump for_53_continue
-or_56:
-	branch layer.2{r12} notequals 1: if_55_end
-	branch moving.1{r6} notequals 0: if_55_end
-	addrof memVarAddr{r14}, layer.2
-	store [memVarAddr{r14}], layer.2{r12}
-	addrof memVarAddr{r14}, source.2
-	store [memVarAddr{r14}], source.2{r13}
-	jump for_53_continue
-if_55_end:
-	move t.18.1{r6}, source.2{r13}
-	shiftright t.18.1{r6}, 2
-	cast t.17.1{r6}(i16), t.18.1{r6}(u8)
-	shiftleft sourceRow.1{r6}, 2
-	move t.20.1{r2}, source.2{r13}
-	and t.20.1{r2}, 3
-	cast t.19.1{r2}(i16), t.20.1{r2}(u8)
-	mul sourceColumn.1{r2}, 9
-	move t.22.1{r0}, target.1{r5}
-	shiftright t.22.1{r0}, 2
-	cast t.21.1{r0}(i16), t.22.1{r0}(u8)
-	shiftleft targetRow.1{r0}, 2
-	and t.24.1{r5}, 3
-	addrof memVarAddr{r14}, layer.2
-	store [memVarAddr{r14}], layer.2{r12}
-	addrof memVarAddr{r14}, source.2
-	store [memVarAddr{r14}], source.2{r13}
-	cast t.23.1{r12}(i16), t.24.1{r5}(u8)
-	mul targetColumn.1{r12}, 9
-	move t.26.1{r5}, sourceRow.1{r6}
-	mul t.26.1{r5}, remaining.2{r10}
-	mul t.27.1{r0}, frame.2{r8}
-	add t.25.1{r5}, t.27.1{r0}
-	shiftright row.1{r5}, 2
-	mul t.29.1{r2}, remaining.2{r10}
-	mul t.30.1{r12}, frame.2{r8}
-	add t.28.1{r2}, t.30.1{r12}
-	move column.1{r12}, t.28.1{r2}
-	shiftright column.1{r12}, 2
-	move t.31.1{r0}, row.1{r5}
-	add t.31.1{r0}, 3
-	move t.32.1{r2}, column.1{r12}
-	add t.32.1{r2}, 1
-	call drawTileAt@i16@i16@u8[t.31.1{r0}, t.32.1{r2}, exponent.1{r4}]
+	cast t.19.1{r11}(i16), source.2{r10}(u8)
+	addrof t.18.1{r2}, moveTiles
+	add t.18.2{r2}, t.19.1{r11}
+	load t.17.1{r11}, [t.18.2{r2}]
+	branch t.17.1{r11} equals 0: for_53_continue
+	cast t.23.1{r11}(i16), source.2{r10}(u8)
+	addrof t.22.1{r2}, moveTargets
+	add t.22.2{r2}, t.23.1{r11}
+	load t.21.1{r1}, [t.22.2{r2}]
+	move source.2{r0}, source.2{r10}
+	call t.20.1{r0} = tileMoveDistance@u8@u8[source.2{r0}, t.21.1{r1}] -> i16
+	move tileFrames.1{r11}, t.20.1{r0}
+	shiftleft tileFrames.1{r11}, 2
+	branch tileFrames.1{r11} lteq animationFrames.2{r8}: for_53_continue
+	move animationFrames.6{r8}, tileFrames.1{r11}
 for_53_continue:
-	addrof memVarAddr{r14}, source.2
-	load source.2{r12}, [memVarAddr{r14}]
-	add source.4{r12}, 1
+	add source.4{r10}, 1
 for_53:
-	branch source.2{r12} lt 16: for_53_body
-	addrof memVarAddr{r14}, layer.2
-	load layer.2{r12}, [memVarAddr{r14}]
-	add layer.4{r12}, 1
-for_52:
-	branch layer.2{r12} lt 2: for_52_body
+	branch source.2{r10} lt 16: for_53_body
+	const frame.1{r10}, 1
+	addrof memVarAddr{r14}, animationFrames.2
+	store [memVarAddr{r14}], animationFrames.2{r8}
+	move frame.2{r0}, frame.2{r10}
+	jump for_56
+for_56_body:
+	move animationFrames.2{r8}, animationFrames.2{r2}
+	move frame.2{r10}, frame.2{r0}
+	call clearBoard[]
+	const layer.1{r12}, 0
+	addrof memVarAddr{r14}, animationFrames.2
+	store [memVarAddr{r14}], animationFrames.2{r8}
+	addrof memVarAddr{r14}, frame.2
+	store [memVarAddr{r14}], frame.2{r10}
+	jump for_57
+for_57_body:
+	addrof memVarAddr{r14}, animationFrames.2
+	load animationFrames.2{r8}, [memVarAddr{r14}]
+	addrof memVarAddr{r14}, frame.2
+	load frame.2{r10}, [memVarAddr{r14}]
+	const source.5{r13}, 0
+	addrof memVarAddr{r14}, frame.2
+	jump for_58
+for_58_body:
+	addrof memVarAddr{r14}, animationFrames.2
+	load animationFrames.2{r8}, [memVarAddr{r14}]
+	addrof memVarAddr{r14}, frame.2
+	load frame.2{r10}, [memVarAddr{r14}]
+	cast t.25.1{r2}(i16), source.6{r13}(u8)
+	addrof t.24.1{r4}, moveTiles
+	add t.24.2{r4}, t.25.1{r2}
+	load exponent.1{r2}, [t.24.2{r4}]
+	branch exponent.1{r2} equals 0: animateSlide.no_critical_edge_27, if_59_end
+	addrof memVarAddr{r14}, exponent.1
+	store [memVarAddr{r14}], exponent.1{r2}
+	jump if_59_end
+animateSlide.no_critical_edge_27:
+	addrof memVarAddr{r14}, animationFrames.2
+	store [memVarAddr{r14}], animationFrames.2{r8}
+	addrof memVarAddr{r14}, frame.2
+	store [memVarAddr{r14}], frame.2{r10}
+	jump for_58_continue
+if_59_end:
+	addrof memVarAddr{r14}, exponent.1
+	store [memVarAddr{r14}], exponent.1{r2}
+	cast t.27.1{r2}(i16), source.6{r13}(u8)
+	addrof t.26.1{r4}, moveTargets
+	add t.26.2{r4}, t.27.1{r2}
+	load target.1{r1}, [t.26.2{r4}]
+	notequals moving.1{r2}, target.1{r1}, source.6{r13}
+	branch layer.2{r12} notequals 0: or_61
+	branch moving.1{r2} equals 0: or_61
+	addrof memVarAddr{r14}, animationFrames.2
+	store [memVarAddr{r14}], animationFrames.2{r8}
+	addrof memVarAddr{r14}, frame.2
+	store [memVarAddr{r14}], frame.2{r10}
+	jump for_58_continue
+or_61:
+	branch layer.2{r12} notequals 1: if_60_end
+	branch moving.1{r2} notequals 0: if_60_end
+	addrof memVarAddr{r14}, animationFrames.2
+	store [memVarAddr{r14}], animationFrames.2{r8}
+	addrof memVarAddr{r14}, frame.2
+	store [memVarAddr{r14}], frame.2{r10}
+	jump for_58_continue
+if_60_end:
+	move t.29.1{r3}, source.6{r13}
+	shiftright t.29.1{r3}, 2
+	cast t.28.1{r3}(i16), t.29.1{r3}(u8)
+	shiftleft sourceRow.1{r3}, 2
+	move t.31.1{r5}, source.6{r13}
+	and t.31.1{r5}, 3
+	cast t.30.1{r5}(i16), t.31.1{r5}(u8)
+	mul sourceColumn.1{r5}, 9
+	move t.33.1{r7}, target.1{r1}
+	shiftright t.33.1{r7}, 2
+	addrof memVarAddr{r14}, animationFrames.2
+	store [memVarAddr{r14}], animationFrames.2{r8}
+	cast t.32.1{r8}(i16), t.33.1{r7}(u8)
+	shiftleft targetRow.1{r8}, 2
+	move t.35.1{r7}, target.1{r1}
+	and t.35.1{r7}, 3
+	addrof memVarAddr{r14}, targetRow.1
+	store [memVarAddr{r14}], targetRow.1{r8}
+	cast t.34.1{r8}(i16), t.35.1{r7}(u8)
+	mul targetColumn.1{r8}, 9
+	addrof memVarAddr{r14}, targetColumn.1
+	store [memVarAddr{r14}], targetColumn.1{r8}
+	move row.1{r8}, sourceRow.1{r3}
+	addrof memVarAddr{r14}, sourceRow.1
+	store [memVarAddr{r14}], sourceRow.1{r3}
+	move column.1{r3}, sourceColumn.1{r5}
+	addrof memVarAddr{r14}, sourceColumn.1
+	store [memVarAddr{r14}], sourceColumn.1{r5}
+	branch moving.1{r2} notequals 0: if_64_then
+	move column.2{r2}, column.1{r3}
+	addrof memVarAddr{r14}, column.2
+	store [memVarAddr{r14}], column.2{r2}
+	addrof memVarAddr{r14}, frame.2
+	store [memVarAddr{r14}], frame.2{r10}
+	addrof memVarAddr{r14}, column.2
+	move column.2{r10}, column.2{r2}
+	jump if_64_end
+if_64_then:
+	move source.6{r0}, source.6{r13}
+	call t.36.1{r0} = tileMoveDistance@u8@u8[source.6{r0}, target.1{r1}] -> i16
+	move tileFrames.2{r8}, t.36.1{r0}
+	shiftleft tileFrames.2{r8}, 2
+	move tileFrame.1{r5}, frame.2{r10}
+	branch tileFrame.1{r5} lteq tileFrames.2{r8}: if_65_end
+	move tileFrame.3{r5}, tileFrames.2{r8}
+if_65_end:
+	addrof memVarAddr{r14}, targetRow.1
+	load targetRow.1{r2}, [memVarAddr{r14}]
+	addrof memVarAddr{r14}, sourceRow.1
+	load sourceRow.1{r0}, [memVarAddr{r14}]
+	sub t.39.1{r2}, sourceRow.1{r0}
+	mul t.38.1{r2}, tileFrame.2{r5}
+	div t.37.1{r2}, tileFrames.2{r8}
+	add row.3{r0}, t.37.1{r2}
+	addrof memVarAddr{r14}, targetColumn.1
+	load targetColumn.1{r2}, [memVarAddr{r14}]
+	addrof memVarAddr{r14}, frame.2
+	store [memVarAddr{r14}], frame.2{r10}
+	addrof memVarAddr{r14}, sourceColumn.1
+	load sourceColumn.1{r10}, [memVarAddr{r14}]
+	sub t.42.1{r2}, sourceColumn.1{r10}
+	mul t.41.1{r2}, tileFrame.2{r5}
+	move t.40.1{r5}, t.41.1{r2}
+	div t.40.1{r5}, tileFrames.2{r8}
+	add column.3{r10}, t.40.1{r5}
+	move row.2{r8}, row.3{r0}
+if_64_end:
+	move t.43.1{r0}, row.2{r8}
+	add t.43.1{r0}, 3
+	move t.44.1{r2}, column.2{r10}
+	add t.44.1{r2}, 1
+	addrof memVarAddr{r14}, exponent.1
+	load exponent.1{r4}, [memVarAddr{r14}]
+	call drawTileAt@i16@i16@u8[t.43.1{r0}, t.44.1{r2}, exponent.1{r4}]
+for_58_continue:
+	move source.8{r8}, source.6{r13}
+	add source.8{r8}, 1
+	move source.6{r13}, source.8{r8}
+for_58:
+	branch source.6{r13} lt 16: for_58_body
+	move layer.4{r8}, layer.2{r12}
+	add layer.4{r8}, 1
+	move layer.2{r12}, layer.4{r8}
+for_57:
+	branch layer.2{r12} lt 2: for_57_body
 	call presentBoard[]
 	call waitFrame[]
-	move frame.4{r0}, frame.2{r8}
+	addrof memVarAddr{r14}, frame.2
+	load frame.2{r0}, [memVarAddr{r14}]
 	add frame.4{r0}, 1
-	move frame.2{r8}, frame.4{r0}
-for_51:
-	branch frame.2{r8} lteq 4: for_51_body
+for_56:
+	addrof memVarAddr{r14}, animationFrames.2
+	load animationFrames.2{r2}, [memVarAddr{r14}]
+	branch frame.2{r0} lteq animationFrames.2{r2}: for_56_body
 
 drawScore:
 	const arg.0.0{r0}, 0
@@ -776,30 +900,30 @@ drawStatus:
 	call setCursor@i16@i16[arg.2.0{r0}, arg.2.1{r2}]
 	addrof a.1.1{r8}, gameState
 	load t.2.1{r10}, [a.1.1{r8}]
-	branch t.2.1{r10} equals 1: if_59_then
-	branch t.5.1{r10} notequals 2: drawStatus_ret, if_60_then
-	jump if_60_then
-if_59_then:
+	branch t.2.1{r10} equals 1: if_66_then
+	branch t.5.1{r10} notequals 2: drawStatus_ret, if_67_then
+	jump if_67_then
+if_66_then:
 	const t.3.1{r0}, [string-18]
 	call printString@@u8[t.3.1{r0}]
 	jump drawStatus_ret
-if_60_then:
+if_67_then:
 	const t.6.1{r0}, [string-19]
 	call printString@@u8[t.6.1{r0}]
 drawStatus_ret:
 
 newGame:
 	const index.1{r8}, 0
-	jump for_61
-for_61_body:
+	jump for_68
+for_68_body:
 	const t.1.1{r9}, 0
 	cast t.3.1{r10}(i16), index.2{r8}(u8)
 	addrof t.2.1{r12}, tiles
 	add t.2.2{r12}, t.3.1{r10}
 	store [t.2.2{r12}], t.1.1{r9}
 	add index.3{r8}, 1
-for_61:
-	branch index.2{r8} lt 16: for_61_body
+for_68:
+	branch index.2{r8} lt 16: for_68_body
 	const t.4.1{r8}, 0
 	addrof a.5.1{r12}, score
 	store [a.5.1{r12}], t.4.1{r8}
@@ -826,79 +950,79 @@ main:
 	call initRandom@i32[arg.0.0{r0}]
 	call drawFrame[]
 	call newGame[]
-	jump while_62
-if_63_end:
-	branch key.1{r8} equals 114: if_64_then
-	branch key.1{r8} equals 82: if_64_then
+	jump while_69
+if_70_end:
+	branch key.1{r8} equals 114: if_71_then
+	branch key.1{r8} equals 82: if_71_then
 	addrof a.6.1{r10}, gameState
 	load t.7.1{r12}, [a.6.1{r10}]
-	branch t.7.1{r12} notequals 0: while_62
-	branch key.1{r8} equals 1: if_67_then, or_69
-	jump or_69
-if_64_then:
+	branch t.7.1{r12} notequals 0: while_69
+	branch key.1{r8} equals 1: if_74_then, or_76
+	jump or_76
+if_71_then:
 	call newGame[]
-	jump while_62
-or_69:
-	branch key.1{r8} equals 97: if_67_then
-	branch key.1{r8} equals 65: if_67_then
-	branch key.1{r8} equals 2: if_70_then
-	branch key.1{r8} equals 100: if_70_then, or_71
-	jump or_71
-if_67_then:
+	jump while_69
+or_76:
+	branch key.1{r8} equals 97: if_74_then
+	branch key.1{r8} equals 65: if_74_then
+	branch key.1{r8} equals 2: if_77_then
+	branch key.1{r8} equals 100: if_77_then, or_78
+	jump or_78
+if_74_then:
 	const direction.2{r8}, 0
 	move direction.3{r0}, direction.2{r8}
-	jump if_67_end
-or_71:
-	branch key.1{r8} equals 68: if_70_then
-	branch key.1{r8} equals 3: if_73_then
-	branch key.1{r8} equals 119: if_73_then, or_74
-	jump or_74
-if_70_then:
+	jump if_74_end
+or_78:
+	branch key.1{r8} equals 68: if_77_then
+	branch key.1{r8} equals 3: if_80_then
+	branch key.1{r8} equals 119: if_80_then, or_81
+	jump or_81
+if_77_then:
 	const direction.4{r8}, 1
 	move direction.3{r0}, direction.4{r8}
-	jump if_67_end
-or_74:
-	branch key.1{r8} equals 87: if_73_then
-	branch key.1{r8} equals 4: if_76_then
-	branch key.1{r8} equals 115: if_76_then, or_77
-	jump or_77
-if_73_then:
+	jump if_74_end
+or_81:
+	branch key.1{r8} equals 87: if_80_then
+	branch key.1{r8} equals 4: if_83_then
+	branch key.1{r8} equals 115: if_83_then, or_84
+	jump or_84
+if_80_then:
 	const direction.5{r8}, 2
 	move direction.3{r0}, direction.5{r8}
-	jump if_67_end
-or_77:
-	branch key.1{r8} notequals 83: while_62, if_76_then
-if_76_then:
+	jump if_74_end
+or_84:
+	branch key.1{r8} notequals 83: while_69, if_83_then
+if_83_then:
 	const direction.6{r8}, 3
 	move direction.3{r0}, direction.6{r8}
-if_67_end:
+if_74_end:
 	call t.8.1{r0} = slide@u8[direction.3{r0}] -> bool
-	branch t.8.1{r0} equals 0: while_62
+	branch t.8.1{r0} equals 0: while_69
 	call animateSlide[]
 	call spawnTile[]
 	addrof a.9.1{r8}, gameState
 	load t.10.1{r10}, [a.9.1{r8}]
-	branch t.10.1{r10} notequals 0: if_80_end
+	branch t.10.1{r10} notequals 0: if_87_end
 	call t.11.1{r0} = canMove[] -> bool
-	branch t.11.1{r0} notequals 0: if_80_end
+	branch t.11.1{r0} notequals 0: if_87_end
 	const t.12.1{r8}, 2
 	addrof a.13.1{r10}, gameState
 	store [a.13.1{r10}], t.12.1{r8}
-if_80_end:
+if_87_end:
 	call drawBoard[]
 	call drawScore[]
 	addrof a.14.1{r8}, gameState
 	load t.15.1{r10}, [a.14.1{r8}]
-	branch t.15.1{r10} equals 0: if_82_end
+	branch t.15.1{r10} equals 0: if_89_end
 	call drawStatus[]
-if_82_end:
+if_89_end:
 	const arg.11.0{r0}, 21
 	const arg.11.1{r2}, 0
 	call setCursor@i16@i16[arg.11.0{r0}, arg.11.1{r2}]
-while_62:
+while_69:
 	call key.1{r0} = getChar[] -> i16
 	move key.1{r8}, key.1{r0}
-	branch key.1{r8} notequals 27: if_63_end
+	branch key.1{r8} notequals 27: if_70_end
 
 printString@@u8:
 	ld   r2, r0

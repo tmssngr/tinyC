@@ -421,9 +421,34 @@ void drawBoard() {
 void waitFrame() asm {
 }
 
+i16 tileMoveDistance@u8@u8(u8 source, u8 target) {
+	i16 sourceRow;
+	i16 sourceColumn;
+	i16 targetRow;
+	i16 targetColumn;
+	i16 rowDistance;
+	i16 columnDistance;
+
+	sourceRow = (source >> 2) as i16;
+	sourceColumn = (source & 3) as i16;
+	targetRow = (target >> 2) as i16;
+	targetColumn = (target & 3) as i16;
+	rowDistance = targetRow - sourceRow;
+	columnDistance = targetColumn - sourceColumn;
+	if (rowDistance < 0) {
+		rowDistance = 0 - rowDistance;
+	}
+	if (columnDistance < 0) {
+		columnDistance = 0 - columnDistance;
+	}
+	return rowDistance + columnDistance;
+}
+
 void animateSlide() {
+	i16 animationFrames;
+	u8 source;
+	i16 tileFrames;
 	i16 frame;
-	i16 remaining;
 	u8 layer;
 	u8 source;
 	u8 exponent;
@@ -435,11 +460,22 @@ void animateSlide() {
 	i16 targetColumn;
 	i16 row;
 	i16 column;
+	i16 tileFrames;
+	i16 tileFrame;
 
+	animationFrames = 0;
+	source = 0;
+	for (; source < 16; source = source + 1) {
+		if (moveTiles[source as i64] == 0) {
+			continue;
+		}
+		tileFrames = (tileMoveDistance@u8@u8(source, moveTargets[source as i64])) * 8;
+		if (tileFrames > animationFrames) {
+			animationFrames = tileFrames;
+		}
+	}
 	frame = 1;
-	for (; frame <= 8; frame = frame + 1) {
-		remaining = 8;
-		remaining = remaining - frame;
+	for (; frame <= animationFrames; frame = frame + 1) {
 		clearBoard();
 		layer = 0;
 		for (; layer < 2; layer = layer + 1) {
@@ -458,8 +494,17 @@ void animateSlide() {
 				sourceColumn = ((source & 3) as i16) * 9;
 				targetRow = ((target >> 2) as i16) * 4;
 				targetColumn = ((target & 3) as i16) * 9;
-				row = ((sourceRow * remaining) + (targetRow * frame)) / 8;
-				column = ((sourceColumn * remaining) + (targetColumn * frame)) / 8;
+				row = sourceRow;
+				column = sourceColumn;
+				if (moving) {
+					tileFrames = (tileMoveDistance@u8@u8(source, target)) * 8;
+					tileFrame = frame;
+					if (tileFrame > tileFrames) {
+						tileFrame = tileFrames;
+					}
+					row = sourceRow + (((targetRow - sourceRow) * tileFrame) / tileFrames);
+					column = sourceColumn + (((targetColumn - sourceColumn) * tileFrame) / tileFrames);
+				}
 				drawTileAt@i16@i16@u8(row + 3, column + 1, exponent);
 			}
 		}
