@@ -37,6 +37,7 @@ const STATE_LOST = 2
 u8 tiles[BOARD_CELLS]
 u8 moveTiles[BOARD_CELLS]
 u8 moveTargets[BOARD_CELLS]
+u8 moveMerges[BOARD_CELLS]
 u8 boardFrame[BOARD_CHARACTERS]
 u8 displayedFrame[BOARD_CHARACTERS]
 i32 score
@@ -104,6 +105,7 @@ bool slideLine(u8 first, u8 step) {
 				u8* previousTile = &tiles[previous]
 				if *previousTile == tile {
 					moveTargets[source] = previous
+					moveMerges[source] = 1
 					// Increasing the exponent by 1 doubles the displayed value.
 					u8 nextTile = tile + 1
 					*previousTile = nextTile
@@ -139,6 +141,7 @@ bool slide(u8 direction) {
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		moveTiles[index] = tiles[index]
 		moveTargets[index] = index
+		moveMerges[index] = 0
 	}
 	bool moved = false
 	for u8 line = 0; line < BOARD_SIZE; line += 1 {
@@ -404,6 +407,20 @@ void animateSlide() {
 				}
 				drawTileAt(row + BOARD_TOP, column + BOARD_LEFT, exponent)
 			}
+		}
+		// Show each merged value on arrival, above any other animated tiles.
+		for u8 source = 0; source < BOARD_CELLS; source += 1 {
+			if moveMerges[source] == 0 {
+				continue
+			}
+			u8 target = moveTargets[source]
+			i16 tileFrames = tileMoveDistance(source, target) * ANIMATION_FRAMES_PER_CELL
+			if frame < tileFrames {
+				continue
+			}
+			i16 targetRow = (target >> 2) as i16 * TILE_ROW_STEP
+			i16 targetColumn = (target & 3) as i16 * TILE_COLUMN_STEP
+			drawTileAt(targetRow + BOARD_TOP, targetColumn + BOARD_LEFT, tiles[target])
 		}
 		// Display the completed image, then pause before preparing the next one.
 		presentBoard()

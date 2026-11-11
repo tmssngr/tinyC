@@ -2,6 +2,7 @@ i32 __random__;
 u8* tiles[16];
 u8* moveTiles[16];
 u8* moveTargets[16];
+u8* moveMerges[16];
 u8* boardFrame[525];
 u8* displayedFrame[525];
 i32 score;
@@ -166,6 +167,7 @@ bool slideLine@u8@u8(u8 first, u8 step) {
 				previousTile = &tiles[previous as i64];
 				if ((*previousTile) == tile) {
 					moveTargets[source as i64] = previous;
+					moveMerges[source as i64] = 1;
 					nextTile = tile + 1;
 					*previousTile = nextTile;
 					mergedScore = (tileValue@u8(nextTile)) as i32;
@@ -204,6 +206,7 @@ bool slide@u8(u8 direction) {
 	for (; index < 16; index = index + 1) {
 		moveTiles[index as i64] = tiles[index as i64];
 		moveTargets[index as i64] = index;
+		moveMerges[index as i64] = 0;
 	}
 	moved = false;
 	line = 0;
@@ -462,6 +465,11 @@ void animateSlide() {
 	i16 column;
 	i16 tileFrames;
 	i16 tileFrame;
+	u8 source;
+	u8 target;
+	i16 tileFrames;
+	i16 targetRow;
+	i16 targetColumn;
 
 	animationFrames = 0;
 	source = 0;
@@ -507,6 +515,20 @@ void animateSlide() {
 				}
 				drawTileAt@i16@i16@u8(row + 3, column + 1, exponent);
 			}
+		}
+		source = 0;
+		for (; source < 16; source = source + 1) {
+			if (moveMerges[source as i64] == 0) {
+				continue;
+			}
+			target = moveTargets[source as i64];
+			tileFrames = (tileMoveDistance@u8@u8(source, target)) << 3;
+			if (frame < tileFrames) {
+				continue;
+			}
+			targetRow = ((target >> 2) as i16) << 2;
+			targetColumn = ((target & 3) as i16) * 9;
+			drawTileAt@i16@i16@u8(targetRow + 3, targetColumn + 1, tiles[target as i64]);
 		}
 		presentBoard();
 		waitFrame();
