@@ -3,10 +3,8 @@
 
 #ifdef Z8
 const CLEAR_SCREEN = true
-const ANIMATION_FRAMES_PER_CELL = 4
 #else
 const CLEAR_SCREEN = false
-const ANIMATION_FRAMES_PER_CELL = 8
 #endif
 
 const BOARD_SIZE = 4
@@ -342,11 +340,11 @@ void waitFrame() asm {
 #endif
 }
 
-i16 tileMoveDistance(u8 source, u8 target) {
-	i16 sourceRow = (source >> 2) as i16
-	i16 sourceColumn = (source & 3) as i16
-	i16 targetRow = (target >> 2) as i16
-	i16 targetColumn = (target & 3) as i16
+i16 tileMoveCharDistance(u8 source, u8 target) {
+	i16 sourceRow = (source >> 2) as i16 * TILE_ROW_STEP
+	i16 sourceColumn = (source & 3) as i16 * TILE_COLUMN_STEP
+	i16 targetRow = (target >> 2) as i16 * TILE_ROW_STEP
+	i16 targetColumn = (target & 3) as i16 * TILE_COLUMN_STEP
 	i16 rowDistance = targetRow - sourceRow
 	i16 columnDistance = targetColumn - sourceColumn
 	if rowDistance < 0 {
@@ -361,18 +359,26 @@ i16 tileMoveDistance(u8 source, u8 target) {
 // Animate the saved starting tiles; tiles already holds the final move result.
 // main() draws the merged values and newly spawned tile after this finishes.
 void animateSlide() {
-	// Give every tile the same frames-per-cell speed; the longest move sets the duration.
-	i16 animationFrames = 0
+	// Find the farthest destination so the shared offset can determine animation length.
+	i16 maxMoveDistance = 0
 	for u8 source = 0; source < BOARD_CELLS; source += 1 {
 		if moveTiles[source] == 0 {
 			continue
 		}
-		i16 tileFrames = tileMoveDistance(source, moveTargets[source]) * ANIMATION_FRAMES_PER_CELL
-		if tileFrames > animationFrames {
-			animationFrames = tileFrames
+		i16 tileDistance = tileMoveCharDistance(source, moveTargets[source])
+		if tileDistance > maxMoveDistance {
+			maxMoveDistance = tileDistance
 		}
 	}
-	for i16 frame = 1; frame <= animationFrames; frame += 1 {
+	i16 moveOffset = 0
+	i16 moveSpeed = 0
+	while (moveOffset < maxMoveDistance) {
+		// Increase the shared speed, then add it to the shared move offset.
+		moveSpeed += 1
+		moveOffset += moveSpeed
+		if moveOffset > maxMoveDistance {
+			moveOffset = maxMoveDistance
+		}
 		// Clear the next image in memory, not the screen, to remove old tile trails.
 		clearBoard()
 		// Draw stationary tiles first so moving tiles stay visible when they overlap.
@@ -396,14 +402,31 @@ void animateSlide() {
 				i16 row = sourceRow
 				i16 column = sourceColumn
 				if moving {
-					// Short moves stop at their target while longer moves keep going.
-					i16 tileFrames = tileMoveDistance(source, target) * ANIMATION_FRAMES_PER_CELL
-					i16 tileFrame = frame
-					if tileFrame > tileFrames {
-						tileFrame = tileFrames
+					// Clamp each axis at its destination to prevent overshooting.
+					if targetRow > sourceRow {
+						row = sourceRow + moveOffset
+						if row > targetRow {
+							row = targetRow
+						}
 					}
-					row = sourceRow + (targetRow - sourceRow) * tileFrame / tileFrames
-					column = sourceColumn + (targetColumn - sourceColumn) * tileFrame / tileFrames
+					else if targetRow < sourceRow {
+						row = sourceRow - moveOffset
+						if row < targetRow {
+							row = targetRow
+						}
+					}
+					if targetColumn > sourceColumn {
+						column = sourceColumn + moveOffset
+						if column > targetColumn {
+							column = targetColumn
+						}
+					}
+					else if targetColumn < sourceColumn {
+						column = sourceColumn - moveOffset
+						if column < targetColumn {
+							column = targetColumn
+						}
+					}
 				}
 				drawTileAt(row + BOARD_TOP, column + BOARD_LEFT, exponent)
 			}
@@ -414,8 +437,8 @@ void animateSlide() {
 				continue
 			}
 			u8 target = moveTargets[source]
-			i16 tileFrames = tileMoveDistance(source, target) * ANIMATION_FRAMES_PER_CELL
-			if frame < tileFrames {
+			i16 tileDistance = tileMoveCharDistance(source, target)
+			if moveOffset < tileDistance {
 				continue
 			}
 			i16 targetRow = (target >> 2) as i16 * TILE_ROW_STEP

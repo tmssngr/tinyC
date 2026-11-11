@@ -424,7 +424,7 @@ void drawBoard() {
 void waitFrame() asm {
 }
 
-i16 tileMoveDistance@u8@u8(u8 source, u8 target) {
+i16 tileMoveCharDistance@u8@u8(u8 source, u8 target) {
 	i16 sourceRow;
 	i16 sourceColumn;
 	i16 targetRow;
@@ -432,10 +432,10 @@ i16 tileMoveDistance@u8@u8(u8 source, u8 target) {
 	i16 rowDistance;
 	i16 columnDistance;
 
-	sourceRow = (source >> 2) as i16;
-	sourceColumn = (source & 3) as i16;
-	targetRow = (target >> 2) as i16;
-	targetColumn = (target & 3) as i16;
+	sourceRow = ((source >> 2) as i16) * 4;
+	sourceColumn = ((source & 3) as i16) * 9;
+	targetRow = ((target >> 2) as i16) * 4;
+	targetColumn = ((target & 3) as i16) * 9;
 	rowDistance = targetRow - sourceRow;
 	columnDistance = targetColumn - sourceColumn;
 	if (rowDistance < 0) {
@@ -448,10 +448,11 @@ i16 tileMoveDistance@u8@u8(u8 source, u8 target) {
 }
 
 void animateSlide() {
-	i16 animationFrames;
+	i16 maxMoveDistance;
 	u8 source;
-	i16 tileFrames;
-	i16 frame;
+	i16 tileDistance;
+	i16 moveOffset;
+	i16 moveSpeed;
 	u8 layer;
 	u8 source;
 	u8 exponent;
@@ -463,27 +464,31 @@ void animateSlide() {
 	i16 targetColumn;
 	i16 row;
 	i16 column;
-	i16 tileFrames;
-	i16 tileFrame;
 	u8 source;
 	u8 target;
-	i16 tileFrames;
+	i16 tileDistance;
 	i16 targetRow;
 	i16 targetColumn;
 
-	animationFrames = 0;
+	maxMoveDistance = 0;
 	source = 0;
 	for (; source < 16; source = source + 1) {
 		if (moveTiles[source as i64] == 0) {
 			continue;
 		}
-		tileFrames = (tileMoveDistance@u8@u8(source, moveTargets[source as i64])) * 8;
-		if (tileFrames > animationFrames) {
-			animationFrames = tileFrames;
+		tileDistance = tileMoveCharDistance@u8@u8(source, moveTargets[source as i64]);
+		if (tileDistance > maxMoveDistance) {
+			maxMoveDistance = tileDistance;
 		}
 	}
-	frame = 1;
-	for (; frame <= animationFrames; frame = frame + 1) {
+	moveOffset = 0;
+	moveSpeed = 0;
+	while (moveOffset < maxMoveDistance) {
+		moveSpeed = moveSpeed + 1;
+		moveOffset = moveOffset + moveSpeed;
+		if (moveOffset > maxMoveDistance) {
+			moveOffset = maxMoveDistance;
+		}
 		clearBoard();
 		layer = 0;
 		for (; layer < 2; layer = layer + 1) {
@@ -505,13 +510,34 @@ void animateSlide() {
 				row = sourceRow;
 				column = sourceColumn;
 				if (moving) {
-					tileFrames = (tileMoveDistance@u8@u8(source, target)) * 8;
-					tileFrame = frame;
-					if (tileFrame > tileFrames) {
-						tileFrame = tileFrames;
+					if (targetRow > sourceRow) {
+						row = sourceRow + moveOffset;
+						if (row > targetRow) {
+							row = targetRow;
+						}
 					}
-					row = sourceRow + (((targetRow - sourceRow) * tileFrame) / tileFrames);
-					column = sourceColumn + (((targetColumn - sourceColumn) * tileFrame) / tileFrames);
+					else {
+						if (targetRow < sourceRow) {
+							row = sourceRow - moveOffset;
+							if (row < targetRow) {
+								row = targetRow;
+							}
+						}
+					}
+					if (targetColumn > sourceColumn) {
+						column = sourceColumn + moveOffset;
+						if (column > targetColumn) {
+							column = targetColumn;
+						}
+					}
+					else {
+						if (targetColumn < sourceColumn) {
+							column = sourceColumn - moveOffset;
+							if (column < targetColumn) {
+								column = targetColumn;
+							}
+						}
+					}
 				}
 				drawTileAt@i16@i16@u8(row + 3, column + 1, exponent);
 			}
@@ -522,8 +548,8 @@ void animateSlide() {
 				continue;
 			}
 			target = moveTargets[source as i64];
-			tileFrames = (tileMoveDistance@u8@u8(source, target)) * 8;
-			if (frame < tileFrames) {
+			tileDistance = tileMoveCharDistance@u8@u8(source, target);
+			if (moveOffset < tileDistance) {
 				continue;
 			}
 			targetRow = ((target >> 2) as i16) * 4;
