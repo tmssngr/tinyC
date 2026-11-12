@@ -266,7 +266,7 @@ _tileValue@u8:
         mov ax, 1
         ; const index.1{r2}, 0
         mov dl, 0
-        ; 42:2 for index < exponent
+        ; 45:2 for index < exponent
         jmp for_4
 for_4_body:
         ; shiftleft value.3{r0}, 1
@@ -277,11 +277,11 @@ for_4:
         ; branch index.2{r2} lt exponent{r1}: for_4_body
         cmp dl, cl
         jb for_4_body
-        ; 45:9 return value
+        ; 48:9 return value
         add rsp, 8
         ret
 
-        ; void _spawnTile
+        ; u8 _spawnTile
         ;   rsp+48: var tile.1
 _spawnTile:
         sub rsp, 8
@@ -293,12 +293,12 @@ _spawnTile:
         mov al, 0
         ; const index.1{r1}, 0
         mov cl, 0
-        ; 50:2 for index < 16
+        ; 53:2 for index < 16
         ; move emptyCount.2{r6}, emptyCount.1{r0}
         mov bl, al
         jmp for_5
 for_5_body:
-        ; 51:3 if [...] == 0
+        ; 54:3 if [...] == 0
         ; cast t.7.1{r1}(i64), index.2{r0}(u8)
         movzx rcx, al
         ; addrof t.6.1{r2}, tiles
@@ -327,9 +327,9 @@ for_5:
         ; branch index.2{r0} lt 16: for_5_body
         cmp al, 16
         jb for_5_body
-        ; branch emptyCount.2{r6} equals 0: _spawnTile_ret
+        ; branch emptyCount.2{r6} equals 0: if_7_then
         cmp bl, 0
-        je _spawnTile_ret
+        je if_7_then
         ; call t.9.1{r0} = _random16[] -> i16
         call _random16
         ; cast t.10.1{r1}(i16), emptyCount.2{r6}(u8)
@@ -345,26 +345,34 @@ for_5:
         mov al, r8b
         ; const index.3{r1}, 0
         mov cl, 0
-        ; 60:2 for index < 16
+        ; 63:2 for index < 16
+        ; move chosen.2{r2}, chosen.1{r0}
+        mov dl, al
         ; move index.4{r6}, index.3{r1}
         mov bl, cl
         jmp for_8
 for_8_body:
-        ; 61:3 if [...] != 0
-        ; cast t.13.1{r1}(i64), index.4{r6}(u8)
-        movzx rcx, bl
-        ; addrof t.12.1{r2}, tiles
-        lea rdx, [var_1]
-        ; add t.12.2{r2}, t.13.1{r1}
-        add rdx, rcx
-        ; load t.11.1{r1}, [t.12.2{r2}]
-        mov cl, [rdx]
-        ; branch t.11.1{r1} notequals 0: for_8_continue
-        cmp cl, 0
-        jne for_8_continue
-        ; branch chosen.2{r0} equals 0: if_10_then
+        ; 64:3 if [...] != 0
+        ; cast t.13.1{r0}(i64), index.4{r6}(u8)
+        movzx rax, bl
+        ; addrof t.12.1{r1}, tiles
+        lea rcx, [var_1]
+        ; add t.12.2{r1}, t.13.1{r0}
+        add rcx, rax
+        ; load t.11.1{r0}, [t.12.2{r1}]
+        mov al, [rcx]
+        ; branch t.11.1{r0} equals 0: if_9_end
         cmp al, 0
+        je if_9_end
+        ; move chosen.3{r0}, chosen.2{r2}
+        mov al, dl
+        jmp for_8_continue
+if_9_end:
+        ; branch chosen.2{r2} equals 0: if_10_then
+        cmp dl, 0
         je if_10_then
+        ; move chosen.4{r0}, chosen.2{r2}
+        mov al, dl
         ; sub chosen.4{r0}, 1
         sub al, 1
 for_8_continue:
@@ -372,21 +380,30 @@ for_8_continue:
         mov cl, bl
         ; add index.8{r1}, 1
         add cl, 1
+        ; move chosen.2{r2}, chosen.3{r0}
+        mov dl, al
         ; move index.4{r6}, index.8{r1}
         mov bl, cl
+        jmp for_8
+if_7_then:
+        ; const {r0}, 255
+        mov al, 255
+        jmp _spawnTile_ret
 for_8:
-        ; branch index.4{r6} gteq 16: _spawnTile_ret, for_8_body
+        ; branch index.4{r6} lt 16: for_8_body
         cmp bl, 16
-        jae _spawnTile_ret
-        jmp for_8_body
+        jb for_8_body
+        ; const {r0}, 255
+        mov al, 255
+        jmp _spawnTile_ret
 if_10_then:
-        ; const tile.1{r0}, 1
-        mov al, 1
+        ; const tile.1{r1}, 1
+        mov cl, 1
         ; addrof memVarAddr{r7}, tile.1
         lea r12, [rsp+48]
-        ; store [memVarAddr{r7}], tile.1{r0}
-        mov [r12], al
-        ; 66:4 if _random16([]) % 10 == 0
+        ; store [memVarAddr{r7}], tile.1{r1}
+        mov [r12], cl
+        ; 69:4 if _random16([]) % 10 == 0
         ; call t.15.1{r0} = _random16[] -> i16
         call _random16
         ; mod t.14.1{r2}, t.14.1{r0}, 10
@@ -414,7 +431,9 @@ if_11_end:
         add rdx, rcx
         ; store [t.16.2{r2}], tile.2{r0}
         mov [rdx], al
-        ; 70:4 return
+        ; 73:11 return index
+        ; move index.4{r0}, index.4{r6}
+        mov al, bl
 _spawnTile_ret:
         add rsp, 32
         ; restore clobbered non-volatile registers
@@ -451,7 +470,7 @@ _slideLine@u8@u8:
         mov r9b, 0
         ; const position.1{r5}, 0
         mov r10b, 0
-        ; 81:2 for position < 4
+        ; 85:2 for position < 4
         ; addrof memVarAddr{r7}, position.2
         lea r12, [rsp+50]
         ; store [memVarAddr{r7}], position.2{r5}
@@ -508,7 +527,7 @@ for_12_body:
         add rax, r10
         ; load tile.1{r5}, [sourceTile.2{r0}]
         mov r10b, [rax]
-        ; 84:3 if tile != 0
+        ; 88:3 if tile != 0
         ; branch tile.1{r5} notequals 0: if_13_then
         cmp r10b, 0
         jne if_13_then
@@ -558,7 +577,7 @@ if_13_then:
         mov [rax], r10b
         ; const merged.1{r0}, 0
         mov al, 0
-        ; 87:4 if target != first && !previousMerged
+        ; 91:4 if target != first && !previousMerged
         ; branch target.2{r1} notequals first{r6}: and_15
         cmp cl, bl
         jne and_15
@@ -619,7 +638,7 @@ if_14_then:
         lea rdx, [var_1]
         ; add previousTile.2{r2}, t.16.1{r1}
         add rdx, rcx
-        ; 90:5 if *previousTile == tile
+        ; 94:5 if *previousTile == tile
         ; load t.17.1{r1}, [previousTile.2{r2}]
         mov cl, [rdx]
         ; addrof memVarAddr{r7}, first
@@ -653,18 +672,22 @@ if_14_then:
         mov cl, r8b
         jmp if_14_end
 if_16_then:
+        ; move t.18.1{r0}, previous.1{r5}
+        mov al, r10b
+        ; or t.18.1{r0}, 128
+        or al, 128
         ; addrof memVarAddr{r7}, source.2
         lea r12, [rsp+48]
-        ; load source.2{r0}, [memVarAddr{r7}]
-        mov al, [r12]
-        ; cast t.19.1{r1}(i64), source.2{r0}(u8)
-        movzx rcx, al
-        ; addrof t.18.1{r0}, moveTargets
-        lea rax, [var_3]
-        ; add t.18.2{r0}, t.19.1{r1}
-        add rax, rcx
-        ; store [t.18.2{r0}], previous.1{r5}
-        mov [rax], r10b
+        ; load source.2{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
+        ; cast t.20.1{r3}(i64), source.2{r1}(u8)
+        movzx r8, cl
+        ; addrof t.19.1{r1}, moveTargets
+        lea rcx, [var_3]
+        ; add t.19.2{r1}, t.20.1{r3}
+        add rcx, r8
+        ; store [t.19.2{r1}], t.18.1{r0}
+        mov [rcx], al
         ; move nextTile.1{r0}, tile.1{r6}
         mov al, bl
         ; addrof memVarAddr{r7}, tile.1
@@ -681,31 +704,31 @@ if_16_then:
         lea r12, [rsp+58]
         ; store [memVarAddr{r7}], nextTile.1{r0}
         mov [r12], al
-        ; call t.20.1{r0} = _tileValue@u8[nextTile.1{r1}] -> i16
+        ; call t.21.1{r0} = _tileValue@u8[nextTile.1{r1}] -> i16
         call _tileValue@u8
-        ; cast mergedScore.1{r0}(i32), t.20.1{r0}(i16)
+        ; cast mergedScore.1{r0}(i32), t.21.1{r0}(i16)
         movsx eax, ax
-        ; addrof a.22.1{r1}, score
+        ; addrof a.23.1{r1}, score
         lea rcx, [var_4]
-        ; load t.23.1{r1}, [a.22.1{r1}]
+        ; load t.24.1{r1}, [a.23.1{r1}]
         mov ecx, [rcx]
-        ; add t.21.1{r1}, mergedScore.1{r0}
+        ; add t.22.1{r1}, mergedScore.1{r0}
         add ecx, eax
-        ; addrof a.24.1{r0}, score
+        ; addrof a.25.1{r0}, score
         lea rax, [var_4]
-        ; store [a.24.1{r0}], t.21.1{r1}
+        ; store [a.25.1{r0}], t.22.1{r1}
         mov [rax], ecx
-        ; 96:6 if nextTile == 11
+        ; 101:6 if nextTile == 11
         ; load nextTile.1{r1}, [memVarAddr{r7}]
         mov cl, [r12]
         ; branch nextTile.1{r1} notequals 11: if_17_end
         cmp cl, 11
         jne if_17_end
-        ; const t.25.1{r0}, 1
+        ; const t.26.1{r0}, 1
         mov al, 1
-        ; addrof a.26.1{r1}, gameState
+        ; addrof a.27.1{r1}, gameState
         lea rcx, [var_5]
-        ; store [a.26.1{r1}], t.25.1{r0}
+        ; store [a.27.1{r1}], t.26.1{r0}
         mov [rcx], al
 if_17_end:
         ; const merged.3{r0}, 1
@@ -740,27 +763,27 @@ if_18_then:
         lea r12, [rsp+48]
         ; load source.2{r3}, [memVarAddr{r7}]
         mov r8b, [r12]
-        ; cast t.28.1{r1}(i64), source.2{r3}(u8)
+        ; cast t.29.1{r1}(i64), source.2{r3}(u8)
         movzx rcx, r8b
-        ; addrof t.27.1{r4}, moveTargets
+        ; addrof t.28.1{r4}, moveTargets
         lea r9, [var_3]
-        ; add t.27.2{r4}, t.28.1{r1}
+        ; add t.28.2{r4}, t.29.1{r1}
         add r9, rcx
-        ; store [t.27.2{r4}], target.2{r0}
+        ; store [t.28.2{r4}], target.2{r0}
         mov [r9], al
-        ; cast t.30.1{r1}(i64), target.2{r0}(u8)
+        ; cast t.31.1{r1}(i64), target.2{r0}(u8)
         movzx rcx, al
-        ; addrof t.29.1{r4}, tiles
+        ; addrof t.30.1{r4}, tiles
         lea r9, [var_1]
-        ; add t.29.2{r4}, t.30.1{r1}
+        ; add t.30.2{r4}, t.31.1{r1}
         add r9, rcx
         ; addrof memVarAddr{r7}, tile.1
         lea r12, [rsp+51]
         ; load tile.1{r1}, [memVarAddr{r7}]
         mov cl, [r12]
-        ; store [t.29.2{r4}], tile.1{r1}
+        ; store [t.30.2{r4}], tile.1{r1}
         mov [r9], cl
-        ; 107:5 if target != source
+        ; 112:5 if target != source
         ; branch target.2{r0} equals source.2{r3}: if_19_end
         cmp al, r8b
         je if_19_end
@@ -790,7 +813,7 @@ for_12:
         ; branch position.2{r5} lt 4: for_12_body
         cmp r10b, 4
         jb for_12_body
-        ; 116:9 return moved
+        ; 121:9 return moved
         ; move moved.2{r0}, moved.2{r2}
         mov al, dl
         add rsp, 32
@@ -814,7 +837,7 @@ _slide@u8:
         mov bl, cl
         ; const index.1{r0}, 0
         mov al, 0
-        ; 120:2 for index < 16
+        ; 125:2 for index < 16
         jmp for_20
 for_20_body:
         ; cast t.8.1{r1}(i64), index.2{r0}(u8)
@@ -851,7 +874,7 @@ for_20:
         mov al, 0
         ; const line.1{r1}, 0
         mov cl, 0
-        ; 125:2 for line < 4
+        ; 130:2 for line < 4
         ; addrof memVarAddr{r7}, moved.2
         lea r12, [rsp+48]
         ; store [memVarAddr{r7}], moved.2{r0}
@@ -870,7 +893,7 @@ for_21_body:
         shl cl, 2
         ; const step.1{r2}, 1
         mov dl, 1
-        ; 128:3 if direction == 1
+        ; 133:3 if direction == 1
         ; branch direction{r6} equals 1: if_22_then
         cmp bl, 1
         je if_22_then
@@ -923,7 +946,7 @@ if_24_then:
         ; move step.3{r2}, step.5{r0}
         mov dl, al
 if_22_end:
-        ; 140:3 if _slideLine@u8@u8([ExprVarAccess[varName=first, index=4, scope=function, type=u8, varIsArray=false, location=140:16], ExprVarAccess[varName=step, index=5, scope=function, type=u8, varIsArray=false, location=140:23]])
+        ; 145:3 if _slideLine@u8@u8([ExprVarAccess[varName=first, index=4, scope=function, type=u8, varIsArray=false, location=145:16], ExprVarAccess[varName=step, index=5, scope=function, type=u8, varIsArray=false, location=145:23]])
         ; call t.13.1{r0} = _slideLine@u8@u8[first.3{r1}, step.3{r2}] -> bool
         call _slideLine@u8@u8
         ; branch t.13.1{r0} notequals 0: if_25_then
@@ -948,7 +971,7 @@ for_21:
         ; branch line.2{r1} lt 4: for_21_body
         cmp cl, 4
         jb for_21_body
-        ; 144:9 return moved
+        ; 149:9 return moved
         add rsp, 32
         ; restore clobbered non-volatile registers
         pop r12
@@ -961,7 +984,7 @@ _canMove:
         sub rsp, 8
         ; const index.1{r0}, 0
         mov al, 0
-        ; 148:2 for index < 16
+        ; 153:2 for index < 16
         jmp for_26
 for_26_body:
         ; cast t.3.1{r1}(i64), index.2{r0}(u8)
@@ -972,11 +995,11 @@ for_26_body:
         add rdx, rcx
         ; load tile.1{r1}, [t.2.2{r2}]
         mov cl, [rdx]
-        ; 150:3 if tile == 0
+        ; 155:3 if tile == 0
         ; branch tile.1{r1} equals 0: if_27_then
         cmp cl, 0
         je if_27_then
-        ; 153:3 if index & 3 != 3 && [...] == tile
+        ; 158:3 if index & 3 != 3 && [...] == tile
         ; move t.4.1{r2}, index.2{r0}
         mov dl, al
         ; and t.4.1{r2}, 3
@@ -1280,6 +1303,1083 @@ _drawTileAt@i16@i16@u8_ret:
         add rsp, 8
         ret
 
+        ; u8 _tileRow@u8
+        ;   rsp+16: arg index
+_tileRow@u8:
+        sub rsp, 8
+        ; 226:19 return index & 12 + 3
+        ; move t.2.1{r0}, index{r1}
+        mov al, cl
+        ; and t.2.1{r0}, 12
+        and al, 12
+        ; add t.1.1{r0}, 3
+        add al, 3
+        add rsp, 8
+        ret
+
+        ; u8 _tileColumn@u8
+        ;   rsp+16: arg index
+_tileColumn@u8:
+        sub rsp, 8
+        ; move column.1{r0}, index{r1}
+        mov al, cl
+        ; and column.1{r0}, 3
+        and al, 3
+        ; 231:36 return column << 3 + 1 + column
+        ; move t.4.1{r1}, column.1{r0}
+        mov cl, al
+        ; shiftleft t.4.1{r1}, 3
+        shl cl, 3
+        ; add t.3.1{r1}, 1
+        add cl, 1
+        ; add t.2.1{r1}, column.1{r0}
+        add cl, al
+        ; move t.2.1{r0}, t.2.1{r1}
+        mov al, cl
+        add rsp, 8
+        ret
+
+        ; void _clearTileTrail@u8@u8@u8@u8
+        ;   rsp+80: arg row
+        ;   rsp+88: arg column
+        ;   rsp+96: arg direction
+        ;   rsp+104: arg distance
+        ;   rsp+48: var height.5
+        ;   rsp+56: var spaces.2
+        ;   rsp+64: var row.5
+        ;   rsp+65: var line.2
+_clearTileTrail@u8@u8@u8@u8:
+        sub rsp, 24
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
+        sub rsp, 32
+        ; const width.1{r0}, 8
+        mov al, 8
+        ; const height.1{r5}, 3
+        mov r10b, 3
+        ; 237:2 if direction < 2
+        ; branch direction{r3} lt 2: if_45_then
+        cmp r8b, 2
+        jb if_45_then
+        ; branch distance{r4} gteq height.1{r5}: _clearTileTrail@u8@u8@u8@u8.no_critical_edge_14, if_48_end
+        cmp r9b, r10b
+        jae _clearTileTrail@u8@u8@u8@u8.no_critical_edge_14
+        jmp if_48_end
+if_45_then:
+        ; branch distance{r4} gteq width.1{r0}: if_46_end, if_46_then
+        cmp r9b, al
+        jae if_46_end
+        jmp if_46_then
+_clearTileTrail@u8@u8@u8@u8.no_critical_edge_14:
+        ; move height.2{r4}, height.1{r5}
+        mov r9b, r10b
+        jmp if_48_end
+if_46_then:
+        ; move width.4{r0}, distance{r4}
+        mov al, r9b
+        jmp if_46_end
+if_48_end:
+        ; branch direction{r3} notequals 2: _clearTileTrail@u8@u8@u8@u8.no_critical_edge_15, if_49_then
+        cmp r8b, 2
+        jne _clearTileTrail@u8@u8@u8@u8.no_critical_edge_15
+        jmp if_49_then
+if_46_end:
+        ; branch direction{r3} notequals 0: _clearTileTrail@u8@u8@u8@u8.no_critical_edge_17, if_47_then
+        cmp r8b, 0
+        jne _clearTileTrail@u8@u8@u8@u8.no_critical_edge_17
+        jmp if_47_then
+_clearTileTrail@u8@u8@u8@u8.no_critical_edge_15:
+        ; move column.3{r6}, column{r2}
+        mov bl, dl
+        ; move height.5{r2}, height.2{r4}
+        mov dl, r9b
+        ; addrof memVarAddr{r7}, height.5
+        lea r12, [rsp+48]
+        ; store [memVarAddr{r7}], height.5{r2}
+        mov [r12], dl
+        jmp if_45_end
+if_49_then:
+        ; const t.11.1{r3}, 3
+        mov r8b, 3
+        ; sub t.10.1{r3}, height.2{r4}
+        sub r8b, r9b
+        ; add row.4{r1}, t.10.1{r3}
+        add cl, r8b
+        ; move column.3{r6}, column{r2}
+        mov bl, dl
+        ; move height.5{r2}, height.2{r4}
+        mov dl, r9b
+        ; addrof memVarAddr{r7}, height.5
+        lea r12, [rsp+48]
+        ; store [memVarAddr{r7}], height.5{r2}
+        mov [r12], dl
+        jmp if_45_end
+_clearTileTrail@u8@u8@u8@u8.no_critical_edge_17:
+        ; move column.3{r6}, column{r2}
+        mov bl, dl
+        ; move height.5{r2}, height.1{r5}
+        mov dl, r10b
+        ; addrof memVarAddr{r7}, height.5
+        lea r12, [rsp+48]
+        ; store [memVarAddr{r7}], height.5{r2}
+        mov [r12], dl
+        jmp if_45_end
+if_47_then:
+        ; const t.9.1{r3}, 8
+        mov r8b, 8
+        ; sub t.8.1{r3}, width.3{r0}
+        sub r8b, al
+        ; add column.4{r2}, t.8.1{r3}
+        add dl, r8b
+        ; move column.3{r6}, column.4{r2}
+        mov bl, dl
+        ; move height.5{r2}, height.1{r5}
+        mov dl, r10b
+        ; addrof memVarAddr{r7}, height.5
+        lea r12, [rsp+48]
+        ; store [memVarAddr{r7}], height.5{r2}
+        mov [r12], dl
+if_45_end:
+        ; const spaces.1{r2}, [string-14]
+        lea rdx, [string_14]
+        ; const t.14.1{r3}, 8
+        mov r8b, 8
+        ; sub t.13.1{r3}, width.5{r0}
+        sub r8b, al
+        ; cast t.12.1{r0}(i64), t.13.1{r3}(u8)
+        movzx rax, r8b
+        ; add spaces.2{r2}, t.12.1{r0}
+        add rdx, rax
+        ; addrof memVarAddr{r7}, spaces.2
+        lea r12, [rsp+56]
+        ; store [memVarAddr{r7}], spaces.2{r2}
+        mov [r12], rdx
+        ; const line.1{r0}, 0
+        mov al, 0
+        ; 255:2 for line < height
+        ; addrof memVarAddr{r7}, line.2
+        lea r12, [rsp+65]
+        ; store [memVarAddr{r7}], line.2{r0}
+        mov [r12], al
+        ; move row.5{r0}, row.5{r1}
+        mov al, cl
+        ; load line.2{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
+        jmp for_50
+for_50_body:
+        ; addrof memVarAddr{r7}, height.5
+        lea r12, [rsp+48]
+        ; store [memVarAddr{r7}], height.5{r2}
+        mov [r12], dl
+        ; addrof memVarAddr{r7}, line.2
+        lea r12, [rsp+65]
+        ; store [memVarAddr{r7}], line.2{r1}
+        mov [r12], cl
+        ; move row.5{r1}, row.5{r0}
+        mov cl, al
+        ; cast t.15.1{r0}(i16), row.5{r1}(u8)
+        movzx ax, cl
+        ; addrof memVarAddr{r7}, row.5
+        lea r12, [rsp+64]
+        ; store [memVarAddr{r7}], row.5{r1}
+        mov [r12], cl
+        ; cast t.16.1{r2}(i16), column.3{r6}(u8)
+        movzx dx, bl
+        ; move t.15.1{r1}, t.15.1{r0}
+        mov cx, ax
+        ; call _setCursor@i16@i16[t.15.1{r1}, t.16.1{r2}]
+        call _setCursor@i16@i16
+        ; addrof memVarAddr{r7}, spaces.2
+        lea r12, [rsp+56]
+        ; load spaces.2{r0}, [memVarAddr{r7}]
+        mov rax, [r12]
+        ; move spaces.2{r1}, spaces.2{r0}
+        mov rcx, rax
+        ; call _printString@@u8[spaces.2{r1}]
+        call _printString@@u8
+        ; addrof memVarAddr{r7}, row.5
+        lea r12, [rsp+64]
+        ; load row.5{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; add row.6{r0}, 1
+        add al, 1
+        ; addrof memVarAddr{r7}, line.2
+        lea r12, [rsp+65]
+        ; load line.2{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
+        ; add line.3{r1}, 1
+        add cl, 1
+for_50:
+        ; addrof memVarAddr{r7}, height.5
+        lea r12, [rsp+48]
+        ; load height.5{r2}, [memVarAddr{r7}]
+        mov dl, [r12]
+        ; branch line.2{r1} lt height.5{r2}: for_50_body
+        cmp cl, dl
+        jb for_50_body
+        add rsp, 32
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
+        add rsp, 24
+        ret
+
+        ; bool _drawMoveFrame@u8@u8@u8@bool
+        ;   rsp+80: arg direction
+        ;   rsp+88: arg previous
+        ;   rsp+96: arg travel
+        ;   rsp+104: arg erase
+        ;   rsp+48: var horizontal.1
+        ;   rsp+49: var forward.1
+        ;   rsp+50: var count.2
+        ;   rsp+51: var index.2
+        ;   rsp+52: var exponent.1
+        ;   rsp+53: var target.1
+        ;   rsp+54: var distance.4
+        ;   rsp+55: var oldOffset.2
+        ;   rsp+56: var pending.9
+        ;   rsp+57: var offset.2
+        ;   rsp+58: var row.3
+        ;   rsp+59: var column.3
+        ;   rsp+60: var t.52.1
+_drawMoveFrame@u8@u8@u8@bool:
+        sub rsp, 24
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
+        sub rsp, 32
+        ; move direction{r6}, direction{r1}
+        mov bl, cl
+        ; lt horizontal.1{r0}, direction{r6}, 2
+        cmp bl, 2
+        setb al
+        ; and t.17.1{r1}, 1
+        and cl, 1
+        ; notequals forward.1{r1}, t.17.1{r1}, 0
+        cmp cl, 0
+        setne cl
+        ; const pending.1{r5}, 0
+        mov r10b, 0
+        ; addrof memVarAddr{r7}, direction
+        lea r12, [rsp+80]
+        ; store [memVarAddr{r7}], direction{r6}
+        mov [r12], bl
+        ; const count.1{r6}, 0
+        mov bl, 0
+        ; 267:2 for count < 16
+        ; addrof memVarAddr{r7}, erase
+        lea r12, [rsp+104]
+        ; store [memVarAddr{r7}], erase{r4}
+        mov [r12], r9b
+        ; addrof memVarAddr{r7}, forward.1
+        lea r12, [rsp+49]
+        ; store [memVarAddr{r7}], forward.1{r1}
+        mov [r12], cl
+        ; addrof memVarAddr{r7}, horizontal.1
+        lea r12, [rsp+48]
+        ; store [memVarAddr{r7}], horizontal.1{r0}
+        mov [r12], al
+        ; addrof memVarAddr{r7}, previous
+        lea r12, [rsp+88]
+        ; store [memVarAddr{r7}], previous{r2}
+        mov [r12], dl
+        ; addrof memVarAddr{r7}, travel
+        lea r12, [rsp+96]
+        ; store [memVarAddr{r7}], travel{r3}
+        mov [r12], r8b
+        ; move count.2{r0}, count.2{r6}
+        mov al, bl
+        ; move pending.2{r1}, pending.2{r5}
+        mov cl, r10b
+        jmp for_51
+for_51_body:
+        ; move count.2{r6}, count.2{r0}
+        mov bl, al
+        ; addrof memVarAddr{r7}, horizontal.1
+        lea r12, [rsp+48]
+        ; load horizontal.1{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; move pending.2{r5}, pending.2{r1}
+        mov r10b, cl
+        ; addrof memVarAddr{r7}, previous
+        lea r12, [rsp+88]
+        ; load previous{r2}, [memVarAddr{r7}]
+        mov dl, [r12]
+        ; addrof memVarAddr{r7}, travel
+        lea r12, [rsp+96]
+        ; load travel{r3}, [memVarAddr{r7}]
+        mov r8b, [r12]
+        ; addrof memVarAddr{r7}, forward.1
+        lea r12, [rsp+49]
+        ; load forward.1{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
+        ; addrof memVarAddr{r7}, erase
+        lea r12, [rsp+104]
+        ; move index.1{r4}, count.2{r6}
+        mov r9b, bl
+        ; 269:3 if !forward
+        ; branch forward.1{r1} notequals 0: if_52_end
+        cmp cl, 0
+        jne if_52_end
+        ; const t.18.1{r4}, 15
+        mov r9b, 15
+        ; sub index.3{r4}, count.2{r6}
+        sub r9b, bl
+if_52_end:
+        ; addrof memVarAddr{r7}, count.2
+        lea r12, [rsp+50]
+        ; store [memVarAddr{r7}], count.2{r6}
+        mov [r12], bl
+        ; cast t.20.1{r6}(i64), index.2{r4}(u8)
+        movzx rbx, r9b
+        ; addrof memVarAddr{r7}, travel
+        lea r12, [rsp+96]
+        ; store [memVarAddr{r7}], travel{r3}
+        mov [r12], r8b
+        ; addrof t.19.1{r3}, moveTiles
+        lea r8, [var_2]
+        ; add t.19.2{r3}, t.20.1{r6}
+        add r8, rbx
+        ; load exponent.1{r3}, [t.19.2{r3}]
+        mov r8b, [r8]
+        ; 274:3 if exponent == 0
+        ; branch exponent.1{r3} notequals 0: if_53_end
+        cmp r8b, 0
+        jne if_53_end
+        ; move pending.4{r6}, pending.2{r5}
+        mov bl, r10b
+        ; addrof memVarAddr{r7}, forward.1
+        lea r12, [rsp+49]
+        ; store [memVarAddr{r7}], forward.1{r1}
+        mov [r12], cl
+        ; addrof memVarAddr{r7}, horizontal.1
+        lea r12, [rsp+48]
+        ; store [memVarAddr{r7}], horizontal.1{r0}
+        mov [r12], al
+        ; addrof memVarAddr{r7}, previous
+        lea r12, [rsp+88]
+        ; store [memVarAddr{r7}], previous{r2}
+        mov [r12], dl
+        jmp for_51_continue
+if_53_end:
+        ; cast t.23.1{r6}(i64), index.2{r4}(u8)
+        movzx rbx, r9b
+        ; addrof memVarAddr{r7}, exponent.1
+        lea r12, [rsp+52]
+        ; store [memVarAddr{r7}], exponent.1{r3}
+        mov [r12], r8b
+        ; addrof t.22.1{r3}, moveTargets
+        lea r8, [var_3]
+        ; add t.22.2{r3}, t.23.1{r6}
+        add r8, rbx
+        ; load t.21.1{r3}, [t.22.2{r3}]
+        mov r8b, [r8]
+        ; move target.1{r6}, t.21.1{r3}
+        mov bl, r8b
+        ; and target.1{r6}, 15
+        and bl, 15
+        ; move distance.1{r3}, index.2{r4}
+        mov r8b, r9b
+        ; sub distance.1{r3}, target.1{r6}
+        sub r8b, bl
+        ; 280:3 if forward
+        ; branch forward.1{r1} equals 0: if_54_end
+        cmp cl, 0
+        je if_54_end
+        ; move distance.3{r3}, target.1{r6}
+        mov r8b, bl
+        ; sub distance.3{r3}, index.2{r4}
+        sub r8b, r9b
+if_54_end:
+        ; branch horizontal.1{r0} notequals 0: if_55_then
+        cmp al, 0
+        jne if_55_then
+        ; addrof memVarAddr{r7}, horizontal.1
+        lea r12, [rsp+48]
+        ; store [memVarAddr{r7}], horizontal.1{r0}
+        mov [r12], al
+        jmp if_55_end
+if_55_then:
+        ; addrof memVarAddr{r7}, horizontal.1
+        lea r12, [rsp+48]
+        ; store [memVarAddr{r7}], horizontal.1{r0}
+        mov [r12], al
+        ; move t.24.1{r0}, distance.2{r3}
+        mov al, r8b
+        ; shiftleft t.24.1{r0}, 3
+        shl al, 3
+        ; add distance.5{r3}, t.24.1{r0}
+        add r8b, al
+if_55_end:
+        ; move oldOffset.1{r0}, previous{r2}
+        mov al, dl
+        ; addrof memVarAddr{r7}, previous
+        lea r12, [rsp+88]
+        ; store [memVarAddr{r7}], previous{r2}
+        mov [r12], dl
+        ; 289:3 if oldOffset > distance
+        ; branch oldOffset.1{r0} lteq distance.4{r3}: if_56_end
+        cmp al, r8b
+        jbe if_56_end
+        ; move oldOffset.3{r0}, distance.4{r3}
+        mov al, r8b
+if_56_end:
+        ; addrof memVarAddr{r7}, travel
+        lea r12, [rsp+96]
+        ; load travel{r2}, [memVarAddr{r7}]
+        mov dl, [r12]
+        ; addrof memVarAddr{r7}, index.2
+        lea r12, [rsp+51]
+        ; store [memVarAddr{r7}], index.2{r4}
+        mov [r12], r9b
+        ; move travel{r4}, travel{r2}
+        mov r9b, dl
+        ; addrof memVarAddr{r7}, travel
+        lea r12, [rsp+96]
+        ; 295:3 if offset >= distance
+        ; branch offset.1{r2} gteq distance.4{r3}: if_57_then
+        cmp dl, r8b
+        jae if_57_then
+        ; const pending.8{r4}, 1
+        mov r9b, 1
+        ; addrof memVarAddr{r7}, distance.4
+        lea r12, [rsp+54]
+        ; store [memVarAddr{r7}], distance.4{r3}
+        mov [r12], r8b
+        jmp if_57_end
+if_57_then:
+        ; move offset.3{r2}, distance.4{r3}
+        mov dl, r8b
+        ; addrof memVarAddr{r7}, distance.4
+        lea r12, [rsp+54]
+        ; store [memVarAddr{r7}], distance.4{r3}
+        mov [r12], r8b
+        ; move pending.9{r4}, pending.2{r5}
+        mov r9b, r10b
+if_57_end:
+        ; branch oldOffset.2{r0} equals offset.2{r2}: and_59
+        cmp al, dl
+        je and_59
+        ; addrof memVarAddr{r7}, pending.9
+        lea r12, [rsp+56]
+        ; store [memVarAddr{r7}], pending.9{r4}
+        mov [r12], r9b
+        ; addrof memVarAddr{r7}, target.1
+        lea r12, [rsp+53]
+        ; store [memVarAddr{r7}], target.1{r6}
+        mov [r12], bl
+        ; addrof memVarAddr{r7}, erase
+        lea r12, [rsp+104]
+        ; load erase{r3}, [memVarAddr{r7}]
+        mov r8b, [r12]
+        ; addrof memVarAddr{r7}, exponent.1
+        lea r12, [rsp+52]
+        ; load exponent.1{r6}, [memVarAddr{r7}]
+        mov bl, [r12]
+        jmp if_58_end
+and_59:
+        ; addrof memVarAddr{r7}, erase
+        lea r12, [rsp+104]
+        ; load erase{r3}, [memVarAddr{r7}]
+        mov r8b, [r12]
+        ; branch erase{r3} equals 0: or_60
+        cmp r8b, 0
+        je or_60
+        ; move pending.4{r6}, pending.9{r4}
+        mov bl, r9b
+        ; addrof memVarAddr{r7}, forward.1
+        lea r12, [rsp+49]
+        ; store [memVarAddr{r7}], forward.1{r1}
+        mov [r12], cl
+        jmp for_51_continue
+or_60:
+        ; cast t.27.1{r5}(i64), target.1{r6}(u8)
+        movzx r10, bl
+        ; addrof memVarAddr{r7}, target.1
+        lea r12, [rsp+53]
+        ; store [memVarAddr{r7}], target.1{r6}
+        mov [r12], bl
+        ; addrof t.26.1{r6}, tiles
+        lea rbx, [var_1]
+        ; add t.26.2{r6}, t.27.1{r5}
+        add rbx, r10
+        ; load t.25.1{r5}, [t.26.2{r6}]
+        mov r10b, [rbx]
+        ; addrof memVarAddr{r7}, exponent.1
+        lea r12, [rsp+52]
+        ; load exponent.1{r6}, [memVarAddr{r7}]
+        mov bl, [r12]
+        ; branch exponent.1{r6} notequals t.25.1{r5}: _drawMoveFrame@u8@u8@u8@bool.no_critical_edge_46
+        cmp bl, r10b
+        jne _drawMoveFrame@u8@u8@u8@bool.no_critical_edge_46
+        ; move pending.4{r6}, pending.9{r4}
+        mov bl, r9b
+        ; addrof memVarAddr{r7}, erase
+        lea r12, [rsp+104]
+        ; store [memVarAddr{r7}], erase{r3}
+        mov [r12], r8b
+        ; addrof memVarAddr{r7}, forward.1
+        lea r12, [rsp+49]
+        ; store [memVarAddr{r7}], forward.1{r1}
+        mov [r12], cl
+        jmp for_51_continue
+_drawMoveFrame@u8@u8@u8@bool.no_critical_edge_46:
+        ; addrof memVarAddr{r7}, pending.9
+        lea r12, [rsp+56]
+        ; store [memVarAddr{r7}], pending.9{r4}
+        mov [r12], r9b
+if_58_end:
+        ; move displacement.1{r4}, offset.2{r2}
+        mov r9b, dl
+        ; addrof memVarAddr{r7}, offset.2
+        lea r12, [rsp+57]
+        ; store [memVarAddr{r7}], offset.2{r2}
+        mov [r12], dl
+        ; 307:3 if erase
+        ; branch erase{r3} notequals 0: if_61_then
+        cmp r8b, 0
+        jne if_61_then
+        ; addrof memVarAddr{r7}, oldOffset.2
+        lea r12, [rsp+55]
+        ; store [memVarAddr{r7}], oldOffset.2{r0}
+        mov [r12], al
+        jmp if_61_end
+if_61_then:
+        ; move displacement.3{r2}, oldOffset.2{r0}
+        mov dl, al
+        ; addrof memVarAddr{r7}, oldOffset.2
+        lea r12, [rsp+55]
+        ; store [memVarAddr{r7}], oldOffset.2{r0}
+        mov [r12], al
+if_61_end:
+        ; branch forward.1{r1} notequals 0: _drawMoveFrame@u8@u8@u8@bool.no_critical_edge_41, if_62_then
+        cmp cl, 0
+        jne _drawMoveFrame@u8@u8@u8@bool.no_critical_edge_41
+        ; addrof memVarAddr{r7}, forward.1
+        lea r12, [rsp+49]
+        ; store [memVarAddr{r7}], forward.1{r1}
+        mov [r12], cl
+        jmp if_62_then
+_drawMoveFrame@u8@u8@u8@bool.no_critical_edge_41:
+        ; addrof memVarAddr{r7}, forward.1
+        lea r12, [rsp+49]
+        ; store [memVarAddr{r7}], forward.1{r1}
+        mov [r12], cl
+        ; move displacement.4{r0}, displacement.2{r2}
+        mov al, dl
+        jmp if_62_end
+if_62_then:
+        ; addrof memVarAddr{r7}, forward.1
+        lea r12, [rsp+49]
+        ; store [memVarAddr{r7}], forward.1{r1}
+        mov [r12], cl
+        ; const t.28.1{r0}, 0
+        mov al, 0
+        ; sub displacement.5{r0}, displacement.2{r2}
+        sub al, dl
+if_62_end:
+        ; addrof memVarAddr{r7}, index.2
+        lea r12, [rsp+51]
+        ; load index.2{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
+        ; move t.29.1{r2}, index.2{r1}
+        mov dl, cl
+        ; and t.29.1{r2}, 12
+        and dl, 12
+        ; add row.1{r2}, 3
+        add dl, 3
+        ; move column.1{r4}, index.2{r1}
+        mov r9b, cl
+        ; and column.1{r4}, 3
+        and r9b, 3
+        ; move t.31.1{r1}, column.1{r4}
+        mov cl, r9b
+        ; shiftleft t.31.1{r1}, 3
+        shl cl, 3
+        ; add t.30.1{r1}, 1
+        add cl, 1
+        ; add column.2{r4}, t.30.1{r1}
+        add r9b, cl
+        ; 319:3 if horizontal
+        ; addrof memVarAddr{r7}, horizontal.1
+        lea r12, [rsp+48]
+        ; load horizontal.1{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
+        ; branch horizontal.1{r1} notequals 0: if_63_then
+        cmp cl, 0
+        jne if_63_then
+        ; move row.2{r1}, row.1{r2}
+        mov cl, dl
+        ; add row.2{r1}, displacement.4{r0}
+        add cl, al
+        ; move column.3{r2}, column.2{r4}
+        mov dl, r9b
+        jmp if_63_end
+if_63_then:
+        ; addrof memVarAddr{r7}, horizontal.1
+        lea r12, [rsp+48]
+        ; store [memVarAddr{r7}], horizontal.1{r1}
+        mov [r12], cl
+        ; add column.4{r4}, displacement.4{r0}
+        add r9b, al
+        ; move row.3{r1}, row.1{r2}
+        mov cl, dl
+        ; move column.3{r2}, column.4{r4}
+        mov dl, r9b
+if_63_end:
+        ; branch erase{r3} equals 0: if_64_else, if_64_then
+        cmp r8b, 0
+        je if_64_else
+        ; addrof memVarAddr{r7}, erase
+        lea r12, [rsp+104]
+        ; store [memVarAddr{r7}], erase{r3}
+        mov [r12], r8b
+        jmp if_64_then
+if_64_else:
+        ; addrof memVarAddr{r7}, erase
+        lea r12, [rsp+104]
+        ; store [memVarAddr{r7}], erase{r3}
+        mov [r12], r8b
+        ; cast t.33.1{r1}(i16), row.3{r1}(u8)
+        movzx cx, cl
+        ; cast t.34.1{r2}(i16), column.3{r2}(u8)
+        movzx dx, dl
+        ; move exponent.1{r3}, exponent.1{r6}
+        mov r8b, bl
+        ; call _drawTileAt@i16@i16@u8[t.33.1{r1}, t.34.1{r2}, exponent.1{r3}]
+        call _drawTileAt@i16@i16@u8
+        ; 331:4 if offset == distance
+        ; addrof memVarAddr{r7}, distance.4
+        lea r12, [rsp+54]
+        ; load distance.4{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
+        ; addrof memVarAddr{r7}, offset.2
+        lea r12, [rsp+57]
+        ; load offset.2{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; branch offset.2{r0} notequals distance.4{r1}: _drawMoveFrame@u8@u8@u8@bool.no_critical_edge_42, if_65_then
+        cmp al, cl
+        jne _drawMoveFrame@u8@u8@u8@bool.no_critical_edge_42
+        jmp if_65_then
+if_64_then:
+        ; addrof memVarAddr{r7}, column.3
+        lea r12, [rsp+59]
+        ; store [memVarAddr{r7}], column.3{r2}
+        mov [r12], dl
+        ; addrof memVarAddr{r7}, erase
+        lea r12, [rsp+104]
+        ; store [memVarAddr{r7}], erase{r3}
+        mov [r12], r8b
+        ; addrof memVarAddr{r7}, row.3
+        lea r12, [rsp+58]
+        ; store [memVarAddr{r7}], row.3{r1}
+        mov [r12], cl
+        ; addrof memVarAddr{r7}, offset.2
+        lea r12, [rsp+57]
+        ; load offset.2{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; move t.32.1{r4}, offset.2{r0}
+        mov r9b, al
+        ; addrof memVarAddr{r7}, oldOffset.2
+        lea r12, [rsp+55]
+        ; load oldOffset.2{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; sub t.32.1{r4}, oldOffset.2{r0}
+        sub r9b, al
+        ; addrof memVarAddr{r7}, direction
+        lea r12, [rsp+80]
+        ; load direction{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; move direction{r3}, direction{r0}
+        mov r8b, al
+        ; call _clearTileTrail@u8@u8@u8@u8[row.3{r1}, column.3{r2}, direction{r3}, t.32.1{r4}]
+        call _clearTileTrail@u8@u8@u8@u8
+        ; addrof memVarAddr{r7}, pending.9
+        lea r12, [rsp+56]
+        ; load pending.9{r6}, [memVarAddr{r7}]
+        mov bl, [r12]
+        jmp for_51_continue
+_drawMoveFrame@u8@u8@u8@bool.no_critical_edge_42:
+        ; addrof memVarAddr{r7}, pending.9
+        lea r12, [rsp+56]
+        ; load pending.9{r6}, [memVarAddr{r7}]
+        mov bl, [r12]
+        jmp for_51_continue
+if_65_then:
+        ; addrof memVarAddr{r7}, pending.9
+        lea r12, [rsp+56]
+        ; load pending.9{r6}, [memVarAddr{r7}]
+        mov bl, [r12]
+        ; 332:5 if [...] & 128 != 0
+        ; addrof memVarAddr{r7}, index.2
+        lea r12, [rsp+51]
+        ; load index.2{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; cast t.38.1{r1}(i64), index.2{r0}(u8)
+        movzx rcx, al
+        ; addrof t.37.1{r2}, moveTargets
+        lea rdx, [var_3]
+        ; add t.37.2{r2}, t.38.1{r1}
+        add rdx, rcx
+        ; load t.36.1{r1}, [t.37.2{r2}]
+        mov cl, [rdx]
+        ; and t.35.1{r1}, 128
+        and cl, 128
+        ; branch t.35.1{r1} notequals 0: if_66_then
+        cmp cl, 0
+        jne if_66_then
+        ; 336:10 if [...] & 64 != 0
+        ; addrof memVarAddr{r7}, target.1
+        lea r12, [rsp+53]
+        ; load target.1{r2}, [memVarAddr{r7}]
+        mov dl, [r12]
+        ; cast t.51.1{r1}(i64), target.1{r2}(u8)
+        movzx rcx, dl
+        ; addrof t.50.1{r3}, moveTargets
+        lea r8, [var_3]
+        ; add t.50.2{r3}, t.51.1{r1}
+        add r8, rcx
+        ; load t.49.1{r1}, [t.50.2{r3}]
+        mov cl, [r8]
+        ; and t.48.1{r1}, 64
+        and cl, 64
+        ; branch t.48.1{r1} equals 0: for_51_continue, if_67_then
+        cmp cl, 0
+        je for_51_continue
+        jmp if_67_then
+if_66_then:
+        ; addrof memVarAddr{r7}, target.1
+        lea r12, [rsp+53]
+        ; load target.1{r2}, [memVarAddr{r7}]
+        mov dl, [r12]
+        ; cast t.42.1{r1}(i64), target.1{r2}(u8)
+        movzx rcx, dl
+        ; addrof t.41.1{r3}, moveTargets
+        lea r8, [var_3]
+        ; add t.41.2{r3}, t.42.1{r1}
+        add r8, rcx
+        ; load t.40.1{r1}, [t.41.2{r3}]
+        mov cl, [r8]
+        ; or t.39.1{r1}, 64
+        or cl, 64
+        ; cast t.44.1{r2}(i64), target.1{r2}(u8)
+        movzx rdx, dl
+        ; addrof t.43.1{r3}, moveTargets
+        lea r8, [var_3]
+        ; add t.43.2{r3}, t.44.1{r2}
+        add r8, rdx
+        ; store [t.43.2{r3}], t.39.1{r1}
+        mov [r8], cl
+        ; const t.45.1{r1}, 0
+        mov cl, 0
+        ; cast t.47.1{r0}(i64), index.2{r0}(u8)
+        movzx rax, al
+        ; addrof t.46.1{r2}, moveTiles
+        lea rdx, [var_2]
+        ; add t.46.2{r2}, t.47.1{r0}
+        add rdx, rax
+        ; store [t.46.2{r2}], t.45.1{r1}
+        mov [rdx], cl
+        jmp for_51_continue
+if_67_then:
+        ; addrof memVarAddr{r7}, index.2
+        lea r12, [rsp+51]
+        ; store [memVarAddr{r7}], index.2{r0}
+        mov [r12], al
+        ; move target.1{r1}, target.1{r2}
+        mov cl, dl
+        ; addrof memVarAddr{r7}, target.1
+        lea r12, [rsp+53]
+        ; store [memVarAddr{r7}], target.1{r2}
+        mov [r12], dl
+        ; call t.53.1{r0} = _tileRow@u8[target.1{r1}] -> u8
+        call _tileRow@u8
+        ; cast t.52.1{r1}(i16), t.53.1{r0}(u8)
+        movzx cx, al
+        ; addrof memVarAddr{r7}, t.52.1
+        lea r12, [rsp+60]
+        ; store [memVarAddr{r7}], t.52.1{r1}
+        mov [r12], cx
+        ; addrof memVarAddr{r7}, target.1
+        lea r12, [rsp+53]
+        ; load target.1{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; move target.1{r1}, target.1{r0}
+        mov cl, al
+        ; call t.55.1{r0} = _tileColumn@u8[target.1{r1}] -> u8
+        call _tileColumn@u8
+        ; cast t.54.1{r2}(i16), t.55.1{r0}(u8)
+        movzx dx, al
+        ; load target.1{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; cast t.58.1{r0}(i64), target.1{r0}(u8)
+        movzx rax, al
+        ; addrof t.57.1{r1}, tiles
+        lea rcx, [var_1]
+        ; add t.57.2{r1}, t.58.1{r0}
+        add rcx, rax
+        ; load t.56.1{r3}, [t.57.2{r1}]
+        mov r8b, [rcx]
+        ; addrof memVarAddr{r7}, t.52.1
+        lea r12, [rsp+60]
+        ; load t.52.1{r1}, [memVarAddr{r7}]
+        mov cx, [r12]
+        ; call _drawTileAt@i16@i16@u8[t.52.1{r1}, t.54.1{r2}, t.56.1{r3}]
+        call _drawTileAt@i16@i16@u8
+        ; const t.59.1{r0}, 0
+        mov al, 0
+        ; addrof memVarAddr{r7}, index.2
+        lea r12, [rsp+51]
+        ; load index.2{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
+        ; cast t.61.1{r1}(i64), index.2{r1}(u8)
+        movzx rcx, cl
+        ; addrof t.60.1{r2}, moveTiles
+        lea rdx, [var_2]
+        ; add t.60.2{r2}, t.61.1{r1}
+        add rdx, rcx
+        ; store [t.60.2{r2}], t.59.1{r0}
+        mov [rdx], al
+for_51_continue:
+        ; addrof memVarAddr{r7}, count.2
+        lea r12, [rsp+50]
+        ; load count.2{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; add count.5{r0}, 1
+        add al, 1
+        ; move pending.2{r1}, pending.4{r6}
+        mov cl, bl
+for_51:
+        ; branch count.2{r0} lt 16: for_51_body
+        cmp al, 16
+        jb for_51_body
+        ; 343:9 return pending
+        ; move pending.2{r0}, pending.2{r1}
+        mov al, cl
+        add rsp, 32
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
+        add rsp, 24
+        ret
+
+        ; void _animateMove@u8
+        ;   rsp+64: arg direction
+        ;   rsp+48: var pending.2
+        ;   rsp+49: var previous.1
+        ;   rsp+50: var travel.3
+        ;   rsp+51: var speed.3
+        ;   rsp+52: var pending.3
+        ;   rsp+53: var target.1
+        ;   rsp+54: var t.21.1
+_animateMove@u8:
+        sub rsp, 8
+        ; save clobbered non-volatile registers
+        push rbx
+        push r12
+        sub rsp, 32
+        ; move direction{r6}, direction{r1}
+        mov bl, cl
+        ; const travel.1{r0}, 0
+        mov al, 0
+        ; const speed.1{r1}, 1
+        mov cl, 1
+        ; const pending.1{r2}, 1
+        mov dl, 1
+        ; 352:2 while pending
+        ; addrof memVarAddr{r7}, pending.2
+        lea r12, [rsp+48]
+        ; store [memVarAddr{r7}], pending.2{r2}
+        mov [r12], dl
+        jmp while_68
+while_68_body:
+        ; move previous.1{r3}, travel.2{r0}
+        mov r8b, al
+        ; add travel.3{r0}, speed.2{r1}
+        add al, cl
+        ; add speed.3{r1}, 1
+        add cl, 1
+        ; addrof memVarAddr{r7}, speed.3
+        lea r12, [rsp+51]
+        ; store [memVarAddr{r7}], speed.3{r1}
+        mov [r12], cl
+        ; const t.7.1{r4}, 1
+        mov r9b, 1
+        ; move direction{r1}, direction{r6}
+        mov cl, bl
+        ; move previous.1{r2}, previous.1{r3}
+        mov dl, r8b
+        ; addrof memVarAddr{r7}, previous.1
+        lea r12, [rsp+49]
+        ; store [memVarAddr{r7}], previous.1{r3}
+        mov [r12], r8b
+        ; move travel.3{r3}, travel.3{r0}
+        mov r8b, al
+        ; addrof memVarAddr{r7}, travel.3
+        lea r12, [rsp+50]
+        ; store [memVarAddr{r7}], travel.3{r0}
+        mov [r12], al
+        ; call _ = _drawMoveFrame@u8@u8@u8@bool[direction{r1}, previous.1{r2}, travel.3{r3}, t.7.1{r4}] -> bool
+        call _drawMoveFrame@u8@u8@u8@bool
+        ; const t.8.1{r4}, 0
+        mov r9b, 0
+        ; move direction{r1}, direction{r6}
+        mov cl, bl
+        ; addrof memVarAddr{r7}, previous.1
+        lea r12, [rsp+49]
+        ; load previous.1{r2}, [memVarAddr{r7}]
+        mov dl, [r12]
+        ; addrof memVarAddr{r7}, travel.3
+        lea r12, [rsp+50]
+        ; load travel.3{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; move travel.3{r3}, travel.3{r0}
+        mov r8b, al
+        ; call pending.3{r0} = _drawMoveFrame@u8@u8@u8@bool[direction{r1}, previous.1{r2}, travel.3{r3}, t.8.1{r4}] -> bool
+        call _drawMoveFrame@u8@u8@u8@bool
+        ; addrof memVarAddr{r7}, pending.3
+        lea r12, [rsp+52]
+        ; store [memVarAddr{r7}], pending.3{r0}
+        mov [r12], al
+        ; call _waitFrame[]
+        call _waitFrame
+        ; addrof memVarAddr{r7}, travel.3
+        lea r12, [rsp+50]
+        ; load travel.3{r3}, [memVarAddr{r7}]
+        mov r8b, [r12]
+        ; move travel.2{r0}, travel.3{r3}
+        mov al, r8b
+        ; addrof memVarAddr{r7}, speed.3
+        lea r12, [rsp+51]
+        ; load speed.3{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
+        ; addrof memVarAddr{r7}, pending.3
+        lea r12, [rsp+52]
+        ; load pending.3{r2}, [memVarAddr{r7}]
+        mov dl, [r12]
+while_68:
+        ; branch pending.2{r2} notequals 0: while_68_body
+        cmp dl, 0
+        jne while_68_body
+        ; const index.1{r0}, 0
+        mov al, 0
+        ; 362:2 for index < 16
+        ; move index.2{r6}, index.1{r0}
+        mov bl, al
+        jmp for_69
+for_69_body:
+        ; cast t.11.1{r0}(i64), index.2{r6}(u8)
+        movzx rax, bl
+        ; addrof t.10.1{r1}, moveTargets
+        lea rcx, [var_3]
+        ; add t.10.2{r1}, t.11.1{r0}
+        add rcx, rax
+        ; load t.9.1{r0}, [t.10.2{r1}]
+        mov al, [rcx]
+        ; and target.1{r0}, 15
+        and al, 15
+        ; 364:3 if [...] != 0 && [...] != [...]
+        ; cast t.14.1{r1}(i64), index.2{r6}(u8)
+        movzx rcx, bl
+        ; addrof t.13.1{r2}, moveTiles
+        lea rdx, [var_2]
+        ; add t.13.2{r2}, t.14.1{r1}
+        add rdx, rcx
+        ; load t.12.1{r1}, [t.13.2{r2}]
+        mov cl, [rdx]
+        ; branch t.12.1{r1} equals 0: for_69_continue
+        cmp cl, 0
+        je for_69_continue
+        ; cast t.17.1{r1}(i64), index.2{r6}(u8)
+        movzx rcx, bl
+        ; addrof t.16.1{r2}, moveTiles
+        lea rdx, [var_2]
+        ; add t.16.2{r2}, t.17.1{r1}
+        add rdx, rcx
+        ; load t.15.1{r1}, [t.16.2{r2}]
+        mov cl, [rdx]
+        ; cast t.20.1{r2}(i64), target.1{r0}(u8)
+        movzx rdx, al
+        ; addrof t.19.1{r3}, tiles
+        lea r8, [var_1]
+        ; add t.19.2{r3}, t.20.1{r2}
+        add r8, rdx
+        ; load t.18.1{r2}, [t.19.2{r3}]
+        mov dl, [r8]
+        ; branch t.15.1{r1} equals t.18.1{r2}: for_69_continue
+        cmp cl, dl
+        je for_69_continue
+        ; move target.1{r1}, target.1{r0}
+        mov cl, al
+        ; addrof memVarAddr{r7}, target.1
+        lea r12, [rsp+53]
+        ; store [memVarAddr{r7}], target.1{r0}
+        mov [r12], al
+        ; call t.23.1{r0} = _tileRow@u8[target.1{r1}] -> u8
+        call _tileRow@u8
+        ; cast t.22.1{r0}(i16), t.23.1{r0}(u8)
+        movzx ax, al
+        ; move t.21.1{r1}, t.22.1{r0}
+        mov cx, ax
+        ; add t.21.1{r1}, 1
+        add cx, 1
+        ; addrof memVarAddr{r7}, t.21.1
+        lea r12, [rsp+54]
+        ; store [memVarAddr{r7}], t.21.1{r1}
+        mov [r12], cx
+        ; addrof memVarAddr{r7}, target.1
+        lea r12, [rsp+53]
+        ; load target.1{r0}, [memVarAddr{r7}]
+        mov al, [r12]
+        ; move target.1{r1}, target.1{r0}
+        mov cl, al
+        ; call t.26.1{r0} = _tileColumn@u8[target.1{r1}] -> u8
+        call _tileColumn@u8
+        ; cast t.25.1{r0}(i16), t.26.1{r0}(u8)
+        movzx ax, al
+        ; move t.24.1{r2}, t.25.1{r0}
+        mov dx, ax
+        ; add t.24.1{r2}, 1
+        add dx, 1
+        ; addrof memVarAddr{r7}, t.21.1
+        lea r12, [rsp+54]
+        ; load t.21.1{r1}, [memVarAddr{r7}]
+        mov cx, [r12]
+        ; call _setCursor@i16@i16[t.21.1{r1}, t.24.1{r2}]
+        call _setCursor@i16@i16
+        ; addrof memVarAddr{r7}, target.1
+        lea r12, [rsp+53]
+        ; load target.1{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
+        ; cast t.29.1{r0}(i64), target.1{r1}(u8)
+        movzx rax, cl
+        ; addrof t.28.1{r1}, tiles
+        lea rcx, [var_1]
+        ; add t.28.2{r1}, t.29.1{r0}
+        add rcx, rax
+        ; load t.27.1{r1}, [t.28.2{r1}]
+        mov cl, [rcx]
+        ; call _printTile@u8[t.27.1{r1}]
+        call _printTile@u8
+for_69_continue:
+        ; move index.4{r0}, index.2{r6}
+        mov al, bl
+        ; add index.4{r0}, 1
+        add al, 1
+        ; move index.2{r6}, index.4{r0}
+        mov bl, al
+for_69:
+        ; branch index.2{r6} lt 16: for_69_body
+        cmp bl, 16
+        jb for_69_body
+        add rsp, 32
+        ; restore clobbered non-volatile registers
+        pop r12
+        pop rbx
+        add rsp, 8
+        ret
+
         ; void _drawFrame
 _drawFrame:
         sub rsp, 8
@@ -1290,8 +2390,8 @@ _drawFrame:
         mov dx, 0
         ; call _setCursor@i16@i16[arg.0.0{r1}, arg.0.1{r2}]
         call _setCursor@i16@i16
-        ; const t.0.1{r1}, [string-14]
-        lea rcx, [string_14]
+        ; const t.0.1{r1}, [string-15]
+        lea rcx, [string_15]
         ; call _printString@@u8[t.0.1{r1}]
         call _printString@@u8
         add rsp, 32
@@ -1305,11 +2405,11 @@ _clearBoard:
         sub rsp, 32
         ; const row.1{r0}, 0
         mov ax, 0
-        ; 228:2 for row < 15
+        ; 404:2 for row < 15
         ; move row.2{r6}, row.1{r0}
         mov bx, ax
-        jmp for_45
-for_45_body:
+        jmp for_72
+for_72_body:
         ; move t.1.1{r1}, row.2{r6}
         mov cx, bx
         ; add t.1.1{r1}, 3
@@ -1318,8 +2418,8 @@ for_45_body:
         mov dx, 1
         ; call _setCursor@i16@i16[t.1.1{r1}, arg.0.1{r2}]
         call _setCursor@i16@i16
-        ; const t.2.1{r1}, [string-15]
-        lea rcx, [string_15]
+        ; const t.2.1{r1}, [string-16]
+        lea rcx, [string_16]
         ; call _printString@@u8[t.2.1{r1}]
         call _printString@@u8
         ; move row.3{r0}, row.2{r6}
@@ -1328,10 +2428,10 @@ for_45_body:
         add ax, 1
         ; move row.2{r6}, row.3{r0}
         mov bx, ax
-for_45:
-        ; branch row.2{r6} lt 15: for_45_body
+for_72:
+        ; branch row.2{r6} lt 15: for_72_body
         cmp bx, 15
-        jl for_45_body
+        jl for_72_body
         add rsp, 32
         ; restore clobbered non-volatile registers
         pop rbx
@@ -1356,7 +2456,7 @@ _drawBoard:
         mov cx, 3
         ; const boardRow.1{r2}, 0
         mov dl, 0
-        ; 238:2 for boardRow < 4
+        ; 414:2 for boardRow < 4
         ; move index.2{r6}, index.1{r0}
         mov bl, al
         ; move row.2{r0}, row.1{r1}
@@ -1369,8 +2469,8 @@ _drawBoard:
         mov [r12], cl
         ; move row.2{r1}, row.2{r0}
         mov cx, ax
-        jmp for_46
-for_46_body:
+        jmp for_73
+for_73_body:
         ; addrof memVarAddr{r7}, boardRow.2
         lea r12, [rsp+50]
         ; store [memVarAddr{r7}], boardRow.2{r2}
@@ -1381,7 +2481,7 @@ for_46_body:
         mov cx, 1
         ; const boardColumn.1{r2}, 0
         mov dl, 0
-        ; 240:3 for boardColumn < 4
+        ; 416:3 for boardColumn < 4
         ; move column.2{r3}, column.1{r1}
         mov r8w, cx
         ; move boardColumn.2{r1}, boardColumn.1{r2}
@@ -1400,8 +2500,8 @@ for_46_body:
         lea r12, [rsp+54]
         ; move boardColumn.2{r3}, boardColumn.2{r1}
         mov r8b, cl
-        jmp for_47
-for_47_body:
+        jmp for_74
+for_74_body:
         ; addrof memVarAddr{r7}, boardColumn.2
         lea r12, [rsp+54]
         ; store [memVarAddr{r7}], boardColumn.2{r3}
@@ -1452,10 +2552,10 @@ for_47_body:
         mov bl, al
         ; move column.2{r2}, column.3{r1}
         mov dx, cx
-for_47:
-        ; branch boardColumn.2{r3} lt 4: for_47_body
+for_74:
+        ; branch boardColumn.2{r3} lt 4: for_74_body
         cmp r8b, 4
-        jb for_47_body
+        jb for_74_body
         ; addrof memVarAddr{r7}, row.2
         lea r12, [rsp+48]
         ; load row.2{r1}, [memVarAddr{r7}]
@@ -1472,10 +2572,10 @@ for_47:
         add dl, 1
         ; move row.2{r1}, row.4{r0}
         mov cx, ax
-for_46:
-        ; branch boardRow.2{r2} lt 4: for_46_body
+for_73:
+        ; branch boardRow.2{r2} lt 4: for_73_body
         cmp dl, 4
-        jb for_46_body
+        jb for_73_body
         add rsp, 32
         ; restore clobbered non-volatile registers
         pop r12
@@ -1493,8 +2593,8 @@ _drawScore:
         mov dx, 0
         ; call _setCursor@i16@i16[arg.0.0{r1}, arg.0.1{r2}]
         call _setCursor@i16@i16
-        ; const t.0.1{r1}, [string-16]
-        lea rcx, [string_16]
+        ; const t.0.1{r1}, [string-17]
+        lea rcx, [string_17]
         ; call _printString@@u8[t.0.1{r1}]
         call _printString@@u8
         ; addrof a.1.1{r0}, score
@@ -1503,8 +2603,8 @@ _drawScore:
         mov ecx, [rax]
         ; call _printUint@i32[t.2.1{r1}]
         call _printUint@i32
-        ; const t.3.1{r1}, [string-17]
-        lea rcx, [string_17]
+        ; const t.3.1{r1}, [string-18]
+        lea rcx, [string_18]
         ; call _printString@@u8[t.3.1{r1}]
         call _printString@@u8
         add rsp, 32
@@ -1521,8 +2621,8 @@ _drawStatus:
         mov dx, 0
         ; call _setCursor@i16@i16[arg.0.0{r1}, arg.0.1{r2}]
         call _setCursor@i16@i16
-        ; const t.0.1{r1}, [string-18]
-        lea rcx, [string_18]
+        ; const t.0.1{r1}, [string-19]
+        lea rcx, [string_19]
         ; call _printString@@u8[t.0.1{r1}]
         call _printString@@u8
         ; const arg.2.0{r1}, 19
@@ -1531,32 +2631,32 @@ _drawStatus:
         mov dx, 0
         ; call _setCursor@i16@i16[arg.2.0{r1}, arg.2.1{r2}]
         call _setCursor@i16@i16
-        ; 260:2 if gameState == 1
+        ; 436:2 if gameState == 1
         ; addrof a.1.1{r0}, gameState
         lea rax, [var_5]
         ; load t.2.1{r0}, [a.1.1{r0}]
         mov al, [rax]
-        ; branch t.2.1{r0} equals 1: if_48_then
+        ; branch t.2.1{r0} equals 1: if_75_then
         cmp al, 1
-        je if_48_then
-        ; 263:7 if gameState == 2
+        je if_75_then
+        ; 439:7 if gameState == 2
         ; addrof a.4.1{r0}, gameState
         lea rax, [var_5]
         ; load t.5.1{r0}, [a.4.1{r0}]
         mov al, [rax]
-        ; branch t.5.1{r0} notequals 2: _drawStatus_ret, if_49_then
+        ; branch t.5.1{r0} notequals 2: _drawStatus_ret, if_76_then
         cmp al, 2
         jne _drawStatus_ret
-        jmp if_49_then
-if_48_then:
-        ; const t.3.1{r1}, [string-19]
-        lea rcx, [string_19]
+        jmp if_76_then
+if_75_then:
+        ; const t.3.1{r1}, [string-20]
+        lea rcx, [string_20]
         ; call _printString@@u8[t.3.1{r1}]
         call _printString@@u8
         jmp _drawStatus_ret
-if_49_then:
-        ; const t.6.1{r1}, [string-20]
-        lea rcx, [string_20]
+if_76_then:
+        ; const t.6.1{r1}, [string-21]
+        lea rcx, [string_21]
         ; call _printString@@u8[t.6.1{r1}]
         call _printString@@u8
 _drawStatus_ret:
@@ -1570,9 +2670,9 @@ _newGame:
         sub rsp, 32
         ; const index.1{r0}, 0
         mov al, 0
-        ; 269:2 for index < 16
-        jmp for_50
-for_50_body:
+        ; 445:2 for index < 16
+        jmp for_77
+for_77_body:
         ; const t.1.1{r1}, 0
         mov cl, 0
         ; cast t.3.1{r2}(i64), index.2{r0}(u8)
@@ -1585,10 +2685,10 @@ for_50_body:
         mov [r8], cl
         ; add index.3{r0}, 1
         add al, 1
-for_50:
-        ; branch index.2{r0} lt 16: for_50_body
+for_77:
+        ; branch index.2{r0} lt 16: for_77_body
         cmp al, 16
-        jb for_50_body
+        jb for_77_body
         ; const t.4.1{r0}, 0
         mov eax, 0
         ; addrof a.5.1{r1}, score
@@ -1603,9 +2703,9 @@ for_50:
         lea rcx, [var_5]
         ; store [a.7.1{r1}], t.6.1{r0}
         mov [rcx], al
-        ; call _spawnTile[]
+        ; call _ = _spawnTile[] -> u8
         call _spawnTile
-        ; call _spawnTile[]
+        ; call _ = _spawnTile[] -> u8
         call _spawnTile
         ; call _drawBoard[]
         call _drawBoard
@@ -1622,26 +2722,29 @@ for_50:
         ret
 
         ; void _main
+        ;   rsp+48: var t.12.1
 _main:
+        sub rsp, 8
         ; save clobbered non-volatile registers
         push rbx
+        push r12
         sub rsp, 32
         ; begin initialize global variables
-        ; const t.2.1{r0}, 0
+        ; const t.3.1{r0}, 0
         mov eax, 0
-        ; addrof a.3.1{r1}, __random__
+        ; addrof a.4.1{r1}, __random__
         lea rcx, [var_0]
-        ; store [a.3.1{r1}], t.2.1{r0}
+        ; store [a.4.1{r1}], t.3.1{r0}
         mov [rcx], eax
-        ; addrof a.5.1{r1}, score
+        ; addrof a.6.1{r1}, score
         lea rcx, [var_4]
-        ; store [a.5.1{r1}], t.4.1{r0}
+        ; store [a.6.1{r1}], t.5.1{r0}
         mov [rcx], eax
-        ; const t.6.1{r0}, 0
+        ; const t.7.1{r0}, 0
         mov al, 0
-        ; addrof a.7.1{r1}, gameState
+        ; addrof a.8.1{r1}, gameState
         lea rcx, [var_5]
-        ; store [a.7.1{r1}], t.6.1{r0}
+        ; store [a.8.1{r1}], t.7.1{r0}
         mov [rcx], al
         ; end initialize global variables
         ; const arg.0.0{r1}, 7439742
@@ -1652,156 +2755,197 @@ _main:
         call _drawFrame
         ; call _newGame[]
         call _newGame
-        ; 286:2 while true
-        jmp while_51
-if_52_end:
-        ; branch key.1{r6} equals 114: if_53_then
+        ; 462:2 while true
+        jmp while_78
+if_79_end:
+        ; branch key.1{r6} equals 114: if_80_then
         cmp bx, 114
-        je if_53_then
-        ; branch key.1{r6} equals 82: if_53_then
+        je if_80_then
+        ; branch key.1{r6} equals 82: if_80_then
         cmp bx, 82
-        je if_53_then
-        ; 295:3 if gameState != 0
-        ; addrof a.8.1{r0}, gameState
+        je if_80_then
+        ; 471:3 if gameState != 0
+        ; addrof a.9.1{r0}, gameState
         lea rax, [var_5]
-        ; load t.9.1{r0}, [a.8.1{r0}]
+        ; load t.10.1{r0}, [a.9.1{r0}]
         mov al, [rax]
-        ; branch t.9.1{r0} notequals 0: while_51
+        ; branch t.10.1{r0} notequals 0: while_78
         cmp al, 0
-        jne while_51
-        ; branch key.1{r6} equals -8117: if_56_then, or_58
+        jne while_78
+        ; branch key.1{r6} equals -8117: if_83_then, or_85
         cmp bx, -8117
-        je if_56_then
-        jmp or_58
-if_53_then:
+        je if_83_then
+        jmp or_85
+if_80_then:
         ; call _newGame[]
         call _newGame
-        jmp while_51
-or_58:
-        ; branch key.1{r6} equals 97: if_56_then
+        jmp while_78
+or_85:
+        ; branch key.1{r6} equals 97: if_83_then
         cmp bx, 97
-        je if_56_then
-        ; branch key.1{r6} equals 65: if_56_then
+        je if_83_then
+        ; branch key.1{r6} equals 65: if_83_then
         cmp bx, 65
-        je if_56_then
-        ; branch key.1{r6} equals -8115: if_59_then
+        je if_83_then
+        ; branch key.1{r6} equals -8115: if_86_then
         cmp bx, -8115
-        je if_59_then
-        ; branch key.1{r6} equals 100: if_59_then, or_60
+        je if_86_then
+        ; branch key.1{r6} equals 100: if_86_then, or_87
         cmp bx, 100
-        je if_59_then
-        jmp or_60
-if_56_then:
+        je if_86_then
+        jmp or_87
+if_83_then:
         ; const direction.2{r0}, 0
         mov al, 0
-        ; move direction.3{r1}, direction.2{r0}
-        mov cl, al
-        jmp if_56_end
-or_60:
-        ; branch key.1{r6} equals 68: if_59_then
+        ; move direction.3{r6}, direction.2{r0}
+        mov bl, al
+        jmp if_83_end
+or_87:
+        ; branch key.1{r6} equals 68: if_86_then
         cmp bx, 68
-        je if_59_then
-        ; branch key.1{r6} equals -8120: if_62_then
+        je if_86_then
+        ; branch key.1{r6} equals -8120: if_89_then
         cmp bx, -8120
-        je if_62_then
-        ; branch key.1{r6} equals 119: if_62_then, or_63
+        je if_89_then
+        ; branch key.1{r6} equals 119: if_89_then, or_90
         cmp bx, 119
-        je if_62_then
-        jmp or_63
-if_59_then:
+        je if_89_then
+        jmp or_90
+if_86_then:
         ; const direction.4{r0}, 1
         mov al, 1
-        ; move direction.3{r1}, direction.4{r0}
-        mov cl, al
-        jmp if_56_end
-or_63:
-        ; branch key.1{r6} equals 87: if_62_then
+        ; move direction.3{r6}, direction.4{r0}
+        mov bl, al
+        jmp if_83_end
+or_90:
+        ; branch key.1{r6} equals 87: if_89_then
         cmp bx, 87
-        je if_62_then
-        ; branch key.1{r6} equals -8112: if_65_then
+        je if_89_then
+        ; branch key.1{r6} equals -8112: if_92_then
         cmp bx, -8112
-        je if_65_then
-        ; branch key.1{r6} equals 115: if_65_then, or_66
+        je if_92_then
+        ; branch key.1{r6} equals 115: if_92_then, or_93
         cmp bx, 115
-        je if_65_then
-        jmp or_66
-if_62_then:
+        je if_92_then
+        jmp or_93
+if_89_then:
         ; const direction.5{r0}, 2
         mov al, 2
-        ; move direction.3{r1}, direction.5{r0}
-        mov cl, al
-        jmp if_56_end
-or_66:
-        ; branch key.1{r6} notequals 83: while_51, if_65_then
+        ; move direction.3{r6}, direction.5{r0}
+        mov bl, al
+        jmp if_83_end
+or_93:
+        ; branch key.1{r6} notequals 83: while_78, if_92_then
         cmp bx, 83
-        jne while_51
-if_65_then:
+        jne while_78
+if_92_then:
         ; const direction.6{r0}, 3
         mov al, 3
-        ; move direction.3{r1}, direction.6{r0}
-        mov cl, al
-if_56_end:
-        ; 315:3 if !_slide@u8([ExprVarAccess[varName=direction, index=1, scope=function, type=u8, varIsArray=false, location=315:13]])
-        ; call t.10.1{r0} = _slide@u8[direction.3{r1}] -> bool
+        ; move direction.3{r6}, direction.6{r0}
+        mov bl, al
+if_83_end:
+        ; 491:3 if !_slide@u8([ExprVarAccess[varName=direction, index=1, scope=function, type=u8, varIsArray=false, location=491:13]])
+        ; move direction.3{r1}, direction.3{r6}
+        mov cl, bl
+        ; call t.11.1{r0} = _slide@u8[direction.3{r1}] -> bool
         call _slide@u8
-        ; branch t.10.1{r0} equals 0: while_51
+        ; branch t.11.1{r0} equals 0: while_78
         cmp al, 0
-        je while_51
-        ; call _spawnTile[]
+        je while_78
+        ; move direction.3{r1}, direction.3{r6}
+        mov cl, bl
+        ; call _animateMove@u8[direction.3{r1}]
+        call _animateMove@u8
+        ; call spawned.1{r0} = _spawnTile[] -> u8
         call _spawnTile
-        ; 320:3 if gameState == 0 && !_canMove([])
-        ; addrof a.11.1{r0}, gameState
+        ; move spawned.1{r6}, spawned.1{r0}
+        mov bl, al
+        ; 497:3 if spawned != 255
+        ; branch spawned.1{r6} equals 255: if_96_end
+        cmp bl, 255
+        je if_96_end
+        ; move spawned.1{r1}, spawned.1{r6}
+        mov cl, bl
+        ; call t.13.1{r0} = _tileRow@u8[spawned.1{r1}] -> u8
+        call _tileRow@u8
+        ; cast t.12.1{r1}(i16), t.13.1{r0}(u8)
+        movzx cx, al
+        ; addrof memVarAddr{r7}, t.12.1
+        lea r12, [rsp+48]
+        ; store [memVarAddr{r7}], t.12.1{r1}
+        mov [r12], cx
+        ; move spawned.1{r1}, spawned.1{r6}
+        mov cl, bl
+        ; call t.15.1{r0} = _tileColumn@u8[spawned.1{r1}] -> u8
+        call _tileColumn@u8
+        ; cast t.14.1{r2}(i16), t.15.1{r0}(u8)
+        movzx dx, al
+        ; cast t.18.1{r0}(i64), spawned.1{r6}(u8)
+        movzx rax, bl
+        ; addrof t.17.1{r1}, tiles
+        lea rcx, [var_1]
+        ; add t.17.2{r1}, t.18.1{r0}
+        add rcx, rax
+        ; load t.16.1{r3}, [t.17.2{r1}]
+        mov r8b, [rcx]
+        ; load t.12.1{r1}, [memVarAddr{r7}]
+        mov cx, [r12]
+        ; call _drawTileAt@i16@i16@u8[t.12.1{r1}, t.14.1{r2}, t.16.1{r3}]
+        call _drawTileAt@i16@i16@u8
+if_96_end:
+        ; 500:3 if gameState == 0 && !_canMove([])
+        ; addrof a.19.1{r0}, gameState
         lea rax, [var_5]
-        ; load t.12.1{r0}, [a.11.1{r0}]
+        ; load t.20.1{r0}, [a.19.1{r0}]
         mov al, [rax]
-        ; branch t.12.1{r0} notequals 0: if_69_end
+        ; branch t.20.1{r0} notequals 0: if_97_end
         cmp al, 0
-        jne if_69_end
-        ; call t.13.1{r0} = _canMove[] -> bool
+        jne if_97_end
+        ; call t.21.1{r0} = _canMove[] -> bool
         call _canMove
-        ; branch t.13.1{r0} notequals 0: if_69_end
+        ; branch t.21.1{r0} notequals 0: if_97_end
         cmp al, 0
-        jne if_69_end
-        ; const t.14.1{r0}, 2
+        jne if_97_end
+        ; const t.22.1{r0}, 2
         mov al, 2
-        ; addrof a.15.1{r1}, gameState
+        ; addrof a.23.1{r1}, gameState
         lea rcx, [var_5]
-        ; store [a.15.1{r1}], t.14.1{r0}
+        ; store [a.23.1{r1}], t.22.1{r0}
         mov [rcx], al
-if_69_end:
-        ; call _drawBoard[]
-        call _drawBoard
+if_97_end:
         ; call _drawScore[]
         call _drawScore
-        ; 325:3 if gameState != 0
-        ; addrof a.16.1{r0}, gameState
+        ; 504:3 if gameState != 0
+        ; addrof a.24.1{r0}, gameState
         lea rax, [var_5]
-        ; load t.17.1{r0}, [a.16.1{r0}]
+        ; load t.25.1{r0}, [a.24.1{r0}]
         mov al, [rax]
-        ; branch t.17.1{r0} equals 0: if_71_end
+        ; branch t.25.1{r0} equals 0: if_99_end
         cmp al, 0
-        je if_71_end
+        je if_99_end
         ; call _drawStatus[]
         call _drawStatus
-if_71_end:
-        ; const arg.10.0{r1}, 21
+if_99_end:
+        ; const arg.13.0{r1}, 21
         mov cx, 21
-        ; const arg.10.1{r2}, 0
+        ; const arg.13.1{r2}, 0
         mov dx, 0
-        ; call _setCursor@i16@i16[arg.10.0{r1}, arg.10.1{r2}]
+        ; call _setCursor@i16@i16[arg.13.0{r1}, arg.13.1{r2}]
         call _setCursor@i16@i16
-while_51:
+while_78:
         ; call key.1{r0} = _getChar[] -> i16
         call _getChar
         ; move key.1{r6}, key.1{r0}
         mov bx, ax
-        ; 288:3 if key == 27
-        ; branch key.1{r6} notequals 27: if_52_end
+        ; 464:3 if key == 27
+        ; branch key.1{r6} notequals 27: if_79_end
         cmp bx, 27
-        jne if_52_end
+        jne if_79_end
         add rsp, 32
         ; restore clobbered non-volatile registers
+        pop r12
         pop rbx
+        add rsp, 8
         ret
 
         ; void _printStringLength@@u8@i64
@@ -1849,6 +2993,14 @@ _setCursor@i16@i16:
         mov     rcx, [rcx]
         call   [SetConsoleCursorPosition]
         add     rsp, 28h
+        ret
+
+        ; void _waitFrame
+_waitFrame:
+        sub  rsp, 28h
+        mov  ecx, 25
+        call [Sleep]
+        add  rsp, 28h
         ret
 
 init:
@@ -1905,13 +3057,14 @@ section '.data' data readable
         string_11 db ' 2048 ', 0x00
         string_12 db '  ?   ', 0x00
         string_13 db '+------+', 0x00
-        string_14 db 'Arrows/WASD  R restart  Esc quit', 0x00
-        string_15 db '                                   ', 0x00
-        string_16 db '2048  Score: ', 0x00
-        string_17 db '          ', 0x00
-        string_18 db '                                      ', 0x00
-        string_19 db '2048! Press R to play again.', 0x00
-        string_20 db 'No moves left. Press R to restart.', 0x00
+        string_14 db '        ', 0x00
+        string_15 db 'Arrows/WASD  R restart  Esc quit', 0x00
+        string_16 db '                                   ', 0x00
+        string_17 db '2048  Score: ', 0x00
+        string_18 db '          ', 0x00
+        string_19 db '                                      ', 0x00
+        string_20 db '2048! Press R to play again.', 0x00
+        string_21 db 'No moves left. Press R to restart.', 0x00
 
 section '.idata' import data readable writeable
 
@@ -1922,6 +3075,7 @@ import kernel32,\
        ExitProcess,'ExitProcess',\
        GetStdHandle,'GetStdHandle',\
        SetConsoleCursorPosition,'SetConsoleCursorPosition',\
+       Sleep,'Sleep',\
        WriteFile,'WriteFile'
 
 import msvcrt,\
