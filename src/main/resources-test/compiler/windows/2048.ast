@@ -243,54 +243,54 @@ bool _canMove() {
 
 void _printTile@u8(u8 exponent) {
 	if (exponent == 0) {
-		_printString@@u8("        ");
+		_printString@@u8("      ");
 	}
 	else {
 		if (exponent == 1) {
-			_printString@@u8("   2    ");
+			_printString@@u8("   2  ");
 		}
 		else {
 			if (exponent == 2) {
-				_printString@@u8("   4    ");
+				_printString@@u8("   4  ");
 			}
 			else {
 				if (exponent == 3) {
-					_printString@@u8("   8    ");
+					_printString@@u8("   8  ");
 				}
 				else {
 					if (exponent == 4) {
-						_printString@@u8("   16   ");
+						_printString@@u8("  16  ");
 					}
 					else {
 						if (exponent == 5) {
-							_printString@@u8("   32   ");
+							_printString@@u8("  32  ");
 						}
 						else {
 							if (exponent == 6) {
-								_printString@@u8("   64   ");
+								_printString@@u8("  64  ");
 							}
 							else {
 								if (exponent == 7) {
-									_printString@@u8("  128   ");
+									_printString@@u8("  128 ");
 								}
 								else {
 									if (exponent == 8) {
-										_printString@@u8("  256   ");
+										_printString@@u8("  256 ");
 									}
 									else {
 										if (exponent == 9) {
-											_printString@@u8("  512   ");
+											_printString@@u8("  512 ");
 										}
 										else {
 											if (exponent == 10) {
-												_printString@@u8("  1024  ");
+												_printString@@u8(" 1024 ");
 											}
 											else {
 												if (exponent == 11) {
-													_printString@@u8("  2048  ");
+													_printString@@u8(" 2048 ");
 												}
 												else {
-													_printString@@u8("   ?    ");
+													_printString@@u8("  ?   ");
 												}
 											}
 										}
@@ -305,28 +305,36 @@ void _printTile@u8(u8 exponent) {
 	}
 }
 
-void _drawFrame() {
-	i16 row;
-	u8 index;
+void _drawTileAt@i16@i16@u8(i16 row, i16 column, u8 exponent) {
+	if (exponent == 0) {
+		return;
+	}
+	_setCursor@i16@i16(row, column);
+	_printString@@u8("+------+");
+	_setCursor@i16@i16(row + 1, column);
+	_printChar@u8(124);
+	_printTile@u8(exponent);
+	_printChar@u8(124);
+	_setCursor@i16@i16(row + 2, column);
+	_printString@@u8("+------+");
+}
 
+void _drawFrame() {
 	if (false) {
 		_printChar@u8(12);
 	}
 	_setCursor@i16@i16(1, 0);
 	_printString@@u8("Arrows/WASD  R restart  Esc quit");
-	row = 3;
-	index = 0;
-	for (; index < 4; index = index + 1) {
-		_setCursor@i16@i16(row, 1);
-		_printString@@u8("+--------+--------+--------+--------+");
-		_setCursor@i16@i16(row + 1, 1);
-		_printString@@u8("|        |        |        |        |");
-		_setCursor@i16@i16(row + 2, 1);
-		_printString@@u8("|        |        |        |        |");
-		row = row + 3;
+}
+
+void _clearBoard() {
+	i16 row;
+
+	row = 0;
+	for (; row < 15; row = row + 1) {
+		_setCursor@i16@i16(row + 3, 1 as i16);
+		_printString@@u8("                                   ");
 	}
-	_setCursor@i16@i16(row, 1);
-	_printString@@u8("+--------+--------+--------+--------+");
 }
 
 void _drawBoard() {
@@ -336,19 +344,19 @@ void _drawBoard() {
 	i16 column;
 	u8 boardColumn;
 
+	_clearBoard();
 	index = 0;
-	row = 5;
+	row = 3;
 	boardRow = 0;
 	for (; boardRow < 4; boardRow = boardRow + 1) {
-		column = 2;
+		column = 1;
 		boardColumn = 0;
 		for (; boardColumn < 4; boardColumn = boardColumn + 1) {
-			_setCursor@i16@i16(row, column);
-			_printTile@u8(tiles[index as i64]);
+			_drawTileAt@i16@i16@u8(row, column, tiles[index as i64]);
 			index = index + 1;
 			column = column + 9;
 		}
-		row = row + 3;
+		row = row + 4;
 	}
 }
 
@@ -360,9 +368,9 @@ void _drawScore() {
 }
 
 void _drawStatus() {
-	_setCursor@i16@i16(18, 0);
+	_setCursor@i16@i16(((3 + 15) + 1) as i16, 0);
 	_printString@@u8("                                      ");
-	_setCursor@i16@i16(18, 0);
+	_setCursor@i16@i16(((3 + 15) + 1) as i16, 0);
 	if (gameState == 1) {
 		_printString@@u8("2048! Press R to play again.");
 	}
