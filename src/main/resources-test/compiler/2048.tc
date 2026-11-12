@@ -24,6 +24,9 @@ const MOVE_RIGHT = 1
 const MOVE_UP = 2
 const MOVE_DOWN = 3
 const MOVE_NONE = 0xFF
+const MOVE_TARGET_MASK = 0x0F
+const MOVE_MERGE_LAST = 0x80       // marked on the partner that arrives last
+const MOVE_MERGE_ARRIVED = 0x40    // marked on the target until its partner is drawn
 const STEP_RIGHT = 0xFF
 const STEP_DOWN = 0xFC
 
@@ -45,7 +48,7 @@ i16 tileValue(u8 exponent) {
 	return value
 }
 
-void spawnTile() {
+u8 spawnTile() {
 	u8 emptyCount = 0
 	for u8 index = 0; index < BOARD_CELLS; index += 1 {
 		if tiles[index] == 0 {
@@ -53,7 +56,7 @@ void spawnTile() {
 		}
 	}
 	if emptyCount == 0 {
-		return
+		return MOVE_NONE
 	}
 
 	u8 chosen = (random16() % emptyCount as i16) as u8
@@ -67,10 +70,11 @@ void spawnTile() {
 				tile = 2
 			}
 			tiles[index] = tile
-			return
+			return index
 		}
 		chosen -= 1
 	}
+	return MOVE_NONE
 }
 
 bool slideLine(u8 first, u8 step) {
@@ -88,7 +92,8 @@ bool slideLine(u8 first, u8 step) {
 				u8 previous = target - step
 				u8* previousTile = &tiles[previous]
 				if *previousTile == tile {
-					moveTargets[source] = previous
+					// The current source is farther away and will arrive last.
+					moveTargets[source] = previous | MOVE_MERGE_LAST
 					u8 nextTile = tile + 1
 					*previousTile = nextTile
 					i32 mergedScore = tileValue(nextTile) as i32
@@ -216,6 +221,177 @@ void drawTileAt(i16 row, i16 column, u8 exponent) {
 	printString("+------+")
 }
 
+// Board coordinates use shifts and additions; no runtime multiplication.
+u8 tileRow(u8 index) {
+	return BOARD_TOP + (index & 12)
+}
+
+u8 tileColumn(u8 index) {
+	u8 column = index & 3
+	return BOARD_LEFT + (column << 3) + column
+}
+
+void clearTileTrail(u8 row, u8 column, u8 direction, u8 distance) {
+	u8 width = TILE_WIDTH
+	u8 height = TILE_HEIGHT
+	if direction < MOVE_UP {
+		if distance < width {
+			width = distance
+		}
+		if direction == MOVE_LEFT {
+			column += TILE_WIDTH - width
+		}
+	}
+	else {
+		if distance < height {
+			height = distance
+		}
+		if direction == MOVE_UP {
+			row += TILE_HEIGHT - height
+		}
+	}
+	u8* spaces = "        "
+	spaces += TILE_WIDTH - width
+	for u8 line = 0; line < height; line += 1 {
+		setCursor(row as i16, column as i16)
+		printString(spaces)
+		row += 1
+	}
+}
+
+bool drawMoveFrame(u8 direction, u8 previous, u8 travel, bool erase) {
+	bool horizontal = direction < MOVE_UP
+	bool forward = (direction & 1) != 0
+	bool pending = false
+	// Paint rear tiles first, so the front tile covers its merging partner.
+	for u8 count = 0; count < BOARD_CELLS; count += 1 {
+		u8 index = count
+		if !forward {
+			index = BOARD_CELLS - 1 - count
+		}
+
+		u8 exponent = moveTiles[index]
+		if exponent == 0 {
+			continue
+		}
+
+		u8 target = moveTargets[index] & MOVE_TARGET_MASK
+		u8 distance = index - target
+		if forward {
+			distance = target - index
+		}
+
+		if horizontal {
+			distance += distance << 3
+		}
+
+		u8 oldOffset = previous
+		if oldOffset > distance {
+			oldOffset = distance
+		}
+
+		u8 offset = travel
+
+		if offset >= distance {
+			offset = distance
+		}
+		else {
+			pending = true
+		}
+
+		if oldOffset == offset && (erase || exponent == tiles[target]) {
+			continue
+		}
+
+		u8 displacement = offset
+		if erase {
+			displacement = oldOffset
+		}
+
+		if !forward {
+			displacement = 0 - displacement
+		}
+
+		u8 row = BOARD_TOP + (index & 12)
+		u8 column = index & 3
+		column += BOARD_LEFT + (column << 3)
+
+		if horizontal {
+			column += displacement
+		}
+		else {
+			row += displacement
+		}
+
+		if erase {
+			clearTileTrail(row, column, direction, offset - oldOffset)
+		}
+		else {
+			drawTileAt(row as i16, column as i16, exponent)
+			if offset == distance {
+				if (moveTargets[index] & MOVE_MERGE_LAST) != 0 {
+					moveTargets[target] |= MOVE_MERGE_ARRIVED
+					moveTiles[index] = 0
+				}
+				else if (moveTargets[target] & MOVE_MERGE_ARRIVED) != 0 {
+					drawTileAt(tileRow(target) as i16, tileColumn(target) as i16, tiles[target])
+					moveTiles[index] = 0
+			}
+		}
+	}
+	}
+	return pending
+}
+
+// Full redraws waste character writes; screen diffs need a buffer.
+// Reuse the move snapshot and erase only the exposed strips instead.
+void animateMove(u8 direction) {
+	u8 travel = 0
+	u8 speed = 1
+	bool pending = true
+	while pending {
+		u8 previous = travel
+		travel += speed
+		speed += 1
+		// Clear all trails before painting, including overlapping merge tiles.
+		drawMoveFrame(direction, previous, travel, true)
+		pending = drawMoveFrame(direction, previous, travel, false)
+		waitFrame()
+	}
+	// Ensure each merge value is visible after its partners have arrived.
+	for u8 index = 0; index < BOARD_CELLS; index += 1 {
+		u8 target = moveTargets[index] & MOVE_TARGET_MASK
+		if moveTiles[index] != 0 && moveTiles[index] != tiles[target] {
+			setCursor(tileRow(target) as i16 + 1, tileColumn(target) as i16 + 1)
+			printTile(tiles[target])
+		}
+	}
+}
+
+void waitFrame() asm {
+#ifdef Z8
+	"ret"
+#else
+  #ifdef __WINDOWS
+	"sub  rsp, 28h"
+	"mov  ecx, 25"  // 25ms
+	"call [Sleep]"
+	"add  rsp, 28h"
+	"ret"
+  #else
+	"sub  rsp, 10h"
+	"mov  qword [rsp], 0"
+	"mov  qword [rsp+8], 25000000" // 25ms = 25.000.000ns
+	"mov  rdi, rsp"
+	"xor  esi, esi"
+	"mov  eax, 35"
+	"syscall"
+	"add  rsp, 10h"
+	"ret"
+  #endif
+#endif
+}
+
 void drawFrame() {
 	if CLEAR_SCREEN {
 		printChar(0x0C)
@@ -316,11 +492,14 @@ void main() {
 			continue
 		}
 
-		spawnTile()
+		animateMove(direction)
+		u8 spawned = spawnTile()
+		if spawned != MOVE_NONE {
+			drawTileAt(tileRow(spawned) as i16, tileColumn(spawned) as i16, tiles[spawned])
+		}
 		if gameState == STATE_PLAYING && !canMove() {
 			gameState = STATE_LOST
 		}
-		drawBoard()
 		drawScore()
 		if gameState != STATE_PLAYING {
 			drawStatus()

@@ -99,7 +99,7 @@ i16 tileValue@u8(u8 exponent) {
 	return value;
 }
 
-void spawnTile() {
+u8 spawnTile() {
 	u8 emptyCount;
 	u8 index;
 	u8 chosen;
@@ -114,7 +114,7 @@ void spawnTile() {
 		}
 	}
 	if (emptyCount == 0) {
-		return;
+		return 255;
 	}
 	chosen = ((random16()) % (emptyCount as i16)) as u8;
 	index = 0;
@@ -128,10 +128,11 @@ void spawnTile() {
 				tile = 2;
 			}
 			tiles[index as i64] = tile;
-			return;
+			return index;
 		}
 		chosen = chosen - 1;
 	}
+	return 255;
 }
 
 bool slideLine@u8@u8(u8 first, u8 step) {
@@ -163,7 +164,7 @@ bool slideLine@u8@u8(u8 first, u8 step) {
 				previous = target - step;
 				previousTile = &tiles[previous as i64];
 				if ((*previousTile) == tile) {
-					moveTargets[source as i64] = previous;
+					moveTargets[source as i64] = previous | 128;
 					nextTile = tile + 1;
 					*previousTile = nextTile;
 					mergedScore = (tileValue@u8(nextTile)) as i32;
@@ -329,6 +330,171 @@ void drawTileAt@i16@i16@u8(i16 row, i16 column, u8 exponent) {
 	printString@@u8("+------+");
 }
 
+u8 tileRow@u8(u8 index) {
+	return 3 + (index & 12);
+}
+
+u8 tileColumn@u8(u8 index) {
+	u8 column;
+
+	column = index & 3;
+	return (1 + (column << 3)) + column;
+}
+
+void clearTileTrail@u8@u8@u8@u8(u8 row, u8 column, u8 direction, u8 distance) {
+	u8 width;
+	u8 height;
+	u8* spaces;
+	u8 line;
+
+	width = 8;
+	height = 3;
+	if (direction < 2) {
+		if (distance < width) {
+			width = distance;
+		}
+		if (direction == 0) {
+			column = column + (8 - width);
+		}
+	}
+	else {
+		if (distance < height) {
+			height = distance;
+		}
+		if (direction == 2) {
+			row = row + (3 - height);
+		}
+	}
+	spaces = "        ";
+	spaces = spaces + ((8 - width) as i64);
+	line = 0;
+	for (; line < height; line = line + 1) {
+		setCursor@i16@i16(row as i16, column as i16);
+		printString@@u8(spaces);
+		row = row + 1;
+	}
+}
+
+bool drawMoveFrame@u8@u8@u8@bool(u8 direction, u8 previous, u8 travel, bool erase) {
+	bool horizontal;
+	bool forward;
+	bool pending;
+	u8 count;
+	u8 index;
+	u8 exponent;
+	u8 target;
+	u8 distance;
+	u8 oldOffset;
+	u8 offset;
+	u8 displacement;
+	u8 row;
+	u8 column;
+
+	horizontal = direction < 2;
+	forward = (direction & 1) != 0;
+	pending = false;
+	count = 0;
+	for (; count < 16; count = count + 1) {
+		index = count;
+		if (!forward) {
+			index = (16 - 1) - count;
+		}
+		exponent = moveTiles[index as i64];
+		if (exponent == 0) {
+			continue;
+		}
+		target = moveTargets[index as i64] & 15;
+		distance = index - target;
+		if (forward) {
+			distance = target - index;
+		}
+		if (horizontal) {
+			distance = distance + (distance << 3);
+		}
+		oldOffset = previous;
+		if (oldOffset > distance) {
+			oldOffset = distance;
+		}
+		offset = travel;
+		if (offset >= distance) {
+			offset = distance;
+		}
+		else {
+			pending = true;
+		}
+		if ((oldOffset == offset) && (erase || (exponent == tiles[target as i64]))) {
+			continue;
+		}
+		displacement = offset;
+		if (erase) {
+			displacement = oldOffset;
+		}
+		if (!forward) {
+			displacement = 0 - displacement;
+		}
+		row = 3 + (index & 12);
+		column = index & 3;
+		column = column + (1 + (column << 3));
+		if (horizontal) {
+			column = column + displacement;
+		}
+		else {
+			row = row + displacement;
+		}
+		if (erase) {
+			clearTileTrail@u8@u8@u8@u8(row, column, direction, offset - oldOffset);
+		}
+		else {
+			drawTileAt@i16@i16@u8(row as i16, column as i16, exponent);
+			if (offset == distance) {
+				if ((moveTargets[index as i64] & 128) != 0) {
+					moveTargets[target as i64] = moveTargets[target as i64] | 64;
+					moveTiles[index as i64] = 0;
+				}
+				else {
+					if ((moveTargets[target as i64] & 64) != 0) {
+						drawTileAt@i16@i16@u8((tileRow@u8(target)) as i16, (tileColumn@u8(target)) as i16, tiles[target as i64]);
+						moveTiles[index as i64] = 0;
+					}
+				}
+			}
+		}
+	}
+	return pending;
+}
+
+void animateMove@u8(u8 direction) {
+	u8 travel;
+	u8 speed;
+	bool pending;
+	u8 previous;
+	u8 index;
+	u8 target;
+
+	travel = 0;
+	speed = 1;
+	pending = true;
+	while (pending) {
+		previous = travel;
+		travel = travel + speed;
+		speed = speed + 1;
+		drawMoveFrame@u8@u8@u8@bool(direction, previous, travel, true);
+		pending = drawMoveFrame@u8@u8@u8@bool(direction, previous, travel, false);
+		waitFrame();
+	}
+	index = 0;
+	for (; index < 16; index = index + 1) {
+		target = moveTargets[index as i64] & 15;
+		if ((moveTiles[index as i64] != 0) && (moveTiles[index as i64] != tiles[target as i64])) {
+			setCursor@i16@i16(((tileRow@u8(target)) as i16) + 1, ((tileColumn@u8(target)) as i16) + 1);
+			printTile@u8(tiles[target as i64]);
+		}
+	}
+}
+
+void waitFrame() asm {
+}
+
 void drawFrame() {
 	if (false) {
 		printChar@u8(12);
@@ -411,6 +577,7 @@ void newGame() {
 void main() {
 	i16 key;
 	u8 direction;
+	u8 spawned;
 
 	initRandom@i32(7439742);
 	drawFrame();
@@ -452,11 +619,14 @@ void main() {
 		if (!(slide@u8(direction))) {
 			continue;
 		}
-		spawnTile();
+		animateMove@u8(direction);
+		spawned = spawnTile();
+		if (spawned != 255) {
+			drawTileAt@i16@i16@u8((tileRow@u8(spawned)) as i16, (tileColumn@u8(spawned)) as i16, tiles[spawned as i64]);
+		}
 		if ((gameState == 0) && (!(canMove()))) {
 			gameState = 2;
 		}
-		drawBoard();
 		drawScore();
 		if (gameState != 0) {
 			drawStatus();
