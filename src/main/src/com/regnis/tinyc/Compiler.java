@@ -32,6 +32,10 @@ public class Compiler {
 		final String subdirLinux = "linux/";
 		final String subdirZ8 = "z8/";
 		final Path asmFileZ8 = compile(inputFile, subdirZ8, TargetArchitecture.Z8);
+		if (!launchZ8asm(asmFileZ8, useExtension(inputFile, subdirZ8, ".bin"))) {
+			throw new IOException("Failed to compiler Z8 target");
+		}
+
 		final Path asmFileWin = compile(inputFile, subdirWin, TargetArchitecture.WIN_X86_64);
 		final Path asmFileLinux = compile(inputFile, subdirLinux, TargetArchitecture.LINUX_X86_64);
 		final Path asmFile;
@@ -54,6 +58,7 @@ public class Compiler {
 			permissions.add(PosixFilePermission.OWNER_EXECUTE);
 			Files.setPosixFilePermissions(exeFile, permissions);
 		}
+
 		return exeFile;
 	}
 
@@ -206,6 +211,36 @@ public class Compiler {
 		}
 
 		System.err.println("Fasm failed " + result);
+		return false;
+	}
+
+	private static boolean launchZ8asm(Path asmFile, Path binFile) throws IOException, InterruptedException {
+		String z8asmName = "z8asm";
+		if (Utils.IS_WINDOWS) {
+			z8asmName += ".exe";
+		}
+		final String z8asmHomeString = System.getenv("Z8ASM_HOME");
+		if (z8asmHomeString == null) {
+			System.out.println("Skipping compiling Z8 target");
+			return true;
+		}
+
+		final Path z8asmHome = Paths.get(z8asmHomeString);
+		z8asmName = z8asmHome.resolve(z8asmName).toString();
+		final ProcessBuilder processBuilder = new ProcessBuilder(List.of(
+				z8asmName,
+				"--output=" + binFile.toString(),
+				"--",
+				asmFile.toString()
+		));
+		processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+		processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
+		final int result = Utils.execute(processBuilder);
+		if (result == 0) {
+			return true;
+		}
+
+		System.err.println("z8asm failed " + result);
 		return false;
 	}
 }
