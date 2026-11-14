@@ -15,7 +15,7 @@ tileValue_Pu8:
         ld   r2, #%01
         ; const index.1{r3}, 0
         ld   r3, #%00
-        ; 45:2 for index < exponent
+        ; 49:2 for index < exponent
         jr   for_1
 
 for_1_body:
@@ -28,7 +28,7 @@ for_1:
         ; branch index.2{r3} lt param.exponent{r0}: for_1_body
         cp   r3, r0
         jr   ult, for_1_body
-        ; 48:9 return value
+        ; 52:9 return value
         ; move value.2{r0}, value.2{r1}
         ld   r0, r1
         ld   r1, r2
@@ -43,13 +43,13 @@ spawnTile:
         ld   r0, #%00
         ; const index.1{r1}, 0
         ld   r1, #%00
-        ; 53:2 for index < 16
+        ; 57:2 for index < 16
         ; move emptyCount.2{r8}, emptyCount.1{r0}
         ld   r8, r0
         jr   for_2
 
 for_2_body:
-        ; 54:3 if [...] == 0
+        ; 58:3 if [...] == 0
         ; cast t.7.1{r1}(i16), index.2{r0}(u8)
         ld   r2, r0
         ld   r1, #0
@@ -104,7 +104,7 @@ for_2:
         ld   r0, r1
         ; const index.3{r1}, 0
         ld   r1, #%00
-        ; 63:2 for index < 16
+        ; 67:2 for index < 16
         ; move chosen.2{r2}, chosen.1{r0}
         ld   r2, r0
         ; move index.4{r8}, index.3{r1}
@@ -112,7 +112,7 @@ for_2:
         jr   for_5
 
 for_5_body:
-        ; 64:3 if [...] != 0
+        ; 68:3 if [...] != 0
         ; cast t.13.1{r0}(i16), index.4{r8}(u8)
         ld   r1, r8
         ld   r0, #0
@@ -166,7 +166,7 @@ for_5:
 if_7_then:
         ; const tile.1{r9}, 1
         ld   r9, #%01
-        ; 69:4 if random16([]) % 10 == 0
+        ; 73:4 if random16([]) % 10 == 0
         ; call t.15.1{r0} = random16[] -> i16
         call random16
         ; mod t.14.1{r0}, 10
@@ -204,7 +204,7 @@ if_8_end:
         adc  r4, r1
         ; store [t.16.2{r4}], tile.2{r0}
         lde  @rr4, r0
-        ; 73:11 return index
+        ; 77:11 return index
         ; move index.4{r0}, index.4{r8}
         ld   r0, r8
 spawnTile_ret:
@@ -248,7 +248,7 @@ slideLine_Pu8_Pu8:
         ld   r3, #%00
         ; const position.1{r4}, 0
         ld   r4, #%00
-        ; 85:2 for position < 4
+        ; 91:2 for position < 4
         ; move source.2{r10}, source.1{r0}
         ld   r10, r0
         ; move target.2{r11}, target.1{r1}
@@ -312,7 +312,7 @@ for_9_body:
         adc  r2, r0
         ; load tile.1{r0}, [sourceTile.2{r2}]
         lde  r0, @rr2
-        ; 88:3 if tile != 0
+        ; 94:3 if tile != 0
         ; branch tile.1{r0} notequals 0: if_10_then
         cp   r0, #%00
         jr   ne, if_10_then
@@ -327,7 +327,7 @@ if_10_then:
         lde  @rr2, r1
         ; const merged.1{r1}, 0
         ld   r1, #%00
-        ; 91:4 if target != first && !previousMerged
+        ; 97:4 if target != first && !previousMerged
         ; branch target.2{r11} notequals param.first{r8}: and_12
         cp   r11, r8
         jr   ne, and_12
@@ -399,7 +399,7 @@ if_11_then:
         ; add previousTile.2{r6}, t.16.1{r3}
         add  r7, r4
         adc  r6, r3
-        ; 94:5 if *previousTile == tile
+        ; 100:5 if *previousTile == tile
         ; load t.17.1{r3}, [previousTile.2{r6}]
         lde  r3, @rr6
         ; branch t.17.1{r3} equals tile.1{r0}: if_13_then
@@ -532,7 +532,7 @@ if_13_then:
         lde  @rr0, r7
         sub  r1, #3
         sbc  r0, #0
-        ; 101:6 if nextTile == 11
+        ; 107:6 if nextTile == 11
         ; branch nextTile.1{r12} notequals 11: if_14_end
         cp   r12, #%0b
         jr   ne, if_14_end
@@ -597,7 +597,7 @@ if_15_then:
         lde  r0, @rr14
         ; store [t.30.2{r2}], tile.1{r0}
         lde  @rr2, r0
-        ; 112:5 if target != source
+        ; 118:5 if target != source
         ; branch target.2{r11} notequals source.2{r10}: if_16_then
         cp   r11, r10
         jr   ne, if_16_then
@@ -648,7 +648,7 @@ for_9:
         ; branch position.2{r1} lt 4: for_9_body
         cp   r1, #%04
         jr   ult, for_9_body
-        ; 121:9 return moved
+        ; 127:9 return moved
         ; move moved.2{r0}, moved.2{r13}
         ld   r0, r13
         ; restore clobbered non-volatile registers
@@ -678,7 +678,7 @@ slide_Pu8:
         ld   r8, r0
         ; const index.1{r0}, 0
         ld   r0, #%00
-        ; 125:2 for index < 16
+        ; 131:2 for index < 16
         jr   for_17
 
 for_17_body:
@@ -725,7 +725,7 @@ for_17:
         ld   r0, #%00
         ; const line.1{r1}, 0
         ld   r1, #%00
-        ; 130:2 for line < 4
+        ; 136:2 for line < 4
         ; move moved.2{r9}, moved.1{r0}
         ld   r9, r0
         ; move line.2{r10}, line.1{r1}
@@ -740,7 +740,7 @@ for_18_body:
         add r0, r0
         ; const step.1{r1}, 1
         ld   r1, #%01
-        ; 133:3 if direction == 1
+        ; 139:3 if direction == 1
         ; branch param.direction{r8} equals 1: if_19_then
         cp   r8, #%01
         jr   eq, if_19_then
@@ -777,7 +777,7 @@ if_21_then:
         ; const step.5{r1}, 252
         ld   r1, #%fc
 if_19_end:
-        ; 145:3 if slideLine_Pu8_Pu8([ExprVarAccess[varName=first, index=4, scope=function, type=u8, varIsArray=false, location=145:16], ExprVarAccess[varName=step, index=5, scope=function, type=u8, varIsArray=false, location=145:23]])
+        ; 151:3 if slideLine_Pu8_Pu8([ExprVarAccess[varName=first, index=4, scope=function, type=u8, varIsArray=false, location=151:16], ExprVarAccess[varName=step, index=5, scope=function, type=u8, varIsArray=false, location=151:23]])
         ; call t.13.1{r0} = slideLine_Pu8_Pu8[first.3{r0}, step.3{r1}] -> bool
         call slideLine_Pu8_Pu8
         ; branch t.13.1{r0} notequals 0: if_22_then
@@ -803,7 +803,7 @@ for_18:
         ; branch line.2{r10} lt 4: for_18_body
         cp   r10, #%04
         jr   ult, for_18_body
-        ; 149:9 return moved
+        ; 155:9 return moved
         ; move moved.2{r0}, moved.2{r9}
         ld   r0, r9
         ; restore clobbered non-volatile registers
@@ -816,7 +816,7 @@ for_18:
 canMove:
         ; const index.1{r0}, 0
         ld   r0, #%00
-        ; 153:2 for index < 16
+        ; 159:2 for index < 16
         jr   for_23
 
 for_23_body:
@@ -831,11 +831,11 @@ for_23_body:
         adc  r4, r1
         ; load tile.1{r1}, [t.2.2{r4}]
         lde  r1, @rr4
-        ; 155:3 if tile == 0
+        ; 161:3 if tile == 0
         ; branch tile.1{r1} equals 0: if_24_then
         cp   r1, #%00
         jr   eq, if_24_then
-        ; 158:3 if index & 3 != 3 && [...] == tile
+        ; 164:3 if index & 3 != 3 && [...] == tile
         ; move t.4.1{r2}, index.2{r0}
         ld   r2, r0
         ; and t.4.1{r2}, 3
@@ -1171,7 +1171,7 @@ drawTileAt_Pi16_Pi16_Pu8_ret:
         ; u8 tileRow_Pu8
         ; arg index (u8): r0
 tileRow_Pu8:
-        ; 226:19 return index & 12 + 3
+        ; 232:19 return index & 12 + 3
         ; and t.2.1{r0}, 12
         and  r0, #%0c
         ; add t.1.1{r0}, 3
@@ -1183,7 +1183,7 @@ tileRow_Pu8:
 tileColumn_Pu8:
         ; and column.1{r0}, 3
         and  r0, #%03
-        ; 231:36 return column << 3 + 1 + column
+        ; 237:36 return column << 3 + 1 + column
         ; move t.4.1{r1}, column.1{r0}
         ld   r1, r0
         ; shiftleft t.4.1{r1}, 3
@@ -1215,7 +1215,7 @@ clearTileTrail_Pu8_Pu8_Pu8_Pu8:
         ld   r4, #%08
         ; const height.1{r5}, 3
         ld   r5, #%03
-        ; 237:2 if direction < 2
+        ; 244:2 if direction < 2
         ; branch param.direction{r2} lt 2: if_42_then
         cp   r2, #%02
         jr   ult, if_42_then
@@ -1317,7 +1317,7 @@ if_42_end:
         adc  r10, r4
         ; const line.1{r1}, 0
         ld   r1, #%00
-        ; 255:2 for line < height
+        ; 262:2 for line < height
         ; move row.5{r12}, row.3{r0}
         ld   r12, r0
         ; move line.2{r13}, line.1{r1}
@@ -1426,7 +1426,7 @@ drawMoveFrame_Pu8_Pu8_Pu8_Pbool:
         ld   r0, #%00
         ; const count.1{r1}, 0
         ld   r1, #%00
-        ; 267:2 for count < 16
+        ; 276:2 for count < 16
         ; addrof memVarAddr{r14}, param.previous
         ld   r14, SPH
         ld   r15, SPL
@@ -1470,7 +1470,7 @@ for_48_body:
         ld   r0, r1
         ; move count.2{r1}, count.2{r2}
         ld   r1, r2
-        ; 269:3 if !forward
+        ; 278:3 if !forward
         ; branch forward.1{r13} equals 0: if_49_then
         cp   r13, #%00
         jr   eq, if_49_then
@@ -1507,7 +1507,7 @@ if_49_end:
         adc  r6, r3
         ; load exponent.1{r4}, [t.19.2{r6}]
         lde  r4, @rr6
-        ; 274:3 if exponent == 0
+        ; 283:3 if exponent == 0
         ; branch exponent.1{r4} notequals 0: if_50_end
         cp   r4, #%00
         jr   ne, if_50_end
@@ -1556,7 +1556,7 @@ if_50_end:
         ld   r1, r2
         ; sub distance.1{r1}, target.1{r0}
         sub  r1, r0
-        ; 280:3 if forward
+        ; 289:3 if forward
         ; branch forward.1{r13} equals 0: if_51_end
         cp   r13, #%00
         jr   eq, if_51_end
@@ -1579,7 +1579,7 @@ if_51_end:
 if_52_end:
         ; move oldOffset.1{r3}, param.previous{r9}
         ld   r3, r9
-        ; 289:3 if oldOffset > distance
+        ; 298:3 if oldOffset > distance
         ; branch oldOffset.1{r3} lteq distance.4{r1}: if_53_end
         cp   r3, r1
         jr   ule, if_53_end
@@ -1588,7 +1588,7 @@ if_52_end:
 if_53_end:
         ; move offset.1{r5}, param.travel{r10}
         ld   r5, r10
-        ; 295:3 if offset >= distance
+        ; 304:3 if offset >= distance
         ; branch offset.1{r5} gteq distance.4{r1}: if_54_then
         cp   r5, r1
         jr   uge, if_54_then
@@ -1747,7 +1747,7 @@ if_55_end:
         adc  r14, #%00
         ; store [memVarAddr{r14}], offset.2{r5}
         lde  @rr14, r5
-        ; 307:3 if erase
+        ; 316:3 if erase
         ; branch param.erase{r11} notequals 0: if_58_then
         cp   r11, #%00
         jr   ne, if_58_then
@@ -1808,7 +1808,7 @@ if_59_end:
         inc  r2
         ; add column.2{r3}, t.30.1{r2}
         add  r3, r2
-        ; 319:3 if horizontal
+        ; 328:3 if horizontal
         ; branch horizontal.1{r12} notequals 0: if_60_then
         cp   r12, #%00
         jr   ne, if_60_then
@@ -1841,7 +1841,7 @@ if_60_end:
         ld   r2, #0
         ; call drawTileAt_Pi16_Pi16_Pu8[t.33.1{r0}, t.34.1{r2}, exponent.1{r4}]
         call drawTileAt_Pi16_Pi16_Pu8
-        ; 331:4 if offset == distance
+        ; 340:4 if offset == distance
         ; addrof memVarAddr{r14}, distance.4
         ld   r14, SPH
         ld   r15, SPL
@@ -1915,7 +1915,7 @@ if_62_then:
         adc  r14, #%00
         ; load pending.9{r9}, [memVarAddr{r14}]
         lde  r9, @rr14
-        ; 332:5 if [...] & 128 != 0
+        ; 341:5 if [...] & 128 != 0
         ; addrof memVarAddr{r14}, index.2
         ld   r14, SPH
         ld   r15, SPL
@@ -1939,7 +1939,7 @@ if_62_then:
         ; branch t.35.1{r0} notequals 0: if_63_then
         cp   r0, #%00
         jr   ne, if_63_then
-        ; 336:10 if [...] & 64 != 0
+        ; 345:10 if [...] & 64 != 0
         ; addrof memVarAddr{r14}, target.1
         ld   r14, SPH
         ld   r15, SPL
@@ -2107,7 +2107,7 @@ for_48:
         ; branch count.2{r0} lt 16: for_48_body
         cp   r0, #%10
         jr   ult, for_48_body
-        ; 343:9 return pending
+        ; 352:9 return pending
         ; move pending.2{r0}, pending.2{r1}
         ld   r0, r1
         ; restore clobbered non-volatile registers
@@ -2143,7 +2143,7 @@ animateMove_Pu8:
         ld   r1, #%01
         ; const pending.1{r2}, 1
         ld   r2, #%01
-        ; 352:2 while pending
+        ; 361:2 while pending
         ; move travel.2{r9}, travel.1{r0}
         ld   r9, r0
         ; move speed.2{r10}, speed.1{r1}
@@ -2189,7 +2189,7 @@ while_65:
         jr   ne, while_65_body
         ; const index.1{r0}, 0
         ld   r0, #%00
-        ; 362:2 for index < 16
+        ; 371:2 for index < 16
         ; move index.2{r8}, index.1{r0}
         ld   r8, r0
         jr   for_66
@@ -2210,7 +2210,7 @@ for_66_body:
         ld   r9, r0
         ; and target.1{r9}, 15
         and  r9, #%0f
-        ; 364:3 if [...] != 0 && [...] != [...]
+        ; 373:3 if [...] != 0 && [...] != [...]
         ; cast t.14.1{r0}(i16), index.2{r8}(u8)
         ld   r1, r8
         ld   r0, #0
@@ -2339,7 +2339,7 @@ clearBoard:
         ; const row.1{r0}, 0
         ld   r0, #%00
         ld   r1, #%00
-        ; 404:2 for row < 15
+        ; 413:2 for row < 15
         ; move row.2{r8}, row.1{r0}
         ld   r9, r1
         ld   r8, r0
@@ -2405,7 +2405,7 @@ drawBoard:
         ld   r2, #%03
         ; const boardRow.1{r3}, 0
         ld   r3, #%00
-        ; 414:2 for boardRow < 4
+        ; 423:2 for boardRow < 4
         ; move index.2{r8}, index.1{r0}
         ld   r8, r0
         ; move row.2{r9}, row.1{r1}
@@ -2421,7 +2421,7 @@ for_70_body:
         ld   r1, #%01
         ; const boardColumn.1{r2}, 0
         ld   r2, #%00
-        ; 416:3 for boardColumn < 4
+        ; 425:3 for boardColumn < 4
         ; move column.2{r12}, column.1{r0}
         ld   r13, r1
         ld   r12, r0
@@ -2584,7 +2584,7 @@ drawStatus:
         ld   r3, #%00
         ; call setCursor_Pi16_Pi16[arg.2.0{r0}, arg.2.1{r2}]
         call setCursor_Pi16_Pi16
-        ; 436:2 if gameState == 1
+        ; 445:2 if gameState == 1
         ; addrof a.1.1{r0}, gameState
         ld   r0, #hi(var_4)
         ld   r1, #lo(var_4)
@@ -2593,7 +2593,7 @@ drawStatus:
         ; branch t.2.1{r2} equals 1: if_72_then
         cp   r2, #%01
         jr   eq, if_72_then
-        ; 439:7 if gameState == 2
+        ; 448:7 if gameState == 2
         ; branch t.5.1{r2} notequals 2: drawStatus_ret, if_73_then
         cp   r2, #%02
         jr   ne, drawStatus_ret
@@ -2620,7 +2620,7 @@ drawStatus_ret:
 newGame:
         ; const index.1{r0}, 0
         ld   r0, #%00
-        ; 445:2 for index < 16
+        ; 454:2 for index < 16
         jr   for_74
 
 for_74_body:
@@ -2732,7 +2732,7 @@ main:
         call drawFrame
         ; call newGame[]
         call newGame
-        ; 462:2 while true
+        ; 471:2 while true
         jr   while_75
 
 if_76_end:
@@ -2748,7 +2748,7 @@ if_76_end:
         cp   r8, #%00
         jr   eq, if_77_then
 .notEquals6:
-        ; 471:3 if gameState != 0
+        ; 480:3 if gameState != 0
         ; addrof a.7.1{r0}, gameState
         ld   r0, #hi(var_4)
         ld   r1, #lo(var_4)
@@ -2872,7 +2872,7 @@ if_89_then:
         ; move direction.3{r8}, direction.6{r0}
         ld   r8, r0
 if_80_end:
-        ; 491:3 if !slide_Pu8([ExprVarAccess[varName=direction, index=1, scope=function, type=u8, varIsArray=false, location=491:13]])
+        ; 500:3 if !slide_Pu8([ExprVarAccess[varName=direction, index=1, scope=function, type=u8, varIsArray=false, location=500:13]])
         ; move direction.3{r0}, direction.3{r8}
         ld   r0, r8
         ; call t.9.1{r0} = slide_Pu8[direction.3{r0}] -> bool
@@ -2888,7 +2888,7 @@ if_80_end:
         call spawnTile
         ; move spawned.1{r8}, spawned.1{r0}
         ld   r8, r0
-        ; 497:3 if spawned != 255
+        ; 506:3 if spawned != 255
         ; branch spawned.1{r8} equals 255: if_93_end
         cp   r8, #%ff
         jr   eq, if_93_end
@@ -2923,7 +2923,7 @@ if_80_end:
         ; call drawTileAt_Pi16_Pi16_Pu8[t.10.1{r0}, t.12.1{r2}, t.14.1{r4}]
         call drawTileAt_Pi16_Pi16_Pu8
 if_93_end:
-        ; 500:3 if gameState == 0 && !canMove([])
+        ; 509:3 if gameState == 0 && !canMove([])
         ; addrof a.17.1{r0}, gameState
         ld   r0, #hi(var_4)
         ld   r1, #lo(var_4)
@@ -2947,7 +2947,7 @@ if_93_end:
 if_94_end:
         ; call drawScore[]
         call drawScore
-        ; 504:3 if gameState != 0
+        ; 513:3 if gameState != 0
         ; addrof a.22.1{r0}, gameState
         ld   r0, #hi(var_4)
         ld   r1, #lo(var_4)
@@ -2973,7 +2973,7 @@ while_75:
         ; move key.1{r8}, key.1{r0}
         ld   r9, r1
         ld   r8, r0
-        ; 464:3 if key == 27
+        ; 473:3 if key == 27
         ; branch key.1{r8} notequals 27: if_76_end
         cp   r9, #%1b
         jr   ne, if_76_end

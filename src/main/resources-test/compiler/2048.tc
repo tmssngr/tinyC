@@ -9,6 +9,7 @@ const CLEAR_SCREEN = false
 
 const BOARD_SIZE = 4
 const BOARD_CELLS = BOARD_SIZE * BOARD_SIZE
+// Tiles store exponents rather than values; merging adds one, and exponent 11 is 2048.
 const WIN_TILE = 11
 const BOARD_TOP = 3
 const BOARD_LEFT = 1
@@ -24,9 +25,11 @@ const MOVE_RIGHT = 1
 const MOVE_UP = 2
 const MOVE_DOWN = 3
 const MOVE_NONE = 0xFF
+// moveTargets stores the destination in its low nibble and animation flags above it.
 const MOVE_TARGET_MASK = 0x0F
 const MOVE_MERGE_LAST = 0x80       // marked on the partner that arrives last
 const MOVE_MERGE_ARRIVED = 0x40    // marked on the target until its partner is drawn
+// Unsigned wraparound encodes -1 and -4, so right/down moves scan from their destination edge.
 const STEP_RIGHT = 0xFF
 const STEP_DOWN = 0xFC
 
@@ -35,6 +38,7 @@ const STATE_WON = 1
 const STATE_LOST = 2
 
 u8 tiles[BOARD_CELLS]
+// Keep pre-slide values for animation while tiles holds the post-slide board.
 u8 moveTiles[BOARD_CELLS]
 u8 moveTargets[BOARD_CELLS]
 i32 score
@@ -77,6 +81,8 @@ u8 spawnTile() {
 	return MOVE_NONE
 }
 
+// target is the next output slot; a merge updates its predecessor instead of advancing it.
+// previousMerged keeps that result from merging again in this move.
 bool slideLine(u8 first, u8 step) {
 	u8 source = first
 	u8 target = first
@@ -231,6 +237,7 @@ u8 tileColumn(u8 index) {
 	return BOARD_LEFT + (column << 3) + column
 }
 
+// Clear only the newly exposed strip, clipped to one tile's footprint.
 void clearTileTrail(u8 row, u8 column, u8 direction, u8 distance) {
 	u8 width = TILE_WIDTH
 	u8 height = TILE_HEIGHT
@@ -259,6 +266,8 @@ void clearTileTrail(u8 row, u8 column, u8 direction, u8 distance) {
 	}
 }
 
+// Distances are terminal characters: horizontal cells span 9 columns.
+// Vertical index differences already match the 4-row cell spacing.
 bool drawMoveFrame(u8 direction, u8 previous, u8 travel, bool erase) {
 	bool horizontal = direction < MOVE_UP
 	bool forward = (direction & 1) != 0
