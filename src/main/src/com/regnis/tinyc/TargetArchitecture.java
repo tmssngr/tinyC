@@ -6,6 +6,8 @@ import com.regnis.tinyc.linearscanregalloc.*;
 import java.io.*;
 import java.util.*;
 
+import org.jetbrains.annotations.*;
+
 /**
  * @author Thomas Singer
  */
@@ -29,7 +31,8 @@ public enum TargetArchitecture {
 		this.architecture = architecture;
 	}
 
-	AsmWriter createAsmWriter(BufferedWriter writer) {
+	@NotNull
+	AsmWriter createAsmWriter(@NotNull BufferedWriter writer) {
 		if (this == WIN_X86_64) {
 			final LSArchitecture.X86_64 x86_64 = (LSArchitecture.X86_64)architecture;
 			final int argCountInRegisters = x86_64.getArgCountInRegisters();

@@ -4,12 +4,15 @@ import com.regnis.tinyc.ast.*;
 
 import java.util.*;
 
+import org.jetbrains.annotations.*;
+
 /**
  * @author Thomas Singer
  */
 public class UnusedFunctionRemover {
 
-	public static Program removeUnusedFunctions(Program program) {
+	@NotNull
+	public static Program removeUnusedFunctions(@NotNull Program program) {
 		final UnusedFunctionRemover remover = new UnusedFunctionRemover(program);
 		remover.collectUsedItems();
 		return remover.removeUnused();
