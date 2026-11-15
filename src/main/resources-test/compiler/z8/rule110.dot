@@ -1,21 +1,21 @@
 digraph program {
 	edge[fontsize="10pt"];
 	subgraph fn_printBoard {
-		BasicBlock_0_printBoard [label="printBoard\lcall printChar_Au8[124]\lconst i_d1, 0\lmove i_d2, i_d1\ljump for__1",shape=box];
+		BasicBlock_0_printBoard [label="printBoard\lcall printChar__Pu8[124]\lconst i_d1, 0\lmove i_d2, i_d1\ljump for__1",shape=box];
 		BasicBlock_0_printBoard -> BasicBlock_0_for__1 [label="(i.2)"];
 		BasicBlock_0_for__1__body [label="for__1__body\lcast t_d3_d1(i16), i_d2(u8)\laddrof t_d2_d1, board\lmove t_d2_d2, t_d2_d1\ladd t_d2_d2, t_d3_d1\lload t_d1_d1, [t_d2_d2]\lbranch t_d1_d1 notequals 0: if__2__else, if__2__then\ljump if__2__then",shape=box];
 		BasicBlock_0_for__1__body -> BasicBlock_0_if__2__else [label="(i.2)"];
 		BasicBlock_0_for__1__body -> BasicBlock_0_if__2__then [label="(i.2)"];
-		BasicBlock_0_if__2__else [label="if__2__else\lcall printChar_Au8[42]\ljump for__1__continue",shape=box];
+		BasicBlock_0_if__2__else [label="if__2__else\lcall printChar__Pu8[42]\ljump for__1__continue",shape=box];
 		BasicBlock_0_if__2__else -> BasicBlock_0_for__1__continue [label="(i.2)"];
-		BasicBlock_0_if__2__then [label="if__2__then\lcall printChar_Au8[32]\ljump for__1__continue",shape=box];
+		BasicBlock_0_if__2__then [label="if__2__then\lcall printChar__Pu8[32]\ljump for__1__continue",shape=box];
 		BasicBlock_0_if__2__then -> BasicBlock_0_for__1__continue [label="(i.2)"];
 		BasicBlock_0_for__1__continue [label="for__1__continue\lmove i_d4, i_d2\ladd i_d4, 1\lmove i_d2, i_d4\ljump for__1",shape=box];
 		BasicBlock_0_for__1__continue -> BasicBlock_0_for__1 [label="(i.2)"];
 		BasicBlock_0_for__1 [label="for__1\lbranch i_d2 gteq 30: for__1__break, for__1__body\ljump for__1__body",shape=box];
 		BasicBlock_0_for__1 -> BasicBlock_0_for__1__break;
 		BasicBlock_0_for__1 -> BasicBlock_0_for__1__body [label="(i.2)"];
-		BasicBlock_0_for__1__break [label="for__1__break\lconst t_d4_d1, [string-0]\lcall printString_A_Au8[t_d4_d1]\ljump printBoard__ret",shape=box];
+		BasicBlock_0_for__1__break [label="for__1__break\lconst t_d4_d1, [string-0]\lcall printString__P__pu8[t_d4_d1]\ljump printBoard__ret",shape=box];
 		BasicBlock_0_for__1__break -> BasicBlock_0_printBoard__ret;
 		BasicBlock_0_printBoard__ret [label="printBoard__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}

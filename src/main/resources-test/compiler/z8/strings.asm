@@ -7,7 +7,7 @@
         srp  #%20
         jr   main
 
-        ; void printUint@i16
+        ; void printUint_Pi16
         ; arg number (i16): r0
 printUint_Pi16:
         ; cast t.1.1{r0}(i32), param.number{r0}(i16)
@@ -17,21 +17,21 @@ printUint_Pi16:
         rl   r1
         sbc  r1, r1
         sbc  r0, r0
-        ; call printUint@i32[t.1.1{r0}]
+        ; call printUint_Pi32[t.1.1{r0}]
         call printUint_Pi32
         ret
 
-        ; void printIntLf@u8
+        ; void printIntLf_Pu8
         ; arg number (u8): r0
 printIntLf_Pu8:
         ; cast t.1.1{r0}(i16), param.number{r0}(u8)
         ld   r1, r0
         ld   r0, #0
-        ; call printIntLf@i16[t.1.1{r0}]
+        ; call printIntLf_Pi16[t.1.1{r0}]
         call printIntLf_Pi16
         ret
 
-        ; void printIntLf@i16
+        ; void printIntLf_Pi16
         ; arg number (i16): r0
 printIntLf_Pi16:
         ; save clobbered non-volatile registers
@@ -42,28 +42,28 @@ printIntLf_Pi16:
         ld   r8, r0
         ; branch param.number{r8} gteq 0: if_1_end
         cp   r8, #%00
-        jr   gt, if__1__end
+        jr   gt, if_1_end
         jr   ne, .gt1
         cp   r9, #%00
-        jr   uge, if__1__end
+        jr   uge, if_1_end
 .gt1:
         ; const arg.0.0{r0}, 45
         ld   r0, #%2d
-        ; call printChar@u8[arg.0.0{r0}]
+        ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
         ; neg number.2{r8}, param.number{r8}
         com  r8
         com  r9
         incw r8
-if__1__end:
+if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
         ld   r1, r9
-        ; call printUint@i16[number.1{r0}]
+        ; call printUint_Pi16[number.1{r0}]
         call printUint_Pi16
         ; const arg.2.0{r0}, 13
         ld   r0, #%0d
-        ; call printChar@u8[arg.2.0{r0}]
+        ; call printChar_Pu8[arg.2.0{r0}]
         call printChar_Pu8
         ; restore clobbered non-volatile registers
         pop  r9
@@ -100,8 +100,8 @@ main:
         incw r8
         lde  r1, @rr8
         decw r8
-        ; call printString@@u8[t.5.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.5.1{r0}]
+        call printString_P_pu8
         ; call printLength[]
         call printLength
         ; const t.6.1{r8}, 1
@@ -118,8 +118,8 @@ main:
         ; add second.2{r0}, t.6.1{r8}
         add  r1, r9
         adc  r0, r8
-        ; call printString@@u8[second.2{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[second.2{r0}]
+        call printString_P_pu8
         ; move a.8.1{r8}, a.8.1{r10}
         ld   r8, r10
         ld   r9, r11
@@ -128,7 +128,7 @@ main:
         ld   r11, r13
         ; load chr.1{r0}, [t.9.1{r10}]
         lde  r0, @rr10
-        ; call printIntLf@u8[chr.1{r0}]
+        ; call printIntLf_Pu8[chr.1{r0}]
         call printIntLf_Pu8
         ; restore clobbered non-volatile registers
         pop  r13
@@ -166,9 +166,9 @@ printLength:
         ; move ptr.2{r8}, ptr.1{r12}
         ld   r8, r12
         ld   r9, r13
-        jr   for__2
+        jr   for_2
 
-for__2__body:
+for_2_body:
         ; move length.3{r10}, length.2{r0}
         ld   r11, r1
         ld   r10, r0
@@ -179,13 +179,13 @@ for__2__body:
         ; move length.2{r0}, length.3{r10}
         ld   r0, r10
         ld   r1, r11
-for__2:
+for_2:
         ; load t.3.1{r10}, [ptr.2{r8}]
         lde  r10, @rr8
         ; branch t.3.1{r10} notequals 0: for_2_body
         cp   r10, #%00
-        jr   ne, for__2__body
-        ; call printIntLf@i16[length.2{r0}]
+        jr   ne, for_2_body
+        ; call printIntLf_Pi16[length.2{r0}]
         call printIntLf_Pi16
         ; restore clobbered non-volatile registers
         pop  r13
@@ -196,8 +196,8 @@ for__2:
         pop  r8
         ret
 
-        ; void printString@@u8
-printString_P_Pu8:
+        ; void printString_P_pu8
+printString_P_pu8:
         ld   r2, r0
         ld   r3, r1
         jr   .loop
@@ -210,7 +210,7 @@ printString_P_Pu8:
         jr   nz, .print
         ret
 
-        ; void printChar@u8
+        ; void printChar_Pu8
 printChar_Pu8:
         cp    r0, #%0a
         jr    ne, .1
@@ -219,7 +219,7 @@ printChar_Pu8:
         ld    %15, r0
         jp    %0818
 
-        ; void printUint@i32
+        ; void printUint_Pi32
 printUint_Pi32:
         ld   r4, #1
         ld   r5, #%28

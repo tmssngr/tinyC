@@ -47,16 +47,16 @@ abstract class AsmWriter {
 
 	protected abstract void writeUnary(IRUnary.Op op, int targetReg, Type targetType, int sourceReg, Type sourceType) throws IOException;
 
-	@NotNull
-	protected abstract String escapeLabel(String label) throws IOException;
-
 	private static final String INDENTATION = "        ";
 
 	private final BufferedWriter writer;
+	protected final TypeChecker.CanonicalNameProvider canonicalNameProvider;
+
 	@SuppressWarnings("unused") private boolean debug;
 
-	protected AsmWriter(@NotNull BufferedWriter writer) {
+	protected AsmWriter(@NotNull BufferedWriter writer, @NotNull TypeChecker.CanonicalNameProvider canonicalNameProvider) {
 		this.writer = writer;
+		this.canonicalNameProvider = canonicalNameProvider;
 	}
 
 	public void write(@NotNull IRProgram program) throws IOException {
@@ -74,7 +74,7 @@ abstract class AsmWriter {
 	protected void writeAsmFunction(IRAsmFunction function) throws IOException {
 		writeComment(function.toString());
 
-		writeLabel(escapeLabel(function.name()));
+		writeLabel(function.name());
 		for (String line : function.asmLines()) {
 			writeLines(line, line.contains(":") ? "" : INDENTATION);
 		}
@@ -164,7 +164,7 @@ abstract class AsmWriter {
 			}
 		}
 		case IRJump jump -> writeJump(jump.label());
-		case IRLabel label -> writeLabel(escapeLabel(label.label()));
+		case IRLabel label -> writeLabel(label.label());
 		case IRMemLoad load -> {
 			final IRVar target = load.target();
 			final IRVar addr = load.addr();

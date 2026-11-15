@@ -20,7 +20,7 @@ simple:
         ; 5:9 return one
         ret
 
-        ; u8 registerHint@u8@u8
+        ; u8 registerHint_Pu8_Pu8
         ; arg a (u8): r0
         ; arg b (u8): r1
 registerHint_Pu8_Pu8:
@@ -29,24 +29,24 @@ registerHint_Pu8_Pu8:
         add  r0, r1
         ret
 
-        ; u8 max@u8@u8
+        ; u8 max_Pu8_Pu8
         ; arg a (u8): r0
         ; arg b (u8): r1
 max_Pu8_Pu8:
         ; branch param.a{r0} lt param.b{r1}: if_1_then
         cp   r0, r1
-        jr   ult, if__1__then
+        jr   ult, if_1_then
         ; 16:9 return a
-        jr   max_Pu8_Pu8__ret
+        jr   max_Pu8_Pu8_ret
 
-if__1__then:
+if_1_then:
         ; 14:10 return b
         ; move param.b{r0}, param.b{r1}
         ld   r0, r1
-max_Pu8_Pu8__ret:
+max_Pu8_Pu8_ret:
         ret
 
-        ; i16 fibonacci@u8
+        ; i16 fibonacci_Pu8
         ; arg i (u8): r0
 fibonacci_Pu8:
         ; save clobbered non-volatile registers
@@ -66,9 +66,9 @@ fibonacci_Pu8:
         ; move b.2{r2}, b.1{r4}
         ld   r2, r4
         ld   r3, r5
-        jr   while__2
+        jr   while_2
 
-while__2__body:
+while_2_body:
         ; move i.2{r4}, i.1{r6}
         ld   r4, r6
         ; sub i.2{r4}, 1
@@ -90,10 +90,10 @@ while__2__body:
         ; move b.2{r2}, b.3{r7}
         ld   r2, r7
         ld   r3, r8
-while__2:
+while_2:
         ; branch i.1{r6} gt 0: while_2_body
         cp   r6, #%00
-        jr   ugt, while__2__body
+        jr   ugt, while_2_body
         ; 28:9 return a
         ; restore clobbered non-volatile registers
         pop  r8
@@ -112,17 +112,17 @@ main:
         ld   r9, #%02
         ; move two.1{r1}, two.1{r9}
         ld   r1, r9
-        ; call _ = registerHint@u8@u8[one.1{r0}, two.1{r1}] -> u8
+        ; call _ = registerHint_Pu8_Pu8[one.1{r0}, two.1{r1}] -> u8
         call registerHint_Pu8_Pu8
         ; move one.1{r0}, one.1{r8}
         ld   r0, r8
         ; move two.1{r1}, two.1{r9}
         ld   r1, r9
-        ; call _ = max@u8@u8[one.1{r0}, two.1{r1}] -> u8
+        ; call _ = max_Pu8_Pu8[one.1{r0}, two.1{r1}] -> u8
         call max_Pu8_Pu8
         ; const arg.3.0{r0}, 5
         ld   r0, #%05
-        ; call _ = fibonacci@u8[arg.3.0{r0}] -> i16
+        ; call _ = fibonacci_Pu8[arg.3.0{r0}] -> i16
         call fibonacci_Pu8
         ; restore clobbered non-volatile registers
         pop  r9

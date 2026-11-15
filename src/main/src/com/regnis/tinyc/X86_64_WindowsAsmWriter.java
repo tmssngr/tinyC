@@ -1,5 +1,6 @@
 package com.regnis.tinyc;
 
+import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
 import java.io.*;
@@ -14,8 +15,8 @@ public final class X86_64_WindowsAsmWriter extends X86_64_AsmWriter {
 
 	private final int argCountInRegisters;
 
-	public X86_64_WindowsAsmWriter(@NotNull BufferedWriter writer, int argCountInRegisters, @NotNull X86Registers registers) {
-		super(writer, registers);
+	public X86_64_WindowsAsmWriter(@NotNull BufferedWriter writer, int argCountInRegisters, @NotNull X86Registers registers, @NotNull TypeChecker.CanonicalNameProvider canonicalNameProvider) {
+		super(writer, registers, canonicalNameProvider);
 		this.argCountInRegisters = argCountInRegisters;
 	}
 
@@ -53,7 +54,7 @@ public final class X86_64_WindowsAsmWriter extends X86_64_AsmWriter {
 		writeComment("alignment");
 		writeIndented("and rsp, -16");
 		writeIndented("call init");
-		writeIndented("call " + escapeLabel("main"));
+		writeIndented("call " + canonicalNameProvider.canonicalFunctionName("main", List.of()));
 		writeIndented("mov rcx, 0");
 		writeIndented("sub rsp, 0x20");
 		writeIndented("call [ExitProcess]");

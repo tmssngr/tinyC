@@ -45,18 +45,18 @@ public class IRGeneratorTest {
 				                                    }
 				                                  }""");
 		assertEquals(new IRProgram(List.of(
-				             new IRFunction("get", Type.U8, new IRVarInfos(List.of(
+				             new IRFunction("_get", Type.U8, new IRVarInfos(List.of(
 				             ), Set.of(), globalVarInfos), List.of(
 						             new IRRetValue(new IRValue(0, Type.U8), loc(1, 2)),
-						             new IRJump("get_ret"),
-						             new IRLabel("get_ret")
+						             new IRJump("_get_ret"),
+						             new IRLabel("_get_ret")
 				             )),
-				             new IRFunction("foo", Type.VOID, new IRVarInfos(List.of(
+				             new IRFunction("_foo", Type.VOID, new IRVarInfos(List.of(
 						             new IRVarDef(new IRVar("chr", 0, VariableScope.function, Type.U8), 1)
 				             ), Set.of(), globalVarInfos), List.of(
 						             new IRComment("5:3 while true"),
 						             new IRLabel("while_1"),
-						             new IRCall(var("chr", 0, Type.U8), Type.U8, "get", List.of(), loc(5, 13)),
+						             new IRCall(var("chr", 0, Type.U8), Type.U8, "_get", List.of(), loc(5, 13)),
 						             new IRComment("7:5 if chr > 97"),
 									 new IRBranch(IRCompare.Op.LtEq, var("chr", 0, Type.U8), 97, "if_2_end",
 									              "if_2_then", loc(6, 12)),
@@ -71,35 +71,35 @@ public class IRGeneratorTest {
 						             new IRLabel("if_3_end"),
 						             new IRJump("while_1"),
 						             new IRLabel("while_1_break"),
-						             new IRLabel("foo_ret")
+						             new IRLabel("_foo_ret")
 				             ))
 		             ), List.of(), globalVarInfos, List.of()),
 		             program);
 		assertEquals(new IRProgram(List.of(
-				             new IRFunction("get", Type.U8,
+				             new IRFunction("_get", Type.U8,
 				                            new IRVarInfos(List.of(
 				                            ), Set.of(), globalVarInfos),
 				                            List.of(
 						                            new IRRetValue(new IRValue(0, Type.U8), loc(1, 2)),
-						                            new IRJump("get_ret"),
-						                            new IRLabel("get_ret")
+						                            new IRJump("_get_ret"),
+						                            new IRLabel("_get_ret")
 				                            )),
-				             new IRFunction("foo", Type.VOID,
+				             new IRFunction("_foo", Type.VOID,
 				                            new IRVarInfos(List.of(
 						                            new IRVarDef(new IRVar("chr", 0, VariableScope.function, Type.U8), 1)
 				                            ), Set.of(), globalVarInfos),
 				                            List.of(
 						                            new IRComment("5:3 while true"),
 						                            new IRLabel("while_1"),
-						                            new IRCall(var("chr", 0, Type.U8), Type.U8, "get", List.of(), loc(5, 13)),
+						                            new IRCall(var("chr", 0, Type.U8), Type.U8, "_get", List.of(), loc(5, 13)),
 						                            new IRComment("7:5 if chr > 97"),
 						                            new IRBranch(IRCompare.Op.Gt, var("chr", 0, Type.U8), 97, "while_1",
 						                                         "if_2_end", loc(6, 12)),
 						                            new IRLabel("if_2_end"),
 						                            new IRComment("10:5 if chr == 10"),
 						                            new IRBranch(IRCompare.Op.NotEquals, var("chr", 0, Type.U8), 10, "while_1",
-						                                         "foo_ret", loc(9, 12)),
-						                            new IRLabel("foo_ret")
+						                                         "_foo_ret", loc(9, 12)),
+						                            new IRLabel("_foo_ret")
 				                            ))
 		             ), List.of(), globalVarInfos, List.of()),
 		             IROptimizer.branchAndLabelOptimizations(program));
@@ -141,22 +141,22 @@ public class IRGeneratorTest {
 				                                  }""");
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		assertEquals(new IRProgram(List.of(
-				new IRFunction("print@u8", Type.VOID,
+				new IRFunction("_print@u8", Type.VOID,
 				               new IRVarInfos(List.of(
 						               new IRVarDef(new IRVar("a", 0, VariableScope.parameter, Type.U8), 1)
 				               ), Set.of(), globalVarInfos),
 				               List.of(
-						               new IRLabel("print@u8_ret")
+						               new IRLabel("_print@u8_ret")
 				               )),
-				new IRFunction("foo", Type.VOID,
+				new IRFunction("_foo", Type.VOID,
 				               new IRVarInfos(List.of(), Set.of(), globalVarInfos),
 				               List.of(
-						               new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue('a', Type.U8)), loc(4, 4)),
-						               new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue('d', Type.U8)), loc(14, 4)),
-						               new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue('e', Type.U8)), loc(18, 4)),
+						               new IRCall(null, Type.VOID, "_print@u8", List.of(new IRValue('a', Type.U8)), loc(4, 4)),
+						               new IRCall(null, Type.VOID, "_print@u8", List.of(new IRValue('d', Type.U8)), loc(14, 4)),
+						               new IRCall(null, Type.VOID, "_print@u8", List.of(new IRValue('e', Type.U8)), loc(18, 4)),
 									   new IRComment("27:5 return"),
-									   new IRJump("foo_ret"),
-						               new IRLabel("foo_ret")
+									   new IRJump("_foo_ret"),
+						               new IRLabel("_foo_ret")
 				               ))), List.of(), globalVarInfos, List.of()), program);
 	}
 
@@ -183,7 +183,7 @@ public class IRGeneratorTest {
 		final IRVar varT8 = new IRVar("t.8", 8, VariableScope.function, Type.POINTER_U8);
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		assertEquals(new IRProgram(List.of(
-				             new IRFunction("main", Type.VOID,
+				             new IRFunction("_main", Type.VOID,
 				                            new IRVarInfos(List.of(
 						                            new IRVarDef(varPos, 2),
 						                            new IRVarDef(varT1, 1),
@@ -208,21 +208,21 @@ public class IRGeneratorTest {
 						                            new IRComment("6:12 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=6:8].x"),
 						                            new IRAddrOf(varT6, varPos, loc(5, 11)),
 						                            new IRMemLoad(varT5, varT6, loc(5, 11)),
-						                            new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue(varT5)), loc(5, 1)),
+						                            new IRCall(null, Type.VOID, "_print@u8", List.of(new IRValue(varT5)), loc(5, 1)),
 						                            new IRComment("7:12 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=7:8].y"),
 						                            new IRAddrOf(varT8, varPos, loc(6, 11)),
 						                            new IRBinary(varT8, IRBinary.Op.Add, varT8, new IRValue(1, Type.I64), ParserTest.loc(6, 11)),
 						                            new IRMemLoad(varT7, varT8, loc(6, 11)),
-						                            new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue(varT7)), loc(6, 1)),
-						                            new IRLabel("main_ret")
+						                            new IRCall(null, Type.VOID, "_print@u8", List.of(new IRValue(varT7)), loc(6, 1)),
+						                            new IRLabel("_main_ret")
 				                            )
 				             ),
-				             new IRFunction("print@u8", Type.VOID,
+				             new IRFunction("_print@u8", Type.VOID,
 				                            new IRVarInfos(List.of(
 						                            new IRVarDef(new IRVar("a", 0, VariableScope.parameter, Type.U8), 1)
 				                            ), Set.of(), globalVarInfos),
 				                            List.of(
-						                            new IRLabel("print@u8_ret")
+						                            new IRLabel("_print@u8_ret")
 				                            )
 				             )
 		             ), List.of(), globalVarInfos, List.of()),
@@ -254,12 +254,12 @@ public class IRGeneratorTest {
 		final IRVar varT9 = new IRVar("t.9", 9, VariableScope.function, Type.I16);
 		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
 		assertEquals(new IRProgram(List.of(
-				             new IRFunction("print@i16", Type.VOID, new IRVarInfos(List.of(
+				             new IRFunction("_print@i16", Type.VOID, new IRVarInfos(List.of(
 									 new IRVarDef(new IRVar("p", 0, VariableScope.parameter, Type.I16), 2)
 				             ), Set.of(), globalVarInfos), List.of(
-									 new IRLabel("print@i16_ret")
+									 new IRLabel("_print@i16_ret")
 				             )),
-				             new IRFunction("main", Type.VOID, new IRVarInfos(List.of(
+				             new IRFunction("_main", Type.VOID, new IRVarInfos(List.of(
 						             new IRVarDef(varA, 2),
 						             new IRVarDef(varB, 8),
 						             new IRVarDef(varT2, 2),
@@ -276,15 +276,15 @@ public class IRGeneratorTest {
 									 new IRMemStore(varA3, varT2),
 									 new IRAddrOf(varA4, varA),
 									 new IRMemLoad(varT5, varA4),
-									 new IRCall(null, Type.VOID, "print@i16", List.of(new IRValue(varT5)), loc(5, 2)),
+									 new IRCall(null, Type.VOID, "_print@i16", List.of(new IRValue(varT5)), loc(5, 2)),
 									 new IRAddrOf(varB, varA, loc(6, 11)),
 									 new IRAddrOf(varA7, varA),
 									 new IRMemLoad(varT8, varA7),
 									 new IRBinary(varT6, IRBinary.Op.Add, varT8, 1, loc(7, 9)),
 									 new IRMemStore(varB, varT6, loc(7, 2)),
 									 new IRMemLoad(varT9, varB, loc(8, 8)),
-									 new IRCall(null, Type.VOID, "print@i16", List.of(new IRValue(varT9)), loc(8, 2)),
-									 new IRLabel("main_ret")
+									 new IRCall(null, Type.VOID, "_print@i16", List.of(new IRValue(varT9)), loc(8, 2)),
+									 new IRLabel("_main_ret")
 				             ))
 		             ), List.of(), globalVarInfos, List.of()),
 		             program);
@@ -318,12 +318,12 @@ public class IRGeneratorTest {
 		final IRVar varA8 = new IRVar("a.8", 8, VariableScope.function, Type.POINTER_U8);
 		final IRVar varT9 = new IRVar("t.9", 9, VariableScope.function, Type.U8);
 		assertEquals(new IRProgram(List.of(
-				             new IRFunction("print@u8", Type.VOID, new IRVarInfos(List.of(
+				             new IRFunction("_print@u8", Type.VOID, new IRVarInfos(List.of(
 						             new IRVarDef(new IRVar("p", 0, VariableScope.parameter, Type.U8), 1)
 				             ), Set.of(), globalVarInfos), List.of(
-						             new IRLabel("print@u8_ret")
+						             new IRLabel("_print@u8_ret")
 				             )),
-				             new IRFunction("main", Type.VOID, new IRVarInfos(List.of(
+				             new IRFunction("_main", Type.VOID, new IRVarInfos(List.of(
 						             new IRVarDef(varT0, 1),
 						             new IRVarDef(varA1, 8),
 						             new IRVarDef(varA2, 8),
@@ -342,7 +342,7 @@ public class IRGeneratorTest {
 									 new IRComment("end initialize global variables"),
 									 new IRAddrOf(varA2, varGlobal),
 									 new IRMemLoad(varT3, varA2),
-						             new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue(varT3)), loc(6, 2)),
+						             new IRCall(null, Type.VOID, "_print@u8", List.of(new IRValue(varT3)), loc(6, 2)),
 									 new IRAddrOf(varA5, varGlobal),
 									 new IRMemLoad(varT6, varA5),
 									 new IRBinary(varT4, IRBinary.Op.Add, varT6, 1, loc(7, 18)),
@@ -350,8 +350,8 @@ public class IRGeneratorTest {
 									 new IRMemStore(varA7, varT4),
 									 new IRAddrOf(varA8, varGlobal),
 									 new IRMemLoad(varT9, varA8),
-									 new IRCall(null, Type.VOID, "print@u8", List.of(new IRValue(varT9)), loc(8, 2)),
-						             new IRLabel("main_ret")
+									 new IRCall(null, Type.VOID, "_print@u8", List.of(new IRValue(varT9)), loc(8, 2)),
+						             new IRLabel("_main_ret")
 				             ))
 		             ), List.of(), globalVarInfos, List.of()),
 		             program);
@@ -388,9 +388,11 @@ public class IRGeneratorTest {
 	private IRProgram convert(String input) {
 		final Program rawProgram = Parser.parse(input, Set.of());
 		final Type pointerIntType = Type.I64;
-		final TypeChecker checker = new TypeChecker(pointerIntType, message -> Assert.fail("no message expected"));
+		final TypeChecker.CanonicalNameProvider canonicalNameProvider = new X86CanonicalNameProvider();
+		final TypeChecker checker = new TypeChecker(pointerIntType, canonicalNameProvider, message -> Assert.fail("no message expected")
+		);
 		final Program program = checker.check(rawProgram);
-		return IRGenerator.convert(program, pointerIntType);
+		return IRGenerator.convert(program, pointerIntType, canonicalNameProvider);
 	}
 
 	@NotNull

@@ -8,7 +8,7 @@ _start:
         xor rdi, rdi        ; exit code 0
         syscall
 
-        ; void printChar@u8
+        ; void _printChar@u8
         ;   rsp+32: arg chr
 _printChar@u8:
         sub rsp, 8
@@ -25,7 +25,7 @@ _printChar@u8:
         mov rdi, r12
         ; const arg.0.1{r2}, 1
         mov sil, 1
-        ; call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
+        ; call _printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
         call _printStringLength@@u8@u8
         ; restore clobbered non-volatile registers
         pop r12
@@ -35,7 +35,7 @@ _printChar@u8:
         add rsp, 8
         ret
 
-        ; void printUint@i64
+        ; void _printUint@i64
         ;   rsp+24: arg number
         ;   rsp+40: var buffer
 _printUint@i64:
@@ -49,7 +49,7 @@ _printUint@i64:
         ; 33:2 while true
         ; move number.1{r5}, number{r1}
         mov r8, rdi
-_while_1:
+while_1:
         ; sub pos.3{r8}, 1
         sub bl, 1
         ; move remainder.1{r6}, number.1{r5}
@@ -85,7 +85,7 @@ _while_1:
         ; 39:3 if number == 0
         ; branch number.2{r5} notequals 0: while_1
         cmp r8, 0
-        jne _while_1
+        jne while_1
         ; addrof t.8.1{r3}, buffer
         lea rdx, [rsp+40]
         ; move t.8.2{r1}, t.8.2{r4}
@@ -96,7 +96,7 @@ _while_1:
         mov sil, al
         ; sub t.10.1{r2}, pos.3{r8}
         sub sil, bl
-        ; call printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
+        ; call _printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
         call _printStringLength@@u8@u8
         ; restore clobbered non-volatile registers
         pop rbx
@@ -105,18 +105,18 @@ _while_1:
         add rsp, 48
         ret
 
-        ; void printIntLf@i16
+        ; void _printIntLf@i16
         ;   rsp+0: arg number
 _printIntLf@i16:
         sub rsp, 8
         ; cast t.1.1{r1}(i64), number{r1}(i16)
         movsx rdi, di
-        ; call printIntLf@i64[t.1.1{r1}]
+        ; call _printIntLf@i64[t.1.1{r1}]
         call _printIntLf@i64
         add rsp, 8
         ret
 
-        ; void printIntLf@i64
+        ; void _printIntLf@i64
         ;   rsp+24: arg number
 _printIntLf@i64:
         sub rsp, 16
@@ -128,21 +128,21 @@ _printIntLf@i64:
         mov rbx, rdi
         ; branch number{r8} gteq 0: if_3_end
         cmp rbx, 0
-        jge _if_3_end
+        jge if_3_end
         ; const arg.0.0{r1}, 45
         mov dil, 45
-        ; call printChar@u8[arg.0.0{r1}]
+        ; call _printChar@u8[arg.0.0{r1}]
         call _printChar@u8
         ; neg number.2{r8}, number{r8}
         neg rbx
-_if_3_end:
+if_3_end:
         ; move number.1{r1}, number.1{r8}
         mov rdi, rbx
-        ; call printUint@i64[number.1{r1}]
+        ; call _printUint@i64[number.1{r1}]
         call _printUint@i64
         ; const arg.2.0{r1}, 10
         mov dil, 10
-        ; call printChar@u8[arg.2.0{r1}]
+        ; call _printChar@u8[arg.2.0{r1}]
         call _printChar@u8
         ; restore clobbered non-volatile registers
         pop rbx
@@ -151,19 +151,19 @@ _if_3_end:
         add rsp, 16
         ret
 
-        ; void printStringLength@@u8@u8
+        ; void _printStringLength@@u8@u8
         ;   rsp+0: arg str
         ;   rsp+8: arg length
 _printStringLength@@u8@u8:
         sub rsp, 24
         ; cast t.2.1{r2}(i64), length{r2}(u8)
         movzx rsi, sil
-        ; call printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
+        ; call _printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
         call _printStringLength@@u8@i64
         add rsp, 24
         ret
 
-        ; void main
+        ; void _main
 _main:
         sub rsp, 8
         ; save clobbered non-volatile registers
@@ -185,15 +185,15 @@ _main:
         mov di, r12w
         ; add t.5.1{r1}, foo.2{r8}
         add di, bx
-        ; call printIntLf@i16[t.5.1{r1}]
+        ; call _printIntLf@i16[t.5.1{r1}]
         call _printIntLf@i16
         ; const foo.3{r1}, 21
         mov di, 21
-        ; call printIntLf@i16[foo.3{r1}]
+        ; call _printIntLf@i16[foo.3{r1}]
         call _printIntLf@i16
         ; const bazz.1{r1}, 0
         mov di, 0
-        ; call printIntLf@i16[bazz.1{r1}]
+        ; call _printIntLf@i16[bazz.1{r1}]
         call _printIntLf@i16
         ; const a.1{r8}, 1000
         mov bx, 1000
@@ -210,13 +210,13 @@ _main:
         idiv r12
         ; move t.6.1{r1}, t.6.1{r0}
         mov di, ax
-        ; call printIntLf@i16[t.6.1{r1}]
+        ; call _printIntLf@i16[t.6.1{r1}]
         call _printIntLf@i16
         ; move t.7.1{r1}, a.1{r8}
         mov di, bx
         ; and t.7.1{r1}, 255
         and di, 255
-        ; call printIntLf@i16[t.7.1{r1}]
+        ; call _printIntLf@i16[t.7.1{r1}]
         call _printIntLf@i16
         ; const a.2{r8}, 10
         mov bx, 10
@@ -226,7 +226,7 @@ _main:
         mov di, bx
         ; shiftright t.8.1{r1}, b.2{r4}
         sar di, cl
-        ; call printIntLf@i16[t.8.1{r1}]
+        ; call _printIntLf@i16[t.8.1{r1}]
         call _printIntLf@i16
         ; const a.3{r8}, 9
         mov bx, 9
@@ -238,7 +238,7 @@ _main:
         mov cx, r12w
         ; shiftright t.9.1{r1}, b.3{r4}
         sar di, cl
-        ; call printIntLf@i16[t.9.1{r1}]
+        ; call _printIntLf@i16[t.9.1{r1}]
         call _printIntLf@i16
         ; const a.4{r8}, 1
         mov bx, 1
@@ -248,7 +248,7 @@ _main:
         mov cx, r12w
         ; shiftleft t.10.1{r1}, b.3{r4}
         sal di, cl
-        ; call printIntLf@i16[t.10.1{r1}]
+        ; call _printIntLf@i16[t.10.1{r1}]
         call _printIntLf@i16
         ; restore clobbered non-volatile registers
         pop r12
@@ -258,7 +258,7 @@ _main:
         add rsp, 8
         ret
 
-        ; void printStringLength@@u8@i64
+        ; void _printStringLength@@u8@i64
 _printStringLength@@u8@i64:
         mov rdx, rsi
         mov rsi, rdi

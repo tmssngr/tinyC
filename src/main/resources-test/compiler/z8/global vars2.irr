@@ -17,16 +17,16 @@ main:
 if_2_end:
 	branch n.1{r8} gteq 2: while_1
 	const t.4.1{r0}, [string-1]
-	call printString@@u8[t.4.1{r0}]
+	call printString_P_pu8[t.4.1{r0}]
 while_1:
 	const t.3.1{r0}, [string-0]
-	call printString@@u8[t.3.1{r0}]
+	call printString_P_pu8[t.3.1{r0}]
 	call n.1{r0} = next[] -> u8
 	move n.1{r8}, n.1{r0}
 	; 15:3 if n == 3
 	branch n.1{r8} notequals 3: if_2_end
 
-printString@@u8:
+printString_P_pu8:
 	ld   r2, r0
 	ld   r3, r1
 	jr   .loop

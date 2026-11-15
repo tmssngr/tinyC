@@ -12,8 +12,8 @@ import org.jetbrains.annotations.*;
 public class UnusedFunctionRemover {
 
 	@NotNull
-	public static Program removeUnusedFunctions(@NotNull Program program) {
-		final UnusedFunctionRemover remover = new UnusedFunctionRemover(program);
+	public static Program removeUnusedFunctions(@NotNull Program program, @NotNull TypeChecker.CanonicalNameProvider canonicalNameProvider) {
+		final UnusedFunctionRemover remover = new UnusedFunctionRemover(program, canonicalNameProvider);
 		remover.collectUsedItems();
 		return remover.removeUnused();
 	}
@@ -24,12 +24,12 @@ public class UnusedFunctionRemover {
 	private final Set<String> pendingFunctions = new LinkedHashSet<>();
 	private final Program program;
 
-	private UnusedFunctionRemover(Program program) {
+	private UnusedFunctionRemover(Program program, TypeChecker.CanonicalNameProvider canonicalNameProvider) {
 		this.program = program;
 		for (Function function : program.functions()) {
 			functionMap.put(function.name(), function);
 		}
-		pendingFunctions.add("main");
+		pendingFunctions.add(canonicalNameProvider.canonicalFunctionName("main", List.of()));
 	}
 
 	private void collectUsedItems() {

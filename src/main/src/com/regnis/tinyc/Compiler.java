@@ -66,7 +66,8 @@ public class Compiler {
 	private static Path compile(@NotNull Path inputFile, String subdir, TargetArchitecture architecture) throws IOException, InterruptedException {
 		final Program parsedProgram = Parser.parse(inputFile, architecture.defines);
 
-		final TypeChecker checker = new TypeChecker(architecture.architecture.getPointerIntType(), message -> {
+		final TypeChecker.CanonicalNameProvider canonicalNameProvider = architecture.canonicalNameProvider;
+		final TypeChecker checker = new TypeChecker(architecture.architecture.getPointerIntType(), canonicalNameProvider, message -> {
 			if (message.isError()) {
 				System.err.println(message);
 			}
@@ -76,7 +77,7 @@ public class Compiler {
 		});
 		final Program typedProgram = checker.check(parsedProgram);
 
-		Program program = UnusedFunctionRemover.removeUnusedFunctions(typedProgram);
+		Program program = UnusedFunctionRemover.removeUnusedFunctions(typedProgram, canonicalNameProvider);
 
 		final Path astFile = useExtension(inputFile, subdir, ".ast");
 		final Path astSimpleFile = useExtension(inputFile, subdir, ".asts");
@@ -100,7 +101,7 @@ public class Compiler {
 
 		write(program, astSimpleFile);
 
-		IRProgram irProgram = IRGenerator.convert(program, architecture.architecture.getPointerIntType());
+		IRProgram irProgram = IRGenerator.convert(program, architecture.architecture.getPointerIntType(), architecture.canonicalNameProvider);
 		irProgram = CleanupGlobalUnusedVariables.process(irProgram);
 		irProgram = IROptimizer.branchAndLabelOptimizations(irProgram);
 		write(irProgram, irFile);
@@ -139,7 +140,7 @@ public class Compiler {
 		write(irProgram, irRegFile);
 
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
-			final AsmWriter output = architecture.createAsmWriter(writer);
+			final AsmWriter output = architecture.createAsmWriter(writer, canonicalNameProvider);
 			output.write(irProgram);
 		}
 

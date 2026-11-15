@@ -20,8 +20,8 @@ final class Z8AsmWriter extends AsmWriter {
 	private int localJumpIndex;
 	private Z8StackOffsets stackOffsets;
 
-	public Z8AsmWriter(@NotNull BufferedWriter writer, @NotNull LSCallingConventionProvider callingConventionProvider) {
-		super(writer);
+	public Z8AsmWriter(@NotNull BufferedWriter writer, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull TypeChecker.CanonicalNameProvider canonicalNameProvider) {
+		super(writer, canonicalNameProvider);
 		this.callingConventionProvider = callingConventionProvider;
 	}
 
@@ -34,7 +34,7 @@ final class Z8AsmWriter extends AsmWriter {
 		writeIndented(".org %e000");
 		writeNL();
 		writeIndented("srp  #%20");
-		writeIndented("jr   main");
+		writeIndented("jr   " + canonicalNameProvider.canonicalFunctionName("main", List.of()));
 		super.write(program);
 
 		writePostamble(program.varInfos().vars(), program.stringLiterals());
@@ -59,7 +59,7 @@ final class Z8AsmWriter extends AsmWriter {
 		final int callArgSpace = stackOffsets.getCallArgSpace();
 		writeVarOffsetAsComments(localVars);
 
-		writeLabel(escapeLabel(function.name()));
+		writeLabel(function.name());
 //		writeFunctionProlog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
 		writeFunctionProlog(localVarSpace, firstNonVolatileRegister, globberedNonVolatileRegisterCount);
 
@@ -373,8 +373,6 @@ final class Z8AsmWriter extends AsmWriter {
 
 	@Override
 	protected void writeBranchRegReg(IRCompare.Op op, int leftReg, int rightReg, Type leftRightType, String targetLabel) throws IOException {
-		targetLabel = escapeLabel(targetLabel);
-
 		final boolean signed = leftRightType != Type.U8;
 		final int byteCount = getByteCount(leftRightType);
 
@@ -430,8 +428,6 @@ final class Z8AsmWriter extends AsmWriter {
 
 	@Override
 	protected void writeBranchRegValue(IRCompare.Op op, int leftReg, int rightValue, Type leftType, String targetLabel) throws IOException {
-		targetLabel = escapeLabel(targetLabel);
-
 		final boolean signed = leftType != Type.U8;
 		final int byteCount = getByteCount(leftType);
 
@@ -487,7 +483,7 @@ final class Z8AsmWriter extends AsmWriter {
 
 	@Override
 	protected void writeCall(String name) throws IOException {
-		writeIndented("call " + escapeLabel(name));
+		writeIndented("call " + name);
 	}
 
 	@Override
@@ -660,7 +656,7 @@ final class Z8AsmWriter extends AsmWriter {
 
 	@Override
 	protected void writeJump(String label) throws IOException {
-		writeIndented("jr   " + escapeLabel(label));
+		writeIndented("jr   " + label);
 		writeNL();
 	}
 
@@ -786,44 +782,6 @@ final class Z8AsmWriter extends AsmWriter {
 		}
 		default -> throw new UnsupportedOperationException(String.valueOf(op));
 		}
-	}
-
-	@NotNull
-	@Override
-	protected String escapeLabel(String label) {
-		final StringBuilder buffer = new StringBuilder();
-		for (int i = 0, len = label.length(); i < len; i++) {
-			final char chr = label.charAt(i);
-			if (Utils.isInInterval(chr, '0', '9')
-			    || Utils.isInInterval(chr, 'A', 'Z')
-			    || Utils.isInInterval(chr, 'a', 'z')) {
-				buffer.append(chr);
-				continue;
-			}
-			if (i == 0) {
-				if (chr == '.') {
-					buffer.append(chr);
-					continue;
-				}
-			}
-			if (chr == '_') {
-				buffer.append("__");
-				continue;
-			}
-			if (chr == '@') {
-				buffer.append("_P");
-				continue;
-			}
-			if (chr < 0x80) {
-				buffer.append("_");
-				buffer.append(Utils.toHex(chr, 2));
-				continue;
-			}
-
-			buffer.append("_u");
-			buffer.append(Utils.toHex(chr, 4));
-		}
-		return buffer.toString();
 	}
 
 	private void writeMove(int targetReg, int sourceReg, int byteCount) throws IOException {

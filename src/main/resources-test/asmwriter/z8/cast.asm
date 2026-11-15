@@ -5,7 +5,7 @@
         .org %e000
 
         srp  #%20
-        jr   main
+        jr   _main
 
         ; i16 fn
         ; var u (u8): SP+0

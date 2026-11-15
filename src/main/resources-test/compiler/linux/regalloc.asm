@@ -8,7 +8,7 @@ _start:
         xor rdi, rdi        ; exit code 0
         syscall
 
-        ; u8 simple
+        ; u8 _simple
 _simple:
         sub rsp, 8
         ; const four.1{r1}, 4
@@ -23,7 +23,7 @@ _simple:
         add rsp, 8
         ret
 
-        ; u8 registerHint@u8@u8
+        ; u8 _registerHint@u8@u8
         ;   rsp+0: arg a
         ;   rsp+1: arg b
 _registerHint@u8@u8:
@@ -36,19 +36,19 @@ _registerHint@u8@u8:
         add rsp, 8
         ret
 
-        ; u8 max@u8@u8
+        ; u8 _max@u8@u8
         ;   rsp+0: arg a
         ;   rsp+1: arg b
 _max@u8@u8:
         sub rsp, 8
         ; branch a{r1} lt b{r2}: if_1_then
         cmp dil, sil
-        jb _if_1_then
+        jb if_1_then
         ; 16:9 return a
         ; move a{r0}, a{r1}
         mov al, dil
         jmp _max@u8@u8_ret
-_if_1_then:
+if_1_then:
         ; 14:10 return b
         ; move b{r0}, b{r2}
         mov al, sil
@@ -56,7 +56,7 @@ _max@u8@u8_ret:
         add rsp, 8
         ret
 
-        ; i16 fibonacci@u8
+        ; i16 _fibonacci@u8
         ;   rsp+0: arg i
 _fibonacci@u8:
         sub rsp, 8
@@ -69,8 +69,8 @@ _fibonacci@u8:
         mov ax, si
         ; move b.2{r2}, b.1{r3}
         mov si, dx
-        jmp _while_2
-_while_2_body:
+        jmp while_2
+while_2_body:
         ; sub i.2{r1}, 1
         sub dil, 1
         ; move c.1{r3}, a.2{r0}
@@ -81,15 +81,15 @@ _while_2_body:
         mov ax, si
         ; move b.2{r2}, b.3{r3}
         mov si, dx
-_while_2:
+while_2:
         ; branch i.1{r1} gt 0: while_2_body
         cmp dil, 0
-        ja _while_2_body
+        ja while_2_body
         ; 28:9 return a
         add rsp, 8
         ret
 
-        ; void main
+        ; void _main
 _main:
         sub rsp, 8
         ; save clobbered non-volatile registers
@@ -97,7 +97,7 @@ _main:
         push r10
         push rbx
         push r12
-        ; call one.1{r0} = simple[] -> u8
+        ; call one.1{r0} = _simple[] -> u8
         call _simple
         ; move one.1{r8}, one.1{r0}
         mov bl, al
@@ -107,17 +107,17 @@ _main:
         mov dil, bl
         ; move two.1{r2}, two.1{r9}
         mov sil, r12b
-        ; call _ = registerHint@u8@u8[one.1{r1}, two.1{r2}] -> u8
+        ; call _ = _registerHint@u8@u8[one.1{r1}, two.1{r2}] -> u8
         call _registerHint@u8@u8
         ; move one.1{r1}, one.1{r8}
         mov dil, bl
         ; move two.1{r2}, two.1{r9}
         mov sil, r12b
-        ; call _ = max@u8@u8[one.1{r1}, two.1{r2}] -> u8
+        ; call _ = _max@u8@u8[one.1{r1}, two.1{r2}] -> u8
         call _max@u8@u8
         ; const arg.3.0{r1}, 5
         mov dil, 5
-        ; call _ = fibonacci@u8[arg.3.0{r1}] -> i16
+        ; call _ = _fibonacci@u8[arg.3.0{r1}] -> i16
         call _fibonacci@u8
         ; restore clobbered non-volatile registers
         pop r12

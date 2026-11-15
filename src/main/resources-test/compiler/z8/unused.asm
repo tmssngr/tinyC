@@ -7,7 +7,7 @@
         srp  #%20
         jr   main
 
-        ; void unusedArg@u8
+        ; void unusedArg_Pu8
         ; arg a (u8): r0
 unusedArg_Pu8:
         ret
@@ -16,6 +16,6 @@ unusedArg_Pu8:
 main:
         ; const arg.0.0{r0}, 0
         ld   r0, #%00
-        ; call unusedArg@u8[arg.0.0{r0}]
+        ; call unusedArg_Pu8[arg.0.0{r0}]
         call unusedArg_Pu8
         ret

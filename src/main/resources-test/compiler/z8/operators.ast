@@ -1,62 +1,62 @@
-void printString@@u8(u8* str) asm {
+void printString_P_pu8(u8* str) asm {
 }
 
-void printChar@u8(u8 chr) asm {
+void printChar_Pu8(u8 chr) asm {
 }
 
-void printUint@i16(i16 number) {
-	printUint@i32(number as i32);
+void printUint_Pi16(i16 number) {
+	printUint_Pi32(number as i32);
 }
 
-void printUint@i32(i32 number) asm {
+void printUint_Pi32(i32 number) asm {
 }
 
-void printIntLf@bool(bool value) {
+void printIntLf_Pbool(bool value) {
 	u8 number;
 
 	number = 0;
 	if (value) {
 		number = 1;
 	}
-	printIntLf@i16(number as i16);
+	printIntLf_Pi16(number as i16);
 }
 
-void printIntLf@u8(u8 number) {
-	printIntLf@i16(number as i16);
+void printIntLf_Pu8(u8 number) {
+	printIntLf_Pi16(number as i16);
 }
 
-void printIntLf@i16(i16 number) {
+void printIntLf_Pi16(i16 number) {
 	if (number < 0) {
-		printChar@u8(45);
+		printChar_Pu8(45);
 		number = -number;
 	}
-	printUint@i16(number);
-	printChar@u8(13);
+	printUint_Pi16(number);
+	printChar_Pu8(13);
 }
 
 bool getTrue() {
-	printString@@u8(" true");
+	printString_P_pu8(" true");
 	return true;
 }
 
 bool getFalse() {
-	printString@@u8(" false");
+	printString_P_pu8(" false");
 	return false;
 }
 
 void printPass() {
-	printString@@u8(" -> pass ");
+	printString_P_pu8(" -> pass ");
 }
 
 void printError() {
-	printString@@u8(" -> ERROR ");
+	printString_P_pu8(" -> ERROR ");
 }
 
 void logicNot() {
 	bool t;
 	bool f;
 
-	printString@@u8("\nLogic-!:\n");
+	printString_P_pu8("\nLogic-!:\n");
 	t = true;
 	f = false;
 	if (!(getFalse())) {
@@ -65,21 +65,21 @@ void logicNot() {
 	else {
 		printError();
 	}
-	printIntLf@bool(!f);
+	printIntLf_Pbool(!f);
 	if (!(getTrue())) {
 		printError();
 	}
 	else {
 		printPass();
 	}
-	printIntLf@bool(!t);
+	printIntLf_Pbool(!t);
 }
 
 void logicAnd() {
 	bool t;
 	bool f;
 
-	printString@@u8("\nLogic-&&:\n");
+	printString_P_pu8("\nLogic-&&:\n");
 	t = true;
 	f = false;
 	if ((getFalse()) && (getFalse())) {
@@ -88,63 +88,63 @@ void logicAnd() {
 	else {
 		printPass();
 	}
-	printIntLf@bool(f && f);
+	printIntLf_Pbool(f && f);
 	if ((getFalse()) && (getTrue())) {
 		printError();
 	}
 	else {
 		printPass();
 	}
-	printIntLf@bool(f && t);
+	printIntLf_Pbool(f && t);
 	if ((getTrue()) && (getFalse())) {
 		printError();
 	}
 	else {
 		printPass();
 	}
-	printIntLf@bool(t && f);
+	printIntLf_Pbool(t && f);
 	if ((getTrue()) && (getTrue())) {
 		printPass();
 	}
 	else {
 		printError();
 	}
-	printIntLf@bool(t && t);
+	printIntLf_Pbool(t && t);
 	if (!((getFalse()) && (getFalse()))) {
 		printPass();
 	}
 	else {
 		printError();
 	}
-	printIntLf@bool(!(f && f));
+	printIntLf_Pbool(!(f && f));
 	if (!((getFalse()) && (getTrue()))) {
 		printPass();
 	}
 	else {
 		printError();
 	}
-	printIntLf@bool(!(f && t));
+	printIntLf_Pbool(!(f && t));
 	if (!((getTrue()) && (getFalse()))) {
 		printPass();
 	}
 	else {
 		printError();
 	}
-	printIntLf@bool(!(t && f));
+	printIntLf_Pbool(!(t && f));
 	if (!((getTrue()) && (getTrue()))) {
 		printError();
 	}
 	else {
 		printPass();
 	}
-	printIntLf@bool(!(t && t));
+	printIntLf_Pbool(!(t && t));
 }
 
 void logicOr() {
 	bool t;
 	bool f;
 
-	printString@@u8("\nLogic-||:\n");
+	printString_P_pu8("\nLogic-||:\n");
 	t = true;
 	f = false;
 	if ((getFalse()) || (getFalse())) {
@@ -153,28 +153,28 @@ void logicOr() {
 	else {
 		printPass();
 	}
-	printIntLf@bool(f || f);
+	printIntLf_Pbool(f || f);
 	if ((getFalse()) || (getTrue())) {
 		printPass();
 	}
 	else {
 		printError();
 	}
-	printIntLf@bool(f || t);
+	printIntLf_Pbool(f || t);
 	if ((getTrue()) || (getFalse())) {
 		printPass();
 	}
 	else {
 		printError();
 	}
-	printIntLf@bool(t || f);
+	printIntLf_Pbool(t || f);
 	if ((getTrue()) || (getTrue())) {
 		printPass();
 	}
 	else {
 		printError();
 	}
-	printIntLf@bool(t || t);
+	printIntLf_Pbool(t || t);
 }
 
 void main() {
@@ -188,27 +188,27 @@ void main() {
 	u8 b6;
 	u8 b1;
 
-	printString@@u8("Bit-&:\n");
+	printString_P_pu8("Bit-&:\n");
 	a = 0;
 	b = 1;
 	c = 2;
 	d = 3;
 	t = true;
 	f = false;
-	printIntLf@i16(a & a);
-	printIntLf@i16(a & b);
-	printIntLf@i16(b & a);
-	printIntLf@i16(b & b);
-	printString@@u8("\nBit-|:\n");
-	printIntLf@i16(a | a);
-	printIntLf@i16(a | b);
-	printIntLf@i16(b | a);
-	printIntLf@i16(b | b);
-	printString@@u8("\nBit-^:\n");
-	printIntLf@i16(a ^ a);
-	printIntLf@i16(a ^ c);
-	printIntLf@i16(b ^ a);
-	printIntLf@i16(b ^ c);
+	printIntLf_Pi16(a & a);
+	printIntLf_Pi16(a & b);
+	printIntLf_Pi16(b & a);
+	printIntLf_Pi16(b & b);
+	printString_P_pu8("\nBit-|:\n");
+	printIntLf_Pi16(a | a);
+	printIntLf_Pi16(a | b);
+	printIntLf_Pi16(b | a);
+	printIntLf_Pi16(b | b);
+	printString_P_pu8("\nBit-^:\n");
+	printIntLf_Pi16(a ^ a);
+	printIntLf_Pi16(a ^ c);
+	printIntLf_Pi16(b ^ a);
+	printIntLf_Pi16(b ^ c);
 	logicNot();
 	logicAnd();
 	logicOr();
@@ -218,15 +218,15 @@ void main() {
 	else {
 		printError();
 	}
-	printIntLf@bool((!(t && t)) || (!(f && f)));
-	printString@@u8("\n\nmisc:\n");
+	printIntLf_Pbool((!(t && t)) || (!(f && f)));
+	printString_P_pu8("\n\nmisc:\n");
 	b10 = 10;
 	b6 = 6;
 	b1 = 1;
-	printIntLf@u8((b10 & b6) | b1);
-	printIntLf@bool((b == c) || (c < d));
-	printIntLf@bool((b == c) && (c < d));
-	printIntLf@i16(-1);
-	printIntLf@i16(-b);
-	printIntLf@u8(~b1);
+	printIntLf_Pu8((b10 & b6) | b1);
+	printIntLf_Pbool((b == c) || (c < d));
+	printIntLf_Pbool((b == c) && (c < d));
+	printIntLf_Pi16(-1);
+	printIntLf_Pi16(-b);
+	printIntLf_Pu8(~b1);
 }

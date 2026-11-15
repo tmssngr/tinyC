@@ -7,7 +7,7 @@
         srp  #%20
         jr   main
 
-        ; void printUint@i16
+        ; void printUint_Pi16
         ; arg number (i16): r0
 printUint_Pi16:
         ; cast t.1.1{r0}(i32), param.number{r0}(i16)
@@ -17,11 +17,11 @@ printUint_Pi16:
         rl   r1
         sbc  r1, r1
         sbc  r0, r0
-        ; call printUint@i32[t.1.1{r0}]
+        ; call printUint_Pi32[t.1.1{r0}]
         call printUint_Pi32
         ret
 
-        ; void printIntLf@i16
+        ; void printIntLf_Pi16
         ; arg number (i16): r0
 printIntLf_Pi16:
         ; save clobbered non-volatile registers
@@ -32,28 +32,28 @@ printIntLf_Pi16:
         ld   r8, r0
         ; branch param.number{r8} gteq 0: if_1_end
         cp   r8, #%00
-        jr   gt, if__1__end
+        jr   gt, if_1_end
         jr   ne, .gt1
         cp   r9, #%00
-        jr   uge, if__1__end
+        jr   uge, if_1_end
 .gt1:
         ; const arg.0.0{r0}, 45
         ld   r0, #%2d
-        ; call printChar@u8[arg.0.0{r0}]
+        ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
         ; neg number.2{r8}, param.number{r8}
         com  r8
         com  r9
         incw r8
-if__1__end:
+if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
         ld   r1, r9
-        ; call printUint@i16[number.1{r0}]
+        ; call printUint_Pi16[number.1{r0}]
         call printUint_Pi16
         ; const arg.2.0{r0}, 13
         ld   r0, #%0d
-        ; call printChar@u8[arg.2.0{r0}]
+        ; call printChar_Pu8[arg.2.0{r0}]
         call printChar_Pu8
         ; restore clobbered non-volatile registers
         pop  r9
@@ -71,33 +71,33 @@ main:
         ; 5:2 if a > 0
         ; branch a.1{r8} gt 0: if_2_then
         cp   r8, #%00
-        jr   gt, if__2__then
+        jr   gt, if_2_then
         jr   ne, .gt2
         cp   r9, #%00
-        jr   ugt, if__2__then
+        jr   ugt, if_2_then
 .gt2:
         ; neg a.2{r0}, a.1{r8}
         ld   r0, #%00
         ld   r1, #%00
         sub  r1, r9
         sbc  r0, r8
-        ; call printIntLf@i16[a.2{r0}]
+        ; call printIntLf_Pi16[a.2{r0}]
         call printIntLf_Pi16
-        jr   main__ret
+        jr   main_ret
 
-if__2__then:
+if_2_then:
         ; move a.1{r0}, a.1{r8}
         ld   r0, r8
         ld   r1, r9
-        ; call printIntLf@i16[a.1{r0}]
+        ; call printIntLf_Pi16[a.1{r0}]
         call printIntLf_Pi16
-main__ret:
+main_ret:
         ; restore clobbered non-volatile registers
         pop  r9
         pop  r8
         ret
 
-        ; void printChar@u8
+        ; void printChar_Pu8
 printChar_Pu8:
         cp    r0, #%0a
         jr    ne, .1
@@ -106,7 +106,7 @@ printChar_Pu8:
         ld    %15, r0
         jp    %0818
 
-        ; void printUint@i32
+        ; void printUint_Pi32
 printUint_Pi32:
         ld   r4, #1
         ld   r5, #%28

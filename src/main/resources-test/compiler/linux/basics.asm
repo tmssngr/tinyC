@@ -8,7 +8,7 @@ _start:
         xor rdi, rdi        ; exit code 0
         syscall
 
-        ; void printChar@u8
+        ; void _printChar@u8
         ;   rsp+32: arg chr
 _printChar@u8:
         sub rsp, 8
@@ -25,7 +25,7 @@ _printChar@u8:
         mov rdi, r12
         ; const arg.0.1{r2}, 1
         mov sil, 1
-        ; call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
+        ; call _printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
         call _printStringLength@@u8@u8
         ; restore clobbered non-volatile registers
         pop r12
@@ -35,18 +35,18 @@ _printChar@u8:
         add rsp, 8
         ret
 
-        ; void printUint@u8
+        ; void _printUint@u8
         ;   rsp+0: arg number
 _printUint@u8:
         sub rsp, 8
         ; cast t.1.1{r1}(i64), number{r1}(u8)
         movzx rdi, dil
-        ; call printUint@i64[t.1.1{r1}]
+        ; call _printUint@i64[t.1.1{r1}]
         call _printUint@i64
         add rsp, 8
         ret
 
-        ; void printUint@i64
+        ; void _printUint@i64
         ;   rsp+24: arg number
         ;   rsp+40: var buffer
 _printUint@i64:
@@ -60,7 +60,7 @@ _printUint@i64:
         ; 33:2 while true
         ; move number.1{r5}, number{r1}
         mov r8, rdi
-_while_1:
+while_1:
         ; sub pos.3{r8}, 1
         sub bl, 1
         ; move remainder.1{r6}, number.1{r5}
@@ -96,7 +96,7 @@ _while_1:
         ; 39:3 if number == 0
         ; branch number.2{r5} notequals 0: while_1
         cmp r8, 0
-        jne _while_1
+        jne while_1
         ; addrof t.8.1{r3}, buffer
         lea rdx, [rsp+40]
         ; move t.8.2{r1}, t.8.2{r4}
@@ -107,7 +107,7 @@ _while_1:
         mov sil, al
         ; sub t.10.1{r2}, pos.3{r8}
         sub sil, bl
-        ; call printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
+        ; call _printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
         call _printStringLength@@u8@u8
         ; restore clobbered non-volatile registers
         pop rbx
@@ -116,19 +116,19 @@ _while_1:
         add rsp, 48
         ret
 
-        ; void printStringLength@@u8@u8
+        ; void _printStringLength@@u8@u8
         ;   rsp+0: arg str
         ;   rsp+8: arg length
 _printStringLength@@u8@u8:
         sub rsp, 24
         ; cast t.2.1{r2}(i64), length{r2}(u8)
         movzx rsi, sil
-        ; call printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
+        ; call _printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
         call _printStringLength@@u8@i64
         add rsp, 24
         ret
 
-        ; i64 unusedArgs@u8@bool@u8@u8
+        ; i64 _unusedArgs@u8@bool@u8@u8
         ;   rsp+0: arg a
         ;   rsp+1: arg b
         ;   rsp+2: arg c
@@ -141,7 +141,7 @@ _unusedArgs@u8@bool@u8@u8:
         add rsp, 8
         ret
 
-        ; void main
+        ; void _main
 _main:
         ; save clobbered non-volatile registers
         push r9
@@ -181,19 +181,19 @@ _main:
         mov dl, 2
         ; const arg.0.3{r4}, 3
         mov cl, 3
-        ; call _ = unusedArgs@u8@bool@u8@u8[arg.0.0{r1}, t.11.1{r2}, arg.0.2{r3}, arg.0.3{r4}] -> i64
+        ; call _ = _unusedArgs@u8@bool@u8@u8[arg.0.0{r1}, t.11.1{r2}, arg.0.2{r3}, arg.0.3{r4}] -> i64
         call _unusedArgs@u8@bool@u8@u8
         ; addrof a.12.1{r8}, zero
         lea rbx, [var_0]
         ; load t.13.1{r1}, [a.12.1{r8}]
         mov dil, [rbx]
-        ; call printChar@u8[t.13.1{r1}]
+        ; call _printChar@u8[t.13.1{r1}]
         call _printChar@u8
         ; addrof onePtr.1{r8}, one
         lea rbx, [var_1]
         ; load t.14.1{r1}, [onePtr.1{r8}]
         mov dil, [rbx]
-        ; call printChar@u8[t.14.1{r1}]
+        ; call _printChar@u8[t.14.1{r1}]
         call _printChar@u8
         ; addrof twoPtr.1{r8}, two
         lea rbx, [var_2]
@@ -203,17 +203,17 @@ _main:
         add rbx, rax
         ; load t.15.1{r1}, [t.16.2{r8}]
         mov dil, [rbx]
-        ; call printChar@u8[t.15.1{r1}]
+        ; call _printChar@u8[t.15.1{r1}]
         call _printChar@u8
         ; addrof a.18.1{r8}, threeFour
         lea rbx, [var_3]
         ; load t.19.1{r1}, [a.18.1{r8}]
         mov dil, [rbx]
-        ; call printUint@u8[t.19.1{r1}]
+        ; call _printUint@u8[t.19.1{r1}]
         call _printUint@u8
         ; const arg.5.0{r1}, 10
         mov dil, 10
-        ; call printChar@u8[arg.5.0{r1}]
+        ; call _printChar@u8[arg.5.0{r1}]
         call _printChar@u8
         ; restore clobbered non-volatile registers
         pop rbx
@@ -221,7 +221,7 @@ _main:
         pop r9
         ret
 
-        ; void printStringLength@@u8@i64
+        ; void _printStringLength@@u8@i64
 _printStringLength@@u8@i64:
         mov rdx, rsi
         mov rsi, rdi

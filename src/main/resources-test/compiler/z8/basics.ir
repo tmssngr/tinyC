@@ -1,13 +1,13 @@
-printUint@u8:
+printUint_Pu8:
  Local variables
 	arg 0: number (u8/1)
 	var 1: t.1 (i32/4)
 
 	cast t.1(i32), number(u8)
-	call printUint@i32[t.1]
-printUint@u8_ret:
+	call printUint_Pi32[t.1]
+printUint_Pu8_ret:
 
-unusedArgs@u8@bool@u8@u8:
+unusedArgs_Pu8_Pbool_Pu8_Pu8:
  Local variables
 	arg 0: a (u8/1)
 	arg 1: b (bool/1)
@@ -18,8 +18,8 @@ unusedArgs@u8@bool@u8@u8:
 	; 9:14 return (i64)
 	cast t.4(i64), c(u8)
 	ret t.4
-	jump unusedArgs@u8@bool@u8@u8_ret
-unusedArgs@u8@bool@u8@u8_ret:
+	jump unusedArgs_Pu8_Pbool_Pu8_Pu8_ret
+unusedArgs_Pu8_Pbool_Pu8_Pu8_ret:
 
 main:
  Local variables
@@ -59,26 +59,26 @@ main:
 	store [a.10], t.9
 	; end initialize global variables
 	const t.11, 1
-	call c = unusedArgs@u8@bool@u8@u8[1, t.11, 2, 3] -> i64
+	call c = unusedArgs_Pu8_Pbool_Pu8_Pu8[1, t.11, 2, 3] -> i64
 	addrof a.12, zero
 	load t.13, [a.12]
-	call printChar@u8[t.13]
+	call printChar_Pu8[t.13]
 	addrof onePtr, one
 	load t.14, [onePtr]
-	call printChar@u8[t.14]
+	call printChar_Pu8[t.14]
 	addrof twoPtr, two
 	const t.17, 0
 	move t.16, twoPtr
 	add t.16, t.17
 	load t.15, [t.16]
-	call printChar@u8[t.15]
+	call printChar_Pu8[t.15]
 	addrof a.18, threeFour
 	load t.19, [a.18]
-	call printUint@u8[t.19]
-	call printChar@u8[10]
+	call printUint_Pu8[t.19]
+	call printChar_Pu8[10]
 main_ret:
 
-printChar@u8:
+printChar_Pu8:
 	cp    r0, #%0a
 	jr    ne, .1
 	ld    r0, #%0d
@@ -86,7 +86,7 @@ printChar@u8:
 	ld    %15, r0
 	jp    %0818
 
-printUint@i32:
+printUint_Pi32:
 	ld   r4, #1
 	ld   r5, #%28
 	ld   r6, #8

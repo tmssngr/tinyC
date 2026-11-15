@@ -40,23 +40,23 @@ main:
         lde  @rr10, r8
         ; end initialize global variables
         ; 12:2 while true
-        jr   while__1
+        jr   while_1
 
-if__2__end:
+if_2_end:
         ; branch n.1{r8} gteq 2: while_1
         cp   r8, #%02
-        jr   uge, while__1
+        jr   uge, while_1
         ; const t.4.1{r0}, [string-1]
         ld   r0, #hi(string_1)
         ld   r1, #lo(string_1)
-        ; call printString@@u8[t.4.1{r0}]
-        call printString_P_Pu8
-while__1:
+        ; call printString_P_pu8[t.4.1{r0}]
+        call printString_P_pu8
+while_1:
         ; const t.3.1{r0}, [string-0]
         ld   r0, #hi(string_0)
         ld   r1, #lo(string_0)
-        ; call printString@@u8[t.3.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.3.1{r0}]
+        call printString_P_pu8
         ; call n.1{r0} = next[] -> u8
         call next
         ; move n.1{r8}, n.1{r0}
@@ -64,7 +64,7 @@ while__1:
         ; 15:3 if n == 3
         ; branch n.1{r8} notequals 3: if_2_end
         cp   r8, #%03
-        jr   ne, if__2__end
+        jr   ne, if_2_end
         ; restore clobbered non-volatile registers
         pop  r11
         pop  r10
@@ -72,8 +72,8 @@ while__1:
         pop  r8
         ret
 
-        ; void printString@@u8
-printString_P_Pu8:
+        ; void printString_P_pu8
+printString_P_pu8:
         ld   r2, r0
         ld   r3, r1
         jr   .loop

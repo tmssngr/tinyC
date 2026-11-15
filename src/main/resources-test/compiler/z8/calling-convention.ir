@@ -1,27 +1,27 @@
-printUint@i16:
+printUint_Pi16:
  Local variables
 	arg 0: number (i16/2)
 	var 1: t.1 (i32/4)
 
 	cast t.1(i32), number(i16)
-	call printUint@i32[t.1]
-printUint@i16_ret:
+	call printUint_Pi32[t.1]
+printUint_Pi16_ret:
 
-printIntLf@i16:
+printIntLf_Pi16:
  Local variables
 	arg 0: number (i16/2)
 
 	; 133:2 if number < 0
 	branch number gteq 0: if_1_end, if_1_then
 if_1_then:
-	call printChar@u8[45]
+	call printChar_Pu8[45]
 	neg number, number
 if_1_end:
-	call printUint@i16[number]
-	call printChar@u8[13]
-printIntLf@i16_ret:
+	call printUint_Pi16[number]
+	call printChar_Pu8[13]
+printIntLf_Pi16_ret:
 
-printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
+printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
  Local variables
 	arg 0: a (i16/2)
 	arg 1: b (i16/2)
@@ -39,14 +39,14 @@ printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
 	var 13: t.13 (i16/2)
 	var 14: t.14 (i16/2)
 
-	call printIntLf@i16[a]
-	call printIntLf@i16[b]
-	call printIntLf@i16[c]
-	call printIntLf@i16[d]
-	call printIntLf@i16[e]
-	call printIntLf@i16[f]
-	call printIntLf@i16[g]
-	call printIntLf@i16[h]
+	call printIntLf_Pi16[a]
+	call printIntLf_Pi16[b]
+	call printIntLf_Pi16[c]
+	call printIntLf_Pi16[d]
+	call printIntLf_Pi16[e]
+	call printIntLf_Pi16[f]
+	call printIntLf_Pi16[g]
+	call printIntLf_Pi16[h]
 	; 17:35 return a + b + c + d + e + f + g + h
 	add t.14, a, b
 	add t.13, t.14, c
@@ -56,18 +56,18 @@ printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
 	add t.9, t.10, g
 	add t.8, t.9, h
 	ret t.8
-	jump printAndSum@i16@i16@i16@i16@i16@i16@i16@i16_ret
-printAndSum@i16@i16@i16@i16@i16@i16@i16@i16_ret:
+	jump printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_ret
+printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_ret:
 
 main:
  Local variables
 	var 0: sum (i16/2)
 
-	call sum = printAndSum@i16@i16@i16@i16@i16@i16@i16@i16[1, 2, 3, 4, 5, 6, 7, 8] -> i16
-	call printIntLf@i16[sum]
+	call sum = printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16[1, 2, 3, 4, 5, 6, 7, 8] -> i16
+	call printIntLf_Pi16[sum]
 main_ret:
 
-printChar@u8:
+printChar_Pu8:
 	cp    r0, #%0a
 	jr    ne, .1
 	ld    r0, #%0d
@@ -75,7 +75,7 @@ printChar@u8:
 	ld    %15, r0
 	jp    %0818
 
-printUint@i32:
+printUint_Pi32:
 	ld   r4, #1
 	ld   r5, #%28
 	ld   r6, #8

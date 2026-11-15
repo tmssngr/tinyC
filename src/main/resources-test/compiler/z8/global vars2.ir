@@ -35,7 +35,7 @@ main:
 	; 12:2 while true
 while_1:
 	const t.3, [string-0]
-	call printString@@u8[t.3]
+	call printString_P_pu8[t.3]
 	call n = next[] -> u8
 	; 15:3 if n == 3
 	branch n equals 3: main_ret, if_2_end
@@ -44,11 +44,11 @@ if_2_end:
 	branch n gteq 2: while_1, if_3_then
 if_3_then:
 	const t.4, [string-1]
-	call printString@@u8[t.4]
+	call printString_P_pu8[t.4]
 	jump while_1
 main_ret:
 
-printString@@u8:
+printString_P_pu8:
 	ld   r2, r0
 	ld   r3, r1
 	jr   .loop

@@ -5,7 +5,7 @@
         .org %e000
 
         srp  #%20
-        jr   main
+        jr   _main
 
         ; void regReg
         ; var b1 (u8): SP+2

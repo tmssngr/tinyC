@@ -1,22 +1,22 @@
-printString@@u8:
+_printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
 
-	call length = strlen@@u8[str] -> i64
-	call printStringLength@@u8@i64[str, length]
-printString@@u8_ret:
+	call length = _strlen@@u8[str] -> i64
+	call _printStringLength@@u8@i64[str, length]
+_printString@@u8_ret:
 
-printChar@u8:
+_printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
 
 	addrof t.1, chr
-	call printStringLength@@u8@u8[t.1, 1]
-printChar@u8_ret:
+	call _printStringLength@@u8@u8[t.1, 1]
+_printChar@u8_ret:
 
-strlen@@u8:
+_strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
@@ -35,20 +35,20 @@ for_1_continue:
 for_1_break:
 	; 76:9 return length
 	ret length
-	jump strlen@@u8_ret
-strlen@@u8_ret:
+	jump _strlen@@u8_ret
+_strlen@@u8_ret:
 
-printStringLength@@u8@u8:
+_printStringLength@@u8@u8:
  Local variables
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
 	var 2: t.2 (i64/8)
 
 	cast t.2(i64), length(u8)
-	call printStringLength@@u8@i64[str, t.2]
-printStringLength@@u8@u8_ret:
+	call _printStringLength@@u8@i64[str, t.2]
+_printStringLength@@u8@u8_ret:
 
-printBoard:
+_printBoard:
  Local variables
 	var 0: i (u8/1)
 	var 1: t.1 (u8/1)
@@ -56,7 +56,7 @@ printBoard:
 	var 3: t.3 (i64/8)
 	var 4: t.4 (u8*/8)
 
-	call printChar@u8[124]
+	call _printChar@u8[124]
 	const i, 0
 	; 11:2 for i < 30
 for_2:
@@ -69,19 +69,19 @@ for_2_body:
 	load t.1, [t.2]
 	branch t.1 notequals 0: if_3_else, if_3_then
 if_3_then:
-	call printChar@u8[32]
+	call _printChar@u8[32]
 	jump for_2_continue
 if_3_else:
-	call printChar@u8[42]
+	call _printChar@u8[42]
 for_2_continue:
 	add i, 1
 	jump for_2
 for_2_break:
 	const t.4, [string-1]
-	call printString@@u8[t.4]
-printBoard_ret:
+	call _printString@@u8[t.4]
+_printBoard_ret:
 
-main:
+_main:
  Local variables
 	var 0: i (u8/1)
 	var 1: i (u8/1)
@@ -131,11 +131,11 @@ for_4_break:
 	addrof t.8, board
 	add t.8, t.9
 	store [t.8], t.7
-	call printBoard[]
+	call _printBoard[]
 	const i, 0
 	; 30:2 for i < 28
 for_5:
-	branch i gteq 28: main_ret, for_5_body
+	branch i gteq 28: _main_ret, for_5_body
 for_5_body:
 	const t.13, 0
 	addrof t.12, board
@@ -171,13 +171,13 @@ for_6_continue:
 	add j, 1
 	jump for_6
 for_6_break:
-	call printBoard[]
+	call _printBoard[]
 for_5_continue:
 	add i, 1
 	jump for_5
-main_ret:
+_main_ret:
 
-printStringLength@@u8@i64:
+_printStringLength@@u8@i64:
 	mov rdx, rsi
 	mov rsi, rdi
 	mov rdi, 1

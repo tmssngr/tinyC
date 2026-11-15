@@ -8,16 +8,16 @@ _start:
         xor rdi, rdi        ; exit code 0
         syscall
 
-        ; void main
+        ; void _main
 _main:
         sub rsp, 8
         ; const i.1{r0}, 0
         mov al, 0
         ; 3:2 while true
-_while_1:
+while_1:
         ; add i.3{r0}, 1
         add al, 1
-        jmp _while_1
+        jmp while_1
         add rsp, 8
         ret
 

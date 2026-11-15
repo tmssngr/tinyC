@@ -1,6 +1,6 @@
-void unusedArg@u8(u8 a) {
+void _unusedArg@u8(u8 a) {
 }
 
-void main() {
-	unusedArg@u8(0);
+void _main() {
+	_unusedArg@u8(0);
 }

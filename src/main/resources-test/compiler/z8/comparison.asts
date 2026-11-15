@@ -1,33 +1,33 @@
-void printString@@u8(u8* str) asm {
+void printString_P_pu8(u8* str) asm {
 }
 
-void printChar@u8(u8 chr) asm {
+void printChar_Pu8(u8 chr) asm {
 }
 
-void printUint@i16(i16 number) {
-	printUint@i32(number as i32);
+void printUint_Pi16(i16 number) {
+	printUint_Pi32(number as i32);
 }
 
-void printUint@i32(i32 number) asm {
+void printUint_Pi32(i32 number) asm {
 }
 
-void printIntLf@bool(bool value) {
+void printIntLf_Pbool(bool value) {
 	u8 number;
 
 	number = 0;
 	if (value) {
 		number = 1;
 	}
-	printIntLf@i16(number as i16);
+	printIntLf_Pi16(number as i16);
 }
 
-void printIntLf@i16(i16 number) {
+void printIntLf_Pi16(i16 number) {
 	if (number < 0) {
-		printChar@u8(45);
+		printChar_Pu8(45);
 		number = -number;
 	}
-	printUint@i16(number);
-	printChar@u8(13);
+	printUint_Pi16(number);
+	printChar_Pu8(13);
 }
 
 void main() {
@@ -36,38 +36,38 @@ void main() {
 	u8 c;
 	u8 d;
 
-	printString@@u8("< (signed)\n");
+	printString_P_pu8("< (signed)\n");
 	a = 1;
 	b = 2;
-	printIntLf@bool(a < b);
-	printIntLf@bool(b < a);
-	printString@@u8("< (unsigned)\n");
+	printIntLf_Pbool(a < b);
+	printIntLf_Pbool(b < a);
+	printString_P_pu8("< (unsigned)\n");
 	c = 0;
 	d = 128;
-	printIntLf@bool(c < d);
-	printIntLf@bool(d < c);
-	printString@@u8("<= (signed)\n");
-	printIntLf@bool(a <= b);
-	printIntLf@bool(b <= a);
-	printString@@u8("<= (unsigned)\n");
-	printIntLf@bool(c <= d);
-	printIntLf@bool(d <= c);
-	printString@@u8("==\n");
-	printIntLf@bool(a == b);
-	printIntLf@bool(b == a);
-	printString@@u8("!=\n");
-	printIntLf@bool(a != b);
-	printIntLf@bool(b != a);
-	printString@@u8(">= (signed)\n");
-	printIntLf@bool(a >= b);
-	printIntLf@bool(b >= a);
-	printString@@u8(">= (unsigned)\n");
-	printIntLf@bool(c >= d);
-	printIntLf@bool(d >= c);
-	printString@@u8("> (signed)\n");
-	printIntLf@bool(a > b);
-	printIntLf@bool(b > a);
-	printString@@u8("> (unsigned)\n");
-	printIntLf@bool(c > d);
-	printIntLf@bool(d > c);
+	printIntLf_Pbool(c < d);
+	printIntLf_Pbool(d < c);
+	printString_P_pu8("<= (signed)\n");
+	printIntLf_Pbool(a <= b);
+	printIntLf_Pbool(b <= a);
+	printString_P_pu8("<= (unsigned)\n");
+	printIntLf_Pbool(c <= d);
+	printIntLf_Pbool(d <= c);
+	printString_P_pu8("==\n");
+	printIntLf_Pbool(a == b);
+	printIntLf_Pbool(b == a);
+	printString_P_pu8("!=\n");
+	printIntLf_Pbool(a != b);
+	printIntLf_Pbool(b != a);
+	printString_P_pu8(">= (signed)\n");
+	printIntLf_Pbool(a >= b);
+	printIntLf_Pbool(b >= a);
+	printString_P_pu8(">= (unsigned)\n");
+	printIntLf_Pbool(c >= d);
+	printIntLf_Pbool(d >= c);
+	printString_P_pu8("> (signed)\n");
+	printIntLf_Pbool(a > b);
+	printIntLf_Pbool(b > a);
+	printString_P_pu8("> (unsigned)\n");
+	printIntLf_Pbool(c > d);
+	printIntLf_Pbool(d > c);
 }

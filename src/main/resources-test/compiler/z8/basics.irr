@@ -1,11 +1,11 @@
-printUint@u8:
+printUint_Pu8:
  Local variables
 	arg 0: number (u8/1)
 
 	cast t.1.1{r0}(i32), param.number{r0}(u8)
-	call printUint@i32[t.1.1{r0}]
+	call printUint_Pi32[t.1.1{r0}]
 
-unusedArgs@u8@bool@u8@u8:
+unusedArgs_Pu8_Pbool_Pu8_Pu8:
  Local variables
 	arg 0: a (u8/1)
 	arg 1: b (bool/1)
@@ -34,25 +34,25 @@ main:
 	const arg.0.0{r0}, 1
 	const arg.0.2{r2}, 2
 	const arg.0.3{r3}, 3
-	call _ = unusedArgs@u8@bool@u8@u8[arg.0.0{r0}, t.11.1{r1}, arg.0.2{r2}, arg.0.3{r3}] -> i64
+	call _ = unusedArgs_Pu8_Pbool_Pu8_Pu8[arg.0.0{r0}, t.11.1{r1}, arg.0.2{r2}, arg.0.3{r3}] -> i64
 	addrof a.12.1{r8}, zero
 	load t.13.1{r0}, [a.12.1{r8}]
-	call printChar@u8[t.13.1{r0}]
+	call printChar_Pu8[t.13.1{r0}]
 	addrof onePtr.1{r8}, one
 	load t.14.1{r0}, [onePtr.1{r8}]
-	call printChar@u8[t.14.1{r0}]
+	call printChar_Pu8[t.14.1{r0}]
 	addrof twoPtr.1{r8}, two
 	const t.17.1{r10}, 0
 	add t.16.2{r8}, t.17.1{r10}
 	load t.15.1{r0}, [t.16.2{r8}]
-	call printChar@u8[t.15.1{r0}]
+	call printChar_Pu8[t.15.1{r0}]
 	addrof a.18.1{r8}, threeFour
 	load t.19.1{r0}, [a.18.1{r8}]
-	call printUint@u8[t.19.1{r0}]
+	call printUint_Pu8[t.19.1{r0}]
 	const arg.5.0{r0}, 10
-	call printChar@u8[arg.5.0{r0}]
+	call printChar_Pu8[arg.5.0{r0}]
 
-printChar@u8:
+printChar_Pu8:
 	cp    r0, #%0a
 	jr    ne, .1
 	ld    r0, #%0d
@@ -60,7 +60,7 @@ printChar@u8:
 	ld    %15, r0
 	jp    %0818
 
-printUint@i32:
+printUint_Pi32:
 	ld   r4, #1
 	ld   r5, #%28
 	ld   r6, #8

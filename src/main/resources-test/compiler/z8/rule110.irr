@@ -1,6 +1,6 @@
 printBoard:
 	const arg.0.0{r0}, 124
-	call printChar@u8[arg.0.0{r0}]
+	call printChar_Pu8[arg.0.0{r0}]
 	const i.1{r8}, 0
 	; 11:2 for i < 30
 	jump for_1
@@ -12,17 +12,17 @@ for_1_body:
 	load t.1.1{r9}, [t.2.2{r12}]
 	branch t.1.1{r9} equals 0: if_2_then
 	const arg.1.0{r0}, 42
-	call printChar@u8[arg.1.0{r0}]
+	call printChar_Pu8[arg.1.0{r0}]
 	jump for_1_continue
 if_2_then:
 	const arg.2.0{r0}, 32
-	call printChar@u8[arg.2.0{r0}]
+	call printChar_Pu8[arg.2.0{r0}]
 for_1_continue:
 	add i.4{r8}, 1
 for_1:
 	branch i.2{r8} lt 30: for_1_body
 	const t.4.1{r0}, [string-0]
-	call printString@@u8[t.4.1{r0}]
+	call printString_P_pu8[t.4.1{r0}]
 
 main:
 	const i.1{r8}, 0
@@ -87,7 +87,7 @@ for_5:
 for_4:
 	branch i.4{r8} lt 28: for_4_body
 
-printString@@u8:
+printString_P_pu8:
 	ld   r2, r0
 	ld   r3, r1
 	jr   .loop
@@ -100,7 +100,7 @@ printString@@u8:
 	jr   nz, .print
 	ret
 
-printChar@u8:
+printChar_Pu8:
 	cp    r0, #%0a
 	jr    ne, .1
 	ld    r0, #%0d

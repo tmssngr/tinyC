@@ -5,4 +5,4 @@
         .org %e000
 
         srp  #%20
-        jr   main
+        jr   _main

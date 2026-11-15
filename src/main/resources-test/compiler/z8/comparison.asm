@@ -7,7 +7,7 @@
         srp  #%20
         jr   main
 
-        ; void printUint@i16
+        ; void printUint_Pi16
         ; arg number (i16): r0
 printUint_Pi16:
         ; cast t.1.1{r0}(i32), param.number{r0}(i16)
@@ -17,11 +17,11 @@ printUint_Pi16:
         rl   r1
         sbc  r1, r1
         sbc  r0, r0
-        ; call printUint@i32[t.1.1{r0}]
+        ; call printUint_Pi32[t.1.1{r0}]
         call printUint_Pi32
         ret
 
-        ; void printIntLf@bool
+        ; void printIntLf_Pbool
         ; arg value (bool): r0
 printIntLf_Pbool:
         ; save clobbered non-volatile registers
@@ -31,20 +31,20 @@ printIntLf_Pbool:
         ; 122:2 if value
         ; branch param.value{r0} equals 0: if_1_end
         cp   r0, #%00
-        jr   eq, if__1__end
+        jr   eq, if_1_end
         ; const number.3{r8}, 1
         ld   r8, #%01
-if__1__end:
+if_1_end:
         ; cast t.2.1{r0}(i16), number.2{r8}(u8)
         ld   r1, r8
         ld   r0, #0
-        ; call printIntLf@i16[t.2.1{r0}]
+        ; call printIntLf_Pi16[t.2.1{r0}]
         call printIntLf_Pi16
         ; restore clobbered non-volatile registers
         pop  r8
         ret
 
-        ; void printIntLf@i16
+        ; void printIntLf_Pi16
         ; arg number (i16): r0
 printIntLf_Pi16:
         ; save clobbered non-volatile registers
@@ -55,28 +55,28 @@ printIntLf_Pi16:
         ld   r8, r0
         ; branch param.number{r8} gteq 0: if_2_end
         cp   r8, #%00
-        jr   gt, if__2__end
+        jr   gt, if_2_end
         jr   ne, .gt1
         cp   r9, #%00
-        jr   uge, if__2__end
+        jr   uge, if_2_end
 .gt1:
         ; const arg.0.0{r0}, 45
         ld   r0, #%2d
-        ; call printChar@u8[arg.0.0{r0}]
+        ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
         ; neg number.2{r8}, param.number{r8}
         com  r8
         com  r9
         incw r8
-if__2__end:
+if_2_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
         ld   r1, r9
-        ; call printUint@i16[number.1{r0}]
+        ; call printUint_Pi16[number.1{r0}]
         call printUint_Pi16
         ; const arg.2.0{r0}, 13
         ld   r0, #%0d
-        ; call printChar@u8[arg.2.0{r0}]
+        ; call printChar_Pu8[arg.2.0{r0}]
         call printChar_Pu8
         ; restore clobbered non-volatile registers
         pop  r9
@@ -95,8 +95,8 @@ main:
         ; const t.4.1{r0}, [string-0]
         ld   r0, #hi(string_0)
         ld   r1, #lo(string_0)
-        ; call printString@@u8[t.4.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.4.1{r0}]
+        call printString_P_pu8
         ; const a.1{r8}, 1
         ld   r8, #%00
         ld   r9, #%01
@@ -115,7 +115,7 @@ main:
 .true2:
         ld   r0, #1
 .2:
-        ; call printIntLf@bool[t.5.1{r0}]
+        ; call printIntLf_Pbool[t.5.1{r0}]
         call printIntLf_Pbool
         ; lt t.6.1{r0}, b.1{r10}, a.1{r8}
         cp   r10, r8
@@ -129,13 +129,13 @@ main:
 .true3:
         ld   r0, #1
 .3:
-        ; call printIntLf@bool[t.6.1{r0}]
+        ; call printIntLf_Pbool[t.6.1{r0}]
         call printIntLf_Pbool
         ; const t.7.1{r0}, [string-1]
         ld   r0, #hi(string_1)
         ld   r1, #lo(string_1)
-        ; call printString@@u8[t.7.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.7.1{r0}]
+        call printString_P_pu8
         ; const c.1{r12}, 0
         ld   r12, #%00
         ; const d.1{r13}, 128
@@ -148,7 +148,7 @@ main:
 .true4:
         ld   r0, #1
 .4:
-        ; call printIntLf@bool[t.8.1{r0}]
+        ; call printIntLf_Pbool[t.8.1{r0}]
         call printIntLf_Pbool
         ; lt t.9.1{r0}, d.1{r13}, c.1{r12}
         cp   r13, r12
@@ -158,13 +158,13 @@ main:
 .true5:
         ld   r0, #1
 .5:
-        ; call printIntLf@bool[t.9.1{r0}]
+        ; call printIntLf_Pbool[t.9.1{r0}]
         call printIntLf_Pbool
         ; const t.10.1{r0}, [string-2]
         ld   r0, #hi(string_2)
         ld   r1, #lo(string_2)
-        ; call printString@@u8[t.10.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.10.1{r0}]
+        call printString_P_pu8
         ; lteq t.11.1{r0}, a.1{r8}, b.1{r10}
         cp   r8, r10
         jr   lt, .true6
@@ -177,7 +177,7 @@ main:
 .true6:
         ld   r0, #1
 .6:
-        ; call printIntLf@bool[t.11.1{r0}]
+        ; call printIntLf_Pbool[t.11.1{r0}]
         call printIntLf_Pbool
         ; lteq t.12.1{r0}, b.1{r10}, a.1{r8}
         cp   r10, r8
@@ -191,13 +191,13 @@ main:
 .true7:
         ld   r0, #1
 .7:
-        ; call printIntLf@bool[t.12.1{r0}]
+        ; call printIntLf_Pbool[t.12.1{r0}]
         call printIntLf_Pbool
         ; const t.13.1{r0}, [string-3]
         ld   r0, #hi(string_3)
         ld   r1, #lo(string_3)
-        ; call printString@@u8[t.13.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.13.1{r0}]
+        call printString_P_pu8
         ; lteq t.14.1{r0}, c.1{r12}, d.1{r13}
         cp   r12, r13
         jr   ule, .true8
@@ -206,7 +206,7 @@ main:
 .true8:
         ld   r0, #1
 .8:
-        ; call printIntLf@bool[t.14.1{r0}]
+        ; call printIntLf_Pbool[t.14.1{r0}]
         call printIntLf_Pbool
         ; lteq t.15.1{r0}, d.1{r13}, c.1{r12}
         cp   r13, r12
@@ -216,13 +216,13 @@ main:
 .true9:
         ld   r0, #1
 .9:
-        ; call printIntLf@bool[t.15.1{r0}]
+        ; call printIntLf_Pbool[t.15.1{r0}]
         call printIntLf_Pbool
         ; const t.16.1{r0}, [string-4]
         ld   r0, #hi(string_4)
         ld   r1, #lo(string_4)
-        ; call printString@@u8[t.16.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.16.1{r0}]
+        call printString_P_pu8
         ; equals t.17.1{r0}, a.1{r8}, b.1{r10}
         cp   r8, r10
         jr   ne, .ne10
@@ -233,7 +233,7 @@ main:
 .ne10:
         ld   r0, #0
 .10:
-        ; call printIntLf@bool[t.17.1{r0}]
+        ; call printIntLf_Pbool[t.17.1{r0}]
         call printIntLf_Pbool
         ; equals t.18.1{r0}, b.1{r10}, a.1{r8}
         cp   r10, r8
@@ -245,13 +245,13 @@ main:
 .ne11:
         ld   r0, #0
 .11:
-        ; call printIntLf@bool[t.18.1{r0}]
+        ; call printIntLf_Pbool[t.18.1{r0}]
         call printIntLf_Pbool
         ; const t.19.1{r0}, [string-5]
         ld   r0, #hi(string_5)
         ld   r1, #lo(string_5)
-        ; call printString@@u8[t.19.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.19.1{r0}]
+        call printString_P_pu8
         ; notequals t.20.1{r0}, a.1{r8}, b.1{r10}
         cp   r8, r10
         jr   ne, .ne12
@@ -262,7 +262,7 @@ main:
 .ne12:
         ld   r0, #1
 .12:
-        ; call printIntLf@bool[t.20.1{r0}]
+        ; call printIntLf_Pbool[t.20.1{r0}]
         call printIntLf_Pbool
         ; notequals t.21.1{r0}, b.1{r10}, a.1{r8}
         cp   r10, r8
@@ -274,13 +274,13 @@ main:
 .ne13:
         ld   r0, #1
 .13:
-        ; call printIntLf@bool[t.21.1{r0}]
+        ; call printIntLf_Pbool[t.21.1{r0}]
         call printIntLf_Pbool
         ; const t.22.1{r0}, [string-6]
         ld   r0, #hi(string_6)
         ld   r1, #lo(string_6)
-        ; call printString@@u8[t.22.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.22.1{r0}]
+        call printString_P_pu8
         ; gteq t.23.1{r0}, a.1{r8}, b.1{r10}
         cp   r8, r10
         jr   gt, .true14
@@ -293,7 +293,7 @@ main:
 .true14:
         ld   r0, #1
 .14:
-        ; call printIntLf@bool[t.23.1{r0}]
+        ; call printIntLf_Pbool[t.23.1{r0}]
         call printIntLf_Pbool
         ; gteq t.24.1{r0}, b.1{r10}, a.1{r8}
         cp   r10, r8
@@ -307,13 +307,13 @@ main:
 .true15:
         ld   r0, #1
 .15:
-        ; call printIntLf@bool[t.24.1{r0}]
+        ; call printIntLf_Pbool[t.24.1{r0}]
         call printIntLf_Pbool
         ; const t.25.1{r0}, [string-7]
         ld   r0, #hi(string_7)
         ld   r1, #lo(string_7)
-        ; call printString@@u8[t.25.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.25.1{r0}]
+        call printString_P_pu8
         ; gteq t.26.1{r0}, c.1{r12}, d.1{r13}
         cp   r12, r13
         jr   uge, .true16
@@ -322,7 +322,7 @@ main:
 .true16:
         ld   r0, #1
 .16:
-        ; call printIntLf@bool[t.26.1{r0}]
+        ; call printIntLf_Pbool[t.26.1{r0}]
         call printIntLf_Pbool
         ; gteq t.27.1{r0}, d.1{r13}, c.1{r12}
         cp   r13, r12
@@ -332,13 +332,13 @@ main:
 .true17:
         ld   r0, #1
 .17:
-        ; call printIntLf@bool[t.27.1{r0}]
+        ; call printIntLf_Pbool[t.27.1{r0}]
         call printIntLf_Pbool
         ; const t.28.1{r0}, [string-8]
         ld   r0, #hi(string_8)
         ld   r1, #lo(string_8)
-        ; call printString@@u8[t.28.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.28.1{r0}]
+        call printString_P_pu8
         ; gt t.29.1{r0}, a.1{r8}, b.1{r10}
         cp   r8, r10
         jr   gt, .true18
@@ -351,7 +351,7 @@ main:
 .true18:
         ld   r0, #1
 .18:
-        ; call printIntLf@bool[t.29.1{r0}]
+        ; call printIntLf_Pbool[t.29.1{r0}]
         call printIntLf_Pbool
         ; gt t.30.1{r0}, b.1{r10}, a.1{r8}
         cp   r10, r8
@@ -365,13 +365,13 @@ main:
 .true19:
         ld   r0, #1
 .19:
-        ; call printIntLf@bool[t.30.1{r0}]
+        ; call printIntLf_Pbool[t.30.1{r0}]
         call printIntLf_Pbool
         ; const t.31.1{r0}, [string-9]
         ld   r0, #hi(string_9)
         ld   r1, #lo(string_9)
-        ; call printString@@u8[t.31.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.31.1{r0}]
+        call printString_P_pu8
         ; gt t.32.1{r0}, c.1{r12}, d.1{r13}
         cp   r12, r13
         jr   ugt, .true20
@@ -380,7 +380,7 @@ main:
 .true20:
         ld   r0, #1
 .20:
-        ; call printIntLf@bool[t.32.1{r0}]
+        ; call printIntLf_Pbool[t.32.1{r0}]
         call printIntLf_Pbool
         ; gt t.33.1{r0}, d.1{r13}, c.1{r12}
         cp   r13, r12
@@ -390,7 +390,7 @@ main:
 .true21:
         ld   r0, #1
 .21:
-        ; call printIntLf@bool[t.33.1{r0}]
+        ; call printIntLf_Pbool[t.33.1{r0}]
         call printIntLf_Pbool
         ; restore clobbered non-volatile registers
         pop  r13
@@ -401,8 +401,8 @@ main:
         pop  r8
         ret
 
-        ; void printString@@u8
-printString_P_Pu8:
+        ; void printString_P_pu8
+printString_P_pu8:
         ld   r2, r0
         ld   r3, r1
         jr   .loop
@@ -415,7 +415,7 @@ printString_P_Pu8:
         jr   nz, .print
         ret
 
-        ; void printChar@u8
+        ; void printChar_Pu8
 printChar_Pu8:
         cp    r0, #%0a
         jr    ne, .1
@@ -424,7 +424,7 @@ printChar_Pu8:
         ld    %15, r0
         jp    %0818
 
-        ; void printUint@i32
+        ; void printUint_Pi32
 printUint_Pi32:
         ld   r4, #1
         ld   r5, #%28

@@ -18,15 +18,17 @@ public final class IRGenerator {
 	private static final String ADDR_PREFIX = "a.";
 
 	@NotNull
-	public static IRProgram convert(@NotNull Program program, @NotNull Type pointerIntType) {
+	public static IRProgram convert(@NotNull Program program, @NotNull Type pointerIntType, @NotNull TypeChecker.CanonicalNameProvider canonicalNameProvider) {
 		Utils.assertTrue(pointerIntType.isInt());
 
-		final IRGenerator generator = new IRGenerator(pointerIntType);
+		final String mainName = canonicalNameProvider.canonicalFunctionName("main", List.of());
+		final IRGenerator generator = new IRGenerator(pointerIntType, mainName);
 		return generator.convertProgram(program);
 	}
 
 	private final Map<Type, TypeInfo> types = new HashMap<>();
 	private final Type pointerIntType;
+	private final String mainName;
 
 	private int labelIndex;
 
@@ -37,8 +39,9 @@ public final class IRGenerator {
 	private IRVarInfos globalVars;
 	private Set<IRVar> localVarsCantBeRegister;
 
-	private IRGenerator(Type pointerIntType) {
+	private IRGenerator(Type pointerIntType, String mainName1) {
 		this.pointerIntType = pointerIntType;
+		mainName = mainName1;
 	}
 
 	@NotNull
@@ -87,7 +90,7 @@ public final class IRGenerator {
 		instructions = new ArrayList<>();
 		try {
 			functionRetLabel = name + "_ret";
-			if (name.equals("main")) {
+			if (name.equals(mainName)) {
 				writeInit(declarations);
 			}
 

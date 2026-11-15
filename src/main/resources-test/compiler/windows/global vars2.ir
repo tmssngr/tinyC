@@ -1,13 +1,13 @@
-printString@@u8:
+_printString_P_pu8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
 
-	call length = strlen@@u8[str] -> i64
-	call printStringLength@@u8@i64[str, length]
-printString@@u8_ret:
+	call length = _strlen_P_pu8[str] -> i64
+	call _printStringLength_P_pu8_Pi64[str, length]
+_printString_P_pu8_ret:
 
-strlen@@u8:
+_strlen_P_pu8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
@@ -26,10 +26,10 @@ for_1_continue:
 for_1_break:
 	; 76:9 return length
 	ret length
-	jump strlen@@u8_ret
-strlen@@u8_ret:
+	jump _strlen_P_pu8_ret
+_strlen_P_pu8_ret:
 
-next:
+_next:
  Local variables
 	var 0: copy (u8/1)
 	var 1: a.1 (u8*/8)
@@ -47,8 +47,8 @@ next:
 	store [a.5], t.2
 	; 8:9 return copy
 	ret copy
-	jump next_ret
-next_ret:
+	jump _next_ret
+_next_ret:
 
 main:
  Local variables
@@ -66,8 +66,8 @@ main:
 	; 12:2 while true
 while_2:
 	const t.3, [string-0]
-	call printString@@u8[t.3]
-	call n = next[] -> u8
+	call _printString_P_pu8[t.3]
+	call n = _next[] -> u8
 	; 15:3 if n == 3
 	branch n equals 3: main_ret, if_3_end
 if_3_end:
@@ -75,11 +75,11 @@ if_3_end:
 	branch n gteq 2: while_2, if_4_then
 if_4_then:
 	const t.4, [string-1]
-	call printString@@u8[t.4]
+	call _printString_P_pu8[t.4]
 	jump while_2
 main_ret:
 
-printStringLength@@u8@i64:
+_printStringLength_P_pu8_Pi64:
 	mov     rdi, rsp
 	
 	mov     r8, rdx

@@ -6,7 +6,7 @@ printBoard:
 	var 3: t.3 (i16/2)
 	var 4: t.4 (u8*/2)
 
-	call printChar@u8[124]
+	call printChar_Pu8[124]
 	const i, 0
 	; 11:2 for i < 30
 for_1:
@@ -19,16 +19,16 @@ for_1_body:
 	load t.1, [t.2]
 	branch t.1 notequals 0: if_2_else, if_2_then
 if_2_then:
-	call printChar@u8[32]
+	call printChar_Pu8[32]
 	jump for_1_continue
 if_2_else:
-	call printChar@u8[42]
+	call printChar_Pu8[42]
 for_1_continue:
 	add i, 1
 	jump for_1
 for_1_break:
 	const t.4, [string-0]
-	call printString@@u8[t.4]
+	call printString_P_pu8[t.4]
 printBoard_ret:
 
 main:
@@ -127,7 +127,7 @@ for_4_continue:
 	jump for_4
 main_ret:
 
-printString@@u8:
+printString_P_pu8:
 	ld   r2, r0
 	ld   r3, r1
 	jr   .loop
@@ -140,7 +140,7 @@ printString@@u8:
 	jr   nz, .print
 	ret
 
-printChar@u8:
+printChar_Pu8:
 	cp    r0, #%0a
 	jr    ne, .1
 	ld    r0, #%0d

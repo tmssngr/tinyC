@@ -1,16 +1,16 @@
 u8 global;
 
-void printStringLength@@u8@i64(u8* str, i64 length) asm {
+void _printStringLength_P_pu8_Pi64(u8* str, i64 length) asm {
 }
 
-void printString@@u8(u8* str) {
+void _printString_P_pu8(u8* str) {
 	i64 length;
 
-	length = strlen@@u8(str);
-	printStringLength@@u8@i64(str, length);
+	length = _strlen_P_pu8(str);
+	_printStringLength_P_pu8_Pi64(str, length);
 }
 
-i64 strlen@@u8(u8* str) {
+i64 _strlen_P_pu8(u8* str) {
 	i64 length;
 
 	length = 0;
@@ -20,7 +20,7 @@ i64 strlen@@u8(u8* str) {
 	return length;
 }
 
-u8 next() {
+u8 _next() {
 	u8 copy;
 
 	copy = global;
@@ -32,13 +32,13 @@ void main() {
 	u8 n;
 
 	while (true) {
-		printString@@u8("loop\n");
-		n = next();
+		_printString_P_pu8("loop\n");
+		n = _next();
 		if (n == 3) {
 			break;
 		}
 		if (n < 2) {
-			printString@@u8("<2\n");
+			_printString_P_pu8("<2\n");
 		}
 	}
 }

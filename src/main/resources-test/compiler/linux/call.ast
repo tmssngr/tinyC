@@ -1,13 +1,13 @@
 u8 i;
 
-void printStringLength@@u8@i64(u8* str, i64 length) asm {
+void _printStringLength@@u8@i64(u8* str, i64 length) asm {
 }
 
-void printChar@u8(u8 chr) {
-	printStringLength@@u8@u8(&chr, 1);
+void _printChar@u8(u8 chr) {
+	_printStringLength@@u8@u8(&chr, 1);
 }
 
-void printUint@i64(i64 number) {
+void _printUint@i64(i64 number) {
 	u8* buffer[20];
 	u8 pos;
 	i64 remainder;
@@ -24,39 +24,39 @@ void printUint@i64(i64 number) {
 			break;
 		}
 	}
-	printStringLength@@u8@u8(&buffer[pos as i64], 20 - pos);
+	_printStringLength@@u8@u8(&buffer[pos as i64], 20 - pos);
 }
 
-void printIntLf@u8(u8 number) {
-	printIntLf@i64(number as i64);
+void _printIntLf@u8(u8 number) {
+	_printIntLf@i64(number as i64);
 }
 
-void printIntLf@i64(i64 number) {
+void _printIntLf@i64(i64 number) {
 	if (number < 0) {
-		printChar@u8(45);
+		_printChar@u8(45);
 		number = -number;
 	}
-	printUint@i64(number);
-	printChar@u8(10);
+	_printUint@i64(number);
+	_printChar@u8(10);
 }
 
-void printStringLength@@u8@u8(u8* str, u8 length) {
-	printStringLength@@u8@i64(str, length as i64);
+void _printStringLength@@u8@u8(u8* str, u8 length) {
+	_printStringLength@@u8@i64(str, length as i64);
 }
 
-void main() {
-	doPrint@u8@u8@u8@u8@u8(next(), next(), next(), next(), next());
+void _main() {
+	_doPrint@u8@u8@u8@u8@u8(_next(), _next(), _next(), _next(), _next());
 }
 
-u8 next() {
+u8 _next() {
 	i = i + 1;
 	return i;
 }
 
-void doPrint@u8@u8@u8@u8@u8(u8 a, u8 b, u8 c, u8 d, u8 e) {
-	printIntLf@u8(a);
-	printIntLf@u8(b);
-	printIntLf@u8(c);
-	printIntLf@u8(d);
-	printIntLf@u8(e);
+void _doPrint@u8@u8@u8@u8@u8(u8 a, u8 b, u8 c, u8 d, u8 e) {
+	_printIntLf@u8(a);
+	_printIntLf@u8(b);
+	_printIntLf@u8(c);
+	_printIntLf@u8(d);
+	_printIntLf@u8(e);
 }

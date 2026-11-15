@@ -13,9 +13,9 @@ digraph program {
 		BasicBlock_1_if__2__end -> BasicBlock_1_if__3__then;
 		BasicBlock_1_main_dno__critical__edge__5 [label="main_dno__critical__edge__5\ljump while__1",shape=box];
 		BasicBlock_1_main_dno__critical__edge__5 -> BasicBlock_1_while__1;
-		BasicBlock_1_if__3__then [label="if__3__then\lconst t_d4_d1, [string-1]\lcall printString_A_Au8[t_d4_d1]\ljump while__1",shape=box];
+		BasicBlock_1_if__3__then [label="if__3__then\lconst t_d4_d1, [string-1]\lcall printString__P__pu8[t_d4_d1]\ljump while__1",shape=box];
 		BasicBlock_1_if__3__then -> BasicBlock_1_while__1;
-		BasicBlock_1_while__1 [label="while__1\lconst t_d3_d1, [string-0]\lcall printString_A_Au8[t_d3_d1]\lcall n_d1 = next[] -> u8\lbranch n_d1 equals 3: main__ret, if__2__end\ljump if__2__end",shape=box];
+		BasicBlock_1_while__1 [label="while__1\lconst t_d3_d1, [string-0]\lcall printString__P__pu8[t_d3_d1]\lcall n_d1 = next[] -> u8\lbranch n_d1 equals 3: main__ret, if__2__end\ljump if__2__end",shape=box];
 		BasicBlock_1_while__1 -> BasicBlock_1_main__ret;
 		BasicBlock_1_while__1 -> BasicBlock_1_if__2__end [label="(n.1)"];
 		BasicBlock_1_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];

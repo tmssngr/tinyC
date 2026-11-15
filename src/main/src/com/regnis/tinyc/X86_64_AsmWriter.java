@@ -23,8 +23,8 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 
 	private X86StackOffsets stackOffsets;
 
-	protected X86_64_AsmWriter(@NotNull BufferedWriter writer, @NotNull X86Registers registers) {
-		super(writer);
+	protected X86_64_AsmWriter(@NotNull BufferedWriter writer, @NotNull X86Registers registers, @NotNull TypeChecker.CanonicalNameProvider canonicalNameProvider) {
+		super(writer, canonicalNameProvider);
 		this.registers = registers;
 	}
 
@@ -40,7 +40,7 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 		final int rspOffset = stackOffsets.getRspOffset();
 		final int callArgSpace = stackOffsets.getCallArgSpace();
 		writeVarOffsetAsComments(localVars);
-		writeLabel(escapeLabel(function.name()));
+		writeLabel(function.name());
 		writeFunctionProlog(rspOffset, nonvolatileRegistersToPushPop, callArgSpace);
 
 		writeInstructions(instructions);
@@ -202,7 +202,7 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 		final String leftRegName = getRegName(leftReg, leftType);
 		final String rightRegName = getRegName(rightReg, leftType);
 		writeIndented("cmp " + leftRegName + ", " + rightRegName);
-		writeIndented(command + " " + escapeLabel(targetLabel));
+		writeIndented(command + " " + targetLabel);
 	}
 
 	@Override
@@ -211,12 +211,12 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 
 		final String leftRegName = getRegName(leftReg, leftType);
 		writeIndented("cmp " + leftRegName + ", " + rightValue);
-		writeIndented(command + " " + escapeLabel(targetLabel));
+		writeIndented(command + " " + targetLabel);
 	}
 
 	@Override
 	protected void writeCall(String name) throws IOException {
-		writeIndented("call " + escapeLabel(name));
+		writeIndented("call " + name);
 	}
 
 	@Override
@@ -308,13 +308,7 @@ public abstract class X86_64_AsmWriter extends AsmWriter {
 
 	@Override
 	protected void writeJump(String label) throws IOException {
-		writeIndented("jmp " + escapeLabel(label));
-	}
-
-	@NotNull
-	@Override
-	protected String escapeLabel(String label) {
-		return "_" + label;
+		writeIndented("jmp " + label);
 	}
 
 	protected final void writeGlobalVariables(List<IRVarDef> globalVariables) throws IOException {

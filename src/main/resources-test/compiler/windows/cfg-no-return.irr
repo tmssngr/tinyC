@@ -1,4 +1,4 @@
-main:
+_main:
 	const i.1{r0}, 0
 	; 3:2 while true
 while_1:

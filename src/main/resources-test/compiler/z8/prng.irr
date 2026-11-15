@@ -1,31 +1,31 @@
-printUint@i16:
+printUint_Pi16:
  Local variables
 	arg 0: number (i16/2)
 
 	cast t.1.1{r0}(i32), param.number{r0}(i16)
-	call printUint@i32[t.1.1{r0}]
+	call printUint_Pi32[t.1.1{r0}]
 
-printIntLf@u8:
+printIntLf_Pu8:
  Local variables
 	arg 0: number (u8/1)
 
 	cast t.1.1{r0}(i16), param.number{r0}(u8)
-	call printIntLf@i16[t.1.1{r0}]
+	call printIntLf_Pi16[t.1.1{r0}]
 
-printIntLf@i16:
+printIntLf_Pi16:
  Local variables
 	arg 0: number (i16/2)
 
 	move param.number{r8}, number{r0}
 	branch param.number{r8} gteq 0: if_1_end
 	const arg.0.0{r0}, 45
-	call printChar@u8[arg.0.0{r0}]
+	call printChar_Pu8[arg.0.0{r0}]
 	neg number.2{r8}, param.number{r8}
 if_1_end:
 	move number.1{r0}, number.1{r8}
-	call printUint@i16[number.1{r0}]
+	call printUint_Pi16[number.1{r0}]
 	const arg.2.0{r0}, 13
-	call printChar@u8[arg.2.0{r0}]
+	call printChar_Pu8[arg.2.0{r0}]
 
 randomU8:
 	; 60:21 return (u8)
@@ -34,20 +34,20 @@ randomU8:
 
 main:
 	const arg.0.0{r0}, 7439742
-	call initRandom@i32[arg.0.0{r0}]
+	call initRandom_Pi32[arg.0.0{r0}]
 	const i.1{r8}, 0
 	; 6:2 for i < 50
 	jump for_2
 for_2_body:
 	call r.1{r0} = randomU8[] -> u8
-	call printIntLf@u8[r.1{r0}]
+	call printIntLf_Pu8[r.1{r0}]
 	move i.3{r0}, i.2{r8}
 	add i.3{r0}, 1
 	move i.2{r8}, i.3{r0}
 for_2:
 	branch i.2{r8} lt 50: for_2_body
 
-printChar@u8:
+printChar_Pu8:
 	cp    r0, #%0a
 	jr    ne, .1
 	ld    r0, #%0d
@@ -55,7 +55,7 @@ printChar@u8:
 	ld    %15, r0
 	jp    %0818
 
-printUint@i32:
+printUint_Pi32:
 	ld   r4, #1
 	ld   r5, #%28
 	ld   r6, #8
@@ -140,7 +140,7 @@ printUint@i32:
 	djnz r6, .pop
 	ret
 
-initRandom@i32:
+initRandom_Pi32:
 	ld   %74, r0
 	ld   %75, r1
 	ld   %76, r2

@@ -3,18 +3,18 @@ u8 one;
 u8 two;
 u8 threeFour;
 
-void printStringLength@@u8@i64(u8* str, i64 length) asm {
+void _printStringLength@@u8@i64(u8* str, i64 length) asm {
 }
 
-void printChar@u8(u8 chr) {
-	printStringLength@@u8@u8(&chr, 1);
+void _printChar@u8(u8 chr) {
+	_printStringLength@@u8@u8(&chr, 1);
 }
 
-void printUint@u8(u8 number) {
-	printUint@i64(number as i64);
+void _printUint@u8(u8 number) {
+	_printUint@i64(number as i64);
 }
 
-void printUint@i64(i64 number) {
+void _printUint@i64(i64 number) {
 	u8* buffer[20];
 	u8 pos;
 	i64 remainder;
@@ -31,28 +31,28 @@ void printUint@i64(i64 number) {
 			break;
 		}
 	}
-	printStringLength@@u8@u8(&buffer[pos as i64], 20 - pos);
+	_printStringLength@@u8@u8(&buffer[pos as i64], 20 - pos);
 }
 
-void printStringLength@@u8@u8(u8* str, u8 length) {
-	printStringLength@@u8@i64(str, length as i64);
+void _printStringLength@@u8@u8(u8* str, u8 length) {
+	_printStringLength@@u8@i64(str, length as i64);
 }
 
-i64 unusedArgs@u8@bool@u8@u8(u8 a, bool b, u8 c, u8 d) {
+i64 _unusedArgs@u8@bool@u8@u8(u8 a, bool b, u8 c, u8 d) {
 	return c as i64;
 }
 
-void main() {
+void _main() {
 	i64 c;
 	u8* onePtr;
 	u8* twoPtr;
 
-	c = unusedArgs@u8@bool@u8@u8(1, true, 2, 3);
-	printChar@u8(zero);
+	c = _unusedArgs@u8@bool@u8@u8(1, true, 2, 3);
+	_printChar@u8(zero);
 	onePtr = &one;
-	printChar@u8(*onePtr);
+	_printChar@u8(*onePtr);
 	twoPtr = &two;
-	printChar@u8(twoPtr[0]);
-	printUint@u8(threeFour);
-	printChar@u8(10);
+	_printChar@u8(twoPtr[0]);
+	_printUint@u8(threeFour);
+	_printChar@u8(10);
 }

@@ -3,17 +3,17 @@ u8 one;
 u8 two;
 u8 threeFour;
 
-void printChar@u8(u8 chr) asm {
+void printChar_Pu8(u8 chr) asm {
 }
 
-void printUint@u8(u8 number) {
-	printUint@i32(number as i32);
+void printUint_Pu8(u8 number) {
+	printUint_Pi32(number as i32);
 }
 
-void printUint@i32(i32 number) asm {
+void printUint_Pi32(i32 number) asm {
 }
 
-i64 unusedArgs@u8@bool@u8@u8(u8 a, bool b, u8 c, u8 d) {
+i64 unusedArgs_Pu8_Pbool_Pu8_Pu8(u8 a, bool b, u8 c, u8 d) {
 	return c as i64;
 }
 
@@ -22,12 +22,12 @@ void main() {
 	u8* onePtr;
 	u8* twoPtr;
 
-	c = unusedArgs@u8@bool@u8@u8(1, true, 2, 3);
-	printChar@u8(zero);
+	c = unusedArgs_Pu8_Pbool_Pu8_Pu8(1, true, 2, 3);
+	printChar_Pu8(zero);
 	onePtr = &one;
-	printChar@u8(*onePtr);
+	printChar_Pu8(*onePtr);
 	twoPtr = &two;
-	printChar@u8(twoPtr[0]);
-	printUint@u8(threeFour);
-	printChar@u8(10);
+	printChar_Pu8(twoPtr[0]);
+	printUint_Pu8(threeFour);
+	printChar_Pu8(10);
 }

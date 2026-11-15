@@ -1,37 +1,37 @@
-void printChar@u8(u8 chr) asm {
+void printChar_Pu8(u8 chr) asm {
 }
 
-void printUint@i16(i16 number) {
-	printUint@i32(number as i32);
+void printUint_Pi16(i16 number) {
+	printUint_Pi32(number as i32);
 }
 
-void printUint@i32(i32 number) asm {
+void printUint_Pi32(i32 number) asm {
 }
 
-void printIntLf@i16(i16 number) {
+void printIntLf_Pi16(i16 number) {
 	if (number < 0) {
-		printChar@u8(45);
+		printChar_Pu8(45);
 		number = -number;
 	}
-	printUint@i16(number);
-	printChar@u8(13);
+	printUint_Pi16(number);
+	printChar_Pu8(13);
 }
 
-i16 printAndSum@i16@i16@i16@i16@i16@i16@i16@i16(i16 a, i16 b, i16 c, i16 d, i16 e, i16 f, i16 g, i16 h) {
-	printIntLf@i16(a);
-	printIntLf@i16(b);
-	printIntLf@i16(c);
-	printIntLf@i16(d);
-	printIntLf@i16(e);
-	printIntLf@i16(f);
-	printIntLf@i16(g);
-	printIntLf@i16(h);
+i16 printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16(i16 a, i16 b, i16 c, i16 d, i16 e, i16 f, i16 g, i16 h) {
+	printIntLf_Pi16(a);
+	printIntLf_Pi16(b);
+	printIntLf_Pi16(c);
+	printIntLf_Pi16(d);
+	printIntLf_Pi16(e);
+	printIntLf_Pi16(f);
+	printIntLf_Pi16(g);
+	printIntLf_Pi16(h);
 	return ((((((a + b) + c) + d) + e) + f) + g) + h;
 }
 
 void main() {
 	i16 sum;
 
-	sum = printAndSum@i16@i16@i16@i16@i16@i16@i16@i16(1, 2, 3, 4, 5, 6, 7, 8);
-	printIntLf@i16(sum);
+	sum = printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16(1, 2, 3, 4, 5, 6, 7, 8);
+	printIntLf_Pi16(sum);
 }

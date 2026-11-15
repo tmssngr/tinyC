@@ -1,4 +1,4 @@
-printChar@u8:
+_printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 
@@ -6,16 +6,16 @@ printChar@u8:
 	store [memVarAddr{r7}], chr{r1}
 	move t.1.1{r1}, t.1.1{r7}
 	const arg.0.1{r2}, 1
-	call printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
+	call _printStringLength@@u8@u8[t.1.1{r1}, arg.0.1{r2}]
 
-printUint@u8:
+_printUint@u8:
  Local variables
 	arg 0: number (u8/1)
 
 	cast t.1.1{r1}(i64), number{r1}(u8)
-	call printUint@i64[t.1.1{r1}]
+	call _printUint@i64[t.1.1{r1}]
 
-printUint@i64:
+_printUint@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
@@ -45,17 +45,17 @@ while_1:
 	const t.11.1{r0}, 20
 	move t.10.1{r2}, t.11.1{r0}
 	sub t.10.1{r2}, pos.3{r6}
-	call printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
+	call _printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
 
-printStringLength@@u8@u8:
+_printStringLength@@u8@u8:
  Local variables
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
 
 	cast t.2.1{r2}(i64), length{r2}(u8)
-	call printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
+	call _printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
 
-unusedArgs@u8@bool@u8@u8:
+_unusedArgs@u8@bool@u8@u8:
  Local variables
 	arg 0: a (u8/1)
 	arg 1: b (bool/1)
@@ -65,7 +65,7 @@ unusedArgs@u8@bool@u8@u8:
 	; 9:14 return (i64)
 	cast t.4.1{r0}(i64), c{r3}(u8)
 
-main:
+_main:
 	; begin initialize global variables
 	const t.3.1{r6}, 48
 	addrof a.4.1{r0}, zero
@@ -84,25 +84,25 @@ main:
 	const arg.0.0{r1}, 1
 	const arg.0.2{r3}, 2
 	const arg.0.3{r4}, 3
-	call _ = unusedArgs@u8@bool@u8@u8[arg.0.0{r1}, t.11.1{r2}, arg.0.2{r3}, arg.0.3{r4}] -> i64
+	call _ = _unusedArgs@u8@bool@u8@u8[arg.0.0{r1}, t.11.1{r2}, arg.0.2{r3}, arg.0.3{r4}] -> i64
 	addrof a.12.1{r6}, zero
 	load t.13.1{r1}, [a.12.1{r6}]
-	call printChar@u8[t.13.1{r1}]
+	call _printChar@u8[t.13.1{r1}]
 	addrof onePtr.1{r6}, one
 	load t.14.1{r1}, [onePtr.1{r6}]
-	call printChar@u8[t.14.1{r1}]
+	call _printChar@u8[t.14.1{r1}]
 	addrof twoPtr.1{r6}, two
 	const t.17.1{r0}, 0
 	add t.16.2{r6}, t.17.1{r0}
 	load t.15.1{r1}, [t.16.2{r6}]
-	call printChar@u8[t.15.1{r1}]
+	call _printChar@u8[t.15.1{r1}]
 	addrof a.18.1{r6}, threeFour
 	load t.19.1{r1}, [a.18.1{r6}]
-	call printUint@u8[t.19.1{r1}]
+	call _printUint@u8[t.19.1{r1}]
 	const arg.5.0{r1}, 10
-	call printChar@u8[arg.5.0{r1}]
+	call _printChar@u8[arg.5.0{r1}]
 
-printStringLength@@u8@i64:
+_printStringLength@@u8@i64:
 	mov     rdi, rsp
 	
 	mov     r8, rdx

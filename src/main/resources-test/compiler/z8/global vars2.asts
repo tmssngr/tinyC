@@ -1,6 +1,6 @@
 u8 global;
 
-void printString@@u8(u8* str) asm {
+void printString_P_pu8(u8* str) asm {
 }
 
 u8 next() {
@@ -15,13 +15,13 @@ void main() {
 	u8 n;
 
 	while (true) {
-		printString@@u8("loop\n");
+		printString_P_pu8("loop\n");
 		n = next();
 		if (n == 3) {
 			break;
 		}
 		if (n < 2) {
-			printString@@u8("<2\n");
+			printString_P_pu8("<2\n");
 		}
 	}
 }

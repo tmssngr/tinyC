@@ -1,4 +1,4 @@
-main:
+_main:
  Local variables
 	var 0: i (u8/1)
 
@@ -7,5 +7,5 @@ main:
 while_1:
 	add i, 1
 	jump while_1
-main_ret:
+_main_ret:
 

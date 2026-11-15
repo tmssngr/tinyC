@@ -7,7 +7,7 @@
         srp  #%20
         jr   main
 
-        ; void printUint@u8
+        ; void printUint_Pu8
         ; arg number (u8): r0
 printUint_Pu8:
         ; cast t.1.1{r0}(i32), param.number{r0}(u8)
@@ -15,11 +15,11 @@ printUint_Pu8:
         ld   r2, #0
         ld   r1, #0
         ld   r0, #0
-        ; call printUint@i32[t.1.1{r0}]
+        ; call printUint_Pi32[t.1.1{r0}]
         call printUint_Pi32
         ret
 
-        ; i64 unusedArgs@u8@bool@u8@u8
+        ; i64 unusedArgs_Pu8_Pbool_Pu8_Pu8
         ; arg a (u8): r0
         ; arg b (bool): r1
         ; arg c (u8): r2
@@ -82,21 +82,21 @@ main:
         ld   r2, #%02
         ; const arg.0.3{r3}, 3
         ld   r3, #%03
-        ; call _ = unusedArgs@u8@bool@u8@u8[arg.0.0{r0}, t.11.1{r1}, arg.0.2{r2}, arg.0.3{r3}] -> i64
+        ; call _ = unusedArgs_Pu8_Pbool_Pu8_Pu8[arg.0.0{r0}, t.11.1{r1}, arg.0.2{r2}, arg.0.3{r3}] -> i64
         call unusedArgs_Pu8_Pbool_Pu8_Pu8
         ; addrof a.12.1{r8}, zero
         ld   r8, #hi(var_0)
         ld   r9, #lo(var_0)
         ; load t.13.1{r0}, [a.12.1{r8}]
         lde  r0, @rr8
-        ; call printChar@u8[t.13.1{r0}]
+        ; call printChar_Pu8[t.13.1{r0}]
         call printChar_Pu8
         ; addrof onePtr.1{r8}, one
         ld   r8, #hi(var_1)
         ld   r9, #lo(var_1)
         ; load t.14.1{r0}, [onePtr.1{r8}]
         lde  r0, @rr8
-        ; call printChar@u8[t.14.1{r0}]
+        ; call printChar_Pu8[t.14.1{r0}]
         call printChar_Pu8
         ; addrof twoPtr.1{r8}, two
         ld   r8, #hi(var_2)
@@ -109,18 +109,18 @@ main:
         adc  r8, r10
         ; load t.15.1{r0}, [t.16.2{r8}]
         lde  r0, @rr8
-        ; call printChar@u8[t.15.1{r0}]
+        ; call printChar_Pu8[t.15.1{r0}]
         call printChar_Pu8
         ; addrof a.18.1{r8}, threeFour
         ld   r8, #hi(var_3)
         ld   r9, #lo(var_3)
         ; load t.19.1{r0}, [a.18.1{r8}]
         lde  r0, @rr8
-        ; call printUint@u8[t.19.1{r0}]
+        ; call printUint_Pu8[t.19.1{r0}]
         call printUint_Pu8
         ; const arg.5.0{r0}, 10
         ld   r0, #%0a
-        ; call printChar@u8[arg.5.0{r0}]
+        ; call printChar_Pu8[arg.5.0{r0}]
         call printChar_Pu8
         ; restore clobbered non-volatile registers
         pop  r11
@@ -129,7 +129,7 @@ main:
         pop  r8
         ret
 
-        ; void printChar@u8
+        ; void printChar_Pu8
 printChar_Pu8:
         cp    r0, #%0a
         jr    ne, .1
@@ -138,7 +138,7 @@ printChar_Pu8:
         ld    %15, r0
         jp    %0818
 
-        ; void printUint@i32
+        ; void printUint_Pi32
 printUint_Pi32:
         ld   r4, #1
         ld   r5, #%28

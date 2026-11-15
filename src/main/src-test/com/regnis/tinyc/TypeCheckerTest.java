@@ -28,7 +28,7 @@ public class TypeCheckerTest {
 	public void testVarDeclaration() {
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
-				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
+				                         Function.typedInstance("_main", "void", Type.VOID, List.of(),
 				                                                List.of(
 						                                                new Variable("i", 0, VariableScope.function, Type.U8, 0, true, loc(1, 2)),
 						                                                new Variable("b", 1, VariableScope.function, Type.BOOL, 0, true, loc(2, 2)),
@@ -347,7 +347,7 @@ public class TypeCheckerTest {
 	public void testArrays() {
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
-				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
+				                         Function.typedInstance("_main", "void", Type.VOID, List.of(),
 				                                                List.of(
 						                                                new Variable("first", 0, VariableScope.function, Type.U8, 0, true, loc(2, 2)),
 						                                                new Variable("second", 1, VariableScope.function, Type.pointer(Type.U8), 0, true, loc(5, 2)),
@@ -427,7 +427,7 @@ public class TypeCheckerTest {
 	public void testFlattenNestedCompounds() {
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
-				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
+				                         Function.typedInstance("_main", "void", Type.VOID, List.of(),
 				                                                List.of(
 						                                                new Variable("x", 0, VariableScope.function, Type.U8, 0, true, loc(2, 4))
 				                                                ),
@@ -451,7 +451,7 @@ public class TypeCheckerTest {
 	public void testLocalVars() {
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
-				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
+				                         Function.typedInstance("_main", "void", Type.VOID, List.of(),
 				                                                List.of(
 						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, true, loc(1, 2))
 				                                                ),
@@ -462,14 +462,14 @@ public class TypeCheckerTest {
 						                                                                          loc(1, 9)),
 						                                                       loc(1, 2)),
 						                                                new StmtExpr(
-								                                                new ExprFuncCall("prInt@u8", Type.VOID,
+								                                                new ExprFuncCall("_prInt@u8", Type.VOID,
 								                                                                 List.of(
 										                                                                 new ExprVarAccess("a", 0, VariableScope.function, Type.U8, false, loc(2, 8))
 								                                                                 ), loc(2, 2))
 						                                                )
 				                                                ),
 				                                                List.of(), loc(0, 0)),
-				                         Function.typedInstance("foo", "void", Type.VOID, List.of(),
+				                         Function.typedInstance("_foo", "void", Type.VOID, List.of(),
 				                                                List.of(
 						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, true, loc(6, 2))
 				                                                ),
@@ -480,13 +480,13 @@ public class TypeCheckerTest {
 						                                                                          loc(6, 9)),
 						                                                       loc(6, 2)),
 						                                                new StmtExpr(
-								                                                new ExprFuncCall("prInt@u8", Type.VOID, List.of(
+								                                                new ExprFuncCall("_prInt@u8", Type.VOID, List.of(
 										                                                new ExprVarAccess("a", 0, VariableScope.function, Type.U8, false, loc(7, 8))
 								                                                ), loc(7, 2))
 						                                                )
 				                                                ),
 				                                                List.of(), loc(5, 0)),
-				                         Function.typedInstance("prInt@u8", "void", Type.VOID, List.of(
+				                         Function.typedInstance("_prInt@u8", "void", Type.VOID, List.of(
 						                                                new Function.Parameter("u8", Type.U8, "x", loc(10, 11))
 				                                                ),
 				                                                List.of(
@@ -512,7 +512,7 @@ public class TypeCheckerTest {
 
 		assertEquals(new Program(List.of(), List.of(),
 		                         List.of(
-				                         Function.typedInstance("main", "void", Type.VOID, List.of(),
+				                         Function.typedInstance("_main", "void", Type.VOID, List.of(),
 				                                                List.of(
 						                                                new Variable("a", 0, VariableScope.function, Type.U8, 0, true, loc(1, 2)),
 						                                                new Variable("b", 1, VariableScope.function, Type.U8, 0, true, loc(3, 4)),
@@ -533,7 +533,7 @@ public class TypeCheckerTest {
 								                                                                  new ExprIntLiteral(1, Type.U8, loc(3, 11)),
 								                                                                  loc(3, 4)),
 								                                                           new StmtExpr(
-										                                                           new ExprFuncCall("prInt@u8", Type.VOID,
+										                                                           new ExprFuncCall("_prInt@u8", Type.VOID,
 										                                                                            List.of(
 												                                                                            new ExprVarAccess("b", 1, VariableScope.function, Type.U8, false, loc(4, 10))
 										                                                                            ), loc(4, 4))
@@ -544,7 +544,7 @@ public class TypeCheckerTest {
 								                                                                  new ExprIntLiteral(2, Type.I16, loc(7, 12)),
 								                                                                  loc(7, 4)),
 								                                                           new StmtExpr(
-										                                                           new ExprFuncCall("prInt@i16", Type.VOID,
+										                                                           new ExprFuncCall("_prInt@i16", Type.VOID,
 										                                                                            List.of(
 												                                                                            new ExprVarAccess("b", 2, VariableScope.function, Type.I16, false, loc(8, 10))
 										                                                                            ), loc(8, 4))
@@ -553,14 +553,14 @@ public class TypeCheckerTest {
 						                                                           loc(2, 2))
 				                                                ),
 				                                                List.of(), loc(0, 0)),
-				                         Function.typedInstance("prInt@i16", "void", Type.VOID, List.of(
+				                         Function.typedInstance("_prInt@i16", "void", Type.VOID, List.of(
 						                                                new Function.Parameter("i16", Type.I16, "x", loc(12, 11))
 				                                                ),
 				                                                List.of(
 						                                                new Variable("x", 0, VariableScope.parameter, Type.I16, 0, true, loc(12, 11))
 				                                                ),
 				                                                List.of(), List.of(), loc(12, 0)),
-				                         Function.typedInstance("prInt@u8", "void", Type.VOID, List.of(
+				                         Function.typedInstance("_prInt@u8", "void", Type.VOID, List.of(
 						                                                new Function.Parameter("u8", Type.U8, "x", loc(13, 11))
 				                                                ),
 				                                                List.of(
@@ -616,7 +616,7 @@ public class TypeCheckerTest {
 		             ),
 		                         List.of(),
 		                         List.of(
-				                         Function.typedInstance("bla", "void", Type.VOID, List.of(),
+				                         Function.typedInstance("_bla", "void", Type.VOID, List.of(),
 				                                                List.of(
 						                                                new Variable("foos", 0, VariableScope.function, Type.pointer(Type.struct("Foo")), 10, false, loc(3, 2))
 				                                                ),
@@ -656,27 +656,27 @@ public class TypeCheckerTest {
 		assertEquals(new Program(List.of(),
 		                         List.of(),
 		                         List.of(
-				                         Function.typedInstance("print", "void", Type.VOID, List.of(),
+				                         Function.typedInstance("_print", "void", Type.VOID, List.of(),
 				                                                List.of(),
 				                                                List.of(
 				                                                ),
 				                                                List.of(), loc(0, 0)),
-				                         Function.typedInstance("breakTest", "void", Type.VOID, List.of(),
+				                         Function.typedInstance("_breakTest", "void", Type.VOID, List.of(),
 				                                                List.of(),
 				                                                List.of(
 						                                                new StmtLoop(new ExprBoolLiteral(true, loc(3, 9)),
 						                                                             List.of(
-								                                                             new StmtExpr(new ExprFuncCall("print", Type.VOID, List.of(), loc(4, 4))),
+								                                                             new StmtExpr(new ExprFuncCall("_print", Type.VOID, List.of(), loc(4, 4))),
 								                                                             new StmtBreakContinue(true, loc(5, 4))
 						                                                             ), List.of(), loc(3, 2))
 				                                                ),
 				                                                List.of(), loc(2, 0)),
-				                         Function.typedInstance("continueTest", "void", Type.VOID, List.of(),
+				                         Function.typedInstance("_continueTest", "void", Type.VOID, List.of(),
 				                                                List.of(),
 				                                                List.of(
 						                                                new StmtLoop(new ExprBoolLiteral(true, loc(10, 9)),
 						                                                             List.of(
-								                                                             new StmtExpr(new ExprFuncCall("print", Type.VOID, List.of(), loc(11, 4))),
+								                                                             new StmtExpr(new ExprFuncCall("_print", Type.VOID, List.of(), loc(11, 4))),
 								                                                             new StmtBreakContinue(false, loc(12, 4))
 						                                                             ), List.of(), loc(10, 2))
 				                                                ),
@@ -713,20 +713,20 @@ public class TypeCheckerTest {
 				                                 foo(1 as u8);
 				                               }""", Set.of());
 		final List<Message> messages = new ArrayList<>();
-		final TypeChecker checker = new TypeChecker(Type.I64, messages::add);
+		final TypeChecker checker = new TypeChecker(Type.I64, new X86CanonicalNameProvider(), messages::add);
 		program = checker.check(program);
 		Assert.assertEquals(List.of(
 				Message.warn(Messages.redundantCast(Type.U8), loc(3, 11))
 		), messages);
 		assertEquals(new Program(List.of(), List.of(), List.of(
-				new Function("foo@u8", "void", Type.VOID, List.of(
+				new Function("_foo@u8", "void", Type.VOID, List.of(
 						new Function.Parameter("u8", Type.U8, "a", loc(0, 9))
 				), List.of(
 						new Variable("a", 0, VariableScope.parameter, Type.U8, 0, true, loc(0, 9))
 				), List.of(), List.of(), loc(0, 0)),
 
-				new Function("main", "void", Type.VOID, List.of(), List.of(), List.of(
-						new StmtExpr(new ExprFuncCall("foo@u8", Type.VOID, List.of(
+				new Function("_main", "void", Type.VOID, List.of(), List.of(), List.of(
+						new StmtExpr(new ExprFuncCall("_foo@u8", Type.VOID, List.of(
 								new ExprIntLiteral(1, Type.U8, loc(3, 6))
 						), loc(3, 2)))
 				), List.of(), loc(2, 0))
@@ -789,7 +789,7 @@ public class TypeCheckerTest {
 				                                       }
 				                                     }""", Set.of());
 		final List<Message> messages = new ArrayList<>();
-		final TypeChecker checker = new TypeChecker(Type.I64, messages::add);
+		final TypeChecker checker = new TypeChecker(Type.I64, new X86CanonicalNameProvider(), messages::add);
 		checker.check(program);
 		Assert.assertTrue(messages.isEmpty());
 	}
@@ -798,14 +798,14 @@ public class TypeCheckerTest {
 	public void testStatementsFollowReturn() {
 		Program program = Parser.parse(SNIPPET_STATEMENTS_FOLLOW_RETURN, Set.of());
 		final List<Message> messages = new ArrayList<>();
-		final TypeChecker checker = new TypeChecker(Type.I64, messages::add);
+		final TypeChecker checker = new TypeChecker(Type.I64, new X86CanonicalNameProvider(), messages::add);
 		program = checker.check(program);
 		Assert.assertEquals(List.of(
 				Message.warn(Messages.skippingAllAfterReturn(), loc(2, 2)),
 				Message.warn(Messages.skippingAllAfterReturn(), loc(8, 4))
 		), messages);
 		assertEquals(new Program(List.of(), List.of(), List.of(
-				new Function("f1", "void", Type.VOID, List.of(), List.of(
+				new Function("_f1", "void", Type.VOID, List.of(), List.of(
 						new Variable("a", 0, VariableScope.function, Type.I16, 0, true, loc(1, 2))
 				), List.of(
 						new StmtAssign(new ExprVarAccess("a", 0, VariableScope.function, Type.I16, false, loc(1, 2)),
@@ -813,7 +813,7 @@ public class TypeCheckerTest {
 						               loc(1, 2)),
 						new StmtReturn(null, loc(2, 2))
 				), List.of(), loc(0, 0)),
-				new Function("f2", "void", Type.VOID, List.of(), List.of(
+				new Function("_f2", "void", Type.VOID, List.of(), List.of(
 						new Variable("a", 0, VariableScope.function, Type.I16, 0, true, loc(6, 2))
 				), List.of(
 						new StmtAssign(new ExprVarAccess("a", 0, VariableScope.function, Type.I16, false, loc(6, 2)),
@@ -855,7 +855,7 @@ public class TypeCheckerTest {
 				                                       }
 				                                     }""", Set.of());
 		final List<Message> messages = new ArrayList<>();
-		final TypeChecker checker = new TypeChecker(Type.I64, messages::add);
+		final TypeChecker checker = new TypeChecker(Type.I64, new X86CanonicalNameProvider(), messages::add);
 		checker.check(program);
 		final Iterator<Message> i = messages.iterator();
 		Assert.assertEquals(Message.warn(Messages.expressionIsAlways(false), loc(2, 7)), i.next());
@@ -905,7 +905,7 @@ public class TypeCheckerTest {
 	@NotNull
 	private Program checkType(String input) {
 		final Program program = Parser.parse(input, Set.of());
-		final TypeChecker checker = new TypeChecker(Type.I64, message -> Assert.fail("no message expected"));
+		final TypeChecker checker = new TypeChecker(Type.I64, new X86CanonicalNameProvider(), message -> Assert.fail("no message expected"));
 		return checker.check(program);
 	}
 

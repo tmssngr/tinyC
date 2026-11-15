@@ -18,14 +18,14 @@ printBoard:
         push r13
         ; const arg.0.0{r0}, 124
         ld   r0, #%7c
-        ; call printChar@u8[arg.0.0{r0}]
+        ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
         ; const i.1{r8}, 0
         ld   r8, #%00
         ; 11:2 for i < 30
-        jr   for__1
+        jr   for_1
 
-for__1__body:
+for_1_body:
         ; 12:3 if [...] == 0
         ; cast t.3.1{r9}(i16), i.2{r8}(u8)
         ld   r10, r8
@@ -40,30 +40,30 @@ for__1__body:
         lde  r9, @rr12
         ; branch t.1.1{r9} equals 0: if_2_then
         cp   r9, #%00
-        jr   eq, if__2__then
+        jr   eq, if_2_then
         ; const arg.1.0{r0}, 42
         ld   r0, #%2a
-        ; call printChar@u8[arg.1.0{r0}]
+        ; call printChar_Pu8[arg.1.0{r0}]
         call printChar_Pu8
-        jr   for__1__continue
+        jr   for_1_continue
 
-if__2__then:
+if_2_then:
         ; const arg.2.0{r0}, 32
         ld   r0, #%20
-        ; call printChar@u8[arg.2.0{r0}]
+        ; call printChar_Pu8[arg.2.0{r0}]
         call printChar_Pu8
-for__1__continue:
+for_1_continue:
         ; add i.4{r8}, 1
         inc  r8
-for__1:
+for_1:
         ; branch i.2{r8} lt 30: for_1_body
         cp   r8, #%1e
-        jr   ult, for__1__body
+        jr   ult, for_1_body
         ; const t.4.1{r0}, [string-0]
         ld   r0, #hi(string_0)
         ld   r1, #lo(string_0)
-        ; call printString@@u8[t.4.1{r0}]
-        call printString_P_Pu8
+        ; call printString_P_pu8[t.4.1{r0}]
+        call printString_P_pu8
         ; restore clobbered non-volatile registers
         pop  r13
         pop  r12
@@ -85,9 +85,9 @@ main:
         ; const i.1{r8}, 0
         ld   r8, #%00
         ; 23:2 for i < 30
-        jr   for__3
+        jr   for_3
 
-for__3__body:
+for_3_body:
         ; const t.4.1{r9}, 0
         ld   r9, #%00
         ; cast t.6.1{r10}(i16), i.2{r8}(u8)
@@ -103,10 +103,10 @@ for__3__body:
         lde  @rr12, r9
         ; add i.5{r8}, 1
         inc  r8
-for__3:
+for_3:
         ; branch i.2{r8} lt 30: for_3_body
         cp   r8, #%1e
-        jr   ult, for__3__body
+        jr   ult, for_3_body
         ; const t.7.1{r8}, 1
         ld   r8, #%01
         ; const t.9.1{r9}, 29
@@ -125,9 +125,9 @@ for__3:
         ; const i.3{r8}, 0
         ld   r8, #%00
         ; 30:2 for i < 28
-        jr   for__4
+        jr   for_4
 
-for__4__body:
+for_4_body:
         ; const t.13.1{r9}, 0
         ld   r9, #%00
         ld   r10, #%00
@@ -157,9 +157,9 @@ for__4__body:
         ; const j.1{r10}, 1
         ld   r10, #%01
         ; 32:3 for j < 29
-        jr   for__5
+        jr   for_5
 
-for__5__body:
+for_5_body:
         ; shiftleft t.18.1{r9}, 1
         add r9, r9
         ; and t.17.1{r9}, 7
@@ -208,10 +208,10 @@ for__5__body:
         lde  @rr0, r11
         ; add j.3{r10}, 1
         inc  r10
-for__5:
+for_5:
         ; branch j.2{r10} lt 29: for_5_body
         cp   r10, #%1d
-        jr   ult, for__5__body
+        jr   ult, for_5_body
         ; call printBoard[]
         call printBoard
         ; move i.7{r0}, i.4{r8}
@@ -220,10 +220,10 @@ for__5:
         inc  r0
         ; move i.4{r8}, i.7{r0}
         ld   r8, r0
-for__4:
+for_4:
         ; branch i.4{r8} lt 28: for_4_body
         cp   r8, #%1c
-        jr   ult, for__4__body
+        jr   ult, for_4_body
         ; restore clobbered non-volatile registers
         pop  r13
         pop  r12
@@ -233,8 +233,8 @@ for__4:
         pop  r8
         ret
 
-        ; void printString@@u8
-printString_P_Pu8:
+        ; void printString_P_pu8
+printString_P_pu8:
         ld   r2, r0
         ld   r3, r1
         jr   .loop
@@ -247,7 +247,7 @@ printString_P_Pu8:
         jr   nz, .print
         ret
 
-        ; void printChar@u8
+        ; void printChar_Pu8
 printChar_Pu8:
         cp    r0, #%0a
         jr    ne, .1

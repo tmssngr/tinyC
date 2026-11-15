@@ -1,26 +1,26 @@
 digraph program {
 	edge[fontsize="10pt"];
-	subgraph fn_printUint_Ai16 {
-		BasicBlock_0_printUint_Ai16 [label="printUint_Ai16\lcast t_d1_d1(i32), number(i16)\lcall printUint_Ai32[t_d1_d1]\ljump printUint_Ai16__ret",shape=box];
-		BasicBlock_0_printUint_Ai16 -> BasicBlock_0_printUint_Ai16__ret;
-		BasicBlock_0_printUint_Ai16__ret [label="printUint_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	subgraph fn_printUint__Pi16 {
+		BasicBlock_0_printUint__Pi16 [label="printUint__Pi16\lcast t_d1_d1(i32), number(i16)\lcall printUint__Pi32[t_d1_d1]\ljump printUint__Pi16__ret",shape=box];
+		BasicBlock_0_printUint__Pi16 -> BasicBlock_0_printUint__Pi16__ret;
+		BasicBlock_0_printUint__Pi16__ret [label="printUint__Pi16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
-	subgraph fn_printIntLf_Au8 {
-		BasicBlock_1_printIntLf_Au8 [label="printIntLf_Au8\lcast t_d1_d1(i16), number(u8)\lcall printIntLf_Ai16[t_d1_d1]\ljump printIntLf_Au8__ret",shape=box];
-		BasicBlock_1_printIntLf_Au8 -> BasicBlock_1_printIntLf_Au8__ret;
-		BasicBlock_1_printIntLf_Au8__ret [label="printIntLf_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	subgraph fn_printIntLf__Pu8 {
+		BasicBlock_1_printIntLf__Pu8 [label="printIntLf__Pu8\lcast t_d1_d1(i16), number(u8)\lcall printIntLf__Pi16[t_d1_d1]\ljump printIntLf__Pu8__ret",shape=box];
+		BasicBlock_1_printIntLf__Pu8 -> BasicBlock_1_printIntLf__Pu8__ret;
+		BasicBlock_1_printIntLf__Pu8__ret [label="printIntLf__Pu8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
-	subgraph fn_printIntLf_Ai16 {
-		BasicBlock_2_printIntLf_Ai16 [label="printIntLf_Ai16\lbranch number gteq 0: printIntLf_Ai16_dno__critical__edge__4, if__1__then\ljump if__1__then",shape=box];
-		BasicBlock_2_printIntLf_Ai16 -> BasicBlock_2_printIntLf_Ai16_dno__critical__edge__4 [label="(number)"];
-		BasicBlock_2_printIntLf_Ai16 -> BasicBlock_2_if__1__then [label="(number)"];
-		BasicBlock_2_printIntLf_Ai16_dno__critical__edge__4 [label="printIntLf_Ai16_dno__critical__edge__4\lmove number_d1, number\ljump if__1__end",shape=box];
-		BasicBlock_2_printIntLf_Ai16_dno__critical__edge__4 -> BasicBlock_2_if__1__end [label="(number.1)"];
-		BasicBlock_2_if__1__then [label="if__1__then\lcall printChar_Au8[45]\lneg number_d2, number\lmove number_d1, number_d2\ljump if__1__end",shape=box];
+	subgraph fn_printIntLf__Pi16 {
+		BasicBlock_2_printIntLf__Pi16 [label="printIntLf__Pi16\lbranch number gteq 0: printIntLf__Pi16_dno__critical__edge__4, if__1__then\ljump if__1__then",shape=box];
+		BasicBlock_2_printIntLf__Pi16 -> BasicBlock_2_printIntLf__Pi16_dno__critical__edge__4 [label="(number)"];
+		BasicBlock_2_printIntLf__Pi16 -> BasicBlock_2_if__1__then [label="(number)"];
+		BasicBlock_2_printIntLf__Pi16_dno__critical__edge__4 [label="printIntLf__Pi16_dno__critical__edge__4\lmove number_d1, number\ljump if__1__end",shape=box];
+		BasicBlock_2_printIntLf__Pi16_dno__critical__edge__4 -> BasicBlock_2_if__1__end [label="(number.1)"];
+		BasicBlock_2_if__1__then [label="if__1__then\lcall printChar__Pu8[45]\lneg number_d2, number\lmove number_d1, number_d2\ljump if__1__end",shape=box];
 		BasicBlock_2_if__1__then -> BasicBlock_2_if__1__end [label="(number.1)"];
-		BasicBlock_2_if__1__end [label="if__1__end\lcall printUint_Ai16[number_d1]\lcall printChar_Au8[13]\ljump printIntLf_Ai16__ret",shape=box];
-		BasicBlock_2_if__1__end -> BasicBlock_2_printIntLf_Ai16__ret;
-		BasicBlock_2_printIntLf_Ai16__ret [label="printIntLf_Ai16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+		BasicBlock_2_if__1__end [label="if__1__end\lcall printUint__Pi16[number_d1]\lcall printChar__Pu8[13]\ljump printIntLf__Pi16__ret",shape=box];
+		BasicBlock_2_if__1__end -> BasicBlock_2_printIntLf__Pi16__ret;
+		BasicBlock_2_printIntLf__Pi16__ret [label="printIntLf__Pi16__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_randomU8 {
 		BasicBlock_3_randomU8 [label="randomU8\lcall t_d1_d1 = random[] -> i32\lcast t_d0_d1(u8), t_d1_d1(i32)\lret t_d0_d1\ljump randomU8__ret",shape=box];
@@ -28,9 +28,9 @@ digraph program {
 		BasicBlock_3_randomU8__ret [label="randomU8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 	subgraph fn_main {
-		BasicBlock_4_main [label="main\lcall initRandom_Ai32[7439742]\lconst i_d1, 0\lmove i_d2, i_d1\ljump for__2",shape=box];
+		BasicBlock_4_main [label="main\lcall initRandom__Pi32[7439742]\lconst i_d1, 0\lmove i_d2, i_d1\ljump for__2",shape=box];
 		BasicBlock_4_main -> BasicBlock_4_for__2 [label="(i.2)"];
-		BasicBlock_4_for__2__body [label="for__2__body\lcall r_d1 = randomU8[] -> u8\lcall printIntLf_Au8[r_d1]\lmove i_d3, i_d2\ladd i_d3, 1\lmove i_d2, i_d3\ljump for__2",shape=box];
+		BasicBlock_4_for__2__body [label="for__2__body\lcall r_d1 = randomU8[] -> u8\lcall printIntLf__Pu8[r_d1]\lmove i_d3, i_d2\ladd i_d3, 1\lmove i_d2, i_d3\ljump for__2",shape=box];
 		BasicBlock_4_for__2__body -> BasicBlock_4_for__2 [label="(i.2)"];
 		BasicBlock_4_for__2 [label="for__2\lbranch i_d2 gteq 50: main__ret, for__2__body\ljump for__2__body",shape=box];
 		BasicBlock_4_for__2 -> BasicBlock_4_main__ret;

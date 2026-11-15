@@ -5,7 +5,7 @@
         .org %e000
 
         srp  #%20
-        jr   main
+        jr   _main
 
         ; void branchRegReg
         ; var b1 (u8): SP+0

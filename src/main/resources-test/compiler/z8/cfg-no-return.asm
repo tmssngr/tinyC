@@ -12,9 +12,9 @@ main:
         ; const i.1{r0}, 0
         ld   r0, #%00
         ; 3:2 while true
-while__1:
+while_1:
         ; add i.3{r0}, 1
         inc  r0
-        jr   while__1
+        jr   while_1
 
         ret

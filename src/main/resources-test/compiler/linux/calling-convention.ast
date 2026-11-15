@@ -1,11 +1,11 @@
-void printStringLength@@u8@i64(u8* str, i64 length) asm {
+void _printStringLength@@u8@i64(u8* str, i64 length) asm {
 }
 
-void printChar@u8(u8 chr) {
-	printStringLength@@u8@u8(&chr, 1);
+void _printChar@u8(u8 chr) {
+	_printStringLength@@u8@u8(&chr, 1);
 }
 
-void printUint@i64(i64 number) {
+void _printUint@i64(i64 number) {
 	u8* buffer[20];
 	u8 pos;
 	i64 remainder;
@@ -22,41 +22,41 @@ void printUint@i64(i64 number) {
 			break;
 		}
 	}
-	printStringLength@@u8@u8(&buffer[pos as i64], 20 - pos);
+	_printStringLength@@u8@u8(&buffer[pos as i64], 20 - pos);
 }
 
-void printIntLf@i16(i16 number) {
-	printIntLf@i64(number as i64);
+void _printIntLf@i16(i16 number) {
+	_printIntLf@i64(number as i64);
 }
 
-void printIntLf@i64(i64 number) {
+void _printIntLf@i64(i64 number) {
 	if (number < 0) {
-		printChar@u8(45);
+		_printChar@u8(45);
 		number = -number;
 	}
-	printUint@i64(number);
-	printChar@u8(10);
+	_printUint@i64(number);
+	_printChar@u8(10);
 }
 
-void printStringLength@@u8@u8(u8* str, u8 length) {
-	printStringLength@@u8@i64(str, length as i64);
+void _printStringLength@@u8@u8(u8* str, u8 length) {
+	_printStringLength@@u8@i64(str, length as i64);
 }
 
-i16 printAndSum@i16@i16@i16@i16@i16@i16@i16@i16(i16 a, i16 b, i16 c, i16 d, i16 e, i16 f, i16 g, i16 h) {
-	printIntLf@i16(a);
-	printIntLf@i16(b);
-	printIntLf@i16(c);
-	printIntLf@i16(d);
-	printIntLf@i16(e);
-	printIntLf@i16(f);
-	printIntLf@i16(g);
-	printIntLf@i16(h);
+i16 _printAndSum@i16@i16@i16@i16@i16@i16@i16@i16(i16 a, i16 b, i16 c, i16 d, i16 e, i16 f, i16 g, i16 h) {
+	_printIntLf@i16(a);
+	_printIntLf@i16(b);
+	_printIntLf@i16(c);
+	_printIntLf@i16(d);
+	_printIntLf@i16(e);
+	_printIntLf@i16(f);
+	_printIntLf@i16(g);
+	_printIntLf@i16(h);
 	return ((((((a + b) + c) + d) + e) + f) + g) + h;
 }
 
-void main() {
+void _main() {
 	i16 sum;
 
-	sum = printAndSum@i16@i16@i16@i16@i16@i16@i16@i16(1, 2, 3, 4, 5, 6, 7, 8);
-	printIntLf@i16(sum);
+	sum = _printAndSum@i16@i16@i16@i16@i16@i16@i16@i16(1, 2, 3, 4, 5, 6, 7, 8);
+	_printIntLf@i16(sum);
 }

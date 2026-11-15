@@ -19,15 +19,17 @@ public final class TypeChecker {
 	private final Map<String, StringLiteral> stringLiteralMap = new HashMap<>();
 	private final List<StringLiteral> stringLiterals = new ArrayList<>();
 	private final Type pointerIntType;
+	private final CanonicalNameProvider canonicalNameProvider;
 	private final Consumer<Message> messages;
 
 	private List<Statement> statements = List.of();
 	@Nullable private Type expectedReturnType;
 	@Nullable private LocalVars localVars;
 
-	public TypeChecker(@NotNull Type pointerIntType, @NotNull Consumer<Message> messages) {
+	public TypeChecker(@NotNull Type pointerIntType, @NotNull CanonicalNameProvider canonicalNameProvider, @NotNull Consumer<Message> messages) {
 		Utils.assertTrue(pointerIntType.isInt());
 		this.pointerIntType = pointerIntType;
+		this.canonicalNameProvider = canonicalNameProvider;
 		this.messages = messages;
 	}
 
@@ -126,26 +128,8 @@ public final class TypeChecker {
 		}
 
 		funcs.add(new Func(returnType, parameterTypes, location));
-		final String canonicalName = canonicalFunctionName(name, parameterTypes);
+		final String canonicalName = canonicalNameProvider.canonicalFunctionName(name, parameterTypes);
 		return new Function(canonicalName, function.typeString(), returnType, parameters, List.of(), function.statements(), function.asmLines(), location);
-	}
-
-	private String canonicalFunctionName(String name, List<Type> types) {
-		Utils.assertTrue(name.indexOf('@') < 0);
-		final StringBuilder buffer = new StringBuilder();
-		buffer.append(name);
-		for (Type type : types) {
-			buffer.append("@");
-			while (type.isPointer()) {
-				buffer.append("@");
-				type = type.toType();
-				assert type != null;
-			}
-			final String typeString = type.toString();
-			Utils.assertTrue(typeString.indexOf('@') < 0);
-			buffer.append(typeString);
-		}
-		return buffer.toString();
 	}
 
 	@NotNull
@@ -216,7 +200,8 @@ public final class TypeChecker {
 				}
 			}
 		}
-		default -> {}
+		default -> {
+		}
 		}
 		return lastStatement.location();
 	}
@@ -654,7 +639,7 @@ public final class TypeChecker {
 					final Expression castExpression = simpleCast(type, expression, expression.location());
 					expressions.set(i, castExpression);
 				}
-				final String canonicalName = canonicalFunctionName(name, func.parameterTypes);
+				final String canonicalName = canonicalNameProvider.canonicalFunctionName(name, func.parameterTypes);
 				return new ExprFuncCall(canonicalName, func.returnType(), expressions, location);
 			}
 		}
@@ -663,7 +648,7 @@ public final class TypeChecker {
 		for (Func func : funcs) {
 			if (func.parameterTypes.equals(argTypes)) {
 				Utils.assertTrue(func.parameterTypes().size() == argExpressions.size());
-				final String canonicalName = canonicalFunctionName(name, argTypes);
+				final String canonicalName = canonicalNameProvider.canonicalFunctionName(name, argTypes);
 				return new ExprFuncCall(canonicalName, func.returnType(), expressions, location);
 			}
 
@@ -891,6 +876,11 @@ public final class TypeChecker {
 			globalVariables.add(new Variable(var.name, var.index, var.scope, var.type, var.arraySize, var.canBeRegister, var.location));
 		}
 		return globalVariables;
+	}
+
+	public interface CanonicalNameProvider {
+		@NotNull
+		String canonicalFunctionName(@NotNull String name, @NotNull List<Type> types);
 	}
 
 	public record Func(@NotNull Type returnType, @NotNull List<Type> parameterTypes, @NotNull Location location) {

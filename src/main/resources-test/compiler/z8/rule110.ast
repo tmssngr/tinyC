@@ -1,25 +1,25 @@
 u8* board[30];
 
-void printString@@u8(u8* str) asm {
+void printString_P_pu8(u8* str) asm {
 }
 
-void printChar@u8(u8 chr) asm {
+void printChar_Pu8(u8 chr) asm {
 }
 
 void printBoard() {
 	u8 i;
 
-	printChar@u8(124);
+	printChar_Pu8(124);
 	i = 0;
 	for (; i < 30; i = i + 1) {
 		if (board[i as i16] == 0) {
-			printChar@u8(32);
+			printChar_Pu8(32);
 		}
 		else {
-			printChar@u8(42);
+			printChar_Pu8(42);
 		}
 	}
-	printString@@u8("|\n");
+	printString_P_pu8("|\n");
 }
 
 void main() {

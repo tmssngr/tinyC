@@ -1,4 +1,4 @@
-void main() {
+void _main() {
 	u8 i;
 
 	i = 0;

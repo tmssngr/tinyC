@@ -1,22 +1,22 @@
-printString@@u8:
+_printString@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
 
-	call length = strlen@@u8[str] -> i64
-	call printStringLength@@u8@i64[str, length]
-printString@@u8_ret:
+	call length = _strlen@@u8[str] -> i64
+	call _printStringLength@@u8@i64[str, length]
+_printString@@u8_ret:
 
-printChar@u8:
+_printChar@u8:
  Local variables
 	arg 0: chr (u8/1)
 	var 1: t.1 (u8*/8)
 
 	addrof t.1, chr
-	call printStringLength@@u8@u8[t.1, 1]
-printChar@u8_ret:
+	call _printStringLength@@u8@u8[t.1, 1]
+_printChar@u8_ret:
 
-printUint@i64:
+_printUint@i64:
  Local variables
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
@@ -51,10 +51,10 @@ while_1_break:
 	add t.8, t.9
 	const t.11, 20
 	sub t.10, t.11, pos
-	call printStringLength@@u8@u8[t.8, t.10]
-printUint@i64_ret:
+	call _printStringLength@@u8@u8[t.8, t.10]
+_printUint@i64_ret:
 
-printIntLf@bool:
+_printIntLf@bool:
  Local variables
 	arg 0: value (bool/1)
 	var 1: number (u8/1)
@@ -67,24 +67,24 @@ if_3_then:
 	const number, 1
 if_3_end:
 	cast t.2(i64), number(u8)
-	call printIntLf@i64[t.2]
-printIntLf@bool_ret:
+	call _printIntLf@i64[t.2]
+_printIntLf@bool_ret:
 
-printIntLf@i64:
+_printIntLf@i64:
  Local variables
 	arg 0: number (i64/8)
 
 	; 63:2 if number < 0
 	branch number gteq 0: if_4_end, if_4_then
 if_4_then:
-	call printChar@u8[45]
+	call _printChar@u8[45]
 	neg number, number
 if_4_end:
-	call printUint@i64[number]
-	call printChar@u8[10]
-printIntLf@i64_ret:
+	call _printUint@i64[number]
+	call _printChar@u8[10]
+_printIntLf@i64_ret:
 
-strlen@@u8:
+_strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
 	var 1: length (i64/8)
@@ -103,20 +103,20 @@ for_5_continue:
 for_5_break:
 	; 76:9 return length
 	ret length
-	jump strlen@@u8_ret
-strlen@@u8_ret:
+	jump _strlen@@u8_ret
+_strlen@@u8_ret:
 
-printStringLength@@u8@u8:
+_printStringLength@@u8@u8:
  Local variables
 	arg 0: str (u8*/8)
 	arg 1: length (u8/1)
 	var 2: t.2 (i64/8)
 
 	cast t.2(i64), length(u8)
-	call printStringLength@@u8@i64[str, t.2]
-printStringLength@@u8@u8_ret:
+	call _printStringLength@@u8@i64[str, t.2]
+_printStringLength@@u8@u8_ret:
 
-main:
+_main:
  Local variables
 	var 0: a (i16/2)
 	var 1: b (i16/2)
@@ -154,72 +154,72 @@ main:
 	var 33: t.33 (bool/1)
 
 	const t.4, [string-1]
-	call printString@@u8[t.4]
+	call _printString@@u8[t.4]
 	const a, 1
 	const b, 2
 	lt t.5, a, b
-	call printIntLf@bool[t.5]
+	call _printIntLf@bool[t.5]
 	lt t.6, b, a
-	call printIntLf@bool[t.6]
+	call _printIntLf@bool[t.6]
 	const t.7, [string-2]
-	call printString@@u8[t.7]
+	call _printString@@u8[t.7]
 	const c, 0
 	const d, 128
 	lt t.8, c, d
-	call printIntLf@bool[t.8]
+	call _printIntLf@bool[t.8]
 	lt t.9, d, c
-	call printIntLf@bool[t.9]
+	call _printIntLf@bool[t.9]
 	const t.10, [string-3]
-	call printString@@u8[t.10]
+	call _printString@@u8[t.10]
 	lteq t.11, a, b
-	call printIntLf@bool[t.11]
+	call _printIntLf@bool[t.11]
 	lteq t.12, b, a
-	call printIntLf@bool[t.12]
+	call _printIntLf@bool[t.12]
 	const t.13, [string-4]
-	call printString@@u8[t.13]
+	call _printString@@u8[t.13]
 	lteq t.14, c, d
-	call printIntLf@bool[t.14]
+	call _printIntLf@bool[t.14]
 	lteq t.15, d, c
-	call printIntLf@bool[t.15]
+	call _printIntLf@bool[t.15]
 	const t.16, [string-5]
-	call printString@@u8[t.16]
+	call _printString@@u8[t.16]
 	equals t.17, a, b
-	call printIntLf@bool[t.17]
+	call _printIntLf@bool[t.17]
 	equals t.18, b, a
-	call printIntLf@bool[t.18]
+	call _printIntLf@bool[t.18]
 	const t.19, [string-6]
-	call printString@@u8[t.19]
+	call _printString@@u8[t.19]
 	notequals t.20, a, b
-	call printIntLf@bool[t.20]
+	call _printIntLf@bool[t.20]
 	notequals t.21, b, a
-	call printIntLf@bool[t.21]
+	call _printIntLf@bool[t.21]
 	const t.22, [string-7]
-	call printString@@u8[t.22]
+	call _printString@@u8[t.22]
 	gteq t.23, a, b
-	call printIntLf@bool[t.23]
+	call _printIntLf@bool[t.23]
 	gteq t.24, b, a
-	call printIntLf@bool[t.24]
+	call _printIntLf@bool[t.24]
 	const t.25, [string-8]
-	call printString@@u8[t.25]
+	call _printString@@u8[t.25]
 	gteq t.26, c, d
-	call printIntLf@bool[t.26]
+	call _printIntLf@bool[t.26]
 	gteq t.27, d, c
-	call printIntLf@bool[t.27]
+	call _printIntLf@bool[t.27]
 	const t.28, [string-9]
-	call printString@@u8[t.28]
+	call _printString@@u8[t.28]
 	gt t.29, a, b
-	call printIntLf@bool[t.29]
+	call _printIntLf@bool[t.29]
 	gt t.30, b, a
-	call printIntLf@bool[t.30]
+	call _printIntLf@bool[t.30]
 	const t.31, [string-10]
-	call printString@@u8[t.31]
+	call _printString@@u8[t.31]
 	gt t.32, c, d
-	call printIntLf@bool[t.32]
+	call _printIntLf@bool[t.32]
 	gt t.33, d, c
-	call printIntLf@bool[t.33]
-main_ret:
+	call _printIntLf@bool[t.33]
+_main_ret:
 
-printStringLength@@u8@i64:
+_printStringLength@@u8@i64:
 	mov rdx, rsi
 	mov rsi, rdi
 	mov rdi, 1

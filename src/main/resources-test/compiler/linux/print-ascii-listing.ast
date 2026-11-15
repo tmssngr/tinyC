@@ -1,18 +1,18 @@
-void printStringLength@@u8@i64(u8* str, i64 length) asm {
+void _printStringLength@@u8@i64(u8* str, i64 length) asm {
 }
 
-void printString@@u8(u8* str) {
+void _printString@@u8(u8* str) {
 	i64 length;
 
-	length = strlen@@u8(str);
-	printStringLength@@u8@i64(str, length);
+	length = _strlen@@u8(str);
+	_printStringLength@@u8@i64(str, length);
 }
 
-void printChar@u8(u8 chr) {
-	printStringLength@@u8@u8(&chr, 1);
+void _printChar@u8(u8 chr) {
+	_printStringLength@@u8@u8(&chr, 1);
 }
 
-i64 strlen@@u8(u8* str) {
+i64 _strlen@@u8(u8* str) {
 	i64 length;
 
 	length = 0;
@@ -22,48 +22,48 @@ i64 strlen@@u8(u8* str) {
 	return length;
 }
 
-void printStringLength@@u8@u8(u8* str, u8 length) {
-	printStringLength@@u8@i64(str, length as i64);
+void _printStringLength@@u8@u8(u8* str, u8 length) {
+	_printStringLength@@u8@i64(str, length as i64);
 }
 
-void printNibble@u8(u8 x) {
+void _printNibble@u8(u8 x) {
 	x = x & 15;
 	if (x > 9) {
 		x = x + ((65 - 57) - 1);
 	}
 	x = x + 48;
-	printChar@u8(x);
+	_printChar@u8(x);
 }
 
-void printHex2@u8(u8 x) {
-	printNibble@u8(x / 16);
-	printNibble@u8(x);
+void _printHex2@u8(u8 x) {
+	_printNibble@u8(x / 16);
+	_printNibble@u8(x);
 }
 
-void main() {
+void _main() {
 	u8 i;
 	u8 i;
 
-	printString@@u8(" x");
+	_printString@@u8(" x");
 	i = 0;
 	for (; i < 16; i = i + 1) {
 		if ((i & 7) == 0) {
-			printChar@u8(32);
+			_printChar@u8(32);
 		}
-		printNibble@u8(i);
+		_printNibble@u8(i);
 	}
-	printChar@u8(10);
+	_printChar@u8(10);
 	i = 32;
 	for (; i < 128; i = i + 1) {
 		if ((i & 15) == 0) {
-			printHex2@u8(i);
+			_printHex2@u8(i);
 		}
 		if ((i & 7) == 0) {
-			printChar@u8(32);
+			_printChar@u8(32);
 		}
-		printChar@u8(i);
+		_printChar@u8(i);
 		if ((i & 15) == 15) {
-			printChar@u8(10);
+			_printChar@u8(10);
 		}
 	}
 }

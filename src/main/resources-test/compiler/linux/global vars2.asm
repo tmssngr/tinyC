@@ -3,14 +3,14 @@ segment executable
 entry _start
 
 _start:
-        call _main
+        call main
         mov rax, 60         ; sys_exit
         xor rdi, rdi        ; exit code 0
         syscall
 
-        ; void printString@@u8
+        ; void _printString_P_pu8
         ;   rsp+24: arg str
-_printString@@u8:
+_printString_P_pu8:
         sub rsp, 16
         ; save clobbered non-volatile registers
         push r9
@@ -18,14 +18,14 @@ _printString@@u8:
         push rbx
         ; move str{r8}, str{r1}
         mov rbx, rdi
-        ; call length.1{r0} = strlen@@u8[str{r1}] -> i64
-        call _strlen@@u8
+        ; call length.1{r0} = _strlen_P_pu8[str{r1}] -> i64
+        call _strlen_P_pu8
         ; move str{r1}, str{r8}
         mov rdi, rbx
         ; move length.1{r2}, length.1{r0}
         mov rsi, rax
-        ; call printStringLength@@u8@i64[str{r1}, length.1{r2}]
-        call _printStringLength@@u8@i64
+        ; call _printStringLength_P_pu8_Pi64[str{r1}, length.1{r2}]
+        call _printStringLength_P_pu8_Pi64
         ; restore clobbered non-volatile registers
         pop rbx
         pop r10
@@ -33,17 +33,17 @@ _printString@@u8:
         add rsp, 16
         ret
 
-        ; i64 strlen@@u8
+        ; i64 _strlen_P_pu8
         ;   rsp+0: arg str
-_strlen@@u8:
+_strlen_P_pu8:
         sub rsp, 8
         ; const length.1{r2}, 0
         mov rsi, 0
         ; 73:2 for *str != 0
         ; move length.2{r0}, length.1{r2}
         mov rax, rsi
-        jmp _for_1
-_for_1_body:
+        jmp for_1
+for_1_body:
         ; move length.3{r2}, length.2{r0}
         mov rsi, rax
         ; add length.3{r2}, 1
@@ -52,17 +52,17 @@ _for_1_body:
         add rdi, 1
         ; move length.2{r0}, length.3{r2}
         mov rax, rsi
-_for_1:
+for_1:
         ; load t.2.1{r2}, [str.1{r1}]
         mov sil, [rdi]
         ; branch t.2.1{r2} notequals 0: for_1_body
         cmp sil, 0
-        jne _for_1_body
+        jne for_1_body
         ; 76:9 return length
         add rsp, 8
         ret
 
-        ; u8 next
+        ; u8 _next
 _next:
         sub rsp, 8
         ; addrof a.1.1{r1}, global
@@ -82,7 +82,7 @@ _next:
         ret
 
         ; void main
-_main:
+main:
         ; save clobbered non-volatile registers
         push r9
         push r10
@@ -96,36 +96,36 @@ _main:
         mov [rax], bl
         ; end initialize global variables
         ; 12:2 while true
-        jmp _while_2
-_if_3_end:
+        jmp while_2
+if_3_end:
         ; branch n.1{r8} gteq 2: while_2
         cmp bl, 2
-        jae _while_2
+        jae while_2
         ; const t.4.1{r1}, [string-2]
         lea rdi, [string_2]
-        ; call printString@@u8[t.4.1{r1}]
-        call _printString@@u8
-_while_2:
+        ; call _printString_P_pu8[t.4.1{r1}]
+        call _printString_P_pu8
+while_2:
         ; const t.3.1{r1}, [string-1]
         lea rdi, [string_1]
-        ; call printString@@u8[t.3.1{r1}]
-        call _printString@@u8
-        ; call n.1{r0} = next[] -> u8
+        ; call _printString_P_pu8[t.3.1{r1}]
+        call _printString_P_pu8
+        ; call n.1{r0} = _next[] -> u8
         call _next
         ; move n.1{r8}, n.1{r0}
         mov bl, al
         ; 15:3 if n == 3
         ; branch n.1{r8} notequals 3: if_3_end
         cmp bl, 3
-        jne _if_3_end
+        jne if_3_end
         ; restore clobbered non-volatile registers
         pop rbx
         pop r10
         pop r9
         ret
 
-        ; void printStringLength@@u8@i64
-_printStringLength@@u8@i64:
+        ; void _printStringLength_P_pu8_Pi64
+_printStringLength_P_pu8_Pi64:
         mov rdx, rsi
         mov rsi, rdi
         mov rdi, 1

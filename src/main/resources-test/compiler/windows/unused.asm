@@ -18,20 +18,20 @@ start:
         sub rsp, 0x20
         call [ExitProcess]
 
-        ; void unusedArg@u8
+        ; void _unusedArg@u8
         ;   rsp+16: arg a
 _unusedArg@u8:
         sub rsp, 8
         add rsp, 8
         ret
 
-        ; void main
+        ; void _main
 _main:
         sub rsp, 8
         sub rsp, 32
         ; const arg.0.0{r1}, 0
         mov cl, 0
-        ; call unusedArg@u8[arg.0.0{r1}]
+        ; call _unusedArg@u8[arg.0.0{r1}]
         call _unusedArg@u8
         add rsp, 32
         add rsp, 8

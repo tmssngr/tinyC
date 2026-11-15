@@ -1,20 +1,20 @@
 u8* text;
 
-void printStringLength@@u8@i64(u8* str, i64 length) asm {
+void _printStringLength@@u8@i64(u8* str, i64 length) asm {
 }
 
-void printString@@u8(u8* str) {
+void _printString@@u8(u8* str) {
 	i64 length;
 
-	length = strlen@@u8(str);
-	printStringLength@@u8@i64(str, length);
+	length = _strlen@@u8(str);
+	_printStringLength@@u8@i64(str, length);
 }
 
-void printChar@u8(u8 chr) {
-	printStringLength@@u8@u8(&chr, 1);
+void _printChar@u8(u8 chr) {
+	_printStringLength@@u8@u8(&chr, 1);
 }
 
-void printUint@i64(i64 number) {
+void _printUint@i64(i64 number) {
 	u8* buffer[20];
 	u8 pos;
 	i64 remainder;
@@ -31,27 +31,27 @@ void printUint@i64(i64 number) {
 			break;
 		}
 	}
-	printStringLength@@u8@u8(&buffer[pos as i64], 20 - pos);
+	_printStringLength@@u8@u8(&buffer[pos as i64], 20 - pos);
 }
 
-void printIntLf@u8(u8 number) {
-	printIntLf@i64(number as i64);
+void _printIntLf@u8(u8 number) {
+	_printIntLf@i64(number as i64);
 }
 
-void printIntLf@i16(i16 number) {
-	printIntLf@i64(number as i64);
+void _printIntLf@i16(i16 number) {
+	_printIntLf@i64(number as i64);
 }
 
-void printIntLf@i64(i64 number) {
+void _printIntLf@i64(i64 number) {
 	if (number < 0) {
-		printChar@u8(45);
+		_printChar@u8(45);
 		number = -number;
 	}
-	printUint@i64(number);
-	printChar@u8(10);
+	_printUint@i64(number);
+	_printChar@u8(10);
 }
 
-i64 strlen@@u8(u8* str) {
+i64 _strlen@@u8(u8* str) {
 	i64 length;
 
 	length = 0;
@@ -61,23 +61,23 @@ i64 strlen@@u8(u8* str) {
 	return length;
 }
 
-void printStringLength@@u8@u8(u8* str, u8 length) {
-	printStringLength@@u8@i64(str, length as i64);
+void _printStringLength@@u8@u8(u8* str, u8 length) {
+	_printStringLength@@u8@i64(str, length as i64);
 }
 
-void main() {
+void _main() {
 	u8* second;
 	u8 chr;
 
-	printString@@u8(text);
-	printLength();
+	_printString@@u8(text);
+	_printLength();
 	second = &text[1];
-	printString@@u8(second);
+	_printString@@u8(second);
 	chr = *text;
-	printIntLf@u8(chr);
+	_printIntLf@u8(chr);
 }
 
-void printLength() {
+void _printLength() {
 	i16 length;
 	u8* ptr;
 
@@ -86,5 +86,5 @@ void printLength() {
 	for (; (*ptr) != 0; ptr = ptr + 1) {
 		length = length + 1;
 	}
-	printIntLf@i16(length);
+	_printIntLf@i16(length);
 }

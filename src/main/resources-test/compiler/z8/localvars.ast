@@ -1,29 +1,29 @@
-void printChar@u8(u8 chr) asm {
+void printChar_Pu8(u8 chr) asm {
 }
 
-void printUint@i16(i16 number) {
-	printUint@i32(number as i32);
+void printUint_Pi16(i16 number) {
+	printUint_Pi32(number as i32);
 }
 
-void printUint@i32(i32 number) asm {
+void printUint_Pi32(i32 number) asm {
 }
 
-void printIntLf@u8(u8 number) {
-	printIntLf@i16(number as i16);
+void printIntLf_Pu8(u8 number) {
+	printIntLf_Pi16(number as i16);
 }
 
-void printIntLf@i16(i16 number) {
+void printIntLf_Pi16(i16 number) {
 	if (number < 0) {
-		printChar@u8(45);
+		printChar_Pu8(45);
 		number = -number;
 	}
-	printUint@i16(number);
-	printChar@u8(13);
+	printUint_Pi16(number);
+	printChar_Pu8(13);
 }
 
 void main() {
 	u8 a;
 
 	a = 10;
-	printIntLf@u8(a);
+	printIntLf_Pu8(a);
 }

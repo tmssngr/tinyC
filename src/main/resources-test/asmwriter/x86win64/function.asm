@@ -27,7 +27,7 @@ start:
         ;   rsp+56: arg f
         ;   rsp+64: arg g
         ;   rsp+72: arg temp
-_fn:
+fn:
         sub rsp, 8
         ; const a{r0}, 10
         mov ax, 10

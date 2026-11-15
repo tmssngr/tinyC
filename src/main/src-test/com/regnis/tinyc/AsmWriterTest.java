@@ -467,7 +467,7 @@ public final class AsmWriterTest {
 
 		final StringWriter output = new StringWriter();
 		try (final BufferedWriter writer = new BufferedWriter(output)) {
-			new Z8AsmWriter(writer, provider).write(program);
+			new Z8AsmWriter(writer, provider, new X86CanonicalNameProvider()).write(program);
 		}
 		return output.toString();
 	}
@@ -477,7 +477,7 @@ public final class AsmWriterTest {
 		Files.createDirectories(dir);
 		final Path asmFile = dir.resolve(name + ".asm");
 		try (final BufferedWriter writer = Files.newBufferedWriter(asmFile)) {
-			final AsmWriter output = architecture.createAsmWriter(writer);
+			final AsmWriter output = architecture.createAsmWriter(writer, new X86CanonicalNameProvider());
 			output.write(program);
 		}
 	}

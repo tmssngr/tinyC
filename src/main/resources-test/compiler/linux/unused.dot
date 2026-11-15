@@ -1,13 +1,13 @@
 digraph program {
 	edge[fontsize="10pt"];
-	subgraph fn_unusedArg_Au8 {
-		BasicBlock_0_unusedArg_Au8 [label="unusedArg_Au8\ljump unusedArg_Au8__ret",shape=box];
-		BasicBlock_0_unusedArg_Au8 -> BasicBlock_0_unusedArg_Au8__ret;
-		BasicBlock_0_unusedArg_Au8__ret [label="unusedArg_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	subgraph fn___unusedArg_Au8 {
+		BasicBlock_0___unusedArg_Au8 [label="__unusedArg_Au8\ljump __unusedArg_Au8__ret",shape=box];
+		BasicBlock_0___unusedArg_Au8 -> BasicBlock_0___unusedArg_Au8__ret;
+		BasicBlock_0___unusedArg_Au8__ret [label="__unusedArg_Au8__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
-	subgraph fn_main {
-		BasicBlock_1_main [label="main\lcall unusedArg_Au8[0]\ljump main__ret",shape=box];
-		BasicBlock_1_main -> BasicBlock_1_main__ret;
-		BasicBlock_1_main__ret [label="main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
+	subgraph fn___main {
+		BasicBlock_1___main [label="__main\lcall __unusedArg_Au8[0]\ljump __main__ret",shape=box];
+		BasicBlock_1___main -> BasicBlock_1___main__ret;
+		BasicBlock_1___main__ret [label="__main__ret",shape=oval,style=filled,fillcolor="#fff5ee"];
 	}
 }

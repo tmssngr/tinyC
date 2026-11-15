@@ -1,25 +1,25 @@
-printUint@i16:
+printUint_Pi16:
  Local variables
 	arg 0: number (i16/2)
 	var 1: t.1 (i32/4)
 
 	cast t.1(i32), number(i16)
-	call printUint@i32[t.1]
-printUint@i16_ret:
+	call printUint_Pi32[t.1]
+printUint_Pi16_ret:
 
-printIntLf@i16:
+printIntLf_Pi16:
  Local variables
 	arg 0: number (i16/2)
 
 	; 133:2 if number < 0
 	branch number gteq 0: if_1_end, if_1_then
 if_1_then:
-	call printChar@u8[45]
+	call printChar_Pu8[45]
 	neg number, number
 if_1_end:
-	call printUint@i16[number]
-	call printChar@u8[13]
-printIntLf@i16_ret:
+	call printUint_Pi16[number]
+	call printChar_Pu8[13]
+printIntLf_Pi16_ret:
 
 main:
  Local variables
@@ -52,7 +52,7 @@ main:
 	; end initialize global variables
 	addrof a.6, next
 	load t.7, [a.6]
-	call printIntLf@i16[t.7]
+	call printIntLf_Pi16[t.7]
 	addrof a.9, ptrToSpace
 	load t.10, [a.9]
 	add t.8, t.10, 2
@@ -61,10 +61,10 @@ main:
 	addrof a.13, ptrToSpace
 	load t.14, [a.13]
 	load t.12, [t.14]
-	call printIntLf@i16[t.12]
+	call printIntLf_Pi16[t.12]
 main_ret:
 
-printChar@u8:
+printChar_Pu8:
 	cp    r0, #%0a
 	jr    ne, .1
 	ld    r0, #%0d
@@ -72,7 +72,7 @@ printChar@u8:
 	ld    %15, r0
 	jp    %0818
 
-printUint@i32:
+printUint_Pi32:
 	ld   r4, #1
 	ld   r5, #%28
 	ld   r6, #8

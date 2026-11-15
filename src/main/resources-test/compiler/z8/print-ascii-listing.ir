@@ -1,4 +1,4 @@
-printNibble@u8:
+printNibble_Pu8:
  Local variables
 	arg 0: x (u8/1)
 
@@ -9,18 +9,18 @@ if_1_then:
 	add x, 7
 if_1_end:
 	add x, 48
-	call printChar@u8[x]
-printNibble@u8_ret:
+	call printChar_Pu8[x]
+printNibble_Pu8_ret:
 
-printHex2@u8:
+printHex2_Pu8:
  Local variables
 	arg 0: x (u8/1)
 	var 1: t.1 (u8/1)
 
 	shiftright t.1, x, 4
-	call printNibble@u8[t.1]
-	call printNibble@u8[x]
-printHex2@u8_ret:
+	call printNibble_Pu8[t.1]
+	call printNibble_Pu8[x]
+printHex2_Pu8_ret:
 
 main:
  Local variables
@@ -33,7 +33,7 @@ main:
 	var 6: t.6 (u8/1)
 
 	const t.2, [string-0]
-	call printString@@u8[t.2]
+	call printString_P_pu8[t.2]
 	const i, 0
 	; 19:2 for i < 16
 for_2:
@@ -43,14 +43,14 @@ for_2_body:
 	and t.3, i, 7
 	branch t.3 notequals 0: if_3_end, if_3_then
 if_3_then:
-	call printChar@u8[32]
+	call printChar_Pu8[32]
 if_3_end:
-	call printNibble@u8[i]
+	call printNibble_Pu8[i]
 for_2_continue:
 	add i, 1
 	jump for_2
 for_2_break:
-	call printChar@u8[10]
+	call printChar_Pu8[10]
 	const i, 32
 	; 27:2 for i < 128
 for_4:
@@ -60,26 +60,26 @@ for_4_body:
 	and t.4, i, 15
 	branch t.4 notequals 0: if_5_end, if_5_then
 if_5_then:
-	call printHex2@u8[i]
+	call printHex2_Pu8[i]
 if_5_end:
 	; 31:3 if i & 7 == 0
 	and t.5, i, 7
 	branch t.5 notequals 0: if_6_end, if_6_then
 if_6_then:
-	call printChar@u8[32]
+	call printChar_Pu8[32]
 if_6_end:
-	call printChar@u8[i]
+	call printChar_Pu8[i]
 	; 35:3 if i & 15 == 15
 	and t.6, i, 15
 	branch t.6 notequals 15: for_4_continue, if_7_then
 if_7_then:
-	call printChar@u8[10]
+	call printChar_Pu8[10]
 for_4_continue:
 	add i, 1
 	jump for_4
 main_ret:
 
-printString@@u8:
+printString_P_pu8:
 	ld   r2, r0
 	ld   r3, r1
 	jr   .loop
@@ -92,7 +92,7 @@ printString@@u8:
 	jr   nz, .print
 	ret
 
-printChar@u8:
+printChar_Pu8:
 	cp    r0, #%0a
 	jr    ne, .1
 	ld    r0, #%0d
