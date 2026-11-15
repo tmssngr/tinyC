@@ -4,7 +4,6 @@
 
         .org %e000
 
-start:
         srp  #%20
         jr   main
 

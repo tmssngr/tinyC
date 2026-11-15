@@ -27,17 +27,14 @@ final class Z8AsmWriter extends AsmWriter {
 
 	@Override
 	public void write(@NotNull IRProgram program) throws IOException {
-		writeLines("""
-				                   .const  RP    = %FD
-				                   .const  SPH   = %FE
-				                   .const  SPL   = %FF
-
-				                   .org %e000
-
-				           start:
-				                   srp  #%20
-				                   jr   main
-				           """);
+		writeIndented(".const  RP    = %FD");
+		writeIndented(".const  SPH   = %FE");
+		writeIndented(".const  SPL   = %FF");
+		writeNL();
+		writeIndented(".org %e000");
+		writeNL();
+		writeIndented("srp  #%20");
+		writeIndented("jr   main");
 		super.write(program);
 
 		writePostamble(program.varInfos().vars(), program.stringLiterals());
