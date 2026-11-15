@@ -86,6 +86,15 @@ printString_P_pu8:
         jr   nz, .print
         ret
 
+        ; void printChar_Pu8
+printChar_Pu8:
+        cp    r0, #%0a
+        jr    ne, .1
+        ld    r0, #%0d
+.1:
+        ld    %15, r0
+        jp    %0818
+
         ; variable 0: global (u8/1)
 var_0:
         .data %00

@@ -3,14 +3,14 @@ segment executable
 entry _start
 
 _start:
-        call main
+        call _main
         mov rax, 60         ; sys_exit
         xor rdi, rdi        ; exit code 0
         syscall
 
-        ; void _printString_P_pu8
+        ; void _printString@@u8
         ;   rsp+24: arg str
-_printString_P_pu8:
+_printString@@u8:
         sub rsp, 16
         ; save clobbered non-volatile registers
         push r9
@@ -18,14 +18,14 @@ _printString_P_pu8:
         push rbx
         ; move str{r8}, str{r1}
         mov rbx, rdi
-        ; call length.1{r0} = _strlen_P_pu8[str{r1}] -> i64
-        call _strlen_P_pu8
+        ; call length.1{r0} = _strlen@@u8[str{r1}] -> i64
+        call _strlen@@u8
         ; move str{r1}, str{r8}
         mov rdi, rbx
         ; move length.1{r2}, length.1{r0}
         mov rsi, rax
-        ; call _printStringLength_P_pu8_Pi64[str{r1}, length.1{r2}]
-        call _printStringLength_P_pu8_Pi64
+        ; call _printStringLength@@u8@i64[str{r1}, length.1{r2}]
+        call _printStringLength@@u8@i64
         ; restore clobbered non-volatile registers
         pop rbx
         pop r10
@@ -33,9 +33,9 @@ _printString_P_pu8:
         add rsp, 16
         ret
 
-        ; i64 _strlen_P_pu8
+        ; i64 _strlen@@u8
         ;   rsp+0: arg str
-_strlen_P_pu8:
+_strlen@@u8:
         sub rsp, 8
         ; const length.1{r2}, 0
         mov rsi, 0
@@ -81,8 +81,8 @@ _next:
         add rsp, 8
         ret
 
-        ; void main
-main:
+        ; void _main
+_main:
         ; save clobbered non-volatile registers
         push r9
         push r10
@@ -103,13 +103,13 @@ if_3_end:
         jae while_2
         ; const t.4.1{r1}, [string-2]
         lea rdi, [string_2]
-        ; call _printString_P_pu8[t.4.1{r1}]
-        call _printString_P_pu8
+        ; call _printString@@u8[t.4.1{r1}]
+        call _printString@@u8
 while_2:
         ; const t.3.1{r1}, [string-1]
         lea rdi, [string_1]
-        ; call _printString_P_pu8[t.3.1{r1}]
-        call _printString_P_pu8
+        ; call _printString@@u8[t.3.1{r1}]
+        call _printString@@u8
         ; call n.1{r0} = _next[] -> u8
         call _next
         ; move n.1{r8}, n.1{r0}
@@ -124,8 +124,8 @@ while_2:
         pop r9
         ret
 
-        ; void _printStringLength_P_pu8_Pi64
-_printStringLength_P_pu8_Pi64:
+        ; void _printStringLength@@u8@i64
+_printStringLength@@u8@i64:
         mov rdx, rsi
         mov rsi, rdi
         mov rdi, 1

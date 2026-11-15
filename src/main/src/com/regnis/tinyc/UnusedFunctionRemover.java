@@ -44,6 +44,24 @@ public class UnusedFunctionRemover {
 
 			usedFunctions.add(name);
 			process(function.statements());
+			processAsm(function.asmLines());
+		}
+	}
+
+	private void processAsm(List<String> asmStrings) {
+		for (String asm : asmStrings) {
+			final int semicolon = asm.indexOf(';');
+			if (semicolon >= 0) {
+				asm = asm.substring(0, semicolon);
+			}
+			asm = asm.trim();
+			if (asm.startsWith("call")) {
+				final int space = asm.indexOf(' ');
+				if (space > 0) {
+					final String possibleTarget = asm.substring(space).trim();
+					usedFunctions.add(possibleTarget);
+				}
+			}
 		}
 	}
 

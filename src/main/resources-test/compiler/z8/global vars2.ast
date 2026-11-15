@@ -3,6 +3,9 @@ u8 global;
 void printString_P_pu8(u8* str) asm {
 }
 
+void printChar_Pu8(u8 chr) asm {
+}
+
 u8 next() {
 	u8 copy;
 
