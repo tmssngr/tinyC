@@ -1,5 +1,7 @@
 package com.regnis.tinyc;
 
+import java.util.*;
+
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -8,6 +10,39 @@ import static org.junit.Assert.*;
  * @author Thomas Singer
  */
 public class LexerTest {
+
+	@Test
+	public void testEmptyInput() {
+		new LexerTester("") {
+			@Override
+			protected void test() {
+				nextEof(0, 0);
+				nextEof(0, 0);
+			}
+		}.test();
+	}
+
+	@Test
+	public void testWhitespaceAndLineBreaks() {
+		new LexerTester(" \t\r\n\n\t \n \t") {
+			@Override
+			protected void test() {
+				nextWhitespace(" \t", 0, 0);
+				nextText(TokenType.LINEBREAK, "\r\n\n", 0, 2);
+				nextWhitespace("\t ", 2, 0);
+				nextLineBreak(2, 2);
+				nextWhitespace(" \t", 3, 0);
+				nextEof(3, 2);
+			}
+		}.test();
+	}
+
+	@Test
+	public void testStandaloneCarriageReturn() {
+		final Lexer lexer = new LexerImpl("\r");
+		assertEquals(new Token(TokenType.LINEBREAK, 0, "\r", new Location(0, 0)), lexer.next());
+		assertEquals(TokenType.EOF, lexer.next().type());
+	}
 
 	@Test
 	public void testComments() {
@@ -34,9 +69,28 @@ public class LexerTest {
 			@Override
 			protected void test() {
 				nextWhitespace(" ", 0, 0);
-				nextInvalidTokenException("1:2 " + Messages.unterminatedBlockComment());
+				nextInvalidTokenException(Messages.unterminatedBlockComment(), 0, 1);
 			}
 		}.test();
+	}
+
+	@Test
+	public void testCommentBoundaries() {
+		new LexerTester("a/**//* outer /* inner **/b//\r\n// eof") {
+			@Override
+			protected void test() {
+				nextIdentifier("a", 0, 0);
+				nextText(TokenType.COMMENT, "/**/", 0, 1);
+				nextText(TokenType.COMMENT, "/* outer /* inner **/", 0, 5);
+				nextIdentifier("b", 0, 26);
+				nextText(TokenType.COMMENT, "//", 0, 27);
+				nextText(TokenType.LINEBREAK, "\r\n", 0, 29);
+				nextText(TokenType.COMMENT, "// eof", 1, 0);
+				nextEof(1, 6);
+			}
+		}.test();
+
+		assertInvalidToken("/*/", Messages.unterminatedBlockComment(), 0);
 	}
 
 	@Test
@@ -68,7 +122,7 @@ public class LexerTest {
 			@Override
 			protected void test() {
 				nextWhitespace("  ", 0, 0);
-				nextInvalidTokenException("1:3 " + Messages.unterminatedCharacterLiteral());
+				nextInvalidTokenException(Messages.unterminatedCharacterLiteral(), 0, 2);
 			}
 		}.test();
 
@@ -76,7 +130,7 @@ public class LexerTest {
 				                 'ab""") {
 			@Override
 			protected void test() {
-				nextInvalidTokenException("1:3 " + Messages.invalidCharLiteral());
+				nextInvalidTokenException(Messages.invalidCharLiteral(), 0, 2);
 			}
 		}.test();
 
@@ -84,7 +138,7 @@ public class LexerTest {
 				                 ''""") {
 			@Override
 			protected void test() {
-				nextInvalidTokenException("1:2 " + Messages.invalidCharLiteral());
+				nextInvalidTokenException(Messages.invalidCharLiteral(), 0, 1);
 			}
 		}.test();
 
@@ -92,9 +146,80 @@ public class LexerTest {
 				                 'a""") {
 			@Override
 			protected void test() {
-				nextInvalidTokenException("1:1 " + Messages.unterminatedCharacterLiteral());
+				nextInvalidTokenException(Messages.unterminatedCharacterLiteral(), 0, 0);
 			}
 		}.test();
+	}
+
+	@Test
+	public void testIntegerLiteralBoundaries() {
+		new LexerTester("""
+				                0 007 -1
+				                0b1_01u8 0xF_fi16
+				                2_147_483_647 0x7fff_ffff
+				                0b111_1111_1111_1111_1111_1111_1111_1111""") {
+			@Override
+			protected void test() {
+				nextIntValue(0, 0, 0);
+				nextWhitespace(" ", 0, 1);
+				nextIntValue(7, 0, 2);
+				nextWhitespace(" ", 0, 5);
+				nextType(TokenType.MINUS, 0, 6);
+				nextIntValue(1, 0, 7);
+				nextLineBreak(0, 8);
+				nextIntValue(5, "u8", 1, 0);
+				nextWhitespace(" ", 1, 8);
+				nextIntValue(255, "i16", 1, 9);
+				nextLineBreak(1, 17);
+				nextIntValue(Integer.MAX_VALUE, 2, 0);
+				nextWhitespace(" ", 2, 13);
+				nextIntValue(Integer.MAX_VALUE, 2, 14);
+				nextLineBreak(2, 25);
+				nextIntValue(Integer.MAX_VALUE, 3, 0);
+				nextEof(3, 40);
+			}
+		}.test();
+	}
+
+	@Test
+	public void testIntegerSuffixesAndSeparators() {
+		new LexerTester("0b102 0x1g 12unknown 12__34") {
+			@Override
+			protected void test() {
+				nextIntValue(2, "2", 0, 0);
+				nextWhitespace(" ", 0, 5);
+				nextIntValue(1, "g", 0, 6);
+				nextWhitespace(" ", 0, 10);
+				nextIntValue(12, "unknown", 0, 11);
+				nextWhitespace(" ", 0, 20);
+				nextIntValue(1234, 0, 21);
+				nextEof(0, 27);
+			}
+		}.test();
+	}
+
+	@Test
+	public void testInvalidPrefixedIntegers() {
+		for (String input : List.of("0b", "0b2", "0b_1", "0b1_", "0b1_u8", "0b1000_0000_0000_0000_0000_0000_0000_0000",
+		                            "0x", "0xG", "0x_1", "0x1_", "0x1_u8", "0x80000000")) {
+			assertInvalidToken(input, "Invalid number", 0);
+		}
+
+		new LexerTester("\r\n\t0x") {
+			@Override
+			protected void test() {
+				nextText(TokenType.LINEBREAK, "\r\n", 0, 0);
+				nextWhitespace("\t", 1, 0);
+				nextInvalidTokenException("Invalid number", 1, 1);
+			}
+		}.test();
+	}
+
+	@Test
+	public void testDecimalFallbackToIdentifier() {
+		for (String input : List.of("_12", "12_", "12_i16", "2147483648")) {
+			assertSingleToken(input, TokenType.IDENTIFIER, input);
+		}
 	}
 
 	@Test
@@ -118,9 +243,63 @@ public class LexerTest {
 			@Override
 			protected void test() {
 				nextWhitespace("  ", 0, 0);
-				nextInvalidTokenException("1:3 " + Messages.unterminatedStringLiteral());
+				nextInvalidTokenException(Messages.unterminatedStringLiteral(), 0, 2);
 			}
 		}.test();
+	}
+
+	@Test
+	public void testEmptyAndEscapedStrings() {
+		new LexerTester("\"\"\"\\t\\n\\r\\0\\\\\\\"\\'\\q\"") {
+			@Override
+			protected void test() {
+				nextText(TokenType.STRING, "", 0, 0);
+				nextText(TokenType.STRING, "\t\n\r\0\\\"'q", 0, 2);
+				nextEof(0, 20);
+			}
+		}.test();
+	}
+
+	@Test
+	public void testHexEscapes() {
+		assertSingleToken("\"\\x1Z\\x09Af:\\x1ffff!\\x0g\"", TokenType.STRING, "\1Z\u09af:\uffff!\0g");
+	}
+
+	@Test
+	public void testEscapedCharacterLiterals() {
+		new LexerTester("'\\'' '\\\\' '\\xFF' '\u00e9'") {
+			@Override
+			protected void test() {
+				nextIntValue('\'', 0, 0);
+				nextWhitespace(" ", 0, 4);
+				nextIntValue('\\', 0, 5);
+				nextWhitespace(" ", 0, 9);
+				nextIntValue(255, 0, 10);
+				nextWhitespace(" ", 0, 16);
+				nextIntValue('\u00e9', 0, 17);
+				nextEof(0, 20);
+			}
+		}.test();
+
+		assertInvalidToken("'\\nq'", Messages.invalidCharLiteral(), 3);
+	}
+
+	@Test
+	public void testInvalidHexEscapes() {
+		assertInvalidToken("\"a\\x\"", "Invalid char escape", 2);
+		assertInvalidToken("\"\\xG\"", "Invalid char escape", 1);
+		assertInvalidToken("\"\\x", "Invalid char escape", 1);
+		assertInvalidToken("'\\x'", "Invalid char escape", 1);
+	}
+
+	@Test
+	public void testUnterminatedLiterals() {
+		for (String input : List.of("\"", "\"a", "\"a\\", "\"\\x1", "\"a\\\r\n")) {
+			assertInvalidToken(input, Messages.unterminatedStringLiteral(), 0);
+		}
+		for (String input : List.of("'", "'\\", "'\\'")) {
+			assertInvalidToken(input, Messages.unterminatedCharacterLiteral(), 0);
+		}
 	}
 
 	@Test
@@ -140,6 +319,31 @@ public class LexerTest {
 				nextEof(0, 21);
 			}
 		}.test();
+	}
+
+	@Test
+	public void testKeywordsAndDirectives() {
+		assertSingleToken("true", TokenType.TRUE, "true");
+		assertSingleToken("false", TokenType.FALSE, "false");
+		assertSingleToken("return", TokenType.RETURN, "return");
+		assertSingleToken("for", TokenType.FOR, "for");
+		assertSingleToken("break", TokenType.BREAK, "break");
+		assertSingleToken("continue", TokenType.CONTINUE, "continue");
+		assertSingleToken("typedef", TokenType.TYPEDEF, "typedef");
+		assertSingleToken("struct", TokenType.STRUCT, "struct");
+		assertSingleToken("#include", TokenType.HASH_INCLUDE, "#include");
+		assertSingleToken("#ifdef", TokenType.HASH_IFDEF, "#ifdef");
+		assertSingleToken("#else", TokenType.HASH_ELSE, "#else");
+		assertSingleToken("#endif", TokenType.HASH_ENDIF, "#endif");
+		assertSingleToken("asm", TokenType.ASM, "asm");
+		assertSingleToken("as", TokenType.AS, "as");
+	}
+
+	@Test
+	public void testKeywordBoundaries() {
+		for (String input : List.of("if0", "IF", "_if", "true_value", "#ifdefExtra")) {
+			assertSingleToken(input, TokenType.IDENTIFIER, input);
+		}
 	}
 
 	@Test
@@ -179,6 +383,7 @@ public class LexerTest {
 				nextWhitespace(" ", 0, 8);
 				nextIntValue(1, 0, 9);
 				nextType(TokenType.SEMI, 0, 10);
+				nextEof(0, 11);
 			}
 		}.test();
 
@@ -194,6 +399,7 @@ public class LexerTest {
 				nextWhitespace(" ", 0, 7);
 				nextIntValue('?', 0, 8);
 				nextType(TokenType.SEMI, 0, 11);
+				nextEof(0, 12);
 			}
 		}.test();
 	}
@@ -218,6 +424,61 @@ public class LexerTest {
 				nextWhitespace(" ", 0, 15);
 				nextType(TokenType.EXCL, 0, 16);
 				nextEof(0, 17);
+			}
+		}.test();
+	}
+
+	@Test
+	public void testOperatorsAndPunctuationAtEof() {
+		assertSingleToken("+", TokenType.PLUS, "");
+		assertSingleToken("+=", TokenType.PLUS_EQ, "");
+		assertSingleToken("-=", TokenType.MINUS_EQ, "");
+		assertSingleToken("*=", TokenType.STAR_EQ, "");
+		assertSingleToken("/", TokenType.SLASH, "");
+		assertSingleToken("/=", TokenType.SLASH_EQ, "");
+		assertSingleToken("%", TokenType.PERCENT, "");
+		assertSingleToken("%=", TokenType.PERCENT_EQ, "");
+		assertSingleToken("&=", TokenType.AMP_EQ, "");
+		assertSingleToken("&&", TokenType.AMP_AMP, "");
+		assertSingleToken("|", TokenType.PIPE, "");
+		assertSingleToken("|=", TokenType.PIPE_EQ, "");
+		assertSingleToken("||", TokenType.PIPE_PIPE, "");
+		assertSingleToken("^", TokenType.CARET, "");
+		assertSingleToken("^=", TokenType.CARET_EQ, "");
+		assertSingleToken("<<", TokenType.LT_LT, "");
+		assertSingleToken("<<=", TokenType.LT_LT_EQ, "");
+		assertSingleToken(">>", TokenType.GT_GT, "");
+		assertSingleToken(">>=", TokenType.GT_GT_EQ, "");
+		assertSingleToken("~", TokenType.TILDE, "");
+		assertSingleToken(".", TokenType.DOT, "");
+		assertSingleToken(",", TokenType.COMMA, "");
+		assertSingleToken("[", TokenType.L_BRACKET, "");
+		assertSingleToken("]", TokenType.R_BRACKET, "");
+	}
+
+	@Test
+	public void testAdjacentOperators() {
+		new LexerTester("a++--<<==>>=&&&=|||=!==/=/b") {
+			@Override
+			protected void test() {
+				nextIdentifier("a", 0, 0);
+				nextType(TokenType.PLUS, 0, 1);
+				nextType(TokenType.PLUS, 0, 2);
+				nextType(TokenType.MINUS, 0, 3);
+				nextType(TokenType.MINUS, 0, 4);
+				nextType(TokenType.LT_LT_EQ, 0, 5);
+				nextType(TokenType.EQUAL, 0, 8);
+				nextType(TokenType.GT_GT_EQ, 0, 9);
+				nextType(TokenType.AMP_AMP, 0, 12);
+				nextType(TokenType.AMP_EQ, 0, 14);
+				nextType(TokenType.PIPE_PIPE, 0, 16);
+				nextType(TokenType.PIPE_EQ, 0, 18);
+				nextType(TokenType.EXCL_EQ, 0, 20);
+				nextType(TokenType.EQUAL, 0, 22);
+				nextType(TokenType.SLASH_EQ, 0, 23);
+				nextType(TokenType.SLASH, 0, 25);
+				nextIdentifier("b", 0, 26);
+				nextEof(0, 27);
 			}
 		}.test();
 	}
@@ -368,6 +629,21 @@ public class LexerTest {
 		}.test();
 	}
 
+	private static void assertSingleToken(String input, TokenType expectedType, String expectedText) {
+		final Lexer lexer = new LexerImpl(input);
+		assertEquals(input, new Token(expectedType, 0, expectedText, new Location(0, 0)), lexer.next());
+		assertEquals(input, new Token(TokenType.EOF, 0, "", new Location(0, input.length())), lexer.next());
+	}
+
+	private static void assertInvalidToken(String input, String expectedMessage, int expectedColumn) {
+		new LexerTester(input) {
+			@Override
+			protected void test() {
+				nextInvalidTokenException(expectedMessage, 0, expectedColumn);
+			}
+		}.test();
+	}
+
 	private abstract static class LexerTester {
 		protected abstract void test();
 
@@ -409,13 +685,14 @@ public class LexerTest {
 			nextType(TokenType.EOF, expectedLine, expectedColumn);
 		}
 
-		public void nextInvalidTokenException(String expectedMessage) {
+		public void nextInvalidTokenException(String expectedMessage, int expectedLine, int expectedColumn) {
+			final Location expectedLocation = new Location(expectedLine, expectedColumn);
 			try {
-				fetchToken();
-				fail();
+				fail("Expected an invalid token but got " + fetchToken());
 			}
 			catch (InvalidTokenException ex) {
-				assertEquals(expectedMessage, ex.getMessage());
+				assertEquals(expectedLocation, ex.location);
+				assertEquals((expectedLine + 1) + ":" + (expectedColumn + 1) + " " + expectedMessage, ex.getMessage());
 			}
 		}
 
