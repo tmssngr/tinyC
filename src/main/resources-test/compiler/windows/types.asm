@@ -47,28 +47,32 @@ _printChar@u8:
         ;   rsp+80: arg number
         ;   rsp+40: var buffer
 _printUint@i64:
+        sub rsp, 40
         sub rsp, 32
-        ; save clobbered non-volatile registers
-        push rbx
-        sub rsp, 32
-        ; const pos.1{r6}, 20
-        mov bl, 20
+        ; const pos.1{r0}, 20
+        mov al, 20
         ; 33:2 while true
         ; move number.1{r3}, number{r1}
         mov r8, rcx
+        jmp while_1
+_printUint@i64.no_critical_edge_4:
+        ; move pos.2{r0}, pos.3{r4}
+        mov al, r9b
 while_1:
-        ; sub pos.3{r6}, 1
-        sub bl, 1
-        ; move remainder.1{r4}, number.1{r3}
-        mov r9, r8
-        ; move remainder.1{r0}, remainder.1{r4}
-        mov rax, r9
+        ; move pos.3{r4}, pos.2{r0}
+        mov r9b, al
+        ; sub pos.3{r4}, 1
+        sub r9b, 1
+        ; move remainder.1{r5}, number.1{r3}
+        mov r10, r8
+        ; move remainder.1{r0}, remainder.1{r5}
+        mov rax, r10
         ; mod remainder.1{r2}, remainder.1{r0}, 10
         cqo
         mov rcx, 10
         idiv rcx
-        ; move remainder.1{r4}, remainder.1{r2}
-        mov r9, rdx
+        ; move remainder.1{r5}, remainder.1{r2}
+        mov r10, rdx
         ; move number.2{r0}, number.2{r3}
         mov rax, r8
         ; div number.2{r0}, 10
@@ -77,38 +81,34 @@ while_1:
         idiv rcx
         ; move number.2{r3}, number.2{r0}
         mov r8, rax
-        ; cast t.5.1{r0}(u8), remainder.1{r4}(i64)
-        mov al, r9b
+        ; cast t.5.1{r0}(u8), remainder.1{r5}(i64)
+        mov al, r10b
         ; add digit.1{r0}, 48
         add al, 48
-        ; cast t.7.1{r4}(i64), pos.3{r6}(u8)
-        movzx r9, bl
-        ; addrof t.6.1{r5}, buffer
-        lea r10, [rsp+40]
-        ; add t.6.2{r5}, t.7.1{r4}
-        add r10, r9
-        ; store [t.6.2{r5}], digit.1{r0}
-        mov [r10], al
+        ; cast t.7.1{r1}(i64), pos.3{r4}(u8)
+        movzx rcx, r9b
+        ; addrof t.6.1{r2}, buffer
+        lea rdx, [rsp+40]
+        ; add t.6.2{r2}, t.7.1{r1}
+        add rdx, rcx
+        ; store [t.6.2{r2}], digit.1{r0}
+        mov [rdx], al
         ; 39:3 if number == 0
-        ; branch number.2{r3} notequals 0: while_1
+        ; branch number.2{r3} notequals 0: _printUint@i64.no_critical_edge_4
         cmp r8, 0
-        jne while_1
-        ; addrof t.8.1{r3}, buffer
-        lea r8, [rsp+40]
-        ; move t.8.2{r1}, t.8.2{r5}
-        mov rcx, r10
+        jne _printUint@i64.no_critical_edge_4
+        ; move t.8.2{r1}, t.8.2{r2}
+        mov rcx, rdx
         ; const t.11.1{r0}, 20
         mov al, 20
         ; move t.10.1{r2}, t.11.1{r0}
         mov dl, al
-        ; sub t.10.1{r2}, pos.3{r6}
-        sub dl, bl
+        ; sub t.10.1{r2}, pos.3{r4}
+        sub dl, r9b
         ; call _printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
         call _printStringLength@@u8@u8
         add rsp, 32
-        ; restore clobbered non-volatile registers
-        pop rbx
-        add rsp, 32
+        add rsp, 40
         ret
 
         ; void _printIntLf@u8
@@ -139,8 +139,11 @@ _printIntLf@i64:
         mov cl, 45
         ; call _printChar@u8[arg.0.0{r1}]
         call _printChar@u8
-        ; neg number.2{r6}, number{r6}
-        neg rbx
+        ; neg number.2{r0}, number{r6}
+        mov rax, rbx
+        neg rax
+        ; move number.1{r6}, number.2{r0}
+        mov rbx, rax
 if_3_end:
         ; move number.1{r1}, number.1{r6}
         mov rcx, rbx
@@ -174,25 +177,31 @@ _main:
         ; save clobbered non-volatile registers
         push rbx
         sub rsp, 32
-        ; const i.1{r6}, 250
-        mov bl, 250
+        ; const i.1{r0}, 250
+        mov al, 250
         ; 4:3 for i != 2
+        ; move i.2{r6}, i.1{r0}
+        mov bl, al
         jmp for_4
 for_4_body:
         ; move i.2{r1}, i.2{r6}
         mov cl, bl
         ; call _printIntLf@u8[i.2{r1}]
         call _printIntLf@u8
-        ; add i.3{r6}, 1
-        add bl, 1
+        ; move i.3{r0}, i.2{r6}
+        mov al, bl
+        ; add i.3{r0}, 1
+        add al, 1
+        ; move i.2{r6}, i.3{r0}
+        mov bl, al
 for_4:
         ; branch i.2{r6} notequals 2: for_4_body
         cmp bl, 2
         jne for_4_body
-        ; const v.1{r6}, 260
-        mov bx, 260
-        ; cast t.2.1{r1}(u8), v.1{r6}(i16)
-        mov cl, bl
+        ; const v.1{r0}, 260
+        mov ax, 260
+        ; cast t.2.1{r1}(u8), v.1{r0}(i16)
+        mov cl, al
         ; call _printIntLf@u8[t.2.1{r1}]
         call _printIntLf@u8
         add rsp, 32

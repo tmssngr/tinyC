@@ -41,10 +41,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
@@ -69,13 +73,19 @@ main:
         push r11
         push r12
         push r13
-        ; const a.1{r8}, 0
-        ld   r8, #%00
-        ld   r9, #%00
-        ; const b.1{r10}, 1
-        ld   r10, #%00
-        ld   r11, #%01
+        ; const a.1{r0}, 0
+        ld   r0, #%00
+        ld   r1, #%00
+        ; const b.1{r2}, 1
+        ld   r2, #%00
+        ld   r3, #%01
         ; 6:2 while b < 1000
+        ; move a.2{r8}, a.1{r0}
+        ld   r9, r1
+        ld   r8, r0
+        ; move b.2{r10}, b.1{r2}
+        ld   r11, r3
+        ld   r10, r2
         jr   while_2
 
 while_2_body:

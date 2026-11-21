@@ -21,7 +21,6 @@ public class LSRegAllocTest {
 	public void testSimplest() {
 		final int r0 = 0;
 		final int r1 = 1;
-		final int r2 = 2;
 		final IRVar varFour = new IRVar("four", 0, VariableScope.function, Type.U8);
 		final IRVar varThree = new IRVar("three", 1, VariableScope.function, Type.U8);
 		final IRVar varOne = new IRVar("one", 2, VariableScope.function, Type.U8);
@@ -44,10 +43,9 @@ public class LSRegAllocTest {
 		final LSCallingConventionProvider callingConventionProvider = (targetType, argTypes) -> LSCallingConvention.createX86CallingConvention(2, 0);
 		final IRFunction regAllocFunction = LSRegAlloc.process(function, null, true, 3, callingConventionProvider, Type.I64);
 		final Iterator<IRInstruction> it = regAllocFunction.instructions().iterator();
-		assertEquals(new IRMove(varFour.asRegister(r1), 4), it.next());
-		assertEquals(new IRMove(varThree.asRegister(r2), 3), it.next());
-		assertEquals(new IRMove(varOne.asRegister(r0), varFour.asRegister(r1)), it.next());
-		assertEquals(new IRBinary(varOne.asRegister(r0), IRBinary.Op.Sub, varOne.asRegister(r0), varThree.asRegister(r2)), it.next());
+		assertEquals(new IRMove(varFour.asRegister(r0), 4), it.next());
+		assertEquals(new IRMove(varThree.asRegister(r1), 3), it.next());
+		assertEquals(new IRBinary(varOne.asRegister(r0), IRBinary.Op.Sub, varOne.asRegister(r0), varThree.asRegister(r1)), it.next());
 		assertFalse(it.hasNext());
 	}
 

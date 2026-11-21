@@ -20,7 +20,8 @@ printIntLf_Pi16:
 	branch param.number{r8} gteq 0: if_1_end
 	const arg.0.0{r0}, 45
 	call printChar_Pu8[arg.0.0{r0}]
-	neg number.2{r8}, param.number{r8}
+	neg number.2{r0}, param.number{r8}
+	move number.1{r8}, number.2{r0}
 if_1_end:
 	move number.1{r0}, number.1{r8}
 	call printUint_Pi16[number.1{r0}]
@@ -28,13 +29,16 @@ if_1_end:
 	call printChar_Pu8[arg.2.0{r0}]
 
 main:
-	const i.1{r8}, 5
+	const i.1{r0}, 5
 	; 5:2 while i > 0
+	move i.2{r8}, i.1{r0}
 	jump while_2
 while_2_body:
 	move i.2{r0}, i.2{r8}
 	call printIntLf_Pu8[i.2{r0}]
-	sub i.4{r8}, 1
+	move i.4{r0}, i.2{r8}
+	sub i.4{r0}, 1
+	move i.2{r8}, i.4{r0}
 while_2:
 	branch i.2{r8} gt 0: while_2_body, while_3
 while_3:

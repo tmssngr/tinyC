@@ -36,73 +36,67 @@ _printChar@u8:
         ret
 
         ; void _printUint@i64
-        ;   rsp+24: arg number
-        ;   rsp+40: var buffer
+        ;   rsp+0: arg number
+        ;   rsp+20: var buffer
 _printUint@i64:
-        sub rsp, 48
-        ; save clobbered non-volatile registers
-        push r9
-        push r10
-        push rbx
-        ; const pos.1{r8}, 20
-        mov bl, 20
+        sub rsp, 40
+        ; const pos.1{r0}, 20
+        mov al, 20
         ; 33:2 while true
-        ; move number.1{r5}, number{r1}
-        mov r8, rdi
+        jmp while_1
+_printUint@i64.no_critical_edge_4:
+        ; move pos.2{r0}, pos.3{r2}
+        mov al, sil
 while_1:
-        ; sub pos.3{r8}, 1
-        sub bl, 1
-        ; move remainder.1{r6}, number.1{r5}
-        mov r9, r8
-        ; move remainder.1{r0}, remainder.1{r6}
-        mov rax, r9
+        ; move pos.3{r2}, pos.2{r0}
+        mov sil, al
+        ; sub pos.3{r2}, 1
+        sub sil, 1
+        ; move remainder.1{r5}, number.1{r1}
+        mov r8, rdi
+        ; move remainder.1{r0}, remainder.1{r5}
+        mov rax, r8
         ; mod remainder.1{r3}, remainder.1{r0}, 10
         cqo
         mov rcx, 10
         idiv rcx
-        ; move remainder.1{r6}, remainder.1{r3}
-        mov r9, rdx
-        ; move number.2{r0}, number.2{r5}
-        mov rax, r8
+        ; move remainder.1{r5}, remainder.1{r3}
+        mov r8, rdx
+        ; move number.2{r0}, number.2{r1}
+        mov rax, rdi
         ; div number.2{r0}, 10
         cqo
         mov rcx, 10
         idiv rcx
-        ; move number.2{r5}, number.2{r0}
-        mov r8, rax
-        ; cast t.5.1{r0}(u8), remainder.1{r6}(i64)
-        mov al, r9b
+        ; move number.2{r1}, number.2{r0}
+        mov rdi, rax
+        ; cast t.5.1{r0}(u8), remainder.1{r5}(i64)
+        mov al, r8b
         ; add digit.1{r0}, 48
         add al, 48
-        ; cast t.7.1{r3}(i64), pos.3{r8}(u8)
-        movzx rdx, bl
+        ; cast t.7.1{r3}(i64), pos.3{r2}(u8)
+        movzx rdx, sil
         ; addrof t.6.1{r4}, buffer
-        lea rcx, [rsp+40]
+        lea rcx, [rsp+20]
         ; add t.6.2{r4}, t.7.1{r3}
         add rcx, rdx
         ; store [t.6.2{r4}], digit.1{r0}
         mov [rcx], al
         ; 39:3 if number == 0
-        ; branch number.2{r5} notequals 0: while_1
-        cmp r8, 0
-        jne while_1
-        ; addrof t.8.1{r3}, buffer
-        lea rdx, [rsp+40]
+        ; branch number.2{r1} notequals 0: _printUint@i64.no_critical_edge_4
+        cmp rdi, 0
+        jne _printUint@i64.no_critical_edge_4
         ; move t.8.2{r1}, t.8.2{r4}
         mov rdi, rcx
         ; const t.11.1{r0}, 20
         mov al, 20
-        ; move t.10.1{r2}, t.11.1{r0}
+        ; sub t.10.1{r0}, pos.3{r2}
+        sub al, sil
+        ; move t.10.1{r2}, t.10.1{r0}
         mov sil, al
-        ; sub t.10.1{r2}, pos.3{r8}
-        sub sil, bl
         ; call _printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
         call _printStringLength@@u8@u8
-        ; restore clobbered non-volatile registers
-        pop rbx
-        pop r10
-        pop r9
-        add rsp, 48
+        add rsp, 40
         ret
 
         ; void _printIntLf@u8
@@ -133,8 +127,11 @@ _printIntLf@i64:
         mov dil, 45
         ; call _printChar@u8[arg.0.0{r1}]
         call _printChar@u8
-        ; neg number.2{r8}, number{r8}
-        neg rbx
+        ; neg number.2{r0}, number{r8}
+        mov rax, rbx
+        neg rax
+        ; move number.1{r8}, number.2{r0}
+        mov rbx, rax
 if_3_end:
         ; move number.1{r1}, number.1{r8}
         mov rdi, rbx
@@ -179,49 +176,49 @@ _initRandom@i32:
         ; i32 _random
 _random:
         sub rsp, 8
-        ; addrof a.5.1{r1}, __random__
-        lea rdi, [var_0]
-        ; load r.1{r1}, [a.5.1{r1}]
-        mov edi, [rdi]
-        ; move t.6.1{r2}, r.1{r1}
-        mov esi, edi
-        ; and t.6.1{r2}, 524287
-        and esi, 524287
-        ; mul b.1{r2}, 48271
-        movsxd rsi, esi
-        imul  rsi, 48271
-        ; shiftright t.7.1{r1}, 15
-        sar edi, 15
-        ; mul c.1{r1}, 48271
+        ; addrof a.5.1{r0}, __random__
+        lea rax, [var_0]
+        ; load r.1{r0}, [a.5.1{r0}]
+        mov eax, [rax]
+        ; move t.6.1{r1}, r.1{r0}
+        mov edi, eax
+        ; and t.6.1{r1}, 524287
+        and edi, 524287
+        ; mul b.1{r1}, 48271
         movsxd rdi, edi
         imul  rdi, 48271
-        ; move t.8.1{r3}, c.1{r1}
-        mov edx, edi
-        ; and t.8.1{r3}, 65535
-        and edx, 65535
-        ; shiftleft d.1{r3}, 15
-        sal edx, 15
-        ; shiftright t.10.1{r1}, 16
-        sar edi, 16
-        ; add t.9.1{r1}, b.1{r2}
-        add edi, esi
-        ; add e.1{r1}, d.1{r3}
-        add edi, edx
-        ; move t.12.1{r2}, e.1{r1}
-        mov esi, edi
-        ; and t.12.1{r2}, 2147483647
-        and esi, 2147483647
-        ; shiftright t.13.1{r1}, 31
-        sar edi, 31
-        ; add t.11.1{r2}, t.13.1{r1}
-        add esi, edi
-        ; addrof a.14.1{r1}, __random__
-        lea rdi, [var_0]
-        ; store [a.14.1{r1}], t.11.1{r2}
-        mov [rdi], esi
+        ; shiftright t.7.1{r0}, 15
+        sar eax, 15
+        ; mul c.1{r0}, 48271
+        movsxd rax, eax
+        imul  rax, 48271
+        ; move t.8.1{r2}, c.1{r0}
+        mov esi, eax
+        ; and t.8.1{r2}, 65535
+        and esi, 65535
+        ; shiftleft d.1{r2}, 15
+        sal esi, 15
+        ; shiftright t.10.1{r0}, 16
+        sar eax, 16
+        ; add t.9.1{r0}, b.1{r1}
+        add eax, edi
+        ; add e.1{r0}, d.1{r2}
+        add eax, esi
+        ; move t.12.1{r1}, e.1{r0}
+        mov edi, eax
+        ; and t.12.1{r1}, 2147483647
+        and edi, 2147483647
+        ; shiftright t.13.1{r0}, 31
+        sar eax, 31
+        ; add t.11.1{r1}, t.13.1{r0}
+        add edi, eax
+        ; addrof a.14.1{r0}, __random__
+        lea rax, [var_0]
+        ; store [a.14.1{r0}], t.11.1{r1}
+        mov [rax], edi
         ; 16:9 return __random__
-        ; move t.16.1{r0}, t.16.1{r2}
-        mov eax, esi
+        ; move t.16.1{r0}, t.16.1{r1}
+        mov eax, edi
         add rsp, 8
         ret
 
@@ -242,20 +239,22 @@ _main:
         push r10
         push rbx
         ; begin initialize global variables
-        ; const t.2.1{r8}, 0
-        mov ebx, 0
-        ; addrof a.3.1{r0}, __random__
-        lea rax, [var_0]
-        ; store [a.3.1{r0}], t.2.1{r8}
-        mov [rax], ebx
+        ; const t.2.1{r0}, 0
+        mov eax, 0
+        ; addrof a.3.1{r1}, __random__
+        lea rdi, [var_0]
+        ; store [a.3.1{r1}], t.2.1{r0}
+        mov [rdi], eax
         ; end initialize global variables
         ; const arg.0.0{r1}, 7439742
         mov edi, 7439742
         ; call _initRandom@i32[arg.0.0{r1}]
         call _initRandom@i32
-        ; const i.1{r8}, 0
-        mov bl, 0
+        ; const i.1{r0}, 0
+        mov al, 0
         ; 6:2 for i < 50
+        ; move i.2{r8}, i.1{r0}
+        mov bl, al
         jmp for_4
 for_4_body:
         ; call r.1{r0} = _randomU8[] -> u8

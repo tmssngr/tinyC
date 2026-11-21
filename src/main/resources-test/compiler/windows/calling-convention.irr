@@ -13,31 +13,34 @@ _printUint@i64:
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
 
-	const pos.1{r6}, 20
+	const pos.1{r0}, 20
 	; 33:2 while true
 	move number.1{r3}, number{r1}
+	jump while_1
+_printUint@i64.no_critical_edge_4:
+	move pos.2{r0}, pos.3{r4}
 while_1:
-	sub pos.3{r6}, 1
-	move remainder.1{r4}, number.1{r3}
-	move remainder.1{r0}, remainder.1{r4}
+	move pos.3{r4}, pos.2{r0}
+	sub pos.3{r4}, 1
+	move remainder.1{r5}, number.1{r3}
+	move remainder.1{r0}, remainder.1{r5}
 	mod remainder.1{r2}, remainder.1{r0}, 10
-	move remainder.1{r4}, remainder.1{r2}
+	move remainder.1{r5}, remainder.1{r2}
 	move number.2{r0}, number.2{r3}
 	div number.2{r0}, 10
 	move number.2{r3}, number.2{r0}
-	cast t.5.1{r0}(u8), remainder.1{r4}(i64)
+	cast t.5.1{r0}(u8), remainder.1{r5}(i64)
 	add digit.1{r0}, 48
-	cast t.7.1{r4}(i64), pos.3{r6}(u8)
-	addrof t.6.1{r5}, buffer
-	add t.6.2{r5}, t.7.1{r4}
-	store [t.6.2{r5}], digit.1{r0}
+	cast t.7.1{r1}(i64), pos.3{r4}(u8)
+	addrof t.6.1{r2}, buffer
+	add t.6.2{r2}, t.7.1{r1}
+	store [t.6.2{r2}], digit.1{r0}
 	; 39:3 if number == 0
-	branch number.2{r3} notequals 0: while_1
-	addrof t.8.1{r3}, buffer
-	move t.8.2{r1}, t.8.2{r5}
+	branch number.2{r3} notequals 0: _printUint@i64.no_critical_edge_4
+	move t.8.2{r1}, t.8.2{r2}
 	const t.11.1{r0}, 20
 	move t.10.1{r2}, t.11.1{r0}
-	sub t.10.1{r2}, pos.3{r6}
+	sub t.10.1{r2}, pos.3{r4}
 	call _printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
 
 _printIntLf@i16:
@@ -55,7 +58,8 @@ _printIntLf@i64:
 	branch number{r6} gteq 0: if_3_end
 	const arg.0.0{r1}, 45
 	call _printChar@u8[arg.0.0{r1}]
-	neg number.2{r6}, number{r6}
+	neg number.2{r0}, number{r6}
+	move number.1{r6}, number.2{r0}
 if_3_end:
 	move number.1{r1}, number.1{r6}
 	call _printUint@i64[number.1{r1}]
@@ -122,25 +126,25 @@ _printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
 	; 17:35 return a + b + c + d + e + f + g + h
 	addrof memVarAddr{r7}, a
 	load a{r1}, [memVarAddr{r7}]
+	move t.14.1{r0}, a{r1}
 	addrof memVarAddr{r7}, b
 	load b{r2}, [memVarAddr{r7}]
-	add t.14.1{r1}, b{r2}
+	add t.14.1{r0}, b{r2}
 	addrof memVarAddr{r7}, c
 	load c{r3}, [memVarAddr{r7}]
-	add t.13.1{r1}, c{r3}
+	add t.13.1{r0}, c{r3}
 	addrof memVarAddr{r7}, d
 	load d{r4}, [memVarAddr{r7}]
-	add t.12.1{r1}, d{r4}
+	add t.12.1{r0}, d{r4}
 	addrof memVarAddr{r7}, e
-	load e{r2}, [memVarAddr{r7}]
-	add t.11.1{r1}, e{r2}
+	load e{r1}, [memVarAddr{r7}]
+	add t.11.1{r0}, e{r1}
 	addrof memVarAddr{r7}, f
-	load f{r2}, [memVarAddr{r7}]
-	add t.10.1{r1}, f{r2}
+	load f{r1}, [memVarAddr{r7}]
+	add t.10.1{r0}, f{r1}
 	addrof memVarAddr{r7}, g
-	load g{r2}, [memVarAddr{r7}]
-	add t.9.1{r1}, g{r2}
-	move t.8.1{r0}, t.9.1{r1}
+	load g{r1}, [memVarAddr{r7}]
+	add t.9.1{r0}, g{r1}
 	add t.8.1{r0}, h{r6}
 
 _main:

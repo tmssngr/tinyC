@@ -68,28 +68,32 @@ _printChar@u8:
         ;   rsp+80: arg number
         ;   rsp+40: var buffer
 _printUint@i64:
+        sub rsp, 40
         sub rsp, 32
-        ; save clobbered non-volatile registers
-        push rbx
-        sub rsp, 32
-        ; const pos.1{r6}, 20
-        mov bl, 20
+        ; const pos.1{r0}, 20
+        mov al, 20
         ; 33:2 while true
         ; move number.1{r3}, number{r1}
         mov r8, rcx
+        jmp while_1
+_printUint@i64.no_critical_edge_4:
+        ; move pos.2{r0}, pos.3{r4}
+        mov al, r9b
 while_1:
-        ; sub pos.3{r6}, 1
-        sub bl, 1
-        ; move remainder.1{r4}, number.1{r3}
-        mov r9, r8
-        ; move remainder.1{r0}, remainder.1{r4}
-        mov rax, r9
+        ; move pos.3{r4}, pos.2{r0}
+        mov r9b, al
+        ; sub pos.3{r4}, 1
+        sub r9b, 1
+        ; move remainder.1{r5}, number.1{r3}
+        mov r10, r8
+        ; move remainder.1{r0}, remainder.1{r5}
+        mov rax, r10
         ; mod remainder.1{r2}, remainder.1{r0}, 10
         cqo
         mov rcx, 10
         idiv rcx
-        ; move remainder.1{r4}, remainder.1{r2}
-        mov r9, rdx
+        ; move remainder.1{r5}, remainder.1{r2}
+        mov r10, rdx
         ; move number.2{r0}, number.2{r3}
         mov rax, r8
         ; div number.2{r0}, 10
@@ -98,62 +102,56 @@ while_1:
         idiv rcx
         ; move number.2{r3}, number.2{r0}
         mov r8, rax
-        ; cast t.5.1{r0}(u8), remainder.1{r4}(i64)
-        mov al, r9b
+        ; cast t.5.1{r0}(u8), remainder.1{r5}(i64)
+        mov al, r10b
         ; add digit.1{r0}, 48
         add al, 48
-        ; cast t.7.1{r4}(i64), pos.3{r6}(u8)
-        movzx r9, bl
-        ; addrof t.6.1{r5}, buffer
-        lea r10, [rsp+40]
-        ; add t.6.2{r5}, t.7.1{r4}
-        add r10, r9
-        ; store [t.6.2{r5}], digit.1{r0}
-        mov [r10], al
+        ; cast t.7.1{r1}(i64), pos.3{r4}(u8)
+        movzx rcx, r9b
+        ; addrof t.6.1{r2}, buffer
+        lea rdx, [rsp+40]
+        ; add t.6.2{r2}, t.7.1{r1}
+        add rdx, rcx
+        ; store [t.6.2{r2}], digit.1{r0}
+        mov [rdx], al
         ; 39:3 if number == 0
-        ; branch number.2{r3} notequals 0: while_1
+        ; branch number.2{r3} notequals 0: _printUint@i64.no_critical_edge_4
         cmp r8, 0
-        jne while_1
-        ; addrof t.8.1{r3}, buffer
-        lea r8, [rsp+40]
-        ; move t.8.2{r1}, t.8.2{r5}
-        mov rcx, r10
+        jne _printUint@i64.no_critical_edge_4
+        ; move t.8.2{r1}, t.8.2{r2}
+        mov rcx, rdx
         ; const t.11.1{r0}, 20
         mov al, 20
         ; move t.10.1{r2}, t.11.1{r0}
         mov dl, al
-        ; sub t.10.1{r2}, pos.3{r6}
-        sub dl, bl
+        ; sub t.10.1{r2}, pos.3{r4}
+        sub dl, r9b
         ; call _printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
         call _printStringLength@@u8@u8
         add rsp, 32
-        ; restore clobbered non-volatile registers
-        pop rbx
-        add rsp, 32
+        add rsp, 40
         ret
 
         ; void _printIntLf@bool
         ;   rsp+48: arg value
 _printIntLf@bool:
-        ; save clobbered non-volatile registers
-        push rbx
+        sub rsp, 8
         sub rsp, 32
-        ; const number.1{r6}, 0
-        mov bl, 0
+        ; const number.1{r0}, 0
+        mov al, 0
         ; 48:2 if value
         ; branch value{r1} equals 0: if_3_end
         cmp cl, 0
         je if_3_end
-        ; const number.3{r6}, 1
-        mov bl, 1
+        ; const number.3{r0}, 1
+        mov al, 1
 if_3_end:
-        ; cast t.2.1{r1}(i64), number.2{r6}(u8)
-        movzx rcx, bl
+        ; cast t.2.1{r1}(i64), number.2{r0}(u8)
+        movzx rcx, al
         ; call _printIntLf@i64[t.2.1{r1}]
         call _printIntLf@i64
         add rsp, 32
-        ; restore clobbered non-volatile registers
-        pop rbx
+        add rsp, 8
         ret
 
         ; void _printIntLf@i64
@@ -171,8 +169,11 @@ _printIntLf@i64:
         mov cl, 45
         ; call _printChar@u8[arg.0.0{r1}]
         call _printChar@u8
-        ; neg number.2{r6}, number{r6}
-        neg rbx
+        ; neg number.2{r0}, number{r6}
+        mov rax, rbx
+        neg rax
+        ; move number.1{r6}, number.2{r0}
+        mov rbx, rax
 if_4_end:
         ; move number.1{r1}, number.1{r6}
         mov rcx, rbx
@@ -191,21 +192,15 @@ if_4_end:
         ;   rsp+16: arg str
 _strlen@@u8:
         sub rsp, 8
-        ; const length.1{r2}, 0
-        mov rdx, 0
+        ; const length.1{r0}, 0
+        mov rax, 0
         ; 73:2 for *str != 0
-        ; move length.2{r0}, length.1{r2}
-        mov rax, rdx
         jmp for_5
 for_5_body:
-        ; move length.3{r2}, length.2{r0}
-        mov rdx, rax
-        ; add length.3{r2}, 1
-        add rdx, 1
+        ; add length.3{r0}, 1
+        add rax, 1
         ; add str.2{r1}, 1
         add rcx, 1
-        ; move length.2{r0}, length.3{r2}
-        mov rax, rdx
 for_5:
         ; load t.2.1{r2}, [str.1{r1}]
         mov dl, [rcx]
@@ -270,32 +265,36 @@ _main:
         call _printString@@u8
         ; const c.1{r0}, 0
         mov al, 0
-        ; const d.1{r2}, 128
-        mov dl, 128
-        ; lt t.8.1{r1}, c.1{r0}, d.1{r2}
-        cmp al, dl
-        setb cl
+        ; const d.1{r1}, 128
+        mov cl, 128
+        ; lt t.8.1{r2}, c.1{r0}, d.1{r1}
+        cmp al, cl
+        setb dl
         ; addrof memVarAddr{r7}, c.1
         lea r12, [rsp+50]
         ; store [memVarAddr{r7}], c.1{r0}
         mov [r12], al
         ; addrof memVarAddr{r7}, d.1
         lea r12, [rsp+51]
-        ; store [memVarAddr{r7}], d.1{r2}
-        mov [r12], dl
+        ; store [memVarAddr{r7}], d.1{r1}
+        mov [r12], cl
+        ; move t.8.1{r1}, t.8.1{r2}
+        mov cl, dl
         ; call _printIntLf@bool[t.8.1{r1}]
         call _printIntLf@bool
         ; addrof memVarAddr{r7}, c.1
         lea r12, [rsp+50]
-        ; load c.1{r2}, [memVarAddr{r7}]
-        mov dl, [r12]
+        ; load c.1{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
         ; addrof memVarAddr{r7}, d.1
         lea r12, [rsp+51]
         ; load d.1{r0}, [memVarAddr{r7}]
         mov al, [r12]
-        ; lt t.9.1{r1}, d.1{r0}, c.1{r2}
-        cmp al, dl
-        setb cl
+        ; lt t.9.1{r2}, d.1{r0}, c.1{r1}
+        cmp al, cl
+        setb dl
+        ; move t.9.1{r1}, t.9.1{r2}
+        mov cl, dl
         ; call _printIntLf@bool[t.9.1{r1}]
         call _printIntLf@bool
         ; const t.10.1{r1}, [string-2]
@@ -328,24 +327,28 @@ _main:
         mov al, [r12]
         ; addrof memVarAddr{r7}, d.1
         lea r12, [rsp+51]
-        ; load d.1{r2}, [memVarAddr{r7}]
-        mov dl, [r12]
-        ; lteq t.14.1{r1}, c.1{r0}, d.1{r2}
-        cmp al, dl
-        setbe cl
+        ; load d.1{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
+        ; lteq t.14.1{r2}, c.1{r0}, d.1{r1}
+        cmp al, cl
+        setbe dl
+        ; move t.14.1{r1}, t.14.1{r2}
+        mov cl, dl
         ; call _printIntLf@bool[t.14.1{r1}]
         call _printIntLf@bool
         ; addrof memVarAddr{r7}, c.1
         lea r12, [rsp+50]
-        ; load c.1{r2}, [memVarAddr{r7}]
-        mov dl, [r12]
+        ; load c.1{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
         ; addrof memVarAddr{r7}, d.1
         lea r12, [rsp+51]
         ; load d.1{r0}, [memVarAddr{r7}]
         mov al, [r12]
-        ; lteq t.15.1{r1}, d.1{r0}, c.1{r2}
-        cmp al, dl
-        setbe cl
+        ; lteq t.15.1{r2}, d.1{r0}, c.1{r1}
+        cmp al, cl
+        setbe dl
+        ; move t.15.1{r1}, t.15.1{r2}
+        mov cl, dl
         ; call _printIntLf@bool[t.15.1{r1}]
         call _printIntLf@bool
         ; const t.16.1{r1}, [string-4]
@@ -414,24 +417,28 @@ _main:
         mov al, [r12]
         ; addrof memVarAddr{r7}, d.1
         lea r12, [rsp+51]
-        ; load d.1{r2}, [memVarAddr{r7}]
-        mov dl, [r12]
-        ; gteq t.26.1{r1}, c.1{r0}, d.1{r2}
-        cmp al, dl
-        setae cl
+        ; load d.1{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
+        ; gteq t.26.1{r2}, c.1{r0}, d.1{r1}
+        cmp al, cl
+        setae dl
+        ; move t.26.1{r1}, t.26.1{r2}
+        mov cl, dl
         ; call _printIntLf@bool[t.26.1{r1}]
         call _printIntLf@bool
         ; addrof memVarAddr{r7}, c.1
         lea r12, [rsp+50]
-        ; load c.1{r2}, [memVarAddr{r7}]
-        mov dl, [r12]
+        ; load c.1{r1}, [memVarAddr{r7}]
+        mov cl, [r12]
         ; addrof memVarAddr{r7}, d.1
         lea r12, [rsp+51]
         ; load d.1{r0}, [memVarAddr{r7}]
         mov al, [r12]
-        ; gteq t.27.1{r1}, d.1{r0}, c.1{r2}
-        cmp al, dl
-        setae cl
+        ; gteq t.27.1{r2}, d.1{r0}, c.1{r1}
+        cmp al, cl
+        setae dl
+        ; move t.27.1{r1}, t.27.1{r2}
+        mov cl, dl
         ; call _printIntLf@bool[t.27.1{r1}]
         call _printIntLf@bool
         ; const t.28.1{r1}, [string-8]

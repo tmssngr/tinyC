@@ -11,9 +11,7 @@ rowColumnToCell_Pi16_Pi16:
 	arg 1: column (i16/2)
 
 	; 16:21 return row * 40 + column
-	move t.3.1{r4}, param.row{r0}
-	mul t.3.1{r4}, 40
-	move t.2.1{r0}, t.3.1{r4}
+	mul t.3.1{r0}, 40
 	add t.2.1{r0}, param.column{r2}
 
 getCell_Pi16_Pi16:
@@ -32,27 +30,24 @@ isBomb_Pu8:
 	arg 0: cell (u8/1)
 
 	; 24:27 return cell & 1 != 0
-	move t.2.1{r1}, param.cell{r0}
-	and t.2.1{r1}, 1
-	notequals t.1.1{r0}, t.2.1{r1}, 0
+	and t.2.1{r0}, 1
+	notequals t.1.1{r0}, t.2.1{r0}, 0
 
 isOpen_Pu8:
  Local variables
 	arg 0: cell (u8/1)
 
 	; 28:27 return cell & 2 != 0
-	move t.2.1{r1}, param.cell{r0}
-	and t.2.1{r1}, 2
-	notequals t.1.1{r0}, t.2.1{r1}, 0
+	and t.2.1{r0}, 2
+	notequals t.1.1{r0}, t.2.1{r0}, 0
 
 isFlag_Pu8:
  Local variables
 	arg 0: cell (u8/1)
 
 	; 32:27 return cell & 4 != 0
-	move t.2.1{r1}, param.cell{r0}
-	and t.2.1{r1}, 4
-	notequals t.1.1{r0}, t.2.1{r1}, 0
+	and t.2.1{r0}, 4
+	notequals t.1.1{r0}, t.2.1{r0}, 0
 
 checkCellBounds_Pi16_Pi16:
  Local variables
@@ -65,20 +60,16 @@ checkCellBounds_Pi16_Pi16:
 	; 36:21 logic and
 	gteq t.2.1{r4}, param.row{r0}, 0
 	branch t.2.1{r4} notequals 0: and_2nd_3
-	move t.2.2{r1}, t.2.1{r4}
+	move t.2.2{r0}, t.2.1{r4}
 	jump and_next_3
 and_2nd_3:
-	lt t.2.3{r1}, param.row{r0}, 20
+	lt t.2.3{r0}, param.row{r0}, 20
 and_next_3:
-	branch t.2.2{r1} equals 0: and_next_2
-	gteq t.2.5{r1}, param.column{r2}, 0
+	branch t.2.2{r0} equals 0: and_next_2
+	gteq t.2.5{r0}, param.column{r2}, 0
 and_next_2:
-	branch t.2.4{r1} notequals 0: and_2nd_1
-	move t.2.6{r0}, t.2.4{r1}
-	jump checkCellBounds_Pi16_Pi16_ret
-and_2nd_1:
-	lt t.2.7{r1}, param.column{r2}, 40
-	move t.2.6{r0}, t.2.7{r1}
+	branch t.2.4{r0} equals 0: checkCellBounds_Pi16_Pi16_ret
+	lt t.2.7{r0}, param.column{r2}, 40
 checkCellBounds_Pi16_Pi16_ret:
 
 setCell_Pi16_Pi16_Pu8:
@@ -104,62 +95,59 @@ getBombCountAround_Pi16_Pi16:
 
 	move param.row{r8}, row{r0}
 	move param.column{r10}, column{r2}
-	const count.1{r12}, 0
-	const dr.1{r4}, -1
+	const count.1{r0}, 0
+	const dr.1{r1}, -1
 	; 46:2 for dr <= 1
-	move dr.2{r1}, dr.2{r4}
+	move count.2{r12}, count.1{r0}
+	move dr.2{r0}, dr.1{r1}
 	jump for_4
 for_4_body:
-	move dr.2{r4}, dr.2{r1}
-	move r.1{r6}, param.row{r8}
-	add r.1{r6}, dr.2{r4}
+	move r.1{r2}, param.row{r8}
+	add r.1{r2}, dr.2{r0}
 	addrof memVarAddr{r14}, dr.2
-	store [memVarAddr{r14}], dr.2{r4}
-	const dc.1{r4}, -1
+	store [memVarAddr{r14}], dr.2{r0}
+	const dc.1{r0}, -1
 	; 48:3 for dc <= 1
 	addrof memVarAddr{r14}, r.1
-	store [memVarAddr{r14}], r.1{r6}
-	move dc.2{r1}, dc.2{r4}
+	store [memVarAddr{r14}], r.1{r2}
 	jump for_5
 for_5_body:
-	move dc.2{r4}, dc.2{r1}
 	addrof memVarAddr{r14}, r.1
-	load r.1{r6}, [memVarAddr{r14}]
-	move c.1{r2}, param.column{r10}
-	add c.1{r2}, dc.2{r4}
+	load r.1{r2}, [memVarAddr{r14}]
+	move c.1{r4}, param.column{r10}
+	add c.1{r4}, dc.2{r0}
 	addrof memVarAddr{r14}, dc.2
-	store [memVarAddr{r14}], dc.2{r4}
-	addrof memVarAddr{r14}, c.1
-	store [memVarAddr{r14}], c.1{r2}
+	store [memVarAddr{r14}], dc.2{r0}
 	; 50:4 if checkCellBounds_Pi16_Pi16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=50:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=50:27]])
-	move r.1{r0}, r.1{r6}
+	move r.1{r0}, r.1{r2}
+	move c.1{r2}, c.1{r4}
 	addrof memVarAddr{r14}, c.1
-	move c.1{r4}, c.1{r2}
+	store [memVarAddr{r14}], c.1{r4}
 	call t.8.1{r0} = checkCellBounds_Pi16_Pi16[r.1{r0}, c.1{r2}] -> bool
 	branch t.8.1{r0} equals 0: for_5_continue
 	addrof memVarAddr{r14}, r.1
-	load r.1{r4}, [memVarAddr{r14}]
-	move r.1{r0}, r.1{r4}
+	load r.1{r2}, [memVarAddr{r14}]
+	move r.1{r0}, r.1{r2}
 	addrof memVarAddr{r14}, c.1
 	load c.1{r2}, [memVarAddr{r14}]
 	call cell.1{r0} = getCell_Pi16_Pi16[r.1{r0}, c.1{r2}] -> u8
 	; 52:5 if isBomb_Pu8([ExprVarAccess[varName=cell, index=7, scope=function, type=u8, varIsArray=false, location=52:16]])
 	call t.9.1{r0} = isBomb_Pu8[cell.1{r0}] -> bool
 	branch t.9.1{r0} equals 0: for_5_continue
-	move count.5{r1}, count.3{r12}
-	add count.5{r1}, 1
-	move count.4{r12}, count.5{r1}
+	move count.5{r0}, count.3{r12}
+	add count.5{r0}, 1
+	move count.4{r12}, count.5{r0}
 for_5_continue:
 	addrof memVarAddr{r14}, dc.2
-	load dc.2{r1}, [memVarAddr{r14}]
-	add dc.4{r1}, 1
+	load dc.2{r0}, [memVarAddr{r14}]
+	add dc.4{r0}, 1
 for_5:
-	branch dc.2{r1} lteq 1: for_5_body
+	branch dc.2{r0} lteq 1: for_5_body
 	addrof memVarAddr{r14}, dr.2
-	load dr.2{r1}, [memVarAddr{r14}]
-	add dr.4{r1}, 1
+	load dr.2{r0}, [memVarAddr{r14}]
+	add dr.4{r0}, 1
 for_4:
-	branch dr.2{r1} lteq 1: for_4_body
+	branch dr.2{r0} lteq 1: for_4_body
 	; 58:9 return count
 	move count.2{r0}, count.2{r12}
 
@@ -173,9 +161,9 @@ getSpacer_Pi16_Pi16_Pi16_Pi16:
 	branch param.rowCursor{r4} notequals param.row{r0}: if_8_end
 	branch param.columnCursor{r6} equals param.column{r2}: if_9_then
 	; 66:3 if columnCursor == column - 1
-	move t.4.1{r1}, param.column{r2}
-	sub t.4.1{r1}, 1
-	branch param.columnCursor{r6} notequals t.4.1{r1}: if_8_end, if_10_then
+	move t.4.1{r0}, param.column{r2}
+	sub t.4.1{r0}, 1
+	branch param.columnCursor{r6} notequals t.4.1{r0}: if_8_end, if_10_then
 	jump if_10_then
 if_9_then:
 	const {r0}, 91
@@ -215,7 +203,8 @@ printCell_Pu8_Pi16_Pi16.no_critical_edge_10:
 	move chr.2{r8}, chr.1{r13}
 	jump if_11_end
 if_14_then:
-	const chr.3{r8}, 35
+	const chr.3{r0}, 35
+	move chr.2{r8}, chr.3{r0}
 	jump if_11_end
 if_12_else:
 	move param.row{r0}, param.row{r9}
@@ -225,14 +214,16 @@ if_12_else:
 	branch count.1{r0} lteq 0: if_13_else, if_13_then
 	jump if_13_then
 if_12_then:
-	const chr.4{r8}, 42
+	const chr.4{r0}, 42
+	move chr.2{r8}, chr.4{r0}
 	jump if_11_end
 if_13_else:
-	const chr.5{r8}, 32
+	const chr.5{r0}, 32
+	move chr.2{r8}, chr.5{r0}
 	jump if_11_end
 if_13_then:
-	move chr.6{r8}, count.1{r0}
-	add chr.6{r8}, 48
+	add chr.6{r0}, 48
+	move chr.2{r8}, chr.6{r0}
 if_11_end:
 	move chr.2{r0}, chr.2{r8}
 	call printChar_Pu8[chr.2{r0}]
@@ -247,14 +238,16 @@ printField_Pi16_Pi16:
 	const arg.0.0{r0}, 0
 	const arg.0.1{r2}, 0
 	call setCursor_Pi16_Pi16[arg.0.0{r0}, arg.0.1{r2}]
-	const row.1{r12}, 0
+	const row.1{r0}, 0
 	; 97:2 for row < 20
+	move row.2{r12}, row.1{r0}
 	jump for_15
 for_15_body:
 	const arg.1.0{r0}, 124
 	call printChar_Pu8[arg.1.0{r0}]
-	const column.1{r14}, 0
+	const column.1{r0}, 0
 	; 99:3 for column < 40
+	move column.2{r14}, column.1{r0}
 	jump for_16
 for_16_body:
 	move row.2{r0}, row.2{r12}
@@ -269,7 +262,9 @@ for_16_body:
 	move row.2{r1}, row.2{r12}
 	move column.2{r3}, column.2{r14}
 	call printCell_Pu8_Pi16_Pi16[cell.1{r0}, row.2{r1}, column.2{r3}]
-	add column.3{r14}, 1
+	move column.3{r0}, column.2{r14}
+	add column.3{r0}, 1
+	move column.2{r14}, column.3{r0}
 for_16:
 	branch column.2{r14} lt 40: for_16_body
 	move row.2{r0}, row.2{r12}
@@ -307,61 +302,51 @@ getDigitCount_Pi16:
 
 	const count.1{r2}, 0
 	; 119:2 if value < 0
-	branch param.value{r0} lt 0: if_18_then
-	move value.1{r3}, param.value{r0}
-	move count.2{r1}, count.1{r2}
-	jump if_18_end
-if_18_then:
+	branch param.value{r0} gteq 0: while_19
 	const count.3{r2}, 1
-	neg value.2{r3}, param.value{r0}
-	move count.2{r1}, count.3{r2}
-if_18_end:
-	move value.3{r2}, value.1{r3}
-	jump while_19
-getDigitCount_Pi16.no_critical_edge_7:
-	move value.3{r2}, value.4{r1}
-	move count.4{r1}, count.5{r0}
+	neg value.2{r0}, param.value{r0}
 while_19:
-	move count.5{r0}, count.4{r1}
-	add count.5{r0}, 1
-	move value.4{r1}, value.3{r2}
-	div value.4{r1}, 10
+	add count.5{r2}, 1
+	div value.4{r0}, 10
 	; 127:3 if value == 0
-	branch value.4{r1} notequals 0: getDigitCount_Pi16.no_critical_edge_7
+	branch value.4{r0} notequals 0: while_19
 	; 132:9 return count
+	move count.5{r0}, count.5{r2}
 
 getHiddenCount:
-	const count.1{r8}, 0
-	const r.1{r10}, 0
+	const count.1{r0}, 0
+	const r.1{r2}, 0
 	; 137:2 for r < 20
+	move count.2{r8}, count.1{r0}
+	move r.2{r10}, r.1{r2}
 	jump for_21
 for_21_body:
-	const c.1{r12}, 0
+	const c.1{r0}, 0
 	; 138:3 for c < 40
+	move c.2{r12}, c.1{r0}
 	jump for_22
 for_22_body:
 	move r.2{r0}, r.2{r10}
 	move c.2{r2}, c.2{r12}
 	call cell.1{r0} = getCell_Pi16_Pi16[r.2{r0}, c.2{r2}] -> u8
 	; 140:4 if cell & 6 == 0
-	move t.4.1{r2}, cell.1{r0}
-	and t.4.1{r2}, 6
-	branch t.4.1{r2} equals 0: if_23_then
-	move count.4{r2}, count.3{r8}
+	and t.4.1{r0}, 6
+	branch t.4.1{r0} equals 0: if_23_then
+	move count.4{r0}, count.3{r8}
 	jump for_22_continue
 if_23_then:
-	move count.5{r2}, count.3{r8}
-	add count.5{r2}, 1
+	move count.5{r0}, count.3{r8}
+	add count.5{r0}, 1
 for_22_continue:
-	move c.4{r4}, c.2{r12}
-	add c.4{r4}, 1
-	move count.3{r8}, count.4{r2}
-	move c.2{r12}, c.4{r4}
+	move c.4{r2}, c.2{r12}
+	add c.4{r2}, 1
+	move count.3{r8}, count.4{r0}
+	move c.2{r12}, c.4{r2}
 for_22:
 	branch c.2{r12} lt 40: for_22_body
-	move r.4{r2}, r.2{r10}
-	add r.4{r2}, 1
-	move r.2{r10}, r.4{r2}
+	move r.4{r0}, r.2{r10}
+	add r.4{r0}, 1
+	move r.2{r10}, r.4{r0}
 for_21:
 	branch r.2{r10} lt 20: for_21_body
 	; 145:9 return count
@@ -401,12 +386,14 @@ if_24_then:
 abs_Pi16_ret:
 
 clearField:
-	const r.1{r8}, 0
+	const r.1{r0}, 0
 	; 167:2 for r < 20
+	move r.2{r8}, r.1{r0}
 	jump for_25
 for_25_body:
-	const c.1{r10}, 0
+	const c.1{r0}, 0
 	; 168:3 for c < 40
+	move c.2{r10}, c.1{r0}
 	jump for_26
 for_26_body:
 	move r.2{r0}, r.2{r8}
@@ -433,8 +420,9 @@ initField_Pi16_Pi16:
 
 	move param.curr_r{r8}, curr_r{r0}
 	move param.curr_c{r10}, curr_c{r2}
-	const bombs.1{r12}, 40
+	const bombs.1{r0}, 40
 	; 175:2 for bombs > 0
+	move bombs.2{r12}, bombs.1{r0}
 	jump for_27
 for_27_body:
 	call t.5.1{r0} = random16[] -> i16
@@ -488,46 +476,44 @@ maybeRevealAround_Pi16_Pi16:
 	; 186:2 if getBombCountAround_Pi16_Pi16([ExprVarAccess[varName=row, index=0, scope=parameter, type=i16, varIsArray=false, location=186:25], ExprVarAccess[varName=column, index=1, scope=parameter, type=i16, varIsArray=false, location=186:30]]) != 0
 	call t.7.1{r0} = getBombCountAround_Pi16_Pi16[param.row{r0}, param.column{r2}] -> u8
 	branch t.7.1{r0} notequals 0: maybeRevealAround_Pi16_Pi16_ret
-	const dr.1{r12}, -1
+	const dr.1{r0}, -1
 	; 190:2 for dr <= 1
+	move dr.2{r12}, dr.1{r0}
 	jump for_31
 for_31_body:
-	move r.1{r4}, param.row{r8}
-	add r.1{r4}, dr.2{r12}
-	const dc.1{r6}, -1
+	move r.1{r2}, param.row{r8}
+	add r.1{r2}, dr.2{r12}
+	const dc.1{r0}, -1
 	; 192:3 for dc <= 1
 	addrof memVarAddr{r14}, r.1
-	store [memVarAddr{r14}], r.1{r4}
-	move dc.2{r0}, dc.2{r6}
+	store [memVarAddr{r14}], r.1{r2}
 	jump for_32
 for_32_body:
-	move dc.2{r6}, dc.2{r0}
 	addrof memVarAddr{r14}, r.1
-	load r.1{r4}, [memVarAddr{r14}]
+	load r.1{r2}, [memVarAddr{r14}]
 	branch dr.2{r12} notequals 0: if_33_end
-	branch dc.2{r6} notequals 0: if_33_end
+	branch dc.2{r0} notequals 0: if_33_end
 	addrof memVarAddr{r14}, dc.2
-	store [memVarAddr{r14}], dc.2{r6}
+	store [memVarAddr{r14}], dc.2{r0}
 	addrof memVarAddr{r14}, r.1
 	jump for_32_continue
 if_33_end:
-	move c.1{r2}, param.column{r10}
-	add c.1{r2}, dc.2{r6}
+	move c.1{r4}, param.column{r10}
+	add c.1{r4}, dc.2{r0}
 	addrof memVarAddr{r14}, dc.2
-	store [memVarAddr{r14}], dc.2{r6}
-	addrof memVarAddr{r14}, c.1
-	store [memVarAddr{r14}], c.1{r2}
+	store [memVarAddr{r14}], dc.2{r0}
 	; 198:4 if !checkCellBounds_Pi16_Pi16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=198:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=198:28]])
-	move r.1{r0}, r.1{r4}
+	move r.1{r0}, r.1{r2}
 	addrof memVarAddr{r14}, r.1
-	store [memVarAddr{r14}], r.1{r4}
+	store [memVarAddr{r14}], r.1{r2}
+	move c.1{r2}, c.1{r4}
 	addrof memVarAddr{r14}, c.1
-	move c.1{r4}, c.1{r2}
+	store [memVarAddr{r14}], c.1{r4}
 	call t.8.1{r0} = checkCellBounds_Pi16_Pi16[r.1{r0}, c.1{r2}] -> bool
 	branch t.8.1{r0} equals 0: for_32_continue
 	addrof memVarAddr{r14}, r.1
-	load r.1{r4}, [memVarAddr{r14}]
-	move r.1{r0}, r.1{r4}
+	load r.1{r2}, [memVarAddr{r14}]
+	move r.1{r0}, r.1{r2}
 	addrof memVarAddr{r14}, c.1
 	load c.1{r4}, [memVarAddr{r14}]
 	move c.1{r2}, c.1{r4}
@@ -542,15 +528,15 @@ if_33_end:
 	move t.10.1{r4}, cell.1{r0}
 	or t.10.1{r4}, 2
 	addrof memVarAddr{r14}, r.1
-	load r.1{r5}, [memVarAddr{r14}]
-	move r.1{r0}, r.1{r5}
+	load r.1{r2}, [memVarAddr{r14}]
+	move r.1{r0}, r.1{r2}
 	addrof memVarAddr{r14}, c.1
 	load c.1{r5}, [memVarAddr{r14}]
 	move c.1{r2}, c.1{r5}
 	call setCell_Pi16_Pi16_Pu8[r.1{r0}, c.1{r2}, t.10.1{r4}]
 	addrof memVarAddr{r14}, r.1
-	load r.1{r4}, [memVarAddr{r14}]
-	move r.1{r0}, r.1{r4}
+	load r.1{r2}, [memVarAddr{r14}]
+	move r.1{r0}, r.1{r2}
 	addrof memVarAddr{r14}, c.1
 	load c.1{r2}, [memVarAddr{r14}]
 	call maybeRevealAround_Pi16_Pi16[r.1{r0}, c.1{r2}]
@@ -593,31 +579,39 @@ if_38_end:
 	branch chr.1{r0} notequals 4: if_42_else, if_42_then
 	jump if_42_then
 if_41_then:
-	add t.10.1{r11}, 20
-	sub t.9.1{r11}, 1
-	mod curr_r.4{r11}, 20
+	move t.10.1{r0}, curr_r.2{r11}
+	add t.10.1{r0}, 20
+	sub t.9.1{r0}, 1
+	mod curr_r.4{r0}, 20
+	move curr_r.2{r11}, curr_r.4{r0}
 	jump while_37
 if_42_else:
 	branch chr.1{r0} notequals 1: if_43_else, if_43_then
 	jump if_43_then
 if_42_then:
-	add t.11.1{r11}, 1
-	mod curr_r.5{r11}, 20
+	move t.11.1{r0}, curr_r.2{r11}
+	add t.11.1{r0}, 1
+	mod curr_r.5{r0}, 20
+	move curr_r.2{r11}, curr_r.5{r0}
 	jump while_37
 if_43_else:
 	branch chr.1{r0} notequals 2: if_44_else, if_44_then
 	jump if_44_then
 if_43_then:
-	add t.13.1{r9}, 40
-	sub t.12.1{r9}, 1
-	mod curr_c.4{r9}, 40
+	move t.13.1{r0}, curr_c.2{r9}
+	add t.13.1{r0}, 40
+	sub t.12.1{r0}, 1
+	mod curr_c.4{r0}, 40
+	move curr_c.2{r9}, curr_c.4{r0}
 	jump while_37
 if_44_else:
 	branch chr.1{r0} notequals 32: if_45_else, if_45_then
 	jump if_45_then
 if_44_then:
-	add t.14.1{r9}, 1
-	mod curr_c.5{r9}, 40
+	move t.14.1{r0}, curr_c.2{r9}
+	add t.14.1{r0}, 1
+	mod curr_c.5{r0}, 40
+	move curr_c.2{r9}, curr_c.5{r0}
 	jump while_37
 if_45_else:
 	branch chr.1{r0} notequals 13: while_37, if_48_then

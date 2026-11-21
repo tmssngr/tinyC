@@ -41,10 +41,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
@@ -65,33 +69,31 @@ main:
         ; save clobbered non-volatile registers
         push r8
         push r9
-        push r10
-        push r11
-        ; const foo.1{r8}, 22
-        ld   r8, #%00
-        ld   r9, #%16
-        ; move bar.1{r10}, foo.1{r8}
-        ld   r11, r9
-        ld   r10, r8
-        ; mul bar.1{r10}, foo.1{r8}
-        ld   %12, r10
-        ld   %13, r11
-        ld   %14, r8
-        ld   %15, r9
+        ; const foo.1{r0}, 22
+        ld   r0, #%00
+        ld   r1, #%16
+        ; move bar.1{r2}, foo.1{r0}
+        ld   r3, r1
+        ld   r2, r0
+        ; mul bar.1{r2}, foo.1{r0}
+        ld   %12, r2
+        ld   %13, r3
+        ld   %14, r0
+        ld   %15, r1
         srp  #%10
         call %00BA ; mul
         srp  #%20
-        ld   r10, %12
-        ld   r11, %13
-        ; const foo.2{r8}, 1
-        ld   r8, #%00
-        ld   r9, #%01
-        ; move t.5.1{r0}, bar.1{r10}
-        ld   r0, r10
-        ld   r1, r11
-        ; add t.5.1{r0}, foo.2{r8}
-        add  r1, r9
-        adc  r0, r8
+        ld   r2, %12
+        ld   r3, %13
+        ; const foo.2{r0}, 1
+        ld   r0, #%00
+        ld   r1, #%01
+        ; add t.5.1{r2}, foo.2{r0}
+        add  r3, r1
+        adc  r2, r0
+        ; move t.5.1{r0}, t.5.1{r2}
+        ld   r0, r2
+        ld   r1, r3
         ; call printIntLf_Pi16[t.5.1{r0}]
         call printIntLf_Pi16
         ; const foo.3{r0}, 21
@@ -107,22 +109,25 @@ main:
         ; const a.1{r8}, 1000
         ld   r8, #%03
         ld   r9, #%e8
-        ; const b.1{r10}, 10
-        ld   r10, #%00
-        ld   r11, #%0a
-        ; move t.6.1{r0}, a.1{r8}
-        ld   r0, r8
-        ld   r1, r9
-        ; div t.6.1{r0}, b.1{r10}
-        ld   %12, r0
-        ld   %13, r1
-        ld   %14, r10
-        ld   %15, r11
+        ; const b.1{r0}, 10
+        ld   r0, #%00
+        ld   r1, #%0a
+        ; move t.6.1{r2}, a.1{r8}
+        ld   r2, r8
+        ld   r3, r9
+        ; div t.6.1{r2}, b.1{r0}
+        ld   %12, r2
+        ld   %13, r3
+        ld   %14, r0
+        ld   %15, r1
         srp  #%10
         call %00E0 ; div
         srp  #%20
-        ld   r0, %12
-        ld   r1, %13
+        ld   r2, %12
+        ld   r3, %13
+        ; move t.6.1{r0}, t.6.1{r2}
+        ld   r0, r2
+        ld   r1, r3
         ; call printIntLf_Pi16[t.6.1{r0}]
         call printIntLf_Pi16
         ; move t.7.1{r0}, a.1{r8}
@@ -132,70 +137,59 @@ main:
         clr  r0
         ; call printIntLf_Pi16[t.7.1{r0}]
         call printIntLf_Pi16
-        ; const a.2{r8}, 10
-        ld   r8, #%00
-        ld   r9, #%0a
-        ; const b.2{r10}, 1
-        ld   r10, #%00
-        ld   r11, #%01
-        ; move t.8.1{r0}, a.2{r8}
-        ld   r0, r8
-        ld   r1, r9
-        ; shiftright t.8.1{r0}, b.2{r10}
-        or   r11, r11
+        ; const a.2{r0}, 10
+        ld   r0, #%00
+        ld   r1, #%0a
+        ; const b.2{r2}, 1
+        ld   r2, #%00
+        ld   r3, #%01
+        ; shiftright t.8.1{r0}, b.2{r2}
+        or   r3, r3
         jr   z, .next2
-        push r11
+        push r3
 .shift2:
         sra  r0
         rrc  r1
-        djnz r11, .shift2
-        pop  r11
+        djnz r3, .shift2
+        pop  r3
 .next2:
         ; call printIntLf_Pi16[t.8.1{r0}]
         call printIntLf_Pi16
-        ; const a.3{r8}, 9
+        ; const a.3{r0}, 9
+        ld   r0, #%00
+        ld   r1, #%09
+        ; const b.3{r8}, 2
         ld   r8, #%00
-        ld   r9, #%09
-        ; const b.3{r10}, 2
-        ld   r10, #%00
-        ld   r11, #%02
-        ; move t.9.1{r0}, a.3{r8}
-        ld   r0, r8
-        ld   r1, r9
-        ; shiftright t.9.1{r0}, b.3{r10}
-        or   r11, r11
+        ld   r9, #%02
+        ; shiftright t.9.1{r0}, b.3{r8}
+        or   r9, r9
         jr   z, .next3
-        push r11
+        push r9
 .shift3:
         sra  r0
         rrc  r1
-        djnz r11, .shift3
-        pop  r11
+        djnz r9, .shift3
+        pop  r9
 .next3:
         ; call printIntLf_Pi16[t.9.1{r0}]
         call printIntLf_Pi16
-        ; const a.4{r8}, 1
-        ld   r8, #%00
-        ld   r9, #%01
-        ; move t.10.1{r0}, a.4{r8}
-        ld   r0, r8
-        ld   r1, r9
-        ; shiftleft t.10.1{r0}, b.3{r10}
-        or   r11, r11
+        ; const a.4{r0}, 1
+        ld   r0, #%00
+        ld   r1, #%01
+        ; shiftleft t.10.1{r0}, b.3{r8}
+        or   r9, r9
         jr   z, .next4
-        push r11
+        push r9
 .shift4:
         rcf
         rlc  r1
         rlc  r0
-        djnz r11, .shift4
-        pop  r11
+        djnz r9, .shift4
+        pop  r9
 .next4:
         ; call printIntLf_Pi16[t.10.1{r0}]
         call printIntLf_Pi16
         ; restore clobbered non-volatile registers
-        pop  r11
-        pop  r10
         pop  r9
         pop  r8
         ret

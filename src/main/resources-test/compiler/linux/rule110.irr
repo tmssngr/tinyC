@@ -22,15 +22,12 @@ _strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
 
-	const length.1{r2}, 0
+	const length.1{r0}, 0
 	; 73:2 for *str != 0
-	move length.2{r0}, length.1{r2}
 	jump for_1
 for_1_body:
-	move length.3{r2}, length.2{r0}
-	add length.3{r2}, 1
+	add length.3{r0}, 1
 	add str.2{r1}, 1
-	move length.2{r0}, length.3{r2}
 for_1:
 	load t.2.1{r2}, [str.1{r1}]
 	branch t.2.1{r2} notequals 0: for_1_body
@@ -47,15 +44,16 @@ _printStringLength@@u8@u8:
 _printBoard:
 	const arg.0.0{r1}, 124
 	call _printChar@u8[arg.0.0{r1}]
-	const i.1{r8}, 0
+	const i.1{r0}, 0
 	; 11:2 for i < 30
+	move i.2{r8}, i.1{r0}
 	jump for_2
 for_2_body:
 	; 12:3 if [...] == 0
 	cast t.3.1{r0}(i64), i.2{r8}(u8)
-	addrof t.2.1{r2}, board
-	add t.2.2{r2}, t.3.1{r0}
-	load t.1.1{r0}, [t.2.2{r2}]
+	addrof t.2.1{r1}, board
+	add t.2.2{r1}, t.3.1{r0}
+	load t.1.1{r0}, [t.2.2{r1}]
 	branch t.1.1{r0} equals 0: if_3_then
 	const arg.1.0{r1}, 42
 	call _printChar@u8[arg.1.0{r1}]
@@ -64,33 +62,36 @@ if_3_then:
 	const arg.2.0{r1}, 32
 	call _printChar@u8[arg.2.0{r1}]
 for_2_continue:
-	add i.4{r8}, 1
+	move i.4{r0}, i.2{r8}
+	add i.4{r0}, 1
+	move i.2{r8}, i.4{r0}
 for_2:
 	branch i.2{r8} lt 30: for_2_body
 	const t.4.1{r1}, [string-1]
 	call _printString@@u8[t.4.1{r1}]
 
 _main:
-	const i.1{r8}, 0
+	const i.1{r0}, 0
 	; 23:2 for i < 30
 	jump for_4
 for_4_body:
-	const t.4.1{r0}, 0
-	cast t.6.1{r1}(i64), i.2{r8}(u8)
-	addrof t.5.1{r2}, board
-	add t.5.2{r2}, t.6.1{r1}
-	store [t.5.2{r2}], t.4.1{r0}
-	add i.5{r8}, 1
+	const t.4.1{r1}, 0
+	cast t.6.1{r2}(i64), i.2{r0}(u8)
+	addrof t.5.1{r3}, board
+	add t.5.2{r3}, t.6.1{r2}
+	store [t.5.2{r3}], t.4.1{r1}
+	add i.5{r0}, 1
 for_4:
-	branch i.2{r8} lt 30: for_4_body
-	const t.7.1{r8}, 1
-	const t.9.1{r0}, 29
-	addrof t.8.1{r1}, board
-	add t.8.2{r1}, t.9.1{r0}
-	store [t.8.2{r1}], t.7.1{r8}
+	branch i.2{r0} lt 30: for_4_body
+	const t.7.1{r0}, 1
+	const t.9.1{r1}, 29
+	addrof t.8.1{r2}, board
+	add t.8.2{r2}, t.9.1{r1}
+	store [t.8.2{r2}], t.7.1{r0}
 	call _printBoard[]
-	const i.3{r8}, 0
+	const i.3{r0}, 0
 	; 30:2 for i < 28
+	move i.4{r8}, i.3{r0}
 	jump for_5
 for_5_body:
 	const t.13.1{r0}, 0

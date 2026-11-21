@@ -24,24 +24,25 @@ printUint_Pi16:
         ; void printIntLf_Pbool
         ; arg value (bool): r0
 printIntLf_Pbool:
-        ; save clobbered non-volatile registers
-        push r8
-        ; const number.1{r8}, 0
-        ld   r8, #%00
+        ; const number.1{r1}, 0
+        ld   r1, #%00
         ; 122:2 if value
-        ; branch param.value{r0} equals 0: if_1_end
+        ; branch param.value{r0} notequals 0: if_1_then
         cp   r0, #%00
-        jr   eq, if_1_end
-        ; const number.3{r8}, 1
-        ld   r8, #%01
+        jr   ne, if_1_then
+        ; move number.2{r0}, number.1{r1}
+        ld   r0, r1
+        jr   if_1_end
+
+if_1_then:
+        ; const number.3{r0}, 1
+        ld   r0, #%01
 if_1_end:
-        ; cast t.2.1{r0}(i16), number.2{r8}(u8)
-        ld   r1, r8
+        ; cast t.2.1{r0}(i16), number.2{r0}(u8)
+        ld   r1, r0
         ld   r0, #0
         ; call printIntLf_Pi16[t.2.1{r0}]
         call printIntLf_Pi16
-        ; restore clobbered non-volatile registers
-        pop  r8
         ret
 
         ; void printIntLf_Pu8
@@ -74,10 +75,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_2_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
@@ -201,7 +206,6 @@ logicAnd:
         ; save clobbered non-volatile registers
         push r8
         push r9
-        push r10
         ; const t.2.1{r0}, [string-5]
         ld   r0, #hi(string_5)
         ld   r1, #lo(string_5)
@@ -231,21 +235,8 @@ if_5_else:
         call printPass
 if_5_end:
         ; 24:15 logic and
-        ; move t.5.1{r10}, f.1{r9}
-        ld   r10, r9
-        ; branch t.5.1{r10} notequals 0: and_2nd_7
-        cp   r10, #%00
-        jr   ne, and_2nd_7
-        ; move t.5.2{r0}, t.5.1{r10}
-        ld   r0, r10
-        jr   and_next_7
-
-and_2nd_7:
-        ; move t.5.3{r10}, f.1{r9}
-        ld   r10, r9
-        ; move t.5.2{r0}, t.5.3{r10}
-        ld   r0, r10
-and_next_7:
+        ; move t.5.1{r0}, f.1{r9}
+        ld   r0, r9
         ; call printIntLf_Pbool[t.5.2{r0}]
         call printIntLf_Pbool
         ; 25:2 if getFalse([]) && getTrue([])
@@ -268,20 +259,13 @@ if_8_else:
         call printPass
 if_8_end:
         ; 26:15 logic and
-        ; move t.8.1{r10}, f.1{r9}
-        ld   r10, r9
-        ; branch t.8.1{r10} notequals 0: and_2nd_10
-        cp   r10, #%00
-        jr   ne, and_2nd_10
-        ; move t.8.2{r0}, t.8.1{r10}
-        ld   r0, r10
-        jr   and_next_10
-
-and_2nd_10:
-        ; move t.8.3{r10}, t.1{r8}
-        ld   r10, r8
-        ; move t.8.2{r0}, t.8.3{r10}
-        ld   r0, r10
+        ; move t.8.1{r0}, f.1{r9}
+        ld   r0, r9
+        ; branch t.8.1{r0} equals 0: and_next_10
+        cp   r0, #%00
+        jr   eq, and_next_10
+        ; move t.8.3{r0}, t.1{r8}
+        ld   r0, r8
 and_next_10:
         ; call printIntLf_Pbool[t.8.2{r0}]
         call printIntLf_Pbool
@@ -305,20 +289,13 @@ if_11_else:
         call printPass
 if_11_end:
         ; 28:15 logic and
-        ; move t.11.1{r10}, t.1{r8}
-        ld   r10, r8
-        ; branch t.11.1{r10} notequals 0: and_2nd_13
-        cp   r10, #%00
-        jr   ne, and_2nd_13
-        ; move t.11.2{r0}, t.11.1{r10}
-        ld   r0, r10
-        jr   and_next_13
-
-and_2nd_13:
-        ; move t.11.3{r10}, f.1{r9}
-        ld   r10, r9
-        ; move t.11.2{r0}, t.11.3{r10}
-        ld   r0, r10
+        ; move t.11.1{r0}, t.1{r8}
+        ld   r0, r8
+        ; branch t.11.1{r0} equals 0: and_next_13
+        cp   r0, #%00
+        jr   eq, and_next_13
+        ; move t.11.3{r0}, f.1{r9}
+        ld   r0, r9
 and_next_13:
         ; call printIntLf_Pbool[t.11.2{r0}]
         call printIntLf_Pbool
@@ -342,21 +319,8 @@ if_14_else:
         call printError
 if_14_end:
         ; 30:15 logic and
-        ; move t.14.1{r10}, t.1{r8}
-        ld   r10, r8
-        ; branch t.14.1{r10} notequals 0: and_2nd_16
-        cp   r10, #%00
-        jr   ne, and_2nd_16
-        ; move t.14.2{r0}, t.14.1{r10}
-        ld   r0, r10
-        jr   and_next_16
-
-and_2nd_16:
-        ; move t.14.3{r10}, t.1{r8}
-        ld   r10, r8
-        ; move t.14.2{r0}, t.14.3{r10}
-        ld   r0, r10
-and_next_16:
+        ; move t.14.1{r0}, t.1{r8}
+        ld   r0, r8
         ; call printIntLf_Pbool[t.14.2{r0}]
         call printIntLf_Pbool
         ; 32:2 if !getFalse([]) && getFalse([])
@@ -379,10 +343,10 @@ if_17_then:
         call printPass
 if_17_end:
         ; 33:17 logic and
-        ; move t.18.1{r10}, f.1{r9}
-        ld   r10, r9
-        ; notlog t.17.1{r0}, t.18.2{r10}
-        or   r10, r10
+        ; move t.18.1{r0}, f.1{r9}
+        ld   r0, r9
+        ; notlog t.17.1{r0}, t.18.2{r0}
+        or   r0, r0
         ld   r0, #0  ; false
         jr   nz, .4
         ld   r0, #1  ; true
@@ -409,16 +373,16 @@ if_20_then:
         call printPass
 if_20_end:
         ; 35:17 logic and
-        ; move t.22.1{r10}, f.1{r9}
-        ld   r10, r9
-        ; branch t.22.1{r10} equals 0: and_next_22
-        cp   r10, #%00
+        ; move t.22.1{r0}, f.1{r9}
+        ld   r0, r9
+        ; branch t.22.1{r0} equals 0: and_next_22
+        cp   r0, #%00
         jr   eq, and_next_22
-        ; move t.22.3{r10}, t.1{r8}
-        ld   r10, r8
+        ; move t.22.3{r0}, t.1{r8}
+        ld   r0, r8
 and_next_22:
-        ; notlog t.21.1{r0}, t.22.2{r10}
-        or   r10, r10
+        ; notlog t.21.1{r0}, t.22.2{r0}
+        or   r0, r0
         ld   r0, #0  ; false
         jr   nz, .5
         ld   r0, #1  ; true
@@ -445,16 +409,16 @@ if_23_then:
         call printPass
 if_23_end:
         ; 37:17 logic and
-        ; move t.26.1{r10}, t.1{r8}
-        ld   r10, r8
-        ; branch t.26.1{r10} notequals 0: and_next_25
-        cp   r10, #%00
-        jr   ne, and_next_25
-        ; move t.26.2{r9}, t.26.1{r10}
-        ld   r9, r10
+        ; move t.26.1{r0}, t.1{r8}
+        ld   r0, r8
+        ; branch t.26.1{r0} equals 0: and_next_25
+        cp   r0, #%00
+        jr   eq, and_next_25
+        ; move t.26.3{r0}, f.1{r9}
+        ld   r0, r9
 and_next_25:
-        ; notlog t.25.1{r0}, t.26.2{r9}
-        or   r9, r9
+        ; notlog t.25.1{r0}, t.26.2{r0}
+        or   r0, r0
         ld   r0, #0  ; false
         jr   nz, .6
         ld   r0, #1  ; true
@@ -481,10 +445,10 @@ if_26_then:
         call printError
 if_26_end:
         ; 39:17 logic and
-        ; move t.30.1{r9}, t.1{r8}
-        ld   r9, r8
-        ; notlog t.29.1{r0}, t.30.2{r8}
-        or   r8, r8
+        ; move t.30.1{r0}, t.1{r8}
+        ld   r0, r8
+        ; notlog t.29.1{r0}, t.30.2{r0}
+        or   r0, r0
         ld   r0, #0  ; false
         jr   nz, .7
         ld   r0, #1  ; true
@@ -492,7 +456,6 @@ if_26_end:
         ; call printIntLf_Pbool[t.29.1{r0}]
         call printIntLf_Pbool
         ; restore clobbered non-volatile registers
-        pop  r10
         pop  r9
         pop  r8
         ret
@@ -502,7 +465,6 @@ logicOr:
         ; save clobbered non-volatile registers
         push r8
         push r9
-        push r10
         ; const t.2.1{r0}, [string-6]
         ld   r0, #hi(string_6)
         ld   r1, #lo(string_6)
@@ -532,21 +494,8 @@ if_29_then:
         call printError
 if_29_end:
         ; 47:15 logic or
-        ; move t.5.1{r10}, f.1{r9}
-        ld   r10, r9
-        ; branch t.5.1{r10} equals 0: or_2nd_31
-        cp   r10, #%00
-        jr   eq, or_2nd_31
-        ; move t.5.2{r0}, t.5.1{r10}
-        ld   r0, r10
-        jr   or_next_31
-
-or_2nd_31:
-        ; move t.5.3{r10}, f.1{r9}
-        ld   r10, r9
-        ; move t.5.2{r0}, t.5.3{r10}
-        ld   r0, r10
-or_next_31:
+        ; move t.5.1{r0}, f.1{r9}
+        ld   r0, r9
         ; call printIntLf_Pbool[t.5.2{r0}]
         call printIntLf_Pbool
         ; 48:2 if getFalse([]) || getTrue([])
@@ -569,20 +518,13 @@ if_32_then:
         call printPass
 if_32_end:
         ; 49:15 logic or
-        ; move t.8.1{r10}, f.1{r9}
-        ld   r10, r9
-        ; branch t.8.1{r10} equals 0: or_2nd_34
-        cp   r10, #%00
-        jr   eq, or_2nd_34
-        ; move t.8.2{r0}, t.8.1{r10}
-        ld   r0, r10
-        jr   or_next_34
-
-or_2nd_34:
-        ; move t.8.3{r10}, t.1{r8}
-        ld   r10, r8
-        ; move t.8.2{r0}, t.8.3{r10}
-        ld   r0, r10
+        ; move t.8.1{r0}, f.1{r9}
+        ld   r0, r9
+        ; branch t.8.1{r0} notequals 0: or_next_34
+        cp   r0, #%00
+        jr   ne, or_next_34
+        ; move t.8.3{r0}, t.1{r8}
+        ld   r0, r8
 or_next_34:
         ; call printIntLf_Pbool[t.8.2{r0}]
         call printIntLf_Pbool
@@ -606,17 +548,12 @@ if_35_then:
         call printPass
 if_35_end:
         ; 51:15 logic or
-        ; move t.11.1{r10}, t.1{r8}
-        ld   r10, r8
-        ; branch t.11.1{r10} equals 0: or_2nd_37
-        cp   r10, #%00
-        jr   eq, or_2nd_37
-        ; move t.11.2{r0}, t.11.1{r10}
-        ld   r0, r10
-        jr   or_next_37
-
-or_2nd_37:
-        ; move t.11.2{r0}, t.11.3{r9}
+        ; move t.11.1{r0}, t.1{r8}
+        ld   r0, r8
+        ; branch t.11.1{r0} notequals 0: or_next_37
+        cp   r0, #%00
+        jr   ne, or_next_37
+        ; move t.11.3{r0}, f.1{r9}
         ld   r0, r9
 or_next_37:
         ; call printIntLf_Pbool[t.11.2{r0}]
@@ -641,23 +578,11 @@ if_38_then:
         call printPass
 if_38_end:
         ; 53:15 logic or
-        ; move t.14.1{r9}, t.1{r8}
-        ld   r9, r8
-        ; branch t.14.1{r9} equals 0: or_2nd_40
-        cp   r9, #%00
-        jr   eq, or_2nd_40
-        ; move t.14.2{r0}, t.14.1{r9}
-        ld   r0, r9
-        jr   or_next_40
-
-or_2nd_40:
-        ; move t.14.2{r0}, t.14.3{r8}
+        ; move t.14.1{r0}, t.1{r8}
         ld   r0, r8
-or_next_40:
         ; call printIntLf_Pbool[t.14.2{r0}]
         call printIntLf_Pbool
         ; restore clobbered non-volatile registers
-        pop  r10
         pop  r9
         pop  r8
         ret
@@ -666,9 +591,7 @@ or_next_40:
         ; var d.1 (i16): SP+8
         ; var t.1 (bool): SP+10
         ; var f.1 (bool): SP+11
-        ; var b1.1 (u8): SP+12
 main:
-        decw SPH
         decw SPH
         decw SPH
         decw SPH
@@ -696,37 +619,37 @@ main:
         ; const c.1{r12}, 2
         ld   r12, #%00
         ld   r13, #%02
-        ; const d.1{r2}, 3
-        ld   r2, #%00
-        ld   r3, #%03
+        ; const d.1{r0}, 3
+        ld   r0, #%00
+        ld   r1, #%03
         ; addrof memVarAddr{r14}, d.1
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%08
         adc  r14, #%00
-        ; store [memVarAddr{r14}], d.1{r2}
-        lde  @rr14, r2
+        ; store [memVarAddr{r14}], d.1{r0}
+        lde  @rr14, r0
         incw r14
-        lde  @rr14, r3
+        lde  @rr14, r1
         decw r14
-        ; const t.1{r2}, 1
-        ld   r2, #%01
+        ; const t.1{r0}, 1
+        ld   r0, #%01
         ; addrof memVarAddr{r14}, t.1
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%0a
         adc  r14, #%00
-        ; store [memVarAddr{r14}], t.1{r2}
-        lde  @rr14, r2
-        ; const f.1{r2}, 0
-        ld   r2, #%00
+        ; store [memVarAddr{r14}], t.1{r0}
+        lde  @rr14, r0
+        ; const f.1{r0}, 0
+        ld   r0, #%00
         ; addrof memVarAddr{r14}, f.1
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%0b
         adc  r14, #%00
-        ; store [memVarAddr{r14}], f.1{r2}
-        lde  @rr14, r2
+        ; store [memVarAddr{r14}], f.1{r0}
+        lde  @rr14, r0
         ; move t.10.1{r0}, a.1{r8}
         ld   r0, r8
         ld   r1, r9
@@ -875,42 +798,35 @@ if_41_end:
         ld   r15, SPL
         add  r15, #%0a
         adc  r14, #%00
-        ; load t.1{r8}, [memVarAddr{r14}]
-        lde  r8, @rr14
-        ; move t.29.1{r9}, t.1{r8}
-        ld   r9, r8
-        ; notlog t.28.1{r8}, t.29.2{r8}
-        or   r8, r8
-        ld   r8, #0  ; false
+        ; load t.1{r0}, [memVarAddr{r14}]
+        lde  r0, @rr14
+        ; move t.29.1{r1}, t.1{r0}
+        ld   r1, r0
+        ; notlog t.28.1{r0}, t.29.2{r0}
+        or   r0, r0
+        ld   r0, #0  ; false
         jr   nz, .8
-        ld   r8, #1  ; true
+        ld   r0, #1  ; true
 .8:
-        ; branch t.28.1{r8} equals 0: or_2nd_45
-        cp   r8, #%00
-        jr   eq, or_2nd_45
-        ; move t.28.2{r0}, t.28.1{r8}
-        ld   r0, r8
-        jr   or_next_45
-
-or_2nd_45:
+        ; branch t.28.1{r0} notequals 0: or_next_45
+        cp   r0, #%00
+        jr   ne, or_next_45
         ; 88:30 logic and
         ; addrof memVarAddr{r14}, f.1
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%0b
         adc  r14, #%00
-        ; load f.1{r8}, [memVarAddr{r14}]
-        lde  r8, @rr14
-        ; move t.30.1{r9}, f.1{r8}
-        ld   r9, r8
-        ; notlog t.28.3{r8}, t.30.2{r8}
-        or   r8, r8
-        ld   r8, #0  ; false
+        ; load f.1{r0}, [memVarAddr{r14}]
+        lde  r0, @rr14
+        ; move t.30.1{r1}, f.1{r0}
+        ld   r1, r0
+        ; notlog t.28.3{r0}, t.30.2{r0}
+        or   r0, r0
+        ld   r0, #0  ; false
         jr   nz, .9
-        ld   r8, #1  ; true
+        ld   r0, #1  ; true
 .9:
-        ; move t.28.2{r0}, t.28.3{r8}
-        ld   r0, r8
 or_next_45:
         ; call printIntLf_Pbool[t.28.2{r0}]
         call printIntLf_Pbool
@@ -919,116 +835,95 @@ or_next_45:
         ld   r1, #lo(string_10)
         ; call printString_P_pu8[t.31.1{r0}]
         call printString_P_pu8
-        ; const b10.1{r8}, 10
-        ld   r8, #%0a
-        ; const b6.1{r9}, 6
-        ld   r9, #%06
-        ; const b1.1{r1}, 1
-        ld   r1, #%01
-        ; and t.33.1{r8}, b6.1{r9}
-        and  r8, r9
-        ; move t.32.1{r0}, t.33.1{r8}
-        ld   r0, r8
-        ; or t.32.1{r0}, b1.1{r1}
-        or   r0, r1
-        ; addrof memVarAddr{r14}, b1.1
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0c
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], b1.1{r1}
-        lde  @rr14, r1
+        ; const b10.1{r0}, 10
+        ld   r0, #%0a
+        ; const b6.1{r1}, 6
+        ld   r1, #%06
+        ; const b1.1{r8}, 1
+        ld   r8, #%01
+        ; and t.33.1{r0}, b6.1{r1}
+        and  r0, r1
+        ; or t.32.1{r0}, b1.1{r8}
+        or   r0, r8
         ; call printIntLf_Pu8[t.32.1{r0}]
         call printIntLf_Pu8
         ; 95:20 logic or
-        ; equals t.34.1{r8}, b.1{r10}, c.1{r12}
+        ; equals t.34.1{r0}, b.1{r10}, c.1{r12}
         cp   r10, r12
         jr   ne, .ne10
         cp   r11, r13
         jr   ne, .ne10
-        ld   r8, #1  ; true
+        ld   r0, #1  ; true
         jr   .10
 .ne10:
-        ld   r8, #0
+        ld   r0, #0
 .10:
-        ; branch t.34.1{r8} equals 0: or_2nd_48
-        cp   r8, #%00
-        jr   eq, or_2nd_48
-        ; move t.34.2{r0}, t.34.1{r8}
-        ld   r0, r8
+        ; branch t.34.1{r0} notequals 0: or_next_48
+        cp   r0, #%00
+        jr   ne, or_next_48
         ; addrof memVarAddr{r14}, d.1
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%08
         adc  r14, #%00
-        ; load d.1{r8}, [memVarAddr{r14}]
-        lde  r8, @rr14
+        ; load d.1{r0}, [memVarAddr{r14}]
+        lde  r0, @rr14
         incw r14
-        lde  r9, @rr14
+        lde  r1, @rr14
         decw r14
-        jr   or_next_48
-
-or_2nd_48:
-        ; addrof memVarAddr{r14}, d.1
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%08
-        adc  r14, #%00
-        ; load d.1{r8}, [memVarAddr{r14}]
-        lde  r8, @rr14
-        incw r14
-        lde  r9, @rr14
-        decw r14
-        ; lt t.34.3{r1}, c.1{r12}, d.1{r8}
-        cp   r12, r8
+        ; lt t.34.3{r2}, c.1{r12}, d.1{r0}
+        cp   r12, r0
         jr   lt, .true11
         jr   ne, .false11
-        cp   r13, r9
+        cp   r13, r1
         jr   ult, .true11
 .false11:
-        ld   r1, #0
+        ld   r2, #0
         jr   .11
 .true11:
-        ld   r1, #1
+        ld   r2, #1
 .11:
-        ; move t.34.2{r0}, t.34.3{r1}
-        ld   r0, r1
+        ; move t.34.2{r0}, t.34.3{r2}
+        ld   r0, r2
 or_next_48:
         ; call printIntLf_Pbool[t.34.2{r0}]
         call printIntLf_Pbool
         ; 96:20 logic and
-        ; equals t.35.1{r1}, b.1{r10}, c.1{r12}
+        ; equals t.35.1{r0}, b.1{r10}, c.1{r12}
         cp   r10, r12
         jr   ne, .ne12
         cp   r11, r13
         jr   ne, .ne12
-        ld   r1, #1  ; true
+        ld   r0, #1  ; true
         jr   .12
 .ne12:
-        ld   r1, #0
+        ld   r0, #0
 .12:
-        ; branch t.35.1{r1} notequals 0: and_2nd_49
-        cp   r1, #%00
-        jr   ne, and_2nd_49
-        ; move t.35.2{r0}, t.35.1{r1}
-        ld   r0, r1
-        jr   and_next_49
-
-and_2nd_49:
-        ; lt t.35.3{r8}, c.1{r12}, d.1{r8}
-        cp   r12, r8
+        ; branch t.35.1{r0} equals 0: and_next_49
+        cp   r0, #%00
+        jr   eq, and_next_49
+        ; addrof memVarAddr{r14}, d.1
+        ld   r14, SPH
+        ld   r15, SPL
+        add  r15, #%08
+        adc  r14, #%00
+        ; load d.1{r0}, [memVarAddr{r14}]
+        lde  r0, @rr14
+        incw r14
+        lde  r1, @rr14
+        decw r14
+        ; lt t.35.3{r0}, c.1{r12}, d.1{r0}
+        cp   r12, r0
         jr   lt, .true13
         jr   ne, .false13
-        cp   r13, r9
+        cp   r13, r1
         jr   ult, .true13
 .false13:
-        ld   r8, #0
+        ld   r0, #0
         jr   .13
 .true13:
-        ld   r8, #1
+        ld   r0, #1
 .13:
-        ; move t.35.2{r0}, t.35.3{r8}
-        ld   r0, r8
 and_next_49:
         ; call printIntLf_Pbool[t.35.2{r0}]
         call printIntLf_Pbool
@@ -1044,13 +939,6 @@ and_next_49:
         sbc  r0, r10
         ; call printIntLf_Pi16[t.36.1{r0}]
         call printIntLf_Pi16
-        ; addrof memVarAddr{r14}, b1.1
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%0c
-        adc  r14, #%00
-        ; load b1.1{r8}, [memVarAddr{r14}]
-        lde  r8, @rr14
         ; not t.37.1{r0}, b1.1{r8}
         ld   r0, r8
         com  r0
@@ -1065,7 +953,6 @@ and_next_49:
         pop  r10
         pop  r9
         pop  r8
-        incw SPH
         incw SPH
         incw SPH
         incw SPH

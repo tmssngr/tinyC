@@ -39,40 +39,35 @@ unusedArgs_Pu8_Pbool_Pu8_Pu8:
 
         ; void main
 main:
-        ; save clobbered non-volatile registers
-        push r8
-        push r9
-        push r10
-        push r11
         ; begin initialize global variables
-        ; const t.3.1{r8}, 48
-        ld   r8, #%30
-        ; addrof a.4.1{r10}, zero
-        ld   r10, #hi(var_0)
-        ld   r11, #lo(var_0)
-        ; store [a.4.1{r10}], t.3.1{r8}
-        lde  @rr10, r8
-        ; const t.5.1{r8}, 49
-        ld   r8, #%31
-        ; addrof a.6.1{r10}, one
-        ld   r10, #hi(var_1)
-        ld   r11, #lo(var_1)
-        ; store [a.6.1{r10}], t.5.1{r8}
-        lde  @rr10, r8
-        ; const t.7.1{r8}, 50
-        ld   r8, #%32
-        ; addrof a.8.1{r10}, two
-        ld   r10, #hi(var_2)
-        ld   r11, #lo(var_2)
-        ; store [a.8.1{r10}], t.7.1{r8}
-        lde  @rr10, r8
-        ; const t.9.1{r8}, 34
-        ld   r8, #%22
-        ; addrof a.10.1{r10}, threeFour
-        ld   r10, #hi(var_3)
-        ld   r11, #lo(var_3)
-        ; store [a.10.1{r10}], t.9.1{r8}
-        lde  @rr10, r8
+        ; const t.3.1{r0}, 48
+        ld   r0, #%30
+        ; addrof a.4.1{r2}, zero
+        ld   r2, #hi(var_0)
+        ld   r3, #lo(var_0)
+        ; store [a.4.1{r2}], t.3.1{r0}
+        lde  @rr2, r0
+        ; const t.5.1{r0}, 49
+        ld   r0, #%31
+        ; addrof a.6.1{r2}, one
+        ld   r2, #hi(var_1)
+        ld   r3, #lo(var_1)
+        ; store [a.6.1{r2}], t.5.1{r0}
+        lde  @rr2, r0
+        ; const t.7.1{r0}, 50
+        ld   r0, #%32
+        ; addrof a.8.1{r2}, two
+        ld   r2, #hi(var_2)
+        ld   r3, #lo(var_2)
+        ; store [a.8.1{r2}], t.7.1{r0}
+        lde  @rr2, r0
+        ; const t.9.1{r0}, 34
+        ld   r0, #%22
+        ; addrof a.10.1{r2}, threeFour
+        ld   r2, #hi(var_3)
+        ld   r3, #lo(var_3)
+        ; store [a.10.1{r2}], t.9.1{r0}
+        lde  @rr2, r0
         ; end initialize global variables
         ; const t.11.1{r1}, 1
         ld   r1, #%01
@@ -84,49 +79,52 @@ main:
         ld   r3, #%03
         ; call _ = unusedArgs_Pu8_Pbool_Pu8_Pu8[arg.0.0{r0}, t.11.1{r1}, arg.0.2{r2}, arg.0.3{r3}] -> i64
         call unusedArgs_Pu8_Pbool_Pu8_Pu8
-        ; addrof a.12.1{r8}, zero
-        ld   r8, #hi(var_0)
-        ld   r9, #lo(var_0)
-        ; load t.13.1{r0}, [a.12.1{r8}]
-        lde  r0, @rr8
+        ; addrof a.12.1{r0}, zero
+        ld   r0, #hi(var_0)
+        ld   r1, #lo(var_0)
+        ; load t.13.1{r2}, [a.12.1{r0}]
+        lde  r2, @rr0
+        ; move t.13.1{r0}, t.13.1{r2}
+        ld   r0, r2
         ; call printChar_Pu8[t.13.1{r0}]
         call printChar_Pu8
-        ; addrof onePtr.1{r8}, one
-        ld   r8, #hi(var_1)
-        ld   r9, #lo(var_1)
-        ; load t.14.1{r0}, [onePtr.1{r8}]
-        lde  r0, @rr8
+        ; addrof onePtr.1{r0}, one
+        ld   r0, #hi(var_1)
+        ld   r1, #lo(var_1)
+        ; load t.14.1{r2}, [onePtr.1{r0}]
+        lde  r2, @rr0
+        ; move t.14.1{r0}, t.14.1{r2}
+        ld   r0, r2
         ; call printChar_Pu8[t.14.1{r0}]
         call printChar_Pu8
-        ; addrof twoPtr.1{r8}, two
-        ld   r8, #hi(var_2)
-        ld   r9, #lo(var_2)
-        ; const t.17.1{r10}, 0
-        ld   r10, #%00
-        ld   r11, #%00
-        ; add t.16.2{r8}, t.17.1{r10}
-        add  r9, r11
-        adc  r8, r10
-        ; load t.15.1{r0}, [t.16.2{r8}]
-        lde  r0, @rr8
+        ; addrof twoPtr.1{r0}, two
+        ld   r0, #hi(var_2)
+        ld   r1, #lo(var_2)
+        ; const t.17.1{r2}, 0
+        ld   r2, #%00
+        ld   r3, #%00
+        ; add t.16.2{r0}, t.17.1{r2}
+        add  r1, r3
+        adc  r0, r2
+        ; load t.15.1{r2}, [t.16.2{r0}]
+        lde  r2, @rr0
+        ; move t.15.1{r0}, t.15.1{r2}
+        ld   r0, r2
         ; call printChar_Pu8[t.15.1{r0}]
         call printChar_Pu8
-        ; addrof a.18.1{r8}, threeFour
-        ld   r8, #hi(var_3)
-        ld   r9, #lo(var_3)
-        ; load t.19.1{r0}, [a.18.1{r8}]
-        lde  r0, @rr8
+        ; addrof a.18.1{r0}, threeFour
+        ld   r0, #hi(var_3)
+        ld   r1, #lo(var_3)
+        ; load t.19.1{r2}, [a.18.1{r0}]
+        lde  r2, @rr0
+        ; move t.19.1{r0}, t.19.1{r2}
+        ld   r0, r2
         ; call printUint_Pu8[t.19.1{r0}]
         call printUint_Pu8
         ; const arg.5.0{r0}, 10
         ld   r0, #%0a
         ; call printChar_Pu8[arg.5.0{r0}]
         call printChar_Pu8
-        ; restore clobbered non-volatile registers
-        pop  r11
-        pop  r10
-        pop  r9
-        pop  r8
         ret
 
         ; void printChar_Pu8

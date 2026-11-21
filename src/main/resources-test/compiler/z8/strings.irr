@@ -20,7 +20,8 @@ printIntLf_Pi16:
 	branch param.number{r8} gteq 0: if_1_end
 	const arg.0.0{r0}, 45
 	call printChar_Pu8[arg.0.0{r0}]
-	neg number.2{r8}, param.number{r8}
+	neg number.2{r0}, param.number{r8}
+	move number.1{r8}, number.2{r0}
 if_1_end:
 	move number.1{r0}, number.1{r8}
 	call printUint_Pi16[number.1{r0}]
@@ -29,40 +30,40 @@ if_1_end:
 
 main:
 	; begin initialize global variables
-	const t.2.1{r8}, [string-0]
-	addrof a.3.1{r10}, text
-	store [a.3.1{r10}], t.2.1{r8}
+	const t.2.1{r0}, [string-0]
+	addrof a.3.1{r2}, text
+	store [a.3.1{r2}], t.2.1{r0}
 	; end initialize global variables
-	move a.4.1{r8}, a.4.1{r10}
-	load t.5.1{r0}, [a.4.1{r8}]
+	move a.4.1{r0}, a.4.1{r2}
+	load t.5.1{r2}, [a.4.1{r0}]
+	move t.5.1{r0}, t.5.1{r2}
 	call printString_P_pu8[t.5.1{r0}]
 	call printLength[]
-	const t.6.1{r8}, 1
-	load second.1{r12}, [a.7.1{r10}]
-	move second.2{r0}, second.1{r12}
-	add second.2{r0}, t.6.1{r8}
+	const t.6.1{r0}, 1
+	addrof a.7.1{r2}, text
+	load second.1{r4}, [a.7.1{r2}]
+	move second.2{r2}, second.1{r4}
+	add second.2{r2}, t.6.1{r0}
+	move second.2{r0}, second.2{r2}
 	call printString_P_pu8[second.2{r0}]
-	move a.8.1{r8}, a.8.1{r10}
-	move t.9.1{r10}, t.9.1{r12}
-	load chr.1{r0}, [t.9.1{r10}]
+	addrof a.8.1{r0}, text
+	load t.9.1{r2}, [a.8.1{r0}]
+	load chr.1{r0}, [t.9.1{r2}]
 	call printIntLf_Pu8[chr.1{r0}]
 
 printLength:
-	const length.1{r8}, 0
-	addrof a.2.1{r10}, text
-	load ptr.1{r12}, [a.2.1{r10}]
+	const length.1{r0}, 0
+	addrof a.2.1{r2}, text
+	load ptr.1{r4}, [a.2.1{r2}]
 	; 16:2 for *ptr != 0
-	move length.2{r0}, length.1{r8}
-	move ptr.2{r8}, ptr.1{r12}
+	move ptr.2{r2}, ptr.1{r4}
 	jump for_2
 for_2_body:
-	move length.3{r10}, length.2{r0}
-	add length.3{r10}, 1
-	add ptr.3{r8}, 1
-	move length.2{r0}, length.3{r10}
+	add length.3{r0}, 1
+	add ptr.3{r2}, 1
 for_2:
-	load t.3.1{r10}, [ptr.2{r8}]
-	branch t.3.1{r10} notequals 0: for_2_body
+	load t.3.1{r4}, [ptr.2{r2}]
+	branch t.3.1{r4} notequals 0: for_2_body
 	call printIntLf_Pi16[length.2{r0}]
 
 printString_P_pu8:

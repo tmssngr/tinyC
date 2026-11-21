@@ -24,24 +24,25 @@ printUint_Pi16:
         ; void printIntLf_Pbool
         ; arg value (bool): r0
 printIntLf_Pbool:
-        ; save clobbered non-volatile registers
-        push r8
-        ; const number.1{r8}, 0
-        ld   r8, #%00
+        ; const number.1{r1}, 0
+        ld   r1, #%00
         ; 122:2 if value
-        ; branch param.value{r0} equals 0: if_1_end
+        ; branch param.value{r0} notequals 0: if_1_then
         cp   r0, #%00
-        jr   eq, if_1_end
-        ; const number.3{r8}, 1
-        ld   r8, #%01
+        jr   ne, if_1_then
+        ; move number.2{r0}, number.1{r1}
+        ld   r0, r1
+        jr   if_1_end
+
+if_1_then:
+        ; const number.3{r0}, 1
+        ld   r0, #%01
 if_1_end:
-        ; cast t.2.1{r0}(i16), number.2{r8}(u8)
-        ld   r1, r8
+        ; cast t.2.1{r0}(i16), number.2{r0}(u8)
+        ld   r1, r0
         ld   r0, #0
         ; call printIntLf_Pi16[t.2.1{r0}]
         call printIntLf_Pi16
-        ; restore clobbered non-volatile registers
-        pop  r8
         ret
 
         ; void printIntLf_Pi16
@@ -64,10 +65,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_2_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8

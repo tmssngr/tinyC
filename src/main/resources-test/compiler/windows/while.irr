@@ -13,31 +13,34 @@ _printUint@i64:
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
 
-	const pos.1{r6}, 20
+	const pos.1{r0}, 20
 	; 33:2 while true
 	move number.1{r3}, number{r1}
+	jump while_1
+_printUint@i64.no_critical_edge_4:
+	move pos.2{r0}, pos.3{r4}
 while_1:
-	sub pos.3{r6}, 1
-	move remainder.1{r4}, number.1{r3}
-	move remainder.1{r0}, remainder.1{r4}
+	move pos.3{r4}, pos.2{r0}
+	sub pos.3{r4}, 1
+	move remainder.1{r5}, number.1{r3}
+	move remainder.1{r0}, remainder.1{r5}
 	mod remainder.1{r2}, remainder.1{r0}, 10
-	move remainder.1{r4}, remainder.1{r2}
+	move remainder.1{r5}, remainder.1{r2}
 	move number.2{r0}, number.2{r3}
 	div number.2{r0}, 10
 	move number.2{r3}, number.2{r0}
-	cast t.5.1{r0}(u8), remainder.1{r4}(i64)
+	cast t.5.1{r0}(u8), remainder.1{r5}(i64)
 	add digit.1{r0}, 48
-	cast t.7.1{r4}(i64), pos.3{r6}(u8)
-	addrof t.6.1{r5}, buffer
-	add t.6.2{r5}, t.7.1{r4}
-	store [t.6.2{r5}], digit.1{r0}
+	cast t.7.1{r1}(i64), pos.3{r4}(u8)
+	addrof t.6.1{r2}, buffer
+	add t.6.2{r2}, t.7.1{r1}
+	store [t.6.2{r2}], digit.1{r0}
 	; 39:3 if number == 0
-	branch number.2{r3} notequals 0: while_1
-	addrof t.8.1{r3}, buffer
-	move t.8.2{r1}, t.8.2{r5}
+	branch number.2{r3} notequals 0: _printUint@i64.no_critical_edge_4
+	move t.8.2{r1}, t.8.2{r2}
 	const t.11.1{r0}, 20
 	move t.10.1{r2}, t.11.1{r0}
-	sub t.10.1{r2}, pos.3{r6}
+	sub t.10.1{r2}, pos.3{r4}
 	call _printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
 
 _printIntLf@u8:
@@ -55,7 +58,8 @@ _printIntLf@i64:
 	branch number{r6} gteq 0: if_3_end
 	const arg.0.0{r1}, 45
 	call _printChar@u8[arg.0.0{r1}]
-	neg number.2{r6}, number{r6}
+	neg number.2{r0}, number{r6}
+	move number.1{r6}, number.2{r0}
 if_3_end:
 	move number.1{r1}, number.1{r6}
 	call _printUint@i64[number.1{r1}]
@@ -71,13 +75,16 @@ _printStringLength@@u8@u8:
 	call _printStringLength@@u8@i64[str{r1}, t.2.1{r2}]
 
 _main:
-	const i.1{r6}, 5
+	const i.1{r0}, 5
 	; 5:2 while i > 0
+	move i.2{r6}, i.1{r0}
 	jump while_4
 while_4_body:
 	move i.2{r1}, i.2{r6}
 	call _printIntLf@u8[i.2{r1}]
-	sub i.4{r6}, 1
+	move i.4{r0}, i.2{r6}
+	sub i.4{r0}, 1
+	move i.2{r6}, i.4{r0}
 while_4:
 	branch i.2{r6} gt 0: while_4_body, while_5
 while_5:

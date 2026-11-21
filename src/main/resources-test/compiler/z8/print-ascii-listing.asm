@@ -10,27 +10,19 @@
         ; void printNibble_Pu8
         ; arg x (u8): r0
 printNibble_Pu8:
-        ; save clobbered non-volatile registers
-        push r8
-        ; move x.1{r8}, param.x{r0}
-        ld   r8, r0
-        ; and x.1{r8}, 15
-        and  r8, #%0f
+        ; and x.1{r0}, 15
+        and  r0, #%0f
         ; 5:2 if x > 9
-        ; branch x.1{r8} lteq 9: if_1_end
-        cp   r8, #%09
+        ; branch x.1{r0} lteq 9: if_1_end
+        cp   r0, #%09
         jr   ule, if_1_end
-        ; add x.3{r8}, 7
-        add  r8, #%07
+        ; add x.3{r0}, 7
+        add  r0, #%07
 if_1_end:
-        ; move x.4{r0}, x.2{r8}
-        ld   r0, r8
         ; add x.4{r0}, 48
         add  r0, #%30
         ; call printChar_Pu8[x.4{r0}]
         call printChar_Pu8
-        ; restore clobbered non-volatile registers
-        pop  r8
         ret
 
         ; void printHex2_Pu8
@@ -57,25 +49,26 @@ printHex2_Pu8:
 main:
         ; save clobbered non-volatile registers
         push r8
-        push r9
         ; const t.2.1{r0}, [string-0]
         ld   r0, #hi(string_0)
         ld   r1, #lo(string_0)
         ; call printString_P_pu8[t.2.1{r0}]
         call printString_P_pu8
-        ; const i.1{r8}, 0
-        ld   r8, #%00
+        ; const i.1{r0}, 0
+        ld   r0, #%00
         ; 19:2 for i < 16
+        ; move i.2{r8}, i.1{r0}
+        ld   r8, r0
         jr   for_2
 
 for_2_body:
         ; 20:3 if i & 7 == 0
-        ; move t.3.1{r9}, i.2{r8}
-        ld   r9, r8
-        ; and t.3.1{r9}, 7
-        and  r9, #%07
-        ; branch t.3.1{r9} notequals 0: if_3_end
-        cp   r9, #%00
+        ; move t.3.1{r0}, i.2{r8}
+        ld   r0, r8
+        ; and t.3.1{r0}, 7
+        and  r0, #%07
+        ; branch t.3.1{r0} notequals 0: if_3_end
+        cp   r0, #%00
         jr   ne, if_3_end
         ; const arg.1.0{r0}, 32
         ld   r0, #%20
@@ -86,8 +79,12 @@ if_3_end:
         ld   r0, r8
         ; call printNibble_Pu8[i.2{r0}]
         call printNibble_Pu8
-        ; add i.7{r8}, 1
-        inc  r8
+        ; move i.7{r0}, i.2{r8}
+        ld   r0, r8
+        ; add i.7{r0}, 1
+        inc  r0
+        ; move i.2{r8}, i.7{r0}
+        ld   r8, r0
 for_2:
         ; branch i.2{r8} lt 16: for_2_body
         cp   r8, #%10
@@ -96,19 +93,21 @@ for_2:
         ld   r0, #%0a
         ; call printChar_Pu8[arg.3.0{r0}]
         call printChar_Pu8
-        ; const i.3{r8}, 32
-        ld   r8, #%20
+        ; const i.3{r0}, 32
+        ld   r0, #%20
         ; 27:2 for i < 128
+        ; move i.4{r8}, i.3{r0}
+        ld   r8, r0
         jr   for_4
 
 for_4_body:
         ; 28:3 if i & 15 == 0
-        ; move t.4.1{r9}, i.4{r8}
-        ld   r9, r8
-        ; and t.4.1{r9}, 15
-        and  r9, #%0f
-        ; branch t.4.1{r9} notequals 0: if_5_end
-        cp   r9, #%00
+        ; move t.4.1{r0}, i.4{r8}
+        ld   r0, r8
+        ; and t.4.1{r0}, 15
+        and  r0, #%0f
+        ; branch t.4.1{r0} notequals 0: if_5_end
+        cp   r0, #%00
         jr   ne, if_5_end
         ; move i.4{r0}, i.4{r8}
         ld   r0, r8
@@ -116,12 +115,12 @@ for_4_body:
         call printHex2_Pu8
 if_5_end:
         ; 31:3 if i & 7 == 0
-        ; move t.5.1{r9}, i.4{r8}
-        ld   r9, r8
-        ; and t.5.1{r9}, 7
-        and  r9, #%07
-        ; branch t.5.1{r9} notequals 0: if_6_end
-        cp   r9, #%00
+        ; move t.5.1{r0}, i.4{r8}
+        ld   r0, r8
+        ; and t.5.1{r0}, 7
+        and  r0, #%07
+        ; branch t.5.1{r0} notequals 0: if_6_end
+        cp   r0, #%00
         jr   ne, if_6_end
         ; const arg.5.0{r0}, 32
         ld   r0, #%20
@@ -133,12 +132,12 @@ if_6_end:
         ; call printChar_Pu8[i.4{r0}]
         call printChar_Pu8
         ; 35:3 if i & 15 == 15
-        ; move t.6.1{r9}, i.4{r8}
-        ld   r9, r8
-        ; and t.6.1{r9}, 15
-        and  r9, #%0f
-        ; branch t.6.1{r9} notequals 15: for_4_continue
-        cp   r9, #%0f
+        ; move t.6.1{r0}, i.4{r8}
+        ld   r0, r8
+        ; and t.6.1{r0}, 15
+        and  r0, #%0f
+        ; branch t.6.1{r0} notequals 15: for_4_continue
+        cp   r0, #%0f
         jr   ne, for_4_continue
         ; const arg.7.0{r0}, 10
         ld   r0, #%0a
@@ -156,7 +155,6 @@ for_4:
         cp   r8, #%80
         jr   ult, for_4_body
         ; restore clobbered non-volatile registers
-        pop  r9
         pop  r8
         ret
 

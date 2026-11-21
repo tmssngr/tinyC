@@ -1,8 +1,7 @@
 _simple:
-	const four.1{r1}, 4
-	const three.1{r2}, 3
-	move one.1{r0}, four.1{r1}
-	sub one.1{r0}, three.1{r2}
+	const four.1{r0}, 4
+	const three.1{r1}, 3
+	sub one.1{r0}, three.1{r1}
 	; 5:9 return one
 
 _registerHint@u8@u8:
@@ -32,16 +31,14 @@ _fibonacci@u8:
  Local variables
 	arg 0: i (u8/1)
 
-	const a.1{r2}, 0
-	const b.1{r3}, 1
+	const a.1{r0}, 0
+	const b.1{r2}, 1
 	; 22:2 while i > 0
-	move a.2{r0}, a.1{r2}
-	move b.2{r2}, b.1{r3}
 	jump while_2
 while_2_body:
 	sub i.2{r1}, 1
-	move c.1{r3}, a.2{r0}
-	add c.1{r3}, b.2{r2}
+	add c.1{r0}, b.2{r2}
+	move b.3{r3}, c.1{r0}
 	move a.2{r0}, a.3{r2}
 	move b.2{r2}, b.3{r3}
 while_2:

@@ -51,10 +51,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
@@ -72,144 +76,131 @@ if_1_end:
 
         ; void testIf_Pu8
         ; arg a (u8): r0
-        ; var b (u8): SP+4
+        ; var b (u8): SP+0
 testIf_Pu8:
         decw SPH
-        ; save clobbered non-volatile registers
-        push r8
-        push r9
-        push r10
-        push r11
-        ; const t.3.1{r8}, 1
-        ld   r8, #%01
-        ; addrof a.4.1{r10}, b
-        ld   r10, SPH
-        ld   r11, SPL
-        add  r11, #%04
-        adc  r10, #%00
-        ; store [a.4.1{r10}], t.3.1{r8}
-        lde  @rr10, r8
-        ; move b_ref.1{r8}, b_ref.1{r10}
-        ld   r8, r10
-        ld   r9, r11
+        ; const t.3.1{r1}, 1
+        ld   r1, #%01
+        ; addrof a.4.1{r2}, b
+        ld   r2, SPH
+        ld   r3, SPL
+        ; store [a.4.1{r2}], t.3.1{r1}
+        lde  @rr2, r1
         ; 6:2 if a == 0
         ; branch param.a{r0} notequals 0: if_2_end
         cp   r0, #%00
         jr   ne, if_2_end
-        ; load t.5.1{r0}, [b_ref.1{r8}]
-        lde  r0, @rr8
+        ; move t.5.1{r0}, t.5.1{r1}
+        ld   r0, r1
         ; call printIntLf_Pu8[t.5.1{r0}]
         call printIntLf_Pu8
 if_2_end:
-        ; addrof a.6.1{r8}, b
-        ld   r8, SPH
-        ld   r9, SPL
-        add  r9, #%04
-        adc  r8, #%00
-        ; load t.7.1{r0}, [a.6.1{r8}]
-        lde  r0, @rr8
+        ; addrof a.6.1{r0}, b
+        ld   r0, SPH
+        ld   r1, SPL
+        ; load t.7.1{r2}, [a.6.1{r0}]
+        lde  r2, @rr0
+        ; move t.7.1{r0}, t.7.1{r2}
+        ld   r0, r2
         ; call printIntLf_Pu8[t.7.1{r0}]
         call printIntLf_Pu8
-        ; restore clobbered non-volatile registers
-        pop  r11
-        pop  r10
-        pop  r9
-        pop  r8
         incw SPH
         ret
 
         ; void main
-        ; var a (i16): SP+4
-        ; var c (i16): SP+6
+        ; var a (i16): SP+0
+        ; var c (i16): SP+2
 main:
         decw SPH
         decw SPH
         decw SPH
         decw SPH
-        ; save clobbered non-volatile registers
-        push r8
-        push r9
-        push r10
-        push r11
-        ; const t.4.1{r8}, 10
-        ld   r8, #%00
-        ld   r9, #%0a
-        ; addrof a.5.1{r10}, a
-        ld   r10, SPH
-        ld   r11, SPL
-        add  r11, #%04
-        adc  r10, #%00
-        ; store [a.5.1{r10}], t.4.1{r8}
-        lde  @rr10, r8
-        incw r10
-        lde  @rr10, r9
-        decw r10
-        ; move a.6.1{r8}, a.6.1{r10}
-        ld   r8, r10
-        ld   r9, r11
-        ; load t.7.1{r0}, [a.6.1{r8}]
-        lde  r0, @rr8
-        incw r8
-        lde  r1, @rr8
-        decw r8
+        ; const t.4.1{r0}, 10
+        ld   r0, #%00
+        ld   r1, #%0a
+        ; addrof a.5.1{r2}, a
+        ld   r2, SPH
+        ld   r3, SPL
+        ; store [a.5.1{r2}], t.4.1{r0}
+        lde  @rr2, r0
+        incw r2
+        lde  @rr2, r1
+        decw r2
+        ; move a.6.1{r0}, a.6.1{r2}
+        ld   r0, r2
+        ld   r1, r3
+        ; load t.7.1{r2}, [a.6.1{r0}]
+        lde  r2, @rr0
+        incw r0
+        lde  r3, @rr0
+        decw r0
+        ; move t.7.1{r0}, t.7.1{r2}
+        ld   r0, r2
+        ld   r1, r3
         ; call printIntLf_Pi16[t.7.1{r0}]
         call printIntLf_Pi16
-        ; load t.9.1{r10}, [b.1{r8}]
-        lde  r10, @rr8
-        incw r8
-        lde  r11, @rr8
-        decw r8
-        ; move t.8.1{r8}, t.9.1{r10}
-        ld   r8, r10
-        ld   r9, r11
-        ; sub t.8.1{r8}, 1
-        decw r8
-        ; addrof a.10.1{r10}, c
-        ld   r10, SPH
-        ld   r11, SPL
-        add  r11, #%06
-        adc  r10, #%00
-        ; store [a.10.1{r10}], t.8.1{r8}
-        lde  @rr10, r8
-        incw r10
-        lde  @rr10, r9
-        decw r10
-        ; move a.11.1{r8}, a.11.1{r10}
-        ld   r8, r10
-        ld   r9, r11
-        ; load t.12.1{r0}, [a.11.1{r8}]
-        lde  r0, @rr8
-        incw r8
-        lde  r1, @rr8
-        decw r8
+        ; addrof b.1{r0}, a
+        ld   r0, SPH
+        ld   r1, SPL
+        ; load t.9.1{r2}, [b.1{r0}]
+        lde  r2, @rr0
+        incw r0
+        lde  r3, @rr0
+        decw r0
+        ; move t.8.1{r0}, t.9.1{r2}
+        ld   r0, r2
+        ld   r1, r3
+        ; sub t.8.1{r0}, 1
+        decw r0
+        ; addrof a.10.1{r2}, c
+        ld   r2, SPH
+        ld   r3, SPL
+        add  r3, #%02
+        adc  r2, #%00
+        ; store [a.10.1{r2}], t.8.1{r0}
+        lde  @rr2, r0
+        incw r2
+        lde  @rr2, r1
+        decw r2
+        ; move a.11.1{r0}, a.11.1{r2}
+        ld   r0, r2
+        ld   r1, r3
+        ; load t.12.1{r2}, [a.11.1{r0}]
+        lde  r2, @rr0
+        incw r0
+        lde  r3, @rr0
+        decw r0
+        ; move t.12.1{r0}, t.12.1{r2}
+        ld   r0, r2
+        ld   r1, r3
         ; call printIntLf_Pi16[t.12.1{r0}]
         call printIntLf_Pi16
-        ; load t.14.1{r10}, [d.1{r8}]
-        lde  r10, @rr8
-        incw r8
-        lde  r11, @rr8
-        decw r8
-        ; sub t.13.1{r10}, 1
-        decw r10
-        ; store [d.1{r8}], t.13.1{r10}
-        lde  @rr8, r10
-        incw r8
-        lde  @rr8, r11
-        decw r8
-        ; move t.16.1{r0}, t.16.1{r10}
-        ld   r0, r10
-        ld   r1, r11
+        ; addrof d.1{r0}, c
+        ld   r0, SPH
+        ld   r1, SPL
+        add  r1, #%02
+        adc  r0, #%00
+        ; load t.14.1{r2}, [d.1{r0}]
+        lde  r2, @rr0
+        incw r0
+        lde  r3, @rr0
+        decw r0
+        ; sub t.13.1{r2}, 1
+        decw r2
+        ; store [d.1{r0}], t.13.1{r2}
+        lde  @rr0, r2
+        incw r0
+        lde  @rr0, r3
+        decw r0
+        ; move t.16.1{r0}, t.16.1{r2}
+        ld   r0, r2
+        ld   r1, r3
         ; call printIntLf_Pi16[t.16.1{r0}]
         call printIntLf_Pi16
         ; const arg.3.0{r0}, 1
         ld   r0, #%01
         ; call testIf_Pu8[arg.3.0{r0}]
         call testIf_Pu8
-        ; restore clobbered non-volatile registers
-        pop  r11
-        pop  r10
-        pop  r9
-        pop  r8
         incw SPH
         incw SPH
         incw SPH

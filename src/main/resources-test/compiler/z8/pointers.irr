@@ -20,7 +20,8 @@ printIntLf_Pi16:
 	branch param.number{r8} gteq 0: if_1_end
 	const arg.0.0{r0}, 45
 	call printChar_Pu8[arg.0.0{r0}]
-	neg number.2{r8}, param.number{r8}
+	neg number.2{r0}, param.number{r8}
+	move number.1{r8}, number.2{r0}
 if_1_end:
 	move number.1{r0}, number.1{r8}
 	call printUint_Pi16[number.1{r0}]
@@ -32,17 +33,17 @@ testIf_Pu8:
 	arg 0: a (u8/1)
 	var 1: b (u8/1)
 
-	const t.3.1{r8}, 1
-	addrof a.4.1{r10}, b
-	store [a.4.1{r10}], t.3.1{r8}
-	move b_ref.1{r8}, b_ref.1{r10}
+	const t.3.1{r1}, 1
+	addrof a.4.1{r2}, b
+	store [a.4.1{r2}], t.3.1{r1}
 	; 6:2 if a == 0
 	branch param.a{r0} notequals 0: if_2_end
-	load t.5.1{r0}, [b_ref.1{r8}]
+	move t.5.1{r0}, t.5.1{r1}
 	call printIntLf_Pu8[t.5.1{r0}]
 if_2_end:
-	addrof a.6.1{r8}, b
-	load t.7.1{r0}, [a.6.1{r8}]
+	addrof a.6.1{r0}, b
+	load t.7.1{r2}, [a.6.1{r0}]
+	move t.7.1{r0}, t.7.1{r2}
 	call printIntLf_Pu8[t.7.1{r0}]
 
 main:
@@ -50,24 +51,28 @@ main:
 	var 0: a (i16/2)
 	var 1: c (i16/2)
 
-	const t.4.1{r8}, 10
-	addrof a.5.1{r10}, a
-	store [a.5.1{r10}], t.4.1{r8}
-	move a.6.1{r8}, a.6.1{r10}
-	load t.7.1{r0}, [a.6.1{r8}]
+	const t.4.1{r0}, 10
+	addrof a.5.1{r2}, a
+	store [a.5.1{r2}], t.4.1{r0}
+	move a.6.1{r0}, a.6.1{r2}
+	load t.7.1{r2}, [a.6.1{r0}]
+	move t.7.1{r0}, t.7.1{r2}
 	call printIntLf_Pi16[t.7.1{r0}]
-	load t.9.1{r10}, [b.1{r8}]
-	move t.8.1{r8}, t.9.1{r10}
-	sub t.8.1{r8}, 1
-	addrof a.10.1{r10}, c
-	store [a.10.1{r10}], t.8.1{r8}
-	move a.11.1{r8}, a.11.1{r10}
-	load t.12.1{r0}, [a.11.1{r8}]
+	addrof b.1{r0}, a
+	load t.9.1{r2}, [b.1{r0}]
+	move t.8.1{r0}, t.9.1{r2}
+	sub t.8.1{r0}, 1
+	addrof a.10.1{r2}, c
+	store [a.10.1{r2}], t.8.1{r0}
+	move a.11.1{r0}, a.11.1{r2}
+	load t.12.1{r2}, [a.11.1{r0}]
+	move t.12.1{r0}, t.12.1{r2}
 	call printIntLf_Pi16[t.12.1{r0}]
-	load t.14.1{r10}, [d.1{r8}]
-	sub t.13.1{r10}, 1
-	store [d.1{r8}], t.13.1{r10}
-	move t.16.1{r0}, t.16.1{r10}
+	addrof d.1{r0}, c
+	load t.14.1{r2}, [d.1{r0}]
+	sub t.13.1{r2}, 1
+	store [d.1{r0}], t.13.1{r2}
+	move t.16.1{r0}, t.16.1{r2}
 	call printIntLf_Pi16[t.16.1{r0}]
 	const arg.3.0{r0}, 1
 	call testIf_Pu8[arg.3.0{r0}]

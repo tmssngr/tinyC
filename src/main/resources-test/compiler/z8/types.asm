@@ -51,10 +51,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
@@ -74,10 +78,11 @@ if_1_end:
 main:
         ; save clobbered non-volatile registers
         push r8
-        push r9
-        ; const i.1{r8}, 250
-        ld   r8, #%fa
+        ; const i.1{r0}, 250
+        ld   r0, #%fa
         ; 4:3 for i != 2
+        ; move i.2{r8}, i.1{r0}
+        ld   r8, r0
         jr   for_2
 
 for_2_body:
@@ -85,21 +90,24 @@ for_2_body:
         ld   r0, r8
         ; call printIntLf_Pu8[i.2{r0}]
         call printIntLf_Pu8
-        ; add i.3{r8}, 1
-        inc  r8
+        ; move i.3{r0}, i.2{r8}
+        ld   r0, r8
+        ; add i.3{r0}, 1
+        inc  r0
+        ; move i.2{r8}, i.3{r0}
+        ld   r8, r0
 for_2:
         ; branch i.2{r8} notequals 2: for_2_body
         cp   r8, #%02
         jr   ne, for_2_body
-        ; const v.1{r8}, 260
-        ld   r8, #%01
-        ld   r9, #%04
-        ; cast t.2.1{r0}(u8), v.1{r8}(i16)
-        ld   r0, r9
+        ; const v.1{r0}, 260
+        ld   r0, #%01
+        ld   r1, #%04
+        ; cast t.2.1{r0}(u8), v.1{r0}(i16)
+        ld   r0, r1
         ; call printIntLf_Pu8[t.2.1{r0}]
         call printIntLf_Pu8
         ; restore clobbered non-volatile registers
-        pop  r9
         pop  r8
         ret
 

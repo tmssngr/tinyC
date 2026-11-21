@@ -23,43 +23,45 @@ _printUint@i64:
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
 
-	const pos.1{r8}, 20
+	const pos.1{r0}, 20
 	; 33:2 while true
-	move number.1{r5}, number{r1}
+	jump while_1
+_printUint@i64.no_critical_edge_4:
+	move pos.2{r0}, pos.3{r2}
 while_1:
-	sub pos.3{r8}, 1
-	move remainder.1{r6}, number.1{r5}
-	move remainder.1{r0}, remainder.1{r6}
+	move pos.3{r2}, pos.2{r0}
+	sub pos.3{r2}, 1
+	move remainder.1{r5}, number.1{r1}
+	move remainder.1{r0}, remainder.1{r5}
 	mod remainder.1{r3}, remainder.1{r0}, 10
-	move remainder.1{r6}, remainder.1{r3}
-	move number.2{r0}, number.2{r5}
+	move remainder.1{r5}, remainder.1{r3}
+	move number.2{r0}, number.2{r1}
 	div number.2{r0}, 10
-	move number.2{r5}, number.2{r0}
-	cast t.5.1{r0}(u8), remainder.1{r6}(i64)
+	move number.2{r1}, number.2{r0}
+	cast t.5.1{r0}(u8), remainder.1{r5}(i64)
 	add digit.1{r0}, 48
-	cast t.7.1{r3}(i64), pos.3{r8}(u8)
+	cast t.7.1{r3}(i64), pos.3{r2}(u8)
 	addrof t.6.1{r4}, buffer
 	add t.6.2{r4}, t.7.1{r3}
 	store [t.6.2{r4}], digit.1{r0}
 	; 39:3 if number == 0
-	branch number.2{r5} notequals 0: while_1
-	addrof t.8.1{r3}, buffer
+	branch number.2{r1} notequals 0: _printUint@i64.no_critical_edge_4
 	move t.8.2{r1}, t.8.2{r4}
 	const t.11.1{r0}, 20
-	move t.10.1{r2}, t.11.1{r0}
-	sub t.10.1{r2}, pos.3{r8}
+	sub t.10.1{r0}, pos.3{r2}
+	move t.10.1{r2}, t.10.1{r0}
 	call _printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
 
 _printIntLf@bool:
  Local variables
 	arg 0: value (bool/1)
 
-	const number.1{r8}, 0
+	const number.1{r0}, 0
 	; 48:2 if value
 	branch value{r1} equals 0: if_3_end
-	const number.3{r8}, 1
+	const number.3{r0}, 1
 if_3_end:
-	cast t.2.1{r1}(i64), number.2{r8}(u8)
+	cast t.2.1{r1}(i64), number.2{r0}(u8)
 	call _printIntLf@i64[t.2.1{r1}]
 
 _printIntLf@i64:
@@ -70,7 +72,8 @@ _printIntLf@i64:
 	branch number{r8} gteq 0: if_4_end
 	const arg.0.0{r1}, 45
 	call _printChar@u8[arg.0.0{r1}]
-	neg number.2{r8}, number{r8}
+	neg number.2{r0}, number{r8}
+	move number.1{r8}, number.2{r0}
 if_4_end:
 	move number.1{r1}, number.1{r8}
 	call _printUint@i64[number.1{r1}]
@@ -81,15 +84,12 @@ _strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
 
-	const length.1{r2}, 0
+	const length.1{r0}, 0
 	; 73:2 for *str != 0
-	move length.2{r0}, length.1{r2}
 	jump for_5
 for_5_body:
-	move length.3{r2}, length.2{r0}
-	add length.3{r2}, 1
+	add length.3{r0}, 1
 	add str.2{r1}, 1
-	move length.2{r0}, length.3{r2}
 for_5:
 	load t.2.1{r2}, [str.1{r1}]
 	branch t.2.1{r2} notequals 0: for_5_body
@@ -123,18 +123,20 @@ _main:
 	const t.7.1{r1}, [string-2]
 	call _printString@@u8[t.7.1{r1}]
 	const c.1{r0}, 0
-	const d.1{r2}, 128
-	lt t.8.1{r1}, c.1{r0}, d.1{r2}
+	const d.1{r1}, 128
+	lt t.8.1{r2}, c.1{r0}, d.1{r1}
 	addrof memVarAddr{r9}, c.1
 	store [memVarAddr{r9}], c.1{r0}
 	addrof memVarAddr{r9}, d.1
-	store [memVarAddr{r9}], d.1{r2}
+	store [memVarAddr{r9}], d.1{r1}
+	move t.8.1{r1}, t.8.1{r2}
 	call _printIntLf@bool[t.8.1{r1}]
 	addrof memVarAddr{r9}, c.1
-	load c.1{r2}, [memVarAddr{r9}]
+	load c.1{r1}, [memVarAddr{r9}]
 	addrof memVarAddr{r9}, d.1
 	load d.1{r0}, [memVarAddr{r9}]
-	lt t.9.1{r1}, d.1{r0}, c.1{r2}
+	lt t.9.1{r2}, d.1{r0}, c.1{r1}
+	move t.9.1{r1}, t.9.1{r2}
 	call _printIntLf@bool[t.9.1{r1}]
 	const t.10.1{r1}, [string-3]
 	call _printString@@u8[t.10.1{r1}]
@@ -150,14 +152,16 @@ _main:
 	addrof memVarAddr{r9}, c.1
 	load c.1{r0}, [memVarAddr{r9}]
 	addrof memVarAddr{r9}, d.1
-	load d.1{r2}, [memVarAddr{r9}]
-	lteq t.14.1{r1}, c.1{r0}, d.1{r2}
+	load d.1{r1}, [memVarAddr{r9}]
+	lteq t.14.1{r2}, c.1{r0}, d.1{r1}
+	move t.14.1{r1}, t.14.1{r2}
 	call _printIntLf@bool[t.14.1{r1}]
 	addrof memVarAddr{r9}, c.1
-	load c.1{r2}, [memVarAddr{r9}]
+	load c.1{r1}, [memVarAddr{r9}]
 	addrof memVarAddr{r9}, d.1
 	load d.1{r0}, [memVarAddr{r9}]
-	lteq t.15.1{r1}, d.1{r0}, c.1{r2}
+	lteq t.15.1{r2}, d.1{r0}, c.1{r1}
+	move t.15.1{r1}, t.15.1{r2}
 	call _printIntLf@bool[t.15.1{r1}]
 	const t.16.1{r1}, [string-5]
 	call _printString@@u8[t.16.1{r1}]
@@ -189,14 +193,16 @@ _main:
 	addrof memVarAddr{r9}, c.1
 	load c.1{r0}, [memVarAddr{r9}]
 	addrof memVarAddr{r9}, d.1
-	load d.1{r2}, [memVarAddr{r9}]
-	gteq t.26.1{r1}, c.1{r0}, d.1{r2}
+	load d.1{r1}, [memVarAddr{r9}]
+	gteq t.26.1{r2}, c.1{r0}, d.1{r1}
+	move t.26.1{r1}, t.26.1{r2}
 	call _printIntLf@bool[t.26.1{r1}]
 	addrof memVarAddr{r9}, c.1
-	load c.1{r2}, [memVarAddr{r9}]
+	load c.1{r1}, [memVarAddr{r9}]
 	addrof memVarAddr{r9}, d.1
 	load d.1{r0}, [memVarAddr{r9}]
-	gteq t.27.1{r1}, d.1{r0}, c.1{r2}
+	gteq t.27.1{r2}, d.1{r0}, c.1{r1}
+	move t.27.1{r1}, t.27.1{r2}
 	call _printIntLf@bool[t.27.1{r1}]
 	const t.28.1{r1}, [string-9]
 	call _printString@@u8[t.28.1{r1}]

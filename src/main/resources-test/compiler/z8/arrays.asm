@@ -51,10 +51,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
@@ -72,79 +76,62 @@ if_1_end:
 
         ; void main
 main:
-        ; save clobbered non-volatile registers
-        push r8
-        push r9
-        push r10
-        push r11
-        push r12
-        push r13
-        ; const chr.1{r8}, 32
-        ld   r8, #%20
-        ; const t.3.1{r9}, 0
-        ld   r9, #%00
-        ld   r10, #%00
-        ; addrof t.2.1{r12}, chars
-        ld   r12, #hi(var_0)
-        ld   r13, #lo(var_0)
-        ; add t.2.2{r12}, t.3.1{r9}
-        add  r13, r10
-        adc  r12, r9
-        ; store [t.2.2{r12}], chr.1{r8}
-        lde  @rr12, r8
-        ; move t.6.2{r10}, t.6.2{r12}
-        ld   r10, r12
-        ld   r11, r13
-        ; load t.5.1{r8}, [t.6.2{r10}]
-        lde  r8, @rr10
-        ; add t.4.1{r8}, 1
-        inc  r8
-        ; const t.9.1{r9}, 1
-        ld   r9, #%00
-        ld   r10, #%01
-        ; addrof t.8.1{r12}, chars
-        ld   r12, #hi(var_0)
-        ld   r13, #lo(var_0)
-        ; add t.8.2{r12}, t.9.1{r9}
-        add  r13, r10
-        adc  r12, r9
-        ; store [t.8.2{r12}], t.4.1{r8}
-        lde  @rr12, r8
-        ; move t.12.2{r10}, t.12.2{r12}
-        ld   r10, r12
-        ld   r11, r13
-        ; load t.11.1{r8}, [t.12.2{r10}]
-        lde  r8, @rr10
-        ; add t.10.1{r8}, 2
-        add  r8, #%02
-        ; const t.15.1{r9}, 2
-        ld   r9, #%00
-        ld   r10, #%02
-        ; addrof t.14.1{r12}, chars
-        ld   r12, #hi(var_0)
-        ld   r13, #lo(var_0)
-        ; add t.14.2{r12}, t.15.1{r9}
-        add  r13, r10
-        adc  r12, r9
-        ; store [t.14.2{r12}], t.10.1{r8}
-        lde  @rr12, r8
-        ; const t.17.1{r8}, 2
-        ld   r8, #%00
-        ld   r9, #%02
-        ; move t.16.2{r10}, t.16.2{r12}
-        ld   r10, r12
-        ld   r11, r13
-        ; load result.1{r0}, [t.16.2{r10}]
-        lde  r0, @rr10
+        ; const chr.1{r0}, 32
+        ld   r0, #%20
+        ; const t.3.1{r1}, 0
+        ld   r1, #%00
+        ld   r2, #%00
+        ; addrof t.2.1{r4}, chars
+        ld   r4, #hi(var_0)
+        ld   r5, #lo(var_0)
+        ; add t.2.2{r4}, t.3.1{r1}
+        add  r5, r2
+        adc  r4, r1
+        ; store [t.2.2{r4}], chr.1{r0}
+        lde  @rr4, r0
+        ; move t.6.2{r2}, t.6.2{r4}
+        ld   r2, r4
+        ld   r3, r5
+        ; load t.5.1{r0}, [t.6.2{r2}]
+        lde  r0, @rr2
+        ; add t.4.1{r0}, 1
+        inc  r0
+        ; const t.9.1{r1}, 1
+        ld   r1, #%00
+        ld   r2, #%01
+        ; addrof t.8.1{r4}, chars
+        ld   r4, #hi(var_0)
+        ld   r5, #lo(var_0)
+        ; add t.8.2{r4}, t.9.1{r1}
+        add  r5, r2
+        adc  r4, r1
+        ; store [t.8.2{r4}], t.4.1{r0}
+        lde  @rr4, r0
+        ; move t.12.2{r2}, t.12.2{r4}
+        ld   r2, r4
+        ld   r3, r5
+        ; load t.11.1{r0}, [t.12.2{r2}]
+        lde  r0, @rr2
+        ; add t.10.1{r0}, 2
+        add  r0, #%02
+        ; const t.15.1{r1}, 2
+        ld   r1, #%00
+        ld   r2, #%02
+        ; addrof t.14.1{r4}, chars
+        ld   r4, #hi(var_0)
+        ld   r5, #lo(var_0)
+        ; add t.14.2{r4}, t.15.1{r1}
+        add  r5, r2
+        adc  r4, r1
+        ; store [t.14.2{r4}], t.10.1{r0}
+        lde  @rr4, r0
+        ; move t.16.2{r2}, t.16.2{r4}
+        ld   r2, r4
+        ld   r3, r5
+        ; load result.1{r0}, [t.16.2{r2}]
+        lde  r0, @rr2
         ; call printIntLf_Pu8[result.1{r0}]
         call printIntLf_Pu8
-        ; restore clobbered non-volatile registers
-        pop  r13
-        pop  r12
-        pop  r11
-        pop  r10
-        pop  r9
-        pop  r8
         ret
 
         ; void printChar_Pu8

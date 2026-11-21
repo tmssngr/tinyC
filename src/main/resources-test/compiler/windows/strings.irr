@@ -23,31 +23,34 @@ _printUint@i64:
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
 
-	const pos.1{r6}, 20
+	const pos.1{r0}, 20
 	; 33:2 while true
 	move number.1{r3}, number{r1}
+	jump while_1
+_printUint@i64.no_critical_edge_4:
+	move pos.2{r0}, pos.3{r4}
 while_1:
-	sub pos.3{r6}, 1
-	move remainder.1{r4}, number.1{r3}
-	move remainder.1{r0}, remainder.1{r4}
+	move pos.3{r4}, pos.2{r0}
+	sub pos.3{r4}, 1
+	move remainder.1{r5}, number.1{r3}
+	move remainder.1{r0}, remainder.1{r5}
 	mod remainder.1{r2}, remainder.1{r0}, 10
-	move remainder.1{r4}, remainder.1{r2}
+	move remainder.1{r5}, remainder.1{r2}
 	move number.2{r0}, number.2{r3}
 	div number.2{r0}, 10
 	move number.2{r3}, number.2{r0}
-	cast t.5.1{r0}(u8), remainder.1{r4}(i64)
+	cast t.5.1{r0}(u8), remainder.1{r5}(i64)
 	add digit.1{r0}, 48
-	cast t.7.1{r4}(i64), pos.3{r6}(u8)
-	addrof t.6.1{r5}, buffer
-	add t.6.2{r5}, t.7.1{r4}
-	store [t.6.2{r5}], digit.1{r0}
+	cast t.7.1{r1}(i64), pos.3{r4}(u8)
+	addrof t.6.1{r2}, buffer
+	add t.6.2{r2}, t.7.1{r1}
+	store [t.6.2{r2}], digit.1{r0}
 	; 39:3 if number == 0
-	branch number.2{r3} notequals 0: while_1
-	addrof t.8.1{r3}, buffer
-	move t.8.2{r1}, t.8.2{r5}
+	branch number.2{r3} notequals 0: _printUint@i64.no_critical_edge_4
+	move t.8.2{r1}, t.8.2{r2}
 	const t.11.1{r0}, 20
 	move t.10.1{r2}, t.11.1{r0}
-	sub t.10.1{r2}, pos.3{r6}
+	sub t.10.1{r2}, pos.3{r4}
 	call _printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
 
 _printIntLf@u8:
@@ -72,7 +75,8 @@ _printIntLf@i64:
 	branch number{r6} gteq 0: if_3_end
 	const arg.0.0{r1}, 45
 	call _printChar@u8[arg.0.0{r1}]
-	neg number.2{r6}, number{r6}
+	neg number.2{r0}, number{r6}
+	move number.1{r6}, number.2{r0}
 if_3_end:
 	move number.1{r1}, number.1{r6}
 	call _printUint@i64[number.1{r1}]
@@ -83,15 +87,12 @@ _strlen@@u8:
  Local variables
 	arg 0: str (u8*/8)
 
-	const length.1{r2}, 0
+	const length.1{r0}, 0
 	; 73:2 for *str != 0
-	move length.2{r0}, length.1{r2}
 	jump for_4
 for_4_body:
-	move length.3{r2}, length.2{r0}
-	add length.3{r2}, 1
+	add length.3{r0}, 1
 	add str.2{r1}, 1
-	move length.2{r0}, length.3{r2}
 for_4:
 	load t.2.1{r2}, [str.1{r1}]
 	branch t.2.1{r2} notequals 0: for_4_body
@@ -107,41 +108,37 @@ _printStringLength@@u8@u8:
 
 _main:
 	; begin initialize global variables
-	const t.2.1{r6}, [string-0]
-	addrof a.3.1{r0}, text
-	store [a.3.1{r0}], t.2.1{r6}
+	const t.2.1{r0}, [string-0]
+	addrof a.3.1{r1}, text
+	store [a.3.1{r1}], t.2.1{r0}
 	; end initialize global variables
-	move a.4.1{r6}, a.4.1{r0}
-	load t.5.1{r1}, [a.4.1{r6}]
+	move a.4.1{r0}, a.4.1{r1}
+	load t.5.1{r1}, [a.4.1{r0}]
 	call _printString@@u8[t.5.1{r1}]
 	call _printLength[]
-	const t.6.1{r6}, 1
-	addrof a.7.1{r0}, text
-	load second.1{r0}, [a.7.1{r0}]
-	move second.2{r1}, second.1{r0}
-	add second.2{r1}, t.6.1{r6}
+	const t.6.1{r0}, 1
+	addrof a.7.1{r1}, text
+	load second.1{r1}, [a.7.1{r1}]
+	add second.2{r1}, t.6.1{r0}
 	call _printString@@u8[second.2{r1}]
-	addrof a.8.1{r6}, text
-	load t.9.1{r6}, [a.8.1{r6}]
-	load chr.1{r1}, [t.9.1{r6}]
+	addrof a.8.1{r0}, text
+	load t.9.1{r0}, [a.8.1{r0}]
+	load chr.1{r1}, [t.9.1{r0}]
 	call _printIntLf@u8[chr.1{r1}]
 
 _printLength:
-	const length.1{r6}, 0
-	addrof a.2.1{r0}, text
-	load ptr.1{r0}, [a.2.1{r0}]
+	const length.1{r0}, 0
+	addrof a.2.1{r1}, text
+	load ptr.1{r1}, [a.2.1{r1}]
 	; 16:2 for *ptr != 0
-	move length.2{r1}, length.1{r6}
-	move ptr.2{r6}, ptr.1{r0}
 	jump for_5
 for_5_body:
-	move length.3{r0}, length.2{r1}
 	add length.3{r0}, 1
-	add ptr.3{r6}, 1
-	move length.2{r1}, length.3{r0}
+	add ptr.3{r1}, 1
 for_5:
-	load t.3.1{r0}, [ptr.2{r6}]
-	branch t.3.1{r0} notequals 0: for_5_body
+	load t.3.1{r2}, [ptr.2{r1}]
+	branch t.3.1{r2} notequals 0: for_5_body
+	move length.2{r1}, length.2{r0}
 	call _printIntLf@i16[length.2{r1}]
 
 _printStringLength@@u8@i64:

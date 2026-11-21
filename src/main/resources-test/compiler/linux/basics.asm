@@ -47,73 +47,67 @@ _printUint@u8:
         ret
 
         ; void _printUint@i64
-        ;   rsp+24: arg number
-        ;   rsp+40: var buffer
+        ;   rsp+0: arg number
+        ;   rsp+20: var buffer
 _printUint@i64:
-        sub rsp, 48
-        ; save clobbered non-volatile registers
-        push r9
-        push r10
-        push rbx
-        ; const pos.1{r8}, 20
-        mov bl, 20
+        sub rsp, 40
+        ; const pos.1{r0}, 20
+        mov al, 20
         ; 33:2 while true
-        ; move number.1{r5}, number{r1}
-        mov r8, rdi
+        jmp while_1
+_printUint@i64.no_critical_edge_4:
+        ; move pos.2{r0}, pos.3{r2}
+        mov al, sil
 while_1:
-        ; sub pos.3{r8}, 1
-        sub bl, 1
-        ; move remainder.1{r6}, number.1{r5}
-        mov r9, r8
-        ; move remainder.1{r0}, remainder.1{r6}
-        mov rax, r9
+        ; move pos.3{r2}, pos.2{r0}
+        mov sil, al
+        ; sub pos.3{r2}, 1
+        sub sil, 1
+        ; move remainder.1{r5}, number.1{r1}
+        mov r8, rdi
+        ; move remainder.1{r0}, remainder.1{r5}
+        mov rax, r8
         ; mod remainder.1{r3}, remainder.1{r0}, 10
         cqo
         mov rcx, 10
         idiv rcx
-        ; move remainder.1{r6}, remainder.1{r3}
-        mov r9, rdx
-        ; move number.2{r0}, number.2{r5}
-        mov rax, r8
+        ; move remainder.1{r5}, remainder.1{r3}
+        mov r8, rdx
+        ; move number.2{r0}, number.2{r1}
+        mov rax, rdi
         ; div number.2{r0}, 10
         cqo
         mov rcx, 10
         idiv rcx
-        ; move number.2{r5}, number.2{r0}
-        mov r8, rax
-        ; cast t.5.1{r0}(u8), remainder.1{r6}(i64)
-        mov al, r9b
+        ; move number.2{r1}, number.2{r0}
+        mov rdi, rax
+        ; cast t.5.1{r0}(u8), remainder.1{r5}(i64)
+        mov al, r8b
         ; add digit.1{r0}, 48
         add al, 48
-        ; cast t.7.1{r3}(i64), pos.3{r8}(u8)
-        movzx rdx, bl
+        ; cast t.7.1{r3}(i64), pos.3{r2}(u8)
+        movzx rdx, sil
         ; addrof t.6.1{r4}, buffer
-        lea rcx, [rsp+40]
+        lea rcx, [rsp+20]
         ; add t.6.2{r4}, t.7.1{r3}
         add rcx, rdx
         ; store [t.6.2{r4}], digit.1{r0}
         mov [rcx], al
         ; 39:3 if number == 0
-        ; branch number.2{r5} notequals 0: while_1
-        cmp r8, 0
-        jne while_1
-        ; addrof t.8.1{r3}, buffer
-        lea rdx, [rsp+40]
+        ; branch number.2{r1} notequals 0: _printUint@i64.no_critical_edge_4
+        cmp rdi, 0
+        jne _printUint@i64.no_critical_edge_4
         ; move t.8.2{r1}, t.8.2{r4}
         mov rdi, rcx
         ; const t.11.1{r0}, 20
         mov al, 20
-        ; move t.10.1{r2}, t.11.1{r0}
+        ; sub t.10.1{r0}, pos.3{r2}
+        sub al, sil
+        ; move t.10.1{r2}, t.10.1{r0}
         mov sil, al
-        ; sub t.10.1{r2}, pos.3{r8}
-        sub sil, bl
         ; call _printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
         call _printStringLength@@u8@u8
-        ; restore clobbered non-volatile registers
-        pop rbx
-        pop r10
-        pop r9
-        add rsp, 48
+        add rsp, 40
         ret
 
         ; void _printStringLength@@u8@u8
@@ -143,35 +137,32 @@ _unusedArgs@u8@bool@u8@u8:
 
         ; void _main
 _main:
-        ; save clobbered non-volatile registers
-        push r9
-        push r10
-        push rbx
+        sub rsp, 8
         ; begin initialize global variables
-        ; const t.3.1{r8}, 48
-        mov bl, 48
-        ; addrof a.4.1{r0}, zero
-        lea rax, [var_0]
-        ; store [a.4.1{r0}], t.3.1{r8}
-        mov [rax], bl
-        ; const t.5.1{r8}, 49
-        mov bl, 49
-        ; addrof a.6.1{r0}, one
-        lea rax, [var_1]
-        ; store [a.6.1{r0}], t.5.1{r8}
-        mov [rax], bl
-        ; const t.7.1{r8}, 50
-        mov bl, 50
-        ; addrof a.8.1{r0}, two
-        lea rax, [var_2]
-        ; store [a.8.1{r0}], t.7.1{r8}
-        mov [rax], bl
-        ; const t.9.1{r8}, 34
-        mov bl, 34
-        ; addrof a.10.1{r0}, threeFour
-        lea rax, [var_3]
-        ; store [a.10.1{r0}], t.9.1{r8}
-        mov [rax], bl
+        ; const t.3.1{r0}, 48
+        mov al, 48
+        ; addrof a.4.1{r1}, zero
+        lea rdi, [var_0]
+        ; store [a.4.1{r1}], t.3.1{r0}
+        mov [rdi], al
+        ; const t.5.1{r0}, 49
+        mov al, 49
+        ; addrof a.6.1{r1}, one
+        lea rdi, [var_1]
+        ; store [a.6.1{r1}], t.5.1{r0}
+        mov [rdi], al
+        ; const t.7.1{r0}, 50
+        mov al, 50
+        ; addrof a.8.1{r1}, two
+        lea rdi, [var_2]
+        ; store [a.8.1{r1}], t.7.1{r0}
+        mov [rdi], al
+        ; const t.9.1{r0}, 34
+        mov al, 34
+        ; addrof a.10.1{r1}, threeFour
+        lea rdi, [var_3]
+        ; store [a.10.1{r1}], t.9.1{r0}
+        mov [rdi], al
         ; end initialize global variables
         ; const t.11.1{r2}, 1
         mov sil, 1
@@ -183,42 +174,39 @@ _main:
         mov cl, 3
         ; call _ = _unusedArgs@u8@bool@u8@u8[arg.0.0{r1}, t.11.1{r2}, arg.0.2{r3}, arg.0.3{r4}] -> i64
         call _unusedArgs@u8@bool@u8@u8
-        ; addrof a.12.1{r8}, zero
-        lea rbx, [var_0]
-        ; load t.13.1{r1}, [a.12.1{r8}]
-        mov dil, [rbx]
+        ; addrof a.12.1{r0}, zero
+        lea rax, [var_0]
+        ; load t.13.1{r1}, [a.12.1{r0}]
+        mov dil, [rax]
         ; call _printChar@u8[t.13.1{r1}]
         call _printChar@u8
-        ; addrof onePtr.1{r8}, one
-        lea rbx, [var_1]
-        ; load t.14.1{r1}, [onePtr.1{r8}]
-        mov dil, [rbx]
+        ; addrof onePtr.1{r0}, one
+        lea rax, [var_1]
+        ; load t.14.1{r1}, [onePtr.1{r0}]
+        mov dil, [rax]
         ; call _printChar@u8[t.14.1{r1}]
         call _printChar@u8
-        ; addrof twoPtr.1{r8}, two
-        lea rbx, [var_2]
-        ; const t.17.1{r0}, 0
-        mov rax, 0
-        ; add t.16.2{r8}, t.17.1{r0}
-        add rbx, rax
-        ; load t.15.1{r1}, [t.16.2{r8}]
-        mov dil, [rbx]
+        ; addrof twoPtr.1{r0}, two
+        lea rax, [var_2]
+        ; const t.17.1{r1}, 0
+        mov rdi, 0
+        ; add t.16.2{r0}, t.17.1{r1}
+        add rax, rdi
+        ; load t.15.1{r1}, [t.16.2{r0}]
+        mov dil, [rax]
         ; call _printChar@u8[t.15.1{r1}]
         call _printChar@u8
-        ; addrof a.18.1{r8}, threeFour
-        lea rbx, [var_3]
-        ; load t.19.1{r1}, [a.18.1{r8}]
-        mov dil, [rbx]
+        ; addrof a.18.1{r0}, threeFour
+        lea rax, [var_3]
+        ; load t.19.1{r1}, [a.18.1{r0}]
+        mov dil, [rax]
         ; call _printUint@u8[t.19.1{r1}]
         call _printUint@u8
         ; const arg.5.0{r1}, 10
         mov dil, 10
         ; call _printChar@u8[arg.5.0{r1}]
         call _printChar@u8
-        ; restore clobbered non-volatile registers
-        pop rbx
-        pop r10
-        pop r9
+        add rsp, 8
         ret
 
         ; void _printStringLength@@u8@i64

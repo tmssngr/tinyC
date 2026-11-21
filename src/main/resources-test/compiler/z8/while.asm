@@ -51,10 +51,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
@@ -74,9 +78,11 @@ if_1_end:
 main:
         ; save clobbered non-volatile registers
         push r8
-        ; const i.1{r8}, 5
-        ld   r8, #%05
+        ; const i.1{r0}, 5
+        ld   r0, #%05
         ; 5:2 while i > 0
+        ; move i.2{r8}, i.1{r0}
+        ld   r8, r0
         jr   while_2
 
 while_2_body:
@@ -84,8 +90,12 @@ while_2_body:
         ld   r0, r8
         ; call printIntLf_Pu8[i.2{r0}]
         call printIntLf_Pu8
-        ; sub i.4{r8}, 1
-        dec  r8
+        ; move i.4{r0}, i.2{r8}
+        ld   r0, r8
+        ; sub i.4{r0}, 1
+        dec  r0
+        ; move i.2{r8}, i.4{r0}
+        ld   r8, r0
 while_2:
         ; branch i.2{r8} gt 0: while_2_body, while_3
         cp   r8, #%00

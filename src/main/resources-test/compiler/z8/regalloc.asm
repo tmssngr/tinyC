@@ -9,14 +9,12 @@
 
         ; u8 simple
 simple:
-        ; const four.1{r1}, 4
-        ld   r1, #%04
-        ; const three.1{r2}, 3
-        ld   r2, #%03
-        ; move one.1{r0}, four.1{r1}
-        ld   r0, r1
-        ; sub one.1{r0}, three.1{r2}
-        sub  r0, r2
+        ; const four.1{r0}, 4
+        ld   r0, #%04
+        ; const three.1{r1}, 3
+        ld   r1, #%03
+        ; sub one.1{r0}, three.1{r1}
+        sub  r0, r1
         ; 5:9 return one
         ret
 
@@ -49,54 +47,38 @@ max_Pu8_Pu8_ret:
         ; i16 fibonacci_Pu8
         ; arg i (u8): r0
 fibonacci_Pu8:
-        ; save clobbered non-volatile registers
-        push r8
-        ; const a.1{r2}, 0
+        ; const a.1{r1}, 0
+        ld   r1, #%00
         ld   r2, #%00
+        ; const b.1{r3}, 1
         ld   r3, #%00
-        ; const b.1{r4}, 1
-        ld   r4, #%00
-        ld   r5, #%01
+        ld   r4, #%01
         ; 22:2 while i > 0
-        ; move i.1{r6}, param.i{r0}
-        ld   r6, r0
-        ; move a.2{r0}, a.1{r2}
-        ld   r0, r2
-        ld   r1, r3
-        ; move b.2{r2}, b.1{r4}
-        ld   r2, r4
-        ld   r3, r5
         jr   while_2
 
 while_2_body:
-        ; move i.2{r4}, i.1{r6}
-        ld   r4, r6
-        ; sub i.2{r4}, 1
-        dec  r4
-        ; move c.1{r5}, a.2{r0}
-        ld   r6, r1
-        ld   r5, r0
-        ; add c.1{r5}, b.2{r2}
-        add  r6, r3
-        adc  r5, r2
-        ; move b.3{r7}, c.1{r5}
-        ld   r8, r6
-        ld   r7, r5
-        ; move i.1{r6}, i.2{r4}
-        ld   r6, r4
-        ; move a.2{r0}, a.3{r2}
-        ld   r0, r2
+        ; sub i.2{r0}, 1
+        dec  r0
+        ; add c.1{r1}, b.2{r3}
+        add  r2, r4
+        adc  r1, r3
+        ; move b.3{r5}, c.1{r1}
+        ld   r6, r2
+        ld   r5, r1
+        ; move a.2{r1}, a.3{r3}
         ld   r1, r3
-        ; move b.2{r2}, b.3{r7}
-        ld   r2, r7
-        ld   r3, r8
+        ld   r2, r4
+        ; move b.2{r3}, b.3{r5}
+        ld   r3, r5
+        ld   r4, r6
 while_2:
-        ; branch i.1{r6} gt 0: while_2_body
-        cp   r6, #%00
+        ; branch i.1{r0} gt 0: while_2_body
+        cp   r0, #%00
         jr   ugt, while_2_body
         ; 28:9 return a
-        ; restore clobbered non-volatile registers
-        pop  r8
+        ; move a.2{r0}, a.2{r1}
+        ld   r0, r1
+        ld   r1, r2
         ret
 
         ; void main

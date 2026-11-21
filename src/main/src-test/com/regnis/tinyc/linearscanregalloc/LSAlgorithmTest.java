@@ -72,6 +72,29 @@ public class LSAlgorithmTest {
 	}
 
 	@Test
+	public void testRegisterPositionsGetFirstFit() {
+		final LSAlgorithm.RegisterPositions singleRegisterPositions = createPos(List.of(3, 6, 4, 8));
+		assertEquals(0, singleRegisterPositions.getFirstFit(3, 1, false));
+		assertEquals(0, singleRegisterPositions.getFirstFit(3, 1, true));
+		assertEquals(1, singleRegisterPositions.getFirstFit(4, 1, false));
+		assertEquals(2, singleRegisterPositions.getFirstFit(4, 1, true));
+		assertEquals(3, singleRegisterPositions.getFirstFit(8, 1, false));
+		assertEquals(-1, singleRegisterPositions.getFirstFit(8, 1, true));
+		assertEquals(-1, singleRegisterPositions.getFirstFit(9, 1, false));
+		assertEquals(-1, singleRegisterPositions.getFirstFit(9, 1, true));
+
+		final LSAlgorithm.RegisterPositions registerPairPositions = createPos(List.of(3, 6, 7, 5, 8, Integer.MAX_VALUE));
+		assertEquals(0, registerPairPositions.getFirstFit(3, 2, false));
+		assertEquals(0, registerPairPositions.getFirstFit(3, 2, true));
+		assertEquals(1, registerPairPositions.getFirstFit(6, 2, false));
+		assertEquals(4, registerPairPositions.getFirstFit(6, 2, true));
+		assertEquals(4, registerPairPositions.getFirstFit(8, 2, false));
+		assertEquals(4, registerPairPositions.getFirstFit(8, 2, true));
+		assertEquals(-1, registerPairPositions.getFirstFit(9, 2, false));
+		assertEquals(-1, registerPairPositions.getFirstFit(9, 2, true));
+	}
+
+	@Test
 	public void testCorrectPointerRegister() {
 		// 0: a = 10
 		// 2: b = &c
@@ -257,11 +280,11 @@ public class LSAlgorithmTest {
 		assertNotNull(split);
 		split = assertInterval(3, 7, -1, split);
 		assertNotNull(split);
-		split = assertInterval(7, 10, 0, split);
+		split = assertInterval(7, 10, 1, split);
 		assertNull(split);
 
 		// iB
-		split = assertInterval(6, 8, 1, intervals.get(varB));
+		split = assertInterval(6, 8, 0, intervals.get(varB));
 		assertNull(split);
 	}
 
@@ -516,6 +539,37 @@ public class LSAlgorithmTest {
 		// iD
 		split = assertInterval(6, 12, 1, intervals.get(varD));
 		assertNull(split);
+	}
+
+	@Test
+	public void testPrefersLowestFittingZ8RegisterPair() {
+		final IRVar pointer = new IRVar("pointer", 0, VariableScope.function, Type.POINTER_U8);
+		final LSInterval interval = LSInterval.testVar(pointer, List.of(new LSRange(0, 10)), List.of(write(0), read(10)));
+		final List<LSInterval> fixedIntervals = List.of(
+				LSInterval.testFixed(0, List.of(new LSRange(4))),
+				LSInterval.testFixed(3, List.of(new LSRange(4))),
+				LSInterval.testFixed(5, List.of(new LSRange(14)))
+		);
+		final Map<IRVar, LSInterval> varMap = toVarMap(interval);
+
+		// r1/r2 starts at an odd register. r4/r5 is the first even pair that fits.
+		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(varMap, fixedIntervals, 8, Z8_POINTER_INT_TYPE, LSAlgorithmLogger.DUMMY);
+		assertNull(assertInterval(0, 10, 4, intervals.get(pointer)));
+	}
+
+	@Test
+	public void testZ8RegisterHintMustFitWholePair() {
+		final IRVar pointer = new IRVar("pointer", 0, VariableScope.function, Type.POINTER_U8);
+		final LSInterval interval = LSInterval.testVar(pointer, List.of(new LSRange(0, 10)), List.of(write(0), read(10)));
+		interval.setRegisterHint(2);
+		final Map<IRVar, LSInterval> varMap = toVarMap(interval);
+
+		final Map<IRVar, LSInterval> withUsableHint = LSAlgorithm.perform(varMap, List.of(), 4, Z8_POINTER_INT_TYPE, LSAlgorithmLogger.DUMMY);
+		assertNull(assertInterval(0, 10, 2, withUsableHint.get(pointer)));
+
+		final List<LSInterval> fixedIntervals = List.of(LSInterval.testFixed(3, List.of(new LSRange(4))));
+		final Map<IRVar, LSInterval> withBlockedHint = LSAlgorithm.perform(varMap, fixedIntervals, 4, Z8_POINTER_INT_TYPE, LSAlgorithmLogger.DUMMY);
+		assertNull(assertInterval(0, 10, 0, withBlockedHint.get(pointer)));
 	}
 
 	private Map<IRVar, LSInterval> toVarMap(LSInterval... intervals) {

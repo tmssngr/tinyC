@@ -13,7 +13,8 @@ printIntLf_Pi16:
 	branch param.number{r8} gteq 0: if_1_end
 	const arg.0.0{r0}, 45
 	call printChar_Pu8[arg.0.0{r0}]
-	neg number.2{r8}, param.number{r8}
+	neg number.2{r0}, param.number{r8}
+	move number.1{r8}, number.2{r0}
 if_1_end:
 	move number.1{r0}, number.1{r8}
 	call printUint_Pi16[number.1{r0}]
@@ -22,28 +23,29 @@ if_1_end:
 
 main:
 	; begin initialize global variables
-	const t.0.1{r8}, 32
-	addrof a.1.1{r10}, space
-	store [a.1.1{r10}], t.0.1{r8}
-	const t.2.1{r8}, 63
-	addrof a.3.1{r10}, next
-	store [a.3.1{r10}], t.2.1{r8}
-	addrof t.4.1{r8}, space
-	addrof a.5.1{r10}, ptrToSpace
-	store [a.5.1{r10}], t.4.1{r8}
+	const t.0.1{r0}, 32
+	addrof a.1.1{r2}, space
+	store [a.1.1{r2}], t.0.1{r0}
+	const t.2.1{r0}, 63
+	addrof a.3.1{r2}, next
+	store [a.3.1{r2}], t.2.1{r0}
+	addrof t.4.1{r0}, space
+	addrof a.5.1{r2}, ptrToSpace
+	store [a.5.1{r2}], t.4.1{r0}
 	; end initialize global variables
-	addrof a.6.1{r8}, next
-	load t.7.1{r0}, [a.6.1{r8}]
+	addrof a.6.1{r0}, next
+	load t.7.1{r2}, [a.6.1{r0}]
+	move t.7.1{r0}, t.7.1{r2}
 	call printIntLf_Pi16[t.7.1{r0}]
-	move a.9.1{r8}, a.9.1{r10}
-	load t.10.1{r10}, [a.9.1{r8}]
-	move t.8.1{r8}, t.10.1{r10}
-	add t.8.1{r8}, 2
-	addrof a.11.1{r10}, ptrToSpace
-	store [a.11.1{r10}], t.8.1{r8}
-	move a.13.1{r8}, a.13.1{r10}
-	load t.14.1{r10}, [a.13.1{r8}]
-	load t.12.1{r0}, [t.14.1{r10}]
+	addrof a.9.1{r0}, ptrToSpace
+	load t.10.1{r2}, [a.9.1{r0}]
+	move t.8.1{r0}, t.10.1{r2}
+	add t.8.1{r0}, 2
+	addrof a.11.1{r2}, ptrToSpace
+	store [a.11.1{r2}], t.8.1{r0}
+	move a.13.1{r0}, a.13.1{r2}
+	load t.14.1{r2}, [a.13.1{r0}]
+	load t.12.1{r0}, [t.14.1{r2}]
 	call printIntLf_Pi16[t.12.1{r0}]
 
 printChar_Pu8:

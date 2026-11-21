@@ -20,7 +20,8 @@ printIntLf_Pi16:
 	branch param.number{r8} gteq 0: if_1_end
 	const arg.0.0{r0}, 45
 	call printChar_Pu8[arg.0.0{r0}]
-	neg number.2{r8}, param.number{r8}
+	neg number.2{r0}, param.number{r8}
+	move number.1{r8}, number.2{r0}
 if_1_end:
 	move number.1{r0}, number.1{r8}
 	call printUint_Pi16[number.1{r0}]
@@ -29,9 +30,9 @@ if_1_end:
 
 main:
 	; begin initialize global variables
-	const t.0.1{r8}, 0
-	addrof a.1.1{r10}, i
-	store [a.1.1{r10}], t.0.1{r8}
+	const t.0.1{r0}, 0
+	addrof a.1.1{r2}, i
+	store [a.1.1{r2}], t.0.1{r0}
 	; end initialize global variables
 	call t.2.1{r0} = next[] -> u8
 	move t.2.1{r8}, t.2.1{r0}
@@ -50,12 +51,16 @@ main:
 	call doPrint_Pu8_Pu8_Pu8_Pu8_Pu8[t.2.1{r0}, t.3.1{r1}, t.4.1{r2}, t.5.1{r3}, t.6.1{r4}]
 
 next:
-	addrof a.1.1{r2}, i
-	load t.2.1{r1}, [a.1.1{r2}]
-	add t.0.1{r1}, 1
-	store [a.3.1{r2}], t.0.1{r1}
+	addrof a.1.1{r0}, i
+	load t.2.1{r2}, [a.1.1{r0}]
+	move t.0.1{r0}, t.2.1{r2}
+	add t.0.1{r0}, 1
+	addrof a.3.1{r2}, i
+	store [a.3.1{r2}], t.0.1{r0}
 	; 11:9 return i
-	move t.5.1{r0}, t.5.1{r1}
+	move a.4.1{r0}, a.4.1{r2}
+	load t.5.1{r2}, [a.4.1{r0}]
+	move t.5.1{r0}, t.5.1{r2}
 
 doPrint_Pu8_Pu8_Pu8_Pu8_Pu8:
  Local variables

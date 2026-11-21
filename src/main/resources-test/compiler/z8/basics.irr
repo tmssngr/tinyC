@@ -17,37 +17,41 @@ unusedArgs_Pu8_Pbool_Pu8_Pu8:
 
 main:
 	; begin initialize global variables
-	const t.3.1{r8}, 48
-	addrof a.4.1{r10}, zero
-	store [a.4.1{r10}], t.3.1{r8}
-	const t.5.1{r8}, 49
-	addrof a.6.1{r10}, one
-	store [a.6.1{r10}], t.5.1{r8}
-	const t.7.1{r8}, 50
-	addrof a.8.1{r10}, two
-	store [a.8.1{r10}], t.7.1{r8}
-	const t.9.1{r8}, 34
-	addrof a.10.1{r10}, threeFour
-	store [a.10.1{r10}], t.9.1{r8}
+	const t.3.1{r0}, 48
+	addrof a.4.1{r2}, zero
+	store [a.4.1{r2}], t.3.1{r0}
+	const t.5.1{r0}, 49
+	addrof a.6.1{r2}, one
+	store [a.6.1{r2}], t.5.1{r0}
+	const t.7.1{r0}, 50
+	addrof a.8.1{r2}, two
+	store [a.8.1{r2}], t.7.1{r0}
+	const t.9.1{r0}, 34
+	addrof a.10.1{r2}, threeFour
+	store [a.10.1{r2}], t.9.1{r0}
 	; end initialize global variables
 	const t.11.1{r1}, 1
 	const arg.0.0{r0}, 1
 	const arg.0.2{r2}, 2
 	const arg.0.3{r3}, 3
 	call _ = unusedArgs_Pu8_Pbool_Pu8_Pu8[arg.0.0{r0}, t.11.1{r1}, arg.0.2{r2}, arg.0.3{r3}] -> i64
-	addrof a.12.1{r8}, zero
-	load t.13.1{r0}, [a.12.1{r8}]
+	addrof a.12.1{r0}, zero
+	load t.13.1{r2}, [a.12.1{r0}]
+	move t.13.1{r0}, t.13.1{r2}
 	call printChar_Pu8[t.13.1{r0}]
-	addrof onePtr.1{r8}, one
-	load t.14.1{r0}, [onePtr.1{r8}]
+	addrof onePtr.1{r0}, one
+	load t.14.1{r2}, [onePtr.1{r0}]
+	move t.14.1{r0}, t.14.1{r2}
 	call printChar_Pu8[t.14.1{r0}]
-	addrof twoPtr.1{r8}, two
-	const t.17.1{r10}, 0
-	add t.16.2{r8}, t.17.1{r10}
-	load t.15.1{r0}, [t.16.2{r8}]
+	addrof twoPtr.1{r0}, two
+	const t.17.1{r2}, 0
+	add t.16.2{r0}, t.17.1{r2}
+	load t.15.1{r2}, [t.16.2{r0}]
+	move t.15.1{r0}, t.15.1{r2}
 	call printChar_Pu8[t.15.1{r0}]
-	addrof a.18.1{r8}, threeFour
-	load t.19.1{r0}, [a.18.1{r8}]
+	addrof a.18.1{r0}, threeFour
+	load t.19.1{r2}, [a.18.1{r0}]
+	move t.19.1{r0}, t.19.1{r2}
 	call printUint_Pu8[t.19.1{r0}]
 	const arg.5.0{r0}, 10
 	call printChar_Pu8[arg.5.0{r0}]

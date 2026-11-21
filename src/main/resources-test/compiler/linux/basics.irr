@@ -20,31 +20,33 @@ _printUint@i64:
 	arg 0: number (i64/8)
 	var 1: buffer[] (u8*/20)
 
-	const pos.1{r8}, 20
+	const pos.1{r0}, 20
 	; 33:2 while true
-	move number.1{r5}, number{r1}
+	jump while_1
+_printUint@i64.no_critical_edge_4:
+	move pos.2{r0}, pos.3{r2}
 while_1:
-	sub pos.3{r8}, 1
-	move remainder.1{r6}, number.1{r5}
-	move remainder.1{r0}, remainder.1{r6}
+	move pos.3{r2}, pos.2{r0}
+	sub pos.3{r2}, 1
+	move remainder.1{r5}, number.1{r1}
+	move remainder.1{r0}, remainder.1{r5}
 	mod remainder.1{r3}, remainder.1{r0}, 10
-	move remainder.1{r6}, remainder.1{r3}
-	move number.2{r0}, number.2{r5}
+	move remainder.1{r5}, remainder.1{r3}
+	move number.2{r0}, number.2{r1}
 	div number.2{r0}, 10
-	move number.2{r5}, number.2{r0}
-	cast t.5.1{r0}(u8), remainder.1{r6}(i64)
+	move number.2{r1}, number.2{r0}
+	cast t.5.1{r0}(u8), remainder.1{r5}(i64)
 	add digit.1{r0}, 48
-	cast t.7.1{r3}(i64), pos.3{r8}(u8)
+	cast t.7.1{r3}(i64), pos.3{r2}(u8)
 	addrof t.6.1{r4}, buffer
 	add t.6.2{r4}, t.7.1{r3}
 	store [t.6.2{r4}], digit.1{r0}
 	; 39:3 if number == 0
-	branch number.2{r5} notequals 0: while_1
-	addrof t.8.1{r3}, buffer
+	branch number.2{r1} notequals 0: _printUint@i64.no_critical_edge_4
 	move t.8.2{r1}, t.8.2{r4}
 	const t.11.1{r0}, 20
-	move t.10.1{r2}, t.11.1{r0}
-	sub t.10.1{r2}, pos.3{r8}
+	sub t.10.1{r0}, pos.3{r2}
+	move t.10.1{r2}, t.10.1{r0}
 	call _printStringLength@@u8@u8[t.8.2{r1}, t.10.1{r2}]
 
 _printStringLength@@u8@u8:
@@ -67,37 +69,37 @@ _unusedArgs@u8@bool@u8@u8:
 
 _main:
 	; begin initialize global variables
-	const t.3.1{r8}, 48
-	addrof a.4.1{r0}, zero
-	store [a.4.1{r0}], t.3.1{r8}
-	const t.5.1{r8}, 49
-	addrof a.6.1{r0}, one
-	store [a.6.1{r0}], t.5.1{r8}
-	const t.7.1{r8}, 50
-	addrof a.8.1{r0}, two
-	store [a.8.1{r0}], t.7.1{r8}
-	const t.9.1{r8}, 34
-	addrof a.10.1{r0}, threeFour
-	store [a.10.1{r0}], t.9.1{r8}
+	const t.3.1{r0}, 48
+	addrof a.4.1{r1}, zero
+	store [a.4.1{r1}], t.3.1{r0}
+	const t.5.1{r0}, 49
+	addrof a.6.1{r1}, one
+	store [a.6.1{r1}], t.5.1{r0}
+	const t.7.1{r0}, 50
+	addrof a.8.1{r1}, two
+	store [a.8.1{r1}], t.7.1{r0}
+	const t.9.1{r0}, 34
+	addrof a.10.1{r1}, threeFour
+	store [a.10.1{r1}], t.9.1{r0}
 	; end initialize global variables
 	const t.11.1{r2}, 1
 	const arg.0.0{r1}, 1
 	const arg.0.2{r3}, 2
 	const arg.0.3{r4}, 3
 	call _ = _unusedArgs@u8@bool@u8@u8[arg.0.0{r1}, t.11.1{r2}, arg.0.2{r3}, arg.0.3{r4}] -> i64
-	addrof a.12.1{r8}, zero
-	load t.13.1{r1}, [a.12.1{r8}]
+	addrof a.12.1{r0}, zero
+	load t.13.1{r1}, [a.12.1{r0}]
 	call _printChar@u8[t.13.1{r1}]
-	addrof onePtr.1{r8}, one
-	load t.14.1{r1}, [onePtr.1{r8}]
+	addrof onePtr.1{r0}, one
+	load t.14.1{r1}, [onePtr.1{r0}]
 	call _printChar@u8[t.14.1{r1}]
-	addrof twoPtr.1{r8}, two
-	const t.17.1{r0}, 0
-	add t.16.2{r8}, t.17.1{r0}
-	load t.15.1{r1}, [t.16.2{r8}]
+	addrof twoPtr.1{r0}, two
+	const t.17.1{r1}, 0
+	add t.16.2{r0}, t.17.1{r1}
+	load t.15.1{r1}, [t.16.2{r0}]
 	call _printChar@u8[t.15.1{r1}]
-	addrof a.18.1{r8}, threeFour
-	load t.19.1{r1}, [a.18.1{r8}]
+	addrof a.18.1{r0}, threeFour
+	load t.19.1{r1}, [a.18.1{r0}]
 	call _printUint@u8[t.19.1{r1}]
 	const arg.5.0{r1}, 10
 	call _printChar@u8[arg.5.0{r1}]

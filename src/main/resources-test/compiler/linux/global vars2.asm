@@ -37,21 +37,15 @@ _printString@@u8:
         ;   rsp+0: arg str
 _strlen@@u8:
         sub rsp, 8
-        ; const length.1{r2}, 0
-        mov rsi, 0
+        ; const length.1{r0}, 0
+        mov rax, 0
         ; 73:2 for *str != 0
-        ; move length.2{r0}, length.1{r2}
-        mov rax, rsi
         jmp for_1
 for_1_body:
-        ; move length.3{r2}, length.2{r0}
-        mov rsi, rax
-        ; add length.3{r2}, 1
-        add rsi, 1
+        ; add length.3{r0}, 1
+        add rax, 1
         ; add str.2{r1}, 1
         add rdi, 1
-        ; move length.2{r0}, length.3{r2}
-        mov rax, rsi
 for_1:
         ; load t.2.1{r2}, [str.1{r1}]
         mov sil, [rdi]
@@ -65,10 +59,10 @@ for_1:
         ; u8 _next
 _next:
         sub rsp, 8
-        ; addrof a.1.1{r1}, global
-        lea rdi, [var_0]
-        ; load copy.1{r0}, [a.1.1{r1}]
-        mov al, [rdi]
+        ; addrof a.1.1{r0}, global
+        lea rax, [var_0]
+        ; load copy.1{r0}, [a.1.1{r0}]
+        mov al, [rax]
         ; move t.4.1{r1}, t.4.1{r0}
         mov dil, al
         ; add t.2.1{r1}, 1
@@ -88,12 +82,12 @@ _main:
         push r10
         push rbx
         ; begin initialize global variables
-        ; const t.1.1{r8}, 0
-        mov bl, 0
-        ; addrof a.2.1{r0}, global
-        lea rax, [var_0]
-        ; store [a.2.1{r0}], t.1.1{r8}
-        mov [rax], bl
+        ; const t.1.1{r0}, 0
+        mov al, 0
+        ; addrof a.2.1{r1}, global
+        lea rdi, [var_0]
+        ; store [a.2.1{r1}], t.1.1{r0}
+        mov [rdi], al
         ; end initialize global variables
         ; 12:2 while true
         jmp while_2

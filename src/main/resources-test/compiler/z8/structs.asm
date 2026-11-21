@@ -51,10 +51,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
@@ -71,77 +75,68 @@ if_1_end:
         ret
 
         ; void main
-        ; var pos (u8): SP+4
+        ; var pos (u8): SP+0
 main:
         decw SPH
         decw SPH
-        ; save clobbered non-volatile registers
-        push r8
-        push r9
-        push r10
-        push r11
-        ; const t.2.1{r8}, 1
-        ld   r8, #%01
+        ; const t.2.1{r0}, 1
+        ld   r0, #%01
         ; 9:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=9:2].x
-        ; addrof t.3.1{r10}, pos
-        ld   r10, SPH
-        ld   r11, SPL
-        add  r11, #%04
-        adc  r10, #%00
-        ; store [t.3.1{r10}], t.2.1{r8}
-        lde  @rr10, r8
+        ; addrof t.3.1{r2}, pos
+        ld   r2, SPH
+        ld   r3, SPL
+        ; store [t.3.1{r2}], t.2.1{r0}
+        lde  @rr2, r0
         ; 10:14 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:10].x
-        ; move t.6.1{r8}, t.6.1{r10}
-        ld   r8, r10
-        ld   r9, r11
-        ; load t.5.1{r10}, [t.6.1{r8}]
-        lde  r10, @rr8
-        ; move t.4.1{r8}, t.5.1{r10}
-        ld   r8, r10
-        ; add t.4.1{r8}, 1
-        inc  r8
+        ; move t.6.1{r0}, t.6.1{r2}
+        ld   r0, r2
+        ld   r1, r3
+        ; load t.5.1{r2}, [t.6.1{r0}]
+        lde  r2, @rr0
+        ; move t.4.1{r0}, t.5.1{r2}
+        ld   r0, r2
+        ; add t.4.1{r0}, 1
+        inc  r0
         ; 10:6 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=10:2].y
-        ; addrof t.7.1{r10}, pos
-        ld   r10, SPH
-        ld   r11, SPL
-        add  r11, #%04
-        adc  r10, #%00
-        ; add t.7.2{r10}, 1
-        incw r10
-        ; store [t.7.2{r10}], t.4.1{r8}
-        lde  @rr10, r8
+        ; addrof t.7.1{r2}, pos
+        ld   r2, SPH
+        ld   r3, SPL
+        ; add t.7.2{r2}, 1
+        incw r2
+        ; store [t.7.2{r2}], t.4.1{r0}
+        lde  @rr2, r0
         ; 11:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=11:13].x
-        ; addrof t.9.1{r8}, pos
-        ld   r8, SPH
-        ld   r9, SPL
-        add  r9, #%04
-        adc  r8, #%00
-        ; load t.8.1{r0}, [t.9.1{r8}]
-        lde  r0, @rr8
+        ; addrof t.9.1{r0}, pos
+        ld   r0, SPH
+        ld   r1, SPL
+        ; load t.8.1{r2}, [t.9.1{r0}]
+        lde  r2, @rr0
+        ; move t.8.1{r0}, t.8.1{r2}
+        ld   r0, r2
         ; call printIntLf_Pu8[t.8.1{r0}]
         call printIntLf_Pu8
         ; 12:17 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=12:13].y
-        ; add t.11.2{r8}, 1
-        incw r8
-        ; load t.10.1{r0}, [t.11.2{r8}]
-        lde  r0, @rr8
+        ; addrof t.11.1{r0}, pos
+        ld   r0, SPH
+        ld   r1, SPL
+        ; add t.11.2{r0}, 1
+        incw r0
+        ; load t.10.1{r2}, [t.11.2{r0}]
+        lde  r2, @rr0
+        ; move t.10.1{r0}, t.10.1{r2}
+        ld   r0, r2
         ; call printIntLf_Pu8[t.10.1{r0}]
         call printIntLf_Pu8
         ; 13:15 ExprVarAccess[varName=pos, index=0, scope=function, type=Pos, varIsArray=false, location=13:11].x
-        ; addrof x.1{r8}, pos
-        ld   r8, SPH
-        ld   r9, SPL
-        add  r9, #%04
-        adc  r8, #%00
-        ; load t.12.1{r0}, [x.1{r8}]
-        lde  r0, @rr8
+        ; addrof x.1{r0}, pos
+        ld   r0, SPH
+        ld   r1, SPL
+        ; load t.12.1{r2}, [x.1{r0}]
+        lde  r2, @rr0
+        ; move t.12.1{r0}, t.12.1{r2}
+        ld   r0, r2
         ; call printIntLf_Pu8[t.12.1{r0}]
         call printIntLf_Pu8
-        ; restore clobbered non-volatile registers
-        pop  r11
-        pop  r10
-        pop  r9
-        pop  r8
         incw SPH
         incw SPH
         ret

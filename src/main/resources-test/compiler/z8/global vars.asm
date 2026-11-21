@@ -41,10 +41,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
@@ -62,98 +66,91 @@ if_1_end:
 
         ; void main
 main:
-        ; save clobbered non-volatile registers
-        push r8
-        push r9
-        push r10
-        push r11
         ; begin initialize global variables
-        ; const t.0.1{r8}, 32
-        ld   r8, #%00
-        ld   r9, #%20
-        ; addrof a.1.1{r10}, space
-        ld   r10, #hi(var_0)
-        ld   r11, #lo(var_0)
-        ; store [a.1.1{r10}], t.0.1{r8}
-        lde  @rr10, r8
-        incw r10
-        lde  @rr10, r9
-        decw r10
-        ; const t.2.1{r8}, 63
-        ld   r8, #%00
-        ld   r9, #%3f
-        ; addrof a.3.1{r10}, next
-        ld   r10, #hi(var_1)
-        ld   r11, #lo(var_1)
-        ; store [a.3.1{r10}], t.2.1{r8}
-        lde  @rr10, r8
-        incw r10
-        lde  @rr10, r9
-        decw r10
-        ; addrof t.4.1{r8}, space
-        ld   r8, #hi(var_0)
-        ld   r9, #lo(var_0)
-        ; addrof a.5.1{r10}, ptrToSpace
-        ld   r10, #hi(var_2)
-        ld   r11, #lo(var_2)
-        ; store [a.5.1{r10}], t.4.1{r8}
-        lde  @rr10, r8
-        incw r10
-        lde  @rr10, r9
-        decw r10
+        ; const t.0.1{r0}, 32
+        ld   r0, #%00
+        ld   r1, #%20
+        ; addrof a.1.1{r2}, space
+        ld   r2, #hi(var_0)
+        ld   r3, #lo(var_0)
+        ; store [a.1.1{r2}], t.0.1{r0}
+        lde  @rr2, r0
+        incw r2
+        lde  @rr2, r1
+        decw r2
+        ; const t.2.1{r0}, 63
+        ld   r0, #%00
+        ld   r1, #%3f
+        ; addrof a.3.1{r2}, next
+        ld   r2, #hi(var_1)
+        ld   r3, #lo(var_1)
+        ; store [a.3.1{r2}], t.2.1{r0}
+        lde  @rr2, r0
+        incw r2
+        lde  @rr2, r1
+        decw r2
+        ; addrof t.4.1{r0}, space
+        ld   r0, #hi(var_0)
+        ld   r1, #lo(var_0)
+        ; addrof a.5.1{r2}, ptrToSpace
+        ld   r2, #hi(var_2)
+        ld   r3, #lo(var_2)
+        ; store [a.5.1{r2}], t.4.1{r0}
+        lde  @rr2, r0
+        incw r2
+        lde  @rr2, r1
+        decw r2
         ; end initialize global variables
-        ; addrof a.6.1{r8}, next
-        ld   r8, #hi(var_1)
-        ld   r9, #lo(var_1)
-        ; load t.7.1{r0}, [a.6.1{r8}]
-        lde  r0, @rr8
-        incw r8
-        lde  r1, @rr8
-        decw r8
+        ; addrof a.6.1{r0}, next
+        ld   r0, #hi(var_1)
+        ld   r1, #lo(var_1)
+        ; load t.7.1{r2}, [a.6.1{r0}]
+        lde  r2, @rr0
+        incw r0
+        lde  r3, @rr0
+        decw r0
+        ; move t.7.1{r0}, t.7.1{r2}
+        ld   r0, r2
+        ld   r1, r3
         ; call printIntLf_Pi16[t.7.1{r0}]
         call printIntLf_Pi16
-        ; move a.9.1{r8}, a.9.1{r10}
-        ld   r8, r10
-        ld   r9, r11
-        ; load t.10.1{r10}, [a.9.1{r8}]
-        lde  r10, @rr8
-        incw r8
-        lde  r11, @rr8
-        decw r8
-        ; move t.8.1{r8}, t.10.1{r10}
-        ld   r8, r10
-        ld   r9, r11
-        ; add t.8.1{r8}, 2
-        add  r9, #%02
-        adc  r8, #%00
-        ; addrof a.11.1{r10}, ptrToSpace
-        ld   r10, #hi(var_2)
-        ld   r11, #lo(var_2)
-        ; store [a.11.1{r10}], t.8.1{r8}
-        lde  @rr10, r8
-        incw r10
-        lde  @rr10, r9
-        decw r10
-        ; move a.13.1{r8}, a.13.1{r10}
-        ld   r8, r10
-        ld   r9, r11
-        ; load t.14.1{r10}, [a.13.1{r8}]
-        lde  r10, @rr8
-        incw r8
-        lde  r11, @rr8
-        decw r8
-        ; load t.12.1{r0}, [t.14.1{r10}]
-        lde  r0, @rr10
-        incw r10
-        lde  r1, @rr10
-        decw r10
+        ; addrof a.9.1{r0}, ptrToSpace
+        ld   r0, #hi(var_2)
+        ld   r1, #lo(var_2)
+        ; load t.10.1{r2}, [a.9.1{r0}]
+        lde  r2, @rr0
+        incw r0
+        lde  r3, @rr0
+        decw r0
+        ; move t.8.1{r0}, t.10.1{r2}
+        ld   r0, r2
+        ld   r1, r3
+        ; add t.8.1{r0}, 2
+        add  r1, #%02
+        adc  r0, #%00
+        ; addrof a.11.1{r2}, ptrToSpace
+        ld   r2, #hi(var_2)
+        ld   r3, #lo(var_2)
+        ; store [a.11.1{r2}], t.8.1{r0}
+        lde  @rr2, r0
+        incw r2
+        lde  @rr2, r1
+        decw r2
+        ; move a.13.1{r0}, a.13.1{r2}
+        ld   r0, r2
+        ld   r1, r3
+        ; load t.14.1{r2}, [a.13.1{r0}]
+        lde  r2, @rr0
+        incw r0
+        lde  r3, @rr0
+        decw r0
+        ; load t.12.1{r0}, [t.14.1{r2}]
+        lde  r0, @rr2
+        incw r2
+        lde  r1, @rr2
+        decw r2
         ; call printIntLf_Pi16[t.12.1{r0}]
         call printIntLf_Pi16
-        ; restore clobbered non-volatile registers
-        pop  r11
-        pop  r10
-        pop  r9
-        pop  r8
         ret
 
         ; void printChar_Pu8

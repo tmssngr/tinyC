@@ -51,10 +51,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
@@ -72,128 +76,102 @@ if_1_end:
 
         ; void main
 main:
-        ; save clobbered non-volatile registers
-        push r8
-        push r9
-        push r10
-        push r11
-        push r12
-        push r13
         ; begin initialize global variables
-        ; const t.2.1{r8}, [string-0]
-        ld   r8, #hi(string_0)
-        ld   r9, #lo(string_0)
-        ; addrof a.3.1{r10}, text
-        ld   r10, #hi(var_0)
-        ld   r11, #lo(var_0)
-        ; store [a.3.1{r10}], t.2.1{r8}
-        lde  @rr10, r8
-        incw r10
-        lde  @rr10, r9
-        decw r10
+        ; const t.2.1{r0}, [string-0]
+        ld   r0, #hi(string_0)
+        ld   r1, #lo(string_0)
+        ; addrof a.3.1{r2}, text
+        ld   r2, #hi(var_0)
+        ld   r3, #lo(var_0)
+        ; store [a.3.1{r2}], t.2.1{r0}
+        lde  @rr2, r0
+        incw r2
+        lde  @rr2, r1
+        decw r2
         ; end initialize global variables
-        ; move a.4.1{r8}, a.4.1{r10}
-        ld   r8, r10
-        ld   r9, r11
-        ; load t.5.1{r0}, [a.4.1{r8}]
-        lde  r0, @rr8
-        incw r8
-        lde  r1, @rr8
-        decw r8
+        ; move a.4.1{r0}, a.4.1{r2}
+        ld   r0, r2
+        ld   r1, r3
+        ; load t.5.1{r2}, [a.4.1{r0}]
+        lde  r2, @rr0
+        incw r0
+        lde  r3, @rr0
+        decw r0
+        ; move t.5.1{r0}, t.5.1{r2}
+        ld   r0, r2
+        ld   r1, r3
         ; call printString_P_pu8[t.5.1{r0}]
         call printString_P_pu8
         ; call printLength[]
         call printLength
-        ; const t.6.1{r8}, 1
-        ld   r8, #%00
-        ld   r9, #%01
-        ; load second.1{r12}, [a.7.1{r10}]
-        lde  r12, @rr10
-        incw r10
-        lde  r13, @rr10
-        decw r10
-        ; move second.2{r0}, second.1{r12}
-        ld   r0, r12
-        ld   r1, r13
-        ; add second.2{r0}, t.6.1{r8}
-        add  r1, r9
-        adc  r0, r8
+        ; const t.6.1{r0}, 1
+        ld   r0, #%00
+        ld   r1, #%01
+        ; addrof a.7.1{r2}, text
+        ld   r2, #hi(var_0)
+        ld   r3, #lo(var_0)
+        ; load second.1{r4}, [a.7.1{r2}]
+        lde  r4, @rr2
+        incw r2
+        lde  r5, @rr2
+        decw r2
+        ; move second.2{r2}, second.1{r4}
+        ld   r2, r4
+        ld   r3, r5
+        ; add second.2{r2}, t.6.1{r0}
+        add  r3, r1
+        adc  r2, r0
+        ; move second.2{r0}, second.2{r2}
+        ld   r0, r2
+        ld   r1, r3
         ; call printString_P_pu8[second.2{r0}]
         call printString_P_pu8
-        ; move a.8.1{r8}, a.8.1{r10}
-        ld   r8, r10
-        ld   r9, r11
-        ; move t.9.1{r10}, t.9.1{r12}
-        ld   r10, r12
-        ld   r11, r13
-        ; load chr.1{r0}, [t.9.1{r10}]
-        lde  r0, @rr10
+        ; addrof a.8.1{r0}, text
+        ld   r0, #hi(var_0)
+        ld   r1, #lo(var_0)
+        ; load t.9.1{r2}, [a.8.1{r0}]
+        lde  r2, @rr0
+        incw r0
+        lde  r3, @rr0
+        decw r0
+        ; load chr.1{r0}, [t.9.1{r2}]
+        lde  r0, @rr2
         ; call printIntLf_Pu8[chr.1{r0}]
         call printIntLf_Pu8
-        ; restore clobbered non-volatile registers
-        pop  r13
-        pop  r12
-        pop  r11
-        pop  r10
-        pop  r9
-        pop  r8
         ret
 
         ; void printLength
 printLength:
-        ; save clobbered non-volatile registers
-        push r8
-        push r9
-        push r10
-        push r11
-        push r12
-        push r13
-        ; const length.1{r8}, 0
-        ld   r8, #%00
-        ld   r9, #%00
-        ; addrof a.2.1{r10}, text
-        ld   r10, #hi(var_0)
-        ld   r11, #lo(var_0)
-        ; load ptr.1{r12}, [a.2.1{r10}]
-        lde  r12, @rr10
-        incw r10
-        lde  r13, @rr10
-        decw r10
+        ; const length.1{r0}, 0
+        ld   r0, #%00
+        ld   r1, #%00
+        ; addrof a.2.1{r2}, text
+        ld   r2, #hi(var_0)
+        ld   r3, #lo(var_0)
+        ; load ptr.1{r4}, [a.2.1{r2}]
+        lde  r4, @rr2
+        incw r2
+        lde  r5, @rr2
+        decw r2
         ; 16:2 for *ptr != 0
-        ; move length.2{r0}, length.1{r8}
-        ld   r0, r8
-        ld   r1, r9
-        ; move ptr.2{r8}, ptr.1{r12}
-        ld   r8, r12
-        ld   r9, r13
+        ; move ptr.2{r2}, ptr.1{r4}
+        ld   r2, r4
+        ld   r3, r5
         jr   for_2
 
 for_2_body:
-        ; move length.3{r10}, length.2{r0}
-        ld   r11, r1
-        ld   r10, r0
-        ; add length.3{r10}, 1
-        incw r10
-        ; add ptr.3{r8}, 1
-        incw r8
-        ; move length.2{r0}, length.3{r10}
-        ld   r0, r10
-        ld   r1, r11
+        ; add length.3{r0}, 1
+        incw r0
+        ; add ptr.3{r2}, 1
+        incw r2
 for_2:
-        ; load t.3.1{r10}, [ptr.2{r8}]
-        lde  r10, @rr8
-        ; branch t.3.1{r10} notequals 0: for_2_body
-        cp   r10, #%00
+        ; load t.3.1{r4}, [ptr.2{r2}]
+        lde  r4, @rr2
+        ; branch t.3.1{r4} notequals 0: for_2_body
+        cp   r4, #%00
         jr   ne, for_2_body
         ; call printIntLf_Pi16[length.2{r0}]
         call printIntLf_Pi16
-        ; restore clobbered non-volatile registers
-        pop  r13
-        pop  r12
-        pop  r11
-        pop  r10
-        pop  r9
-        pop  r8
         ret
 
         ; void printString_P_pu8

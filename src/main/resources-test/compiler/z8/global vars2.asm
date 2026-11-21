@@ -9,35 +9,39 @@
 
         ; u8 next
 next:
-        ; addrof a.1.1{r2}, global
-        ld   r2, #hi(var_0)
-        ld   r3, #lo(var_0)
-        ; load copy.1{r0}, [a.1.1{r2}]
-        lde  r0, @rr2
-        ; move t.4.1{r1}, t.4.1{r0}
-        ld   r1, r0
-        ; add t.2.1{r1}, 1
-        inc  r1
-        ; store [a.5.1{r2}], t.2.1{r1}
-        lde  @rr2, r1
+        ; addrof a.1.1{r0}, global
+        ld   r0, #hi(var_0)
+        ld   r1, #lo(var_0)
+        ; load copy.1{r2}, [a.1.1{r0}]
+        lde  r2, @rr0
+        ; move t.4.1{r3}, t.4.1{r2}
+        ld   r3, r2
+        ; move t.2.1{r0}, t.4.1{r3}
+        ld   r0, r3
+        ; add t.2.1{r0}, 1
+        inc  r0
+        ; addrof a.5.1{r4}, global
+        ld   r4, #hi(var_0)
+        ld   r5, #lo(var_0)
+        ; store [a.5.1{r4}], t.2.1{r0}
+        lde  @rr4, r0
         ; 8:9 return copy
+        ; move copy.1{r0}, copy.1{r2}
+        ld   r0, r2
         ret
 
         ; void main
 main:
         ; save clobbered non-volatile registers
         push r8
-        push r9
-        push r10
-        push r11
         ; begin initialize global variables
-        ; const t.1.1{r8}, 0
-        ld   r8, #%00
-        ; addrof a.2.1{r10}, global
-        ld   r10, #hi(var_0)
-        ld   r11, #lo(var_0)
-        ; store [a.2.1{r10}], t.1.1{r8}
-        lde  @rr10, r8
+        ; const t.1.1{r0}, 0
+        ld   r0, #%00
+        ; addrof a.2.1{r2}, global
+        ld   r2, #hi(var_0)
+        ld   r3, #lo(var_0)
+        ; store [a.2.1{r2}], t.1.1{r0}
+        lde  @rr2, r0
         ; end initialize global variables
         ; 12:2 while true
         jr   while_1
@@ -66,9 +70,6 @@ while_1:
         cp   r8, #%03
         jr   ne, if_2_end
         ; restore clobbered non-volatile registers
-        pop  r11
-        pop  r10
-        pop  r9
         pop  r8
         ret
 

@@ -175,6 +175,11 @@ final class LSAlgorithm {
 			return exactReg;
 		}
 
+		final int firstFitReg = registersFreeUntil.getFirstFit(endExclusive, registerAmount, onlyEvenRegisters);
+		if (firstFitReg >= 0) {
+			return firstFitReg;
+		}
+
 		return registersFreeUntil.getMax(registerAmount, onlyEvenRegisters);
 	}
 
@@ -478,6 +483,16 @@ final class LSAlgorithm {
 					continue;
 				}
 				return startReg;
+			}
+			return -1;
+		}
+
+		public int getFirstFit(int to, int registerAmount, boolean onlyEvenRegisters) {
+			final int highestReg = positions.length - registerAmount;
+			for (int reg = 0; reg <= highestReg; reg += onlyEvenRegisters ? 2 : 1) {
+				if (get(reg, registerAmount) >= to) {
+					return reg;
+				}
 			}
 			return -1;
 		}

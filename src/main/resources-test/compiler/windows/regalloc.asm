@@ -21,14 +21,12 @@ start:
         ; u8 _simple
 _simple:
         sub rsp, 8
-        ; const four.1{r1}, 4
-        mov cl, 4
-        ; const three.1{r2}, 3
-        mov dl, 3
-        ; move one.1{r0}, four.1{r1}
-        mov al, cl
-        ; sub one.1{r0}, three.1{r2}
-        sub al, dl
+        ; const four.1{r0}, 4
+        mov al, 4
+        ; const three.1{r1}, 3
+        mov cl, 3
+        ; sub one.1{r0}, three.1{r1}
+        sub al, cl
         ; 5:9 return one
         add rsp, 8
         ret
@@ -70,23 +68,19 @@ _max@u8@u8_ret:
         ;   rsp+16: arg i
 _fibonacci@u8:
         sub rsp, 8
-        ; const a.1{r2}, 0
-        mov dx, 0
-        ; const b.1{r3}, 1
-        mov r8w, 1
+        ; const a.1{r0}, 0
+        mov ax, 0
+        ; const b.1{r2}, 1
+        mov dx, 1
         ; 22:2 while i > 0
-        ; move a.2{r0}, a.1{r2}
-        mov ax, dx
-        ; move b.2{r2}, b.1{r3}
-        mov dx, r8w
         jmp while_2
 while_2_body:
         ; sub i.2{r1}, 1
         sub cl, 1
-        ; move c.1{r3}, a.2{r0}
+        ; add c.1{r0}, b.2{r2}
+        add ax, dx
+        ; move b.3{r3}, c.1{r0}
         mov r8w, ax
-        ; add c.1{r3}, b.2{r2}
-        add r8w, dx
         ; move a.2{r0}, a.3{r2}
         mov ax, dx
         ; move b.2{r2}, b.3{r3}

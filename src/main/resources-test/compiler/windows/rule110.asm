@@ -68,21 +68,15 @@ _printChar@u8:
         ;   rsp+16: arg str
 _strlen@@u8:
         sub rsp, 8
-        ; const length.1{r2}, 0
-        mov rdx, 0
+        ; const length.1{r0}, 0
+        mov rax, 0
         ; 73:2 for *str != 0
-        ; move length.2{r0}, length.1{r2}
-        mov rax, rdx
         jmp for_1
 for_1_body:
-        ; move length.3{r2}, length.2{r0}
-        mov rdx, rax
-        ; add length.3{r2}, 1
-        add rdx, 1
+        ; add length.3{r0}, 1
+        add rax, 1
         ; add str.2{r1}, 1
         add rcx, 1
-        ; move length.2{r0}, length.3{r2}
-        mov rax, rdx
 for_1:
         ; load t.2.1{r2}, [str.1{r1}]
         mov dl, [rcx]
@@ -116,20 +110,22 @@ _printBoard:
         mov cl, 124
         ; call _printChar@u8[arg.0.0{r1}]
         call _printChar@u8
-        ; const i.1{r6}, 0
-        mov bl, 0
+        ; const i.1{r0}, 0
+        mov al, 0
         ; 11:2 for i < 30
+        ; move i.2{r6}, i.1{r0}
+        mov bl, al
         jmp for_2
 for_2_body:
         ; 12:3 if [...] == 0
         ; cast t.3.1{r0}(i64), i.2{r6}(u8)
         movzx rax, bl
-        ; addrof t.2.1{r2}, board
-        lea rdx, [var_0]
-        ; add t.2.2{r2}, t.3.1{r0}
-        add rdx, rax
-        ; load t.1.1{r0}, [t.2.2{r2}]
-        mov al, [rdx]
+        ; addrof t.2.1{r1}, board
+        lea rcx, [var_0]
+        ; add t.2.2{r1}, t.3.1{r0}
+        add rcx, rax
+        ; load t.1.1{r0}, [t.2.2{r1}]
+        mov al, [rcx]
         ; branch t.1.1{r0} equals 0: if_3_then
         cmp al, 0
         je if_3_then
@@ -144,8 +140,12 @@ if_3_then:
         ; call _printChar@u8[arg.2.0{r1}]
         call _printChar@u8
 for_2_continue:
-        ; add i.4{r6}, 1
-        add bl, 1
+        ; move i.4{r0}, i.2{r6}
+        mov al, bl
+        ; add i.4{r0}, 1
+        add al, 1
+        ; move i.2{r6}, i.4{r0}
+        mov bl, al
 for_2:
         ; branch i.2{r6} lt 30: for_2_body
         cmp bl, 30
@@ -164,89 +164,95 @@ _main:
         ; save clobbered non-volatile registers
         push rbx
         sub rsp, 32
-        ; const i.1{r6}, 0
-        mov bl, 0
+        ; const i.1{r0}, 0
+        mov al, 0
         ; 23:2 for i < 30
         jmp for_4
 for_4_body:
-        ; const t.4.1{r0}, 0
-        mov al, 0
-        ; cast t.6.1{r1}(i64), i.2{r6}(u8)
-        movzx rcx, bl
-        ; addrof t.5.1{r2}, board
-        lea rdx, [var_0]
-        ; add t.5.2{r2}, t.6.1{r1}
-        add rdx, rcx
-        ; store [t.5.2{r2}], t.4.1{r0}
-        mov [rdx], al
-        ; add i.5{r6}, 1
-        add bl, 1
+        ; const t.4.1{r1}, 0
+        mov cl, 0
+        ; cast t.6.1{r2}(i64), i.2{r0}(u8)
+        movzx rdx, al
+        ; addrof t.5.1{r3}, board
+        lea r8, [var_0]
+        ; add t.5.2{r3}, t.6.1{r2}
+        add r8, rdx
+        ; store [t.5.2{r3}], t.4.1{r1}
+        mov [r8], cl
+        ; add i.5{r0}, 1
+        add al, 1
 for_4:
-        ; branch i.2{r6} lt 30: for_4_body
-        cmp bl, 30
+        ; branch i.2{r0} lt 30: for_4_body
+        cmp al, 30
         jb for_4_body
-        ; const t.7.1{r6}, 1
-        mov bl, 1
-        ; const t.9.1{r0}, 29
-        mov rax, 29
-        ; addrof t.8.1{r1}, board
-        lea rcx, [var_0]
-        ; add t.8.2{r1}, t.9.1{r0}
-        add rcx, rax
-        ; store [t.8.2{r1}], t.7.1{r6}
-        mov [rcx], bl
+        ; const t.7.1{r0}, 1
+        mov al, 1
+        ; const t.9.1{r1}, 29
+        mov rcx, 29
+        ; addrof t.8.1{r2}, board
+        lea rdx, [var_0]
+        ; add t.8.2{r2}, t.9.1{r1}
+        add rdx, rcx
+        ; store [t.8.2{r2}], t.7.1{r0}
+        mov [rdx], al
         ; call _printBoard[]
         call _printBoard
-        ; const i.3{r6}, 0
-        mov bl, 0
+        ; const i.3{r0}, 0
+        mov al, 0
         ; 30:2 for i < 28
+        ; move i.4{r6}, i.3{r0}
+        mov bl, al
         jmp for_5
 for_5_body:
         ; const t.13.1{r0}, 0
         mov rax, 0
-        ; addrof t.12.1{r2}, board
-        lea rdx, [var_0]
-        ; add t.12.2{r2}, t.13.1{r0}
-        add rdx, rax
-        ; load t.11.1{r0}, [t.12.2{r2}]
-        mov al, [rdx]
+        ; addrof t.12.1{r1}, board
+        lea rcx, [var_0]
+        ; add t.12.2{r1}, t.13.1{r0}
+        add rcx, rax
+        ; load t.11.1{r0}, [t.12.2{r1}]
+        mov al, [rcx]
         ; shiftleft t.10.1{r0}, 1
         shl al, 1
-        ; const t.16.1{r2}, 1
-        mov rdx, 1
-        ; addrof t.15.1{r3}, board
-        lea r8, [var_0]
-        ; add t.15.2{r3}, t.16.1{r2}
-        add r8, rdx
-        ; load t.14.1{r2}, [t.15.2{r3}]
-        mov dl, [r8]
-        ; or pattern.1{r0}, t.14.1{r2}
-        or al, dl
-        ; const j.1{r2}, 1
-        mov dl, 1
+        ; const t.16.1{r1}, 1
+        mov rcx, 1
+        ; addrof t.15.1{r2}, board
+        lea rdx, [var_0]
+        ; add t.15.2{r2}, t.16.1{r1}
+        add rdx, rcx
+        ; load t.14.1{r1}, [t.15.2{r2}]
+        mov cl, [rdx]
+        ; or pattern.1{r0}, t.14.1{r1}
+        or al, cl
+        ; const j.1{r1}, 1
+        mov cl, 1
         ; 32:3 for j < 29
+        ; move j.2{r2}, j.1{r1}
+        mov dl, cl
         jmp for_6
 for_6_body:
         ; shiftleft t.18.1{r0}, 1
         shl al, 1
         ; and t.17.1{r0}, 7
         and al, 7
-        ; move t.22.1{r3}, j.2{r2}
-        mov r8b, dl
-        ; add t.22.1{r3}, 1
-        add r8b, 1
-        ; cast t.21.1{r3}(i64), t.22.1{r3}(u8)
-        movzx r8, r8b
-        ; addrof t.20.1{r4}, board
-        lea r9, [var_0]
-        ; add t.20.2{r4}, t.21.1{r3}
-        add r9, r8
-        ; load t.19.1{r3}, [t.20.2{r4}]
-        mov r8b, [r9]
-        ; or pattern.3{r0}, t.19.1{r3}
-        or al, r8b
-        ; const t.25.1{r3}, 110
-        mov r8b, 110
+        ; move t.22.1{r1}, j.2{r2}
+        mov cl, dl
+        ; add t.22.1{r1}, 1
+        add cl, 1
+        ; cast t.21.1{r1}(i64), t.22.1{r1}(u8)
+        movzx rcx, cl
+        ; addrof t.20.1{r3}, board
+        lea r8, [var_0]
+        ; add t.20.2{r3}, t.21.1{r1}
+        add r8, rcx
+        ; load t.19.1{r1}, [t.20.2{r3}]
+        mov cl, [r8]
+        ; or pattern.3{r0}, t.19.1{r1}
+        or al, cl
+        ; const t.25.1{r1}, 110
+        mov cl, 110
+        ; move t.24.1{r3}, t.25.1{r1}
+        mov r8b, cl
         ; move pattern.3{r1}, pattern.3{r0}
         mov cl, al
         ; shiftright t.24.1{r3}, pattern.3{r1}

@@ -41,10 +41,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
@@ -250,22 +254,19 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         incw r14
         lde  r1, @rr14
         decw r14
-        ; move t.14.1{r2}, param.a{r0}
-        ld   r3, r1
-        ld   r2, r0
         ; addrof memVarAddr{r14}, param.b
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%0a
         adc  r14, #%00
-        ; load param.b{r4}, [memVarAddr{r14}]
-        lde  r4, @rr14
+        ; load param.b{r2}, [memVarAddr{r14}]
+        lde  r2, @rr14
         incw r14
-        lde  r5, @rr14
+        lde  r3, @rr14
         decw r14
-        ; add t.14.1{r2}, param.b{r4}
-        add  r3, r5
-        adc  r2, r4
+        ; add t.14.1{r0}, param.b{r2}
+        add  r1, r3
+        adc  r0, r2
         ; addrof memVarAddr{r14}, param.c
         ld   r14, SPH
         ld   r15, SPL
@@ -276,9 +277,9 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         incw r14
         lde  r5, @rr14
         decw r14
-        ; add t.13.1{r2}, param.c{r4}
-        add  r3, r5
-        adc  r2, r4
+        ; add t.13.1{r0}, param.c{r4}
+        add  r1, r5
+        adc  r0, r4
         ; addrof memVarAddr{r14}, param.d
         ld   r14, SPH
         ld   r15, SPL
@@ -289,31 +290,28 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         incw r14
         lde  r7, @rr14
         decw r14
-        ; add t.12.1{r2}, param.d{r6}
-        add  r3, r7
-        adc  r2, r6
+        ; add t.12.1{r0}, param.d{r6}
+        add  r1, r7
+        adc  r0, r6
         ; addrof memVarAddr{r14}, e
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%12
         adc  r14, #%00
-        ; load e{r4}, [memVarAddr{r14}]
-        lde  r4, @rr14
+        ; load e{r2}, [memVarAddr{r14}]
+        lde  r2, @rr14
         incw r14
-        lde  r5, @rr14
+        lde  r3, @rr14
         decw r14
-        ; add t.11.1{r2}, e{r4}
-        add  r3, r5
-        adc  r2, r4
-        ; add t.10.1{r2}, f{r12}
-        add  r3, r13
-        adc  r2, r12
-        ; add t.9.1{r2}, g{r10}
-        add  r3, r11
-        adc  r2, r10
-        ; move t.8.1{r0}, t.9.1{r2}
-        ld   r0, r2
-        ld   r1, r3
+        ; add t.11.1{r0}, e{r2}
+        add  r1, r3
+        adc  r0, r2
+        ; add t.10.1{r0}, f{r12}
+        add  r1, r13
+        adc  r0, r12
+        ; add t.9.1{r0}, g{r10}
+        add  r1, r11
+        adc  r0, r10
         ; add t.8.1{r0}, h{r8}
         add  r1, r9
         adc  r0, r8

@@ -9,12 +9,15 @@ printIntLf_Pbool:
  Local variables
 	arg 0: value (bool/1)
 
-	const number.1{r8}, 0
+	const number.1{r1}, 0
 	; 122:2 if value
-	branch param.value{r0} equals 0: if_1_end
-	const number.3{r8}, 1
+	branch param.value{r0} notequals 0: if_1_then
+	move number.2{r0}, number.1{r1}
+	jump if_1_end
+if_1_then:
+	const number.3{r0}, 1
 if_1_end:
-	cast t.2.1{r0}(i16), number.2{r8}(u8)
+	cast t.2.1{r0}(i16), number.2{r0}(u8)
 	call printIntLf_Pi16[t.2.1{r0}]
 
 printIntLf_Pi16:
@@ -25,7 +28,8 @@ printIntLf_Pi16:
 	branch param.number{r8} gteq 0: if_2_end
 	const arg.0.0{r0}, 45
 	call printChar_Pu8[arg.0.0{r0}]
-	neg number.2{r8}, param.number{r8}
+	neg number.2{r0}, param.number{r8}
+	move number.1{r8}, number.2{r0}
 if_2_end:
 	move number.1{r0}, number.1{r8}
 	call printUint_Pi16[number.1{r0}]

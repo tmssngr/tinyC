@@ -68,21 +68,15 @@ _printChar@u8:
         ;   rsp+16: arg str
 _strlen@@u8:
         sub rsp, 8
-        ; const length.1{r2}, 0
-        mov rdx, 0
+        ; const length.1{r0}, 0
+        mov rax, 0
         ; 73:2 for *str != 0
-        ; move length.2{r0}, length.1{r2}
-        mov rax, rdx
         jmp for_1
 for_1_body:
-        ; move length.3{r2}, length.2{r0}
-        mov rdx, rax
-        ; add length.3{r2}, 1
-        add rdx, 1
+        ; add length.3{r0}, 1
+        add rax, 1
         ; add str.2{r1}, 1
         add rcx, 1
-        ; move length.2{r0}, length.3{r2}
-        mov rax, rdx
 for_1:
         ; load t.2.1{r2}, [str.1{r1}]
         mov dl, [rcx]
@@ -110,29 +104,27 @@ _printStringLength@@u8@u8:
         ; void _printNibble@u8
         ;   rsp+48: arg x
 _printNibble@u8:
-        ; save clobbered non-volatile registers
-        push rbx
+        sub rsp, 8
         sub rsp, 32
-        ; move x.1{r6}, x{r1}
-        mov bl, cl
-        ; and x.1{r6}, 15
-        and bl, 15
+        ; move x.1{r0}, x{r1}
+        mov al, cl
+        ; and x.1{r0}, 15
+        and al, 15
         ; 5:2 if x > 9
-        ; branch x.1{r6} lteq 9: if_2_end
-        cmp bl, 9
+        ; branch x.1{r0} lteq 9: if_2_end
+        cmp al, 9
         jbe if_2_end
-        ; add x.3{r6}, 7
-        add bl, 7
+        ; add x.3{r0}, 7
+        add al, 7
 if_2_end:
-        ; move x.4{r1}, x.2{r6}
-        mov cl, bl
+        ; move x.4{r1}, x.2{r0}
+        mov cl, al
         ; add x.4{r1}, 48
         add cl, 48
         ; call _printChar@u8[x.4{r1}]
         call _printChar@u8
         add rsp, 32
-        ; restore clobbered non-volatile registers
-        pop rbx
+        add rsp, 8
         ret
 
         ; void _printHex2@u8
@@ -158,27 +150,27 @@ _printHex2@u8:
 
         ; void _main
 _main:
-        sub rsp, 8
         ; save clobbered non-volatile registers
         push rbx
-        push r12
         sub rsp, 32
         ; const t.2.1{r1}, [string-0]
         lea rcx, [string_0]
         ; call _printString@@u8[t.2.1{r1}]
         call _printString@@u8
-        ; const i.1{r6}, 0
-        mov bl, 0
+        ; const i.1{r0}, 0
+        mov al, 0
         ; 19:2 for i < 16
+        ; move i.2{r6}, i.1{r0}
+        mov bl, al
         jmp for_3
 for_3_body:
         ; 20:3 if i & 7 == 0
-        ; move t.3.1{r7}, i.2{r6}
-        mov r12b, bl
-        ; and t.3.1{r7}, 7
-        and r12b, 7
-        ; branch t.3.1{r7} notequals 0: if_4_end
-        cmp r12b, 0
+        ; move t.3.1{r0}, i.2{r6}
+        mov al, bl
+        ; and t.3.1{r0}, 7
+        and al, 7
+        ; branch t.3.1{r0} notequals 0: if_4_end
+        cmp al, 0
         jne if_4_end
         ; const arg.1.0{r1}, 32
         mov cl, 32
@@ -189,8 +181,12 @@ if_4_end:
         mov cl, bl
         ; call _printNibble@u8[i.2{r1}]
         call _printNibble@u8
-        ; add i.7{r6}, 1
-        add bl, 1
+        ; move i.7{r0}, i.2{r6}
+        mov al, bl
+        ; add i.7{r0}, 1
+        add al, 1
+        ; move i.2{r6}, i.7{r0}
+        mov bl, al
 for_3:
         ; branch i.2{r6} lt 16: for_3_body
         cmp bl, 16
@@ -199,18 +195,20 @@ for_3:
         mov cl, 10
         ; call _printChar@u8[arg.3.0{r1}]
         call _printChar@u8
-        ; const i.3{r6}, 32
-        mov bl, 32
+        ; const i.3{r0}, 32
+        mov al, 32
         ; 27:2 for i < 128
+        ; move i.4{r6}, i.3{r0}
+        mov bl, al
         jmp for_5
 for_5_body:
         ; 28:3 if i & 15 == 0
-        ; move t.4.1{r7}, i.4{r6}
-        mov r12b, bl
-        ; and t.4.1{r7}, 15
-        and r12b, 15
-        ; branch t.4.1{r7} notequals 0: if_6_end
-        cmp r12b, 0
+        ; move t.4.1{r0}, i.4{r6}
+        mov al, bl
+        ; and t.4.1{r0}, 15
+        and al, 15
+        ; branch t.4.1{r0} notequals 0: if_6_end
+        cmp al, 0
         jne if_6_end
         ; move i.4{r1}, i.4{r6}
         mov cl, bl
@@ -218,12 +216,12 @@ for_5_body:
         call _printHex2@u8
 if_6_end:
         ; 31:3 if i & 7 == 0
-        ; move t.5.1{r7}, i.4{r6}
-        mov r12b, bl
-        ; and t.5.1{r7}, 7
-        and r12b, 7
-        ; branch t.5.1{r7} notequals 0: if_7_end
-        cmp r12b, 0
+        ; move t.5.1{r0}, i.4{r6}
+        mov al, bl
+        ; and t.5.1{r0}, 7
+        and al, 7
+        ; branch t.5.1{r0} notequals 0: if_7_end
+        cmp al, 0
         jne if_7_end
         ; const arg.5.0{r1}, 32
         mov cl, 32
@@ -235,12 +233,12 @@ if_7_end:
         ; call _printChar@u8[i.4{r1}]
         call _printChar@u8
         ; 35:3 if i & 15 == 15
-        ; move t.6.1{r7}, i.4{r6}
-        mov r12b, bl
-        ; and t.6.1{r7}, 15
-        and r12b, 15
-        ; branch t.6.1{r7} notequals 15: for_5_continue
-        cmp r12b, 15
+        ; move t.6.1{r0}, i.4{r6}
+        mov al, bl
+        ; and t.6.1{r0}, 15
+        and al, 15
+        ; branch t.6.1{r0} notequals 15: for_5_continue
+        cmp al, 15
         jne for_5_continue
         ; const arg.7.0{r1}, 10
         mov cl, 10
@@ -259,9 +257,7 @@ for_5:
         jb for_5_body
         add rsp, 32
         ; restore clobbered non-volatile registers
-        pop r12
         pop rbx
-        add rsp, 8
         ret
 
         ; void _printStringLength@@u8@i64

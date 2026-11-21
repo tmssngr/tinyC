@@ -51,10 +51,14 @@ printIntLf_Pi16:
         ld   r0, #%2d
         ; call printChar_Pu8[arg.0.0{r0}]
         call printChar_Pu8
-        ; neg number.2{r8}, param.number{r8}
-        com  r8
-        com  r9
-        incw r8
+        ; neg number.2{r0}, param.number{r8}
+        ld   r0, #%00
+        ld   r1, #%00
+        sub  r1, r9
+        sbc  r0, r8
+        ; move number.1{r8}, number.2{r0}
+        ld   r9, r1
+        ld   r8, r0
 if_1_end:
         ; move number.1{r0}, number.1{r8}
         ld   r0, r8
@@ -78,13 +82,13 @@ main:
         push r10
         push r11
         ; begin initialize global variables
-        ; const t.0.1{r8}, 0
-        ld   r8, #%00
-        ; addrof a.1.1{r10}, i
-        ld   r10, #hi(var_0)
-        ld   r11, #lo(var_0)
-        ; store [a.1.1{r10}], t.0.1{r8}
-        lde  @rr10, r8
+        ; const t.0.1{r0}, 0
+        ld   r0, #%00
+        ; addrof a.1.1{r2}, i
+        ld   r2, #hi(var_0)
+        ld   r3, #lo(var_0)
+        ; store [a.1.1{r2}], t.0.1{r0}
+        lde  @rr2, r0
         ; end initialize global variables
         ; call t.2.1{r0} = next[] -> u8
         call next
@@ -125,18 +129,28 @@ main:
 
         ; u8 next
 next:
-        ; addrof a.1.1{r2}, i
+        ; addrof a.1.1{r0}, i
+        ld   r0, #hi(var_0)
+        ld   r1, #lo(var_0)
+        ; load t.2.1{r2}, [a.1.1{r0}]
+        lde  r2, @rr0
+        ; move t.0.1{r0}, t.2.1{r2}
+        ld   r0, r2
+        ; add t.0.1{r0}, 1
+        inc  r0
+        ; addrof a.3.1{r2}, i
         ld   r2, #hi(var_0)
         ld   r3, #lo(var_0)
-        ; load t.2.1{r1}, [a.1.1{r2}]
-        lde  r1, @rr2
-        ; add t.0.1{r1}, 1
-        inc  r1
-        ; store [a.3.1{r2}], t.0.1{r1}
-        lde  @rr2, r1
+        ; store [a.3.1{r2}], t.0.1{r0}
+        lde  @rr2, r0
         ; 11:9 return i
-        ; move t.5.1{r0}, t.5.1{r1}
-        ld   r0, r1
+        ; move a.4.1{r0}, a.4.1{r2}
+        ld   r0, r2
+        ld   r1, r3
+        ; load t.5.1{r2}, [a.4.1{r0}]
+        lde  r2, @rr0
+        ; move t.5.1{r0}, t.5.1{r2}
+        ld   r0, r2
         ret
 
         ; void doPrint_Pu8_Pu8_Pu8_Pu8_Pu8
