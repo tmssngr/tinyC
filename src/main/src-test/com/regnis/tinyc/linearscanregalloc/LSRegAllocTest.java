@@ -118,6 +118,36 @@ public class LSRegAllocTest {
 	}
 
 	@Test
+	public void testZ8SpillPreservesValueOverwrittenByInversion() {
+		final IRVar value = new IRVar("value", 0, VariableScope.function, Type.I16);
+		final IRVar inverted = new IRVar("inverted", 0, VariableScope.register, Type.I16);
+		final IRVar result = new IRVar("result", 1, VariableScope.function, Type.I32);
+		final IRVarInfos globalVarInfos = new IRVarInfos(List.of(), Set.of(), null);
+		final IRFunction function = new IRFunction("spillAcrossCall", Type.I32,
+		                                           new IRVarInfos(List.of(
+				                                           new IRVarDef(value, 2),
+				                                           new IRVarDef(result, 4)
+		                                           ), Set.of(), globalVarInfos),
+		                                           List.of(
+				                                           new IRMove(value, 7),
+				                                           new IRUnary(IRUnary.Op.Not, inverted, value),
+				                                           // these arguments occupy r0 through r14, so value cannot stay in a register pair across the call
+				                                           new IRCall(null, Type.VOID, "clobber", List.of(
+						                                           new IRValue(0, Type.I32),
+						                                           new IRValue(0, Type.I16),
+						                                           new IRValue(0, Type.U8),
+						                                           new IRValue(0, Type.I64)
+				                                           )),
+				                                           new IRRetValue(value)
+		                                           ));
+		final List<IRInstruction> instructions = LSRegAlloc.process(function, new LSArchitecture.Z8()).instructions();
+		final IRUnary inversion = instructions.stream().filter(IRUnary.class::isInstance).map(IRUnary.class::cast).findFirst().orElseThrow();
+		final IRMemStore spill = instructions.stream().filter(IRMemStore.class::isInstance).map(IRMemStore.class::cast).findFirst().orElseThrow();
+		assertTrue("The spill must preserve the original value",
+		           instructions.indexOf(spill) < instructions.indexOf(inversion) || spill.value().index() >= 2);
+	}
+
+	@Test
 	public void testBlockEdgeSpillBeforeSplitReload() {
 		final IRVar varRow = new IRVar("row", 0, VariableScope.function, Type.U8);
 		final IRVar varLimit = new IRVar("limit", 1, VariableScope.function, Type.U8);
