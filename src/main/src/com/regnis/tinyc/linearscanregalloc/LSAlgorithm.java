@@ -460,8 +460,7 @@ final class LSAlgorithm {
 		}
 
 		public int getExact(int to, int registerAmount, boolean onlyEvenRegisters) {
-			final int highestReg = positions.length - registerAmount;
-			for (int reg = 0, amount = registerAmount; reg <= highestReg; reg++) {
+			for (int reg = 0, amount = registerAmount; reg < positions.length; reg++) {
 				final int pos = positions[reg];
 				if (pos != to) {
 					amount = registerAmount;

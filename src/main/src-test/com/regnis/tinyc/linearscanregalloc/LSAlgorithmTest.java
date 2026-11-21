@@ -20,9 +20,7 @@ public class LSAlgorithmTest {
 
 	@Test
 	public void testRegisterPositions1() {
-		final LSAlgorithm.RegisterPositions positions = new LSAlgorithm.RegisterPositions(6);
-		positions.setMinPos(2, 0, 1);
-		positions.setMinPos(3, 1, 1);
+		final LSAlgorithm.RegisterPositions positions = createPos(List.of(2, 3, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE));
 		assertEquals(2, positions.get(0, 1));
 		assertEquals(3, positions.get(1, 1));
 		assertEquals(Integer.MAX_VALUE, positions.get(2, 1));
@@ -40,11 +38,7 @@ public class LSAlgorithmTest {
 
 	@Test
 	public void testRegisterPositions2() {
-		final LSAlgorithm.RegisterPositions positions = new LSAlgorithm.RegisterPositions(6);
-		positions.setMinPos(2, 0, 1);
-		positions.setMinPos(3, 1, 1);
-		positions.setMinPos(3, 2, 1);
-		positions.setMinPos(3, 3, 1);
+		final LSAlgorithm.RegisterPositions positions = createPos(List.of(2, 3, 3, 3, Integer.MAX_VALUE, Integer.MAX_VALUE));
 		assertEquals(2, positions.get(0, 2));
 		assertEquals(3, positions.get(1, 2));
 		assertEquals(3, positions.get(2, 2));
@@ -54,6 +48,27 @@ public class LSAlgorithmTest {
 		assertEquals(2, positions.getExact(3, 2, true));
 		assertEquals(4, positions.getMax(2, false));
 		assertEquals(4, positions.getMax(2, true));
+	}
+
+	@Test
+	public void testRegisterPositionsgetExtact() {
+		assertEquals(0, createPos(List.of(6, 6, 3, 4, Integer.MAX_VALUE, Integer.MAX_VALUE)).getExact(6, 1, false));
+		assertEquals(0, createPos(List.of(6, 6, 3, 4, Integer.MAX_VALUE, Integer.MAX_VALUE)).getExact(6, 1, true));
+		assertEquals(2, createPos(List.of(6, 6, 3, 4, Integer.MAX_VALUE, Integer.MAX_VALUE)).getExact(3, 1, false));
+		assertEquals(2, createPos(List.of(6, 6, 3, 4, Integer.MAX_VALUE, Integer.MAX_VALUE)).getExact(3, 1, true));
+		assertEquals(3, createPos(List.of(6, 6, 3, 4, Integer.MAX_VALUE, Integer.MAX_VALUE)).getExact(4, 1, false));
+		assertEquals(-1, createPos(List.of(6, 6, 3, 4, Integer.MAX_VALUE, Integer.MAX_VALUE)).getExact(4, 1, true));
+		assertEquals(-1, createPos(List.of(6, 6, 3, 4, Integer.MAX_VALUE, Integer.MAX_VALUE)).getExact(5, 1, false));
+		assertEquals(-1, createPos(List.of(6, 6, 3, 4, Integer.MAX_VALUE, Integer.MAX_VALUE)).getExact(5, 1, true));
+
+		assertEquals(0, createPos(List.of(6, 6, 3, 4, Integer.MAX_VALUE, Integer.MAX_VALUE)).getExact(6, 2, false));
+		assertEquals(0, createPos(List.of(6, 6, 3, 4, Integer.MAX_VALUE, Integer.MAX_VALUE)).getExact(6, 2, true));
+		assertEquals(1, createPos(List.of(4, 6, 6, 4, Integer.MAX_VALUE, Integer.MAX_VALUE)).getExact(6, 2, false));
+		assertEquals(-1, createPos(List.of(4, 6, 6, 4, Integer.MAX_VALUE, Integer.MAX_VALUE)).getExact(6, 2, true));
+		assertEquals(2, createPos(List.of(4, 4, 6, 6)).getExact(6, 2, false));
+		assertEquals(2, createPos(List.of(4, 4, 6, 6)).getExact(6, 2, true));
+		assertEquals(-1, createPos(List.of(4, 4, 4, 6)).getExact(6, 2, false));
+		assertEquals(-1, createPos(List.of(4, 4, 4, 6)).getExact(6, 2, true));
 	}
 
 	@Test
@@ -256,7 +271,7 @@ public class LSAlgorithmTest {
 		for (int index = 0; index < 4; index++) {
 			final IRVar var = new IRVar("byte" + index, index, VariableScope.function, Type.U8);
 			inputs.add(LSInterval.testVar(var, List.of(new LSRange(2 * index, 30 - 2 * index)),
-			                             List.of(write(2 * index), read(30 - 2 * index))));
+			                              List.of(write(2 * index), read(30 - 2 * index))));
 		}
 		final IRVar wide = new IRVar("wide", 4, VariableScope.function, Type.I32);
 		inputs.add(LSInterval.testVar(wide, List.of(new LSRange(8, 10)), List.of(write(8), read(10))));
@@ -517,5 +532,15 @@ public class LSAlgorithmTest {
 		assertEquals(expectedTo, interval.getTo());
 		assertEquals(expectedRegister, interval.register());
 		return interval.getNextSplit();
+	}
+
+	@NotNull
+	private static LSAlgorithm.RegisterPositions createPos(List<Integer> minPositions) {
+		final LSAlgorithm.RegisterPositions positions = new LSAlgorithm.RegisterPositions(minPositions.size());
+		for (int i = 0; i < minPositions.size(); i++) {
+			final int minPos = minPositions.get(i);
+			positions.setMinPos(minPos, i, 1);
+		}
+		return positions;
 	}
 }
