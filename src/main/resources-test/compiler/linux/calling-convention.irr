@@ -83,6 +83,7 @@ _printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
 
 	addrof memVarAddr{r9}, h
 	load h{r8}, [memVarAddr{r9}]
+	move a{r0}, a{r1}
 	addrof memVarAddr{r9}, b
 	store [memVarAddr{r9}], b{r2}
 	addrof memVarAddr{r9}, c
@@ -94,7 +95,7 @@ _printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
 	addrof memVarAddr{r9}, f
 	store [memVarAddr{r9}], f{r6}
 	addrof memVarAddr{r9}, a
-	store [memVarAddr{r9}], a{r1}
+	store [memVarAddr{r9}], a{r0}
 	call _printIntLf@i16[a{r1}]
 	addrof memVarAddr{r9}, b
 	load b{r2}, [memVarAddr{r9}]
@@ -117,7 +118,8 @@ _printAndSum@i16@i16@i16@i16@i16@i16@i16@i16:
 	move f{r1}, f{r6}
 	call _printIntLf@i16[f{r1}]
 	addrof memVarAddr{r9}, g
-	load g{r1}, [memVarAddr{r9}]
+	load g{r0}, [memVarAddr{r9}]
+	move g{r1}, g{r0}
 	call _printIntLf@i16[g{r1}]
 	move h{r1}, h{r8}
 	call _printIntLf@i16[h{r1}]

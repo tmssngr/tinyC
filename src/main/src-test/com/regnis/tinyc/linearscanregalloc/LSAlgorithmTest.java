@@ -253,7 +253,7 @@ public class LSAlgorithmTest {
 		assertEquals(2, intervals.size());
 
 		// iA
-		LSInterval split = assertInterval(0, 3, 1, intervals.get(varA));
+		LSInterval split = assertInterval(0, 3, 0, intervals.get(varA));
 		assertNotNull(split);
 		split = assertInterval(3, 7, -1, split);
 		assertNotNull(split);

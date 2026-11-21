@@ -111,31 +111,35 @@ getBombCountAround_Pi16_Pi16:
 	jump for_4
 for_4_body:
 	move dr.2{r4}, dr.2{r1}
-	move r.1{r0}, param.row{r8}
-	add r.1{r0}, dr.2{r4}
+	move r.1{r6}, param.row{r8}
+	add r.1{r6}, dr.2{r4}
 	addrof memVarAddr{r14}, dr.2
 	store [memVarAddr{r14}], dr.2{r4}
 	const dc.1{r4}, -1
 	; 48:3 for dc <= 1
 	addrof memVarAddr{r14}, r.1
-	store [memVarAddr{r14}], r.1{r0}
+	store [memVarAddr{r14}], r.1{r6}
 	move dc.2{r1}, dc.2{r4}
 	jump for_5
 for_5_body:
 	move dc.2{r4}, dc.2{r1}
 	addrof memVarAddr{r14}, r.1
-	load r.1{r0}, [memVarAddr{r14}]
+	load r.1{r6}, [memVarAddr{r14}]
 	move c.1{r2}, param.column{r10}
 	add c.1{r2}, dc.2{r4}
 	addrof memVarAddr{r14}, dc.2
 	store [memVarAddr{r14}], dc.2{r4}
-	; 50:4 if checkCellBounds_Pi16_Pi16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=50:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=50:27]])
 	addrof memVarAddr{r14}, c.1
 	store [memVarAddr{r14}], c.1{r2}
+	; 50:4 if checkCellBounds_Pi16_Pi16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=50:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=50:27]])
+	move r.1{r0}, r.1{r6}
+	addrof memVarAddr{r14}, c.1
+	move c.1{r4}, c.1{r2}
 	call t.8.1{r0} = checkCellBounds_Pi16_Pi16[r.1{r0}, c.1{r2}] -> bool
 	branch t.8.1{r0} equals 0: for_5_continue
 	addrof memVarAddr{r14}, r.1
-	load r.1{r0}, [memVarAddr{r14}]
+	load r.1{r4}, [memVarAddr{r14}]
+	move r.1{r0}, r.1{r4}
 	addrof memVarAddr{r14}, c.1
 	load c.1{r2}, [memVarAddr{r14}]
 	call cell.1{r0} = getCell_Pi16_Pi16[r.1{r0}, c.1{r2}] -> u8
@@ -488,56 +492,65 @@ maybeRevealAround_Pi16_Pi16:
 	; 190:2 for dr <= 1
 	jump for_31
 for_31_body:
-	move r.1{r0}, param.row{r8}
-	add r.1{r0}, dr.2{r12}
-	const dc.1{r4}, -1
+	move r.1{r4}, param.row{r8}
+	add r.1{r4}, dr.2{r12}
+	const dc.1{r6}, -1
 	; 192:3 for dc <= 1
 	addrof memVarAddr{r14}, r.1
-	store [memVarAddr{r14}], r.1{r0}
-	move dc.2{r0}, dc.2{r4}
+	store [memVarAddr{r14}], r.1{r4}
+	move dc.2{r0}, dc.2{r6}
 	jump for_32
 for_32_body:
-	move dc.2{r4}, dc.2{r0}
+	move dc.2{r6}, dc.2{r0}
 	addrof memVarAddr{r14}, r.1
-	load r.1{r0}, [memVarAddr{r14}]
+	load r.1{r4}, [memVarAddr{r14}]
 	branch dr.2{r12} notequals 0: if_33_end
-	branch dc.2{r4} notequals 0: if_33_end
+	branch dc.2{r6} notequals 0: if_33_end
 	addrof memVarAddr{r14}, dc.2
-	store [memVarAddr{r14}], dc.2{r4}
+	store [memVarAddr{r14}], dc.2{r6}
 	addrof memVarAddr{r14}, r.1
 	jump for_32_continue
 if_33_end:
 	move c.1{r2}, param.column{r10}
-	add c.1{r2}, dc.2{r4}
+	add c.1{r2}, dc.2{r6}
 	addrof memVarAddr{r14}, dc.2
-	store [memVarAddr{r14}], dc.2{r4}
-	; 198:4 if !checkCellBounds_Pi16_Pi16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=198:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=198:28]])
-	addrof memVarAddr{r14}, r.1
-	store [memVarAddr{r14}], r.1{r0}
+	store [memVarAddr{r14}], dc.2{r6}
 	addrof memVarAddr{r14}, c.1
 	store [memVarAddr{r14}], c.1{r2}
+	; 198:4 if !checkCellBounds_Pi16_Pi16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=198:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=198:28]])
+	move r.1{r0}, r.1{r4}
+	addrof memVarAddr{r14}, r.1
+	store [memVarAddr{r14}], r.1{r4}
+	addrof memVarAddr{r14}, c.1
+	move c.1{r4}, c.1{r2}
 	call t.8.1{r0} = checkCellBounds_Pi16_Pi16[r.1{r0}, c.1{r2}] -> bool
 	branch t.8.1{r0} equals 0: for_32_continue
 	addrof memVarAddr{r14}, r.1
-	load r.1{r0}, [memVarAddr{r14}]
+	load r.1{r4}, [memVarAddr{r14}]
+	move r.1{r0}, r.1{r4}
 	addrof memVarAddr{r14}, c.1
-	load c.1{r2}, [memVarAddr{r14}]
+	load c.1{r4}, [memVarAddr{r14}]
+	move c.1{r2}, c.1{r4}
 	call cell.1{r0} = getCell_Pi16_Pi16[r.1{r0}, c.1{r2}] -> u8
+	move cell.1{r1}, cell.1{r0}
 	; 203:4 if isOpen_Pu8([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=203:15]])
 	addrof memVarAddr{r14}, cell.1
-	store [memVarAddr{r14}], cell.1{r0}
+	store [memVarAddr{r14}], cell.1{r1}
 	call t.9.1{r0} = isOpen_Pu8[cell.1{r0}] -> bool
 	branch t.9.1{r0} notequals 0: for_32_continue
 	load cell.1{r0}, [memVarAddr{r14}]
 	move t.10.1{r4}, cell.1{r0}
 	or t.10.1{r4}, 2
 	addrof memVarAddr{r14}, r.1
-	load r.1{r0}, [memVarAddr{r14}]
+	load r.1{r5}, [memVarAddr{r14}]
+	move r.1{r0}, r.1{r5}
 	addrof memVarAddr{r14}, c.1
-	load c.1{r2}, [memVarAddr{r14}]
+	load c.1{r5}, [memVarAddr{r14}]
+	move c.1{r2}, c.1{r5}
 	call setCell_Pi16_Pi16_Pu8[r.1{r0}, c.1{r2}, t.10.1{r4}]
 	addrof memVarAddr{r14}, r.1
-	load r.1{r0}, [memVarAddr{r14}]
+	load r.1{r4}, [memVarAddr{r14}]
+	move r.1{r0}, r.1{r4}
 	addrof memVarAddr{r14}, c.1
 	load c.1{r2}, [memVarAddr{r14}]
 	call maybeRevealAround_Pi16_Pi16[r.1{r0}, c.1{r2}]

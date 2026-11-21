@@ -142,12 +142,12 @@ final class LSAlgorithm {
 			return true;
 		}
 
-		final int splitPos = getIdealSplitPosition(current, maxFreeUntil);
-		reg = getIdealRegister(registerHint, splitPos, registerAmount, registersFreeUntil, onlyEvenRegisters);
+		final int splitEnd = getIdealSplitEnd(current, maxFreeUntil);
+		reg = getIdealRegister(registerHint, splitEnd, registerAmount, registersFreeUntil, onlyEvenRegisters);
 		Utils.assertTrue(reg >= 0);
 		setRegister(current, reg);
-		final LSInterval split = truncateAndSplit(current, splitPos + 1);
-		if (firstUsePos > splitPos + 1) {
+		final LSInterval split = truncateAndSplit(current, splitEnd);
+		if (firstUsePos > splitEnd) {
 			addToDone(split);
 			return true;
 		}
@@ -162,15 +162,15 @@ final class LSAlgorithm {
 		return pointerIntType != null && type.isPointer();
 	}
 
-	private int getIdealRegister(int registerHint, int to, int registerAmount, RegisterPositions registersFreeUntil, boolean onlyEvenRegisters) {
+	private int getIdealRegister(int registerHint, int endExclusive, int registerAmount, RegisterPositions registersFreeUntil, boolean onlyEvenRegisters) {
 		if (registerHint >= 0) {
 			Utils.assertTrue(!onlyEvenRegisters || (registerHint & 1) == 0);
-			if (registersFreeUntil.get(registerHint, registerAmount) >= to) {
+			if (registersFreeUntil.get(registerHint, registerAmount) >= endExclusive) {
 				return registerHint;
 			}
 		}
 
-		final int exactReg = registersFreeUntil.getExact(to, registerAmount, onlyEvenRegisters);
+		final int exactReg = registersFreeUntil.getExact(endExclusive, registerAmount, onlyEvenRegisters);
 		if (exactReg >= 0) {
 			return exactReg;
 		}
@@ -197,15 +197,15 @@ final class LSAlgorithm {
 		}
 	}
 
-	private int getIdealSplitPosition(LSInterval interval, int maxPos) {
+	private int getIdealSplitEnd(LSInterval interval, int maxPos) {
 		final LSUse use = interval.getUseBefore(maxPos);
 		if (use == null) {
-			return maxPos;
+			return maxPos + 1;
 		}
 
 		final int usePos = use.pos();
 		Utils.assertTrue(usePos < maxPos);
-		return usePos;
+		return usePos + 1;
 	}
 
 	/**

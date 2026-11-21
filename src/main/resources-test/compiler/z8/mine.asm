@@ -267,12 +267,12 @@ for_4_body:
         ; move dr.2{r4}, dr.2{r1}
         ld   r5, r2
         ld   r4, r1
-        ; move r.1{r0}, param.row{r8}
-        ld   r0, r8
-        ld   r1, r9
-        ; add r.1{r0}, dr.2{r4}
-        add  r1, r5
-        adc  r0, r4
+        ; move r.1{r6}, param.row{r8}
+        ld   r6, r8
+        ld   r7, r9
+        ; add r.1{r6}, dr.2{r4}
+        add  r7, r5
+        adc  r6, r4
         ; addrof memVarAddr{r14}, dr.2
         ld   r14, SPH
         ld   r15, SPL
@@ -292,10 +292,10 @@ for_4_body:
         ld   r15, SPL
         add  r15, #%0a
         adc  r14, #%00
-        ; store [memVarAddr{r14}], r.1{r0}
-        lde  @rr14, r0
+        ; store [memVarAddr{r14}], r.1{r6}
+        lde  @rr14, r6
         incw r14
-        lde  @rr14, r1
+        lde  @rr14, r7
         decw r14
         ; move dc.2{r1}, dc.2{r4}
         ld   r1, r4
@@ -311,10 +311,10 @@ for_5_body:
         ld   r15, SPL
         add  r15, #%0a
         adc  r14, #%00
-        ; load r.1{r0}, [memVarAddr{r14}]
-        lde  r0, @rr14
+        ; load r.1{r6}, [memVarAddr{r14}]
+        lde  r6, @rr14
         incw r14
-        lde  r1, @rr14
+        lde  r7, @rr14
         decw r14
         ; move c.1{r2}, param.column{r10}
         ld   r2, r10
@@ -332,7 +332,6 @@ for_5_body:
         incw r14
         lde  @rr14, r5
         decw r14
-        ; 50:4 if checkCellBounds_Pi16_Pi16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=50:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=50:27]])
         ; addrof memVarAddr{r14}, c.1
         ld   r14, SPH
         ld   r15, SPL
@@ -343,6 +342,18 @@ for_5_body:
         incw r14
         lde  @rr14, r3
         decw r14
+        ; 50:4 if checkCellBounds_Pi16_Pi16([ExprVarAccess[varName=r, index=4, scope=function, type=i16, varIsArray=false, location=50:24], ExprVarAccess[varName=c, index=6, scope=function, type=i16, varIsArray=false, location=50:27]])
+        ; move r.1{r0}, r.1{r6}
+        ld   r0, r6
+        ld   r1, r7
+        ; addrof memVarAddr{r14}, c.1
+        ld   r14, SPH
+        ld   r15, SPL
+        add  r15, #%0e
+        adc  r14, #%00
+        ; move c.1{r4}, c.1{r2}
+        ld   r5, r3
+        ld   r4, r2
         ; call t.8.1{r0} = checkCellBounds_Pi16_Pi16[r.1{r0}, c.1{r2}] -> bool
         call checkCellBounds_Pi16_Pi16
         ; branch t.8.1{r0} equals 0: for_5_continue
@@ -353,11 +364,14 @@ for_5_body:
         ld   r15, SPL
         add  r15, #%0a
         adc  r14, #%00
-        ; load r.1{r0}, [memVarAddr{r14}]
-        lde  r0, @rr14
+        ; load r.1{r4}, [memVarAddr{r14}]
+        lde  r4, @rr14
         incw r14
-        lde  r1, @rr14
+        lde  r5, @rr14
         decw r14
+        ; move r.1{r0}, r.1{r4}
+        ld   r0, r4
+        ld   r1, r5
         ; addrof memVarAddr{r14}, c.1
         ld   r14, SPH
         ld   r15, SPL
@@ -1336,64 +1350,64 @@ maybeRevealAround_Pi16_Pi16:
         jr   for_31
 
 for_31_body:
-        ; move r.1{r0}, param.row{r8}
-        ld   r0, r8
-        ld   r1, r9
-        ; add r.1{r0}, dr.2{r12}
-        add  r1, r13
-        adc  r0, r12
-        ; const dc.1{r4}, -1
-        ld   r4, #%ff
-        ld   r5, #%ff
+        ; move r.1{r4}, param.row{r8}
+        ld   r4, r8
+        ld   r5, r9
+        ; add r.1{r4}, dr.2{r12}
+        add  r5, r13
+        adc  r4, r12
+        ; const dc.1{r6}, -1
+        ld   r6, #%ff
+        ld   r7, #%ff
         ; 192:3 for dc <= 1
         ; addrof memVarAddr{r14}, r.1
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%08
         adc  r14, #%00
-        ; store [memVarAddr{r14}], r.1{r0}
-        lde  @rr14, r0
+        ; store [memVarAddr{r14}], r.1{r4}
+        lde  @rr14, r4
         incw r14
-        lde  @rr14, r1
+        lde  @rr14, r5
         decw r14
-        ; move dc.2{r0}, dc.2{r4}
-        ld   r0, r4
-        ld   r1, r5
+        ; move dc.2{r0}, dc.2{r6}
+        ld   r0, r6
+        ld   r1, r7
         jr   for_32
 
 for_32_body:
-        ; move dc.2{r4}, dc.2{r0}
-        ld   r5, r1
-        ld   r4, r0
+        ; move dc.2{r6}, dc.2{r0}
+        ld   r7, r1
+        ld   r6, r0
         ; addrof memVarAddr{r14}, r.1
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%08
         adc  r14, #%00
-        ; load r.1{r0}, [memVarAddr{r14}]
-        lde  r0, @rr14
+        ; load r.1{r4}, [memVarAddr{r14}]
+        lde  r4, @rr14
         incw r14
-        lde  r1, @rr14
+        lde  r5, @rr14
         decw r14
         ; branch dr.2{r12} notequals 0: if_33_end
         cp   r13, #%00
         jr   ne, if_33_end
         cp   r12, #%00
         jr   ne, if_33_end
-        ; branch dc.2{r4} notequals 0: if_33_end
-        cp   r5, #%00
+        ; branch dc.2{r6} notequals 0: if_33_end
+        cp   r7, #%00
         jr   ne, if_33_end
-        cp   r4, #%00
+        cp   r6, #%00
         jr   ne, if_33_end
         ; addrof memVarAddr{r14}, dc.2
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%0a
         adc  r14, #%00
-        ; store [memVarAddr{r14}], dc.2{r4}
-        lde  @rr14, r4
+        ; store [memVarAddr{r14}], dc.2{r6}
+        lde  @rr14, r6
         incw r14
-        lde  @rr14, r5
+        lde  @rr14, r7
         decw r14
         ; addrof memVarAddr{r14}, r.1
         ld   r14, SPH
@@ -1406,29 +1420,18 @@ if_33_end:
         ; move c.1{r2}, param.column{r10}
         ld   r2, r10
         ld   r3, r11
-        ; add c.1{r2}, dc.2{r4}
-        add  r3, r5
-        adc  r2, r4
+        ; add c.1{r2}, dc.2{r6}
+        add  r3, r7
+        adc  r2, r6
         ; addrof memVarAddr{r14}, dc.2
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%0a
         adc  r14, #%00
-        ; store [memVarAddr{r14}], dc.2{r4}
-        lde  @rr14, r4
+        ; store [memVarAddr{r14}], dc.2{r6}
+        lde  @rr14, r6
         incw r14
-        lde  @rr14, r5
-        decw r14
-        ; 198:4 if !checkCellBounds_Pi16_Pi16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=198:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=198:28]])
-        ; addrof memVarAddr{r14}, r.1
-        ld   r14, SPH
-        ld   r15, SPL
-        add  r15, #%08
-        adc  r14, #%00
-        ; store [memVarAddr{r14}], r.1{r0}
-        lde  @rr14, r0
-        incw r14
-        lde  @rr14, r1
+        lde  @rr14, r7
         decw r14
         ; addrof memVarAddr{r14}, c.1
         ld   r14, SPH
@@ -1440,6 +1443,28 @@ if_33_end:
         incw r14
         lde  @rr14, r3
         decw r14
+        ; 198:4 if !checkCellBounds_Pi16_Pi16([ExprVarAccess[varName=r, index=3, scope=function, type=i16, varIsArray=false, location=198:25], ExprVarAccess[varName=c, index=5, scope=function, type=i16, varIsArray=false, location=198:28]])
+        ; move r.1{r0}, r.1{r4}
+        ld   r0, r4
+        ld   r1, r5
+        ; addrof memVarAddr{r14}, r.1
+        ld   r14, SPH
+        ld   r15, SPL
+        add  r15, #%08
+        adc  r14, #%00
+        ; store [memVarAddr{r14}], r.1{r4}
+        lde  @rr14, r4
+        incw r14
+        lde  @rr14, r5
+        decw r14
+        ; addrof memVarAddr{r14}, c.1
+        ld   r14, SPH
+        ld   r15, SPL
+        add  r15, #%0c
+        adc  r14, #%00
+        ; move c.1{r4}, c.1{r2}
+        ld   r5, r3
+        ld   r4, r2
         ; call t.8.1{r0} = checkCellBounds_Pi16_Pi16[r.1{r0}, c.1{r2}] -> bool
         call checkCellBounds_Pi16_Pi16
         ; branch t.8.1{r0} equals 0: for_32_continue
@@ -1450,31 +1475,39 @@ if_33_end:
         ld   r15, SPL
         add  r15, #%08
         adc  r14, #%00
-        ; load r.1{r0}, [memVarAddr{r14}]
-        lde  r0, @rr14
+        ; load r.1{r4}, [memVarAddr{r14}]
+        lde  r4, @rr14
         incw r14
-        lde  r1, @rr14
+        lde  r5, @rr14
         decw r14
+        ; move r.1{r0}, r.1{r4}
+        ld   r0, r4
+        ld   r1, r5
         ; addrof memVarAddr{r14}, c.1
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%0c
         adc  r14, #%00
-        ; load c.1{r2}, [memVarAddr{r14}]
-        lde  r2, @rr14
+        ; load c.1{r4}, [memVarAddr{r14}]
+        lde  r4, @rr14
         incw r14
-        lde  r3, @rr14
+        lde  r5, @rr14
         decw r14
+        ; move c.1{r2}, c.1{r4}
+        ld   r2, r4
+        ld   r3, r5
         ; call cell.1{r0} = getCell_Pi16_Pi16[r.1{r0}, c.1{r2}] -> u8
         call getCell_Pi16_Pi16
+        ; move cell.1{r1}, cell.1{r0}
+        ld   r1, r0
         ; 203:4 if isOpen_Pu8([ExprVarAccess[varName=cell, index=6, scope=function, type=u8, varIsArray=false, location=203:15]])
         ; addrof memVarAddr{r14}, cell.1
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%0e
         adc  r14, #%00
-        ; store [memVarAddr{r14}], cell.1{r0}
-        lde  @rr14, r0
+        ; store [memVarAddr{r14}], cell.1{r1}
+        lde  @rr14, r1
         ; call t.9.1{r0} = isOpen_Pu8[cell.1{r0}] -> bool
         call isOpen_Pu8
         ; branch t.9.1{r0} notequals 0: for_32_continue
@@ -1491,21 +1524,27 @@ if_33_end:
         ld   r15, SPL
         add  r15, #%08
         adc  r14, #%00
-        ; load r.1{r0}, [memVarAddr{r14}]
-        lde  r0, @rr14
+        ; load r.1{r5}, [memVarAddr{r14}]
+        lde  r5, @rr14
         incw r14
-        lde  r1, @rr14
+        lde  r6, @rr14
         decw r14
+        ; move r.1{r0}, r.1{r5}
+        ld   r0, r5
+        ld   r1, r6
         ; addrof memVarAddr{r14}, c.1
         ld   r14, SPH
         ld   r15, SPL
         add  r15, #%0c
         adc  r14, #%00
-        ; load c.1{r2}, [memVarAddr{r14}]
-        lde  r2, @rr14
+        ; load c.1{r5}, [memVarAddr{r14}]
+        lde  r5, @rr14
         incw r14
-        lde  r3, @rr14
+        lde  r6, @rr14
         decw r14
+        ; move c.1{r2}, c.1{r5}
+        ld   r2, r5
+        ld   r3, r6
         ; call setCell_Pi16_Pi16_Pu8[r.1{r0}, c.1{r2}, t.10.1{r4}]
         call setCell_Pi16_Pi16_Pu8
         ; addrof memVarAddr{r14}, r.1
@@ -1513,11 +1552,14 @@ if_33_end:
         ld   r15, SPL
         add  r15, #%08
         adc  r14, #%00
-        ; load r.1{r0}, [memVarAddr{r14}]
-        lde  r0, @rr14
+        ; load r.1{r4}, [memVarAddr{r14}]
+        lde  r4, @rr14
         incw r14
-        lde  r1, @rr14
+        lde  r5, @rr14
         decw r14
+        ; move r.1{r0}, r.1{r4}
+        ld   r0, r4
+        ld   r1, r5
         ; addrof memVarAddr{r14}, c.1
         ld   r14, SPH
         ld   r15, SPL

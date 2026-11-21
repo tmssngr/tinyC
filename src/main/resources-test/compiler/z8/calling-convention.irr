@@ -49,6 +49,7 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
 	store [memVarAddr{r14}], param.c{r4}
 	addrof memVarAddr{r14}, param.d
 	store [memVarAddr{r14}], param.d{r6}
+	move param.a{r2}, param.a{r0}
 	call printIntLf_Pi16[param.a{r0}]
 	addrof memVarAddr{r14}, param.b
 	load param.b{r2}, [memVarAddr{r14}]
@@ -63,7 +64,8 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
 	move param.d{r0}, param.d{r6}
 	call printIntLf_Pi16[param.d{r0}]
 	addrof memVarAddr{r14}, e
-	load e{r0}, [memVarAddr{r14}]
+	load e{r2}, [memVarAddr{r14}]
+	move e{r0}, e{r2}
 	call printIntLf_Pi16[e{r0}]
 	move f{r0}, f{r12}
 	call printIntLf_Pi16[f{r0}]

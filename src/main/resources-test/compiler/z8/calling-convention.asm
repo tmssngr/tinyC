@@ -159,6 +159,9 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         incw r14
         lde  @rr14, r7
         decw r14
+        ; move param.a{r2}, param.a{r0}
+        ld   r3, r1
+        ld   r2, r0
         ; call printIntLf_Pi16[param.a{r0}]
         call printIntLf_Pi16
         ; addrof memVarAddr{r14}, param.b
@@ -211,11 +214,14 @@ printAndSum_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16_Pi16:
         ld   r15, SPL
         add  r15, #%12
         adc  r14, #%00
-        ; load e{r0}, [memVarAddr{r14}]
-        lde  r0, @rr14
+        ; load e{r2}, [memVarAddr{r14}]
+        lde  r2, @rr14
         incw r14
-        lde  r1, @rr14
+        lde  r3, @rr14
         decw r14
+        ; move e{r0}, e{r2}
+        ld   r0, r2
+        ld   r1, r3
         ; call printIntLf_Pi16[e{r0}]
         call printIntLf_Pi16
         ; move f{r0}, f{r12}

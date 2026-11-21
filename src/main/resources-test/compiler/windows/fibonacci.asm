@@ -187,18 +187,20 @@ _main:
 while_4_body:
         ; add b.3{r0}, a.2{r6}
         add ax, bx
-        ; move a.3{r1}, b.3{r0}
-        mov cx, ax
+        ; move a.3{r2}, b.3{r0}
+        mov dx, ax
         ; addrof memVarAddr{r7}, b.3
         lea r12, [rsp+48]
         ; store [memVarAddr{r7}], b.3{r0}
         mov [r12], ax
-        ; sub a.3{r1}, a.2{r6}
-        sub cx, bx
+        ; sub a.3{r2}, a.2{r6}
+        sub dx, bx
+        ; move a.3{r1}, a.3{r2}
+        mov cx, dx
         ; addrof memVarAddr{r7}, a.3
         lea r12, [rsp+50]
-        ; store [memVarAddr{r7}], a.3{r1}
-        mov [r12], cx
+        ; store [memVarAddr{r7}], a.3{r2}
+        mov [r12], dx
         ; call _printIntLf@i16[a.3{r1}]
         call _printIntLf@i16
         ; load a.3{r1}, [memVarAddr{r7}]
