@@ -1,5 +1,6 @@
 package com.regnis.tinyc.linearscanregalloc;
 
+import com.regnis.tinyc.*;
 import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
@@ -570,6 +571,57 @@ public class LSAlgorithmTest {
 		final List<LSInterval> fixedIntervals = List.of(LSInterval.testFixed(3, List.of(new LSRange(4))));
 		final Map<IRVar, LSInterval> withBlockedHint = LSAlgorithm.perform(varMap, fixedIntervals, 4, Z8_POINTER_INT_TYPE, LSAlgorithmLogger.DUMMY);
 		assertNull(assertInterval(0, 10, 0, withBlockedHint.get(pointer)));
+	}
+
+	@Test
+	public void testPhysicalRegisterGroups() {
+		final Z8Registers registers = new Z8Registers(0x40, 0x42, 0x43, 0x44, 0x45);
+		final LSAlgorithm.RegisterPositions positions = new LSAlgorithm.RegisterPositions(registers.registerCount(), registers);
+		positions.setMinPos(-1, 0, 16);
+		positions.setMinPos(10, 16, 5);
+
+		assertEquals(17, positions.getExact(10, 2, true));
+		assertEquals(17, positions.getFirstFit(10, 2, true));
+		assertEquals(17, positions.getMax(2, true));
+		assertEquals(17, positions.getFirstFit(10, 4, false));
+		assertEquals(-1, positions.getFirstFit(10, 8, false));
+	}
+
+	@Test
+	public void testPhysicalPointerHints() {
+		final Z8Registers registers = new Z8Registers(0x40, 0x42, 0x43, 0x44, 0x45);
+		final IRVar pointer = new IRVar("pointer", 0, VariableScope.function, Type.POINTER_U8);
+		final List<LSInterval> fixedIntervals = new ArrayList<>();
+		for (int register = 0; register < 16; register++) {
+			fixedIntervals.add(LSInterval.testFixed(register, List.of(new LSRange(0, 12))));
+		}
+		for (int hint : new int[]{16, 18, 19}) {
+			final LSInterval interval = LSInterval.testVar(pointer, List.of(new LSRange(0, 10)), List.of(write(0), read(10)));
+			interval.setRegisterHint(hint);
+			final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(interval), fixedIntervals,
+			                                                          registers.registerCount(), Z8_POINTER_INT_TYPE,
+			                                                          registers, LSAlgorithmLogger.DUMMY);
+			assertNull(assertInterval(0, 10, hint == 19 ? 19 : 17, intervals.get(pointer)));
+		}
+	}
+
+	@Test
+	public void testBlockedPhysicalRegisterGroup() {
+		final Z8Registers registers = new Z8Registers(0x40, 0x42, 0x43);
+		final IRVar wide = new IRVar("wide", 0, VariableScope.function, Type.I16);
+		final IRVar pointer = new IRVar("pointer", 1, VariableScope.function, Type.POINTER_U8);
+		final LSInterval wideInterval = LSInterval.testVar(wide, List.of(new LSRange(0, 12)), List.of(write(0), read(12)));
+		final LSInterval pointerInterval = LSInterval.testVar(pointer, List.of(new LSRange(2, 8)), List.of(write(2), read(8)));
+		final List<LSInterval> fixedIntervals = new ArrayList<>();
+		for (int register = 0; register < 16; register++) {
+			fixedIntervals.add(LSInterval.testFixed(register, List.of(new LSRange(0, 20))));
+		}
+		final Map<IRVar, LSInterval> intervals = LSAlgorithm.perform(toVarMap(wideInterval, pointerInterval), fixedIntervals,
+		                                                          registers.registerCount(), Z8_POINTER_INT_TYPE,
+		                                                          registers, LSAlgorithmLogger.DUMMY);
+
+		assertNull(assertInterval(2, 8, 17, intervals.get(pointer)));
+		assertTrue(intervals.get(wide).containsSpill());
 	}
 
 	private Map<IRVar, LSInterval> toVarMap(LSInterval... intervals) {

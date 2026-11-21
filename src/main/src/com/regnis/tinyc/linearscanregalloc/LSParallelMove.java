@@ -14,6 +14,10 @@ import org.jetbrains.annotations.*;
  */
 final class LSParallelMove {
 	public static void transfer(@NotNull List<VarTransfer> varTransfers, int maxRegisters, @Nullable Type pointerIntType, @NotNull Consumer<VarTransfer> consumer) {
+		transfer(varTransfers, maxRegisters, pointerIntType, null, consumer);
+	}
+
+	public static void transfer(@NotNull List<VarTransfer> varTransfers, int maxRegisters, @Nullable Type pointerIntType, @Nullable Z8Registers z8Registers, @NotNull Consumer<VarTransfer> consumer) {
 		final Map<Integer, IRVar> registerStates = new HashMap<>();
 		final List<VarTransfer> pending = new ArrayList<>();
 
@@ -27,7 +31,7 @@ final class LSParallelMove {
 			final int transferIndex = findRegisterTransfer(pending, pointerIntType);
 			Utils.assertTrue(transferIndex >= 0);
 			final VarTransfer transfer = pending.get(transferIndex);
-			final int tmp = determineTemp(transfer, pending, registerStates, maxRegisters, pointerIntType);
+			final int tmp = determineTemp(transfer, pending, registerStates, maxRegisters, pointerIntType, z8Registers);
 			if (tmp >= 0) {
 				consumeAndUpdateRegisterState(new VarTransfer(transfer.var, transfer.from, tmp),
 				                              registerStates, pointerIntType, consumer);
@@ -103,11 +107,17 @@ final class LSParallelMove {
 		}
 	}
 
-	private static int determineTemp(VarTransfer transfer, List<VarTransfer> pending, Map<Integer, IRVar> registerStates, int maxRegisters, @Nullable Type pointerIntType) {
+	private static int determineTemp(VarTransfer transfer, List<VarTransfer> pending, Map<Integer, IRVar> registerStates, int maxRegisters, @Nullable Type pointerIntType, @Nullable Z8Registers z8Registers) {
 		final int registerAmount = getRegisterAmount(transfer.var, pointerIntType);
 		final boolean onlyEvenRegisters = isOnlyEvenRegisters(transfer.var, pointerIntType);
 		final int lastStart = maxRegisters - registerAmount;
-		for (int register = 0; register <= lastStart; register += onlyEvenRegisters ? 2 : 1) {
+		for (int register = 0; register <= lastStart; register++) {
+			final boolean validGroup = z8Registers != null
+					? z8Registers.isValidGroup(register, registerAmount, onlyEvenRegisters)
+					: !onlyEvenRegisters || (register & 1) == 0;
+			if (!validGroup) {
+				continue;
+			}
 			boolean available = true;
 			for (int current = register; current < register + registerAmount; current++) {
 				if (registerStates.containsKey(current)) {

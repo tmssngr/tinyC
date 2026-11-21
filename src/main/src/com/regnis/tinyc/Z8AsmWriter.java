@@ -15,13 +15,19 @@ import org.jetbrains.annotations.*;
  */
 final class Z8AsmWriter extends AsmWriter {
 
+	private final Z8Registers registers;
 	private final LSCallingConventionProvider callingConventionProvider;
 
 	private int localJumpIndex;
 	private Z8StackOffsets stackOffsets;
 
 	public Z8AsmWriter(@NotNull BufferedWriter writer, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull TypeChecker.CanonicalNameProvider canonicalNameProvider) {
+		this(writer, Z8Registers.DEFAULT, callingConventionProvider, canonicalNameProvider);
+	}
+
+	public Z8AsmWriter(@NotNull BufferedWriter writer, @NotNull Z8Registers registers, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull TypeChecker.CanonicalNameProvider canonicalNameProvider) {
 		super(writer, canonicalNameProvider);
+		this.registers = registers;
 		this.callingConventionProvider = callingConventionProvider;
 	}
 
@@ -33,7 +39,7 @@ final class Z8AsmWriter extends AsmWriter {
 		writeNL();
 		writeIndented(".org %e000");
 		writeNL();
-		writeIndented("srp  #%20");
+		writeIndented("srp  #%" + byteToHex(Z8Registers.WORKING_REGISTER_BASE));
 		writeIndented("jr   " + canonicalNameProvider.canonicalFunctionName("main", List.of()));
 		super.write(program);
 
@@ -814,7 +820,7 @@ final class Z8AsmWriter extends AsmWriter {
 			writeIndented("ld   %15, " + regName(rightReg));
 			writeIndented("srp  #%10");
 			writeIndented(call);
-			writeIndented("srp  #%20");
+			writeIndented("srp  #%" + byteToHex(Z8Registers.WORKING_REGISTER_BASE));
 			writeIndented("ld   " + regName(leftReg) + ", %13");
 		}
 		else if (leftType == Type.I16) {
@@ -824,7 +830,7 @@ final class Z8AsmWriter extends AsmWriter {
 			writeIndented("ld   %15, " + regName(rightReg + 1));
 			writeIndented("srp  #%10");
 			writeIndented(call);
-			writeIndented("srp  #%20");
+			writeIndented("srp  #%" + byteToHex(Z8Registers.WORKING_REGISTER_BASE));
 			writeIndented("ld   " + regName(leftReg) + ", %12");
 			writeIndented("ld   " + regName(leftReg + 1) + ", %13");
 		}
@@ -842,7 +848,7 @@ final class Z8AsmWriter extends AsmWriter {
 			writeIndented("ld   %15, #%" + byteToHex(bytes[1]));
 			writeIndented("srp  #%10");
 			writeIndented(call);
-			writeIndented("srp  #%20");
+			writeIndented("srp  #%" + byteToHex(Z8Registers.WORKING_REGISTER_BASE));
 			writeIndented("ld   " + regName(leftReg) + ", %13");
 		}
 		else if (leftType == Type.I16) {
@@ -853,7 +859,7 @@ final class Z8AsmWriter extends AsmWriter {
 			writeIndented("ld   %15, #%" + byteToHex(bytes[1]));
 			writeIndented("srp  #%10");
 			writeIndented(call);
-			writeIndented("srp  #%20");
+			writeIndented("srp  #%" + byteToHex(Z8Registers.WORKING_REGISTER_BASE));
 			writeIndented("ld   " + regName(leftReg) + ", %12");
 			writeIndented("ld   " + regName(leftReg + 1) + ", %13");
 		}
@@ -1071,16 +1077,18 @@ final class Z8AsmWriter extends AsmWriter {
 	private void writeFunctionProlog(int localVarSpace, int firstNonVolatileRegister, int count) throws IOException {
 		if (localVarSpace > 0) {
 			if (localVarSpace > 6) {
-				writeIndented("ld   %30, SPH");
-				writeIndented("ld   %31, SPL");
-				writeIndented("sub  %31, #%" + byteToHex(localVarSpace));
+				final String scratchHigh = "%" + byteToHex(Z8Registers.STACK_SCRATCH_HIGH);
+				final String scratchLow = "%" + byteToHex(Z8Registers.STACK_SCRATCH_LOW);
+				writeIndented("ld   " + scratchHigh + ", SPH");
+				writeIndented("ld   " + scratchLow + ", SPL");
+				writeIndented("sub  " + scratchLow + ", #%" + byteToHex(localVarSpace));
 				localVarSpace >>= 8;
-				writeIndented("sbc  %30, #%" + byteToHex(localVarSpace));
+				writeIndented("sbc  " + scratchHigh + ", #%" + byteToHex(localVarSpace));
 				// order matters! if an overflow in SPH happened, better let an
 				// interrupt overwrite something further below in the stack than
 				// in the active stack area
-				writeIndented("ld   SPH, %30");
-				writeIndented("ld   SPL, %31");
+				writeIndented("ld   SPH, " + scratchHigh);
+				writeIndented("ld   SPL, " + scratchLow);
 			}
 			else {
 				for (int i = 0; i < localVarSpace; i++) {
@@ -1115,17 +1123,19 @@ final class Z8AsmWriter extends AsmWriter {
 		}
 		if (localVarSpace > 0) {
 			if (localVarSpace > 6) {
-				writeIndented("ld   %30, SPH");
-				writeIndented("ld   %31, SPL");
-				writeIndented("add  %31, #%" + byteToHex(localVarSpace));
+				final String scratchHigh = "%" + byteToHex(Z8Registers.STACK_SCRATCH_HIGH);
+				final String scratchLow = "%" + byteToHex(Z8Registers.STACK_SCRATCH_LOW);
+				writeIndented("ld   " + scratchHigh + ", SPH");
+				writeIndented("ld   " + scratchLow + ", SPL");
+				writeIndented("add  " + scratchLow + ", #%" + byteToHex(localVarSpace));
 				localVarSpace >>= 8;
-				writeIndented("adc  %30, #%" + byteToHex(localVarSpace));
+				writeIndented("adc  " + scratchHigh + ", #%" + byteToHex(localVarSpace));
 				// if SPH is unchanged, the order does not matter
 				// but if it changed, it will be higher, so the worst that
 				// can happen by an interrupt is overwriting stack memory
 				// which is discarded anyway
-				writeIndented("ld   SPL, %31");
-				writeIndented("ld   SPH, %30");
+				writeIndented("ld   SPL, " + scratchLow);
+				writeIndented("ld   SPH, " + scratchHigh);
 			}
 			else {
 				for (int i = 0; i < localVarSpace; i++) {
@@ -1152,12 +1162,12 @@ final class Z8AsmWriter extends AsmWriter {
 	}
 
 	private void getRegisterName(int reg, StringBuilder buffer) {
-		buffer.append("r");
-		buffer.append(reg);
+		buffer.append(regName(reg));
 	}
 
 	private String regName(int reg) {
-		return "r" + reg;
+		Utils.assertTrue(registers.isWorkingRegister(reg));
+		return "r" + (registers.getPhysicalAddress(reg) - Z8Registers.WORKING_REGISTER_BASE);
 	}
 
 	private int getByteCount(Type type) {

@@ -47,7 +47,8 @@ public enum TargetArchitecture {
 			return new X86_64_LinuxAsmWriter(writer, argCountInRegisters, registers, canonicalNameProvider);
 		}
 		if (this == Z8) {
-			return new Z8AsmWriter(writer, architecture.getCallingConventionProvider(), canonicalNameProvider);
+			final LSArchitecture.Z8 z8 = (LSArchitecture.Z8)architecture;
+			return new Z8AsmWriter(writer, z8.getRegisters(), architecture.getCallingConventionProvider(), canonicalNameProvider);
 		}
 		throw new IllegalStateException();
 	}

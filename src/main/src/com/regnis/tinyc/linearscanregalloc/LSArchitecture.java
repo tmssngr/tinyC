@@ -99,7 +99,14 @@ public interface LSArchitecture {
 	}
 
 	class Z8 implements LSArchitecture, IRLocalOptimizer.PlatformSpecificInstructionBehavior {
+		private final Z8Registers registers = Z8Registers.DEFAULT;
+
 		public Z8() {
+		}
+
+		@NotNull
+		public Z8Registers getRegisters() {
+			return registers;
 		}
 
 		@Override
@@ -121,7 +128,7 @@ public interface LSArchitecture {
 
 		@Override
 		public int registerCount() {
-			return 16;
+			return registers.registerCount();
 		}
 
 		@NotNull

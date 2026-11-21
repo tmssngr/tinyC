@@ -22,15 +22,21 @@ public final class LSRegAlloc {
 	@NotNull
 	public static IRFunction process(@NotNull IRFunction function, @NotNull LSArchitecture architecture) {
 		final X86Registers x86Registers = architecture instanceof LSArchitecture.X86_64 x86_64 ? x86_64.getRegisters() : null;
+		final Z8Registers z8Registers = architecture instanceof LSArchitecture.Z8 z8 ? z8.getRegisters() : null;
 		final int registeredCount = architecture.registerCount();
 		final LSCallingConventionProvider callingConventionProvider = architecture.getCallingConventionProvider();
 		final Type pointerIntType = architecture.getPointerIntType();
 		final boolean hasStackSlotsForRegisterVars = x86Registers != null;
-		return process(function, x86Registers, hasStackSlotsForRegisterVars, registeredCount, callingConventionProvider, pointerIntType);
+		return process(function, x86Registers, hasStackSlotsForRegisterVars, registeredCount, callingConventionProvider, pointerIntType, z8Registers);
 	}
 
 	@NotNull
 	public static IRFunction process(@NotNull IRFunction function, @Nullable X86Registers x86Registers, boolean hasStackSlotsForRegisterVars, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull Type pointerIntType) {
+		return process(function, x86Registers, hasStackSlotsForRegisterVars, registerCount, callingConventionProvider, pointerIntType, null);
+	}
+
+	@NotNull
+	private static IRFunction process(@NotNull IRFunction function, @Nullable X86Registers x86Registers, boolean hasStackSlotsForRegisterVars, int registerCount, @NotNull LSCallingConventionProvider callingConventionProvider, @NotNull Type pointerIntType, @Nullable Z8Registers z8Registers) {
 		final var preprocessorResult = LSPreprocessor.process(function, callingConventionProvider, x86Registers, hasStackSlotsForRegisterVars, pointerIntType);
 		IRVarInfos varInfos = preprocessorResult.first();
 		final List<IRInstruction> instructions = preprocessorResult.second();
@@ -57,7 +63,7 @@ public final class LSRegAlloc {
 
 		Map<IRVar, LSInterval> varToInterval = null;
 		if (!containsNonRegisterVars(varInfos, instructions2)) {
-			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount, z8PointerIntType, logger);
+			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCount, z8PointerIntType, z8Registers, logger);
 		}
 		IRVar spillHelper = null;
 		if (varToInterval == null || containsSpills(varToInterval)) {
@@ -68,17 +74,18 @@ public final class LSRegAlloc {
 				spillHelperRegister--;
 				registerCountWithSpillHelper--;
 			}
+			Utils.assertTrue(z8Registers == null || z8Registers.isValidGroup(spillHelperRegister, 2, true));
 			spillHelper = tempVarFactory.createPointerVar(MEM_VAR_ADDRESS)
 					.asRegister(spillHelperRegister);
 			varInfos = tempVarFactory.createVarInfos();
-			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCountWithSpillHelper, z8PointerIntType, logger);
+			varToInterval = LSAlgorithm.perform(intervalFactory.getVarIntervals(), intervalFactory.getFixedIntervals(), registerCountWithSpillHelper, z8PointerIntType, z8Registers, logger);
 		}
 
 		if (debug) {
 			intervalFactory.debugPrint(function.name());
 		}
 
-		final LSRegAlloc regAlloc = new LSRegAlloc(varToInterval, registerCount, cfg, blockToIndex, varInfos, z8PointerIntType, spillHelper);
+		final LSRegAlloc regAlloc = new LSRegAlloc(varToInterval, registerCount, cfg, blockToIndex, varInfos, z8PointerIntType, z8Registers, spillHelper);
 		regAlloc.determineMovesAtBlockEdges(blocks, liveness);
 		regAlloc.processStackArguments();
 		regAlloc.processInstructions(instructions2);
@@ -101,6 +108,7 @@ public final class LSRegAlloc {
 	private final Map<String, LSIntervalFactory.Indices> blockToIndex;
 	private final IRCanBeRegister canBeRegister;
 	@Nullable private final Type pointerIntType;
+	@Nullable private final Z8Registers z8Registers;
 	@Nullable private final IRVar spillHelper;
 
 	private int pos;
@@ -111,6 +119,7 @@ public final class LSRegAlloc {
 	                   @NotNull Map<String, LSIntervalFactory.Indices> blockToIndex,
 	                   @NotNull IRCanBeRegister canBeRegister,
 	                   @Nullable Type pointerIntType,
+	                   @Nullable Z8Registers z8Registers,
 	                   @Nullable IRVar spillHelper) {
 		this.varToInterval = varToInterval;
 		this.registerCount = registerCount;
@@ -118,6 +127,7 @@ public final class LSRegAlloc {
 		this.blockToIndex = blockToIndex;
 		this.canBeRegister = canBeRegister;
 		this.pointerIntType = pointerIntType;
+		this.z8Registers = z8Registers;
 		this.spillHelper = spillHelper;
 	}
 
@@ -421,7 +431,7 @@ public final class LSRegAlloc {
 		});
 
 		final List<IRMove> moves = new ArrayList<>();
-		LSParallelMove.transfer(transfers, registerCount, pointerIntType, transfer -> {
+		LSParallelMove.transfer(transfers, registerCount, pointerIntType, z8Registers, transfer -> {
 			final IRVar var = transfer.var();
 			final IRVar source = deriveVar(var, transfer.from());
 			final IRVar target = deriveVar(var, transfer.to());

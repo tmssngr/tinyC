@@ -15,7 +15,12 @@ final class LSAlgorithm {
 
 	@NotNull
 	public static Map<IRVar, LSInterval> perform(@NotNull Map<IRVar, LSInterval> varIntervals, @NotNull List<LSInterval> fixedIntervals, int registerCount, @Nullable Type pointerIntType, @NotNull LSAlgorithmLogger logger) {
-		final LSAlgorithm algorithm = new LSAlgorithm(varIntervals, fixedIntervals, registerCount, pointerIntType, logger);
+		return perform(varIntervals, fixedIntervals, registerCount, pointerIntType, null, logger);
+	}
+
+	@NotNull
+	public static Map<IRVar, LSInterval> perform(@NotNull Map<IRVar, LSInterval> varIntervals, @NotNull List<LSInterval> fixedIntervals, int registerCount, @Nullable Type pointerIntType, @Nullable Z8Registers z8Registers, @NotNull LSAlgorithmLogger logger) {
+		final LSAlgorithm algorithm = new LSAlgorithm(varIntervals, fixedIntervals, registerCount, pointerIntType, z8Registers, logger);
 		return algorithm.run();
 	}
 
@@ -28,12 +33,14 @@ final class LSAlgorithm {
 	private final LSAlgorithmLogger logger;
 	private final int registerCount;
 	@Nullable private final Type pointerIntType;
+	@Nullable private final Z8Registers z8Registers;
 
-	private LSAlgorithm(@NotNull Map<IRVar, LSInterval> varIntervals, @NotNull List<LSInterval> fixedIntervals, int registerCount, @Nullable Type pointerIntType, @NotNull LSAlgorithmLogger logger) {
+	private LSAlgorithm(@NotNull Map<IRVar, LSInterval> varIntervals, @NotNull List<LSInterval> fixedIntervals, int registerCount, @Nullable Type pointerIntType, @Nullable Z8Registers z8Registers, @NotNull LSAlgorithmLogger logger) {
 		Utils.assertTrue(registerCount > 1);
 		this.varIntervals = varIntervals;
 		this.registerCount = registerCount;
 		this.pointerIntType = pointerIntType;
+		this.z8Registers = z8Registers;
 		this.logger = logger;
 
 		for (LSInterval interval : fixedIntervals) {
@@ -107,7 +114,7 @@ final class LSAlgorithm {
 	}
 
 	private boolean tryAllocateFree(LSInterval current) {
-		final RegisterPositions registersFreeUntil = new RegisterPositions(registerCount);
+		final RegisterPositions registersFreeUntil = new RegisterPositions(registerCount, z8Registers);
 		prepareFreeUntil(current, registersFreeUntil);
 		registersFreeUntil.log("free until:", logger);
 
@@ -163,8 +170,7 @@ final class LSAlgorithm {
 	}
 
 	private int getIdealRegister(int registerHint, int endExclusive, int registerAmount, RegisterPositions registersFreeUntil, boolean onlyEvenRegisters) {
-		if (registerHint >= 0) {
-			Utils.assertTrue(!onlyEvenRegisters || (registerHint & 1) == 0);
+		if (registersFreeUntil.isValidGroup(registerHint, registerAmount, onlyEvenRegisters)) {
 			if (registersFreeUntil.get(registerHint, registerAmount) >= endExclusive) {
 				return registerHint;
 			}
@@ -218,8 +224,8 @@ final class LSAlgorithm {
 	 * this frees a register as long as possible.
 	 */
 	private void allocateBlockedReg(LSInterval current) {
-		final RegisterPositions registersUsedNext = new RegisterPositions(registerCount);
-		final RegisterPositions registersBlockedNext = new RegisterPositions(registerCount);
+		final RegisterPositions registersUsedNext = new RegisterPositions(registerCount, z8Registers);
+		final RegisterPositions registersBlockedNext = new RegisterPositions(registerCount, z8Registers);
 
 		final int registerAmount = getRegisterAmount(current);
 		final boolean onlyEvenRegisters = isOnlyEvenRegisters(current.var());
@@ -411,7 +417,10 @@ final class LSAlgorithm {
 	private void setRegister(LSInterval current, int reg) {
 		Utils.assertTrue(reg >= 0);
 
-		if (isOnlyEvenRegisters(current.var())) {
+		if (z8Registers != null) {
+			Utils.assertTrue(z8Registers.isValidGroup(reg, getRegisterAmount(current), isOnlyEvenRegisters(current.var())));
+		}
+		else if (isOnlyEvenRegisters(current.var())) {
 			Utils.assertTrue((reg & 1) == 0);
 		}
 
@@ -432,10 +441,16 @@ final class LSAlgorithm {
 
 	static final class RegisterPositions {
 		private final int[] positions;
+		@Nullable private final Z8Registers z8Registers;
 
 		public RegisterPositions(int registerCount) {
+			this(registerCount, null);
+		}
+
+		public RegisterPositions(int registerCount, @Nullable Z8Registers z8Registers) {
 			positions = new int[registerCount];
 			Arrays.fill(positions, Integer.MAX_VALUE);
+			this.z8Registers = z8Registers;
 		}
 
 		@Override
@@ -478,7 +493,7 @@ final class LSAlgorithm {
 				}
 
 				final int startReg = reg - registerAmount + 1;
-				if (onlyEvenRegisters && (startReg & 1) > 0) {
+				if (!isValidGroup(startReg, registerAmount, onlyEvenRegisters)) {
 					amount++;
 					continue;
 				}
@@ -489,8 +504,9 @@ final class LSAlgorithm {
 
 		public int getFirstFit(int to, int registerAmount, boolean onlyEvenRegisters) {
 			final int highestReg = positions.length - registerAmount;
-			for (int reg = 0; reg <= highestReg; reg += onlyEvenRegisters ? 2 : 1) {
-				if (get(reg, registerAmount) >= to) {
+			for (int reg = 0; reg <= highestReg; reg++) {
+				if (isValidGroup(reg, registerAmount, onlyEvenRegisters)
+				    && get(reg, registerAmount) >= to) {
 					return reg;
 				}
 			}
@@ -501,7 +517,10 @@ final class LSAlgorithm {
 			final int highestReg = positions.length - registerAmount;
 			int maxReg = -1;
 			int max = 0;
-			for (int reg = 0; reg <= highestReg; reg += onlyEvenRegisters ? 2 : 1) {
+			for (int reg = 0; reg <= highestReg; reg++) {
+				if (!isValidGroup(reg, registerAmount, onlyEvenRegisters)) {
+					continue;
+				}
 				final int pos = get(reg, registerAmount);
 				if (pos > max) {
 					max = pos;
@@ -509,6 +528,15 @@ final class LSAlgorithm {
 				}
 			}
 			return maxReg;
+		}
+
+		private boolean isValidGroup(int register, int registerAmount, boolean onlyEvenRegisters) {
+			if (register < 0 || registerAmount <= 0 || register > positions.length - registerAmount) {
+				return false;
+			}
+			return z8Registers != null
+					? z8Registers.isValidGroup(register, registerAmount, onlyEvenRegisters)
+					: !onlyEvenRegisters || (register & 1) == 0;
 		}
 
 		public void log(String s, LSAlgorithmLogger logger) {

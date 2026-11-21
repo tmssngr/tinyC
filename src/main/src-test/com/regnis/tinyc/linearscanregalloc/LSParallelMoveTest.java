@@ -1,5 +1,6 @@
 package com.regnis.tinyc.linearscanregalloc;
 
+import com.regnis.tinyc.*;
 import com.regnis.tinyc.ast.*;
 import com.regnis.tinyc.ir.*;
 
@@ -13,6 +14,28 @@ import static org.junit.Assert.assertEquals;
  * @author Thomas Singer
  */
 public class LSParallelMoveTest {
+
+	@Test
+	public void testTemporaryUsesPhysicalPointerPair() {
+		final Z8Registers registers = new Z8Registers(0x40, 0x42, 0x43, 0x44, 0x45, 0x48, 0x49);
+		final IRVar a = new IRVar("a", 0, VariableScope.function, Type.POINTER_U8);
+		final IRVar b = new IRVar("b", 1, VariableScope.function, Type.POINTER_U8);
+		final List<LSParallelMove.VarTransfer> pending = new ArrayList<>();
+		for (int register = 0; register < 16; register++) {
+			final IRVar occupant = new IRVar("occupant" + register, register + 2, VariableScope.function, Type.U8);
+			pending.add(new LSParallelMove.VarTransfer(occupant, register, register));
+		}
+		pending.add(new LSParallelMove.VarTransfer(a, 17, 19));
+		pending.add(new LSParallelMove.VarTransfer(b, 19, 17));
+		final List<LSParallelMove.VarTransfer> transfers = new ArrayList<>();
+		LSParallelMove.transfer(pending, registers.registerCount(), Type.I16, registers, transfers::add);
+
+		assertEquals(List.of(
+				new LSParallelMove.VarTransfer(a, 17, 21),
+				new LSParallelMove.VarTransfer(b, 19, 17),
+				new LSParallelMove.VarTransfer(a, 21, 19)
+		), transfers);
+	}
 
 	@Test
 	public void test() {

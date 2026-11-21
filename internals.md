@@ -191,6 +191,10 @@ For example, a register-to-register copy uses the `move` instruction:
 
 The register indices are mapped to physical registers by the target backend. More detail is available in [lsra.md](lsra.md).
 
+`Z8Registers` defines the Z8 physical register map. Its default allowlist maps indices 0–15 to addresses `%20`–`%2F`, the working window selected by `RP = %20`.
+Additional addresses require an explicit allowlist checked against the target CPU and OS register map. Known compiler scratch and runtime state addresses are reserved.
+Allocation and parallel-move temporary selection check that every multi-byte group has consecutive physical addresses. Pointer pairs also require an even physical starting address.
+
 ### Variables addressed with pointers
 
 Variables whose addresses are taken (`&foo`) keep memory locations and are excluded from register allocation.
